@@ -1,0 +1,11 @@
+#Ant properties
+#Tue Dec 08 18:04:56 CET 2020
+version.api=2011
+vendor=hybris
+group.id=de.hybris.platform
+name=blcore
+description=blcore
+builddate=20201208 1801
+releasedate=20201119 1630
+version=2011.1
+module.name=platform-module
