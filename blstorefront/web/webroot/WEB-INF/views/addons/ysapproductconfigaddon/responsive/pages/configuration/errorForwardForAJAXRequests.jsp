@@ -1,4 +1,0 @@
-<%@ page trimDirectiveWhitespaces="true"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
-<div id="redirectUrl"><c:out value="${redirectUrl}"/></div>
