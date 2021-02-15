@@ -256,7 +256,6 @@
     <extension name='blfacades'/>
     <extension name='blfulfilmentprocess'/>
     <extension name='blinitialdata'/>
-    <extension name='bltest'/>
     <extension name='blstorefront'/>
 
     <!-- BL Addons-->
