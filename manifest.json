@@ -29,22 +29,7 @@
             {
                 "location": "/config/prod/local-prod.properties",
                 "persona": "production"
-            },
-            {
-                "location": "/config/environments/common.properties"
-             },
-             {
-                "aspect": "accstorefront",
-                "location": "/config/environments/accstorefront.properties"
-             },
-             {
-                "aspect": "api",
-                "location": "/config/environments/api.properties"
-             },
-             {
-                "aspect": "backoffice",
-                "location": "/config/environments/backoffice.properties"
-             }
+            }
         ],
         "extensions": {
             "location": "/config/common/localextensions.xml",
@@ -52,7 +37,8 @@
 	   },
 	"solr": {
 		"location": "solrconfig/solr"
-	   },
+	   }
+	},   
 	"properties":[ 
 	   { 
 		  "key":"lang.packs",
@@ -86,6 +72,7 @@
 		  "key": "cronjob.timertask.loadonstartup",
 	      "value": "false"
 	   }
+	 ],  
 	"storefrontAddons":[ 
 	   { 
 		  "addon":"promotionenginesamplesaddon",
@@ -350,7 +337,6 @@
 					"value":"integration,yHotfolderCandidate"
 		     }
             ],
-		  ],
 		  "webapps":[ 
 			 { 
 				"name":"hac",
