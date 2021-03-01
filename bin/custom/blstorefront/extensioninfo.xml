@@ -20,14 +20,11 @@
 	   <requires-extension name="stocknotificationaddon"/>
 	   <requires-extension name="personalizationsampledataaddon"/>
 	   <requires-extension name="pcmbackofficesamplesaddon"/>
-	   <!--<requires-extension name="orderselfserviceaddon"/>
-	   <requires-extension name="ordermanagementaddon"/>-->
 	   <requires-extension name="notificationaddon"/>
 	   <requires-extension name="customerinterestsaddon"/>
 	   <requires-extension name="customercouponsamplesaddon"/>
 	   <requires-extension name="customercouponaddon"/>
 	   <requires-extension name="consignmenttrackingaddon"/>
-	   <!-- <requires-extension name="assistedservicestorefront"/> -->
 	   <requires-extension name="assistedservicepromotionaddon"/>
 	   <requires-extension name="adaptivesearchsamplesaddon"/>
 	   <requires-extension name="acceleratorstorefrontcommons"/>
