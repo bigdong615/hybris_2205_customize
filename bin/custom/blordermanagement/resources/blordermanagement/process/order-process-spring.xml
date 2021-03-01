@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+ 
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+        
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<context:annotation-config/>
+	
+	<!-- Order Process Actions -->
+	<bean id="abstractOrderAction" class="com.bl.Ordermanagement.actions.order.AbstractOrderAction" abstract="true" parent="abstractAction">
+		<property name="timeService" ref="timeService"/>
+	</bean>
+	
+	<bean id="checkOrderAction" class="com.bl.Ordermanagement.actions.order.CheckOrderAction" parent="abstractAction">
+		<property name="checkOrderService" ref="checkOrderService"/>
+	</bean>
+	
+	<bean id="geocodeShippingAddressAction" class="com.bl.Ordermanagement.actions.order.GeocodeShippingAddressAction" parent="abstractAction">
+		<property name="geoWebServiceWrapper" ref="geoServiceWrapper"/>
+		<property name="addressConverter" ref="deliveryAddressGeocodeConverter"/>
+	</bean>
+		
+	<bean id="sourceOrderAction" class="com.bl.Ordermanagement.actions.order.SourceOrderAction" parent="abstractAction">
+		<property name="sourcingService" ref="sourcingService"/>
+		<property name="allocationService" ref="allocationService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
+	
+	<bean id="completeOrderAction" class="com.bl.Ordermanagement.actions.order.CompleteOrderAction" parent="abstractAction" />
+
+	<bean id="putOrderOnHoldAction" class="com.bl.Ordermanagement.actions.order.PutOrderOnHoldAction" parent="abstractAction" >
+		<property name="orderOnHoldService" ref="orderOnHoldService" />
+	</bean>
+	
+	<!-- Fraud Check Actions -->
+	<bean id="abstractFraudCheckAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.AbstractFraudCheckAction" abstract="true" parent="abstractOrderAction" />
+	
+	<bean id="fraudCheckOrderInternalAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.FraudCheckOrderAction" parent="abstractFraudCheckAction">
+		<property name="fraudService" ref="fraudService"/>
+		<property name="providerName" value="hybris"/>
+	</bean>
+	
+	<bean id="prepareOrderForManualCheckAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.PrepareOrderForManualCheckAction" parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+	
+	<bean id="notifyCustomerAboutFraudAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.NotifyCustomerAboutFraudAction" parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+	
+	<bean id="sendOrderPlacedNotificationAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.SendOrderPlacedNotificationAction" parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+	
+	<bean id="orderManualCheckedAction" class="com.bl.Ordermanagement.actions.order.fraudcheck.OrderManualCheckedAction" parent="abstractOrderAction"/>
+
+	<!-- Consignment Subprocess Completion Action -->
+	<bean id="verifyOrderCompletionAction" class="com.bl.Ordermanagement.actions.order.VerifyOrderCompletionAction" parent="abstractAction"/>
+	
+	<!-- Cancellation Actions -->
+	<bean id="cancelOrderAction" class="com.bl.Ordermanagement.actions.order.cancel.CancelOrderAction" parent="abstractAction">
+		<property name="orderCancelService" ref="orderCancelService"/>
+		<property name="userService" ref="userService" />
+	</bean>
+
+    <bean id="processOrderCancellationAction" class="com.bl.Ordermanagement.actions.order.cancel.ProcessOrderCancellationAction" parent="abstractAction">
+        <property name="orderCancelCallbackService" ref="orderCancelCallbackService"/>
+	    <property name="orderCancelService" ref="orderCancelService"/>
+		<property name="calculationService" ref="calculationService" />
+		<property name="impersonationService" ref="impersonationService"/>
+		<property name="promotionsService" ref="promotionsService"/>
+		<property name="timeService" ref="timeService"/>
+    </bean>
+	
+	<!-- Payment Actions-->
+	<bean id="postTaxesAction" class="com.bl.Ordermanagement.actions.order.payment.PostTaxesAction" parent="abstractAction">
+		<property name="externalTaxesService" ref="externalTaxesService"/>
+	</bean>
+	
+	<bean id="takePaymentAction" class="com.bl.Ordermanagement.actions.order.payment.TakePaymentAction" parent="abstractAction">
+		<property name="paymentService" ref="paymentService"/>
+	</bean>
+	
+	<bean id="sendPaymentFailedNotificationAction" class="com.bl.Ordermanagement.actions.order.payment.SendPaymentFailedNotificationAction" parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+	
+</beans>
