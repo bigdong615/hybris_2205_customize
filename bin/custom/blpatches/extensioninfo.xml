@@ -5,12 +5,8 @@
            
     
     <extension abstractclassprefix="Generated" classprefix="Blpatches" jaloLogicFree="true" managername="BlpatchesManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="blpatches" usemaven="false">
-                  
-        <!-- for more information on maven managed libraries please consult https://wiki.hybris.com/x/Nq8sDQ -->
-                               
-        <!-- you should add all required extensions to this list, except platform extensions which are automatically required -->
-                         
-        <!-- <requires-extension name="cms"/> -->             
+      
+        <requires-extension name="blinitialdata"/>      
       
         <coremodule generated="true" manager="com.bl.patches.jalo.BlpatchesManager" packageroot="com.bl.patches"/>
                       
