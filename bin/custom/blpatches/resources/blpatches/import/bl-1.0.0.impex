@@ -1,0 +1,9 @@
+#% import com.bl.patches.setup.BlpatchesSystemSetup
+#% impex.enableExternalImpExSyntaxParsing(true)
+#% impex.enableExternalDataCodeExecution(true)
+
+$releasePath = /blpatches/import/bl-1.0.0_demo
+
+#% impex.info("Importing content patch for Release 1.0.0 >>>");
+
+#% impex.includeExternalData(BlpatchesSystemSetup.class.getResourceAsStream("$releasePath/bl-import-sequence.impex"), "utf-8", 0, 0);

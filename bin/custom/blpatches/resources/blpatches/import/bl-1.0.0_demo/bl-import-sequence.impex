@@ -1,0 +1,12 @@
+#% import com.bl.patches.setup.BlpatchesSystemSetup
+#% impex.enableExternalImpExSyntaxParsing(true)
+#% impex.enableExternalDataCodeExecution(true)
+
+$path = /blpatches/import/bl-1.0.0_demo/bl-data-impexes
+
+#% impex.info("Importing content from $path >>>");
+
+#% impex.includeExternalData(BlpatchesSystemSetup.class.getResourceAsStream("$path/impex1.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(BlpatchesSystemSetup.class.getResourceAsStream("$path/impex2.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(BlpatchesSystemSetup.class.getResourceAsStream("$path/impex3.impex"), "utf-8", 0, 0);
+
