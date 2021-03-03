@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd">
+	
+    <bean id="blpatchesSystemSetup" class="com.bl.patches.setup.BlpatchesSystemSetup" parent="abstractCoreSystemSetup">
+        <property name="sampleDataImportService" ref="sampleDataImportService"/>
+		<property name="blpatchesService" ref="blpatchesService"/>
+        <property name="configurationService" ref="configurationService"/>
+    </bean>
+
+    <bean id="blpatchesService" class="com.bl.patches.service.impl.DefaultBlpatchesService">
+        <property name="modelService" ref="modelService"/>
+        <property name="mediaService" ref="mediaService"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+        <property name="importService" ref="importService"/>
+    </bean>
+			
+</beans>
