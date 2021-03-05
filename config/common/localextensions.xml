@@ -5,18 +5,20 @@
     <!-- <path dir="${HYBRIS_BIN_DIR}/custom" autoload="true" /> -->
     
     <!-- BL custom extensions -->
-    <extension name='blassistedservicestorefront' />
-	<extension name='blbackoffice' />
-	<extension name='blconfigurablebundleaddon' />
-	<extension name='blcore' />
-	<extension name='blcustomerticketingaddon' />
-	<extension name='blfacades' />
-	<extension name='blinitialdata' />
-	<extension name='blordermanagement' />
-	<extension name='blordermanagementaddon' />
-	<extension name='blorderselfserviceaddon' />
-	<extension name='blpatches' />
-	<extension name='blstorefront' />
+      <extension name='blassistedservicestorefront' />
+      <extension name='blbackoffice' />
+      <extension name='blconfigurablebundleaddon' />
+      <extension name='blcore' />
+      <extension name='blcustomerticketingaddon' />
+      <extension name='blfacades' />
+      <extension name='blinitialdata' />
+      <extension name='blordermanagement' />
+      <extension name='blordermanagementaddon' />
+      <extension name='blorderselfserviceaddon' />
+      <extension name='blpatches' />
+      <extension name='blstorefront' />
+      <extension name='bllogging' />
+
 	
 	<!-- Extension to enable Accelerator Services -->
 	<extension name='acceleratorbackoffice' />

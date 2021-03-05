@@ -41,7 +41,7 @@ public final class BlLogger
     }
 
     /**
-     * Log generic message with messageCode and arguments without exception.
+     * Log generic message with arguments without exception and message code.
      *
      * ex: BlLogger.logFormattedMessage(LOG, Level.DEBUG, BlCoreConstants.EMPTY_STRING,
      *                                 "Using delivery mode {} and zone {} for a delivery cost of {}", deliveryModeModel.getCode(),
