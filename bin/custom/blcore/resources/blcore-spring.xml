@@ -538,4 +538,12 @@
 		<property name="itemCleanupHooks" ref="csTicketRetentionHooks"/>
 		<property name="ticketBusinessService" ref="ticketBusinessService"/>
 	</bean>
+	
+	<!-- Import Services -->
+	<alias name="blCoreDataImportService" alias="coreDataImportService"/>
+    <bean id="blCoreDataImportService" class="com.bl.core.dataimport.BLCoreDataImportService" parent="defaultCoreDataImportService"/>
+    
+     <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
+    <bean id="blSampleDataImportService" class="com.bl.core.dataimport.BLSampleDataImportService" parent="defaultSampleDataImportService"/>
+    
 </beans>

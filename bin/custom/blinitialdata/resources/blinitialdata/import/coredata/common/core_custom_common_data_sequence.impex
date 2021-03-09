@@ -1,0 +1,10 @@
+#% import com.bl.initialdata.setup.InitialDataSystemSetup
+#% impex.enableExternalImpExSyntaxParsing(true)
+#% impex.enableExternalDataCodeExecution(true)
+
+$commonCustomPath = /blinitialdata/import/coredata/common/custom
+
+#% impex.info("=============================== Importing content from BLInitialData core_custom_common_data_sequence =========================");
+
+#Mention here common custom impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/demo.impex"), "utf-8", 0, 0);

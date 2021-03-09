@@ -1,0 +1,51 @@
+#% import com.bl.initialdata.setup.InitialDataSystemSetup
+#% impex.enableExternalImpExSyntaxParsing(true)
+#% impex.enableExternalDataCodeExecution(true)
+ 
+$contentCatalogsCustomPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom
+$contentCatalogsCustomHomepagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/homepage
+$contentCatalogsCustomCategoryPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/category
+$contentCatalogsCustomPLPPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/plp
+$contentCatalogsCustomSLPPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/slp
+$contentCatalogsCustomPDPPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/pdp
+$contentCatalogsCustomCartPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/cart
+$contentCatalogsCustomCheckoutPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/checkout
+$contentCatalogsCustomEmailsPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/emails
+$contentCatalogsCustomOthersPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/others
+
+#% impex.info("=============================== Importing content from BLInitialData core_custom_content_data_sequence ========================="); 
+
+#Mention here homepage related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/demo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here category page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCategoryPath/categorypagedemo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here PLP related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPLPPath/plpdemo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here SLP related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomSLPPath/slpdemo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here PDP related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPDPPath/pdpdemo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here Cart Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCartPath/cartdemo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here Checkout Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCheckoutPath/checkoutdemo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here Emails related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/emailsdemo.impex"), "utf-8", 0, 0); 
+
+
+#Mention here Others related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomOthersPath/othersdemo.impex"), "utf-8", 0, 0); 
