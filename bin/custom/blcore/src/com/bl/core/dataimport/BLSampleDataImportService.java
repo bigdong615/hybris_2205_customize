@@ -10,7 +10,7 @@ import de.hybris.platform.commerceservices.dataimport.impl.SampleDataImportServi
  * BLSampleDataImportService class makes possible to import custom impexes along with other required impexes while
  * system initialization or update process
  *
- * @author Pragiti
+ * @author Ravikumar
  */
 
 public class BLSampleDataImportService extends SampleDataImportService
