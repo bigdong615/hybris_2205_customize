@@ -6,9 +6,24 @@ package com.bl.core.dataimport;
 import de.hybris.platform.commerceservices.dataimport.impl.SampleDataImportService;
 
 
+/**
+ * BLSampleDataImportService class makes possible to import custom impexes along with other required impexes while
+ * system initialization or update process
+ *
+ * @author Pragiti
+ */
+
 public class BLSampleDataImportService extends SampleDataImportService
 {
 
+	/**
+	 * Import product catalog data.
+	 *
+	 * @param extensionName
+	 *           the extension name
+	 * @param productCatalogName
+	 *           the product catalog name
+	 */
 	@Override
 	protected void importProductCatalog(final String extensionName, final String productCatalogName)
 	{
@@ -19,6 +34,14 @@ public class BLSampleDataImportService extends SampleDataImportService
 				false);
 	}
 
+	/**
+	 * Import content catalog data.
+	 *
+	 * @param extensionName
+	 *           the extension name
+	 * @param contentCatalogName
+	 *           the content catalog name
+	 */
 	@Override
 	protected void importContentCatalog(final String extensionName, final String contentCatalogName)
 	{
@@ -29,6 +52,16 @@ public class BLSampleDataImportService extends SampleDataImportService
 				false);
 	}
 
+	/**
+	 * Import stores data.
+	 *
+	 * @param extensionName
+	 *           the extension name
+	 * @param storeName
+	 *           the store name
+	 * @param productCatalogName
+	 *           the product catalog name
+	 */
 	@Override
 	protected void importStore(final String extensionName, final String storeName, final String productCatalogName)
 	{

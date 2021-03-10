@@ -539,11 +539,13 @@
 		<property name="ticketBusinessService" ref="ticketBusinessService"/>
 	</bean>
 	
-	<!-- Import Services -->
+	<!-- Impex Import Services to be used while system initialization or update process -->
+	<!-- Extended CoreDataImportService class to make possible to import custom impexes along with other required impexes while system initialization or update process -->
 	<alias name="blCoreDataImportService" alias="coreDataImportService"/>
     <bean id="blCoreDataImportService" class="com.bl.core.dataimport.BLCoreDataImportService" parent="defaultCoreDataImportService"/>
     
-     <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
+    <!-- Extended SampleDataImportService class to make possible to import custom impexes along with other required impexes while system initialization or update process -->
+    <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
     <bean id="blSampleDataImportService" class="com.bl.core.dataimport.BLSampleDataImportService" parent="defaultSampleDataImportService"/>
     
 </beans>
