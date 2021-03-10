@@ -13,7 +13,7 @@ import de.hybris.platform.commerceservices.dataimport.impl.SampleDataImportServi
  * @author Ravikumar
  */
 
-public class BLSampleDataImportService extends SampleDataImportService
+public class BlSampleDataImportService extends SampleDataImportService
 {
 
 	/**

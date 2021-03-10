@@ -9,7 +9,7 @@ import de.hybris.platform.commerceservices.dataimport.impl.CoreDataImportService
  *
  * @author Ravikumar
  */
-public class BLCoreDataImportService extends CoreDataImportService
+public class BlCoreDataImportService extends CoreDataImportService
 {
 
 	/**
