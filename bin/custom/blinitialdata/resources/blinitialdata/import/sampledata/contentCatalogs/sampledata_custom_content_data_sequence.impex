@@ -1,0 +1,45 @@
+#% import com.bl.initialdata.setup.InitialDataSystemSetup
+#% impex.enableExternalImpExSyntaxParsing(true)
+#% impex.enableExternalDataCodeExecution(true)
+ 
+#% impex.info("=============================== Importing content from BLInitialData sampledata_custom_content_data_sequence ========================="); 
+
+#mention custom paths here
+$contentCatalogsCustomPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom
+$contentCatalogsCustomContentPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/content
+$contentCatalogsCustomCategoryPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/category
+$contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/myaccount
+$contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/checkout
+$contentCatalogsCustomEmailsPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/emails
+
+#Please go through to /blinitialdata/resources/blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
+#Mention here homepage related impexes in sequence
+
+
+#Mention here Content page related impexes in sequence 
+
+
+#Mention here Category Page related impexes in sequence
+
+
+#Mention here Search Listing Page related impexes in sequence
+
+
+#Mention here Product Listing Page related impexes in sequence
+
+
+#Mention here Product Details Page related impexes in sequence
+
+
+#Mention here MyAccount Page related impexes in sequence
+
+
+#Mention here Cart Page related impexes in sequence
+
+
+#Mention here Checkout Page related impexes in sequence
+
+
+#Mention here Email Page related impexes in sequence
+
+

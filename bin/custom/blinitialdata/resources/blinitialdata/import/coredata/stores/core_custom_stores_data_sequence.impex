@@ -1,0 +1,13 @@
+#% import com.bl.initialdata.setup.InitialDataSystemSetup
+#% impex.enableExternalImpExSyntaxParsing(true)
+#% impex.enableExternalDataCodeExecution(true)
+
+#% impex.info("=============================== Importing content from BLInitialData core_custom_stores_data_sequence =========================");
+
+#mention custom paths here 
+$storesCustomPath = /blinitialdata/import/coredata/stores/bl/custom
+
+ 
+#Mention here store related custom impexes in sequence
+ 
+
