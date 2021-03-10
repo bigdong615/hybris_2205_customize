@@ -540,11 +540,13 @@
 	</bean>
 	
 	<!-- Impex Import Services to be used while system initialization or update process -->
-	<!-- Extended CoreDataImportService class to make possible to import custom impexes along with other required impexes while system initialization or update process -->
+	<!-- BLCoreDataImportService class is used to import common data, product catalog, content catalog, store 
+    	from coredata while performing system initialization or update process. -->
 	<alias name="blCoreDataImportService" alias="coreDataImportService"/>
     <bean id="blCoreDataImportService" class="com.bl.core.dataimport.BLCoreDataImportService" parent="defaultCoreDataImportService"/>
     
-    <!-- Extended SampleDataImportService class to make possible to import custom impexes along with other required impexes while system initialization or update process -->
+    <!-- BLSampleDataImportService class is used to import common data, product catalog, content catalog, store 
+    	from sampledata while performing system initialization or update process. -->
     <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
     <bean id="blSampleDataImportService" class="com.bl.core.dataimport.BLSampleDataImportService" parent="defaultSampleDataImportService"/>
     

@@ -4,8 +4,8 @@ import de.hybris.platform.commerceservices.dataimport.impl.CoreDataImportService
 
 
 /**
- * BLCoreDataImportService class makes possible to import custom impexes along with other required impexes while system
- * initialization or update process
+ * This class is used to import common data, product catalog, content catalog, store from coredata while performing
+ * system initialization or update process.
  *
  * @author Ravikumar
  */
@@ -13,7 +13,7 @@ public class BLCoreDataImportService extends CoreDataImportService
 {
 
 	/**
-	 * Import common data.
+	 * Import common impexes from coredata.
 	 *
 	 * @param extensionName
 	 *           the extension name
@@ -28,7 +28,7 @@ public class BLCoreDataImportService extends CoreDataImportService
 	}
 
 	/**
-	 * Import product catalog data.
+	 * Import product catalog impexes from coredata.
 	 *
 	 * @param extensionName
 	 *           the extension name
@@ -45,7 +45,7 @@ public class BLCoreDataImportService extends CoreDataImportService
 	}
 
 	/**
-	 * Import content catalog data.
+	 * Import content catalog impexes from coredata.
 	 *
 	 * @param extensionName
 	 *           the extension name
@@ -62,7 +62,7 @@ public class BLCoreDataImportService extends CoreDataImportService
 	}
 
 	/**
-	 * Import stores data.
+	 * Import stores impexes from coredata.
 	 *
 	 * @param extensionName
 	 *           the extension name

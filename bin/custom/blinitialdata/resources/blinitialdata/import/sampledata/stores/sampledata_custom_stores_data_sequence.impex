@@ -1,11 +1,12 @@
 #% import com.bl.initialdata.setup.InitialDataSystemSetup
 #% impex.enableExternalImpExSyntaxParsing(true)
 #% impex.enableExternalDataCodeExecution(true)
- 
+#% impex.info("=============================== Importing content from BLInitialData sampledata_custom_stores_data_sequence =========================");
+
+#mention custom paths here  
 $storesCustomPath = /blinitialdata/import/sampledata/stores/bl/custom
 
-#% impex.info("=============================== Importing content from BLInitialData sampledata_custom_stores_data_sequence ========================="); 
 
 #Mention here store related custom impexes in sequence
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomPath/demo.impex"), "utf-8", 0, 0); 
+ 
 

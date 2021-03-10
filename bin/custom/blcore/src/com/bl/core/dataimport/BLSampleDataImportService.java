@@ -7,8 +7,8 @@ import de.hybris.platform.commerceservices.dataimport.impl.SampleDataImportServi
 
 
 /**
- * BLSampleDataImportService class makes possible to import custom impexes along with other required impexes while
- * system initialization or update process
+ * This class is used to import common data, product catalog, content catalog, store from sampledata while performing
+ * system initialization or update process.
  *
  * @author Ravikumar
  */
@@ -17,7 +17,7 @@ public class BLSampleDataImportService extends SampleDataImportService
 {
 
 	/**
-	 * Import product catalog data.
+	 * Import product catalog impexes from sampledata .
 	 *
 	 * @param extensionName
 	 *           the extension name
@@ -35,7 +35,7 @@ public class BLSampleDataImportService extends SampleDataImportService
 	}
 
 	/**
-	 * Import content catalog data.
+	 * Import content catalog impexes from sampledata.
 	 *
 	 * @param extensionName
 	 *           the extension name
@@ -53,7 +53,7 @@ public class BLSampleDataImportService extends SampleDataImportService
 	}
 
 	/**
-	 * Import stores data.
+	 * Import stores impexes from sampledata.
 	 *
 	 * @param extensionName
 	 *           the extension name
