@@ -549,5 +549,24 @@
     	from sampledata while performing system initialization or update process. -->
     <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
     <bean id="blSampleDataImportService" class="com.bl.core.dataimport.BlSampleDataImportService" parent="defaultSampleDataImportService"/>
-    
+
+	<alias name="blCategoryPrepareInterceptor" alias="blCategoryPrepareInterceptor"/>
+	<bean id="blCategoryPrepareInterceptor" class="com.bl.core.model.interceptor.BlCategoryPrepareInterceptor">
+		<property name="keyGenerator" ref="categoryIdGenerator"/>
+	</bean>
+
+	<bean id="blCategoryInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blCategoryPrepareInterceptor"/>
+		<property name="typeCode" value="Category"/>
+	</bean>
+	<!-- category Id generator-->
+	<bean id="categoryIdGenerator" class="de.hybris.platform.servicelayer.keygenerator.impl.PersistentKeyGenerator">
+		<property name="key" value="${keygen.category.id.name}"/>
+		<property name="digits" value="${keygen.category.id.digits}"/>
+		<property name="start" value="${keygen.category.id.start}"/>
+		<property name="type" value="${keygen.category.id.type}"/>
+		<property name="template" value="${keygen.category.id.template}"/>
+	</bean>
+
+
 </beans>

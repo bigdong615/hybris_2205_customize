@@ -1,0 +1,35 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Category Classifications
+#% impex.info("=============================== Importing content from BLInitialData categories-classifications_en.impex =========================");
+
+# Macros / Replacement Parameter definitions
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$classificationCatalog=blClassification
+
+$classCatalogVersion=catalogversion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true,default='$classificationCatalog:1.0']
+$classSystemVersion=systemVersion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true]
+
+# Language
+$lang=en
+
+# Insert Classifications
+UPDATE ClassificationClass;code[unique=true];$classCatalogVersion;name[lang=$lang]
+                          ;CameraAttributes;;Camera Attributes
+                          ;LensAttributes;;Lens Attributes
+                          ;MemoryCardAttributes;;Memory Card Attributes
+                          ;Monitors_VideoAttributes;; Monitors/Video Attributes
+
+# Insert Classification Attributes
+UPDATE ClassificationAttribute;code[unique=true];$classSystemVersion;name[lang=$lang]
+                              ;formatCoverage;Format Coverage
+                              ;maxAperture;Max Aperture
+                              ;sensorSize;Sensor Size
+                              ;videoResolution;Video Resolution
+                              ;megapixels;Megapixels
+                              ;prime_zoom;Prime/Zoom
+                              ;af_mf;AF/MF
+                              ;memoryCardType;Memory Card Type

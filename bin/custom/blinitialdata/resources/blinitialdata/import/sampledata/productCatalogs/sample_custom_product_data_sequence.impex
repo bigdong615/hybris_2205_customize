@@ -6,8 +6,17 @@
 
 #mention custom paths here 
 $productCatalogsCustomPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom
+$productCatalogsCategoriesPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/categories
 
- 
+
+#Mention here categories related custom impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories-classifications.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories-classifications_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/suppliers.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/suppliers_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/suppliers-media.impex"), "utf-8", 0, 0);
+
 #Mention here product related custom impexes in sequence
- 
 
