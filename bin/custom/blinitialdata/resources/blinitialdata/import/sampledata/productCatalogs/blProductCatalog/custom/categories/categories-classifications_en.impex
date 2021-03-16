@@ -25,11 +25,11 @@ UPDATE ClassificationClass;code[unique=true];$classCatalogVersion;name[lang=$lan
 
 # Insert Classification Attributes
 UPDATE ClassificationAttribute;code[unique=true];$classSystemVersion;name[lang=$lang]
-                              ;formatCoverage;Format Coverage
-                              ;maxAperture;Max Aperture
-                              ;sensorSize;Sensor Size
-                              ;videoResolution;Video Resolution
-                              ;megapixels;Megapixels
-                              ;prime_zoom;Prime/Zoom
-                              ;af_mf;AF/MF
-                              ;memoryCardType;Memory Card Type
+                              ;formatCoverage;;Format Coverage
+                              ;maxAperture;;Max Aperture
+                              ;sensorSize;;Sensor Size
+                              ;videoResolution;;Video Resolution
+                              ;megapixels;;Megapixels
+                              ;prime_zoom;;Prime/Zoom
+                              ;af_mf;;AF/MF
+                              ;memoryCardType;;Memory Card Type
