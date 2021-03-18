@@ -9,6 +9,7 @@ package com.bl.facades.constants;
 public class BlFacadesConstants extends GeneratedBlFacadesConstants
 {
 	public static final String EXTENSIONNAME = "blfacades";
+	public static final String Default_Customer_Name = "customer";
 
 	private BlFacadesConstants()
 	{

@@ -15,8 +15,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Collections;
 
 /**
- *{javadoc}
  *
+ *This is created to provide bl register form for register.
  * @author vijay vishwakarma
  *
  */

@@ -9,10 +9,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- *{javadoc}
+ *This is created to override register method and disable registration email.
  *
  * @author vijay vishwakarma
- * This is created to override register method and disable registration email.
  */
 
 public class DefaultBlCustomerAccountService extends DefaultCustomerAccountService implements BlCustomerAccountService {
@@ -24,9 +23,7 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
     @Override
     public void register(final CustomerModel customerModel, final String password) throws DuplicateUidException
     {
-      BlLogger.logMessage(LOGGER, Level.DEBUG, "register() : Entering");
         registerCustomer(customerModel, password);
-      BlLogger.logMessage(LOGGER, Level.DEBUG, "register() : Exiting");
     }
 }
 
