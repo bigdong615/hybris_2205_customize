@@ -549,5 +549,10 @@
     	from sampledata while performing system initialization or update process. -->
     <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
     <bean id="blSampleDataImportService" class="com.bl.core.dataimport.BlSampleDataImportService" parent="defaultSampleDataImportService"/>
-    
+
+	<!--BL-30 : This is created to override register method and disable registration email. -->
+	<alias name="defaultBlCustomerAccountService" alias="customerAccountService"/>
+	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService" >
+	</bean>
+
 </beans>
