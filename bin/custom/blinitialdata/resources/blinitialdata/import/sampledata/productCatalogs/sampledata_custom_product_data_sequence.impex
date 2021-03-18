@@ -7,7 +7,18 @@
 #mention custom paths here 
 $productCatalogsCustomPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom
 
- 
+$productCatalogsProductPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/product
+
+
+#Mention here product related custom impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products-media.impex"), "utf-8", 0, 0);
+
+#Mention here product related custom impexes in sequence
+
+
+
 #Mention here product related custom impexes in sequence
  
 
