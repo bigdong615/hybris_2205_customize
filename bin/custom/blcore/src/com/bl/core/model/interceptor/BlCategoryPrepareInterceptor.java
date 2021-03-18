@@ -6,7 +6,12 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import org.apache.commons.lang.StringUtils;
-
+/**
+ * This class is for setting the auto generated category Id on Category
+ * when there is no categoryId associated to it
+ *
+ * @author Ritika
+ */
 public class BlCategoryPrepareInterceptor implements PrepareInterceptor<CategoryModel> {
 
   private KeyGenerator keyGenerator;

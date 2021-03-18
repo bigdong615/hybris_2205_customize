@@ -554,7 +554,7 @@
 	<bean id="blCategoryPrepareInterceptor" class="com.bl.core.model.interceptor.BlCategoryPrepareInterceptor">
 		<property name="keyGenerator" ref="categoryIdGenerator"/>
 	</bean>
-
+	<!-- BL-90 Category Modeling Related changes in Category Prepare Interceptor to generate CategoryId-->
 	<bean id="blCategoryInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blCategoryPrepareInterceptor"/>
 		<property name="typeCode" value="Category"/>

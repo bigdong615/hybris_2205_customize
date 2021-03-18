@@ -116,7 +116,7 @@
                     </attribute>
                     <attribute qualifier="displayName" type="java.lang.String">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="true"/>
                         <description>Category Display Name</description>
                     </attribute>
                     <attribute qualifier="titleTag" type="java.lang.String">
