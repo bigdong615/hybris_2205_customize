@@ -57,7 +57,7 @@
         </enumtype>
         <enumtype generate="true" code="MountTypeEnum" autocreate="true" dynamic="true">
             <value code="CANON_EF_MOUNT"/>
-            <value code="CANON_EF-S_MOUNT"/>
+            <value code="CANON_EF_S_MOUNT"/>
             <value code="CANON_RF_MOUNT"/>
             <value code="FUJI_G_MOUNT"/>
             <value code="FUJI_X_MOUNT"/>
@@ -65,7 +65,7 @@
             <value code="HASSELBLAD_X_MOUNT"/>
             <value code="L_MOUNT"/>
             <value code="MICRO_FOUR_THIRDS_MOUNT"/>
-            <value code="NIKON_F_ MOUNT"/>
+            <value code="NIKON_F_MOUNT"/>
             <value code="NIKON_Z_MOUNT"/>
             <value code="PL_MOUNT"/>
             <value code="SONY_E_MOUNT"/>
@@ -488,83 +488,6 @@
                     </attribute>
                 </attributes>
             </itemtype>
-            <itemtype code="BLPricingLogic" autocreate="true" generate="true"
-              jaloclass="com.bl.core.jalo.BLPricingLogic">
-                <description>This table is for calculating the rental product 7 day price</description>
-                <deployment table="blPricingLogic" typecode="12201" />
-                <attributes>
-                    <attribute qualifier="productType" type="ProductTypeEnum">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
-                        <description>Type of the Product</description>
-                    </attribute>
-                    <attribute qualifier="tier" type="PricingTierEnum">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
-                        <description>This attribute is defined to </description>
-                    </attribute>
-                    <attribute qualifier="greaterThan" type="java.lang.Double">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
-                        <description>Determines the minimum or lowest value</description>
-                    </attribute>
-                    <attribute qualifier="lessThan" type="java.lang.Double">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
-                        <description>Determines the maximum or highest value</description>
-                    </attribute>
-                    <attribute qualifier="pctOfRetail" type="java.lang.Integer">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
-                        <description>Additional Discount for used gear</description>
-                    </attribute>
-                </attributes>
-            </itemtype>
-            <itemtype code="BlStandardPricingRatio" autocreate="true" generate="true"
-              jaloclass="com.bl.core.jalo.BlStandardPricingRatio">
-                <description>This table is for calculating the duration prices based on the pricing ratio</description>
-                <deployment table="blStandardPricingRatio" typecode="12202" />
-                <attributes>
-                    <attribute qualifier="pricingRatio" type="java.lang.Double">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
-                        <description>Pricing Ratio per duration</description>
-                    </attribute>
-                    <attribute qualifier="duration" type="DurationEnum">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
-                        <description>Duration in days</description>
-                    </attribute>
-                </attributes>
-            </itemtype>
-            <itemtype code="BlConstrainedPricingRatio" autocreate="true" generate="true"
-              jaloclass="com.bl.core.jalo.BlConstrainedPricingRatio">
-                <description>This table is for calculating the duration prices based on the pricing ratio</description>
-                <deployment table="blConsPricingRatio" typecode="12203" />
-                <attributes>
-                    <attribute qualifier="pricingRatio" type="java.lang.Double">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
-                        <description>Pricing Ratio per duration</description>
-                    </attribute>
-                    <attribute qualifier="duration" type="DurationEnum">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
-                        <description>Duration in days</description>
-                    </attribute>
-                </attributes>
-            </itemtype>
-            <itemtype code="PriceRow" autocreate="false" generate="false">
-                <description>Extending the PriceRow with additional attributes.</description>
-                <attributes>
-                    <attribute qualifier="duration" type="DurationEnum">
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="true"/>
-                        <description>Duration in days</description>
-                    </attribute>
-                </attributes>
-            </itemtype>
         </typegroup>
-
     </itemtypes>
 </items>
