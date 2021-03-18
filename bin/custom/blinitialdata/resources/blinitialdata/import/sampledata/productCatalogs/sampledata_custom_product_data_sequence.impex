@@ -10,4 +10,4 @@ $productCatalogsCustomPath = /blinitialdata/import/sampledata/productCatalogs/bl
  
 #Mention here product related custom impexes in sequence
  
-
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCustomPath/categories.impex"), "utf-8", 0, 0);
