@@ -12,7 +12,7 @@
 
 	<div class="facet js-facet">
 
-	<div class="facet__name js-facet-name">
+	<div class="js-facet-name">
 		<span class="glyphicon facet__arrow"></span>
 		<spring:theme code="search.nav.applied.facets"/>
 	</div>

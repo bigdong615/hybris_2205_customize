@@ -22,13 +22,13 @@
 
             <c:choose>
                 <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
-                    <button type="submit" class="btn btn-primary btn-block glyphicon glyphicon-shopping-cart"
-                            aria-disabled="true" disabled="disabled">
+                    <button type="submit" class="btn btn-outline btn-disabled"
+                            aria-disabled="true" disabled="disabled">Add to Rental
                     </button>
                 </c:when>
                 <c:otherwise>
-                    <button type="submit" class="btn btn-primary btn-block glyphicon glyphicon-shopping-cart js-enable-btn"
-                            disabled="disabled">
+                    <button type="submit" class="btn btn-primary"
+                            disabled="disabled">Add to Rental
                     </button>
                 </c:otherwise>
             </c:choose>
