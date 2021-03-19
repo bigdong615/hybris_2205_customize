@@ -11,11 +11,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EXTENSIONNAME = "blcore";
 
 
-	private BlCoreConstants()
-	{
-		//empty
-	}
-
 	// implement here constants used by this extension
 	public static final String QUOTE_BUYER_PROCESS = "quote-buyer-process";
 	public static final String QUOTE_SALES_REP_PROCESS = "quote-salesrep-process";
@@ -25,5 +20,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String QUOTE_EXPIRED_EMAIL_PROCESS = "quote-expired-email-process";
 	public static final String QUOTE_POST_CANCELLATION_PROCESS = "quote-post-cancellation-process";
 	public static final String EMPTY_STRING = "";
+	public static final int PRECISION = 2;
+	public static final int MINIMUM_RENTAL_DAYS = 3;
 
+	private BlCoreConstants()
+	{
+		//empty
+	}
 }

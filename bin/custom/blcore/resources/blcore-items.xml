@@ -25,6 +25,13 @@
             <value code="WHITE"/>
             <value code="YELLOW"/>
         </enumtype>
+
+        <!--BL custom enum type-->
+
+        <enumtype generate="true" code="DurationEnum" autocreate="true" dynamic="true">
+            <value code="RETAIL"/>
+        </enumtype>
+
     </enumtypes>
 
     <itemtypes>
@@ -102,6 +109,72 @@
                     </attribute>
                 </attributes>
             </itemtype>
+        </typegroup>
+
+       <!-- Custom BL Item changes-->
+
+        <typegroup name="BL">
+
+            <itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
+                <description>Extending AbstractOrderEntry type with additional attributes for BL.</description>
+                <attributes>
+                    <attribute qualifier="rentalStartDate" type="java.util.Date">
+                        <persistence type="property"/>
+                        <description>BL Rental Strat Date</description>
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
+                    <attribute qualifier="rentalReturnDate" type="java.util.Date">
+                        <persistence type="property"/>
+                        <description>BL Rental Return Date</description>
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="AbstractOrder" autocreate="false" generate="false">
+                <description>Extending AbstractOrder type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="rentalStartDate" type="java.util.Date">
+                        <description>BL Rental Strat Date</description>
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
+                    <attribute qualifier="rentalReturnDate" type="java.util.Date">
+                        <description>BL Rental Return Date</description>
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlStandardPricingRatio" autocreate="true" generate="true">
+                <description>This table is for calculating the duration prices based on the pricing ratio</description>
+                <deployment table="blstdpricingratio" typecode="12203" />
+                <attributes>
+                    <attribute qualifier="pricingRatio" type="java.lang.Double">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Pricing Ratio per duration</description>
+                    </attribute>
+                    <attribute qualifier="duration" type="DurationEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Duration in days</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="PriceRow" autocreate="false" generate="false">
+                <description>Extending the PriceRow with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="duration" type="DurationEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Duration in days</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
         </typegroup>
 
     </itemtypes>
