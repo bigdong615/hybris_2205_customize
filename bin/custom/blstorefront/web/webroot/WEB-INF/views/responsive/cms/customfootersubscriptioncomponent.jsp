@@ -1,13 +1,4 @@
-<%-- <div class="col-12 order-2 order-md-1">
-	<div class="input-group">
-		<input type="text" class="form-control"
-			placeholder="${feature.placeHolder}">
-		<div class="input-group-append">
-			<button class="btn btn-submit" type="button">Search</button>
-		</div>
-	</div>
-</div> --%>
-
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <div class="row">
 	<div class="col-12 order-2 order-md-1">
@@ -15,7 +6,8 @@
 			<input type="text" class="form-control"
 				placeholder="${feature.placeHolder}">
 			<div class="input-group-append">
-				<button class="btn btn-submit" type="button">Search</button>
+				<button class="btn btn-submit" type="button"><spring:theme code="text.footer.subscription.button.search"/></button>
+				
 			</div>
 		</div>
 	</div>

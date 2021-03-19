@@ -9,14 +9,7 @@
                         <div class="splide__track">
                             <ul class="splide__list">
                            <c:forEach items="${feature.banners}" var="banner" varStatus="status">
-                                <li class="splide__slide" style="background-image: url(${banner.media.url});">
-                                   <!--  <div class="card">
-                                        <img src="assets/img-test-profile.jpg">
-                                        <div class="my-auto">
-                                            <p class="quote">“I’ve been shooting for 10 years and love to collaborate.”</p>
-                                            <p class="credit"><b>Ted</b>&ensp;Customer Support</p>
-                                        </div>    
-                                    </div> -->
+                                <li class="splide__slide" style="background-image: url(${banner.media.url});">                                  
                                 </li>
                     			</c:forEach>
                             </ul>

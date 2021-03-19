@@ -12,7 +12,7 @@
 #
 # Import the CMS content for the Borrow Lenses site
 #
-
+ 
 #% impex.info("=============================== Importing content from BLInitialData coredata cms_content_homepage.impex ========================="); 
 $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
@@ -66,19 +66,26 @@ INSERT_UPDATE ComponentTypeGroup ; code[unique=true]
                                  ; navigation        
                                  ; mobile            
                                  
-#INSERT_UPDATE ComponentTypeGroups2ComponentType; source(code)[unique=true]; target(code)[unique=true]
-                                 ; wide              ;  
-                                 ; wide              ;  
-                                 ; wide              ;  
-                                 ; wide              ;  
-                                 ; wide              ;  
-                                 ; headerlinks       ;  
-                                 ; wide              ;  
-                                 ; logo              ;  
-                                 ; wide              ;  
-                                 ; footer            ;  
-                                 
-###  Define Content Slots  ###   
+INSERT_UPDATE ComponentTypeGroups2ComponentType ; source(code)[unique=true] ; target(code)[unique=true]            
+                                                ; wide                      ; CustomPromoMessageComponent          
+                                                ; wide                      ; CustomBLParagraphComponent           
+                                                ; wide                      ; PickUpOrDeliveryNavigationComponent  
+                                                ; wide                      ; CustomWhyBorrowLensesBannerComponent 
+                                                ; wide                      ; CustomFeaturedStoriesComponent       
+                                                ; wide                      ; CustomBrandsComponent                
+                                                ; wide                      ; RentingGearIsEasyComponent           
+                                                ; headerlinks               ; PickUpOrDeliveryNavigationComponent  
+                                                ; headerlinks               ; SupportNavigationComponent           
+                                                ; wide                      ; RotatingHomePageImagesComponent      
+                                                ; logo                      ; CustomSiteLogoComponent              
+                                                ; wide                      ; HomePageCategoriesCarouselComponent  
+                                                ; footer                    ; CMSLinkComponent                     
+                                                ; minicart                  ; MiniCartComponent                    
+                                                ; navigation                ; CustomNavigationPromoComponent       
+                                                ; navigation                ; CategoryNavigationComponent          
+                                                
+                                                
+###  Define Content Slots  ###                  
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true] 
                           ;                         ; PromoBannerSlot                    ; Promo Banner Slot                      
                           ;                         ; SiteLogoHeaderSlot                 ; Site Logo Header Slot                  
