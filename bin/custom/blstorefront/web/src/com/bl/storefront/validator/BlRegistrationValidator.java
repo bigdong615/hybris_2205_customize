@@ -1,7 +1,9 @@
 package com.bl.storefront.validator;
 
-import com.bl.storefront.form.BlRegisterForm;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
@@ -19,7 +21,7 @@ import java.util.regex.Pattern;
  * This validater use to validate bl register form.
  */
 
-@Component("registerFormValidator")
+@Component("blRegisterFormValidator")
 public class BlRegistrationValidator implements Validator{
 
     @Resource(name = "configurationService")
@@ -27,12 +29,12 @@ public class BlRegistrationValidator implements Validator{
 
     @Override
     public boolean supports(Class<?> aClass) {
-        return BlRegisterForm.class.equals(aClass);
+        return RegisterForm.class.equals(aClass);
     }
 
     @Override
     public void validate(final Object object, final Errors errors) {
-        BlRegisterForm registerForm = (BlRegisterForm)object;
+        RegisterForm registerForm = (RegisterForm)object;
         final String email = registerForm.getEmail();
         final String pwd = registerForm.getPwd();
         final String checkPwd = registerForm.getCheckPwd();
@@ -46,13 +48,13 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isNotEmpty(pwd) && StringUtils.isNotEmpty(checkPwd) && !StringUtils.equals(pwd, checkPwd))
         {
-            errors.rejectValue("checkPwd", "validation.checkPwd.equals");
+            errors.rejectValue("checkPwd", BlControllerConstants.VALIDATE_CHECKPWD_EQUALS);
         }
         else
         {
             if (StringUtils.isEmpty(checkPwd))
             {
-                errors.rejectValue("checkPwd", "register.checkPwd.invalid");
+                errors.rejectValue("checkPwd", BlControllerConstants.REGISTER_CHECKPWD_INVALID);
             }
         }
     }
@@ -61,11 +63,11 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isEmpty(pwd))
         {
-            errors.rejectValue("pwd", "register.pwd.invalid");
+            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);
         }
-        else if (StringUtils.length(pwd) < 6 || StringUtils.length(pwd) > 255) // NOSONAR
+        else if (StringUtils.length(pwd) < BlControllerConstants.PASSWORD_MIN_LENGTH || StringUtils.length(pwd) >BlControllerConstants.PASSWORD_MAX_LENGTH)
         {
-            errors.rejectValue("pwd", "register.pwd.invalid");
+            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);
         }
     }
 
@@ -73,11 +75,11 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isEmpty(email))
         {
-            errors.rejectValue("email", "register.email.invalid");
+            errors.rejectValue("email", BlControllerConstants.REGISTER_EMAIL_INVALID);
         }
-        else if (StringUtils.length(email) > 255 || !validateEmailAddress(email)) // NOSONAR
+        else if (StringUtils.length(email) > BlControllerConstants.EMAIL_MAX_LENGTH || !validateEmailAddress(email))
         {
-            errors.rejectValue("email", "register.email.invalid");
+            errors.rejectValue("email", BlControllerConstants.REGISTER_EMAIL_INVALID);
         }
     }
 

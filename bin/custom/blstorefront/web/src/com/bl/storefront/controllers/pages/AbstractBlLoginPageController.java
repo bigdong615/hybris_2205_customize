@@ -1,18 +1,23 @@
 package com.bl.storefront.controllers.pages;
 
-import com.bl.storefront.form.BlRegisterForm;
-import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.Breadcrumb;
-import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
+
+import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractLoginPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.GuestForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.LoginForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
-import de.hybris.platform.cms2.model.pages.ContentPageModel;
+import de.hybris.platform.commercefacades.user.data.RegisterData;
+import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
 
-import javax.servlet.http.HttpSession;
-import java.util.Collections;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -23,43 +28,45 @@ import java.util.Collections;
 
 public abstract class AbstractBlLoginPageController extends AbstractLoginPageController {
 
-    /**
-     * TODO : This code will be remove when ui for sign up popup is available.
-    * This method is used for rendering login page ,sign and guest form.
+    private static final Logger LOGGER = Logger.getLogger(AbstractBlLoginPageController.class);
+
+    /*
+     * Changing the register form to bl specific register form
      */
     @Override
-    protected String getDefaultLoginPage(final boolean loginError, final HttpSession session, final Model model)
-            throws CMSItemNotFoundException
+    protected String processRegisterUserRequest(final String referer, final RegisterForm form, final BindingResult bindingResult,
+        final Model model, final HttpServletRequest request, final HttpServletResponse response,
+        final RedirectAttributes redirectModel) throws CMSItemNotFoundException // NOSONAR
     {
-        final LoginForm loginForm = new LoginForm();
-        model.addAttribute(loginForm);
-        model.addAttribute(new BlRegisterForm()); // changes in registration form
-        model.addAttribute(new GuestForm());
-
-        final String username = (String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME);
-        if (username != null)
+        if (bindingResult.hasErrors())
         {
-            session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
+            model.addAttribute(form);
+            model.addAttribute(new LoginForm());
+            GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
+            return handleRegistrationError(model);
+        }
+        final RegisterData data = new RegisterData();
+        data.setLogin(form.getEmail());
+        data.setPassword(form.getPwd());
+        try
+        {
+            getCustomerFacade().register(data);
+            getAutoLoginStrategy().login(form.getEmail().toLowerCase(), form.getPwd(), request, response); // NOSONAR
+            GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
+                BlControllerConstants.REGISTRATION_CONFIRMATION_MESSAGE);
+
+        }
+        catch (final DuplicateUidException duplicateUidException)
+        {
+            BlLogger.logMessage(LOGGER, Level.ERROR, "registration failed due to unique uid");
+            BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Registration failed due to duplicated uid : {}",form.getEmail());
+            model.addAttribute(form);
+            model.addAttribute(new LoginForm());
+            bindingResult.rejectValue("email", BlControllerConstants.DUBLICATE_UID_ERROR);
+            GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
+            return handleRegistrationError(model);
         }
 
-        loginForm.setJ_username(username);
-        storeCmsPageInModel(model, getCmsPage());
-        setUpMetaDataForContentPage(model, (ContentPageModel) getCmsPage());
-        model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
-
-        addRegistrationConsentDataToModel(model);
-
-        final Breadcrumb loginBreadcrumbEntry = new Breadcrumb("#",
-                getMessageSource().getMessage("header.link.login", null, "header.link.login", getI18nService().getCurrentLocale()),
-                null);
-        model.addAttribute("breadcrumbs", Collections.singletonList(loginBreadcrumbEntry));
-
-        if (loginError)
-        {
-            model.addAttribute("loginError", Boolean.valueOf(loginError));
-            GlobalMessages.addErrorMessage(model, "login.error.account.not.found.title");
-        }
-
-        return getView();
+        return REDIRECT_PREFIX + getSuccessRedirect(request, response);
     }
 }

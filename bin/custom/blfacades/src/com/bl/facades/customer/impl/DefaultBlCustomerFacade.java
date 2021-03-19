@@ -23,7 +23,7 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
     @Override
     public void register(final RegisterData registerData) throws DuplicateUidException
     {
-        validateParameterNotNullStandardMessage("registerData", registerData); // This is same present in ootb
+        validateParameterNotNullStandardMessage("registerData", registerData); // This is also call from other place
         Assert.hasText(registerData.getLogin(), "The field [Login] cannot be empty");
 
         final CustomerModel newCustomer = getModelService().create(CustomerModel.class);
@@ -37,7 +37,7 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
     @Override
     protected void setCommonPropertiesForRegister(final RegisterData registerData, final CustomerModel customerModel)
     {
-        customerModel.setName(BlFacadesConstants.Default_Customer_Name);
+        customerModel.setName(BlFacadesConstants.DEFAULT_CUSTOMER_NAME);
         setUidForRegister(registerData, customerModel);
         customerModel.setSessionLanguage(getCommonI18NService().getCurrentLanguage());
         customerModel.setSessionCurrency(getCommonI18NService().getCurrentCurrency());
