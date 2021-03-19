@@ -8,7 +8,7 @@ ACC.global = {
         "initImager",
         "backToHome",
         "bindDropdown",
-        "closeAccAlert","initSlider"
+        "closeAccAlert"
     ],
 
     passwordStrength: function () {

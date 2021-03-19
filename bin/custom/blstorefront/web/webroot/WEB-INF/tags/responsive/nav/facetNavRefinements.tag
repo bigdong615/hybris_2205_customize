@@ -5,7 +5,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav" %>
 
-<div id="productFilter" class="d-none d-lg-block col-lg-3 sticky-lg-top productfilter-width">
+<div id="productFilter" class="d-none d-lg-block col-lg-3 sticky-lg-top">
 
             <h6 class="mb-4">Filters</h6>
 
