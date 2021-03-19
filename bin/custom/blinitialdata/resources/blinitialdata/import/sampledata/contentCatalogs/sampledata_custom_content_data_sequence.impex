@@ -6,6 +6,7 @@
 
 #mention custom paths here
 $contentCatalogsCustomPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom
+$contentCatalogsCustomHomepagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/homepage
 $contentCatalogsCustomContentPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/content
 $contentCatalogsCustomCategoryPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/category
 $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/myaccount
@@ -13,11 +14,21 @@ $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/sampledata/conten
 $contentCatalogsCustomEmailsPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/emails
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
-#Mention here homepage related impexes in sequence
 
+#Mention here homepage related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/cms_content_homepage_sample.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/cms-content_homepage_footer.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/cms-content_homepage_en.impex"), "utf-8", 0, 0);
 
 #Mention here Content page related impexes in sequence 
 
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_brands.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_cameras.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_lenses.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_production.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_usedgear.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_myaccount.impex"), "utf-8", 0, 0);
 
 #Mention here Category Page related impexes in sequence
 
