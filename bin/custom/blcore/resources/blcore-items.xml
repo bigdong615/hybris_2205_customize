@@ -55,21 +55,7 @@
             <value code="STABLIZERS"/>
             <value code="MONITORS"/>
         </enumtype>
-        <enumtype generate="true" code="MountTypeEnum" autocreate="true" dynamic="true">
-            <value code="CANON_EF_MOUNT"/>
-            <value code="CANON_EF_S_MOUNT"/>
-            <value code="CANON_RF_MOUNT"/>
-            <value code="FUJI_G_MOUNT"/>
-            <value code="FUJI_X_MOUNT"/>
-            <value code="HASSELBLAD_H_MOUNT"/>
-            <value code="HASSELBLAD_X_MOUNT"/>
-            <value code="L_MOUNT"/>
-            <value code="MICRO_FOUR_THIRDS_MOUNT"/>
-            <value code="NIKON_F_MOUNT"/>
-            <value code="NIKON_Z_MOUNT"/>
-            <value code="PL_MOUNT"/>
-            <value code="SONY_E_MOUNT"/>
-        </enumtype>
+
     </enumtypes>
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
@@ -184,7 +170,7 @@
                     </attribute>
                     <attribute qualifier="displayName" type="java.lang.String">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="true"/>
                         <description>Category Display Name</description>
                     </attribute>
                     <attribute qualifier="titleTag" type="java.lang.String">
@@ -218,7 +204,7 @@
                     </attribute>
                     <attribute qualifier="displayName" type="java.lang.String">
                         <persistence type="property" />
-                        <modifiers read="true" search="true" write="true" optional="false"/>
+                        <modifiers read="true" search="true" write="true" optional="true"/>
                         <description>Product Display Name</description>
                     </attribute>
                     <attribute qualifier="mpn" type="java.lang.String">
@@ -312,11 +298,6 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="false"/>
                         <description>The type of Product</description>
-                    </attribute>
-                    <attribute qualifier="mountType" type="MountTypeEnum">
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" optional="true"/>
-                        <description>Mount Type </description>
                     </attribute>
                     <attribute qualifier="shortDescription" type="java.lang.String">
                         <persistence type="property">
