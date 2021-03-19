@@ -14,7 +14,7 @@ $contentCatalogsCustomEmailsPath = /blinitialdata/import/coredata/contentCatalog
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
 #Mention here homepage related impexes in sequence
-
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPath/cms_content_homepage.impex"), "utf-8", 0, 0);
 
 #Mention here Content page related impexes in sequence 
 

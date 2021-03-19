@@ -24,18 +24,11 @@
 		<jsp:invoke fragment="pageScripts" />
 	</jsp:attribute>
 
+	
 	<jsp:body>
-		<div class="branding-mobile hidden-md hidden-lg">
-			<div class="js-mobile-logo">
-				<%--populated by JS acc.navigation--%>
-			</div>
-		</div>
-		<main data-currency-iso-code="${fn:escapeXml(currentCurrency.isocode)}">
-			<spring:theme code="text.skipToContent" var="skipToContent" />
-			<a href="#skip-to-content" class="skiptocontent" data-role="none">${fn:escapeXml(skipToContent)}</a>
-			<spring:theme code="text.skipToNavigation" var="skipToNavigation" />
-			<a href="#skiptonavigation" class="skiptonavigation" data-role="none">${fn:escapeXml(skipToNavigation)}</a>
-
+	<div class="home">
+		<div id="my-page">
+		
 
 			<header:header hideHeaderLinks="${hideHeaderLinks}" />
 
@@ -51,8 +44,9 @@
 			</div>
 
 			<footer:footer />
-		</main>
-
-	</jsp:body>
+	
+</div>
+</div>
+	</jsp:body >
 
 </template:master>

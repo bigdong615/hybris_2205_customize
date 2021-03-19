@@ -1,0 +1,1 @@
+<div class="nav-promo"><img src="${component.media.url }"></div>

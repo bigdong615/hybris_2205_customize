@@ -1,0 +1,129 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Categories into BL Store
+ #% impex.info("=============================== Importing content from cms-content_homepage_brands.impex =========================");
+# Macros / Replacement Parameter definitions
+$contentCatalog=blContentCatalog
+ 
+$productCatalog=blProductCatalog
+#$productCatalogName=bl Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+ 
+$supercategories=source(code, $catalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+#$contentCatalogName=bl Content Catalog
+$productCV=catalogVersion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$picture=media(code, $contentCV); 
+$siteResource=jar:com.bl.initialdata.constants.blInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
+$lang=en
+ 
+######################  All Navigation Data #####################
+######################  Level 1 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####
+#####################################################################
+ 
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name            ; &nodeRef      ; children(uid,$contentCV) ; links(&linkRef) ;  
+                                ; BrandsNavNode    ;                         ; Brands Nav Node ; BrandsNavNode ;                          
+#####################################################################
+                                
+                                
+#### Navigation Node ENtry #### 
+#####################################################################
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]   ; $contentCV[unique=true] ; name              ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; BrandsNavNodeEntry ;                         ; Brands Node Entry ; BrandsNavNode            ; BrandsLink                                             ;  
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name             ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
+                               ;                         ; BrandsLink       ; Brands Node Link ; "#" ; brands                                       ;          ;               ; Brands               ;                                    
+                               
+                               
+#####################################################################
+######################  Level 2 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####     
+#####################################################################
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name            ; &nodeRef          ; links(&linkRef) ;  
+# Brands -- all brands          
+                                ; CanonNavNode      ;                         ; Canon Link      ; CanonNavNode      
+                                ; SonyNavNode       ;                         ; Sony Link       ; SonyNavNode       
+                                ; NikonNavNode      ;                         ; Nikon Link      ; NikonNavNode      
+                                ; PanasonicNavNode  ;                         ; Panasonic Link  ; PanasonicNavNode  
+                                ; DJINavNode        ;                         ; DJI Link        ; DJINavNode        
+                                ; REDNavNode        ;                         ; DJI Link        ; REDNavNode        
+                                ; FujiNavNode       ;                         ; Fuji Link       ; FujiNavNode       
+                                ; ZeissNavNode      ;                         ; Zeiss Link      ; ZeissNavNode      
+                                ; ARRINavNode       ;                         ; ARRI Link       ; ARRINavNode       
+                                ; GoProNavNode      ;                         ; GoPro Link      ; GoProNavNode      
+                                ; SigmaNavNode      ;                         ; Sigma Link      ; SigmaNavNode      
+                                ; BlackmagicNavNode ;                         ; Blackmagic Link ; BlackmagicNavNode 
+                                ; ProfotoNavNode    ;                         ; Profoto Link    ; ProfotoNavNode    
+                                ; HasselbladNavNode ;                         ; Hasselblad Link ; HasselbladNavNode 
+                                ; AtomosNavNode     ;                         ; Atomos Link     ; AtomosNavNode     
+                                
+#####################################################################
+#####################################################################
+#### Navigation Node  ####      
+#####################################################################
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name       ; parent(uid, $contentCV) ; &nodeRef      ; children(uid,$contentCV)                                                                                                                                                                                     
+                         ; BrandsNavNode    ;                         ; BrandLinks ; BLCategoryNavNode       ; BrandsNavNode ; CanonNavNode,SonyNavNode,NikonNavNode,PanasonicNavNode,DJINavNode,REDNavNode,FujiNavNode,ZeissNavNode,ARRINavNode,GoProNavNode,SigmaNavNode,BlackmagicNavNode,ProfotoNavNode,HasselbladNavNode,AtomosNavNode 
+                         
+                         
+#####################################################################
+#### Navigation Node ENtry ####
+#####################################################################
+                         
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]          ; $contentCV[unique=true] ; name                             ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+# Brands -- all brands           
+                                 ; CanonNavNodeEntry         ;                         ; Canon Navigation Node Entry      ; CanonNavNode             ; CanonLink                                              
+                                 ; SonyNavNodeEntry          ;                         ; Sony Navigation Node Entry       ; SonyNavNode              ; SonyLink                                               
+                                 ; NikonNavNodeEntry         ;                         ; Nikon Navigation Node Entry      ; NikonNavNode             ; NikonLink                                              
+                                 ; PanasonicNavNodeEntry     ;                         ; Panasonic Navigation Node Entry  ; PanasonicNavNode         ; PanasonicLink                                          
+                                 ; DJINavNodeEntry           ;                         ; DJI Navigation Node Entry        ; DJINavNode               ; DJILink                                                
+                                 ; REDNavNodeEntry           ;                         ; RED Navigation Node Entry        ; REDNavNode               ; REDLink                                                
+                                 ; FujiNavNodeEntry          ;                         ; Fuji Navigation Node Entry       ; FujiNavNode              ; FujiLink                                               
+                                 ; ZeissNavNodeEntry         ;                         ; Zeiss Navigation Node Entry      ; ZeissNavNode             ; ZeissLink                                              
+                                 ; ARRINavNodeEntry          ;                         ; ARRI Navigation Node Entry       ; ARRINavNode              ; ARRILink                                               
+                                 ; GoProNavNodeEntry         ;                         ; GoPro Navigation Node Entry      ; GoProNavNode             ; GoProLink                                              
+                                 ; SigmaNavNodeEntry         ;                         ; Sigma Navigation Node Entry      ; SigmaNavNode             ; SigmaLink                                              
+                                 ; BlackmagicNavNodeEntry    ;                         ; Blackmagic Navigation Node Entry ; BlackmagicNavNode        ; BlackmagicLink                                         
+                                 ; ProfotoNavNodeEntry       ;                         ; Profoto Navigation Node Entry    ; ProfotoNavNode           ; ProfotoLink                                            
+                                 ; HasselbladNavNodeEntry    ;                         ; Hasselblad Navigation Node Entry ; HasselbladNavNode        ; HasselbladLink                                         
+                                 ; AtomosNavNodeNavNodeEntry ;                         ; Atomos Navigation Node Entry     ; AtomosNavNode            ; AtomosLink                                             
+                                 
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en] ;  
+# Brands -- all brands         
+                               ;                         ; CanonLink        ; Canon Link      ; "#" ; canon                      ;                                    ; Canon             ;  
+                               ;                         ; SonyLink         ; Sony Link       ; "#" ; sony                       ;                                    ; Sony              ;  
+                               ;                         ; NikonLink        ; Nikon Link      ; "#" ; nikon                      ;                                    ; Nikon             ;  
+                               ;                         ; PanasonicLink    ; Panasonic Link  ; "#" ; panasonic                  ;                                    ; Panasonic         ;  
+                               ;                         ; DJILink          ; DJI Link        ; "#" ; dji                        ;                                    ; DJI               ;  
+                               ;                         ; REDLink          ; RED Link        ; "#" ; red                        ;                                    ; RED               ;  
+                               ;                         ; FujiLink         ; Fuji Link       ; "#" ; fuji                       ;                                    ; Fuji              ;  
+                               ;                         ; ZeissLink        ; Zeiss Link      ; "#" ; zeiss                      ;                                    ; Zeiss             ;  
+                               ;                         ; ARRILink         ; ARRI Link       ; "#" ; arri                       ;                                    ; ARRI              ;  
+                               ;                         ; GoProLink        ; GoPro Link      ; "#" ; gopro                      ;                                    ; GoPro             ;  
+                               ;                         ; SigmaLink        ; Sigma Link      ; "#" ; sigma                      ;                                    ; Sigma             ;  
+                               ;                         ; BlackmagicLink   ; Blackmagic Link ; "#" ; blackmagic                 ;                                    ; Blackmagic        ;  
+                               ;                         ; ProfotoLink      ; Profoto Link    ; "#" ; profoto                    ;                                    ; Profoto           ;  
+                               ;                         ; HasselbladLink   ; Hasselblad Link ; "#" ; hasselblad                 ;                                    ; Hasselblad        ;  
+                               ;                         ; AtomosLink       ; Atomos Link     ; "#" ;                            ;                                    ; Atomos            ;  
+                               
+                               
+#                              ; BLCategoryNavNode       ;                  ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode
