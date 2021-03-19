@@ -95,6 +95,112 @@
 		    <script src="${fn:escapeXml(addOnJavaScript)}"></script>
 		</c:forEach>
 		
+		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
+		
+		<script>
+        document.addEventListener(
+            "DOMContentLoaded", () => {
+                 new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],          
+                } ); 
+            }
+        );
+        $('.menu-large').hover(
+               function(){ $('.screen').addClass('show') },
+               function(){ $('.screen').removeClass('show') }
+        );
+         var splide = new Splide( '#hero-slider', {
+            perPage: 1,
+            type: 'fade',
+            gap: 0,
+        } ).mount();
+        new Splide( '#cat-slider', {
+            perPage: 4,
+            breakpoints: {
+                //'991': {
+                //    perPage: 3,
+                //},
+                '640': {
+                    perPage: 3,
+                },
+                '480': {
+                    perPage: 2,  
+                },
+            },
+            rewind : true,
+            gap: 30,
+        } ).mount();
+        /* Uncomment below piece of JS after adding feature gear section on homepage */ 
+        /* new Splide( '#gear-slider', {
+            perPage: 3,
+            breakpoints: {
+                '991': {
+                    perPage: 2,
+                },
+                '640': {
+                    perPage: 1,
+                },
+            },
+            rewind : true,
+            gap: 20,
+            padding: 10,
+        } ).mount();  */
+        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+            type   : 'loop',
+            perPage: 1,
+            drag   : false,
+            breakpoints: {
+                '991': {
+                    pagination: false,
+                },
+            },
+            //,
+        } ).mount());
+        document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
+            type   : 'loop',
+            perPage: 3,
+            gap: 20,
+            //drag   : true,
+        } ).mount());
+         new Splide( '#testimonials-slider', {
+            perPage: 1,
+            type: 'fade',
+            arrows: false,
+        } ).mount(); 
+        new Splide( '#blog-slider', {
+            perPage: 3,
+            breakpoints: {
+                '991': {
+                    perPage: 2,
+                },
+                '640': {
+                    perPage: 1,
+                },
+            },
+            rewind : true,
+            gap: 20,
+            padding: 10,
+        } ).mount();
+         const picker = new Litepicker({ 
+            element: document.getElementById('litepicker'),
+            singleMode: false,
+            numberOfMonths: 2,
+            numberOfColumns: 2,
+            autoApply: false,
+            format: "MMM D",
+            resetButton: true,
+            buttonText : {"reset":"Reset Dates"},
+        }); 
+    </script>  
+		
+		
 	</c:otherwise>
 </c:choose>
 
