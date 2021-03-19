@@ -13,24 +13,27 @@
 <c:url value="${product.url}" var="productUrl"/>
 <c:set value="${not empty product.potentialPromotions}" var="hasPromotion"/>
 
-<c:set value="product-item" var="productTagClasses"/>
-<c:forEach var="tag" items="${product.tags}">
-	<c:set value="${productTagClasses} tag-${tag}" var="productTagClasses"/>
-</c:forEach>
-
-<div class="${fn:escapeXml(productTagClasses)}">
-	<ycommerce:testId code="product_wholeProduct">
-		<a class="thumb" href="${fn:escapeXml(productUrl)}" title="${fn:escapeXml(product.name)}">
-			<product:productPrimaryImage product="${product}" format="product"/>
-		</a>
+<div class="col-md-6 col-lg-4">
+<div class="card">
+<span class="badge badge-limited-stock">InStock</span>
+ <span class="bookmark"></span>
+ <div class="card-slider splide">
+   <div class="splide__track">
+     <ul class="splide__list">
+			 <c:forEach var="mediaLi" items="${product.images}">
+			 <c:if test ="${mediaLi.format eq 'product'}">
+         	<c:url value="${mediaLi.url}" var="primaryImageUrl" />
+				  <li class="splide__slide" style="width:231px;"><img src="${fn:escapeXml(primaryImageUrl)}" alt="${altTextHtml}" title="${altTextHtml}"/></li>
+				</c:if>
+			 </c:forEach>
+	   </ul>
+	 </div>
+ </div>
+ <h6 class="product">
+            <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" />
+  </h6>
+		<ycommerce:testId code="product_wholeProduct">
 		<div class="details">
-
-			<ycommerce:testId code="product_productName">
-				<a class="name" href="${fn:escapeXml(productUrl)}">
-					<c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" />
-				</a>
-			</ycommerce:testId>
-		
 			<c:if test="${not empty product.potentialPromotions}">
 				<div class="promo">
 					<c:forEach items="${product.potentialPromotions}" var="promotion">
@@ -38,10 +41,8 @@
 					</c:forEach>
 				</div>
 			</c:if>
-			
-			<ycommerce:testId code="product_productPrice">
-				<div class="price"><product:productListerItemPrice product="${product}"/></div>
-			</ycommerce:testId>
+
+			<h6 class="price"><product:productListerItemPrice product="${product}"/><span class="period"> &nbsp;7 day rental</span></h6>
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">
@@ -69,4 +70,5 @@
 			</div>
 		</div>
 	</ycommerce:testId>
+</div>
 </div>

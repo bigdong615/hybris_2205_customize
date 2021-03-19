@@ -20,7 +20,7 @@
 				<c:url value="${primaryImage.url}" var="primaryImageUrl" context="${originalContextPath}"/>
 			</c:otherwise>
 		</c:choose>
-		
+
 		<c:choose>
 			<c:when test="${not empty primaryImage.altText}">
 				<c:set value="${fn:escapeXml(primaryImage.altText)}" var="altTextHtml"/>

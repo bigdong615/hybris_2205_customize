@@ -38,6 +38,7 @@
         <enumtype generate="true" code="DurationEnum" autocreate="true" dynamic="true">
             <value code="RETAIL"/>
         </enumtype>
+
         <enumtype generate="true" code="ProductTypeEnum" autocreate="true" dynamic="true">
             <value code="PRODUCT"/>
             <value code="SERVICE"/>
@@ -79,7 +80,6 @@
             </targetElement>
         </relation>
     </relations>
-
 
 
     <itemtypes>

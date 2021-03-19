@@ -8,7 +8,7 @@ ACC.global = {
         "initImager",
         "backToHome",
         "bindDropdown",
-        "closeAccAlert"
+        "closeAccAlert","initSlider"
     ],
 
     passwordStrength: function () {
@@ -21,6 +21,14 @@ ACC.global = {
                 ACC.pwdStrengthVeryStrong],
             minCharText: ACC.pwdStrengthMinCharText
         });
+    },
+    initSlider : function () {
+        $( document ).ready(function() {
+         var elms = document.getElementsByClassName( 'splide' );
+          for ( var i = 0, len = elms.length; i < len; i++ ) {
+          	new Splide( elms[ i ] ).mount();
+          }
+    });
     },
 
     bindToggleOffcanvas: function () {

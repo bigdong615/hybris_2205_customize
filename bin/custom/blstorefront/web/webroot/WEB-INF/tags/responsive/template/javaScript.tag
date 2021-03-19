@@ -84,7 +84,13 @@
 		<script src="${commonResourcePathHtml}/js/acc.csv-import.js"></script>
 
 		<script src="${commonResourcePathHtml}/js/_autoload.js"></script>
-		
+
+
+		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
+		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
+		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
+
 		<%-- Cms Action JavaScript files --%>
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
