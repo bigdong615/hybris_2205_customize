@@ -52,5 +52,7 @@ $contentCatalogsCustomEmailsPath = /blinitialdata/import/sampledata/contentCatal
 
 
 #Mention here Email Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-paragraphs.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-contentslots.impex"), "utf-8", 0, 0);
 
 
