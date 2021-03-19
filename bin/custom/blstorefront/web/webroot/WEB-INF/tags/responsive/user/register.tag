@@ -20,17 +20,8 @@
 	<spring:theme code="register.description" />
 </p>
 
-<form:form method="post" modelAttribute="registerForm" action="${action}">
-	<formElement:formSelectBoxDefaultEnabled idKey="register.title"
-		labelKey="register.title" selectCSSClass="form-control"
-		path="titleCode" mandatory="true" skipBlank="false"
-		skipBlankMessageKey="form.select.none" items="${titles}" />
-	<formElement:formInputBox idKey="register.firstName"
-		labelKey="register.firstName" path="firstName" inputCSS="form-control"
-		mandatory="true" />
-	<formElement:formInputBox idKey="register.lastName"
-		labelKey="register.lastName" path="lastName" inputCSS="form-control"
-		mandatory="true" />
+<form:form method="post" modelAttribute="blRegisterForm" action="${action}">
+
 	<formElement:formInputBox idKey="register.email"
 		labelKey="register.email" path="email" inputCSS="form-control"
 		mandatory="true" />
@@ -57,21 +48,12 @@
     </c:if>
 
 	<spring:theme code="register.termsConditions" arguments="${getTermsAndConditionsUrl}" var="termsConditionsHtml" htmlEscape="false" />
-	<template:errorSpanField path="termsCheck">
-		<div class="checkbox">
-			<label class="control-label uncased">
-				<form:checkbox id="registerChkTermsConditions" path="termsCheck" disabled="true"/>
-				${ycommerce:sanitizeHTML(termsConditionsHtml)}
-			</label>
-		</div>
-	</template:errorSpanField>
-
 	<input type="hidden" id="recaptchaChallangeAnswered"
 		value="${fn:escapeXml(requestScope.recaptchaChallangeAnswered)}" />
 	<div class="form_field-elements control-group js-recaptcha-captchaaddon"></div>
 	<div class="form-actions clearfix">
 		<ycommerce:testId code="register_Register_button">
-			<button type="submit" class="btn btn-default btn-block" disabled="disabled">
+			<button type="submit" class="btn btn-default btn-block">
 				<spring:theme code='${actionNameKey}' />
 			</button>
 		</ycommerce:testId>

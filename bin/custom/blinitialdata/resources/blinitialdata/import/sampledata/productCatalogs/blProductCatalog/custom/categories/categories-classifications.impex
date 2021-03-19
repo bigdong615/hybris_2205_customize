@@ -1,0 +1,114 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Category Classifications
+#% impex.info("=============================== Importing content from BLInitialData categories-classifications.impex =========================");
+
+# Macros / Replacement Parameter definitions
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$classificationCatalog=blClassification
+
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$classCatalogVersion=catalogversion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true,default='$classificationCatalog:1.0']
+$classSystemVersion=systemVersion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true]
+$class=classificationClass(ClassificationClass.code,$classCatalogVersion)[unique=true]
+$supercategories=source(code, $classCatalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+$attribute=classificationAttribute(code,$classSystemVersion)[unique=true]
+$unit=unit(code,$classSystemVersion)
+
+# Insert Classifications
+INSERT_UPDATE ClassificationClass;$classCatalogVersion;code[unique=true];displayName;allowedPrincipals(uid)[default='customergroup']
+                                 ;;CameraAttributes;CameraAttributes
+                                 ;;LensAttributes;LensAttributes
+                                 ;;MemoryCardAttributes;MemoryCardAttributes
+                                 ;;Monitors_VideoAttributes;Monitors_VideoAttributes
+
+# Insert Classification Attributes
+INSERT_UPDATE ClassificationAttribute;$classSystemVersion;code[unique=true]
+                                     ;;formatCoverage
+                                     ;;maxAperture
+                                     ;;sensorSize
+                                     ;;videoResolution
+                                     ;;megapixels
+                                     ;;prime_zoom
+                                     ;;af_mf
+                                     ;;memoryCardType
+
+# Links ClassificationClasses to Categories
+INSERT_UPDATE CategoryCategoryRelation;$categories;$supercategories
+                                      ;cameras;CameraAttributes
+                                      ;lenses;LensAttributes
+                                      ;memory_cards_storage  ;MemoryCardAttributes
+                                      ;monitors_video_recorders ;Monitors_VideoAttributes
+
+INSERT_UPDATE ClassificationAttributeValue;$classSystemVersion; code[unique = true]; name
+                                          ;;APS-C;APS-C
+                                          ;;APS-H;APS-H
+                                          ;;Full Frame;Full Frame
+                                          ;;Medium Format;Medium Format
+                                          ;;Micro Four Thirds;Micro Four Thirds
+                                          ;;Super 16;Super 16
+                                          ;;Super 35;Super 35
+                                          ;;f0.95;f0.95
+                                          ;;f1;f1
+                                          ;;f1.2;f1.2
+                                          ;;f1.4;f1.4
+                                          ;;f1.8;f1.8
+                                          ;;f2;f2
+                                          ;;f2.2;f2.2
+                                          ;;f2.8;f2.8
+                                          ;;f3.5;f3.5
+                                          ;;f4;f4
+                                          ;;T1.2;T1.2
+                                          ;;T1.3;T1.3
+                                          ;;T1.5;T1.5
+                                          ;;T2;T2
+                                          ;;T2.8;T2.8
+                                          ;;T3;T3
+                                          ;;1 Inch Type;1 Inch Type
+                                          ;;APS-C Sensor;APS-C Sensor
+                                          ;;Full Frame Sensor;Full Frame Sensor
+                                          ;;Medium Format Sensor;Medium Format Sensor
+                                          ;;Micro Four Thirds Sensor;Micro Four Thirds Sensor
+                                          ;;Other;Other
+                                          ;;Super 35 Sensor;Super 35 Sensor
+                                          ;;Super 16 Sensor;Super 16 Sensor
+                                          ;;1080p;1080p
+                                          ;;4K;4K
+                                          ;;5K;5K
+                                          ;;6K;6K
+                                          ;;8K;8K
+                                          ;;Raw Video;Raw Video
+                                          ;;60+;60+
+                                          ;;50-59;50-59
+                                          ;;40-49;40-49
+                                          ;;30-39;30-39
+                                          ;;20-29;20-29
+                                          ;;Prime;Prime
+                                          ;;Zoom;Zoom
+                                          ;;Autofocus;Autofocus
+                                          ;;Manual Focus Only;Manual Focus Only
+                                          ;;CF;CF
+                                          ;;CFast;CFast
+                                          ;;CFexpress A;CFexpress A
+                                          ;;CFexpress B;CFexpress B
+                                          ;;microSD;microSD
+                                          ;;SD;SD
+                                          ;;SSD;SSD
+                                          ;;XQD;XQD
+                                          ;;Card Readers;Card Readers
+
+INSERT_UPDATE ClassAttributeAssignment;$class;$attribute;position;$unit;attributeType(code[default=string]);multiValued[default=false];range[default=false];localized[default=true];attributeValues(code, $classSystemVersion)
+                                      ;LensAttributes;formatCoverage;1;;string;false;false;;APS-C,APS-H,Full Frame,Medium Format,Micro Four Thirds,Super 16,Super 35
+                                      ;LensAttributes;maxAperture;2;;string;false;false;;f0.95,f1,f1.2,f1.4,f1.8,f2,f2.2,f2.8,f3.5,f4,T1.2,T1.3,T1.5,T2,T2.8,T3
+                                      ;LensAttributes;prime_zoom;3;;enum;false;false;;Prime,Zoom
+                                      ;LensAttributes;af_mf;4;;enum;false;false;;Autofocus,Manual Focus Only
+                                      ;CameraAttributes;sensorSize;1;;string;true;false;;1 Inch Type,APS-C Sensor,Full Frame Sensor,Medium Format Sensor,Micro Four Thirds Sensor,Other,Super 35 Sensor,Super 16 Sensor
+                                      ;CameraAttributes;videoResolution;2;;string;false;false;;1080p,4K,5K,6K,8K,Raw Video
+                                      ;CameraAttributes;megapixels;3;;number;false;false;false;20-29,30-39,40-49,50-59,60+
+                                      ;CameraAttributes;memoryCardType;4;;enum;false;false;;CF,CFast,CFexpress A,CFexpress B,microSD;SD;SSD;XQD;Card Readers
+                                      ;Monitors_VideoAttributes;videoResolution;1;;string;false;false;;1080p,4K,5K,6K,8K,Raw Video
+                                      ;MemoryCardAttributes;memoryCardType;1;;enum;false;false;;CF,CFast,CFexpress A,CFexpress B,microSD;SD;SSD;XQD;Card Readers
+
