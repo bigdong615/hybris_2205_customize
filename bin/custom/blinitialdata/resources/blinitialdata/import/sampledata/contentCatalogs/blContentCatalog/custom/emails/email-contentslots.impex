@@ -3,7 +3,8 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 $wideContent=CMSImageComponent,BannerComponent,SimpleBannerComponent,CMSLinkComponent,CMSParagraphComponent
 $lang=en
 
-#% impex.info("This Impex associate forgot password-related components to the content slot.");
+#% impex.info("importing sample data email-contentslots.impex");
+#This Impex associate forgot password-related components to the content slot.
 
 UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)
 ;;ForgottenPasswordEmailTopSlot;EmailBannerSaleNowOnImage,ForgottenPasswordEmailBody

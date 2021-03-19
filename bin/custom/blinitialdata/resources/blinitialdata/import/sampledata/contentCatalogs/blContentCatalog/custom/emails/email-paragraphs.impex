@@ -4,7 +4,8 @@ $wideContent=CMSImageComponent,BannerComponent,SimpleBannerComponent,CMSLinkComp
 
 $lang=en
 
-#% impex.info("This Impex is responsible for creating the middle section of forgotpassword email page.");
+#% impex.info("importing sample data email-paragraphs.impex");
+#This Impex is responsible for creating the middle section of forgotpassword email page.
 
 INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]
                                    ;;ForgottenPasswordEmailBody;"#macro(genHtmlLinkStartTag $url)
