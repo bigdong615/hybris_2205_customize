@@ -589,4 +589,9 @@
 		<property name="template" value="${keygen.product.id.template}"/>
 	</bean>
 
+	<!--BL-30 : This is created to override register method and disable registration email. -->
+	<alias name="defaultBlCustomerAccountService" alias="customerAccountService"/>
+	<bean id="defaultBlCustomerAccountService" class="com.bl.core.services.customer.impl.DefaultBlCustomerAccountService" parent="defaultCustomerAccountService" >
+
+
 </beans>
