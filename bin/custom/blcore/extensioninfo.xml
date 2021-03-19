@@ -12,7 +12,7 @@
                 		
         
         <requires-extension name="acceleratorcms"/>
-                		
+        <requires-extension name="bllogging"/>
         
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		

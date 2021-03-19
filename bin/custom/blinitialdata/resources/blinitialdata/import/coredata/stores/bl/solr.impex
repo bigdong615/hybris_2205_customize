@@ -26,7 +26,7 @@ $solrMethod=solrQueryMethod(code)[default='GET']
  
 # Create the solr server configuration
 INSERT_UPDATE SolrServerConfig ; name[unique=true] ; mode(code)
-
+;Default;standalone
 # Changed To Post Method
 INSERT_UPDATE SolrServerConfig ;name[unique=true];$solrMethod
 ;Default; POST
@@ -93,11 +93,6 @@ INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; n
                                  ;$solrIndexedType; multidimensional       ;boolean;            ;    ;    ;    ;    ;    ;multidimentionalProductFlagValueProvider  ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
 
 
-
-#Commented Non-facet Existing Header , Because it does't contain some of the attributes on Header
-# Category fields
-#INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);localized[default=false];multiValue[default=true];categoryField[default=true];useForSpellchecking[default=false];useForAutocomplete[default=false];fieldValueProvider
-
 # Category fields
 INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);localized[default=false];multiValue[default=true];categoryField[default=true];useForSpellchecking[default=false];useForAutocomplete[default=false];fieldValueProvider;ftsPhraseQuery[default=false];ftsPhraseQueryBoost;ftsQuery[default=false];ftsQueryBoost;ftsFuzzyQuery[default=false];ftsFuzzyQueryBoost
                                  ;$solrIndexedType; allCategories   	;string ;false;;;    ;   ;categoryCodeValueProvider					;    ;  ;    ;  ;    ;
@@ -116,10 +111,39 @@ INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[
                                  ;$solrIndexedType; allPromotions	;string ;	 ;     ;     ;true ;     ;MultiSelectOr ;Alpha ; 0   ;false;     ;     ;promotionCodeValueProvider	;promotionFacetDisplayNameProvider;                         ;
                                  ;$solrIndexedType; availableInStores;string	;	 ;     ;     ;true ;     ;MultiSelectOr ;Custom;10000;true;     ;     ;productStoreStockValueProvider;electronicsPointOfServiceFacetDisplayNameProvider;distanceAttributeSortProvider
 
-# Create the queries that will be used to extract data for Solr
-INSERT_UPDATE SolrIndexerQuery ; solrIndexedType(identifier)[unique=true] ; identifier[unique=true] ; type(code) ; injectCurrentDate[default=true] ; injectCurrentTime[default=true] ; injectLastIndexTime[default=true] ; query ; user(uid) 
-                               
-# Define the available sorts   
+
+
+# Create the queries that will be used to extract data for Solr  And Excluding Product while going for Indexing Based on some restriction
+INSERT_UPDATE SolrIndexerQuery;solrIndexedType(identifier)[unique=true];identifier[unique=true];type(code);injectCurrentDate[default=true];injectCurrentTime[default=true];injectLastIndexTime[default=true];query;user(uid)
+                              ;$solrIndexedType;$searchIndexNamePrefix-fullQuery;full;;;false;"
+SELECT {PK} FROM {Product} WHERE ({varianttype} IS NULL OR {varianttype} NOT IN ( {{ SELECT {PK} FROM {varianttype} WHERE {code} = 'ElectronicsColorVariantProduct'}}) )
+                           AND {code} NOT IN( {{ SELECT {code} FROM {GenericVariantProduct} }})
+						   AND {productType} NOT  IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}})";anonymous
+
+                              ;$solrIndexedType;$searchIndexNamePrefix-updateQuery;update;;;;"
+SELECT DISTINCT tbl.pk, tbl.code FROM (
+	{{
+		SELECT DISTINCT {p:PK} AS pk, {p:code} AS code, {p:varianttype} AS varianttype
+		FROM {Product AS p LEFT JOIN CustomerReview AS cr ON {cr:product}={p:PK} }
+		WHERE {p:modifiedtime} >= ?lastIndexTime OR {cr:modifiedtime} >= ?lastIndexTime
+		AND {productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}})
+	}}
+	UNION
+	{{
+		SELECT {p:PK}  AS pk, {p:code} AS code, {p:varianttype} AS varianttype FROM {Product AS p} WHERE
+		{productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}})
+		AND {p:code} IN (
+			{{
+				SELECT DISTINCT {sl:productCode} FROM {StockLevel AS sl} WHERE {sl:modifiedtime} >= ?lastIndexTime
+			}}
+		)
+	}}
+) tbl WHERE (tbl.varianttype IS NULL OR tbl.varianttype NOT IN ( {{ SELECT {PK} FROM {varianttype} WHERE {code} = 'ElectronicsColorVariantProduct'}}) )
+      AND tbl.code NOT IN({{ SELECT {code} FROM {GenericVariantProduct} }}) ORDER BY tbl.code
+";anonymous
+
+
+# Define the available sorts
 INSERT_UPDATE SolrSort ; &sortRefID ; indexedType(identifier)[unique=true] ; code[unique=true] ; useBoost 
                        
 # Define the sort fields
