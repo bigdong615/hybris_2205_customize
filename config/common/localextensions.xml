@@ -7,6 +7,7 @@
     <!-- BL custom extensions -->
       <extension name='blassistedservicestorefront' />
       <extension name='blbackoffice' />
+      <extension name='blpcmbackoffice' />
       <extension name='blconfigurablebundleaddon' />
       <extension name='blcore' />
       <extension name='blcustomerticketingaddon' />

@@ -3,7 +3,22 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <config xmlns="http://www.hybris.com/cockpit/config"
-	xmlns:na="http://www.hybris.com/cockpitng/config/notifications">
+	xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+	xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+
+	<context component="explorer-tree">
+		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+			<n:navigation-node id="BLBackoffice">
+				<n:type-node id="BlProduct" code="BlProduct"/>
+				<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+				<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
+				<n:navigation-node id="BlPricingRatio">
+					<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
+					<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
+				</n:navigation-node>
+			</n:navigation-node>
+		</n:explorer-tree>
+	</context>
 
 	<context merge-by="module" component="editorareaactions" type="Consignment">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -21,6 +36,74 @@
 	            <na:message>hmc.action.confirmpickup.success</na:message>
 	        </na:notifications>
 	   </na:notification-area>
+	</context>
+
+	<context component="create-wizard" type="BlProduct"  extends="Product" merge-by="replace">
+		<wz:flow id="BlProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="blProductPrepare">
+				<wz:initialize property="newBlProduct" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newBlProduct.code" value="ctx.code"/>
+				<wz:assign property="newBlProduct.catalogVersion" value="ctx.catalogVersion"/>
+				<wz:assign property="newBlProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
+				<wz:assign property="newBlProduct.supercategories" value="ctx?.actionContext?.supercategories"/>
+				<wz:assign property="newBlProduct.procurementCost" value="0.0"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlProduct">
+						<wz:property qualifier="code"/>
+						<wz:property qualifier="displayName"/>
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="catalogVersion"/>
+						<wz:property qualifier="supercategories"/>
+						<wz:property qualifier="productType"/>
+						<wz:property qualifier="procurementCost"/>
+						<wz:property qualifier="procurementSource"/>
+						<wz:property qualifier="mpn"/>
+						<wz:property qualifier="upc"/>
+						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="numberingSystem"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlProduct"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+
+	<context component="create-wizard" type="BlSerialProduct"  extends="BlProduct" merge-by="type">
+		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="blSerialProductPrepare">
+				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newBlSerialProduct.code" value="ctx.code"/>
+				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.catalogVersion"/>
+				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
+				<wz:assign property="newBlSerialProduct.supercategories" value="ctx?.actionContext?.supercategories"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlSerialProduct">
+						<wz:property qualifier="serialId"/>
+						<wz:property qualifier="code"/>
+						<wz:property qualifier="blProduct"/>
+						<wz:property qualifier="barcode"/>
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="forSaleBasePrice"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:custom label="Done" visible="!#empty(newBlSerialProduct.serialId and newBlSerialProduct.barcode and newBlSerialProduct.code and
+					                   and newBlSerialProduct.blProduct and newProduct.name[T(java.util.Locale).ENGLISH])">
+					</wz:custom>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
 	</context>
 
 </config>
