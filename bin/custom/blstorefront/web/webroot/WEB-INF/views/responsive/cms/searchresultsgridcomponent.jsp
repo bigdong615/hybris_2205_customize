@@ -5,28 +5,30 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<div class="product__list--wrapper">
-    <div class="results">
+<div id="productList" class="col-lg-9">
+<div class="row mb-2">
+        <nav:blFacetNavAppliedFilters pageData="${searchPageData}"/>
+ </div>
+    <%-- <div class="results">
         <h1><spring:theme code="search.page.searchText" arguments="${searchPageData.freeTextSearch}" htmlEscape="false"/></h1>
-    </div>
+    </div> --%>
 
-    <nav:searchSpellingSuggestion spellingSuggestion="${searchPageData.spellingSuggestion}" />
+    <nav:searchSpellingSuggestion spellingSuggestion="${searchPageData.spellingSuggestion}" /> <br>
 
-    <nav:pagination top="true"  supportShowPaged="${isShowPageAllowed}" supportShowAll="${isShowAllAllowed}"  searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"  numberPagesShown="${numberPagesShown}"/>
+    <%-- <nav:pagination top="true"  supportShowPaged="${isShowPageAllowed}" supportShowAll="${isShowAllAllowed}"
+    searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"  numberPagesShown="${numberPagesShown}"/> --%>
 
-    <ul class="product__listing product__grid">
+   <div id="matchingProducts" class="row">
         <c:forEach items="${searchPageData.results}" var="product" varStatus="status">
             <product:productListerGridItem product="${product}"/>
         </c:forEach>
-    </ul>
+   </div>
 
-    <div id="addToCartTitle" class="display-none">
+ <%--   <div id="addToCartTitle" class="display-none">
         <div class="add-to-cart-header">
             <div class="headline">
                 <span class="headline-text"><spring:theme code="basket.added.to.basket"/></span>
             </div>
         </div>
-    </div>
-
-    <nav:pagination top="false"  supportShowPaged="${isShowPageAllowed}" supportShowAll="${isShowAllAllowed}"  searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"  numberPagesShown="${numberPagesShown}"/>
+    </div> --%>
 </div>

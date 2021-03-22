@@ -77,8 +77,7 @@ public class SearchPageController extends AbstractSearchPageController
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
-		if (StringUtils.isNotBlank(searchText))
-		{
+
 			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
 
 			final SearchStateData searchState = new SearchStateData();
@@ -126,11 +125,11 @@ public class SearchPageController extends AbstractSearchPageController
 				model.addAttribute(WebConstants.BREADCRUMBS_KEY, searchBreadcrumbBuilder.getBreadcrumbs(null, searchText,
 						CollectionUtils.isEmpty(searchPageData.getBreadcrumbs())));
 			}
-		}
-		else
+
+		/*else
 		{
 			storeCmsPageInModel(model, noResultPage);
-		}
+		}*/
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
 
