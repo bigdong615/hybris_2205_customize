@@ -28,6 +28,7 @@ public class BLImageValueProvider  extends AbstractPropertyFieldValueProvider im
     FieldValueProvider {
 
   private static final Logger LOG = Logger.getLogger(BLImageValueProvider.class);
+  private static final String BL_IMAGE = "blimage";
 
   private String mediaFormat;
   private MediaService mediaService;
@@ -108,7 +109,7 @@ public class BLImageValueProvider  extends AbstractPropertyFieldValueProvider im
     final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
     String mediaString;
 
-    String splitter = "blimage";
+    String splitter = BL_IMAGE;
 
     mediaString = mediaListModels.stream().map(mediaListModel -> mediaListModel.getURL() + splitter)
         .collect(Collectors.joining());

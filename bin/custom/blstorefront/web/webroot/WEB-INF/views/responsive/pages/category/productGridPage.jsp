@@ -32,7 +32,7 @@
       </div>
       <div id="catDescription" class="row justify-content-center">
          <div class="col-xl-10">
-            <p> ${categoryDescription} </p>
+            <p> ${footerContent} </p>
          </div>
       </div>
    </div>

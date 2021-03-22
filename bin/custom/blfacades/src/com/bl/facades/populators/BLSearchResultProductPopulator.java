@@ -38,6 +38,9 @@ import org.springframework.util.Assert;
 
 public class BLSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
 
+  private static final String BL_IMAGE = "blimage";
+  private static final String MEDIA_FORMAT = "300Wx300H";
+
   private ImageFormatMapping imageFormatMapping;
   private PriceDataFactory priceDataFactory;
   private UrlResolver<ProductData> productDataUrlResolver;
@@ -267,8 +270,8 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
   protected void addImageData(final SearchResultValueData source, final String imageFormat, final String mediaFormatQualifier,
       final ImageDataType type, final List<ImageData> images)
   {
-    if(mediaFormatQualifier.equalsIgnoreCase("300Wx300H")) {
-      String splitter = "blimage";
+    if(mediaFormatQualifier.equalsIgnoreCase(MEDIA_FORMAT)) {
+      String splitter = BL_IMAGE;
       String multiImage = getValue(source, "img-" + mediaFormatQualifier);
 
       if(null != multiImage && !multiImage.isEmpty() && multiImage.contains(splitter)) {

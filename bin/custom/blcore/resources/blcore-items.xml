@@ -394,7 +394,7 @@
                         <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
                         <description>The category to be shown on navigation</description>
                     </attribute>
-                  <attribute qualifier="categoryRentDescription" type="java.lang.String">
+                  <attribute qualifier="footerContent" type="java.lang.String">
                     <persistence type="property">
                       <columntype>
                         <value>HYBRIS.LONG_STRING</value>

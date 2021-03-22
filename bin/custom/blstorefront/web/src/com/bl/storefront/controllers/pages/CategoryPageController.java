@@ -111,7 +111,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
         model.addAttribute("categoryName", category.getName());
         model.addAttribute("pageType", PageType.CATEGORY.name());
         model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
-        model.addAttribute("categoryDescription",category.getFooterContent());
+        model.addAttribute("footerContent",category.getFooterContent());
 
         updatePageTitle(category, model);
 
