@@ -43,7 +43,7 @@
 			<cms:component component="${component}" />
 	   </cms:pageSlot>
 	   </li>
-	   <li class="nav-item dropdown  nav-account">
+	   <li class="nav-item dropdown nav-account">
 	   	<cms:pageSlot position="MyAccountSlot" var="component" class="">
 			<cms:component component="${component}" />
 	   </cms:pageSlot>
