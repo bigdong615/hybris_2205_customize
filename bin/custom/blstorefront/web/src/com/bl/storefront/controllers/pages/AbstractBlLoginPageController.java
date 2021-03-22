@@ -1,6 +1,5 @@
 package com.bl.storefront.controllers.pages;
 
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
 
 import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractLoginPageController;
@@ -21,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
- *This is created to provide bl register form for register.
+ *This is created to override processRegisterUserRequest method to perform bl specific registration.
  * @author vijay vishwakarma
  *
  */
@@ -31,7 +30,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
     private static final Logger LOGGER = Logger.getLogger(AbstractBlLoginPageController.class);
 
     /*
-     * Changing the register form to bl specific register form
+     * This method override to remove guest form, breadcrumb and consent form related unwanted code.
      */
     @Override
     protected String processRegisterUserRequest(final String referer, final RegisterForm form, final BindingResult bindingResult,
@@ -61,7 +60,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Registration failed due to duplicated uid : {}",form.getEmail());
             model.addAttribute(form);
             model.addAttribute(new LoginForm());
-            bindingResult.rejectValue("email", BlControllerConstants.DUBLICATE_UID_ERROR);
+            bindingResult.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.DUBLICATE_UID_ERROR);
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
             return handleRegistrationError(model);
         }

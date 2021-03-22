@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
 /**
- *This is created to override register method to use blRegistration form.
+ *This is created to override register method to perform bl specific registration.
  *
  * @author vijay vishwakarma
  */
@@ -23,7 +23,7 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
     @Override
     public void register(final RegisterData registerData) throws DuplicateUidException
     {
-        validateParameterNotNullStandardMessage("registerData", registerData); // This is also call from other place
+        validateParameterNotNullStandardMessage("registerData", registerData);
         Assert.hasText(registerData.getLogin(), "The field [Login] cannot be empty");
 
         final CustomerModel newCustomer = getModelService().create(CustomerModel.class);
