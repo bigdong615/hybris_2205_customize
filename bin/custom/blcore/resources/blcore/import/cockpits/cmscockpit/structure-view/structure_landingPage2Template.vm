@@ -3,65 +3,92 @@
 		<tbody>
 			<tr>
 				<td colspan="5" class="structureViewSection">
-					<cockpit code="TopHeaderSlot"/>
+					<cockpit code="PromoBannerSlot"/>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" height="125px" width="35%" rowspan="2" class="structureViewSection">
-					<cockpit code="SiteLogo" />
+					<cockpit code="SiteLogoHeaderSlot" />
 				</td>
-				<td colspan="2" class="structureViewSection">
-					<cockpit code="HeaderLinks" />
-					<cockpit code="SearchBox" />
+				<td colspan="5" class="structureViewSection">
+					<cockpit code="NavigationBarSlot" />
+				</td>
+				<td colspan="5" class="structureViewSection">
+					<cockpit code="HeaderLinkForShipOrPickupSlot" />
+				</td>
+				<td colspan="5" class="structureViewSection">
+					<cockpit code="HeaderLinkForSupportSlot" />
+				</td>
+				<td colspan="5" class="structureViewSection">
+					<cockpit code="MyAccountSlot" />
 				</td>
 				<td width="20%" rowspan="2" class="structureViewSection">
 					<cockpit code="MiniCart" />
 				</td>
 			</tr>
-			<tr>
-				<td colspan="5" class="structureViewSection">
-					<cockpit code="NavigationBar" />
-				</td>
-			</tr>
-			<tr>
-				<td colspan="5" class="structureViewSection">
-					<cockpit code="BottomHeaderSlot"/>
-				</td>
-			</tr>
+			
 			<tr>
 				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
-					<cockpit code="Section1" />
+					<cockpit code="HomePageHeroBannerSlot" />
 				</td>
-			</tr>
-			<tr>
-				<td width="25%" height="249px" style="vertical-align:top;" class="structureViewSection">
-					<cockpit code="Section2A" />
-				</td>
-				<td colspan="2" width="25%" height="249px" style="vertical-align:top;" class="structureViewSection">
-					<cockpit code="Section2B" />
-				</td>
-				<td colspan="2" height="249px" style="vertical-align:top;" class="structureViewSection">
-					<cockpit code="Section2C" />
-				</td>
-			</tr>
-			<tr>
+				
 				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
-					<cockpit code="Section3" />
+					<cockpit code="HomePageRentingGearIsEasyTitleSlot" />
 				</td>
-			</tr>
-			<tr>
-				<td colspan="5" height="249px" style="vertical-align:top;" class="structureViewSection">
-					<cockpit code="Section4" />
-				</td>
-			</tr>
-			<tr>
+				
 				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
-					<cockpit code="Section5" />
+					<cockpit code="HomePageRentingGearSectionSlot" />
 				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageCategoriesTitleSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageCategorySectionSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageBrandTitleSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageBrandSectionSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageWhyBorrowLensesSectionSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageTheyBorrowFromUsTitleSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageBorrowFromUsSectionSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageFeaturedStoriesTitleSlot" />
+				</td>
+				
+				<td colspan="5" style="vertical-align:top;" class="structureViewSection">
+					<cockpit code="HomePageFeaturedStoriesSectionSlot" />
+				</td>
+				
 			</tr>
+			
 			<tr>
 				<td height="270px" colspan="5" class="structureViewSection">
-					<cockpit code="Footer" />
+					<cockpit code="FooterSlot" />
+				</td>
+				
+				<td height="270px" colspan="5" class="structureViewSection">
+					<cockpit code="FooterSubscriptionSlot" />
+				</td>
+				
+				<td height="270px" colspan="5" class="structureViewSection">
+					<cockpit code="FooterCopyRightslot" />
 				</td>
 			</tr>
 		</tbody>

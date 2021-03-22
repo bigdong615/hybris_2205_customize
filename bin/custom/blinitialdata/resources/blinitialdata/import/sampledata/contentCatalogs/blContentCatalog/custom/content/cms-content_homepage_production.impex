@@ -1,0 +1,164 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Categories into BL Store
+ #% impex.info("=============================== Importing content from cms-content_homepage_production.impex =========================");
+# Macros / Replacement Parameter definitions
+$contentCatalog=blContentCatalog
+ 
+$productCatalog=blProductCatalog
+#$productCatalogName=BL Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+ 
+$supercategories=source(code, $catalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+$contentCatalogName=BL Content Catalog
+$productCV=catalogVersion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$picture=media(code, $contentCV); 
+$siteResource=jar:com.bl.initialdata.constants.blInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
+$lang=en
+ 
+######################  All Navigation Data #####################
+######################  Level 1 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####
+#####################################################################
+ 
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name                ; &nodeRef          ; children(uid,$contentCV) ; links(&linkRef) ;  
+                                ; ProductionNavNode ;                         ; Production Nav Node ; ProductionNavNode ;                          
+#####################################################################
+#### Navigation Node ENtry #### 
+#####################################################################
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]       ; $contentCV[unique=true] ; name                  ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; ProductionNavNodeEntry ;                         ; Production Node Entry ; ProductionNavNode        ; ProductionLink                                         ;  
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name                 ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
+                               ;                         ; ProductionLink   ; Production Node Link ; "#" ; production                                   ;          ;               ; Production           ;                                    
+                               
+                               
+#####################################################################
+######################  Level 2 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####     
+#####################################################################
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]                ; $contentCV[unique=true] ; name                             ; &nodeRef                        ; links(&linkRef) ;  
+# Cameras -- all brands         
+                                ; AllProductionNavNode            ;                         ; All Production Link              ; AllProductionNavNode            
+                                ; NewArrivalsNavNode_Production   ;                         ; New Arrivals Link                ; NewArrivalsNavNode_Production   
+                                ; GimbalsOrStabilizersNavNode     ;                         ; GimbalsOrStabilizers Link        ; GimbalsOrStabilizersNavNode     
+                                ; CameraRigsSupportNavNode        ;                         ; Camera And Rigs Support Link     ; CameraRigsSupportNavNode        
+                                ; TripodHeadsNavNode              ;                         ; TripodHeads Link                 ; TripodHeadsNavNode              
+                                ; SlidersOrDolliesNavNode         ;                         ; Sliders Or Dollies Link          ; SlidersOrDolliesNavNode         
+                                ; FollowFocusOrMatteBoxesNavNode  ;                         ; Follow Focus Or MatteBoxes Link  ; FollowFocusOrMatteBoxesNavNode  
+                                ; MonitorsOrVideoRecordersNavNode ;                         ; Monitors Or Video Recorders Link ; MonitorsOrVideoRecordersNavNode 
+                                ; StreamingNavNode                ;                         ; Streaming Link                   ; StreamingNavNode                
+                                ; AudioNavNode                    ;                         ; Audio Link                       ; AudioNavNode                    
+                                ; LightingNavNode                 ;                         ; Lighting Link                    ; LightingNavNode                 
+                                ; ProjectorsOrScannersNavNode     ;                         ; Projectors Or Scanners Link      ; ProjectorsOrScannersNavNode     
+                                ; UnderwaterOrHousingsNavNode     ;                         ; Underwater Or Housings Link      ; UnderwaterOrHousingsNavNode     
+                                ; BatteriesOrPowerNavNode         ;                         ; Batteries Or Power Link          ; BatteriesOrPowerNavNode         
+                                ; MemoryCardsOrStorageNavNode     ;                         ; Memory Cards Or Storage Link     ; MemoryCardsOrStorageNavNode     
+                                ; FiltersNavNode                  ;                         ; Filters Link                     ; FiltersNavNode                  
+                                ; CameraBagsOrCasesNavNode        ;                         ; CameraBags Or Cases Link         ; CameraBagsOrCasesNavNode        
+                                ; ViewfindersNavNode              ;                         ; Viewfinders Link                 ; ViewfindersNavNode              
+                                ; CablesOrAdaptersNavNode         ;                         ; Cables Or Adapters Link          ; CablesOrAdaptersNavNode         
+                                ; MicrophonesNavNode              ;                         ; Microphones Link                 ; MicrophonesNavNode              
+                                
+                                
+#####################################################################
+#####################################################################
+#### Navigation Node  ####      
+#####################################################################
+UPDATE CMSNavigationNode ; uid[unique=true]  ; $contentCV[unique=true] ; name                ; parent(uid, $contentCV) ; &nodeRef          ; children(uid,$contentCV)                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                         ; ProductionNavNode ;                         ; Production Nav Node ; BLCategoryNavNode       ; ProductionNavNode ; AllProductionNavNode,NewArrivalsNavNode_Production,GimbalsOrStabilizersNavNode,CameraRigsSupportNavNode,TripodHeadsNavNode,SlidersOrDolliesNavNode,FollowFocusOrMatteBoxesNavNode,MonitorsOrVideoRecordersNavNode,StreamingNavNode,AudioNavNode,LightingNavNode,ProjectorsOrScannersNavNode,UnderwaterOrHousingsNavNode,BatteriesOrPowerNavNode,MemoryCardsOrStorageNavNode,FiltersNavNode,CameraBagsOrCasesNavNode,ViewfindersNavNode,CablesOrAdaptersNavNode,MicrophonesNavNode 
+                         
+#####################################################################
+#### Navigation Node ENtry ####
+#####################################################################
+                         
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                     ; $contentCV[unique=true] ; name                                           ; navigationNode(&nodeRef)        ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+# Cameras -- all cameras         
+                                 ; AllProductionNavNodeEntry            ;                         ; AllProduction Navigation Node Entry            ; AllProductionNavNode            ; AllProductionLink                                      
+                                 ; NewArrivalsNavNodeEntry_Production   ;                         ; New Arrivals Navigation Node Entry             ; NewArrivalsNavNode_Production   ; NewArrivalsLink_Production                             
+                                 ; GimbalsOrStabilizersNavNodeEntry     ;                         ; GimbalsOrStabilizers Navigation Node Entry     ; GimbalsOrStabilizersNavNode     ; GimbalsOrStabilizersLink                               
+                                 ; CameraRigsSupportNavNodeEntry        ;                         ; CameraRigsSupport Navigation Node Entry        ; CameraRigsSupportNavNode        ; CameraRigsSupportLink                                  
+                                 ; TripodHeadsNavNodeEntry              ;                         ; TripodHeads Navigation Node Entry              ; TripodHeadsNavNode              ; TripodHeadsLink                                        
+                                 ; SlidersOrDolliesNavNodeEntry         ;                         ; SlidersOrDollies Navigation Node Entry         ; SlidersOrDolliesNavNode         ; SlidersOrDolliesLink                                   
+                                 ; FollowFocusOrMatteBoxesNavNodeEntry  ;                         ; FollowFocusOrMatteBoxes Navigation Node Entry  ; FollowFocusOrMatteBoxesNavNode  ; FollowFocusOrMatteBoxesLink                            
+                                 ; MonitorsOrVideoRecordersNavNodeEntry ;                         ; MonitorsOrVideoRecorders Navigation Node Entry ; MonitorsOrVideoRecordersNavNode ; MonitorsOrVideoRecordersLink                           
+                                 ; StreamingNavNodeEntry                ;                         ; Streaming Navigation Node Entry                ; StreamingNavNode                ; StreamingNavLink                                       
+                                 ; AudioNavNodeEntry                    ;                         ; Audio Navigation Node Entry                    ; AudioNavNode                    ; AudioNavLink                                           
+                                 ; LightingNavNodeEntry                 ;                         ; Lighting Navigation Node Entry                 ; LightingNavNode                 ; LightingLink                                           
+                                 ; ProjectorsOrScannersNavNodeEntry     ;                         ; ProjectorsOrScanners Navigation Node Entry     ; ProjectorsOrScannersNavNode     ; ProjectorsOrScannersLink                               
+                                 ; UnderwaterOrHousingsNavNodeEntry     ;                         ; UnderwaterOrHousings Navigation Node Entry     ; UnderwaterOrHousingsNavNode     ; UnderwaterOrHousingsLink                               
+                                 ; BatteriesOrPowerNavNodeEntry         ;                         ; BatteriesOrPower Navigation Node Entry         ; BatteriesOrPowerNavNode         ; BatteriesOrPowerLink                                   
+                                 ; MemoryCardsOrStorageNavNodeEntry     ;                         ; MemoryCardsOrStorage Navigation Node Entry     ; MemoryCardsOrStorageNavNode     ; MemoryCardsOrStorageLink                               
+                                 ; FiltersNavNodeEntry                  ;                         ; Filters Navigation Node Entry                  ; FiltersNavNode                  ; FiltersLink                                            
+                                 ; CameraBagsOrCasesNavNodeEntry        ;                         ; CameraBagsOrCases Navigation Node Entry        ; CameraBagsOrCasesNavNode        ; CameraBagsOrCasesLink                                  
+                                 ; ViewfindersNavNodeEntry              ;                         ; Viewfinders Navigation Node Entry              ; ViewfindersNavNode              ; ViewfindersLink                                        
+                                 ; CablesOrAdaptersNavNodeEntry         ;                         ; CablesOrAdapters Navigation Node Entry         ; CablesOrAdaptersNavNode         ; CablesOrAdaptersLink                                   
+#                                ; MicrophonesNavNodeEntry              ;                         ; Microphones Navigation Node Entry              ; MicrophonesNavNode              ; MicrophonesLink                                        
+                                 
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                          ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang]     ;  
+# Cameras -- all cameras       
+                               ;                         ; AllProductionLink            ; All Production Link           ; "#" ;                            ;                                    ; All Production           ;  
+                               ;                         ; NewArrivalsLink_Production   ; NewArrivals Link              ; "#" ;                            ;                                    ; New Arrivals             ;  
+                               ;                         ; GimbalsOrStabilizersLink     ; GimbalsOrStabilizers Link     ; "#" ; gimbals-stabilizers        ;                                    ; Gimbals/Stabilizers      ;  
+                               ;                         ; CameraRigsSupportLink        ; CameraRigsSupport Link        ; "#" ;                            ;                                    ; Camera Rigs/Support      ;  
+                               ;                         ; TripodHeadsLink              ; TripodHeads Link              ; "#" ; tripods_heads              ;                                    ; Tripods/Heads            ;  
+                               ;                         ; SlidersOrDolliesLink         ; SlidersOrDollies Link         ; "#" ; dollies_sliders            ;                                    ; Sliders/Dollies          ;  
+                               ;                         ; FollowFocusOrMatteBoxesLink  ; FollowFocusOrMatteBoxes Link  ; "#" ; follow_focus               ;                                    ; Follow Focus/Matte Boxes ;  
+                               ;                         ; MonitorsOrVideoRecordersLink ; MonitorsOrVideoRecorders Link ; "#" ; monitors_video_recorders   ;                                    ; Monitors/Video Recorders ;  
+                               ;                         ; StreamingNavLink             ; StreamingNav Link             ; "#" ; streaming                  ;                                    ; Streaming                ;  
+                               ;                         ; AudioNavLink                 ; AudioNav Link                 ; "#" ; audio                      ;                                    ; Audio                    ;  
+                               ;                         ; LightingLink                 ; Lighting Link                 ; "#" ; lighting                   ;                                    ; Lighting                 ;  
+                               ;                         ; ProjectorsOrScannersLink     ; ProjectorsOrScanners Link     ; "#" ; projectors                 ;                                    ; Projectors/Scanners      ;  
+                               ;                         ; UnderwaterOrHousingsLink     ; UnderwaterOrHousings Link     ; "#" ; underwater-housing         ;                                    ; Underwater Housings      ;  
+                               ;                         ; BatteriesOrPowerLink         ; BatteriesOrPower Link         ; "#" ; batteries_power            ;                                    ; Batteries/Power          ;  
+                               ;                         ; MemoryCardsOrStorageLink     ; MemoryCardsOrStorage Link     ; "#" ; memory_cards_storage       ;                                    ; Memory Cards/Storage     ;  
+                               ;                         ; FiltersLink                  ; Filters Link                  ; "#" ; filters                    ;                                    ; Filters                  ;  
+                               ;                         ; CameraBagsOrCasesLink        ; CameraBagsOrCases Link        ; "#" ; camera-bags                ;                                    ; Camera Bags/Cases        ;  
+                               ;                         ; ViewfindersLink              ; Viewfinders Link              ; "#" ; viewfinders                ;                                    ; Viewfinders              ;  
+                               ;                         ; CablesOrAdaptersLink         ; CablesOrAdapters Link         ; "#" ; cables_adapters            ;                                    ; Cables/Adapters          ;  
+#                              ;                         ; MicrophonesLink              ; Microphones Link              ; "#" ;                            ;                                    ; Microphones              ;  
+                               
+                               
+                               
+#####################################################################
+######################  Level 3 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####     
+#####################################################################
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]   ; $contentCV[unique=true] ; name             ; &nodeRef           ; links(&linkRef) ;  
+                                ; MicrophonesNavNode ;                         ; Microphones Link ; MicrophonesNavNode 
+                                
+                                
+#####################################################################
+#####################################################################
+#### Navigation Node  ####      
+#####################################################################
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name       ; parent(uid, $contentCV) ; &nodeRef     ; children(uid,$contentCV) 
+                         ; AudioNavNode     ;                         ; Audio Link ; ProductionNavNode       ; AudioNavNode ; MicrophonesNavNode       
+                         
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]        ; $contentCV[unique=true] ; name                              ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; MicrophonesNavNodeEntry ;                         ; Microphones Navigation Node Entry ; MicrophonesNavNode       ; MicrophonesLink                                        
+                                 
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name             ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
+                               ;                         ; MicrophonesLink  ; Microphones Link ; "#" ;                            ;                                    ; Microphones          ;  

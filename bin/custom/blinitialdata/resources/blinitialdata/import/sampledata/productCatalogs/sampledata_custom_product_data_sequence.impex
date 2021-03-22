@@ -24,4 +24,3 @@ $productCatalogsProductPath = /blinitialdata/import/sampledata/productCatalogs/b
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products_en.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/products-media.impex"), "utf-8", 0, 0);
 
-

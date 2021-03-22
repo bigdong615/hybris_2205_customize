@@ -12,17 +12,13 @@
 
 	<div class="facet js-facet">
 
-	<div class="facet__name js-facet-name">
+	<div class="js-facet-name">
 		<span class="glyphicon facet__arrow"></span>
-		<spring:theme code="search.nav.applied.facets"/>
 	</div>
 		<div class="facet__values js-facet-values">
-			<ul class="facet__list">
 				<c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
-					<li>
 						<c:url value="${breadcrumb.removeQuery.url}" var="removeQueryUrl"/>
-						${fn:escapeXml(breadcrumb.facetValueName)}&nbsp;<a href="${fn:escapeXml(removeQueryUrl)}" ><span class="glyphicon glyphicon-remove"></span></a>
-					</li>
+						    <a href="${fn:escapeXml(removeQueryUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
 				</c:forEach>
 			</ul>
 		</div>

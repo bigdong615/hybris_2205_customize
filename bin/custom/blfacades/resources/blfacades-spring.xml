@@ -5,6 +5,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context
@@ -182,4 +183,58 @@
 	</bean>
 
 	<bean id="genderData" class="com.bl.facades.product.data.GenderData" scope="prototype"/>
+
+
+	<!--BL-30 : This is created to override register method to use blRegistration form. -->
+	<alias name="defaultBlCustomerFacade" alias="customerFacade"/>
+	<bean id="defaultBlCustomerFacade" class="com.bl.facades.customer.impl.DefaultBlCustomerFacade"
+		parent="defaultCustomerFacade">
+	</bean>
+
+
+	<!--This is created to Override OOB Populator to use custom logic for Price and Images which retrieving from solr-->
+
+	<bean id="blSearchResultProductPopulator"
+		class="com.bl.facades.populators.BLSearchResultProductPopulator">
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="imageFormatMapping" ref="imageFormatMapping"/>
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="productDataUrlResolver" ref="productDataUrlResolver"/>
+		<property name="productFeatureListPopulator" ref="productFeatureListPopulator"/>
+		<property name="productService" ref="productService"/>
+		<property name="stockConverter" ref="stockConverter"/>
+		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
+	</bean>
+
+
+	<alias name="blSearchResultVariantProductPopulator" alias="blSearchResultVariantProductPopulator"/>
+	<bean id="blSearchResultVariantProductPopulator"
+		class="com.bl.facades.populators.BLSearchResultVariantProductPopulator"
+		parent="blSearchResultProductPopulator">
+		<property name="categoryManager" ref="solrFirstVariantCategoryManager"/>
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+	</bean>
+
+
+
+	<alias name="blDefaultCommerceSearchResultProductConverter" alias="commerceSearchResultProductConverter"/>
+	<bean id="blDefaultCommerceSearchResultProductConverter" parent="defaultCommerceSearchResultProductConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.product.data.ProductData"/>
+		<property name="populators">
+			<list>
+				<ref bean="blCommerceSearchResultProductPopulator"/>
+				<ref bean="searchResultPickupAvailabilityPopulator"/>
+			</list>
+		</property>
+	</bean>
+
+
+	<alias name="blSearchResultVariantOptionsProductPopulator" alias="blCommerceSearchResultProductPopulator"/>
+	<bean id="blSearchResultVariantOptionsProductPopulator"
+		class="com.bl.facades.populators.BLSearchResultVariantOptionsProductPopulator"
+		parent="blSearchResultVariantProductPopulator">
+		<property name="variantsService" ref="variantsService"/>
+		<property name="configurationService" ref="configurationService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+	</bean>
 </beans>
