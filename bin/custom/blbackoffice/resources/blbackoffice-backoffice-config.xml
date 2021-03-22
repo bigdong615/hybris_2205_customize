@@ -11,11 +11,6 @@
 			<n:navigation-node id="BLBackoffice">
 				<n:type-node id="BlProduct" code="BlProduct"/>
 				<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
-				<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
-				<n:navigation-node id="BlPricingRatio">
-					<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
-					<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
-				</n:navigation-node>
 			</n:navigation-node>
 		</n:explorer-tree>
 	</context>
@@ -45,7 +40,7 @@
 				<wz:assign property="newBlProduct.code" value="ctx.code"/>
 				<wz:assign property="newBlProduct.catalogVersion" value="ctx.catalogVersion"/>
 				<wz:assign property="newBlProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
-				<wz:assign property="newBlProduct.supercategories" value="ctx?.actionContext?.supercategories"/>
+				<wz:assign property="newBlProduct.supercategories" value="T(com.hybris.cockpitng.util.ListJoiner).join(newBlProduct.supercategories, ctx?.actionContext?.supercategories)"/>
 				<wz:assign property="newBlProduct.procurementCost" value="0.0"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
