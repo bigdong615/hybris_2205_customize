@@ -58,7 +58,6 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
         }
         catch (final DuplicateUidException duplicateUidException)
         {
-            BlLogger.logMessage(LOGGER, Level.ERROR, "registration failed due to unique uid");
             BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Registration failed due to duplicated uid : {}",form.getEmail());
             model.addAttribute(form);
             model.addAttribute(new LoginForm());
