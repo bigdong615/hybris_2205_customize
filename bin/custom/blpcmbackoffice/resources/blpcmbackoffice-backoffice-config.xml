@@ -26,6 +26,8 @@
 				<ea:section name="hmc.section.category.description">
 					<ea:attribute editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 						qualifier="description"/>
+					<ea:attribute qualifier="headerContent"/>
+					<ea:attribute qualifier="footerContent"/>
 					<ea:attribute qualifier="titleTag"/>
 					<ea:attribute qualifier="keywords"/>
 				</ea:section>
