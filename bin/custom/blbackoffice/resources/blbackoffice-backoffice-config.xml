@@ -6,6 +6,7 @@
 	xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
 	xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 
+	<!--Bl Specific custom nodes to be added here -->
 	<context component="explorer-tree">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 			<n:navigation-node id="BLBackoffice">
@@ -33,6 +34,7 @@
 	   </na:notification-area>
 	</context>
 
+	<!--BlProduct Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
 	<context component="create-wizard" type="BlProduct"  extends="Product" merge-by="replace">
 		<wz:flow id="BlProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="blProductPrepare">
@@ -70,7 +72,7 @@
 		</wz:flow>
 	</context>
 
-
+	<!--BlSerialProduct Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
 	<context component="create-wizard" type="BlSerialProduct"  extends="BlProduct" merge-by="type">
 		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="blSerialProductPrepare">

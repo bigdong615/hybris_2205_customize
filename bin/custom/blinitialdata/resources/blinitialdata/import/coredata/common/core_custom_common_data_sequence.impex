@@ -8,4 +8,4 @@
 $commonCustomPath = /blinitialdata/import/coredata/common/custom
 
 #Mention here common custom impexes in sequence
-
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/user-access-rights.impex"), "utf-8", 0, 0);
