@@ -12,6 +12,7 @@
      <spring:param name="componentuid"  value="${component.uid}"/>
 </spring:url>
 
+
 <section id="globalSearch">
    <div class="container">
       <div  class="row justify-content-center">

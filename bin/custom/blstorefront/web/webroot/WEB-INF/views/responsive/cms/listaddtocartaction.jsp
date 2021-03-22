@@ -14,12 +14,9 @@
 	</spring:url>
 
 	<form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
-
-        <ycommerce:testId code="addToCartButton">
             <input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
             <input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
             <input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
-
             <c:choose>
                 <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
                     <button type="submit" class="btn btn-outline btn-disabled"
@@ -27,12 +24,11 @@
                     </button>
                 </c:when>
                 <c:otherwise>
-                    <button type="submit" class="btn btn-primary"
-                            disabled="disabled">Add to Rental
+                    <button type="submit" class="btn btn-primary" disabled="disabled">Add to Rental
                     </button>
                 </c:otherwise>
             </c:choose>
-        </ycommerce:testId>
+
     </form:form>
 
     <form:form id="configureForm${fn:escapeXml(product.code)}" action="${configureProductUrl}" method="get" class="configure_form">

@@ -78,7 +78,7 @@ INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; n
                                  ;$solrIndexedType; keywords               ;text   ;            ;    ;true;    ;true;true;productKeywordsValueProvider           ;              ;true;40 ;true;20 ;true;10;    ;   ;  ;
                                  ;$solrIndexedType; reviewAvgRating        ;double ;            ;    ;true;    ;    ;    ;productReviewAverageRatingValueProvider;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
                                  ;$solrIndexedType; img-515Wx515H          ;string ;            ;    ;    ;    ;    ;    ;image515ValueProvider                  ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
-                                 ;$solrIndexedType; img-300Wx300H          ;string ;            ;    ;    ;    ;    ;    ;image300ValueProvider                  ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
+                                 ;$solrIndexedType; img-300Wx300H          ;string ;            ;    ;    ;    ;    ;    ;blDefaultImageValueProvider                  ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
                                  ;$solrIndexedType; img-96Wx96H            ;string ;            ;    ;    ;    ;    ;    ;image96ValueProvider                   ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
                                  ;$solrIndexedType; img-65Wx65H            ;string ;            ;    ;    ;    ;    ;    ;image65ValueProvider                   ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
                                  ;$solrIndexedType; img-30Wx30H            ;string ;            ;    ;    ;    ;    ;    ;image30ValueProvider                   ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
@@ -102,8 +102,8 @@ INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[
 # Category facets
 INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);multiValue[default=true];facet[default=true];facetType(code);facetSort(code);priority;visible;categoryField[default=true];fieldValueProvider;facetDisplayNameProvider;topValuesProvider
                                  ;$solrIndexedType; categoryPath  	;string;;;Refine		;Alpha;-9999;false;false;categoryPathValueProvider;
-                                 ;$solrIndexedType; category      	;string;;;Refine		;Alpha; 6000;true;;electronicsCategoryCodeValueProvider;categoryFacetDisplayNameProvider;defaultTopValuesProvider
-                                 ;$solrIndexedType; brand         	;string;;;Refine		;Alpha; 5000;true;;electronicsBrandCategoryCodeValueProvider;categoryFacetDisplayNameProvider;defaultTopValuesProvider
+                                 ;$solrIndexedType; category      	;string;;;Refine		;Alpha; 6000;true;;blCategoryCodeValueProvider;categoryFacetDisplayNameProvider;defaultTopValuesProvider
+                                 ;$solrIndexedType; brand         	;string;;;Refine		;Alpha; 5000;true;;blBrandCategoryCodeValueProvider;categoryFacetDisplayNameProvider;defaultTopValuesProvider
 
 # Other facet properties
 INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);sortableType(code);currency[default=false];localized[default=false];multiValue[default=false];facet[default=true];facetType(code);facetSort(code);priority;visible;useForSpellchecking[default=false];useForAutocomplete[default=false];fieldValueProvider;facetDisplayNameProvider;customFacetSortProvider;topValuesProvider;rangeSets(name)
@@ -116,9 +116,7 @@ INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[
 # Create the queries that will be used to extract data for Solr  And Excluding Product while going for Indexing Based on some restriction
 INSERT_UPDATE SolrIndexerQuery;solrIndexedType(identifier)[unique=true];identifier[unique=true];type(code);injectCurrentDate[default=true];injectCurrentTime[default=true];injectLastIndexTime[default=true];query;user(uid)
                               ;$solrIndexedType;$searchIndexNamePrefix-fullQuery;full;;;false;"
-SELECT {PK} FROM {Product} WHERE ({varianttype} IS NULL OR {varianttype} NOT IN ( {{ SELECT {PK} FROM {varianttype} WHERE {code} = 'ElectronicsColorVariantProduct'}}) )
-                           AND {code} NOT IN( {{ SELECT {code} FROM {GenericVariantProduct} }})
-						   AND {productType} NOT  IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}})";anonymous
+SELECT {PK} FROM {blProduct}";anonymous
 
                               ;$solrIndexedType;$searchIndexNamePrefix-updateQuery;update;;;;"
 SELECT DISTINCT tbl.pk, tbl.code FROM (
@@ -186,8 +184,8 @@ INSERT_UPDATE SolrSearchQueryProperty;indexedProperty(name, solrIndexedType(iden
 # Category search query facets
 INSERT_UPDATE SolrSearchQueryProperty;indexedProperty(name, solrIndexedType(identifier))[unique=true];searchQueryTemplate(name, indexedType(identifier))[unique=true][default=DEFAULT:$solrIndexedType];facet[default=true];facetType(code);includeInResponse[default=true];facetDisplayNameProvider;facetSortProvider;facetTopValuesProvider
                                      ;categoryPath:$solrIndexedType 	;;;Refine;;;
-                                     ;category:$solrIndexedType 		;;;Refine;;categoryFacetDisplayNameProvider;defaultTopValuesProvider
-                                     ;brand:$solrIndexedType 		;;;Refine;;categoryFacetDisplayNameProvider;defaultTopValuesProvider
+                                     ;category:$solrIndexedType 		;;;MultiSelectOr;;categoryFacetDisplayNameProvider;defaultTopValuesProvider
+                                     ;brand:$solrIndexedType 		;;;MultiSelectOr;;categoryFacetDisplayNameProvider;defaultTopValuesProvider
 
 # Other search query facets
 INSERT_UPDATE SolrSearchQueryProperty;indexedProperty(name, solrIndexedType(identifier))[unique=true];facet[default=true];facetType(code);priority;facetDisplayNameProvider;facetSortProvider;facetTopValuesProvider;includeInResponse[default=true];searchQueryTemplate(name, indexedType(identifier))[unique=true][default=DEFAULT:$solrIndexedType]

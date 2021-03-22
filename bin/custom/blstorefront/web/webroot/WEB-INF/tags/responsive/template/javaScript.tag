@@ -99,7 +99,7 @@
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
-		
+
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>
         document.addEventListener(
@@ -201,6 +201,8 @@
         }); 
     </script>  
 	</c:if>
+
+
 	<c:if test="${cmsPage.uid ne 'homepage'}">
 	<script>
         // Mobile Menu styles - #my-menu is required for ALL pages
