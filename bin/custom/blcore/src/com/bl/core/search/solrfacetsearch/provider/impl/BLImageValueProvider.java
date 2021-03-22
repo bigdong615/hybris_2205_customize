@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -70,7 +71,7 @@ public class BLImageValueProvider  extends AbstractPropertyFieldValueProvider im
           {
             final List<MediaModel> mediaModelList =  getBlDefaultMediaContainerService().getMediaForFormatList(container,mediaFormatModel);
 
-            if (!mediaModelList.isEmpty())
+             if (!mediaModelList.isEmpty())
             {
               return mediaModelList;
             }
@@ -93,23 +94,30 @@ public class BLImageValueProvider  extends AbstractPropertyFieldValueProvider im
 
 
 
-  protected Collection<FieldValue> createFieldValues(final IndexedProperty indexedProperty, final List<MediaModel> mediaList)
+  private Collection<FieldValue> createFieldValues(final IndexedProperty indexedProperty,
+      final List<MediaModel> mediaList)
   {
     return createFieldValuesForList(indexedProperty, mediaList);
   }
 
-  protected Collection<FieldValue> createFieldValuesForList(final IndexedProperty indexedProperty, List<MediaModel> mediaListModels)
+  private Collection<FieldValue> createFieldValuesForList(final IndexedProperty indexedProperty,
+      List<MediaModel> mediaListModels)
   {
-    final List<FieldValue> fieldValues = new ArrayList<FieldValue>();
+    final List<FieldValue> fieldValues = new ArrayList<>();
 
     final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
-    StringBuilder mediaString = new StringBuilder();
+    String mediaString;
 
-   for(int i=0;i<mediaListModels.size();i++) {
-     mediaString.append(mediaListModels.get(i).getURL()).append(":");
-   }
+    String splitter = "blimage";
 
-   String value = StringUtils.chop(mediaString.toString());
+    mediaString = mediaListModels.stream().map(mediaListModel -> mediaListModel.getURL() + splitter)
+        .collect(Collectors.joining());
+
+    String value = mediaString;
+
+   if(mediaString.endsWith(splitter)) {
+     value = StringUtils.removeEnd(mediaString, splitter);
+    }
     for (final String fieldName : fieldNames)
     {
       fieldValues.add(new FieldValue(fieldName, value));

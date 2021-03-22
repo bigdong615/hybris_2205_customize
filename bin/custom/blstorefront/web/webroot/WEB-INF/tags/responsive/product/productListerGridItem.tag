@@ -23,17 +23,18 @@
 			 <c:forEach var="mediaLi" items="${product.images}">
 			 <c:if test ="${mediaLi.format eq 'product'}">
          	<c:url value="${mediaLi.url}" var="primaryImageUrl" />
-				  <li class="splide__slide" style="width:231px;"><img src="${fn:escapeXml(primaryImageUrl)}" alt="${altTextHtml}" title="${altTextHtml}"/></li>
+				  <li class="splide__slide""><img src="${fn:escapeXml(primaryImageUrl)}" alt="${altTextHtml}" title="${altTextHtml}"/></li>
 				</c:if>
 			 </c:forEach>
 	   </ul>
 	 </div>
  </div>
+ <p class="overline">${product.manufacturer}</p>
  <h6 class="product">
             <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" />
   </h6>
 		<ycommerce:testId code="product_wholeProduct">
-		<div class="details">
+
 			<c:if test="${not empty product.potentialPromotions}">
 				<div class="promo">
 					<c:forEach items="${product.potentialPromotions}" var="promotion">
@@ -57,7 +58,7 @@
 				</c:forEach>
 				<img style="width: 32px; height: 32px;" src="${imageUrlHtml}" title="${variantNameHtml}" alt="${variantNameHtml}"/>
 			</c:forEach>
-		</div>
+
 
 
 		<c:set var="product" value="${product}" scope="request"/>

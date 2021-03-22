@@ -268,11 +268,11 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
       final ImageDataType type, final List<ImageData> images)
   {
     if(mediaFormatQualifier.equalsIgnoreCase("300Wx300H")) {
-
+      String splitter = "blimage";
       String multiImage = getValue(source, "img-" + mediaFormatQualifier);
 
-      if(null != multiImage && !multiImage.isEmpty() && multiImage.contains(":")) {
-        final String[] split = multiImage.split(":");
+      if(null != multiImage && !multiImage.isEmpty() && multiImage.contains(splitter)) {
+        final String[] split = multiImage.split(splitter);
         for (int i = 0; i < split.length; i++) {
           final ImageData imageData = createImageData();
           imageData.setImageType(type);

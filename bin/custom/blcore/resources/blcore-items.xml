@@ -394,7 +394,31 @@
                         <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
                         <description>The category to be shown on navigation</description>
                     </attribute>
+
+                  <attribute qualifier="footerContent" type="java.lang.String">
+                    <persistence type="property">
+                      <columntype>
+                        <value>HYBRIS.LONG_STRING</value>
+                      </columntype>
+                    </persistence>
+                    <modifiers read="true" write="true" search="true" optional="true"/>
+                    <description>Customer facing notes on the item</description>
+                  </attribute>
+
+                  <attribute qualifier="categoryRentDescription" type="java.lang.String">
+                    <persistence type="property">
+                      <columntype>
+                        <value>HYBRIS.LONG_STRING</value>
+                      </columntype>
+                    </persistence>
+                    <modifiers read="true" write="true" search="true" optional="true"/>
+                    <description>Customer facing notes on the item</description>
+                  </attribute>
+
+
+
                 </attributes>
+
             </itemtype>
             <itemtype code="BlProduct" extends="Product" autocreate="true" generate="true"
                jaloclass="com.bl.core.jalo.BlProduct">

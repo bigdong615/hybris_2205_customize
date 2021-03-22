@@ -622,5 +622,29 @@
 		<property name="blDefaultMediaContainerService" ref="blDefaultMediaContainerService" />
 	</bean>
 
+	<!--BL-75-->
+
+	<bean id="abstractBlCategoryCodeValueProvider" abstract="true"
+		class="com.bl.core.search.solrfacetsearch.provider.impl.BlCategoryCodeValueProvider"
+		parent="abstractPropertyFieldValueProvider" >
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+	</bean>
+
+	<bean id="blBrandCategoryCodeValueProvider" parent="abstractBlCategoryCodeValueProvider">
+		<property name="categorySource" ref="blBrandCategorySource"/>
+	</bean>
+
+	<bean id="blBrandCategorySource" parent="abstractCategorySource">
+		<property name="rootCategory" value="brands"/>
+	</bean>
+
+	<bean id="blCategoryCodeValueProvider" parent="abstractBlCategoryCodeValueProvider">
+		<property name="categorySource" ref="blCategorySource"/>
+	</bean>
+
+	<bean id="blCategorySource" parent="abstractCategorySource">
+		<property name="rootCategory" value="1"/>
+	</bean>
 
 </beans>
