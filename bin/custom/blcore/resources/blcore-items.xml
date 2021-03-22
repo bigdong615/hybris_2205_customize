@@ -401,7 +401,16 @@
                       </columntype>
                     </persistence>
                     <modifiers read="true" write="true" search="true" optional="true"/>
-                    <description>Customer facing notes on the item</description>
+                    <description>Customer facing footer notes on the item</description>
+                  </attribute>
+                  <attribute qualifier="headerContent" type="java.lang.String">
+                    <persistence type="property">
+                      <columntype>
+                        <value>HYBRIS.LONG_STRING</value>
+                      </columntype>
+                    </persistence>
+                    <modifiers read="true" write="true" search="true" optional="true"/>
+                    <description>Customer facing header notes on the item</description>
                   </attribute>
                 </attributes>
 

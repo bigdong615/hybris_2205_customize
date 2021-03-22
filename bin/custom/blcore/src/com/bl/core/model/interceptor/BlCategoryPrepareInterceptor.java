@@ -17,7 +17,7 @@ public class BlCategoryPrepareInterceptor implements PrepareInterceptor<Category
   private KeyGenerator keyGenerator;
 
   @Override
-  public void onPrepare(CategoryModel categoryModel, InterceptorContext interceptorContext)
+  public void onPrepare(final CategoryModel categoryModel, final InterceptorContext interceptorContext)
       throws InterceptorException {
     if(StringUtils.isBlank(categoryModel.getCategoryId())) {
       categoryModel.setCategoryId(getKeyGenerator().generate().toString());
