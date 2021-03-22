@@ -60,10 +60,10 @@
     </enumtypes>
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
-            <sourceElement qualifier="blProduct" type="BLProduct" cardinality="one">
+            <sourceElement qualifier="blProduct" type="BlProduct" cardinality="one">
                 <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
             </sourceElement>
-            <targetElement qualifier="serialProducts" type="BLSerialProduct" cardinality="many" ordered="false">
+            <targetElement qualifier="serialProducts" type="BlSerialProduct" cardinality="many" ordered="false">
                 <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
                 <custom-properties>
                     <property name="ordering.attribute"><value>"code"</value></property>
@@ -401,7 +401,16 @@
                       </columntype>
                     </persistence>
                     <modifiers read="true" write="true" search="true" optional="true"/>
-                    <description>Customer facing notes on the item</description>
+                    <description>Customer facing footer notes on the item</description>
+                  </attribute>
+                  <attribute qualifier="headerContent" type="java.lang.String">
+                    <persistence type="property">
+                      <columntype>
+                        <value>HYBRIS.LONG_STRING</value>
+                      </columntype>
+                    </persistence>
+                    <modifiers read="true" write="true" search="true" optional="true"/>
+                    <description>Customer facing header notes on the item</description>
                   </attribute>
                 </attributes>
 
@@ -425,6 +434,11 @@
                          <persistence type="property" />
                          <modifiers read="true" write="true" optional="false"/>
                          <description>Manufactuer's part number</description>
+                     </attribute>
+                     <attribute qualifier="titleTag" type="java.lang.String">
+                         <persistence type="property" />
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Product Title Tag to show Product Page Title Name. Managed for SEO.</description>
                      </attribute>
                      <attribute qualifier="upc" type="java.lang.String">
                          <persistence type="property" />
@@ -457,21 +471,15 @@
                          <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                          <description>Product classified as as video for reporting / order reporting</description>
                      </attribute>
-                     <attribute qualifier="isAccounting" type="java.lang.Boolean">
-                         <persistence type="property" />
-                         <modifiers read="true" write="true" search="true" optional="true" />
-                         <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
-                         <description>Used for accounting reporting</description>
-                     </attribute>
                      <attribute qualifier="forSale" type="java.lang.Boolean">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" search="true" optional="true" />
+                         <modifiers read="true" write="true" search="true" optional="false" />
                          <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
                          <description>If the item is available for sale</description>
                      </attribute>
                      <attribute qualifier="forRent" type="java.lang.Boolean">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" search="true" optional="true" />
+                         <modifiers read="true" write="true" search="true" optional="false" />
                          <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
                          <description>If the item is available for rent</description>
                      </attribute>
@@ -588,13 +596,13 @@
                      </attribute>
                      <attribute qualifier="isNew" type="java.lang.Boolean">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" search="true"/>
+                         <modifiers read="true" write="true" search="true" optional="false"/>
                          <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                          <description>Determines the product is Newly arrived</description>
                      </attribute>
                      <attribute qualifier="discontinued" type="java.lang.Boolean">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" search="true"/>
+                         <modifiers read="true" write="true" search="true" optional="false"/>
                          <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                          <description>Determines the product is Discontinued</description>
                      </attribute>
@@ -627,7 +635,7 @@
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
                jaloclass="com.bl.core.jalo.BlSerialProduct">
-                 <description>Extending BLProduct with additional attributes</description>
+                 <description>Extending BlSerialProduct with additional attributes</description>
                  <attributes>
                      <attribute qualifier="serialId" type="java.lang.String">
                          <persistence type="property"/>

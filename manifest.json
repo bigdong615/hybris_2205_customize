@@ -150,6 +150,10 @@
 			 {
 	   			"name": "smartedit",
 				"contextPath": "/smartedit"
+			 }, 
+			 {
+	   			"name": "cmscockpit",
+				"contextPath": "/cmscockpit"
 			 },
 			 {
 				"name": "previewwebservices",
