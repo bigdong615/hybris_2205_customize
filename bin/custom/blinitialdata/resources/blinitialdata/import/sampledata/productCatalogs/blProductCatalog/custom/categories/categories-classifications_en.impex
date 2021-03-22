@@ -22,14 +22,29 @@ UPDATE ClassificationClass;code[unique=true];$classCatalogVersion;name[lang=$lan
                           ;LensAttributes;;Lens Attributes
                           ;MemoryCardAttributes;;Memory Card Attributes
                           ;Monitors_VideoAttributes;; Monitors/Video Attributes
+                          ;ProductionAttributes;;Production Attributes
+                          ;AudioAttributes;;Audio Attributes
+                          ;LightingAttributes;;Lighting Attributes
+                          ;Batteries_PowerAttributes;;Batteries & Power Attributes
+                          ;MountAttribute;;Mount Attribute
+
 
 # Insert Classification Attributes
 UPDATE ClassificationAttribute;code[unique=true];$classSystemVersion;name[lang=$lang]
-                              ;formatCoverage;;Format Coverage
-                              ;maxAperture;;Max Aperture
-                              ;sensorSize;;Sensor Size
-                              ;videoResolution;;Video Resolution
-                              ;megapixels;;Megapixels
-                              ;prime_zoom;;Prime/Zoom
-                              ;af_mf;;AF/MF
-                              ;memoryCardType;;Memory Card Type
+                                ;Format Coverage;;Format Coverage
+                                ;Max Aperture;;Max Aperture
+                                ;Sensor Size;;Sensor Size
+                                ;Video Resolution;;Video Resolution
+                                ;Megapixels;;Megapixels
+                                ;Prime/Zoom;;Prime/Zoom
+                                ;AF/MF;;AF/MF
+                                ;Media & Storage Type;;Media & Storage Type
+                                ;Accessories Type;;Accessories Type
+                                ;Cameras Type;;Cameras Type
+                                ;Lenses Type;;Lenses Type
+                                ;Audio Type;;Audio Type
+                                ;Battery Type;;Battery Type
+                                ;Support Type;;Support Type
+                                ;Microphone Type;;Microphone Type
+                                ;Lighting Type;;Lighting Type
+                                ;Mount Type;;Mount Type

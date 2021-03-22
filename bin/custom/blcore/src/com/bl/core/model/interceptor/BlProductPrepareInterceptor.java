@@ -18,7 +18,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
   private KeyGenerator keyGenerator;
 
   @Override
-  public void onPrepare(BlProductModel blProductModel, InterceptorContext interceptorContext)
+  public void onPrepare(final BlProductModel blProductModel, final InterceptorContext interceptorContext)
       throws InterceptorException {
     setBlProductId(blProductModel,interceptorContext);
   }
@@ -28,7 +28,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
    * @param blProductModel
    * @param interceptorContext
    */
-  private void setBlProductId(BlProductModel blProductModel, InterceptorContext interceptorContext) {
+  private void setBlProductId(final BlProductModel blProductModel,final InterceptorContext interceptorContext) {
     if( interceptorContext.isNew(blProductModel) && StringUtils.isBlank(blProductModel.getProductId())){
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
