@@ -60,10 +60,10 @@
     </enumtypes>
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
-            <sourceElement qualifier="blProduct" type="BLProduct" cardinality="one">
+            <sourceElement qualifier="blProduct" type="BlProduct" cardinality="one">
                 <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
             </sourceElement>
-            <targetElement qualifier="serialProducts" type="BLSerialProduct" cardinality="many" ordered="false">
+            <targetElement qualifier="serialProducts" type="BlSerialProduct" cardinality="many" ordered="false">
                 <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
                 <custom-properties>
                     <property name="ordering.attribute"><value>"code"</value></property>
@@ -626,7 +626,7 @@
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
                jaloclass="com.bl.core.jalo.BlSerialProduct">
-                 <description>Extending BLProduct with additional attributes</description>
+                 <description>Extending BlSerialProduct with additional attributes</description>
                  <attributes>
                      <attribute qualifier="serialId" type="java.lang.String">
                          <persistence type="property"/>
