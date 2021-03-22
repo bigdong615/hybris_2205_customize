@@ -148,7 +148,12 @@
         <js>/_ui/responsive/common/js/acc.csv-import.js</js>
         		
         <js>/_ui/responsive/common/js/_autoload.js</js>
-        		
+        <js>/_ui/responsive/common/js/bootstrap.bundle.min.js</js>
+       <!-- <js>/_ui/responsive/common/js/mburger.js</js>-->
+        <js>/_ui/responsive/common/js/mmenu.js</js>
+        <js>/_ui/responsive/common/js/mmenu-light.js</js>
+        <js>/_ui/responsive/common/js/splide.min.js</js>
+
 		
         <!-- Cms Action JavaScript files -->
                 
@@ -159,7 +164,7 @@
 
     <group name="bltheme_responsive">
         							
-        <css>/_ui/responsive/theme-bltheme/css/style.css</css>
+        <css>/_ui/responsive/theme-bltheme/css/blstyle.css</css>
         						
     </group>
 </groups>

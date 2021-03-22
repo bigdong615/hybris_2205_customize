@@ -22,6 +22,14 @@ ACC.global = {
             minCharText: ACC.pwdStrengthMinCharText
         });
     },
+    initSlider : function () {
+        $( document ).ready(function() {
+         var elms = document.getElementsByClassName( 'splide' );
+          for ( var i = 0, len = elms.length; i < len; i++ ) {
+          	new Splide( elms[ i ] ).mount();
+          }
+    });
+    },
 
     bindToggleOffcanvas: function () {
         $(document).on("click", ".js-toggle-sm-navigation", function () {

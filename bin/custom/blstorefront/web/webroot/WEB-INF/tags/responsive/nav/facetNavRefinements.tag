@@ -6,16 +6,22 @@
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav" %>
 
 
+<div id="productFilter" class="d-none d-lg-block col-lg-3 sticky-lg-top">
 
-<c:forEach items="${pageData.facets}" var="facet">
-	<c:choose>
-		<c:when test="${facet.code eq 'availableInStores'}">
-			<nav:facetNavRefinementStoresFacet facetData="${facet}" userLocation="${userLocation}"/>
-		</c:when>
-		<c:otherwise>
-			<nav:facetNavRefinementFacet facetData="${facet}"/>
-		</c:otherwise>
-	</c:choose>
-</c:forEach>
+            <h6 class="mb-4">Filters</h6>
+
+            <p>Refine by <a class="clear-filters" href="#">Clear all</a></p>
+            <c:forEach items="${pageData.facets}" var="facet">
+               <c:choose>
+                  <c:when test="${facet.code eq 'availableInStores'}">
+                  </c:when>
+                  <c:otherwise>
+                     <nav:facetNavRefinementFacet facetData="${facet}"/>
+                  </c:otherwise>
+               </c:choose>
+            </c:forEach>
+</div>
+
+
 
 

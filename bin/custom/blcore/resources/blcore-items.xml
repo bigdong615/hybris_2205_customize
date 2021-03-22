@@ -38,6 +38,7 @@
         <enumtype generate="true" code="DurationEnum" autocreate="true" dynamic="true">
             <value code="RETAIL"/>
         </enumtype>
+
         <enumtype generate="true" code="ProductTypeEnum" autocreate="true" dynamic="true">
             <value code="PRODUCT"/>
             <value code="SERVICE"/>
@@ -79,7 +80,6 @@
             </targetElement>
         </relation>
     </relations>
-
 
 
     <itemtypes>
@@ -158,6 +158,210 @@
                 </attributes>
             </itemtype>
         </typegroup>
+
+		<!-- Custom CMS ItemTypes -->
+		<typegroup name="cms">
+			<itemtype code="CustomPromoMessageComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" >
+				<description>CMS Paragraph Component that contains the Promotion message section on header</description>
+			</itemtype>
+		
+			<itemtype code="CustomSiteLogoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >				
+				<description>Custom Simple Banner Component to display SiteLogo on header</description>
+			</itemtype>
+		
+			<itemtype code="CustomBLParagraphComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" >
+				<description>Custom CMS Paragraph Component type that contains additional attribute to display required information.</description>
+				<attributes>
+					<attribute qualifier="mode" type="localized:java.lang.String" >
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized value for storing content data</description>						
+					</attribute>
+					<attribute qualifier="title" type="localized:java.lang.String" >
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized title of the paragraph. </description>						
+					</attribute>
+				</attributes>				
+			</itemtype>
+			
+			<itemtype code="CustomFeaturedStoriesComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >
+				<description>Custom Simple Banner Component type that contains additional attribute to display Featured Stories.</description>
+				<attributes>
+					<attribute qualifier="storyCategory" type="localized:java.lang.String">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized Featured stories Category on component </description>						
+					</attribute>
+					<attribute qualifier="storyTitle" type="localized:java.lang.String">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized Featured Stories Title on component</description>						
+					</attribute>
+					<attribute qualifier="storyDate" type="localized:java.lang.String">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized Featured Stories Date on component </description>						
+					</attribute>
+				</attributes>
+			</itemtype>
+		
+			<itemtype code="CustomNavigationPromoComponent" extends="SimpleBannerComponent" autocreate="true" generate="true" >				
+				<description>Custom Simple Banner Component type that contains additional attribute to display Promotion Image under category navigation.</description>
+			</itemtype>
+			
+			<itemtype code="RotatingHomePageImagesComponent" extends="AbstractBannerComponent" autocreate="true" generate="true" 		 
+				jaloclass="com.bl.core.cms.components.RotatingHomePageImagesComponent">
+				<description>Custom Banner Component type that contains additional attribute to display Hero Banner Carousel on HomePage.</description>
+                <attributes>
+                    <attribute qualifier="searchPVRent" type="localized:java.lang.String" >
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized Search Product and Video rentals placeholder value </description>
+                    </attribute>
+                    <attribute qualifier="rentDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Select dates placeholder value </description>
+                    </attribute>
+                    <attribute qualifier="rentProData" type="localized:java.lang.String">
+						<persistence type="property" />
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized Content title on Hero Banner Carousel </description>
+					</attribute>
+					<attribute qualifier="borrowData" type="localized:java.lang.String">
+						<persistence type="property" />
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized Type of Borrow content on Hero Banner Carousel </description>
+					</attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="RentingGearIsEasyComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" >
+            	<description>Custom CMS Paragraph Component type that contains additional attribute for renting gear is easy section</description>
+                <attributes>
+                    <attribute qualifier="rentingTitle" type="localized:java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized Renting gear is easy title </description>
+                    </attribute>
+                    <attribute qualifier="count" type="java.lang.Integer">
+						<persistence type="property" />
+						<modifiers read="true" write="true" optional="true" />
+						<description>Renting gear is easy paragraph count </description>
+					</attribute>
+					<attribute qualifier="rentingData1" type="localized:java.lang.String">
+						<persistence type="property" />
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized Renting gear is easy paragraph one </description>
+					</attribute>
+					<attribute qualifier="rentingData2" type="localized:java.lang.String">
+						<persistence type="property" />
+						<modifiers read="true" write="true" optional="true" />
+						<description>Localized Renting gear is easy paragraph two</description>
+					</attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="HomePageCategoriesCarouselComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
+				jaloclass="com.bl.core.cms.components.HomePageCategoriesCarouselComponent">
+				<description>Custom Banner Component type that contains additional attribute to display Categories Carousel on HomePage.</description>
+                <attributes>
+                    <attribute qualifier="imagetitle" type="localized:java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized HomePage Categories Carousel Title </description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="CustomBrandsComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
+            	jaloclass="com.bl.core.cms.components.CustomBrandsComponent">
+            	<description>Custom Banner Component type to display Brands Section on HomePage.</description>
+            </itemtype>
+            
+            <itemtype code="CustomBorrowFromUsComponent" extends="AbstractBannerComponent" autocreate="true" generate="true" 
+				jaloclass="com.bl.core.jalo.CustomBorrowFromUsComponent">
+				<description>Custom Banner Component type to display Borrow From Us Section on HomePage.</description>
+			</itemtype>
+            
+            <itemtype code="CustomFooterSubscriptionComponent" extends="SimpleCMSComponent" autocreate="true" generate="true" 
+            	jaloclass="com.bl.core.cms.components.CustomFooterSubscriptionComponent">
+				<description>Custom Simple CMS Component type that contains additional attribute to display Footer Subscription on footer</description>
+				<attributes>
+					<attribute qualifier="placeHolder" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized Placeholder value </description>
+					</attribute>
+					<attribute qualifier="footerAddress" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized value for footer address </description>
+					</attribute>
+				</attributes>
+			</itemtype>
+			
+			<itemtype code="CustomFooterCopyRightComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" 
+				jaloclass="com.bl.core.cms.components.CustomFooterCopyRightComponent">
+				<description>Custom Paragraph Component type that contains additional attribute for footer copyright section</description>
+				<attributes>
+					<attribute qualifier="footerCopyRight" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized Footer Copyright content </description>
+					</attribute>
+					<attribute qualifier="footerLinks" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized Footer Links </description>
+					</attribute>
+				</attributes>
+			</itemtype>
+			
+			<itemtype code="CustomWhyBorrowLensesBannerComponent" extends="RotatingImagesComponent" autocreate="true" generate="true">			
+				<description>Custom Banner Component type that contains additional attribute to display Why Borrow Lenses section.</description>
+				<attributes>
+					<attribute qualifier="title" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized why borrow lenses paragraph Title </description>
+					</attribute>
+					<attribute qualifier="description" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized why borrow lenses description </description>
+					</attribute>
+					<attribute qualifier="buttonText" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized button text </description>
+					</attribute>
+				</attributes>
+			</itemtype>
+			
+			<itemtype code="NavigationComponent" autocreate="false" generate="false">
+                <description>Extending from core with additional attributes</description>
+                <attributes>
+					<attribute qualifier="title" type="localized:java.lang.String" >
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized Navigation Title </description>
+					</attribute>
+				</attributes>
+            </itemtype>
+			
+			<itemtype code="PickUpOrDeliveryNavigationComponent" extends="NavigationComponent" autocreate="true" generate="true"
+				jaloclass="de.hybris.platform.acceleratorcms.jalo.components.PickUpOrDeliveryNavigationComponent">
+				<description>Custom Navigation component for PickUp Or Delivery navigation node on header.</description>
+			</itemtype>
+			
+			<itemtype code="SupportNavigationComponent" extends="NavigationComponent" autocreate="true" generate="true"
+				jaloclass="de.hybris.platform.acceleratorcms.jalo.components.SupportNavigationComponent">
+				<description>Custom Navigation component for Support navigation node on header.</description>
+			</itemtype>
+		</typegroup>
+
         <typegroup name="borrowLenses">
             <itemtype code="Category" autocreate="false" generate="false">
                 <description>Extending from core with additional attributes</description>
@@ -190,7 +394,17 @@
                         <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
                         <description>The category to be shown on navigation</description>
                     </attribute>
+                  <attribute qualifier="footerContent" type="java.lang.String">
+                    <persistence type="property">
+                      <columntype>
+                        <value>HYBRIS.LONG_STRING</value>
+                      </columntype>
+                    </persistence>
+                    <modifiers read="true" write="true" search="true" optional="true"/>
+                    <description>Customer facing notes on the item</description>
+                  </attribute>
                 </attributes>
+
             </itemtype>
             <itemtype code="BlProduct" extends="Product" autocreate="true" generate="true"
                jaloclass="com.bl.core.jalo.BlProduct">
@@ -470,5 +684,7 @@
                </attributes>
             </itemtype>
          </typegroup>
+
+
     </itemtypes>
 </items>

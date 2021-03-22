@@ -456,8 +456,8 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; n
                           ;                         ; TopHeaderSlot          ; Top Header                      ; true   
                           ;                         ; BottomHeaderSlot       ; Bottom Header                   ; true   
                           ;                         ; ProductLeftRefinements ; Refinements                     ; true   
-                          ;                         ; ProductGridSlot        ; Product List                    ; true   
-                          ;                         ; ProductListSlot        ; Product Grid                    ; true   
+                          ;                         ; ProductGridSlot        ; Product Grid                    ; true
+                          ;                         ; ProductListSlot        ; Product List                    ; true
                           ;                         ; SearchResultsListSlot  ; Search Result List              ; true   
                           ;                         ; SearchResultsGridSlot  ; Search Result Grid              ; true   
                           ;                         ; MiddleContentSlot      ; Middle Content Slot             ; true   
@@ -807,6 +807,29 @@ INSERT_UPDATE ProductPage ; $contentCV[unique=true] ; uid[unique=true] ; name   
                           
 # Category Pages          
 INSERT_UPDATE CategoryPage ; $contentCV[unique=true] ; uid[unique=true] ; name                  ; masterTemplate(uid,$contentCV) ; defaultPage ; approvalStatus(code)[default='approved'] 
-                           ;                         ; productList      ; Product List          ; ProductListPageTemplate        ; true        ;                                          
-                           ;                         ; productGrid      ; Product Grid          ; ProductGridPageTemplate        ; false       ;                                          
+                           ;                         ; productList      ; Product List          ; ProductListPageTemplate        ; false        ;
+                           ;                         ; productGrid      ; Product Grid          ; ProductGridPageTemplate        ; true       ;
                            ;                         ; category         ; Default Category Page ; CategoryPageTemplate           ; false       ;                                          
+
+#Product Grid Page For BL
+#### ProductGridPage
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]; name                               ; active; cmsComponents(&componentRef); ; ;
+                         ;                          ; ProductGridSlot   ; Product Grid Slot for Product List ; true  ; ProductGridComponent        ; ; ;
+
+
+INSERT_UPDATE ProductGridComponent; $contentCV[unique = true]; uid[unique = true]   ; name                   ; actions(uid, $contentCV); &componentRef
+                                  ;                          ; ProductGridComponent ; Product Grid Component ; ListAddToCartAction     ; ProductGridComponent
+
+INSERT_UPDATE ListAddToCartAction; $contentCV[unique = true]; uid[unique = true]  ; url       ; name                            ; &actionRef
+                                 ;                          ; ListAddToCartAction ; /cart/add ; Product Add To Cart Action List ; ListAddToCartAction
+
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]     ; cmsComponents(uid, $contentCV)
+                         ;                          ; ProductLeftRefinements ; RefinementFacetComponent
+
+
+INSERT_UPDATE ProductRefinementComponent; $contentCV[unique = true]; uid[unique = true]       ; name                               ; &componentRef
+                                        ;                          ; RefinementFacetComponent ; Product Refinement Facet Component ; RefinementFacetComponent
+
+
+
+
