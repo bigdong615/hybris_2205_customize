@@ -148,20 +148,13 @@ INSERT_UPDATE ClassificationAttributeValue;$classSystemVersion; code[unique = tr
                                           ;;Flashes/Strobes;Flashes/Strobes
                                           ;;Light Stands/ Lighting Support;Light Stands/ Lighting Support
                                           ;;Lighting Accessories;Lighting Accessories
-                                          ;;Audio Accessories;Audio Accessories
-                                          ;;Headphones;Headphones
-                                          ;;Microphones;Microphones
-                                          ;;Mixers;Mixers
-                                          ;;Recorders;Recorders
                                           ;;360;360
                                           ;;Action;Action
                                           ;;Camcorders;Camcorders
                                           ;;Cinema;Cinema
                                           ;;DSLR;DSLR
-                                          ;;Medium Format;Medium Format
                                           ;;Mirrorless;Mirrorless
                                           ;;Point & Shoot;Point & Shoot
-                                          ;;Raw Video;Raw Video
                                           ;;Webcams;Webcams
                                           ;;Camera Packages;Camera Packages
                                           ;;Underwater Housings;Underwater Housings
