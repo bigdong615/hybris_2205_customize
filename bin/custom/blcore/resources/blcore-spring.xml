@@ -648,6 +648,8 @@
 	</bean>
 
 
+	<!--BL-79 Value Provider to get the store facet and data index to solr -->
+
 	<bean id="abstractBlGlobalFacetValueProvider" abstract="true"
 		class="com.bl.core.search.solrfacetsearch.provider.impl.BlGlobalFacetValueProvider"
 		parent="abstractPropertyFieldValueProvider" >

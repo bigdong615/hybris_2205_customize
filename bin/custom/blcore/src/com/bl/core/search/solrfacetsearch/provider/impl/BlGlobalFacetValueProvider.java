@@ -1,5 +1,6 @@
 package com.bl.core.search.solrfacetsearch.provider.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.provider.CategorySource;
 import de.hybris.platform.core.model.c2l.LanguageModel;
@@ -12,23 +13,33 @@ import de.hybris.platform.solrfacetsearch.provider.FieldValue;
 import de.hybris.platform.solrfacetsearch.provider.FieldValueProvider;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractPropertyFieldValueProvider;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import org.apache.commons.collections.CollectionUtils;
+
+  /**
+  *
+  * Class is created for providing Global facet values to the solr .
+  *
+  * @author ManiKandan
+  */
 
 public class BlGlobalFacetValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
-  private CategorySource categorySource;
-  private FieldNameProvider fieldNameProvider;
-  private CommonI18NService commonI18NService;
 
-  private static final String LENSES = "lenses";
-  private static final String CAMERAS = "cameras";
-  private static final String PRODUCTION = "production";
-  private static final String BRANDS = "Brands";
+    private static final List<String> CATEGORY_LIST = Arrays.asList("lenses", "cameras", "production");
+
+    private CategorySource categorySource;
+    private FieldNameProvider fieldNameProvider;
+    private CommonI18NService commonI18NService;
 
 
+   /*
+   * This Method check for the categories and add that into result
+   */
 
   @Override
   public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig, final IndexedProperty indexedProperty,
@@ -36,32 +47,16 @@ public class BlGlobalFacetValueProvider extends AbstractPropertyFieldValueProvid
   {
     final Collection<CategoryModel> categories = getCategorySource().getCategoriesForConfigAndProperty(indexConfig,
         indexedProperty, model);
-    if (categories != null && !categories.isEmpty())
+    if (CollectionUtils.isNotEmpty(categories))
     {
       final Collection<FieldValue> fieldValues = new ArrayList<>();
 
       if (indexedProperty.isLocalized())
       {
-        final Collection<LanguageModel> languages = indexConfig.getLanguages();
-        for (final LanguageModel language : languages)
-        {
-          for (final CategoryModel category : categories)
-          {
-            if(!category.getName().equalsIgnoreCase("Brands")) {
-              fieldValues.addAll(createFieldValue(category, language, indexedProperty));
-            }
-          }
-        }
+        this.getValueForLocalized(indexConfig ,categories ,indexedProperty,fieldValues);
       }
-      else
-      {
-        for (final CategoryModel category : categories)
-        {
-          if(!category.getName().equalsIgnoreCase(BRANDS) && category.getName().equalsIgnoreCase(CAMERAS) || !category.getName().equalsIgnoreCase(BRANDS) && category.getName().equalsIgnoreCase(LENSES)
-            || !category.getName().equalsIgnoreCase(BRANDS) && category.getName().equalsIgnoreCase(PRODUCTION)) {
-          fieldValues.addAll(createFieldValue(category, null, indexedProperty));
-        }
-        }
+      else {
+        this.getValueForNonLocalized(categories,indexedProperty ,fieldValues);
       }
       return fieldValues;
     }
@@ -71,10 +66,45 @@ public class BlGlobalFacetValueProvider extends AbstractPropertyFieldValueProvid
     }
   }
 
-  protected List<FieldValue> createFieldValue(final CategoryModel category, final LanguageModel language,
+  /*
+   * This method is created to populate values when its localized
+   */
+
+  private void getValueForLocalized(final IndexConfig indexConfig,Collection<CategoryModel> categories ,final IndexedProperty indexedProperty ,final Collection<FieldValue> fieldValues) {
+    final Collection<LanguageModel> languages = indexConfig.getLanguages();
+    for (final LanguageModel language : languages)
+    {
+      for (final CategoryModel category : categories)
+      {
+        if(!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName()) && CATEGORY_LIST.contains(category.getName())) {
+          fieldValues.addAll(createFieldValue(category, language, indexedProperty));
+        }
+      }
+    }
+  }
+
+    /*
+     * This method is created to populate values when its non-localized
+     */
+
+  private void getValueForNonLocalized(final Collection<CategoryModel> categories ,final IndexedProperty indexedProperty ,final Collection<FieldValue> fieldValues) {
+    for (final CategoryModel category : categories)
+    {
+      if((!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName()) && CATEGORY_LIST.contains(category.getName().toLowerCase()))) {
+        fieldValues.addAll(createFieldValue(category, null, indexedProperty));
+      }
+    }
+  }
+
+  /**
+   * This Method get the field name for current indexed property and the result on it .
+   */
+
+  private List<FieldValue> createFieldValue(final CategoryModel category,
+      final LanguageModel language,
       final IndexedProperty indexedProperty)
   {
-    final List<FieldValue> fieldValues = new ArrayList<FieldValue>();
+    final List<FieldValue> fieldValues = new ArrayList<>();
 
     if (language != null)
     {
@@ -109,12 +139,12 @@ public class BlGlobalFacetValueProvider extends AbstractPropertyFieldValueProvid
     return fieldValues;
   }
 
-  protected Object getPropertyValue(final Object model)
+  private Object getPropertyValue(final Object model)
   {
-    return getPropertyValue(model, "code");
+    return getPropertyValue(model, BlCoreConstants.CODE);
   }
 
-  protected Object getPropertyValue(final Object model, final String propertyName)
+  private Object getPropertyValue(final Object model, final String propertyName)
   {
     return modelService.getAttributeValue(model, propertyName);
   }

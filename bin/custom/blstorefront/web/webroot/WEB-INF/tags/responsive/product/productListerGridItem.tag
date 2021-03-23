@@ -14,33 +14,34 @@
 <spring:theme code="text.addToCart" var="addToCartText"/>
 <c:url value="${product.url}" var="productUrl"/>
 <c:set value="${not empty product.potentialPromotions}" var="hasPromotion"/>
+<c:set value="image coming soon" var="altText"/>
 
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <span class="badge badge-limited-stock">InStock</span>
  <span class="bookmark"></span>
 
-   <c:choose>
-          <c:when test ="${not empty product.images}">
-           <div class="card-slider splide">
-             <div class="splide__track">
-     <ul class="splide__list">
-			 <c:forEach var="mediaLi" items="${product.images}">
-			 <c:if test ="${mediaLi.format eq 'product'}">
-         	<c:url value="${mediaLi.url}" var="primaryImageUrl" />
-         		<c:set value="this is alternate" var="altTextHtml"/>
-				  <li class="splide__slide""><img src="${fn:escapeXml(primaryImageUrl)}"/></li>
-				</c:if>
-			 </c:forEach>
-			</ul>
-				 </div>
-       </div>
-			 </c:when>
-			 <c:otherwise>
-			 <c:set value="/blstorefront/_ui/responsive/theme-bltheme/images/missing_product_EN_300x300.jpg" var="altTextHtml1"/>
-			 <img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}" title="image coming soon" title="image coming soon"/>
-			 </c:otherwise>
-			 </c:choose>
+  <c:choose>
+     <c:when test ="${not empty product.images}">
+        <div class="card-slider splide">
+           <div class="splide__track">
+              <ul class="splide__list">
+                 <c:forEach var="mediaLi" items="${product.images}">
+                    <c:if test ="${mediaLi.format eq 'product'}">
+                       <c:url value="${mediaLi.url}" var="primaryImageUrl" />
+                       <c:set value="this is alternate" var="altTextHtml"/>
+                       <li class="splide__slide""><img src="${fn:escapeXml(primaryImageUrl)}"/></li>
+                    </c:if>
+                 </c:forEach>
+              </ul>
+           </div>
+        </div>
+     </c:when>
+     <c:otherwise>
+        <c:set value="/blstorefront/_ui/responsive/theme-bltheme/images/missing_product_EN_300x300.jpg" var="altTextHtml1"/>
+        <img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}" title="${altText}" title="${altText}"/>
+     </c:otherwise>
+  </c:choose>
 
  <p class="overline">${product.manufacturer}</p>
  <h6 class="product">

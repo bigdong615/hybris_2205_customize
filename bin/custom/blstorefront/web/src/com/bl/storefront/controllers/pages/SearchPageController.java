@@ -33,7 +33,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,11 +50,11 @@ public class SearchPageController extends AbstractSearchPageController
 	private static final String SEARCH_META_DESCRIPTION_ON = "search.meta.description.on";
 	private static final String SEARCH_META_DESCRIPTION_RESULTS = "search.meta.description.results";
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused") //NOSONAR
 	private static final Logger LOG = Logger.getLogger(SearchPageController.class);
 
 	private static final String COMPONENT_UID_PATH_VARIABLE_PATTERN = "{componentUid:.*}";
-	private static final String FACET_SEPARATOR = ":";
+	private static final String FACET_SEPARATOR = ":";  //NOSONAR
 
 	private static final String SEARCH_CMS_PAGE_ID = "search";
 	private static final String NO_RESULTS_CMS_PAGE_ID = "searchEmpty";
@@ -125,11 +124,6 @@ public class SearchPageController extends AbstractSearchPageController
 				model.addAttribute(WebConstants.BREADCRUMBS_KEY, searchBreadcrumbBuilder.getBreadcrumbs(null, searchText,
 						CollectionUtils.isEmpty(searchPageData.getBreadcrumbs())));
 			}
-
-		/*else
-		{
-			storeCmsPageInModel(model, noResultPage);
-		}*/
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
 
