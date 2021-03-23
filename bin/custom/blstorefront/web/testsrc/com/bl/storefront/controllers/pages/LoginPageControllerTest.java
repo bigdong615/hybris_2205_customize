@@ -3,11 +3,11 @@ package com.bl.storefront.controllers.pages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.bl.storefront.form.BlRegisterForm;
 import com.bl.storefront.validator.BlRegistrationValidator;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorservices.config.SiteConfigService;
 import de.hybris.platform.acceleratorservices.storefront.util.PageTitleResolver;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.acceleratorstorefrontcommons.security.AutoLoginStrategy;
 import de.hybris.platform.acceleratorstorefrontcommons.strategy.CustomerConsentDataStrategy;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
@@ -66,7 +66,7 @@ public class LoginPageControllerTest {
   @Mock
   private HttpSessionRequestCache httpSessionRequestCache;
   @Mock
-  private BlRegisterForm form;
+  private RegisterForm form;
 
   private BindingResult bindingResult;
   @Mock
@@ -123,7 +123,7 @@ public class LoginPageControllerTest {
     Mockito.verify(page).addAttribute("cmsPage",contentPageModel);
     Mockito.verify(page).addAttribute("pageTitle",TITLE_FOR_PAGE);
     assertNotNull(page.getAttribute("loginForm"));
-    assertNotNull(page.getAttribute("blRegisterForm"));
+    assertNotNull(page.getAttribute("registerForm"));
     assertNotNull(page.getAttribute("guestForm"));
   }
 
@@ -148,8 +148,7 @@ public class LoginPageControllerTest {
     Mockito.verify(page).addAttribute("cmsPage",contentPageModel);
     Mockito.verify(page).addAttribute("pageTitle",TITLE_FOR_PAGE);
     assertNotNull(page.getAttribute("loginForm"));
-    assertNotNull(page.getAttribute("blRegisterForm"));
-    assertNotNull(page.getAttribute("guestForm"));
+    assertNotNull(page.getAttribute("registerForm"));
     assertNotNull(page.getAttribute("accErrorMsgs"));
   }
 
