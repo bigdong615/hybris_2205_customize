@@ -185,7 +185,7 @@
 	<bean id="genderData" class="com.bl.facades.product.data.GenderData" scope="prototype"/>
 
 
-	<!--BL-30 : This is created to override register method to use blRegistration form. -->
+	<!--BL-30 : This is created to override register method to perform bl specific registration. -->
 	<alias name="defaultBlCustomerFacade" alias="customerFacade"/>
 	<bean id="defaultBlCustomerFacade" class="com.bl.facades.customer.impl.DefaultBlCustomerFacade"
 		parent="defaultCustomerFacade">

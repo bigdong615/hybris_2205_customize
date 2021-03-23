@@ -20,7 +20,7 @@
 	<spring:theme code="register.description" />
 </p>
 
-<form:form method="post" modelAttribute="blRegisterForm" action="${action}">
+<form:form method="post" modelAttribute="registerForm" action="${action}">
 
 	<formElement:formInputBox idKey="register.email"
 		labelKey="register.email" path="email" inputCSS="form-control"
