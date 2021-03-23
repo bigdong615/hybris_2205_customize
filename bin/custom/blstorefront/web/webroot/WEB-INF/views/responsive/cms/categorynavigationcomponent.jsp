@@ -11,12 +11,12 @@
 				<c:url value="${childlink1.item.url}" var="MainCatUrl" />
 	           	<c:if test="${childlink1.item.visible}">
 					<li class="nav-item dropdown menu-large">
-		                <a class="nav-link dropdown-toggle" href="#" id="${fn:toLowerCase(childlink1.item.linkName)}dropdown" data-bs-toggle="dropdown" aria-expanded="false">${childlink1.item.linkName}</a>
+		                <a class="nav-link dropdown-toggle" href="${MainCatUrl }" id="${fn:toLowerCase(childlink1.item.linkName)}dropdown" data-bs-toggle="dropdown" aria-expanded="false">${childlink1.item.linkName}</a>
 		              	<div class="dropdown-menu megamenu" aria-labelledby="${fn:toLowerCase(childlink1.item.linkName)}dropdown">
 							<div class="container">
 								<div class="row">
 									<div class="col-md-6 offset-md-1 submenu">
-										<h5><i class="icon-${fn:toLowerCase(childlink1.item.category.code)}"></i> ${childlink1.item.linkName}</h5>
+										<h5><i class="icon-${fn:toLowerCase(childlink1.item.linkName)}"></i> ${childlink1.item.linkName}</h5>
 										<c:if test="${not empty childLevel1.children}">
 										<div class="row">
 										<c:set var="breakRow" value="0" />
