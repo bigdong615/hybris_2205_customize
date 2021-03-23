@@ -32,7 +32,7 @@
 		<formElement:formPasswordBox idKey="j_password"
 			labelKey="login.password" path="j_password" inputCSS="form-control"
 			mandatory="true" />
-	<label><input type="checkbox" name="remember-me" class="checkbox" id="_spring_security_remember_me"  /> Remember Login</label>
+	<label><input type="checkbox" name="remember-me" class="checkbox" id="_spring_security_remember_me"  /> <spring:theme code="login.rememberme"/></label>
 			<div class="forgotten-password">
 				<ycommerce:testId code="login_forgotPassword_link">
 					<a href="#" data-link="<c:url value='/login/pw/request'/>" class="js-password-forgotten" data-cbox-title="<spring:theme code="forgottenPwd.title"/>">
