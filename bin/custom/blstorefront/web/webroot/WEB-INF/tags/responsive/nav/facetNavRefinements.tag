@@ -10,7 +10,7 @@
    <h6 class="mb-4">Filters</h6>
    <c:choose>
       <c:when test="${pageType == 'CATEGORY'}">
-      <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
+            <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
          <p>Refine by <a class="clear-filters" href="${clearUrl}"><spring:theme code="text.button.clear.all"/></a></p>
       </c:when>
       <c:otherwise>
