@@ -647,4 +647,22 @@
 		<property name="rootCategory" value="1"/>
 	</bean>
 
+
+	<!--BL-79 Value Provider to get the store facet and data index to solr -->
+
+	<bean id="abstractBlGlobalFacetValueProvider" abstract="true"
+		class="com.bl.core.search.solrfacetsearch.provider.impl.BlGlobalFacetValueProvider"
+		parent="abstractPropertyFieldValueProvider" >
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+	</bean>
+
+	<bean id="blGlobalValueProvider" parent="abstractBlGlobalFacetValueProvider">
+		<property name="categorySource" ref="blGlobalCategorySource"/>
+	</bean>
+
+	<bean id="blGlobalCategorySource" parent="abstractCategorySource">
+		<property name="rootCategory" value="1"/>
+	</bean>
+
 </beans>

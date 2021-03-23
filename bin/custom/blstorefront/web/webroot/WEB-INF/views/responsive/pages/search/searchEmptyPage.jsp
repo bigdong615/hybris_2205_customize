@@ -15,6 +15,10 @@
 	<cms:pageSlot position="SideContent" var="feature" element="div" class="side-content-slot cms_disp-img_slot searchEmptyPageTop">
 		<cms:component component="${feature}" element="div" class="no-space yComponentWrapper searchEmptyPageTop-component"/>
 	</cms:pageSlot>
+
+	<cms:pageSlot position="SearchBoxBl" var="component">
+  				<cms:component component="${component}"/>
+  </cms:pageSlot>
 	
 	<div class="search-empty">
 		<div class="headline">
