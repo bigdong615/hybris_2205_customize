@@ -33,7 +33,7 @@
 												</c:if>
 															<c:forEach items="${childLevel2.entries}" var="childlink2">							
 																<c:url value="${childlink2.item.url}" var="linkNode"/>
-																<li><a href="#">${childlink2.item.linkName}</a></li> 
+																<li><a href="${linkNode }">${childlink2.item.linkName}</a></li> 
 															</c:forEach>
 															<c:if test="${breakRow == numberOfRows or loopStatus.isLast()}">
 																<c:choose>
@@ -50,7 +50,7 @@
 																						</c:if>
 																							<c:forEach items="${level3.entries}" var="level4link">							
 																								<c:url value="${level4link.item.url}" var="linkNode"/>
-																								<li><a href="#">${level4link.item.linkName}</a></li> 
+																								<li><a href="${linkNode }">${level4link.item.linkName}</a></li> 
 																							</c:forEach>
 																							<c:if test="${breakRow == numberOfRows or childStatus.isLast()}">
 																									</ul>
