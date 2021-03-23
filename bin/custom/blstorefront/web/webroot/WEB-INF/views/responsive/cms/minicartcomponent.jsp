@@ -15,15 +15,14 @@
 </spring:url>
 <c:url value="/cart" var="cartUrl"/>
 
-
-	<a 	href="${fn:escapeXml(cartUrl)}"
-		class="nav-link bak_mini-cart-link js-mini-cart-link"
+	<a href="${fn:escapeXml(cartUrl)}"
+		class="nav-link bak_mini-cart-link bak_js-mini-cart-link"
 		data-mini-cart-url="${fn:escapeXml(rolloverPopupUrl)}"
 		data-mini-cart-refresh-url="${fn:escapeXml(refreshMiniCartUrl)}"
 		data-mini-cart-name="<spring:theme code="text.cart"/>"
 		data-mini-cart-empty-name="<spring:theme code="popup.cart.empty"/>"
-		data-mini-cart-items-text="<spring:theme code="basket.items"/>"
-		><span class="cart-count">${component.shownProductCount }</span>
+		data-mini-cart-items-text="<spring:theme code="basket.items"/>">
+		<span class="cart-count">${component.shownProductCount }</span>
 		<!-- <div class="mini-cart-icon">
 			<span class="glyphicon glyphicon-shopping-cart "></span>
 		</div> -->
@@ -46,5 +45,5 @@
 		</ycommerce:testId> --%>
 
 	</a>
-
-<div class="mini-cart-container js-mini-cart-container"></div>
+<!-- TODO : Uncomment to enable mini cart container -->
+<!-- <div class="mini-cart-container js-mini-cart-container"></div> -->
