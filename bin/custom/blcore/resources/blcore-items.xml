@@ -38,6 +38,10 @@
         <enumtype generate="true" code="DurationEnum" autocreate="true" dynamic="true">
             <value code="RETAIL"/>
         </enumtype>
+        <enumtype generate="true" code="NumberingSystemEnum" autocreate="true" dynamic="true">
+            <value code="BARCODE"/>
+            <value code="NONE"/>
+        </enumtype>
 
         <enumtype generate="true" code="ProductTypeEnum" autocreate="true" dynamic="true">
             <value code="PRODUCT"/>
@@ -557,7 +561,7 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Customer facing details of what comes with the rental version of the item</description>
                      </attribute>
-                     <attribute qualifier="numberingSystem" type="java.lang.String">
+                     <attribute qualifier="numberingSystem" type="NumberingSystemEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="false"/>
                          <description>Determines how we track inventory</description>
@@ -637,11 +641,6 @@
                jaloclass="com.bl.core.jalo.BlSerialProduct">
                  <description>Extending BlSerialProduct with additional attributes</description>
                  <attributes>
-                     <attribute qualifier="serialId" type="java.lang.String">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="false" unique="true"/>
-                         <description>Unique Serial Id for Serial Product</description>
-                     </attribute>
                      <attribute qualifier="displayName" type="java.lang.String" redeclare="true">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true" unique="true"/>
@@ -672,13 +671,8 @@
 
             <itemtype code="BlSubpart" extends="BlSerialProduct" autocreate="true" generate="true"
                  jaloclass="com.bl.core.jalo.BlSubpart">
-                 <description>Extending BlSerialProduct with additional attributes</description>
+                 <description>Extending BlSubPart with additional attributes</description>
                <attributes>
-                 <attribute qualifier="serialId" type="java.lang.String" redeclare="true">
-                     <persistence type="property"/>
-                     <modifiers read="true" write="true" optional="true" unique="true"/>
-                     <description>Unique Serial Id for Subpart Product</description>
-                 </attribute>
                  <attribute qualifier="barcode" type="java.lang.String" redeclare="true">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" unique="true"  optional="true"/>

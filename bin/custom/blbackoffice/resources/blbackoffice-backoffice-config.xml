@@ -85,7 +85,7 @@
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
 					<wz:property-list root="newBlSerialProduct">
-						<wz:property qualifier="serialId"/>
+						<wz:property qualifier="productId"/>
 						<wz:property qualifier="code"/>
 						<wz:property qualifier="blProduct"/>
 						<wz:property qualifier="barcode"/>
@@ -95,7 +95,7 @@
 				</wz:content>
 				<wz:navigation id="step1.navigation">
 					<wz:cancel/>
-					<wz:custom label="Done" visible="!#empty(newBlSerialProduct.serialId and newBlSerialProduct.barcode and newBlSerialProduct.code and
+					<wz:custom label="Done" visible="!#empty(newBlSerialProduct.productId and newBlSerialProduct.barcode and newBlSerialProduct.code and
 					                   and newBlSerialProduct.blProduct and newProduct.name[T(java.util.Locale).ENGLISH])">
 					</wz:custom>
 				</wz:navigation>

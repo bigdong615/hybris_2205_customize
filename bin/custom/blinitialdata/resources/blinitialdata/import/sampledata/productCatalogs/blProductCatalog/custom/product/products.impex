@@ -14,7 +14,7 @@ $baseProduct=baseProduct(code,$catalogVersion)
 $approved=approvalstatus(code)[default='approved']
 
 
-INSERT_UPDATE BLProduct ;$catalogVersion;$approved;productId[unique=true];code[unique=true];$superCategories;name[lang=en] ;procurementCost;displayName ;procurementSource;mpn ;upc;productType(code);forRent ;forSale  ;level1Required ;level2Required  ;numberingSystem;scheduled ;isVideo;manufacturerAID;manufacturerName
+INSERT_UPDATE BLProduct ;$catalogVersion;$approved;productId[unique=true];code[unique=true];$superCategories;name[lang=en] ;procurementCost;displayName ;procurementSource;mpn ;upc;productType(code);forRent ;forSale  ;level1Required ;level2Required  ;numberingSystem(code);scheduled ;isVideo;manufacturerAID;manufacturerName
 #cameras
                         ;;;81;Canon_Rebel_XTi;cameras,canon;Canon_Rebel_XTi;0;Canon_Rebel_XTi;CAEDRXTIB;NA;NA;CAMERAS;true;false;false;false;BARCODE;true;false;2;Canon
                         ;;;88;Canon-EOS-1D-Mark-II;cameras,canon;Canon EOS 1D Mark II;0;Canon EOS 1D Mark II;NA;NA;NA;CAMERAS;true;false;false;false;NA;false;false;2;Canon
