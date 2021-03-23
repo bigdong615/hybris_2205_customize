@@ -237,4 +237,14 @@
 		<property name="configurationService" ref="configurationService"/>
 		<property name="baseSiteService" ref="baseSiteService"/>
 	</bean>
+
+	<!--Added for BL-75-->
+	<bean class="de.hybris.platform.cmsfacades.types.service.impl.DefaultComponentTypeAttributeStructure" p:typecode="Category" p:qualifier="footerContent">
+		<property name="populators">
+			<set>
+				<ref bean="richTextComponentTypeAttributePopulator" />
+			</set>
+		</property>
+	</bean>
+
 </beans>

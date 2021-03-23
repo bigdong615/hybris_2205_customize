@@ -25,5 +25,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String QUOTE_EXPIRED_EMAIL_PROCESS = "quote-expired-email-process";
 	public static final String QUOTE_POST_CANCELLATION_PROCESS = "quote-post-cancellation-process";
 	public static final String EMPTY_STRING = "";
-
+	public static final String CODE = "code";
+	public static final String BRANDS = "Brands";
 }
