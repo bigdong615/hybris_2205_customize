@@ -337,6 +337,11 @@
                         <modifiers read="true" write="true" optional="true" />
 						<description>Localized button text </description>
 					</attribute>
+					<attribute qualifier="buttonUrlLink" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized button url link </description>
+					</attribute>
 				</attributes>
 			</itemtype>
 			
