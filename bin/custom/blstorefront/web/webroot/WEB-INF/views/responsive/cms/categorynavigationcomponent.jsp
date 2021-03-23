@@ -11,7 +11,7 @@
 				<c:url value="${childlink1.item.url}" var="MainCatUrl" />
 	           	<c:if test="${childlink1.item.visible}">
 					<li class="nav-item dropdown menu-large">
-		                <a class="nav-link dropdown-toggle" href="${MainCatUrl }" id="${fn:toLowerCase(childlink1.item.linkName)}dropdown" data-bs-toggle="dropdown" aria-expanded="false">${childlink1.item.linkName}</a>
+		                <a class="nav-link dropdown-toggle" href="${MainCatUrl}" id="${fn:toLowerCase(childlink1.item.linkName)}dropdown" data-bs-toggle="dropdown" aria-expanded="false">${childlink1.item.linkName}</a>
 		              	<div class="dropdown-menu megamenu" aria-labelledby="${fn:toLowerCase(childlink1.item.linkName)}dropdown">
 							<div class="container">
 								<div class="row">
