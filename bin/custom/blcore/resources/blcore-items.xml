@@ -57,6 +57,15 @@
             <value code="MONITORS"/>
         </enumtype>
 
+        <enumtype generate="true" code="InventoryLocationTypeEnum" autocreate="true" dynamic="true">
+            <value code="BIN"/>
+            <value code="CARRIER"/>
+            <value code="STATIC_SHELF"/>
+            <value code="MOBILE_SHELF"/>
+            <value code="PART_OF_SHELF"/>
+            <value code="UNKNOWN"/>
+            <value code="WORK_STATION"/>
+        </enumtype>
     </enumtypes>
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
@@ -672,6 +681,26 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Additional Discount for used gear</description>
                      </attribute>
+                     <attribute qualifier="serialInventoryLocation" type="BLInventoryLocation">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Inventory Location for serial product</description>
+                     </attribute>
+                     <attribute qualifier="serialHomeLocation" type="BLInventoryLocation">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Inventory HomeBase Location for serial product</description>
+                     </attribute>
+                     <attribute qualifier="serialLastLocation" type="BLInventoryLocation">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Last Inventory Location for serial product</description>
+                     </attribute>
+                     <attribute qualifier="serialLastParentLocation" type="BLInventoryLocation">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Inventory Last Parent Location for serial product</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
@@ -696,8 +725,80 @@
                  </attribute>
                </attributes>
             </itemtype>
+
+            <!-- InventoryLocation for Scan -->
+            <itemtype code="BLInventoryLocation" autocreate="true" generate="true"
+                      jaloclass="com.bl.core.jalo.BLInventoryLocation">
+                <description>This table is for storing InventoryLocation details.</description>
+                <deployment table="blInventoryLocation" typecode="12204" />
+                <attributes>
+                    <attribute qualifier="inventoryLocationID" type="java.lang.Integer">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" unique="true"/>
+                        <description>Auto generated inventory location ID</description>
+                    </attribute>
+                    <attribute qualifier="code" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="false" optional="true" unique="true"/>
+                        <description>Inventory Location Code</description>
+                    </attribute>
+                    <attribute qualifier="name" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Inventory Location Name</description>
+                    </attribute>
+                    <attribute qualifier="inventoryType" type="InventoryLocationTypeEnum">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>The type of Product</description>
+                    </attribute>
+                    <attribute qualifier="active" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+                        <description>If the Inventory Location is active</description>
+                    </attribute>
+                    <attribute qualifier="lastModifiedTime" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Time when user modify inventory location details</description>
+                    </attribute>
+                    <attribute qualifier="parentInventoryLocation" type="BLInventoryLocation">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Parent Inventory Location for serial product</description>
+                    </attribute>
+                    <attribute qualifier="inventoryLocationScanHistory" type="BLInventoryLocationScanHistory">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Inventory Location scan History for serial product</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <!-- InventoryLocationScanHistory for tracking logs-->
+            <itemtype code="BLInventoryLocationScanHistory" autocreate="true" generate="true"
+                      jaloclass="com.bl.core.jalo.BLInventoryLocationScanHistory">
+                <description>This table is for keeping track of Inventory being moved in warehouse by different users.</description>
+                <deployment table="blInventoryLocationScanHistory" typecode="12205" />
+                <attributes>
+                    <attribute qualifier="serialProduct" type="BLSerialProduct">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>BLSerialProduct in scan History</description>
+                    </attribute>
+                    <attribute qualifier="scanUser" type="User">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>User who scanned the inventory</description>
+                    </attribute>
+                    <attribute qualifier="scanTime" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Time when user scanned inventory</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
          </typegroup>
-
-
     </itemtypes>
 </items>
