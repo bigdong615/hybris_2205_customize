@@ -6,12 +6,17 @@ public class BlControllerConstants {
   public static final String REGISTER_CHECKPWD_INVALID = "register.checkPwd.invalid";
   public static final String REGISTER_PWD_INVALID = "register.pwd.invalid";
   public static final String REGISTER_EMAIL_INVALID = "register.email.invalid";
+  public static final String REGISTER_EMAIL_EMPTY = "register.email.empty";
   public static final int PASSWORD_MIN_LENGTH = 6;
   public static final int PASSWORD_MAX_LENGTH = 255;
   public static final int EMAIL_MAX_LENGTH = 255;
   public static final String DUBLICATE_UID_ERROR = "registration.error.account.exists.title";
   public static final String REGISTRATION_CONFIRMATION_MESSAGE = "registration.confirmation.message.title";
   public static final String EMAIL = "email";
+  public static final String PASSWORD_STRING = "pwd";
+  public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
+  public static final String REFERER= "Referer";
+  public static final String HOME_PAGE_URL = "/";
 
   private BlControllerConstants(){
     //empty
