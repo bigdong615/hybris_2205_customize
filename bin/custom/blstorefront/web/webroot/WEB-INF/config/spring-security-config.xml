@@ -189,7 +189,7 @@
 	<bean id="defaultLoginAuthenticationSuccessHandler" class="de.hybris.platform.acceleratorstorefrontcommons.security.StorefrontAuthenticationSuccessHandler" >
 		<property name="customerFacade" ref="customerFacade" />
 		<!--<property name="defaultTargetUrl" value="#{'responsive' == '${commerceservices.default.desktop.ui.experience}' ? '/' : '/my-account'}"/>-->
-		<property name="defaultTargetUrl" value="/my-account"/>
+		<property name="defaultTargetUrl" value="/"/>
 		<property name="targetUrlParameter" value="targetUrlParameter"/>
 		<property name="useReferer" value="true"/>
 		<property name="requestCache" ref="httpSessionRequestCache" />
