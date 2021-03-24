@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.security;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.security.BruteForceAttackCounter;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 	public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response,
 			final AuthenticationException exception) throws IOException, ServletException
 	{
-		String targetUrl = request.getHeader("Referer");
+		String targetUrl = request.getHeader(BlControllerConstants.REFERER);
 		// Register brute attacks
 		bruteForceAttackCounter.registerLoginFailure(request.getParameter("j_username"));
 
@@ -35,20 +36,21 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 		request.getSession().setAttribute("SPRING_SECURITY_LAST_USERNAME", request.getParameter("j_username"));
 
 		HttpSession session = request.getSession(false);
-
+// This is redirect same page for all pages before checkout.
 		if (session != null || isAllowSessionCreation())
 		{
 			
 			if (targetUrl == null) {
-				super.setDefaultFailureUrl("/");
+				super.setDefaultFailureUrl(BlControllerConstants.HOME_PAGE_URL);
 			} else {
 				super.setDefaultFailureUrl(targetUrl);
 			}
 		}
+		// This is redirect to checkout login page.
 		if(this.useReferer && checkoutLogin)
 		{
 			if (targetUrl == null) {
-				super.setDefaultFailureUrl("/");
+				super.setDefaultFailureUrl(BlControllerConstants.HOME_PAGE_URL);
 			} else {
 				super.setDefaultFailureUrl(targetUrl);
 			}
