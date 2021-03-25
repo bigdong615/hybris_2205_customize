@@ -780,7 +780,7 @@
             <itemtype code="BLInventoryLocationScanHistory" autocreate="true" generate="true"
                       jaloclass="com.bl.core.jalo.BLInventoryLocationScanHistory">
                 <description>This table is for keeping track of Inventory being moved in warehouse by different users.</description>
-                <deployment table="blInventoryLocationScanHistory" typecode="12205" />
+                <deployment table="blInvLocScanHistory" typecode="12205" />
                 <attributes>
                     <attribute qualifier="serialProduct" type="BLSerialProduct">
                         <persistence type="property"/>
