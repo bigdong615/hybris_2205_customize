@@ -3,6 +3,10 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
+
+import com.bl.facades.giftcard.BlGiftCardFacade;
+import de.hybris.order.calculation.exception.CalculationException;
 import de.hybris.platform.acceleratorfacades.flow.impl.SessionOverrideCheckoutFlowFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -14,12 +18,13 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.ConsentForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.GuestRegisterForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.GuestRegisterValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.security.AutoLoginStrategy;
-import de.hybris.platform.commercefacades.consent.CustomerConsentDataStrategy;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.consent.ConsentFacade;
+import de.hybris.platform.commercefacades.consent.CustomerConsentDataStrategy;
 import de.hybris.platform.commercefacades.consent.data.AnonymousConsentData;
 import de.hybris.platform.commercefacades.coupon.data.CouponData;
+import de.hybris.platform.commercefacades.order.CartFacade;
 import de.hybris.platform.commercefacades.order.CheckoutFacade;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.OrderData;
@@ -27,18 +32,31 @@ import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.commercefacades.voucher.VoucherFacade;
+import de.hybris.platform.commercefacades.voucher.exceptions.VoucherOperationException;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
+import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.couponservices.model.AbstractCouponModel;
+import de.hybris.platform.couponservices.services.CouponService;
+import de.hybris.platform.order.CartService;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
-import com.bl.storefront.controllers.ControllerConstants;
+import de.hybris.platform.servicelayer.session.SessionService;
+import de.hybris.platform.servicelayer.user.UserService;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -52,16 +70,15 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.services.gitfcard.BlGiftCardService;
+import com.bl.facades.giftcard.data.BLGiftCardData;
+import com.bl.storefront.controllers.ControllerConstants;
 
 
 
@@ -105,6 +122,33 @@ public class CheckoutController extends AbstractCheckoutController
 	@Resource(name = "customerConsentDataStrategy")
 	protected CustomerConsentDataStrategy customerConsentDataStrategy;
 
+	@Resource(name = "cartFacade")
+	private CartFacade cartFacade;
+
+	@Resource(name = "voucherFacade")
+	private VoucherFacade voucherFacade;
+
+	@Resource(name = "giftCardService")
+	private BlGiftCardService giftCardService;
+
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
+
+	@Resource(name = "userService")
+	private UserService userService;
+
+	@Resource(name = "couponService")
+	private CouponService couponService;
+
+	@Resource(name = "cartService")
+	private CartService cartService;
+
+	@Resource(name = "checkoutCartCalculationStrategy")
+	private CommerceCartCalculationStrategy commerceCartCalculationStrategy;
+
+	@Resource(name = "blGiftCardFacade")
+    private BlGiftCardFacade blGiftCardFacade;
+
 	@ExceptionHandler(ModelNotFoundException.class)
 	public String handleModelNotFoundException(final ModelNotFoundException exception, final HttpServletRequest request)
 	{
@@ -137,7 +181,7 @@ public class CheckoutController extends AbstractCheckoutController
 	@RequestMapping(value = "/orderConfirmation/" + ORDER_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
 	@RequireHardLogIn
 	public String orderConfirmation(@PathVariable("orderCode") final String orderCode, final HttpServletRequest request,
-			final Model model, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+									final Model model, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
 		SessionOverrideCheckoutFlowFacade.resetSessionOverrides();
 		return processOrderCode(orderCode, model, request, redirectModel);
@@ -146,7 +190,7 @@ public class CheckoutController extends AbstractCheckoutController
 
 	@RequestMapping(value = "/orderConfirmation/" + ORDER_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.POST)
 	public String orderConfirmation(final GuestRegisterForm form, final BindingResult bindingResult, final Model model,
-			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
+									final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
 			throws CMSItemNotFoundException
 	{
 		getGuestRegisterValidator().validate(form, bindingResult);
@@ -154,8 +198,8 @@ public class CheckoutController extends AbstractCheckoutController
 	}
 
 	protected String processRegisterGuestUserRequest(final GuestRegisterForm form, final BindingResult bindingResult,
-			final Model model, final HttpServletRequest request, final HttpServletResponse response,
-			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+													 final Model model, final HttpServletRequest request, final HttpServletResponse response,
+													 final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
 		if (bindingResult.hasErrors())
 		{
@@ -177,7 +221,7 @@ public class CheckoutController extends AbstractCheckoutController
 			model.addAttribute(new GuestRegisterForm());
 			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
 					"guest.checkout.existingaccount.register.error", new Object[]
-					{ form.getUid() });
+							{ form.getUid() });
 			return REDIRECT_PREFIX + request.getHeader("Referer");
 		}
 
@@ -229,7 +273,7 @@ public class CheckoutController extends AbstractCheckoutController
 	}
 
 	protected String processOrderCode(final String orderCode, final Model model, final HttpServletRequest request,
-			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+									  final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
 		final OrderData orderDetails;
 
@@ -311,6 +355,161 @@ public class CheckoutController extends AbstractCheckoutController
 		}
 		model.addAttribute("email", uid);
 	}
+
+	/**
+	 * This method is used to apply gift card.
+	 * @param code
+	 * @param request
+	 * @param model
+	 * @return
+	 * @throws CMSItemNotFoundException
+	 * @throws CalculationException
+	 */
+	@PostMapping(value = "/apply")
+	@ResponseBody
+	public String apply(final String code, final HttpServletRequest request, final Model model) throws VoucherOperationException {
+		String status = StringUtils.EMPTY;
+		boolean isReapplyGiftCard = false;
+		final Locale locale = getI18nService().getCurrentLocale();
+		final List<BLGiftCardData> blGiftCardData = cartFacade.getSessionCart().getGiftCardData();
+
+			final String codeUpperCase = code.toUpperCase();
+			final Optional<AbstractCouponModel> optional = couponService.getCouponForCode(codeUpperCase);
+			if (optional.isPresent())
+			{
+				// Check if any gift card is applied
+				if (blGiftCardData != null && !blGiftCardData.isEmpty())
+				{
+					// Remove gift card
+					for (BLGiftCardData giftCardData : blGiftCardData) {
+						blGiftCardFacade.removeGiftcard(giftCardData.getCode());
+						isReapplyGiftCard = true;
+					}
+				}
+
+				addCoupon(locale, codeUpperCase,blGiftCardData,isReapplyGiftCard);
+			}
+
+			if (optional.isEmpty())
+			{
+				final List<String> giftCardDataList = new ArrayList<>();
+				if (blGiftCardData != null && !blGiftCardData.isEmpty())
+				{
+					for (BLGiftCardData giftCardData : blGiftCardData) {
+						giftCardDataList.add(giftCardData.getCode());
+					}
+				}
+					status = handleGiftCardStatus(code, status, locale, giftCardDataList);
+			}
+
+			return status;
+	}
+
+	private String handleGiftCardStatus(String code, String status, Locale locale, List<String> giftCardData) {
+		if (blGiftCardFacade.applyGiftCard(code))
+		{
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
+							{ code }, locale));
+		}
+		else
+		{
+			final String registered = "REGISTERED";
+			final CustomerModel customerModel = (CustomerModel) userService.getCurrentUser();
+			if (customerModel != null && registered.equalsIgnoreCase(customerModel.getType().getCode()) && CollectionUtils.isNotEmpty(giftCardData)
+					&& !giftCardData.contains(code))
+			{
+				status = getMessageSource().getMessage("text.gift.apply.applied.fail", null, locale);
+			}
+			else if (giftCardData.contains(code))
+			{
+				status = getMessageSource().getMessage("text.gift.apply.applied.again", null, locale);
+			}
+			else
+			{
+				status = getMessageSource().getMessage("text.gift.apply.applied.registereduser.fail", null, locale);
+			}
+		}
+		return status;
+	}
+
+	private void addCoupon(Locale locale, String codeUpperCase, final List<BLGiftCardData> blGiftCardData,final boolean isReapplyGiftCard) throws VoucherOperationException {
+		// apply coupon
+		try {
+			voucherFacade.applyVoucher(codeUpperCase);
+
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
+							{codeUpperCase}, locale));
+		}catch (final VoucherOperationException exception)
+			{
+				if (isReapplyGiftCard && !blGiftCardData.isEmpty())
+				{
+					for (BLGiftCardData blGiftCardDatum : blGiftCardData) {
+						blGiftCardFacade.applyGiftCard(blGiftCardDatum.getCode());
+					}
+				}
+				if (LOG.isDebugEnabled())
+				{
+					LOG.debug(exception.getMessage(), exception);
+				}
+			}
+
+		if (blGiftCardData != null && !blGiftCardData.isEmpty())
+		{
+			for (BLGiftCardData giftData : blGiftCardData) {
+				blGiftCardFacade.applyGiftCard(giftData.getCode());
+			}
+		}
+	}
+
+	@PostMapping(value = "/remove")
+	@ResponseBody
+	public String remove(final String code, final HttpServletRequest request, final Model model)
+	{
+		String status = "true";
+		boolean isVoucher = false;
+		try
+		{
+			final String codeUpperCase = code.toUpperCase(Locale.getDefault());
+			if (voucherFacade.checkVoucherCode(codeUpperCase))
+			{
+				isVoucher = true;
+				voucherFacade.releaseVoucher(codeUpperCase);
+				status = "true";
+			}
+			else
+			{
+				blGiftCardFacade.removeGiftcard(code);
+			}
+		}
+		catch (final VoucherOperationException e)
+		{
+			status = "false";
+		}
+		finally
+		{
+			try
+			{
+				if (isVoucher)
+				{
+					final CartModel sessionCart = cartService.getSessionCart();
+					final CommerceCartParameter calculateCartParameter = new CommerceCartParameter();
+					calculateCartParameter.setEnableHooks(true);
+					calculateCartParameter.setCart(sessionCart);
+					calculateCartParameter.setRecalculate(true);
+					commerceCartCalculationStrategy.calculateCart(calculateCartParameter);
+				}
+			}
+			catch (final CalculationException calculationException)
+			{
+				LOG.error("Error calculating cart during  coupon removal.");
+			}
+		}
+		return status;
+	}
+
+
 
 	protected GuestRegisterValidator getGuestRegisterValidator()
 	{

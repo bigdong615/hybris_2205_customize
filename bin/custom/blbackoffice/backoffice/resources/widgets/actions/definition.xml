@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<action-definition id="com.bl.blbackoffice.actions.giftcardemailandmovement"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+	<name>Send Email</name>
+	<description>Send email to customers</description>
+	<author>Me</author>
+	<version>0.1</version>
+
+	<actionClassName>com.bl.blbackoffice.actions.GiftcardEmailandMovementAction</actionClassName>
+
+	<inputType>java.lang.Object</inputType>
+	<outputType>java.lang.Object</outputType>
+
+	<iconUri>icons/email.png</iconUri>
+	<iconDisabledUri>icons/email_disable.png</iconDisabledUri>
+
+</action-definition>

@@ -1,0 +1,12 @@
+<p style="margin: 0px;">Hi ${ctx.custname},&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p style="margin: 0px;">&nbsp;</p>
+<p style="margin: 0px;">A credit in the amount of <strong>${ctx.amount}</strong> has been issued to your&nbsp;<a style="color: #1155cc;" href="${ctx.secureBaseUrl}">CORSAIR.com</a>&nbsp;account. This credit is good toward purchases of in-stock products at&nbsp;<a style="color: #1155cc;" href="${ctx.secureBaseUrl}">CORSAIR.com</a> and cannot be exchanged for cash. This gift card expires one year from the date of issue, unless otherwise prohibited by local law.</p>
+<p style="margin: 0px;">&nbsp;</p>
+<p style="margin: 0px;">To use the credit, please enter: <strong>${ctx.code}</strong> in the Gift Card box at checkout. This credit can be applied in addition to Credit Card payments. Credit balances can be checked at:&nbsp;<a href="${ctx.secureBaseUrl}/giftcard/balance">Credit Balance</a>.</p>
+<p style="margin: 0px;">&nbsp;</p>
+<p style="margin: 0px;"><strong>PLEASE RETAIN THIS CREDIT CODE FOR YOUR RECORDS.</strong></p>
+<p style="margin: 0px;">&nbsp;</p>
+<p style="margin: 0px;">Please check our <a href="https://help.corsair.com/hc/sections/360007075872">FAQ</a> page, use our <a href="${ctx.secureBaseUrl}/contact">Contact Us</a> page or contact our customer service team directly via phone 1-888-222-4346 extension 4, if you have further questions.</p>
+<p style="margin: 0px;">&nbsp;</p>
+<p style="margin: 0px;">Best Regards,</p>
+<p style="margin: 0px;">Borrow Lenses Online Store Customer Service</p>

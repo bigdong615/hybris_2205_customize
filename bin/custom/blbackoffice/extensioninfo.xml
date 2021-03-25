@@ -4,7 +4,8 @@
 --><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
         	
     
-    <extension abstractclassprefix="Generated" classprefix="Yacceleratorbackoffice" name="blbackoffice" usemaven="false">
+    <extension abstractclassprefix="Generated" classprefix="blbackoffice" managername="blbackoffice" managersuperclass="de.hybris.platform.jalo.extension.Extension"
+               name="blbackoffice" usemaven="false">
                 		
 		
         
@@ -12,12 +13,15 @@
                 		
         
         <requires-extension name="acceleratorbackoffice"/>
-                		
-        
+
+
+        <requires-extension name="backoffice"/>
+        <requires-extension name="platformbackoffice"/>
         <requires-extension name="blcore"/>
+        <requires-extension name="customersupportbackoffice"/>
                 		
         
-        <coremodule generated="true" manager="org.blbackoffice.jalo.YacceleratorbackofficeManager" packageroot="org.blbackoffice"/>
+        <coremodule generated="true" manager="com.bl.blbackoffice.jalo.BLbackofficeManager" packageroot="com.bl.blbackoffice"/>
                 		
         
         		

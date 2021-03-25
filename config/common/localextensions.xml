@@ -81,10 +81,10 @@
 	<!-- <extension name='commercefacades' />
     <extension name='commerceservices' />
     <extension name='commercewebservicescommons' />
-    <extension name='commercewebservicestests' /> 
+    <extension name='commercewebservicestests' />
 	<extension name='basecommerce' />
-    <extension name='basecommercebackoffice' /> 
-	<extension name='customerreview' /> 
+    <extension name='basecommercebackoffice' />
+	<extension name='customerreview' />
 	<extension name='payment' />
 	<extension name='promotions' />
 	<extension name='promotionsbackoffice' />

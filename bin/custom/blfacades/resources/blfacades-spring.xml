@@ -184,6 +184,7 @@
 
 	<bean id="genderData" class="com.bl.facades.product.data.GenderData" scope="prototype"/>
 
+<<<<<<< Updated upstream
 
 	<!--BL-30 : This is created to override register method to perform bl specific registration. -->
 	<alias name="defaultBlCustomerFacade" alias="customerFacade"/>
@@ -224,10 +225,31 @@
 			<list>
 				<ref bean="blCommerceSearchResultProductPopulator"/>
 				<ref bean="searchResultPickupAvailabilityPopulator"/>
+=======
+	<!--BL-XYZ Adding this changes for Gift Card implementation Start-->
+	<alias name="defaultBlCartPopulator" alias="blCartPopulator" />
+	<bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BLCartPopulator" parent="cartPopulator">
+	</bean>
+
+	<alias name="defaultBlOrderPopulator" alias="blOrderPopulator" />
+	<bean id="defaultBlOrderPopulator" class="com.bl.facades.populators.BLOrderPopulator" parent="orderPopulator">
+	</bean>
+
+	<bean id="defaultCartConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CartData"/>
+		<property name="populators">
+			<list>
+				<ref bean="cartPopulator"/>
+				<ref bean="pickupOrderEntryGroupPopulator"/>
+				<ref bean="deliveryOrderEntryGroupPopulator"/>
+				<ref bean="orderAppliedVouchersPopulator"/>
+				<ref bean="blCartPopulator"/>
+>>>>>>> Stashed changes
 			</list>
 		</property>
 	</bean>
 
+<<<<<<< Updated upstream
 
 	<alias name="blSearchResultVariantOptionsProductPopulator" alias="blCommerceSearchResultProductPopulator"/>
 	<bean id="blSearchResultVariantOptionsProductPopulator"
@@ -247,4 +269,23 @@
 		</property>
 	</bean>
 
+=======
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="orderConverter"/>
+		<property name="add" ref="blOrderPopulator"/>
+	</bean>
+
+	<bean id="giftCardEmailContext"
+		  class="com.bl.facades.process.email.context.GiftCardEmailContext"
+		  parent="abstractEmailContext" scope="prototype">
+	</bean>
+
+	<alias name="defaultBlGiftCardFacade" alias="blGiftCardFacade"/>
+	<bean id="defaultBlGiftCardFacade" class="com.bl.facades.giftcard.impl.DefaultBlGiftCardFacade">
+
+	</bean>
+
+	<!--BL-XYZ Adding this changes for Gift Card implementation End-->
+
+>>>>>>> Stashed changes
 </beans>
