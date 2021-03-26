@@ -1,6 +1,6 @@
  
  
-#% impex.info("=============================== Importing content from cms-content_homepage_en.impex ========================="); 
+#% impex.info("=============================== Importing content from sampledata sample_data_homepage_en.impex ========================="); 
 $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 $picture=media(code, $contentCV); 
