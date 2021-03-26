@@ -369,7 +369,7 @@
 			<ea:essentials>
 				<ea:essentialSection name="hmc.essential">
 					<ea:attribute qualifier="code"/>
-					<ea:attribute qualifier="productId" label="Serial ID"/>
+					<ea:attribute qualifier="productId"/>
 					<ea:attribute qualifier="barcode"/>
 					<ea:attribute qualifier="name"/>
 					<ea:attribute qualifier="displayName"/>
