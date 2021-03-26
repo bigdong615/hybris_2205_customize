@@ -12,6 +12,7 @@ $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/coredata/content
 $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/checkout
 $contentCatalogsCustomEmailsPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/emails
 $contentCatalogsCustomSearchPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/searchpage
+$contentCatalogsCustomProductPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/productlistpage
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
 #Mention here homepage related impexes in sequence
@@ -28,7 +29,7 @@ $contentCatalogsCustomSearchPagePath = /blinitialdata/import/coredata/contentCat
 
 
 #Mention here Product Listing Page related impexes in sequence
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPath/cms_content_productgridpage.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productgridpage.impex"), "utf-8", 0, 0);
 
 #Mention here Product Details Page related impexes in sequence
 
