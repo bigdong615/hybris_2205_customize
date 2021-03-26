@@ -8,7 +8,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-<c:set value="my-cart/emptyCart" var="emptyCart" />
+<c:set value="cart/emptyCart" var="emptyCart" />
 
 <template:page pageTitle="${pageTitle}">
 

@@ -665,4 +665,11 @@
 		<property name="rootCategory" value="1"/>
 	</bean>
 
+	<!--<BL-xyz bean entry is for cart page>-->
+	<alias name="defaultBlCartService" alias="blCartService" />
+	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService">
+		<property name="modelService" ref="modelService" />
+		<property name="cartService" ref="cartService" />
+	</bean>
+
 </beans>
