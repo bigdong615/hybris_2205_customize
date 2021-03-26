@@ -126,12 +126,37 @@ INSERT_UPDATE Media;mediaFormat(qualifier);code[unique=true];URL;mime[default='i
                    ;300Wx300H;sony_battery_a55_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDc7b2cfc1-fbfa-43b7-afe5-88398b25d920.jpg;;;images
                    ;300Wx300H;Sony_NP-FV70_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDb22a657f-de36-43a5-9c06-2431eeb73161.jpg;;;images
                    ;300Wx300H;Panasonic_Battery_DMW-BLC12_Medium;https://cdn.static-bl.com/images/store/Panasonic_DMW_BLC12_Battery___main.jpg;;;images
+                    ;96Wx96H;Rode_videomic_Small;https://cdn.static-bl.com/images/store/rode_videomic_sm.jpg;;;images
+                    ;96Wx96H;Sennheiser_MKE_Small;https://cdn.static-bl.com/images/store/534023_sm.jpg;;;images
+                    ;96Wx96H;Tascam_DR100_Small;https://cdn.static-bl.com/images/store/599285_sm.jpg;;;images
+                    ;96Wx96H;Rode_videomic_stereo_Small;https://cdn.static-bl.com/images/store/450170_sm.jpg;;;images
+                    ;96Wx96H;Azden_lav_Small;https://cdn.static-bl.com/images/store/3656_sm.jpg;;;images
+                    ;96Wx96H;Sennheiser_ME66_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM7014a5c1-7821-4136-a935-ac23d0e8e60e.jpg;;;images
+                    ;96Wx96H;sennheiser_lav_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM9c4f2933-1d2b-4c91-a162-79b78fdb553d.jpg;;;images
+                    ;96Wx96H;beachtek_DXA_Small;https://cdn.static-bl.com/product/SMfadef34e-ab15-49eb-84f8-86fc325db458.jpg;;;images
+                    ;96Wx96H;female_XLR_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMfbda9b47-51b9-4964-b446-4d2e55554ad1.jpg;;;images
+                    ;96Wx96H;boom_pole_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM14702470-ea2f-4e65-b33a-3c95125dc22b.jpg;;;images
+                    ;300Wx300H;Rode_videomic_Medium;https://cdn.static-bl.com/images/store/rode_videomic.jpg;;;images
+                    ;300Wx300H;Sennheiser_MKE_Medium;https://cdn.static-bl.com/images/store/534023.jpg;;;images
+                    ;300Wx300H;Tascam_DR100_Medium;https://cdn.static-bl.com/images/store/599285.jpg;;;images
+                    ;300Wx300H;Rode_videomic_stereo_Medium;https://cdn.static-bl.com/images/store/450170.jpg;;;images
+                    ;300Wx300H;Azden_lav_Medium;https://cdn.static-bl.com/images/store/3656.jpg;;;images
+                    ;300Wx300H;Sennheiser_ME66_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD9d0a1542-bd1d-4457-a5e9-b96709102b84.jpg;;;images
+                    ;300Wx300H;sennheiser_lav_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD6bddb7cb-39a1-4ab8-ac29-837f2d87a423.jpg;;;images
+                    ;300Wx300H;beachtek_DXA_Medium;https://cdn.static-bl.com/product/MD7903a52a-a53a-4487-b622-7938ca81cc21.jpg;;;images
+                    ;300Wx300H;female_XLR_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD3eada0bb-a935-4afd-8a92-aea5b1d78c8c.jpg;;;images
+                    ;300Wx300H;boom_pole_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDc7fd3b2e-02ab-4db6-ae4b-1c1d64a78dff.jpg;;;images
+                    ;515Wx515H;Sennheiser_ME66_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG0118bee2-1fb8-480a-b5ca-3a7cbe1b4b80.jpg;;;images
+                    ;515Wx515H;sennheiser_lav_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG74db6f17-348a-41e2-b4a1-d7f47297b570.jpg;;;images
+                    ;515Wx515H;beachtek_DXA_Large;https://cdn.static-bl.com/product/LGa7d9e46d-3d04-4a0f-aac9-9dc86ad3d76f.jpg;;;images
+                    ;515Wx515H;female_XLR_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LGeb08fff2-04c7-4a07-b0ec-af6c9b76654f.jpg;;;images
+                    ;515Wx515H;boom_pole_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LGdbe0aaf5-d33c-46da-b42f-ced30bcf1da1.jpg;;;images
+
 
 
 
 # Create Media Containers
 INSERT_UPDATE MediaContainer;qualifier[unique=true];$medias;$catalogVersion
-                            ;1Ds_MkIII_container;1Ds_MkIII_Small,1Ds_MkIII_Medium,1Ds_MkIII_Large;
                             ;Canon-EOS-1D-Mark-II_Container;Canon-EOS-1D-Mark-II_Small;
                             ;Canon_1Ds_Mark_II_Container;Canon_1Ds_Mark_II_Small,Canon_1Ds_Mark_II_Medium
                             ;Canon_EOS_1D_Mk_III_Container;Canon_EOS_1D_Mk_III_Medium,Canon_EOS_1D_Mk_III_Small
@@ -197,6 +222,17 @@ INSERT_UPDATE MediaContainer;qualifier[unique=true];$medias;$catalogVersion
                             ;sony_battery_a55_Container;sony_battery_a55_Medium
                             ;Sony_NP-FV70_Container;Sony_NP-FV70_Medium
                             ;Panasonic_Battery_DMW-BLC12_Container;Panasonic_Battery_DMW-BLC12_Medium
+                            ;Rode_videomic_Container;Rode_videomic_Small;Rode_videomic_Medium
+                            ;Sennheiser_MKE_Container;Sennheiser_MKE_Small;Sennheiser_MKE_Medium
+                            ;Tascam_DR100_Container;Tascam_DR100_Small;Tascam_DR100_Medium
+                            ;Rode_videomic_stereo_Container;Rode_videomic_stereo_Small;Rode_videomic_stereo_Medium
+                            ;Azden_lav_Container;Azden_lav_Small;Azden_lav_Medium
+                            ;Sennheiser_ME66_Container;Sennheiser_ME66_Small;Sennheiser_ME66_Medium,Sennheiser_ME66_Large
+                            ;sennheiser_lav_Container;sennheiser_lav_Small;sennheiser_lav_Medium,sennheiser_lav_Large
+                            ;beachtek_DXA_Container;beachtek_DXA_Small;beachtek_DXA_Medium,beachtek_DXA_Large
+                            ;female_XLR_Container;female_XLR_Small;female_XLR_Medium,female_XLR_Large
+                            ;boom_pole_Container;boom_pole_Small;boom_pole_Medium,boom_pole_Large
+
 
 
 # Update Products with Media and Media Containers
@@ -267,3 +303,13 @@ UPDATE Product;code[unique=true];$picture;$thumbnail;$galleryImages;$catalogVers
                 ;sony_battery_a55;sony_battery_a55_Medium;;sony_battery_a55_Container
                 ;Sony_NP-FV70;Sony_NP-FV70_Medium;;Sony_NP-FV70_Container
                 ;Panasonic_Battery_DMW-BLC12;Panasonic_Battery_DMW-BLC12_Medium;;Panasonic_Battery_DMW-BLC12_Container
+                ;Rode_videomic;Rode_videomic_Medium;Rode_videomic_Small;Rode_videomic_Container;
+                ;Sennheiser_MKE;Sennheiser_MKE_Medium;Sennheiser_MKE_Small;Sennheiser_MKE_Container;
+                ;Tascam_DR100;Tascam_DR100_Medium;Tascam_DR100_Small;Tascam_DR100_Container;
+                ;Rode_videomic_stereo;Rode_videomic_stereo_Medium;Rode_videomic_stereo_Small;Rode_videomic_stereo_Container;
+                ;Azden_lav;Azden_lav_Medium;Azden_lav_Small;Azden_lav_Container;
+                ;Sennheiser_ME66;Sennheiser_ME66_Medium;Sennheiser_ME66_Small;Sennheiser_ME66_Container;
+                ;sennheiser_lav;sennheiser_lav_Medium;sennheiser_lav_Small;sennheiser_lav_Container;
+                ;beachtek_DXA;beachtek_DXA_Medium;beachtek_DXA_Small;beachtek_DXA_Container;
+                ;female_XLR;female_XLR_Medium;female_XLR_Small;female_XLR_Container;
+                ;boom_pole;boom_pole_Medium;boom_pole_Small;boom_pole_Container;
