@@ -12,7 +12,7 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
 
 
 INSERT_UPDATE ProductGridComponent;$contentCV[unique=true];uid[unique=true];name;actions(uid,$contentCV);&componentRef
-                                  ;;ProductGridComponent;Product Grid Component;	;ProductGridComponent
+                                  ;;ProductGridComponent;Product Grid Component ;ListAddToCartAction;ProductGridComponent
 
 
 INSERT_UPDATE ListAddToCartAction;$contentCV[unique=true];uid[unique=true];url;name;&actionRef
