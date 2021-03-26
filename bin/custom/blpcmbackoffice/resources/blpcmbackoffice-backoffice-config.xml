@@ -331,6 +331,7 @@
 				<wz:assign property="newBlSerialProduct.numberSystem" value="ctx.parentObject.numberSystem"/>
 				<wz:assign property="newBlSerialProduct.productType" value="ctx.parentObject.productType"/>
 				<wz:assign property="newBlSerialProduct.manufacturerAID" value="ctx.parentObject.manufacturerAID"/>
+				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
@@ -472,7 +473,11 @@
 				</ea:section>
 				<ea:section name="hmc.section.product.ids">
 					<ea:attribute qualifier="procurementSource"/>
-
+					<ea:attribute qualifier="mpn"/>
+					<ea:attribute qualifier="upc"/>
+					<ea:attribute qualifier="manufacturerAID"/>
+					<ea:attribute qualifier="numberSystem"/>
+					<ea:attribute qualifier="productType"/>
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.order.invoice" position="30">
