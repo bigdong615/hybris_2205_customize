@@ -1,5 +1,5 @@
 
-#% impex.info("=============================== Importing content from cms-content_homepage_footer.impex =========================");
+#% impex.info("=============================== Importing content from sampledata footer_navigation.impex =========================");
 $contentCatalog=blContentCatalog
 $contentCatalogName=bl Content Catalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
