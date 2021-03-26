@@ -11,12 +11,12 @@ import de.hybris.platform.servicelayer.model.attribute.DynamicAttributeHandler;
 public class SerialProductTotalRentedDaysHandler implements DynamicAttributeHandler<Long, BlSerialProductModel> {
 
   @Override
-  public Long get(BlSerialProductModel model) {
+  public Long get(final BlSerialProductModel model) {
     return null;
   }
 
   @Override
-  public void set(BlSerialProductModel model, Long aLong) {
+  public void set(final BlSerialProductModel model,final Long aLong) {
 
   }
 }

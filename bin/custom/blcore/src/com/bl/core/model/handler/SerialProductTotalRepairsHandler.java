@@ -11,12 +11,12 @@ import de.hybris.platform.servicelayer.model.attribute.DynamicAttributeHandler;
 public class SerialProductTotalRepairsHandler implements DynamicAttributeHandler<Double, BlSerialProductModel> {
 
   @Override
-  public Double get(BlSerialProductModel model) {
+  public Double get(final BlSerialProductModel model) {
     return null;
   }
 
   @Override
-  public void set(BlSerialProductModel model, Double aDouble) {
+  public void set(final BlSerialProductModel model, final Double aDouble) {
 
   }
 }
