@@ -302,6 +302,13 @@
             <itemtype code="CustomBrandsComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
             	jaloclass="com.bl.core.cms.components.CustomBrandsComponent">
             	<description>Custom Banner Component type to display Brands Section on HomePage.</description>
+            	<attributes>
+                    <attribute qualifier="brandImageTitle" type="localized:java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized Brand Image Title only for Brands section </description>
+                    </attribute>
+                </attributes>
             </itemtype>
             
             <itemtype code="CustomBorrowFromUsComponent" extends="AbstractBannerComponent" autocreate="true" generate="true" 
@@ -360,6 +367,11 @@
 						<persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
 						<description>Localized button text </description>
+					</attribute>
+					<attribute qualifier="buttonUrlLink" type="localized:java.lang.String">
+						<persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Localized button url link </description>
 					</attribute>
 				</attributes>
 			</itemtype>

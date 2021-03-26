@@ -19,7 +19,8 @@
                 <div class="heavy-padding col-md-6 my-auto">
                     <h4>${feature.title}</h4>
                     <p>${feature.description}</p>
-                    <p><a href="#" class="btn btn-primary">${feature.buttonText}</a></p>
+                    <c:url value="${feature.buttonUrlLink } " var="buttonLink"/>
+                    <p><a href="${buttonLink }" class="btn btn-primary">${feature.buttonText}</a></p>
                 </div>
             </div>
           

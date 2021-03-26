@@ -21,9 +21,8 @@
 					<c:forEach items="${childLevel1.children}" var="childLevel2"
 						begin="${i.index}" end="${i.index + component.wrapAfter - 1}">
 						<c:forEach items="${childLevel2.entries}" var="childlink">
-
-							<li><a href="#">${fn:escapeXml(childLevel2.title)}</a></li>
-
+						<c:url value="${childlink.item.url}" var="link"/>
+							<li><a href="${link }">${fn:escapeXml(childLevel2.title)}</a></li>
 						</c:forEach>
 					</c:forEach>
 				</ul>
