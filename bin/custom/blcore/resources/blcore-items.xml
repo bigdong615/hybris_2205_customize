@@ -741,12 +741,12 @@
                 <attributes>
                     <attribute qualifier="inventoryLocationID" type="java.lang.Integer">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false" unique="true"/>
+                        <modifiers read="true" write="false" optional="false" unique="true"/>
                         <description>Auto generated inventory location ID</description>
                     </attribute>
                     <attribute qualifier="code" type="java.lang.String">
                         <persistence type="property"/>
-                        <modifiers read="true" write="false" optional="true" unique="true"/>
+                        <modifiers read="true" write="true" optional="true" unique="true"/>
                         <description>Inventory Location Code</description>
                     </attribute>
                     <attribute qualifier="name" type="java.lang.String">
@@ -767,7 +767,7 @@
                     </attribute>
                     <attribute qualifier="lastModifiedTime" type="java.util.Date">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="true"/>
                         <description>Time when user modify inventory location details</description>
                     </attribute>
                     <attribute qualifier="parentInventoryLocation" type="BLInventoryLocation">
