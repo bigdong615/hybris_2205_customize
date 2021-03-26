@@ -10,6 +10,6 @@
 <c:if test="${not empty spellingSuggestion}">
 	<div class="searchSpellingSuggestionPrompt">
 		<spring:url value="${spellingSuggestion.query.url}" var="spellingSuggestionQueryUrl" htmlEscape="false"/>
-		<spring:theme code="search.spellingSuggestion.prompt" />&nbsp;<a href="${fn:escapeXml(spellingSuggestionQueryUrl)}">${fn:escapeXml(spellingSuggestion.suggestion)}</a>?
+		<spring:theme code="search.spellingSuggestion.prompt" />&nbsp;<a href="${fn:escapeXml(spellingSuggestionQueryUrl)}">${fn:escapeXml(spellingSuggestion.suggestion)}</a>
 	</div>
 </c:if>
