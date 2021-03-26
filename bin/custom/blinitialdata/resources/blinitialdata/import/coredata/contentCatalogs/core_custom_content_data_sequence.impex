@@ -26,7 +26,7 @@ $contentCatalogsCustomEmailsPath = /blinitialdata/import/coredata/contentCatalog
 
 
 #Mention here Product Listing Page related impexes in sequence
-
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPath/cms_content_productgridpage.impex"), "utf-8", 0, 0);
 
 #Mention here Product Details Page related impexes in sequence
 

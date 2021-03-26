@@ -130,7 +130,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]      ; template(uid,$contentCV
 INSERT_UPDATE ContentSlotName ; name[unique=true]      ; template(uid,$contentCV)[unique=true][default='ProductGridPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code) 
                               ; SiteLogo               ;                                                                          ;                           ; logo                
                               ; HeaderLinks            ;                                                                          ;                           ; headerlinks         
-                              ; SearchBox              ;                                                                          ;                           ; searchbox           
+#                              ; SearchBox              ;                                                                          ;                           ; searchbox
                               ; MiniCart               ;                                                                          ;                           ; minicart            
                               ; NavigationBar          ;                                                                          ;                           ; navigation          
                               ; Section1               ;                                                                          ;                           ; wide                
@@ -162,7 +162,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]      ; template(uid,$contentCV
 INSERT_UPDATE ContentSlotName ; name[unique=true]      ; template(uid,$contentCV)[unique=true][default='SearchResultsGridPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code) 
                               ; SiteLogo               ;                                                                                ;                           ; logo                
                               ; HeaderLinks            ;                                                                                ;                           ; headerlinks         
-                              ; SearchBox              ;                                                                                ;                           ; searchbox           
+#                              ; SearchBox              ;                                                                                ;                           ; searchbox
                               ; MiniCart               ;                                                                                ;                           ; minicart            
                               ; NavigationBar          ;                                                                                ;                           ; navigation          
                               ; ProductLeftRefinements ;                                                                                ;                           ; narrow              
@@ -630,7 +630,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; NavigationBar-ProductGridPage          ; NavigationBar          ;                                                                              ; NavigationBarSlot                        ; true           
                                      ;                         ; Footer-ProductGridPage                 ; Footer                 ;                                                                              ; FooterSlot                               ; true           
                                      ;                         ; HeaderLinks-ProductGridPage            ; HeaderLinks            ;                                                                              ; HeaderLinksSlot                          ; true           
-                                     ;                         ; SearchBox-ProductGridPage              ; SearchBox              ;                                                                              ; SearchBoxSlot                            ; true           
+#                                     ;                         ; SearchBox-ProductGridPage              ; SearchBox              ;                                                                              ; SearchBoxSlot                            ; true
                                      ;                         ; TopHeaderSlot-ProductGridPage          ; TopHeaderSlot          ;                                                                              ; TopHeaderSlot                            ; true           
                                      ;                         ; BottomHeaderSlot-ProductGridPage       ; BottomHeaderSlot       ;                                                                              ; BottomHeaderSlot                         ; true           
                                      ;                         ; ProductLeftRefinemnts-ProductGridPage  ; ProductLeftRefinements ;                                                                              ; ProductLeftRefinements                   ; true           
