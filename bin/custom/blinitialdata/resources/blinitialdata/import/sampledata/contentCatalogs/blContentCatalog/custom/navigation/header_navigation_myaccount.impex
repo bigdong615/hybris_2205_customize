@@ -1,5 +1,5 @@
  
-#% impex.info("=============================== Importing content from cms-content_homepage_myaccount.impex ========================="); 
+#% impex.info("=============================== Importing content from sampledata header_navigaton_myaccount.impex ========================="); 
 $contentCatalog=blContentCatalog
  
 $productCatalog=blProductCatalog
