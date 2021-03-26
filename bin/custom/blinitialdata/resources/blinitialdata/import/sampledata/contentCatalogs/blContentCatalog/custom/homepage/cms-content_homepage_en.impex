@@ -54,10 +54,10 @@ INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @me
                     ;                        ; /images/logo-panasonic1.svg ; $siteResource/images/logo-panasonic.svg                                                     ; logo-panasonic.svg ;         ; image/svg+xml              ;                         ;                                   
                     
                     
-INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator];mime[default='image/jpg+xml'];altText;folder(qualifier)[default='images']
-;;/images/theme/img-blog-1.jpg;img-blog-1.jpg;$siteResource/images/theme/img-blog-1.jpg;image/jpg+xml;;
-;;/images/theme/img-blog-2.jpg;img-blog-2.jpg;$siteResource/images/theme/img-blog-2.jpg;image/jpg+xml;;
-;;/images/theme/img-blog-3.jpg;img-blog-3.jpg;$siteResource/images/theme/img-blog-3.jpg;image/jpg+xml;;
+INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]            ; realfilename   ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/jpg+xml'] ; altText ; folder(qualifier)[default='images'] 
+                    ;                         ; /images/theme/img-blog-1.jpg ; img-blog-1.jpg ; $siteResource/images/theme/img-blog-1.jpg                                  ; image/jpg+xml                 ;         ;                                     
+                    ;                         ; /images/theme/img-blog-2.jpg ; img-blog-2.jpg ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                     
+                    ;                         ; /images/theme/img-blog-3.jpg ; img-blog-3.jpg ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;                                     
                     
 UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]         
                                ;                         ; BLSiteLogoComponent ; /images/theme/bl-logo@2x.png ;  
@@ -111,17 +111,17 @@ UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=tr
                                        ;                         ; RotatingHomePageImagesComponent2 ; production_ID_49119834.mp4       
                                        ;                         ; RotatingHomePageImagesComponent3 ; pexels-cottonbro-59671434.mp4    
                                        
-UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; $picture[lang=$lang] 
-                                           ;                         ; HomePageCategoriesCarouselComponent1 ; /cat-cameras.png     ;  
-                                           ;                         ; HomePageCategoriesCarouselComponent2 ; /cat-lenses.png      ;  
-                                           ;                         ; HomePageCategoriesCarouselComponent3 ; /cat-lighting.png    ;  
-                                           ;                         ; HomePageCategoriesCarouselComponent4 ; /cat-support.png     ;  
-                                           ;                         ; HomePageCategoriesCarouselComponent5 ; /img-blog-1.jpg      ;  
-                                           ;                         ; HomePageCategoriesCarouselComponent6 ; /img-blog-2.jpg      ;  
+UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; $picture[lang=$lang] ; urlLink                         ; imagetitle[lang=$lang] 
+                                           ;                         ; HomePageCategoriesCarouselComponent1 ; /cat-cameras.png     ; "/Cameras/c/cameras"            ; Camera                 
+                                           ;                         ; HomePageCategoriesCarouselComponent2 ; /cat-lenses.png      ; "/Brands/Sony/c/Sony"           ; Sony                   
+                                           ;                         ; HomePageCategoriesCarouselComponent3 ; /cat-lighting.png    ; "/Brands/Panasonic/c/Panasonic" ; Panasonic              
+                                           ;                         ; HomePageCategoriesCarouselComponent4 ; /cat-support.png     ; "/Brands/Nikon/c/nikon"         ; Nikon                  
+                                           ;                         ; HomePageCategoriesCarouselComponent5 ; /img-blog-1.jpg      ; "/Brands/Kodak/c/kodak"         ; Kodak                  
+                                           ;                         ; HomePageCategoriesCarouselComponent6 ; /img-blog-2.jpg      ; "/Cameras/c/cameras"            ; Camera                 
                                            
-UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]        
-                             ;                         ; CustomBrandsComponent1 ; /images/logo-canon.svg      
-                             ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       
-                             ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     
-                             ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       
-                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg 
+UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; $picture[lang=$lang]        ; urlLink                  ; brandImageTitle[lang=$lang] 
+                             ;                         ; CustomBrandsComponent1 ; /images/logo-canon.svg      ; "/Canon/c/canon"         ; Canon                       
+                             ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       ; "/Sony/c/Sony"           ; Sony                        
+                             ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     ; "/Nikon/c/nikon"         ; Nikon                       
+                             ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/DJI/c/DJI"             ; DJI                         
+                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/Panasonic/c/Panasonic" ; Panasonic                   

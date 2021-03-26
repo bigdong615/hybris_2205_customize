@@ -1,5 +1,5 @@
-
-#% impex.info("=============================== Importing content from cms-content_homepage_myaccount.impex =========================");
+ 
+#% impex.info("=============================== Importing content from cms-content_homepage_myaccount.impex ========================="); 
 $contentCatalog=blContentCatalog
  
 $productCatalog=blProductCatalog
@@ -24,7 +24,7 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
                                ;                         ; AccountCreditCardsLink       ; Account Credit Cards Link        ; "#" ; AccountCreditCardsLink       ; Credit Cards        ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountVerificaionImagesLink ; Account Verification Images Link ; "#" ; AccountVerificaionImagesLink ; Verification Images ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountUserAccountsLink      ; Account User Accounts Link       ; "#" ; AccountUserAccountsLink      ; Accounts            ;                            ;                                    ;  ;  ;  
-                               ;                         ; AccountCreateAccountsLink    ; Account Create Accounts Link     ; "#" ; AccountCreateAccountsLink    ; Create Accounts     ;                            ;                                    ;  ;  ;  
+                               
                                
                                
 INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name                  ; parent(uid, $contentCV) ; links(&componentRef) ; &nodeRef       ; children(uid,$contentCV) 
@@ -39,7 +39,7 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                  ; $contentC
                                  ; AccountCreditCardsLinkEntry       ;                         ; Account Credit Cards Link Entry        ; AccountNavNode           ; AccountCreditCardsLink                                 
                                  ; AccountVerificaionImagesLinkEntry ;                         ; Account Verification Images Link Entry ; AccountNavNode           ; AccountVerificaionImagesLink                           
                                  ; AccountUserAccountsLinkEntry      ;                         ; Account User Accounts Link Entry       ; AccountNavNode           ; AccountUserAccountsLink                                
-                                 ; AccountCreateAccountsLinkEntry    ;                         ; Account Create Accounts Link Entry     ; AccountNavNode           ; AccountCreateAccountsLink                              
+                                 
                                  
                                  
 # Navigation Bar Component       
