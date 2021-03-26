@@ -5,15 +5,16 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
  <div id="productList" class="col-lg-9">
-<div class="row mb-2">
+         <div class="row mb-2">
         <nav:blFacetNavAppliedFilters pageData="${searchPageData}"/>
- </div>
+         </div>
             <div id="matchingProducts" class="row">
                <c:forEach items="${searchPageData.results}" var="product" varStatus="status">
                   <product:productListerGridItem product="${product}" />
                </c:forEach>
-            </div
-
+            </div>
+   <nav:blPagination searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"/>
+</div>
          <%--  Commented For Later Use
          <div id="addToCartTitle" class="display-none">
                <div class="add-to-cart-header">
