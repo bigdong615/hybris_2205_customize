@@ -321,7 +321,7 @@
 
 	<!-- Bl Serial Product Create wizard accessed from the BL Product Serials Tab-->
 	<context component="create-wizard-no-save" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace" module="blpcmbackoffice">
-		<wz:flow id="BlSerailProductWizard" title="create.title(ctx.TYPE_CODE)">
+		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="blSerialProductPrepare">
 				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
 				<wz:assign property="newBlSerialProduct.blProduct" value="ctx.parentObject"/>

@@ -74,7 +74,7 @@
 
 	<!--BlSerialProduct Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
 	<context component="create-wizard" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace">
-		<wz:flow id="BlSerailProductWizard" title="create.title(ctx.TYPE_CODE)">
+		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="blSerialProductPrepare">
 				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
 				<wz:assign property="newBlSerialProduct.code" value="ctx.code"/>
