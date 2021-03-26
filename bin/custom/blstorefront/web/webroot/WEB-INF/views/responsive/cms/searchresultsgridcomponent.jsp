@@ -16,5 +16,5 @@
          <product:productListerGridItem product="${product}"/>
       </c:forEach>
    </div>
-   <nav:blPagination searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"/>
+   <nav:pagination searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"/>
 </div>
