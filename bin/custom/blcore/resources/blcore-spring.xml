@@ -665,6 +665,12 @@
 		<property name="rootCategory" value="1"/>
 	</bean>
 
+	<!--BL-91 Adding attribute handler classes for dynamic attributes-->
+	<bean id="serialProductNotInServiceHandler" class="com.bl.core.model.handler.SerialProductNotInServiceHandler"/>
+	<bean id="serialProductTotalRentedDaysHandler" class="com.bl.core.model.handler.SerialProductTotalRentedDaysHandler"/>
+	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
+	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
+
 	<!--<BL-xyz bean entry is for cart page>-->
 	<alias name="defaultBlCartService" alias="blCartService" />
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService">

@@ -10,7 +10,7 @@
 # license agreement you entered into with SAP.
 # -----------------------------------------------------------------------
 # ImpEx for Importing Categories into BL Store
- #% impex.info("=============================== Importing content from cms-content_homepage_brands.impex =========================");
+ #% impex.info("=============================== Importing content from sampledata header_category_navigation_brands.impex =========================");
 # Macros / Replacement Parameter definitions
 $contentCatalog=blContentCatalog
  
@@ -47,7 +47,7 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]   ; $contentCV[unique=true] 
 #### Navigation Node Link  ####  
 #####################################################################
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name             ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
-                               ;                         ; BrandsLink       ; Brands Node Link ; "#" ; brands                                       ;          ;               ; Brands               ;                                    
+                               ;                         ; BrandsLink       ; Brands Node Link ; "/Brands/c/brands" ; brands                                       ;          ;               ; Brands               ;
                                
                                
 #####################################################################
@@ -109,21 +109,21 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]          ; $contentCV[unique
 #####################################################################
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en] ;  
 # Brands -- all brands         
-                               ;                         ; CanonLink        ; Canon Link      ; "#" ; canon                      ;                                    ; Canon             ;  
-                               ;                         ; SonyLink         ; Sony Link       ; "#" ; sony                       ;                                    ; Sony              ;  
-                               ;                         ; NikonLink        ; Nikon Link      ; "#" ; nikon                      ;                                    ; Nikon             ;  
-                               ;                         ; PanasonicLink    ; Panasonic Link  ; "#" ; panasonic                  ;                                    ; Panasonic         ;  
-                               ;                         ; DJILink          ; DJI Link        ; "#" ; dji                        ;                                    ; DJI               ;  
-                               ;                         ; REDLink          ; RED Link        ; "#" ; red                        ;                                    ; RED               ;  
-                               ;                         ; FujiLink         ; Fuji Link       ; "#" ; fuji                       ;                                    ; Fuji              ;  
-                               ;                         ; ZeissLink        ; Zeiss Link      ; "#" ; zeiss                      ;                                    ; Zeiss             ;  
-                               ;                         ; ARRILink         ; ARRI Link       ; "#" ; arri                       ;                                    ; ARRI              ;  
-                               ;                         ; GoProLink        ; GoPro Link      ; "#" ; gopro                      ;                                    ; GoPro             ;  
-                               ;                         ; SigmaLink        ; Sigma Link      ; "#" ; sigma                      ;                                    ; Sigma             ;  
-                               ;                         ; BlackmagicLink   ; Blackmagic Link ; "#" ; blackmagic                 ;                                    ; Blackmagic        ;  
-                               ;                         ; ProfotoLink      ; Profoto Link    ; "#" ; profoto                    ;                                    ; Profoto           ;  
-                               ;                         ; HasselbladLink   ; Hasselblad Link ; "#" ; hasselblad                 ;                                    ; Hasselblad        ;  
-                               ;                         ; AtomosLink       ; Atomos Link     ; "#" ;                            ;                                    ; Atomos            ;  
+                               ;                         ; CanonLink        ; Canon Link      ; "/Canon/c/canon" ; canon                      ;                                    ; Canon             ;
+                               ;                         ; SonyLink         ; Sony Link       ; "/Sony/c/Sony" ; sony                       ;                                    ; Sony              ;
+                               ;                         ; NikonLink        ; Nikon Link      ; "/Nikon/c/nikon" ; nikon                      ;                                    ; Nikon             ;
+                               ;                         ; PanasonicLink    ; Panasonic Link  ; "/Panasonic/c/Panasonic" ; panasonic                  ;                                    ; Panasonic         ;
+                               ;                         ; DJILink          ; DJI Link        ; "DJI/c/DJI" ; dji                        ;                                    ; DJI               ;
+                               ;                         ; REDLink          ; RED Link        ; "/RED/c/RED" ; red                        ;                                    ; RED               ;
+                               ;                         ; FujiLink         ; Fuji Link       ; "/Fuji/c/Fuji" ; fuji                       ;                                    ; Fuji              ;
+                               ;                         ; ZeissLink        ; Zeiss Link      ; "/Zeiss/c/Zeiss" ; zeiss                      ;                                    ; Zeiss             ;
+                               ;                         ; ARRILink         ; ARRI Link       ; "/ARRI/c/ARRI" ; arri                       ;                                    ; ARRI              ;
+                               ;                         ; GoProLink        ; GoPro Link      ; "/GoPro/c/GoPro" ; gopro                      ;                                    ; GoPro             ;
+                               ;                         ; SigmaLink        ; Sigma Link      ; "/Sigma/c/Sigma" ; sigma                      ;                                    ; Sigma             ;
+                               ;                         ; BlackmagicLink   ; Blackmagic Link ; "/Blackmagic/c/Blackmagic" ; blackmagic                 ;                                    ; Blackmagic        ;
+                               ;                         ; ProfotoLink      ; Profoto Link    ; "/Profoto/c/Profoto" ; profoto                    ;                                    ; Profoto           ;
+                               ;                         ; HasselbladLink   ; Hasselblad Link ; "/Hasselblad/c/Hasselblad" ; hasselblad                 ;                                    ; Hasselblad        ;
+                               ;                         ; AtomosLink       ; Atomos Link     ; "/Atomos/c/Atomos" ;                            ;                                    ; Atomos            ;
                                
                                
 #                              ; BLCategoryNavNode       ;                  ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode
