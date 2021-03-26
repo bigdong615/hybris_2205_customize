@@ -12,6 +12,7 @@ $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/coredata/content
 $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/checkout
 $contentCatalogsCustomEmailsPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/emails
 $contentCatalogsCustomSearchPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/searchpage
+$contentCatalogsCustomProductGridPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/productgridpage
 $contentCatalogsCustomHomepagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/homepage
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
@@ -22,10 +23,11 @@ $contentCatalogsCustomHomepagePath = /blinitialdata/import/coredata/contentCatal
 
 #Mention here Category Page related impexes in sequence
 
-#Mention here Search Listing Page related impexes in sequence
+#Mention here Search Grid Page related impexes in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomSearchPagePath/cms_content_searchpage.impex"), "utf-8", 0, 0);
 
-#Mention here Product Listing Page related impexes in sequence
+#Mention here Product Grid Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductGridPagePath/cms_content_productgridpage.impex"), "utf-8", 0, 0);
 
 #Mention here Product Details Page related impexes in sequence
 
