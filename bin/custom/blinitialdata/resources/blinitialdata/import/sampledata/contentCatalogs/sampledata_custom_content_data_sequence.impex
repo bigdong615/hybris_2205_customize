@@ -41,7 +41,7 @@ $contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentC
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomSearchPath/cms_content_searchpage_sample.impex"), "utf-8", 0, 0);
 
 #Mention here Product Grid Page related impexes in sequence
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsProductGridPagePath/cms-cms-content_productgridpage_sample.impex.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsProductGridPagePath/cms-content_productgridpage_sample.impex"), "utf-8", 0, 0);
 
 #Mention here Product Details Page related impexes in sequence
 
