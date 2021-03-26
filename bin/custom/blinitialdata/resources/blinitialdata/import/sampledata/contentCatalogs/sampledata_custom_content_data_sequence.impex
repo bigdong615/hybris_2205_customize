@@ -19,7 +19,7 @@ $contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentC
 #Mention here homepage related impexes in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_navigation.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/sample_data_homepage.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/footer_navigation.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/footer_navigation.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/sample_data_homepage_en.impex"), "utf-8", 0, 0);
 
 #Mention here Navigation related impexes in sequence 
