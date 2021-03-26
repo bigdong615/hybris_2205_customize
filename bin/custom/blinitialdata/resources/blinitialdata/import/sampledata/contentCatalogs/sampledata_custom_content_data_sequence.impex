@@ -13,24 +13,26 @@ $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/sampledata/conte
 $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/checkout
 $contentCatalogsCustomEmailsPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/emails
 $contentCatalogsCustomSearchPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/searchpage
-
+$contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/navigation
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
 
 #Mention here homepage related impexes in sequence
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/cms_content_homepage_sample.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/cms-content_homepage_footer.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/cms-content_homepage_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_navigation.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/sample_data_homepage.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/footer_navigation.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/sample_data_homepage_en.impex"), "utf-8", 0, 0);
 
-#Mention here Content page related impexes in sequence 
+#Mention here Navigation related impexes in sequence 
 
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_brands.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_cameras.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_lenses.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_production.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_usedgear.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_myaccount.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_brands.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_cameras.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_lenses.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_production.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_usedgear.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_navigation_myaccount.impex"), "utf-8", 0, 0);
+
+#Mention here Content page related impexes in sequence
 
 #Mention here Category Page related impexes in sequence
 
