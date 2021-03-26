@@ -62,6 +62,7 @@ INSERT_UPDATE Category;code[unique=true];active;name[lang=en];onCategoryTree;dis
                       ;audio-accessories;true;Audio Accessories;true;Audio Accessories;Audio Visual Rentals | Rent AV Equipment | BorrowLenses
                       ;headphones;true;Headphones;true;Headphones;Rent Audio Headphones | Headphones Rental | BorrowLenses
                       ;video-lighting-batteries;true;Lighting Batteries;true;Lighting Batteries;Lighting Batteries | Rent Video Lighting | BorrowLenses
+                      ;cameraRigs;true;Camera Rigs;true;Camera Rigs;
 
 # Insert Category Structure
 INSERT_UPDATE CategoryCategoryRelation;$categories;$supercategories
@@ -102,9 +103,191 @@ INSERT_UPDATE CategoryCategoryRelation;$categories;$supercategories
                                       ;streaming;production
                                       ;viewfinders;production
                                       ;gimbals-stabilizers;production
+                                      ;cameraRigs;production
                                       ;flashes-and-on-camera;lighting
                                       ;backdrops;lighting
                                       ;audio-accessories;audio
                                       ;headphones;audio
                                       ;video-lighting-batteries;batteries_power
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$supercategories=source(code, $catalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+
+UPDATE Category;$catalogVersion;code[unique=true];headerContent;footerContent
+               ;;cameras;;
+               ;;lenses;;
+               ;;production;;
+               ;;subparts;;
+               ;;newgear;;
+               ;;audio;;"<!-- Begin OrangeSoda Tracking Code -->
+<!--
+<script language='javascript' type='text/javascript'>
+var trackCid = 130438;
+var trackTid = '';
+</script>
+<script type='text/javascript'>
+var proto = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2.js' type='text/javascript'%3E%3C/script%3E'));
+</script>
+-->
+<!-- End OrangeSoda Tracking Code -->"
+
+               ;;lighting;;
+               ;;camcorders;;
+               ;;dslr-cameras;;
+               ;;mirrorless-cameras;"<style scoped>
+      /* Mobile View */
+	#divTextContent {
+		margin: auto;
+		width: 100%;
+		font-size: 14;
+                color:#000;
+		margin-bottom: 20px;
+	}
+
+	/* Desktop View */
+	    #divTextContent {
+		margin: auto;
+		width: 80%;
+		font-size: large;
+                color:#000;
+		margin-bottom: 30px;
+                margin-top: 30px;
+</style>
+
+<div id='divTextContent'>The future is mirrorless. Explore the latest advances in full frame optical performance from <a href='https://www.borrowlenses.com/category/sony-full-frame-mirrorless' target='_blank'>Sony</a>, <a href='https://www.borrowlenses.com/category/canon-full-frame-mirrorless' target='_blank'>Canon</a>, <a href='https://www.borrowlenses.com/category/panasonic-full-frame-mirrorless' target='_blank'>Panasonic</a>, and <a href='https://www.borrowlenses.com/category/nikon-full-frame-mirrorless' target='_blank'>Nikon</a>. Below you'll find not only high resolution, full frame options but also ultra portable systems for travel and vlogging.
+</div>";
+               ;;medium-format-cameras;;
+               ;;point-and-shoot-cameras;;
+               ;;action-and-pov-cameras;;
+               ;;professional;;
+               ;;vr-video-cameras;;
+               ;;webcams;;
+               ;;camera_packages;;
+               ;;macro;;
+               ;;wide_angle;;
+               ;;super-telephoto;;
+               ;;normal;;
+               ;;lens_adapters;;"<h1>Rent a Lens Adapter to Use Any Lens with Your Camera</h1>
+<p>Lens adapters free you from the equipment limitations of a brand&rsquo;s proprietary design. Have a <a href='https://www.borrowlenses.com/sony'>Sony video camera</a> and want to use your Canon lens on it? No problem with a lens adapter!</p>
+<p>These small accessories attach quickly and easily between a lens and your camera, giving you big flexibility in what equipment you can use and where you can use it. Lens adapters also save you money. Instead of getting a host of unique lenses for each camera, you can get the camera you want and use the lenses you already have. A lens adapter rental from BorrowLenses saves even more money as you don&rsquo;t have to invest a lot in a piece of equipment you might only occasionally need.</p>
+<h2>Lens Adapters Give You More Flexibility When Filming or Photographing</h2>
+<p>Before you run out and buy or rent a new lens to outfit your camera for a project, it may be worth checking whether a lens you already have would do the job. If you&rsquo;re renting a camera and already have a lens that delivers the image quality you want, rent an adapter instead. With lens adapters, you have lots of options. Here are some of our most popular adapters:</p>
+<p>- <a href='https://www.borrowlenses.com/product/Canon-EF-to-EOS-R-Mount-Control-Ring-Adapter'>Canon EF/EF-S Lens to Canon EOS R Camera Control Ring Adapter</a>: Already invested in Canon EF mount lenses but want to try the new line of full frame Canon mirrorless cameras? You&rsquo;re in luck. Not only is there an adapter for it, but there are specialized adapters that mount between EF lenses and RF cameras that have not only a control ring, like the one above, but <a href='https://www.borrowlenses.com/product/Canon-EF-to-EOS-R-Mount-ND-Filter-Adapter'>ND</a> and <a href='https://www.borrowlenses.com/product/Canon-EF-to-EOS-R-Mount-CPL-Filter-Adapter'>polarizing filters</a> as well!</p>
+<p>- <a href='https://www.borrowlenses.com/product/Nikon-FTZ-Mount-Adapter'>Nikon FTZ Mount Adapter</a>: Pair nearly any Nikon F mount lens to the new Z mount mirrorless cameras from Nikon with this adapter. It maintains direct mechanical and electrical coupling between your lens and the camera.</p>
+<p>-&nbsp;<a href='https://www.borrowlenses.com/product/Metabones-Canon-EF-Lens-Sony-E-Mount-Camera-T-Cine-Speed-Booster-ULTRA'>Canon EF Lens to Sony E Mount Camera Metabones T Cine Speed Booster ULTRA</a>: This cinema-styled electronic adapter will allow you to pair Canon EF mount lenses with Sony E mount cameras while also increasing the effective field of view and maximum aperture. This triple threat of an adapter is ideal for using full frame EF mount lenses on a Sony camera with a crop sensor (or while using crop mode on the Sony a7 line of full frame cameras). This has the effect of making the field of view of the lens wider or, in other terms, reducing the crop factor of the camera from 1.5x to 1.07x &ndash; nearly full frame! Additionally, by concentrating the image circle from a lens, this Speed Booster also 'brightens' the image &ndash; maximum lens apertures are increased by approximately 1 stop down to the sub-f/1.0 range. Finally use your full frame Canon lens collection on Sony E mount cameras that have either APS-C sensors, Super 35 sensors, or ASP-C/Super 35 modes without sacrificing angle of view!</p>
+<p>- <a href='https://www.borrowlenses.com/product/Letus35-AnamorphX-Adapter-Matte-Box'>Letus35 AnamorphX Adapter with Built-In Matte Box &amp; Lens Support</a>: This lens adapter and matte box combo gives you a 1.33x anamorphic squeeze to lenses with 114mm front diameter (common for cinema prime lenses). It features its own critical focusing mechanism/focus ring with a standard 0.8 mod pitch focus gear that works in tandem with your lens&rsquo; focus ring for fine-tuned rack focusing. This adapter/matte box system is compatible with most sensor sizes, many lenses, and all resolutions and is ideal for creative filmmakers.</p>
+<p>- <a href='https://www.borrowlenses.com/product/Wooden-Camera-PL-Lens-to-Sony-E-Mount-Camera-Adapter'>Wooden Camera PL Lens to Sony E Mount Camera Adapter</a>: Using a cinema standard PL mount lens but want to take advantage of the low-light prowess of Sony mirrorless E mount cameras? Now you can! This adapter is ideal for Sony E mount camera shooters who want to use cine-style PL mount lenses. It includes a set of color-coded, stackable shims for adjusting your flange focal distance.</p>
+<h2>What to Know About Lens Adapters</h2>
+<p>It&rsquo;s important to review all the details when you&rsquo;re looking at a lens adapter. Different lens adapters work in different ways, sometimes expanding functionality in some areas while reducing it in others. If you have any questions about lens adapters for your camera, just reach out to a BorrowLenses representative &ndash; we&rsquo;re happy to help!</p>"
+               ;;tilt-shift;;
+               ;;fisheye;;
+               ;;teleconverters;;"<h2>Magnify a Telephoto Lens with a Teleconverter</h2>
+<p>A teleconverter can be a photographer&rsquo;s best friend. Since a teleconverter extends the focal length of a lens by up to 100% &ndash; taking a zoom of 200mm up to 400mm &ndash; it can be the difference between cropping/enlarging a shot (with quality loss) and getting the perfectly sharp, up-close shot you actually want.</p>
+<p>Renting a teleconverter, also called an extender, for your lens comes with incredible benefits for professional, amateur and student photographers alike.</p>
+<h2>The Many Benefits of Teleconverters</h2>
+<p>Perhaps the biggest benefit of a teleconverter is how it maximizes the value of the lenses you already have and use regularly. Teleconverters typically cost less than lenses, so you don&rsquo;t need to invest in an additional lens to get the added zoom you occasionally need. They&rsquo;re also small and light, which means you&rsquo;re carrying less and traveling lighter &ndash; so they&rsquo;re great if you&rsquo;re on the go, on a photo safari, or simply want to take longer shots but can&rsquo;t wield a super long lens.</p>
+<p>Renting a teleconverter lens has added benefits, too:</p>
+<p>- You can get the range you need (1.4x, 1.7x or 2x depending on brand) as you need it.</p>
+<p>-&nbsp;You&rsquo;ll have less equipment to carry around all the time, since you won&rsquo;t need an additional lens.</p>
+<p>- It means a lower cost to you when you change or update your camera model or switch to a new brand.</p>
+<h2>When to Use a Teleconverter</h2>
+<p>A teleconverter is ideal when you want to capture greater close-up definition for a sporting event, nature shoot or any project that requires a couple of shots beyond the standard zoom of your current lens. You retain the minimum focus of your lens but gain a lot more &ndash; up to 100% more &ndash; range than you otherwise would.</p>
+<p>While the range extension is the big selling point, a teleconverter does reduce the amount of light coming into the lens &ndash; meaning a decreased maximum aperture. For example, with a 1.4x you&rsquo;ll lose one stop and with a 2x you lose two stops. If you&rsquo;re shooting with a long depth of field anyway, this is not a problem. But it is worth noting for those who like to shoot wide open. Camera shake, focus speed and some image degradation can also be a concern. This makes teleconverters less effective in low-light settings and autofocus may not work as the extender slows down the camera&rsquo;s ability to focus. You could experience flare or ghosting problems if you&rsquo;re shooting straight into light, too. Keep these factors in mind if you&rsquo;re considering an extender for a low-light project.</p>
+<h1>Save Money by Renting a Canon, Sony, or Nikon Teleconverter</h1>
+<p>At BorrowLenses, you can find a variety of <a href='https://www.borrowlenses.com/category/canon/'>Canon</a> and Nikon teleconverters (or &ldquo;extenders&rdquo; as Canon calls them) for your cameras. Olympus, Panasonic and Sony teleconverters are also available. Just remember, not all teleconverters work with all cameras and lenses, so you always want to check compatibility before renting or buying.</p>"
+
+               ;;cine-lenses;"<style scoped>
+      /* Mobile View */
+      #divMainContent {
+            margin: auto;
+            background: url(https://cdn.static-bl.com/category/VideoLenses-SEM-MOBILE.jpg) center no-repeat;
+            height: 242px;
+      }
+	#divTextContent {
+		margin: auto;
+		width: 75%;
+		font-size: 14;
+		text-align: center;
+	}
+
+	/* Desktop View */
+	@media (min-width: 650px){
+	    #divMainContent {
+			width: 100%;
+			height:280px;
+			background: url(https://cdn.static-bl.com/category/VideoLenses-SEM.jpg) center no-repeat;
+	    }
+	    #divTextContent {
+	    	font-size: x-large;
+		}
+	}
+	@media (min-width: 1100px) {
+	    #divMainContent {
+			width: 1100px;
+	    }
+		#divTextContent {
+			width: 1100px;
+		}
+	}
+
+</style>
+<div id='divMainContent'></div>
+
+<div id='divTextContent'><h1>Cine Lens Rentals</h1>
+<p>Long focus throws, precision markings, and no breathing are among the professional qualities<br />
+you'll find in our selection of production-ready cinema lenses.</p></div>
+";
+               ;;telescopes;;
+               ;;lens_packages;;
+               ;;filters;;"<!-- Begin OrangeSoda Tracking Code -->
+<!--
+<script language='javascript' type='text/javascript'>
+var trackCid = 130438;
+var trackTid = '';
+</script>
+<script type='text/javascript'>
+var proto = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2.js' type='text/javascript'%3E%3C/script%3E'));
+</script>
+-->
+<!-- End OrangeSoda Tracking Code -->"
+
+               ;;batteries_power;;
+               ;;tripods_heads;;
+               ;;dollies_sliders;;
+               ;;cables_adapters;;
+               ;;monitors_video_recorders;;
+               ;;follow_focus;;
+               ;;camera-bags;;
+               ;;memory_cards_storage;;
+               ;;projectors;;
+               ;;underwater-housing;;
+               ;;streaming;;
+               ;;viewfinders;;
+               ;;gimbals-stabilizers;;
+               ;;flashes-and-on-camera;;
+               ;;backdrops;;"<!-- Begin OrangeSoda Tracking Code -->
+<!--
+<script language='javascript' type='text/javascript'>
+var trackCid = 130438;
+var trackTid = '';
+</script>
+<script type='text/javascript'>
+var proto = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2.js' type='text/javascript'%3E%3C/script%3E'));
+</script>
+-->
+<!-- End OrangeSoda Tracking Code -->"
+
+               ;;audio-accessories
+               ;;headphones
+               ;;video-lighting-batteries
+
+
+
 
