@@ -479,10 +479,15 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Link for the rental item on a competitive site</description>
                      </attribute>
-                   <attribute qualifier="resourceTitle" type="java.lang.String">
+                   <attribute qualifier="rentalVideoLinks" type="StringCollection">
                          <persistence type="property" />
                          <modifiers read="true" write="true" optional="true"/>
-                         <description>The display name of each uploaded document</description>
+                         <description>The video URL links for the Rental</description>
+                     </attribute>
+                   <attribute qualifier="usedGearVideoLinks" type="StringCollection">
+                         <persistence type="property" />
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>The video URL links for the Used Gear</description>
                      </attribute>
                    <attribute qualifier="resourceLink" type="java.lang.String">
                          <persistence type="property" />

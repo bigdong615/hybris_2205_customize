@@ -6,7 +6,8 @@
 	  xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
 		xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
 
-	<context merge-by="type" parent="GenericItem" type="Category" component="editor-area" module="blpcmbackoffice">
+	<!--Category editor Area Specific to Blpcmbackoffice -->
+<context merge-by="type" parent="GenericItem" type="Category" component="editor-area" module="blpcmbackoffice">
 		<ea:editorArea name="">
 			<ea:essentials>
 				<ea:essentialSection name="hmc.essential">
@@ -59,6 +60,7 @@
 		</ea:editorArea>
 	</context>
 
+	<!--Bl Product Create wizard Specific to Blpcmbackoffice -->
 		<context component="create-wizard" type="BlProduct"  extends="Product" merge-by="replace" module="blpcmbackoffice">
 			<wz:flow id="BlProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 				<wz:prepare id="blProductPrepare">
@@ -84,7 +86,7 @@
 							<wz:property qualifier="mpn"/>
 							<wz:property qualifier="upc"/>
 							<wz:property qualifier="manufacturerAID"/>
-							<wz:property qualifier="numberingSystem"/>
+							<wz:property qualifier="numberSystem"/>
 						</wz:property-list>
 					</wz:content>
 					<wz:navigation id="step1.navigation">
@@ -96,6 +98,8 @@
 				</wz:step>
 			</wz:flow>
 		</context>
+
+	<!--BlProduct editor Area Specific to Blpcmbackoffice -->
 	<context merge-by="replace" parent="Product" type="BlProduct" component="editor-area" module="pcmbackoffice"
 		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
 		<ea:editorArea name="">
@@ -119,14 +123,15 @@
 						<ea:attribute
 							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 							qualifier="description"/>
+						<ea:attribute qualifier="rentalVideoLinks"/>
 						<ea:attribute qualifier="summary"/>
-						<ea:attribute qualifier="resourceTitle"/>
 						<ea:attribute qualifier="resourceLink"/>
 						<ea:attribute qualifier="rentalIncludes"/>
 						<ea:attribute qualifier="displayNotes"/>
 						<ea:attribute qualifier="purchaseNotes"/>
 						<ea:attribute qualifier="shortDescription"/>
 						<ea:attribute qualifier="usedDescription"/>
+						<ea:attribute qualifier="usedGearVideoLinks"/>
 						<ea:attribute qualifier="usedIncludes"/>
 						<ea:attribute qualifier="techEngNotes"/>
 					</ea:panel>
@@ -223,7 +228,7 @@
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
 				<ea:section name="hmc.section.product.extendedattributes">
-					<ea:attribute qualifier="numberingSystem"/>
+					<ea:attribute qualifier="numberSystem"/>
 					<ea:attribute qualifier="productType"/>
 					<ea:attribute qualifier="level1required"/>
 					<ea:attribute qualifier="level2required"/>
@@ -271,8 +276,10 @@
 		</ea:editorArea>
 	</context>
 
+
+	<!--BlSerialProduct Create wizard for Blpcmbackoffice-->
 	<context component="create-wizard" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace" module="blpcmbackoffice">
-		<wz:flow id="BlSerailProductWizard" title="create.title(ctx.TYPE_CODE)">
+		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="blSerialProductPrepare">
 				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
 				<wz:assign property="newBlSerialProduct.code" value="ctx.code"/>
@@ -292,7 +299,12 @@
 						<wz:property qualifier="catalogVersion"/>
 						<wz:property qualifier="blProduct"/>
 						<wz:property qualifier="procurementCost"/>
-						<wz:property qualifier="forSalePrice"/>
+						<wz:property qualifier="mpn"/>
+						<wz:property qualifier="upc"/>
+						<wz:property qualifier="productType"/>
+						<wz:property qualifier="numberSystem"/>
+						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="forSaleBasePrice"/>
 						<wz:property qualifier="forSale"/>
 						<wz:property qualifier="procurementSource"/>
 					</wz:property-list>
@@ -307,7 +319,51 @@
 		</wz:flow>
 	</context>
 
-	<context merge-by="replace" parent="BlProduct" type="BlSerialProduct" component="editor-area" module="pcmbackoffice"
+	<!-- Bl Serial Product Create wizard accessed from the BL Product Serials Tab-->
+	<context component="create-wizard-no-save" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace" module="blpcmbackoffice">
+		<wz:flow id="BlSerailProductWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="blSerialProductPrepare">
+				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newBlSerialProduct.blProduct" value="ctx.parentObject"/>
+				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.parentObject.catalogVersion"/>
+				<wz:assign property="newBlSerialProduct.mpn" value="ctx.parentObject.mpn"/>
+				<wz:assign property="newBlSerialProduct.upc" value="ctx.parentObject.upc"/>
+				<wz:assign property="newBlSerialProduct.numberSystem" value="ctx.parentObject.numberSystem"/>
+				<wz:assign property="newBlSerialProduct.productType" value="ctx.parentObject.productType"/>
+				<wz:assign property="newBlSerialProduct.manufacturerAID" value="ctx.parentObject.manufacturerAID"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlSerialProduct">
+						<wz:property qualifier="code"/>
+						<wz:property qualifier="barcode"/>
+						<wz:property qualifier="displayName"/>
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="approvalStatus"/>
+						<wz:property qualifier="serialStatus"/>
+						<wz:property qualifier="catalogVersion"/>
+						<wz:property qualifier="blProduct"/>
+						<wz:property qualifier="procurementCost"/>
+						<wz:property qualifier="mpn"/>
+						<wz:property qualifier="upc"/>
+						<wz:property qualifier="productType"/>
+						<wz:property qualifier="numberSystem"/>
+						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="forSaleBasePrice"/>
+						<wz:property qualifier="forSale"/>
+						<wz:property qualifier="procurementSource"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done/>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<!--BlSerialProduct  editor Area Specific to Blpcmbackoffice -->
+	<context merge-by="replace" parent="BlProduct" type="BlSerialProduct" component="editor-area" module="blpcmbackoffice"
 		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
 		<ea:editorArea name="">
 			<ea:essentials>
@@ -361,7 +417,7 @@
 				<ea:section name="hmc.section.product.pricesdiscounts">
 					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
 						<ea:attribute qualifier="procurementCost"/>
-						<ea:attribute qualifier="forSalePrice"/>
+						<ea:attribute qualifier="forSaleBasePrice"/>
 						<ea:attribute qualifier="incentivizedPrice"/>
 						<ea:attribute qualifier="finalSalePrice"/>
 						<ea:attribute qualifier="totalRepairSpend"/>
@@ -416,6 +472,7 @@
 				</ea:section>
 				<ea:section name="hmc.section.product.ids">
 					<ea:attribute qualifier="procurementSource"/>
+
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.order.invoice" position="30">

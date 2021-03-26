@@ -59,7 +59,7 @@
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
 						<wz:property qualifier="manufacturerAID"/>
-						<wz:property qualifier="numberingSystem"/>
+						<wz:property qualifier="numberSystem"/>
 					</wz:property-list>
 				</wz:content>
 				<wz:navigation id="step1.navigation">
@@ -73,34 +73,44 @@
 	</context>
 
 	<!--BlSerialProduct Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
-	<context component="create-wizard" type="BlSerialProduct"  extends="BlProduct" merge-by="type">
-		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+	<context component="create-wizard" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace">
+		<wz:flow id="BlSerailProductWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="blSerialProductPrepare">
 				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
 				<wz:assign property="newBlSerialProduct.code" value="ctx.code"/>
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
-				<wz:assign property="newBlSerialProduct.supercategories" value="ctx?.actionContext?.supercategories"/>
+				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
 					<wz:property-list root="newBlSerialProduct">
-						<wz:property qualifier="productId"/>
 						<wz:property qualifier="code"/>
-						<wz:property qualifier="blProduct"/>
 						<wz:property qualifier="barcode"/>
+						<wz:property qualifier="displayName"/>
 						<wz:property qualifier="name"/>
+						<wz:property qualifier="approvalStatus"/>
+						<wz:property qualifier="serialStatus"/>
+						<wz:property qualifier="catalogVersion"/>
+						<wz:property qualifier="blProduct"/>
+						<wz:property qualifier="procurementCost"/>
+						<wz:property qualifier="mpn"/>
+						<wz:property qualifier="upc"/>
+						<wz:property qualifier="productType"/>
+						<wz:property qualifier="numberSystem"/>
+						<wz:property qualifier="manufacturerAID"/>
 						<wz:property qualifier="forSaleBasePrice"/>
+						<wz:property qualifier="forSale"/>
+						<wz:property qualifier="procurementSource"/>
 					</wz:property-list>
 				</wz:content>
 				<wz:navigation id="step1.navigation">
 					<wz:cancel/>
-					<wz:custom label="Done" visible="!#empty(newBlSerialProduct.productId and newBlSerialProduct.barcode and newBlSerialProduct.code and
-					                   and newBlSerialProduct.blProduct and newProduct.name[T(java.util.Locale).ENGLISH])">
-					</wz:custom>
+					<wz:done>
+						<wz:save property="newBlSerialProduct"/>
+					</wz:done>
 				</wz:navigation>
 			</wz:step>
 		</wz:flow>
 	</context>
-
 </config>
