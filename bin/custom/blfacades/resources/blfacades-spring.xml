@@ -247,4 +247,11 @@
 		</property>
 	</bean>
 
+	<!--<BL-xyz entry for clear cart>-->
+	<alias name="defaultBlCartFacade" alias="blCartFacade" />
+	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade">
+		<property name="modelService" ref="modelService" />
+		<property name="cartService" ref="cartService" />
+	</bean>
+
 </beans>
