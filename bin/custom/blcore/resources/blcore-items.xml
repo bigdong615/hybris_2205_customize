@@ -30,6 +30,26 @@
             <value code="LITHIUM_METAL"/>
             <value code="NON_LITHIUM"/>
         </enumtype>
+      <enumtype generate="true" code="SerialStatusEnum" autocreate="true" dynamic="true">
+            <value code="ACTIVE"/>
+            <value code="COMING_FROM_PURCHASE"/>
+            <value code="REPAIR"/>
+            <value code="REPAIR_IN_HOUSE"/>
+            <value code="REPAIR_SEND_TO_VENDOR"/>
+            <value code="REPAIR_PARTS_NEEDED"/>
+            <value code="REPAIR_AWAITING_QUOTES"/>
+            <value code="SOLD"/>
+            <value code="LOST"/>
+            <value code="LOST_IN_TRANSIT"/>
+            <value code="LOST_IN_HOUSE"/>
+            <value code="LOST_UNDER_INVESTIGATION"/>
+            <value code="STOLEN"/>
+            <value code="STOLEN_PAID_IN_FULL"/>
+            <value code="STOLEN_PAID_SOME"/>
+            <value code="STOLEN_NOT_PAID"/>
+            <value code="STOLEN_PAID_12_PERCENT"/>
+            <value code="SCRAPPED"/>
+        </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
             <value code="TWO"/>
@@ -383,7 +403,7 @@
                     </attribute>
                     <attribute qualifier="titleTag" type="java.lang.String">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" optional="true"/>
+                       <modifiers read="true" write="true" optional="true"/>
                         <description>Category Title Tag</description>
                     </attribute>
                     <attribute qualifier="active" type="java.lang.Boolean">
@@ -458,6 +478,16 @@
                          <persistence type="property" />
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Link for the rental item on a competitive site</description>
+                     </attribute>
+                   <attribute qualifier="resourceTitle" type="java.lang.String">
+                         <persistence type="property" />
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>The display name of each uploaded document</description>
+                     </attribute>
+                   <attribute qualifier="resourceLink" type="java.lang.String">
+                         <persistence type="property" />
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>The link from each uploaded document</description>
                      </attribute>
                      <attribute qualifier="procurementSource" type="java.lang.String">
                          <persistence type="property" />
@@ -561,7 +591,7 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Customer facing details of what comes with the rental version of the item</description>
                      </attribute>
-                     <attribute qualifier="numberingSystem" type="NumberingSystemEnum">
+                     <attribute qualifier="numberSystem" type="NumberingSystemEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="false"/>
                          <description>Determines how we track inventory</description>
@@ -641,19 +671,19 @@
                jaloclass="com.bl.core.jalo.BlSerialProduct">
                  <description>Extending BlSerialProduct with additional attributes</description>
                  <attributes>
-                     <attribute qualifier="displayName" type="java.lang.String" redeclare="true">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true" unique="true"/>
-                         <description>Display Name on Serial Product</description>
-                     </attribute>
+                   <attribute qualifier="serialStatus" type="SerialStatusEnum">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="false"/>
+                     <description>The status assigned to Serial Product</description>
+                   </attribute>
                      <attribute qualifier="barcode" type="java.lang.String">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" unique="true" optional="false"/>
-                         <description>Unique Barcode associated to a serial</description>
+                         <description>Serial barcode assigned specifically to the serial</description>
                      </attribute>
                      <attribute qualifier="warehouseLocation" type="Warehouse">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" unique="true" optional="false"/>
+                         <modifiers read="true" write="true" unique="true" optional="true"/>
                          <description>Determines the warehouse where the products are kept</description>
                      </attribute>
                      <attribute qualifier="forSaleBasePrice" type="java.math.BigDecimal">
@@ -661,11 +691,143 @@
                          <modifiers read="true" write="true" optional="false"/>
                          <description>Starting base price for the sku for used gear sales of all serials</description>
                      </attribute>
+                     <attribute qualifier="isArchived" type="java.lang.Boolean">
+                       <persistence type="property" />
+                       <modifiers read="true" write="true" search="true" optional="false"/>
+                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                       <description>Determines the serial is archived or not</description>
+                     </attribute>
+                   <attribute qualifier="finalSalePrice" type="java.math.BigDecimal">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>This is the price the customer paid when the item is sold on a used gear order</description>
+                     </attribute>
+                   <attribute qualifier="conditionRatingOverallScore" type="java.lang.Double">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>T</description>
+                     </attribute>
+                   <attribute qualifier="incentivizedPrice" type="java.math.BigDecimal">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>Calculated based on incentivized discount and for sale base price and condition rating score</description>
+                     </attribute>
                      <attribute qualifier="forSaleDiscount" type="java.lang.Integer">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Additional Discount for used gear</description>
                      </attribute>
+                   <attribute qualifier="ownedBy" type="java.lang.String">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Consigner name who delivers over or commits merchandise, can also be BL</description>
+                   </attribute>
+                   <attribute qualifier="totalRepairSpend" type="java.lang.double">
+                     <persistence type="dynamic" attributeHandler="serialProductTotalRepairsHandler" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Total amount spent on repairs on this serial to date,should update with every repair</description>
+                   </attribute>
+                   <attribute qualifier="noDaysRented" type="java.lang.long">
+                     <persistence type="dynamic" attributeHandler="serialProductTotalRentedDaysHandler" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>The total no of days the serial was rented for all orders</description>
+                   </attribute>
+                   <attribute qualifier="noDaysNotInService" type="java.lang.long">
+                     <persistence type="dynamic" attributeHandler="serialProductNotInServiceHandler" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Calculated based on the days an item spends with a shipping carrier</description>
+                   </attribute>
+                   <attribute qualifier="noDaysInTransit" type="java.lang.long">
+                     <persistence type="dynamic" attributeHandler="serialProductTotalTransitDaysHandler"  />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Calculated based on the days an item is neither in transit nor with a customer</description>
+                   </attribute>
+                   <attribute qualifier="conditions" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Notes about condition of the serial</description>
+                   </attribute>
+                   <attribute qualifier="notes" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Generic notes about the serial</description>
+                   </attribute>
+                   <attribute qualifier="forSaleNotes" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Sales Note on the Serial</description>
+                   </attribute>
+                   <attribute qualifier="purchaseOrder" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Vendor purchase order number</description>
+                   </attribute>
+                   <attribute qualifier="orderNumberRecord" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" unique="true"/>
+                     <description>Vendor unique order number</description>
+                   </attribute>
+                   <attribute qualifier="invoiceNumberRecord" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>The specific invoice this item was on</description>
+                   </attribute>
+                   <attribute qualifier="trackingNumber" type="StringCollection">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Tracking number of the procurement order the serial was on when purchased, if it was shipped by the vendor</description>
+                   </attribute>
+                   <attribute qualifier="invoiceNumber" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Invoice number of the procurement order the serial was on when purchased</description>
+                   </attribute>
+                   <attribute qualifier="dateFirstActive" type="java.util.Date">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Date when the active serial was/will be assigned for the first time</description>
+                   </attribute>
+                   <attribute qualifier="invoiceDate" type="java.util.Date">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Invoice date of the procurement order the serial was on when purchased</description>
+                   </attribute>
+                   <attribute qualifier="dateOfSale" type="java.util.Date">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>The date the item is sold on a used gear order</description>
+                   </attribute>
+                   <attribute qualifier="inventoryLocationID" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>serial barcode assigned specifically to the serial</description>
+                   </attribute>
+                   <attribute qualifier="ocLocation" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Last scanned location for the serial</description>
+                   </attribute>
+                   <attribute qualifier="lastLocationScanParent" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Parent location of the last scanned location for the serial</description>
+                   </attribute>
+                   <attribute qualifier="withOrderID" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description> order ID of the order that the serial is currently assigned to</description>
+                   </attribute>
+                   <attribute qualifier="assetNumber" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>This is the number used to link SoftSlate records with the Shutterfly Accounting team where both teams track changes to the specific serial.</description>
+                   </attribute>
+                   <attribute qualifier="assetStatus" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Asset is written off or not, set manually by inventory personnel </description>
+                   </attribute>
+
                  </attributes>
              </itemtype>
 
@@ -677,11 +839,6 @@
                      <persistence type="property"/>
                      <modifiers read="true" write="true" unique="true"  optional="true"/>
                      <description>Unique Barcode associated to a subpart</description>
-                 </attribute>
-                 <attribute qualifier="warehouseLocation" type="Warehouse" redeclare="true">
-                 <persistence type="property"/>
-                 <modifiers read="true" write="true" unique="true" optional="true"/>
-                 <description>Determines the warehouse where the products are kept</description>
                  </attribute>
                </attributes>
             </itemtype>
