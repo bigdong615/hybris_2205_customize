@@ -10,7 +10,7 @@
 # license agreement you entered into with SAP.
 # -----------------------------------------------------------------------
  
-#% impex.info("=============================== Importing content from cms_content_homepage_sample.impex ========================="); 
+#% impex.info("=============================== Importing content from sampledata sample_data_homepage.impex ========================="); 
 $contentCatalog=blContentCatalog
 $contentCatalogName=bl Content Catalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
@@ -53,8 +53,8 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
                                          ;                         ; SupportLinkComponent3          ; Support Link Component3            ; SupportLinkComponent3          ;  
                                          ;                         ; SupportLinkComponent4          ; Support Link Component4            ; SupportLinkComponent4          ;  
                                          
-INSERT_UPDATE PickUpOrDeliveryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name               ; styleClass ; &componentRef                  ; navigationNode(&nodeRef) ; title                           
-                                                  ;                         ; BLPickUpOrDeliveryNavComponent ; PickUp Or Delivery ;            ; BLPickUpOrDeliveryNavComponent ; PickUpOrDeliveryNavNode  ; "Free 2-Day Shipping or Faster" 
+INSERT_UPDATE PickUpOrDeliveryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name           ; styleClass ; &componentRef                  ; navigationNode(&nodeRef) ; title                           
+                                                  ;                         ; BLPickUpOrDeliveryNavComponent ; Ship Or PickUp ;            ; BLPickUpOrDeliveryNavComponent ; PickUpOrDeliveryNavNode  ; "Free 2-Day Shipping or Faster" 
                                                   
 INSERT_UPDATE SupportNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]      ; name    ; styleClass ; &componentRef         ; navigationNode(&nodeRef) ; title     
                                          ;                         ; BLSupportNavComponent ; Support ;            ; BLSupportNavComponent ; HeaderSupportNavNode     ; "Support" 
@@ -70,17 +70,17 @@ INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]      
                               ;                         ; HomePageWhyBorrowLensesBannerComponent2 ; HomePage WhyBorrowLenses Banner Component2 ; HomePageWhyBorrowLensesBannerComponent2 ;         
                               ;                         ; HomePageWhyBorrowLensesBannerComponent3 ; HomePage WhyBorrowLenses Banner Component3 ; HomePageWhyBorrowLensesBannerComponent3 ;         
                               
-INSERT_UPDATE CustomWhyBorrowLensesBannerComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                 ; &componentRef                     ; banners(&componentRef)                                                                                                  ; title               ; description                                                                                                                                                                                              ; buttonText     
-                                                   ;                         ; HomePageWhyBorrowLensesComponent2 ; HomePage Why BorrowLenses Component2 ; HomePageWhyBorrowLensesComponent2 ; HomePageWhyBorrowLensesBannerComponent1,HomePageWhyBorrowLensesBannerComponent2,HomePageWhyBorrowLensesBannerComponent3 ; "Why BorrowLenses?" ; "We are photographers and cinematophers  just like you. Whether you know exactly what you want, need advice on putting together your rig or just want to talk trade, our Gearheads are up for anything." ; "How It Works" 
+INSERT_UPDATE CustomWhyBorrowLensesBannerComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                 ; &componentRef                     ; banners(&componentRef)                                                                                                  ; title               ; description                                                                                                                                                                                              ; buttonText   ; buttonUrlLink[lang=$lang] 
+                                                   ;                         ; HomePageWhyBorrowLensesComponent2 ; HomePage Why BorrowLenses Component2 ; HomePageWhyBorrowLensesComponent2 ; HomePageWhyBorrowLensesBannerComponent1,HomePageWhyBorrowLensesBannerComponent2,HomePageWhyBorrowLensesBannerComponent3 ; "Why BorrowLenses?" ; "We are photographers and cinematophers  just like you. Whether you know exactly what you want, need advice on putting together your rig or just want to talk trade, our Gearheads are up for anything." ; "Contact Us" ; "#"                       
                                                    
                                                    
-INSERT_UPDATE CustomFeaturedStoriesComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                ; &componentRef                     ;  storyCategory ; storyTitle                                   ; storyDate 
-                                             ;                         ; HomePageFeaturedStoriesComponent1 ; HomePage FeaturedStories Component1 ; HomePageFeaturedStoriesComponent1 ;   "Technique"   ; "20 insane photography tips & tricks"        ; "Jan 2"   
-                                             ;                         ; HomePageFeaturedStoriesComponent2 ; HomePage FeaturedStories Component2 ; HomePageFeaturedStoriesComponent2 ;   "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  
-                                             ;                         ; HomePageFeaturedStoriesComponent3 ; HomePage FeaturedStories Component3 ; HomePageFeaturedStoriesComponent3 ;   "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Feb 4"   
-                                             ;                         ; HomePageFeaturedStoriesComponent4 ; HomePage FeaturedStories Component4 ; HomePageFeaturedStoriesComponent4 ;   "Technique"   ; "20 insane photography tips & tricks"        ; "Feb 4"   
-                                             ;                         ; HomePageFeaturedStoriesComponent5 ; HomePage FeaturedStories Component5 ; HomePageFeaturedStoriesComponent5 ;   "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  
-                                             ;                         ; HomePageFeaturedStoriesComponent6 ; HomePage FeaturedStories Component6 ; HomePageFeaturedStoriesComponent6 ;   "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Jan 2"   
+INSERT_UPDATE CustomFeaturedStoriesComponent ; $contentCV[unique=true] ; uid[unique=true]                  ; name                                ; &componentRef                     ; storyCategory ; storyTitle                                   ; storyDate ; urlLink 
+                                             ;                         ; HomePageFeaturedStoriesComponent1 ; HomePage FeaturedStories Component1 ; HomePageFeaturedStoriesComponent1 ; "Technique"   ; "20 insane photography tips & tricks"        ; "Jan 2"   ; "#"     
+                                             ;                         ; HomePageFeaturedStoriesComponent2 ; HomePage FeaturedStories Component2 ; HomePageFeaturedStoriesComponent2 ; "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  ; "#"     
+                                             ;                         ; HomePageFeaturedStoriesComponent3 ; HomePage FeaturedStories Component3 ; HomePageFeaturedStoriesComponent3 ; "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Feb 4"   ; "#"     
+                                             ;                         ; HomePageFeaturedStoriesComponent4 ; HomePage FeaturedStories Component4 ; HomePageFeaturedStoriesComponent4 ; "Technique"   ; "20 insane photography tips & tricks"        ; "Feb 4"   ; "#"     
+                                             ;                         ; HomePageFeaturedStoriesComponent5 ; HomePage FeaturedStories Component5 ; HomePageFeaturedStoriesComponent5 ; "Gear"        ; "The best video cameras for 2021 and beyond" ; "Jan 14"  ; "#"     
+                                             ;                         ; HomePageFeaturedStoriesComponent6 ; HomePage FeaturedStories Component6 ; HomePageFeaturedStoriesComponent6 ; "Category"    ; "Dolor waoimaw oimawef awoimawe awoimawe"    ; "Jan 2"   ; "#"     
                                              
 INSERT_UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &componentRef          ; urlLink 
                                     ;                         ; CustomBorrowComponent1 ; Custom Borrow Component1 ; CustomBorrowComponent1 ; "#"     
@@ -96,24 +96,24 @@ INSERT_UPDATE RentingGearIsEasyComponent ; $contentCV[unique=true] ; uid[unique=
                                          ;                         ; RentingGearIsEasyReturns     ; Renting Gear Is Easy Returns      ; true    ; RentingGearIsEasyReturns     ; Easy Returns ; 4     ; Repack in same box   ; We provide return label 
                                          
 INSERT_UPDATE RotatingHomePageImagesComponent ; $contentCV[unique=true] ; uid[unique=true]                 ; name                                 ; &componentRef                    ; urlLink ; rentProData                 ; borrowData                    
-                                              ;                         ; RotatingHomePageImagesComponent1 ; Rotating Home Page Images Component1 ; RotatingHomePageImagesComponent1 ; "#"      ; RENT PRO photo & video gear ; Borrow for the studio.        
-                                              ;                         ; RotatingHomePageImagesComponent2 ; Rotating Home Page Images Component3 ; RotatingHomePageImagesComponent2 ; "#"      ; RENT PRO photo & video gear ; Borrow for the flippy screen. 
-                                              ;                         ; RotatingHomePageImagesComponent3 ; Rotating Home Page Images Component4 ; RotatingHomePageImagesComponent3 ; "#"      ; RENT PRO photo & video gear ; Borrow for the road trip.     
+                                              ;                         ; RotatingHomePageImagesComponent1 ; Rotating Home Page Images Component1 ; RotatingHomePageImagesComponent1 ; "#"     ; RENT PRO photo & video gear ; Borrow for the studio.        
+                                              ;                         ; RotatingHomePageImagesComponent2 ; Rotating Home Page Images Component3 ; RotatingHomePageImagesComponent2 ; "#"     ; RENT PRO photo & video gear ; Borrow for the flippy screen. 
+                                              ;                         ; RotatingHomePageImagesComponent3 ; Rotating Home Page Images Component4 ; RotatingHomePageImagesComponent3 ; "#"     ; RENT PRO photo & video gear ; Borrow for the road trip.     
                                               
-INSERT_UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                     ; &componentRef                        ; urlLink ; imagetitle 
-                                                  ;                         ; HomePageCategoriesCarouselComponent1 ; Home Page Categories Carousel Component1 ; HomePageCategoriesCarouselComponent1 ; "#"     ; Camera     
-                                                  ;                         ; HomePageCategoriesCarouselComponent2 ; Home Page Categories Carousel Component2 ; HomePageCategoriesCarouselComponent2 ; "#"     ; Sony       
-                                                  ;                         ; HomePageCategoriesCarouselComponent3 ; Home Page Categories Carousel Component3 ; HomePageCategoriesCarouselComponent3 ; "#"     ; Panasonic  
-                                                  ;                         ; HomePageCategoriesCarouselComponent4 ; Home Page Categories Carousel Component4 ; HomePageCategoriesCarouselComponent4 ; "#"     ; Nikon      
-                                                  ;                         ; HomePageCategoriesCarouselComponent5 ; Home Page Categories Carousel Component5 ; HomePageCategoriesCarouselComponent5 ; "#"     ; Kodak      
-                                                  ;                         ; HomePageCategoriesCarouselComponent6 ; Home Page Categories Carousel Component6 ; HomePageCategoriesCarouselComponent6 ; "#"     ; Camera     
+INSERT_UPDATE HomePageCategoriesCarouselComponent ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                     ; &componentRef                        
+                                                  ;                         ; HomePageCategoriesCarouselComponent1 ; Home Page Categories Carousel Component1 ; HomePageCategoriesCarouselComponent1 
+                                                  ;                         ; HomePageCategoriesCarouselComponent2 ; Home Page Categories Carousel Component2 ; HomePageCategoriesCarouselComponent2 
+                                                  ;                         ; HomePageCategoriesCarouselComponent3 ; Home Page Categories Carousel Component3 ; HomePageCategoriesCarouselComponent3 
+                                                  ;                         ; HomePageCategoriesCarouselComponent4 ; Home Page Categories Carousel Component4 ; HomePageCategoriesCarouselComponent4 
+                                                  ;                         ; HomePageCategoriesCarouselComponent5 ; Home Page Categories Carousel Component5 ; HomePageCategoriesCarouselComponent5 
+                                                  ;                         ; HomePageCategoriesCarouselComponent6 ; Home Page Categories Carousel Component6 ; HomePageCategoriesCarouselComponent6 
                                                   
-INSERT_UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &componentRef          ; urlLink 
-                                    ;                         ; CustomBrandsComponent1 ; Custom Brands Component1 ; CustomBrandsComponent1 ; "#"     
-                                    ;                         ; CustomBrandsComponent2 ; Custom Brands Component2 ; CustomBrandsComponent2 ; "#"     
-                                    ;                         ; CustomBrandsComponent3 ; Custom Brands Component3 ; CustomBrandsComponent3 ; "#"     
-                                    ;                         ; CustomBrandsComponent4 ; Custom Brands Component4 ; CustomBrandsComponent4 ; "#"     
-                                    ;                         ; CustomBrandsComponent5 ; Custom Brands Component5 ; CustomBrandsComponent5 ; "#"     
+INSERT_UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                     ; &componentRef          
+                                    ;                         ; CustomBrandsComponent1 ; Custom Brands Component1 ; CustomBrandsComponent1 
+                                    ;                         ; CustomBrandsComponent2 ; Custom Brands Component2 ; CustomBrandsComponent2 
+                                    ;                         ; CustomBrandsComponent3 ; Custom Brands Component3 ; CustomBrandsComponent3 
+                                    ;                         ; CustomBrandsComponent4 ; Custom Brands Component4 ; CustomBrandsComponent4 
+                                    ;                         ; CustomBrandsComponent5 ; Custom Brands Component5 ; CustomBrandsComponent5 
                                     
 INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]                ; name                                ; &componentRef                   ; content[lang=$lang]    
                                     ;                         ; FeatureStoryTitleComponent      ; Feature StoryTitle Component        ; FeatureStoryTitleComponent      ; "Featured Stories"     

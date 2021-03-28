@@ -2,6 +2,9 @@
 
 #% impex.info("=============================== Importing content from BLInitialData core_custom_common_data_sequence user-access-rights.impex=========================");
 
+INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
+                      ;blproductmanager;Bl Product Manager;employeegroup,backofficeproductmanagergroup;Backoffice BL Product Manager User has access to the PCM Backoffice Cockpit.;1234
+
 
 $START_USERRIGHTS;;;;;;;;;
 Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
