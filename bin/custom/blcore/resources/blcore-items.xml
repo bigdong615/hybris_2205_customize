@@ -972,7 +972,7 @@
                     </attribute>
                     <attribute qualifier="lastModifiedTime" type="java.util.Date">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="true"/>
                         <description>Time when user modify inventory location details</description>
                     </attribute>
                     <attribute qualifier="parentInventoryLocation" type="BLInventoryLocation">
@@ -995,6 +995,11 @@
                 </description>
                 <deployment table="blInvLocScanHistory" typecode="12205"/>
                 <attributes>
+                    <attribute qualifier="inventoryLocation" type="BLInventoryLocation">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Inventory Location</description>
+                    </attribute>
                     <attribute qualifier="serialProduct" type="BLSerialProduct">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="false"/>

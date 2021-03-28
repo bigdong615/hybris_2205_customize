@@ -247,4 +247,8 @@
 		</property>
 	</bean>
 
+	<!--BL Inventory Scan Tool-->
+	<bean id="blInventoryScanToolFacade" name="blInventoryScanToolFacade"
+		  class="com.bl.facades.inventoryScan.impl.BLDefaultInventoryScanToolFacade"/>
+
 </beans>

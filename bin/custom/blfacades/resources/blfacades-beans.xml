@@ -12,4 +12,13 @@
 		<property name="code" type="String"/>
 		<property name="name" type="String"/>
 	</bean>
+
+	<!--BL Inventory Scan Result Model -->
+	<bean class="com.bl.facades.inventoryScan.model.BlInventoryScanResultData">
+		<property name="responseMessage" type="String"/>
+		<property name="failedBarcodeList" type="java.util.List&lt;String&gt;"/>
+		<property name="scanBarcodeList" type="java.util.List&lt;String&gt;"/>
+		<property name="scanBarcodeCount" type="java.lang.Integer"/>
+		<property name="updateLocationSuccessStatus" type="java.lang.Boolean"/>
+	</bean>
 </beans>
