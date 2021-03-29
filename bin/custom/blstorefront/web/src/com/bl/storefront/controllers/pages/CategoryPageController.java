@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages;
 
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -18,10 +19,13 @@ import de.hybris.platform.commercefacades.search.data.SearchStateData;
 import de.hybris.platform.commerceservices.search.facetdata.FacetRefinement;
 
 import de.hybris.platform.commerceservices.search.facetdata.ProductCategorySearchPageData;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
 
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -72,12 +76,19 @@ public class CategoryPageController extends AbstractCategoryPageController {
         return performSearchAndGetResultsData(categoryCode, searchQuery, page, showMode, sortCode);
     }
 
-    protected String performSearchAndGetResultsPage(final String categoryCode, final String searchQuery, final int page, // NOSONAR
+    protected String performSearchAndGetResultsPage(final String categoryCode, String searchQuery, final int page, // NOSONAR
         final ShowMode showMode, final String sortCode, final Model model, final HttpServletRequest request,
         final HttpServletResponse response) throws UnsupportedEncodingException
     {
         final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
 
+        if(StringUtils.isBlank(searchQuery)) {
+            for (CategoryModel superCategory : category.getSupercategories()) {
+                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
+                    searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE) + Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME)+categoryCode;
+                }
+            }
+        }
         final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
         if (StringUtils.isNotEmpty(redirection))
         {
