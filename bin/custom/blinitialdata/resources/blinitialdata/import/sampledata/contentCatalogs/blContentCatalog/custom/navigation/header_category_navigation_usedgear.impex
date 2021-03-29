@@ -10,7 +10,7 @@
 # license agreement you entered into with SAP.
 # -----------------------------------------------------------------------
 # ImpEx for Importing Categories into BL Store
- #% impex.info("=============================== Importing content from cms-content_homepage_usedgear.impex ========================="); 
+ #% impex.info("=============================== Importing content from sampledata header_category_navigation_usedgear.impex ========================="); 
 # Macros / Replacement Parameter definitions
 $contentCatalog=blContentCatalog
  
