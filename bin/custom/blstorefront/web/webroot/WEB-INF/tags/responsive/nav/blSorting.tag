@@ -28,6 +28,7 @@
          <form id="sortForm${top ? '1' : '2'}" name="sortForm${top ? '1' : '2'}" method="get" action="#">
             <select id="sortOptions${top ? '1' : '2'}" name="sort" class="form-control">
                <c:forEach items="${searchPageData.sorts}" var="sort">
+               <%-- Condition to hide the Relevance sorting option for PLP --%>
                  <c:if test="${pageType == 'CATEGORY' && sort.name ne 'Relevance'}">
                   <option value="${fn:escapeXml(sort.code)}" ${sort.selected? 'selected="selected"' : ''}>
                   <c:choose>
@@ -40,6 +41,7 @@
                   </c:choose>
                   </option>
                  </c:if>
+                 <%-- Condition added for SLP sorting --%>
                  <c:if test="${pageType == 'PRODUCTSEARCH'}">
                          <option value="${fn:escapeXml(sort.code)}" ${sort.selected? 'selected="selected"' : ''}>
                              <c:choose>
