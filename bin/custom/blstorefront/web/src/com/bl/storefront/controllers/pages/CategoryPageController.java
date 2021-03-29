@@ -17,18 +17,13 @@ import de.hybris.platform.commercefacades.product.data.CategoryData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.search.data.SearchStateData;
 import de.hybris.platform.commerceservices.search.facetdata.FacetRefinement;
-
 import de.hybris.platform.commerceservices.search.facetdata.ProductCategorySearchPageData;
-import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
-
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
