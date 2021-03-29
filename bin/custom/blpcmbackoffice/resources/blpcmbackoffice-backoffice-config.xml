@@ -467,6 +467,7 @@
 					<ea:attribute qualifier="noDaysInTransit"/>
 					<ea:attribute qualifier="noDaysNotInService"/>
 					<ea:attribute qualifier="lastLocationScanParent"/>
+					<ea:attribute qualifier="firmwareVersion"/>
 					<ea:attribute qualifier="withOrderID"/>
 					<ea:attribute qualifier="assetNumber"/>
 					<ea:attribute qualifier="assetStatus"/>
