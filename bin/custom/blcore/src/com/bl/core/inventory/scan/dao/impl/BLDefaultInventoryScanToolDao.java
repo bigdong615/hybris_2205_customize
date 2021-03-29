@@ -3,7 +3,6 @@ package com.bl.core.inventory.scan.dao.impl;
 import com.bl.core.inventory.scan.dao.BLInventoryScanToolDao;
 import com.bl.core.jalo.BLInventoryLocation;
 import com.bl.core.jalo.BlSerialProduct;
-import de.hybris.platform.core.model.user.EmployeeModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,14 +17,6 @@ public class BLDefaultInventoryScanToolDao implements BLInventoryScanToolDao {
 
     private FlexibleSearchService flexibleSearchService;
 
-    public FlexibleSearchService getFlexibleSearchService() {
-        return flexibleSearchService;
-    }
-
-    public void setFlexibleSearchService(FlexibleSearchService flexibleSearchService) {
-        this.flexibleSearchService = flexibleSearchService;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -35,7 +26,7 @@ public class BLDefaultInventoryScanToolDao implements BLInventoryScanToolDao {
         params.put("locationId", locationId);
 
         FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {BlInventoryLocation!} WHERE {inventoryLocationID} = ?locationId", params);
-        final List<BLInventoryLocation> results = getFlexibleSearchService().<BLInventoryLocation> search(query).getResult();
+        final List<BLInventoryLocation> results = flexibleSearchService.<BLInventoryLocation> search(query).getResult();
 
         if (CollectionUtils.isNotEmpty(results))
         {
@@ -53,7 +44,7 @@ public class BLDefaultInventoryScanToolDao implements BLInventoryScanToolDao {
         params.put("barcode", barcode);
 
         FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {BlSerialProduct!} WHERE {barcode} = ?barcode", params);
-        final List<BlSerialProduct> results = getFlexibleSearchService().<BlSerialProduct> search(query).getResult();
+        final List<BlSerialProduct> results = flexibleSearchService.<BlSerialProduct> search(query).getResult();
 
         if (CollectionUtils.isNotEmpty(results))
         {
@@ -71,7 +62,7 @@ public class BLDefaultInventoryScanToolDao implements BLInventoryScanToolDao {
         params.put("serialId", serialId);
 
         FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {BlSerialProduct!} WHERE {serialId} = ?barcode", params);
-        final List<BlSerialProduct> results = getFlexibleSearchService().<BlSerialProduct> search(query).getResult();
+        final List<BlSerialProduct> results = flexibleSearchService.<BlSerialProduct> search(query).getResult();
 
         if (CollectionUtils.isNotEmpty(results))
         {
@@ -86,7 +77,7 @@ public class BLDefaultInventoryScanToolDao implements BLInventoryScanToolDao {
     @Override
     public Collection<BlSerialProduct> getSerialProductsByBarcode(Collection<String> barcodes) {
         FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {BlSerialProduct!} WHERE {serialId} in (?" + barcodes + ")");
-        final List<BlSerialProduct> results = getFlexibleSearchService().<BlSerialProduct> search(query).getResult();
+        final List<BlSerialProduct> results = flexibleSearchService.<BlSerialProduct> search(query).getResult();
 
         if (CollectionUtils.isNotEmpty(results))
         {

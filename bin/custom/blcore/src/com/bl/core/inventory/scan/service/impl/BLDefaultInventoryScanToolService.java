@@ -97,16 +97,16 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
     @Override
     public BlInventoryScanResultData webScanToolUpdateInventoryLocation(List<String> barcodes) {
         int barcodeSize = barcodes.size();
-        if (barcodeSize >= BLInventoryScanLoggingConstants.EIGHT) {
-            return createMaximumBarcodeScanErrorResponseData(barcodes);
+        if (barcodeSize >= BLInventoryScanLoggingConstants.EIGHT || barcodeSize <= BLInventoryScanLoggingConstants.ONE) {
+            return createMaxMinBarcodeScanErrorResponseData(barcodes, barcodeSize);
         } else {
             return createBatchScanResponseData(checkValidLocationInBarcodeList(barcodes), barcodes, barcodeSize);
         }
     }
 
     /**
-     * @param result of Scanning
-     * @param barcodes of Input List
+     * @param result      of Scanning
+     * @param barcodes    of Input List
      * @param barcodeSize from scanned barcode
      * @return BlInventoryScanResultData
      */
@@ -137,23 +137,28 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
      * @param barcodes of Input List
      * @return BlInventoryScanResultData
      */
-    private BlInventoryScanResultData createMaximumBarcodeScanErrorResponseData(List<String> barcodes) {
+    private BlInventoryScanResultData createMaxMinBarcodeScanErrorResponseData(List<String> barcodes, int barcodeSize) {
         blInventoryScanResultData = new BlInventoryScanResultData();
 
         blInventoryScanResultData.setUpdateLocationSuccessStatus(Boolean.FALSE);
         blInventoryScanResultData.setFailedBarcodeList(null);
         blInventoryScanResultData.setScanBarcodeList(barcodes);
         blInventoryScanResultData.setScanBarcodeCount(barcodes.size());
-        blInventoryScanResultData.setResponseMessage(BLInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_ERROR
-                + Config.getParameter("bl.inventory.scan.maxSequenceScan.limit"));
+        if(barcodeSize >= BLInventoryScanLoggingConstants.EIGHT)
+        {
+            blInventoryScanResultData.setResponseMessage(BLInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_ERROR
+                    + Config.getParameter("bl.inventory.scan.maxSequenceScan.limit"));
+        } else {
+            blInventoryScanResultData.setResponseMessage(BLInventoryScanLoggingConstants.MUST_2_ERROR
+                    + BLInventoryScanLoggingConstants.SCAN_DATA_ERROR + barcodes);
+        }
         return blInventoryScanResultData;
     }
 
     /**
-     *
      * @param failedBarcodeList from scanned barcode list
-     * @param blSerialProducts from barcodes
-     * @param iteratorBarcode current iterator
+     * @param blSerialProducts  from barcodes
+     * @param iteratorBarcode   current iterator
      */
     private void setInventoryLocationOnSerial(List<String> failedBarcodeList, Collection<BlSerialProduct> blSerialProducts, String iteratorBarcode) {
         BlSerialProduct blSerialProduct = blSerialProducts.stream().filter(p -> p.getBarcode().equals(iteratorBarcode)).findFirst().orElse(null);
@@ -178,9 +183,8 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
     }
 
     /**
-     *
      * @param failedBarcodeList from scanned barcode
-     * @param barcodes input list
+     * @param barcodes          input list
      * @return BlInventoryScanResultData
      */
     private BlInventoryScanResultData createResponseScanData(List<String> failedBarcodeList, List<String> barcodes) {
@@ -201,12 +205,11 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
     }
 
     /**
-     *
      * @param barcodes from input list
      * @return int for success/error message
      */
     private int checkValidLocationInBarcodeList(List<String> barcodes) {
-        List<String> defaultLocations = BLInventoryScanLoggingConstants.defaultLocations;
+        List<String> defaultLocations = BLInventoryScanLoggingConstants.getDefaultInventoryLocation();
         List<String> filteredLocationList = Stream.of(defaultLocations.toArray(new String[BLInventoryScanLoggingConstants.ZERO]))
                 .filter(str -> defaultLocations.stream().anyMatch(str::startsWith))
                 .collect(Collectors.toList());
@@ -214,8 +217,7 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
     }
 
     /**
-     *
-     * @param inventoryLocation for update
+     * @param inventoryLocation    for update
      * @param filteredLocationList all locations in batch
      * @return int for success/error message
      */
@@ -230,8 +232,7 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
     }
 
     /**
-     *
-     * @param inventoryLocation for update
+     * @param inventoryLocation    for update
      * @param filteredLocationList all locations in batch
      * @return int for success/error message
      */
