@@ -152,7 +152,6 @@ SELECT DISTINCT tbl.pk, tbl.code FROM (
 # Define the available sorts for Bl
 # Added new sorting for BL
 INSERT_UPDATE SolrSort ; &sortRefID ; indexedType(identifier)[unique=true] ; code[unique=true] ; useBoost
-;$solrIndexedType;relevance;"Relevance"
 ;sortRef1;$solrIndexedType;relevance;true
 ;sortRef2;$solrIndexedType;popular;false
 ;sortRef3;$solrIndexedType;newest;false
