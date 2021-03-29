@@ -20,19 +20,12 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
   @Override
   public void onPrepare(final BlProductModel blProductModel, final InterceptorContext interceptorContext)
       throws InterceptorException {
-    setBlProductId(blProductModel,interceptorContext);
-  }
 
-  /**
-   * Set auto generated productId on BlProduct
-   * @param blProductModel
-   * @param interceptorContext
-   */
-  private void setBlProductId(final BlProductModel blProductModel,final InterceptorContext interceptorContext) {
     if( interceptorContext.isNew(blProductModel) && StringUtils.isBlank(blProductModel.getProductId())){
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
   }
+
 
   public KeyGenerator getKeyGenerator() {
     return keyGenerator;
