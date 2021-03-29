@@ -12,6 +12,9 @@
 			<n:navigation-node id="BLBackoffice">
 				<n:type-node id="BlProduct" code="BlProduct"/>
 				<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+				<n:navigation-node id="BLProduct Inventory">
+					<n:type-node id="BLInventoryLocation" code="BLInventoryLocation"/>
+				</n:navigation-node>
 			</n:navigation-node>
 		</n:explorer-tree>
 	</context>

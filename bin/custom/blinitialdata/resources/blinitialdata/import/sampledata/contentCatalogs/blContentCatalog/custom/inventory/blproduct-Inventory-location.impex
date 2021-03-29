@@ -1,4 +1,4 @@
-INSERT_UPDATE BLInventoryLocation;code[unique='true'];name;inventoryType(code);parentInventoryLocation;lastModifiedTime[dateformat=dd-MM-yyyy HH:mm]
+INSERT_UPDATE BLInventoryLocation;code[unique='true'];name;inventoryType(code);parentInventoryLocation(inventoryLocationID);lastModifiedTime[dateformat=dd-MM-yyyy HH:mm]
                                  ;MAM011 S04;MA M011 S04;MOBILE_SHELF;;11-02-2021 17:51
                                  ;MAR001 S01;MAR001 S01;STATIC_SHELF;;11-02-2021 17:51
                                  ;MA Aisle 001;MA Aisle 001;STATIC_SHELF;;11-02-2021 17:51

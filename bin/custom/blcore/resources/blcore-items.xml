@@ -898,7 +898,7 @@
                 <attributes>
                     <attribute qualifier="inventoryLocationID" type="java.lang.Integer">
                         <persistence type="property"/>
-                        <modifiers read="true" write="false" optional="false" unique="true"/>
+                        <modifiers read="true" write="false" optional="false" unique="true" initial="true"/>
                         <description>Auto generated inventory location ID</description>
                     </attribute>
                     <attribute qualifier="code" type="java.lang.String">
