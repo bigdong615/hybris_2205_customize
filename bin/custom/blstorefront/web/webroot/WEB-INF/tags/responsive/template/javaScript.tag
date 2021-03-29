@@ -99,6 +99,8 @@
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
+    		<script src="${commonResourcePathHtml}/js/mburger.js"></script>
 
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>

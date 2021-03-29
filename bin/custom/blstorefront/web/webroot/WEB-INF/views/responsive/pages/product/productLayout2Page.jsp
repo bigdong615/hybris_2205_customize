@@ -4,7 +4,10 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 
 <template:page pageTitle="${pageTitle}">
-	<cms:pageSlot position="Section1" var="comp" element="div" class="productDetailsPageSection1">
+
+<product:blProductDetailsPanel />
+
+	<!--<cms:pageSlot position="Section1" var="comp" element="div" class="productDetailsPageSection1">
 		<cms:component component="${comp}" element="div" class="productDetailsPageSection1-component"/>
 	</cms:pageSlot>
 	<product:productDetailsPanel />
@@ -20,5 +23,8 @@
 	<product:productPageTabs />
 	<cms:pageSlot position="Section4" var="comp" element="div" class="productDetailsPageSection4">
 		<cms:component component="${comp}" element="div" class="productDetailsPageSection4-component"/>
-	</cms:pageSlot>
+	</cms:pageSlot> -->
+
+	<product:productPageTabs />
+
 </template:page>

@@ -5,10 +5,25 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
 <c:url value="/" var="homeUrl" />
 
-<ol class="breadcrumb">
+<a href="${homeUrl}"><spring:theme code="breadcrumb.home" /></a> &gt;
+<c:forEach items="${breadcrumbs}" var="breadcrumb" varStatus="status">
+		<spring:url htmlEscape="false" value="${breadcrumb.url}" var="breadcrumbUrl" />
+		<c:choose>
+			<c:when test="${status.last}">
+			<a href="#">${fn:escapeXml(breadcrumb.name)} </a><span class="bookmark float-right"></span>
+			</c:when>
+			<c:when test="${breadcrumb.url eq '#'}">
+					<a href="#">${fn:escapeXml(breadcrumb.name)}</a>&gt;
+			</c:when>
+			<c:otherwise>
+					<a href="${fn:escapeXml(breadcrumbUrl)}">${fn:escapeXml(breadcrumb.name)}</a>&gt;
+			</c:otherwise>
+		</c:choose>
+	</c:forEach>
+
+<!-- <ol class="breadcrumb">
 	<li>
 		<a href="${homeUrl}"><spring:theme code="breadcrumb.home" /></a>
 	</li>
@@ -31,4 +46,4 @@
 			</c:otherwise>
 		</c:choose>
 	</c:forEach>
-</ol>
+</ol>  -->
