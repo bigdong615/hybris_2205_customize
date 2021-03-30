@@ -12,7 +12,7 @@ $contentCatalogsCustomCategoryPagePath = /blinitialdata/import/sampledata/conten
 $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/myaccount
 $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/checkout
 $contentCatalogsCustomEmailsPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/emails
-$contentCatalogsProductGridPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/productgidpage
+$contentCatalogsProductGridPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/productgridpage
 $contentCatalogsCustomSearchPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/searchpage
 $contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/navigation
 

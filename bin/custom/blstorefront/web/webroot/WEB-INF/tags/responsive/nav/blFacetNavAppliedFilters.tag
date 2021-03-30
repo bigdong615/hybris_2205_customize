@@ -12,4 +12,5 @@
 </c:choose>
 <div id="filterList" class="col-12">
    <nav:facetNavAppliedFilters pageData="${searchPageData}"/>
+   <nav:blSorting top="true"  supportShowPaged="${isShowPageAllowed}" supportShowAll="${isShowAllAllowed}"  searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"  numberPagesShown="${numberPagesShown}"/>
 </div>
