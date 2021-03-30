@@ -77,7 +77,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
     {
         final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
 
-        // Bl-268 Added For Faceted PLP & Default Sorting for PLP
+        // BL-268 Added For Faceted PLP & Default Sorting for PLP
         StringBuilder configParam  = new StringBuilder();
         if(StringUtils.isBlank(searchQuery)) {
             for (CategoryModel superCategory : category.getSupercategories()) {
