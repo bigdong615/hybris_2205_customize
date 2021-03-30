@@ -124,6 +124,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
         model.addAttribute("footerContent",category.getFooterContent());
 
         updatePageTitle(category, model);
+        usedGearCategory(category,model);
 
         final RequestContextData requestContextData = getRequestContextData(request);
         requestContextData.setCategory(category);
@@ -142,5 +143,21 @@ public class CategoryPageController extends AbstractCategoryPageController {
 
         return getViewPage(categorySearch.getCategoryPage());
 
+    }
+
+    /**
+     * @author ManiKandan
+     *
+     * This method is created to identify whether category belongs to used gear category
+     */
+
+    private void usedGearCategory(CategoryModel category, Model model) {
+        if(category.getSupercategories().stream().anyMatch(categoryModel -> BlCoreConstants.USED_GEAR.equalsIgnoreCase(categoryModel.getName())
+            ||  BlCoreConstants.USED_GEAR.equalsIgnoreCase(category.getName()))) {
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_PAGE);
+        }
+        else {
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlCoreConstants.RENTAL_GEAR_PAGE);
+        }
     }
 }

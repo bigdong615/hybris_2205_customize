@@ -29,4 +29,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BRANDS = "Brands";
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
+	public static final String BL_PAGE_TYPE ="blPageType";
+	public static final String USED_GEAR ="Used Gear";
+	public static final String USED_GEAR_PAGE ="usedGear";
+	public static final String RENTAL_GEAR_PAGE ="rentalGear";
 }

@@ -28,13 +28,22 @@
                      "displayProductImages" : "${ycommerce:encodeJSON(component.displayProductImages)}"
                      }
                   </c:set>
+                   <c:choose>
+                   <c:when test="${blPageType ne 'usedGear'}">
                   <input type="text" id="js-site-search-input"  class="d-none d-md-inline-block form-control js-site-search-input" placeholder="Search photo & Videos rentals..."
                      name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
-                     </ycommerce:testId>
+
                   <input type="text" class="d-inline-block d-md-none form-control" placeholder="Search…">
                   <span class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> Rental Dates</span>
                   <input type="text" id="litepicker" class="form-control d-none d-md-inline-block" placeholder="Select rental dates…">
                   <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="Dates…">
+                  </c:when>
+                  <c:otherwise>
+                   <input type="text" id="js-site-search-input"  class="d-none d-md-inline-block form-control js-site-search-input" placeholder="Search photo & Videos gear for sale..."
+                     name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
+                  </c:otherwise>
+                  </c:choose>
+                  </ycommerce:testId>
                   <div class="input-group-append d-none d-md-block">
                      <button class="btn btn-search btn-link js_search_button" type="submit">Search</button>
                   </div>
