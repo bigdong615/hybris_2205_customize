@@ -34,9 +34,9 @@ INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[
 
 
 # Define the available sorts
-UPDATE SolrSort ; indexedType(identifier)[unique=true] ; code[unique=true] ; name[lang=$lang]
+INSERT_UPDATE SolrSort ; indexedType(identifier)[unique=true] ; code[unique=true] ; name[lang=$lang]
 ;$solrIndexedType;relevance;"Relevance"
-;$solrIndexedType;popular;"Most Popular"
+;$solrIndexedType;mostPopular;"Most Popular"
 ;$solrIndexedType;newest;"Newest"
 ;$solrIndexedType;price-asc;"$ - $$$"
 ;$solrIndexedType;price-desc;"$$$ - $"

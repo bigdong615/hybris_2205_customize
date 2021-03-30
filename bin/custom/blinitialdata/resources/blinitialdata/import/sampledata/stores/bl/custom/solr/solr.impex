@@ -15,7 +15,8 @@ $storeUid = bl
 $snIndexConfiguration = bl
 $snIndexType = blProductType
 
-INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); sortableType(code); currency[default = false]; localized[default = false]; multiValue[default = false]; facet[default = false]; facetType(code); facetSort(code); priority; visible; fieldValueProvider                          ; customFacetSortProvider; rangeSets(name); $classAttributeAssignment
+## Remove Existing Classification Attributes for SolrIndexedProperty , since we have updated below
+REMOVE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); sortableType(code); currency[default = false]; localized[default = false]; multiValue[default = false]; facet[default = false]; facetType(code); facetSort(code); priority; visible; fieldValueProvider                          ; customFacetSortProvider; rangeSets(name); $classAttributeAssignment
                                  ; blProductType                             ; sensorSize         ; string    ;                   ;                          ; true                      ;                            ; true                  ; MultiSelectOr  ; Alpha          ; 1000    ; true   ; commerceClassificationPropertyValueProvider ;                        ;                ; CameraAttributes:::sensorSize::::
                                  ; blProductType                             ; videoResolution    ; string    ;                   ;                          ; true                      ;                            ; true                  ; MultiSelectOr  ; Alpha          ; 1000    ; true   ; commerceClassificationPropertyValueProvider ;                        ;                ; CameraAttributes:::videoResolution::::
                                  ; blProductType                             ; megapixels         ; double    ;                   ;                          ; true                      ;                            ; true                  ; MultiSelectOr  ; Alpha          ; 1000    ; true   ; commerceClassificationPropertyValueProvider ;                        ;                ; CameraAttributes:::megapixels::::
@@ -24,8 +25,8 @@ INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; n
                                  ; blProductType                             ; maxAperture        ; string    ;                   ;                          ; true                      ;                            ; true                  ; MultiSelectOr  ; Alpha          ; 1000    ; true   ; commerceClassificationPropertyValueProvider ;                        ;                ; LensAttributes:::maxAperture::::
                                  ; blProductType                             ; prime_zoom         ; string    ;                   ;                          ; true                      ;                            ; true                  ; MultiSelectOr  ; Alpha          ; 1000    ; true   ; commerceClassificationPropertyValueProvider ;                        ;                ; LensAttributes:::prime_zoom::::
                                  ; blProductType                             ; af_mf              ; string    ;                   ;                          ; true                      ;                            ; true                  ; MultiSelectOr  ; Alpha          ; 1000    ; true   ; commerceClassificationPropertyValueProvider ;                        ;                ; LensAttributes:::af_mf::::
-
-INSERT_UPDATE SolrSearchQueryProperty; indexedProperty(name, solrIndexedType(identifier))[unique = true]; facet[default = true]; facetType(code); priority; facetDisplayNameProvider; facetSortProvider; facetTopValuesProvider; includeInResponse[default = true]; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$snIndexType]
+####### Remove Existing Attributes for SolrSearchQueryProperty, since we have updated below
+REMOVE SolrSearchQueryProperty; indexedProperty(name, solrIndexedType(identifier))[unique = true]; facet[default = true]; facetType(code); priority; facetDisplayNameProvider; facetSortProvider; facetTopValuesProvider; includeInResponse[default = true]; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$snIndexType]
                                      ; sensorSize:$snIndexType                                          ;                      ; MultiSelectOr  ; 1000    ;                         ;                  ;                       ;                                  ;
                                      ; videoResolution:$snIndexType                                     ;                      ; MultiSelectOr  ; 1000    ;                         ;                  ;                       ;                                  ;
                                      ; megapixels:$snIndexType                                          ;                      ; MultiSelectOr  ; 1000    ;                         ;                  ;                       ;                                  ;
@@ -126,3 +127,26 @@ line.clear();
 }
 "
                      ; indexer-$snIndexType-incremental ; false ; 0 0/5 * * * ?
+
+### Added Bl ClassificationAttribute related Facets #######
+
+
+INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);sortableType(code);currency[default=false];localized[default=false];multiValue[default=false];facet[default=false];facetType(code);facetSort(code);priority;visible;fieldValueProvider;customFacetSortProvider;rangeSets(name);$classAttributeAssignment
+                                 ;blProductType;Format Coverage;string;; ;true; ;true;MultiSelectOr;Alpha;1000;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Format Coverage::::
+                                 ;blProductType;Max Aperture;string;; ;true; ;true;MultiSelectOr;Alpha;900;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Max Aperture::::
+                                 ;blProductType;Sensor Size;string;; ;true; ;true;MultiSelectOr;Alpha;800;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Sensor Size::::
+                                 ;blProductType;Video Resolution;string;; ;true; ;true;MultiSelectOr;Alpha;700;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Video Resolution::::
+                                 ;blProductType;Megapixels;string;; ;true; ;true;MultiSelectOr;Alpha;600;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Megapixels::::
+                                 ;blProductType;Prime/Zoom;string;; ;true; ;true;MultiSelectOr;Alpha;500;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Prime/Zoom::::
+                                 ;blProductType;AF/MF;string;; ;true; ;true;MultiSelectOr;Alpha;400;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::AF/MF::::
+                                 ;blProductType;Media & Storage Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Media & Storage Type::::
+
+INSERT_UPDATE SolrSearchQueryProperty;indexedProperty(name, solrIndexedType(identifier))[unique=true];facet[default=true];facetType(code);priority;facetDisplayNameProvider;facetSortProvider;facetTopValuesProvider;includeInResponse[default=true];searchQueryTemplate(name, indexedType(identifier))[unique=true][default=DEFAULT:$snIndexType]
+                                     ;Format Coverage:$snIndexType				;	;MultiSelectOr	;1000;	;								;;;
+                                     ;Max Aperture:$snIndexType				;	;MultiSelectOr	;900;	;								;;;
+                                     ;Sensor Size:$snIndexType				;	;MultiSelectOr	;800;	;								;;;
+                                     ;Video Resolution:$snIndexType				;	;MultiSelectOr	;700;	;								;;;
+                                     ;Megapixels:$snIndexType				;	;MultiSelectOr	;600;	;								;;;
+                                     ;Prime/Zoom:$snIndexType				;	;MultiSelectOr	;500;	;								;;;
+                                     ;AF/MF:$snIndexType				;	;MultiSelectOr	;400;	;								;;;
+                                     ;Media & Storage Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;

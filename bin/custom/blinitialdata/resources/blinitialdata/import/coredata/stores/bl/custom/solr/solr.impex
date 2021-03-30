@@ -153,7 +153,7 @@ SELECT DISTINCT tbl.pk, tbl.code FROM (
 # Added new sorting for BL
 INSERT_UPDATE SolrSort ; &sortRefID ; indexedType(identifier)[unique=true] ; code[unique=true] ; useBoost
 ;sortRef1;$solrIndexedType;relevance;true
-;sortRef2;$solrIndexedType;popular;false
+;sortRef2;$solrIndexedType;mostPopular;false
 ;sortRef3;$solrIndexedType;newest;false
 ;sortRef4;$solrIndexedType;price-asc;false
 ;sortRef5;$solrIndexedType;price-desc;false
@@ -163,6 +163,8 @@ INSERT_UPDATE SolrSort ; &sortRefID ; indexedType(identifier)[unique=true] ; cod
 # Added for new sorting field
 INSERT_UPDATE SolrSortField ; sort(indexedType(identifier),code)[unique=true] ; fieldName[unique=true] ; ascending[unique=true]
 ;$solrIndexedType:newest;isNew;false
+;$solrIndexedType:mostPopular;mostPopular;false
+
 
 
 # Non-facet search query properties
@@ -237,6 +239,8 @@ INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; n
 ### Added for new soring property ###
 INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);sortableType(code);currency[default=false];localized[default=false];multiValue[default=false];useForSpellchecking[default=false];useForAutocomplete[default=false];fieldValueProvider;valueProviderParameter;ftsPhraseQuery[default=false];ftsPhraseQueryBoost;ftsQuery[default=false];ftsQueryBoost;ftsFuzzyQuery[default=false];ftsFuzzyQueryBoost;ftsWildcardQuery[default=false];ftsWildcardQueryType(code)[default=POSTFIX];ftsWildcardQueryBoost;ftsWildcardQueryMinTermLength
                                  ;$solrIndexedType; isNew            ;boolean;            ;    ;    ;    ;    ;    ;           ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
+                                 ;$solrIndexedType; mostPopular            ;boolean;            ;    ;    ;    ;    ;    ;           ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
+
 # To Remove OOB Sorts
 Remove SolrSort;indexedType(identifier)[unique=true];code[unique=true];
                ;$solrIndexedType;topRated;
