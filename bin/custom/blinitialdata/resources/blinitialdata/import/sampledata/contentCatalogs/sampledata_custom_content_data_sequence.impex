@@ -33,9 +33,6 @@ $contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentC
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_usedgear.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_homepage_myaccount.impex"), "utf-8", 0, 0);
 
-#Mention here Cart Page related impexes in sequence
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_cartpage.impex"), "utf-8", 0, 0);
-
 #Mention here Category Page related impexes in sequence
 
 
