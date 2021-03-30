@@ -77,10 +77,14 @@ public class CategoryPageController extends AbstractCategoryPageController {
     {
         final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
 
+        // Bl-268 Added For Faceted PLP & Default Sorting for PLP
+        StringBuilder configParam  = new StringBuilder();
         if(StringUtils.isBlank(searchQuery)) {
             for (CategoryModel superCategory : category.getSupercategories()) {
                 if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
-                    searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE) + Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME)+categoryCode;
+                    searchQuery= String.valueOf(
+                        configParam.append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)).append(Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME))
+                            .append(categoryCode));
                 }
             }
         }
