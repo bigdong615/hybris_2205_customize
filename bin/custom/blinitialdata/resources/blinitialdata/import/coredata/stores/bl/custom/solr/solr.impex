@@ -4,8 +4,12 @@
 #
 # Import the Solr configuration for the store
 #
+
+#% impex.info("=============================== Importing content from BLInitialData coredata solr.impex =========================");
+
+
 $productCatalog=blProductCatalog
-$catalogVersions=catalogVersions(catalog(id),version); 
+$catalogVersions=catalogVersions(catalog(id),version);
 $serverConfigName=blSolrServerConfig
 $indexConfigName=blSolrIndexConfig
 $searchConfigName=blPageSize
@@ -18,40 +22,42 @@ $indexLanguages=en
 $indexCurrencies=USD
 $solrMethod=solrQueryMethod(code)[default='GET']
 
- 
- 
+
+
 #
 # Setup the Solr server, indexer, and search configs
 #
- 
+
 # Create the solr server configuration
 INSERT_UPDATE SolrServerConfig ; name[unique=true] ; mode(code)
-;Default;standalone
+                               ;Default;standalone
 # Changed To Post Method
 INSERT_UPDATE SolrServerConfig ;name[unique=true];$solrMethod
-;Default; POST
+                               ;Default; POST
 
-                               
+
 # Create the solr indexer configuration
 INSERT_UPDATE SolrIndexConfig ; name[unique=true] ; batchSize ; numberOfThreads ; indexMode(code) ;
-;$indexConfigName;100;1;TWO_PHASE;
+                              ;$indexConfigName;100;1;TWO_PHASE;
 
 # Create the faceted search configuration
 INSERT_UPDATE SolrSearchConfig ; description[unique=true] ; pageSize
-;$searchConfigName;20
+                               ;$searchConfigName;9
 
-#                              
+#
 # Setup the indexed types, their properties, and the update queries
-#                              
-                               
+#
+
 # Declare the indexed type Product
-INSERT_UPDATE SolrIndexedType ; identifier[unique=true] ; type(code) ; variant ; sorts(&sortRefID) 
-                              
+INSERT_UPDATE SolrIndexedType ; identifier[unique=true] ; type(code) ; variant ; sorts(&sortRefID)
+;$solrIndexedType;BlProduct;false;sortRef1,sortRef2,sortRef3,sortRef4,sortRef5
+
+
 INSERT_UPDATE SolrFacetSearchConfig ; name[unique=true] ; description ; indexNamePrefix ; languages(isocode) ; currencies(isocode) ; solrServerConfig(name) ; solrSearchConfig(description) ; solrIndexConfig(name) ; solrIndexedTypes(identifier) ; enabledLanguageFallbackMechanism ; $catalogVersions
-;$facetSearchConfigName;$facetSearchConfigDescription;$searchIndexNamePrefix;$indexLanguages;$indexCurrencies;Default;Default;Default;$solrIndexedType;true;$productCatalog:Online,$productCatalog:Staged
+                                    ;$facetSearchConfigName;$facetSearchConfigDescription;$searchIndexNamePrefix;$indexLanguages;$indexCurrencies;Default;Default;Default;$solrIndexedType;true;$productCatalog:Online,$productCatalog:Staged
 
 UPDATE BaseSite ; uid[unique=true] ; solrFacetSearchConfiguration(name)
-;$indexBaseSite;$facetSearchConfigName
+                ;$indexBaseSite;$facetSearchConfigName
 
 # Search query template
 INSERT_UPDATE SolrSearchQueryTemplate ; name[unique=true] ; indexedType(identifier)[unique=true] ; ftsQueryBuilder    ; enableHighlighting[default=true]
@@ -59,8 +65,8 @@ INSERT_UPDATE SolrSearchQueryTemplate ; name[unique=true] ; indexedType(identifi
 
 
 # Define price range set
-INSERT_UPDATE SolrValueRangeSet ; name[unique=true] ; qualifier ; type ; solrValueRanges(&rangeValueRefID) 
-                                
+INSERT_UPDATE SolrValueRangeSet ; name[unique=true] ; qualifier ; type ; solrValueRanges(&rangeValueRefID)
+
 # Define price ranges           
 INSERT_UPDATE SolrValueRange ; &rangeValueRefID ; solrValueRangeSet(name)[unique=true] ; name[unique=true] ; from ; to
 
@@ -103,7 +109,9 @@ INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[
 INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); multiValue[default = true]; facet[default = true]; facetType(code); facetSort(code); priority; visible; categoryField[default = true]; fieldValueProvider               ; facetDisplayNameProvider         ; topValuesProvider
                                  ; $solrIndexedType                          ; categoryPath       ; string    ;                           ;                      ; Refine         ; Alpha          ; -9999   ; false  ; false                        ; categoryPathValueProvider        ;
                                  ; $solrIndexedType                          ; category           ; string    ;                           ;                      ; Refine         ; Alpha          ; 6000    ; true   ;                              ; blCategoryCodeValueProvider      ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
-                                 ; $solrIndexedType                          ; brand              ; string    ;                           ;                      ; Refine         ; Alpha          ; 5000    ; true   ;                              ; blBrandCategoryCodeValueProvider ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
+REMOVE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); multiValue[default = true]; facet[default = true]; facetType(code); facetSort(code); priority; visible; categoryField[default = true]; fieldValueProvider               ; facetDisplayNameProvider         ; topValuesProvider
+; $solrIndexedType                          ; brand              ; string    ;                           ;                      ; Refine         ; Alpha          ; 5000    ; true   ;                              ; blBrandCategoryCodeValueProvider ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
+
 
 # Other facet properties
 INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);sortableType(code);currency[default=false];localized[default=false];multiValue[default=false];facet[default=true];facetType(code);facetSort(code);priority;visible;useForSpellchecking[default=false];useForAutocomplete[default=false];fieldValueProvider;facetDisplayNameProvider;customFacetSortProvider;topValuesProvider;rangeSets(name)
@@ -116,7 +124,7 @@ INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[
 # Create the queries that will be used to extract data for Solr  And Excluding Product while going for Indexing Based on some restriction
 INSERT_UPDATE SolrIndexerQuery;solrIndexedType(identifier)[unique=true];identifier[unique=true];type(code);injectCurrentDate[default=true];injectCurrentTime[default=true];injectLastIndexTime[default=true];query;user(uid)
                               ;$solrIndexedType;$searchIndexNamePrefix-fullQuery;full;;;false;"
-SELECT {PK} FROM {blProduct}";anonymous
+SELECT {PK} FROM {blProduct} where {productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN ('SUBPARTS','CONSUMABLES')}})";anonymous
 
                               ;$solrIndexedType;$searchIndexNamePrefix-updateQuery;update;;;;"
 SELECT DISTINCT tbl.pk, tbl.code FROM (
@@ -141,11 +149,22 @@ SELECT DISTINCT tbl.pk, tbl.code FROM (
 ";anonymous
 
 
-# Define the available sorts
-INSERT_UPDATE SolrSort ; &sortRefID ; indexedType(identifier)[unique=true] ; code[unique=true] ; useBoost 
-                       
-# Define the sort fields
+# Define the available sorts for Bl
+# Added new sorting for BL
+INSERT_UPDATE SolrSort ; &sortRefID ; indexedType(identifier)[unique=true] ; code[unique=true] ; useBoost
+;sortRef1;$solrIndexedType;relevance;true
+;sortRef2;$solrIndexedType;mostPopular;false
+;sortRef3;$solrIndexedType;newest;false
+;sortRef4;$solrIndexedType;price-asc;false
+;sortRef5;$solrIndexedType;price-desc;false
+
+
+
+# Added for new sorting field
 INSERT_UPDATE SolrSortField ; sort(indexedType(identifier),code)[unique=true] ; fieldName[unique=true] ; ascending[unique=true]
+;$solrIndexedType:newest;isNew;false
+;$solrIndexedType:mostPopular;mostPopular;false
+
 
 
 # Non-facet search query properties
@@ -185,7 +204,7 @@ INSERT_UPDATE SolrSearchQueryProperty;indexedProperty(name, solrIndexedType(iden
 INSERT_UPDATE SolrSearchQueryProperty; indexedProperty(name, solrIndexedType(identifier))[unique = true]; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$solrIndexedType]; facet[default = true]; facetType(code); includeInResponse[default = true]; facetDisplayNameProvider         ; facetSortProvider; facetTopValuesProvider
                                      ; categoryPath:$solrIndexedType                                    ;                                                                                                      ;                      ; Refine         ;                                  ;                                  ;
                                      ; category:$solrIndexedType                                        ;                                                                                                      ;                      ; MultiSelectOr  ;                                  ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
-                                     ; brand:$solrIndexedType                                           ;                                                                                                      ;                      ; MultiSelectOr  ;                                  ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
+#                                     ; brand:$solrIndexedType                                           ;                                                                                                      ;                      ; MultiSelectOr  ;                                  ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
 
 # Other search query facets
 INSERT_UPDATE SolrSearchQueryProperty;indexedProperty(name, solrIndexedType(identifier))[unique=true];facet[default=true];facetType(code);priority;facetDisplayNameProvider;facetSortProvider;facetTopValuesProvider;includeInResponse[default=true];searchQueryTemplate(name, indexedType(identifier))[unique=true][default=DEFAULT:$solrIndexedType]
@@ -201,19 +220,29 @@ INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; n
                                  ; $solrIndexedType                          ;titleTag            ;text     ;                   ;                          ;                           ;                            ;true                                 ;true                                ;springELValueProvider  ;                       ;                                ;                    ; true                     ;90              ;                               ;                   ; true                             ;POSTFIX                                       ;45                    ;3
                                  ; $solrIndexedType                          ;shortDescription    ;text     ;                   ;                          ;                           ;                            ;true                                 ;true                                ;springELValueProvider  ;                       ;                                ;                    ; true                     ;90              ;                               ;                   ; true                             ;POSTFIX                                       ;45                    ;3
 ### BL Product  #######
-INSERT_UPDATE SolrSearchQueryProperty ; indexedProperty(name, solrIndexedType(identifier))[unique=true] ; searchQueryTemplate(name, indexedType(identifier))[unique=true][default=DEFAULT:$solrIndexedType] ; facet ; ftsPhraseQuery[default=false] ; ftsPhraseQueryBoost ; ftsQuery[default=false] ; ftsQueryBoost ; ftsFuzzyQuery[default=false] ; ftsFuzzyQueryBoost ; ftsWildcardQuery[default=false] ; ftsWildcardQueryType(code)[default=POSTFIX] ; ftsWildcardQueryBoost ; ftsWildcardQueryMinTermLength ; includeInResponse[default=true] ; useForHighlighting[default=false]
-                                      ; displayName:$solrIndexedType                                    ;                                                                                                   ;       ; TRUE                          ; 90                  ;                         ;               ; TRUE                         ;                    ;                                 ; POSTFIX                                     ; 45                    ; 3                             ;                                 ;
-                                      ; titleTag:$solrIndexedType                                       ;                                                                                                   ;       ; TRUE                          ; 90                  ;                         ;               ; TRUE                         ;                    ;                                 ; POSTFIX                                     ; 45                    ; 3                             ;                                 ;
-                                      ; shortDescription:$solrIndexedType                               ;                                                                                                   ;       ; TRUE                          ; 90                  ;                         ;               ; TRUE                         ;                    ;                                 ; POSTFIX                                     ; 45                    ; 3                             ;                                 ;
-                                      ; store:$solrIndexedType                                           ;                                                                                                      ;                      ; MultiSelectOr  ;                                  ;  ;
+INSERT_UPDATE SolrSearchQueryProperty; indexedProperty(name, solrIndexedType(identifier))[unique = true]; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$solrIndexedType]; facet; ftsPhraseQuery[default = false]; ftsPhraseQueryBoost; ftsQuery[default = false]; ftsQueryBoost; ftsFuzzyQuery[default = false]; ftsFuzzyQueryBoost; ftsWildcardQuery[default = false]; ftsWildcardQueryType(code)[default = POSTFIX]; ftsWildcardQueryBoost; ftsWildcardQueryMinTermLength; includeInResponse[default = true]; useForHighlighting[default = false]
+                                     ; displayName:$solrIndexedType                                     ;                                                                                                      ;      ; TRUE                           ; 90                 ;                          ;              ; TRUE                          ;                   ;                                  ; POSTFIX                                      ; 45                   ; 3                            ;                                  ;
+                                     ; titleTag:$solrIndexedType                                        ;                                                                                                      ;      ; TRUE                           ; 90                 ;                          ;              ; TRUE                          ;                   ;                                  ; POSTFIX                                      ; 45                   ; 3                            ;                                  ;
+                                     ; shortDescription:$solrIndexedType                                ;                                                                                                      ;      ; TRUE                           ; 90                 ;                          ;              ; TRUE                          ;                   ;                                  ; POSTFIX                                      ; 45                   ; 3                            ;                                  ;
 
-INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); multiValue[default = true]; facet[default = true]; facetType(code); facetSort(code); priority; visible; categoryField[default = true]; fieldValueProvider; facetDisplayNameProvider; topValuesProvider
-; $solrIndexedType                          ; store              ; string    ;                           ;                      ; MultiSelectOr         ; Alpha          ; 5000    ; true   ;                              ; blGlobalValueProvider ;  ;
+INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); multiValue[default = true]; facet[default = true]; facetType(code); facetSort(code); priority; visible; categoryField[default = true]; fieldValueProvider    ; facetDisplayNameProvider; topValuesProvider
+                                 ; $solrIndexedType                             ; store               ; string    ;                          ;                      ; MultiSelectOr  ; Alpha          ; 5000    ; true   ;                              ; blGlobalValueProvider ;                         ;
 
 
-INSERT_UPDATE SolrSearchQueryProperty; indexedProperty(name, solrIndexedType(identifier))[unique = true]; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$solrIndexedType]; facet[default = true]; facetType(code); includeInResponse[default = true]; facetDisplayNameProvider         ; facetSortProvider; facetTopValuesProvider
-                                     ; brand:$solrIndexedType                                           ;                                                                                                      ;                      ; MultiSelectOr  ;                                  ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
+INSERT_UPDATE SolrSearchQueryProperty; indexedProperty(name, solrIndexedType(identifier))[unique = true]; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$solrIndexedType]; facet[default = true]; facetType(code)    ; includeInResponse[default = true] ; facetDisplayNameProvider         ; facetSortProvider; facetTopValuesProvider
+                                     ; brand:$solrIndexedType   ;                                                        ;            ; MultiSelectOr  ;                         ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
+                                     ; store:$solrIndexedType  ;                                                         ;            ; MultiSelectOr  ;                         ;                                  ;
 
 INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; name[unique = true]; type(code); multiValue[default = true]; facet[default = true]; facetType(code); facetSort(code); priority; visible; categoryField[default = true]; fieldValueProvider               ; facetDisplayNameProvider         ; topValuesProvider
-                                 ; $solrIndexedType                          ; brand              ; string    ;                           ;                      ; MultiSelectOr         ; Alpha          ; 5000    ; true   ;                              ; blBrandCategoryCodeValueProvider ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
+                                 ; $solrIndexedType                          ; brand              ; string    ;                           ;                      ; MultiSelectOr  ; Alpha          ; 5000    ; true   ;                              ; blBrandCategoryCodeValueProvider ; categoryFacetDisplayNameProvider ; defaultTopValuesProvider
 
+### Added for new soring property ###
+INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);sortableType(code);currency[default=false];localized[default=false];multiValue[default=false];useForSpellchecking[default=false];useForAutocomplete[default=false];fieldValueProvider;valueProviderParameter;ftsPhraseQuery[default=false];ftsPhraseQueryBoost;ftsQuery[default=false];ftsQueryBoost;ftsFuzzyQuery[default=false];ftsFuzzyQueryBoost;ftsWildcardQuery[default=false];ftsWildcardQueryType(code)[default=POSTFIX];ftsWildcardQueryBoost;ftsWildcardQueryMinTermLength
+                                 ;$solrIndexedType; isNew            ;boolean;            ;    ;    ;    ;    ;    ;           ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
+                                 ;$solrIndexedType; mostPopular            ;boolean;            ;    ;    ;    ;    ;    ;           ;              ;    ;   ;    ;   ;    ;  ;    ;   ;  ;
+
+# To Remove OOB Sorts
+Remove SolrSort;indexedType(identifier)[unique=true];code[unique=true];
+               ;$solrIndexedType;topRated;
+               ;$solrIndexedType;name-desc;
+               ;$solrIndexedType;name-asc;

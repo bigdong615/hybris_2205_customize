@@ -8,10 +8,8 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<c:if test="${not empty pageData.breadcrumbs}">
-
+<c:if test="${not empty pageData.breadcrumbs && pageData.pagination.totalNumberOfResults > 0}">
 	<div class="facet js-facet">
-
 	<div class="js-facet-name">
 		<span class="glyphicon facet__arrow"></span>
 	</div>
