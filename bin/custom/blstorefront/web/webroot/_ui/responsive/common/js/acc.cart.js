@@ -7,8 +7,7 @@ ACC.cart = {
         "bindMultiDEntryRemoval",
         "bindMultidCartProduct",
         ["bindApplyVoucher", $("#js-voucher-apply-btn").length != 0],
-        ["bindToReleaseVoucher", $("#js-applied-vouchers").length != 0],
-        "bindClearCart"
+        ["bindToReleaseVoucher", $("#js-applied-vouchers").length != 0]
     ],
 
     bindHelp: function () {
@@ -395,23 +394,6 @@ ACC.cart = {
         $('.js-release-voucher-remove-btn').on("click", function (event) {
             $(this).closest('form').submit();
         });
-    },
+    }
 
-    bindClearCart: function () {
-            $('.clear-cart-page').on("click", function (event) {
-
-                       var method = "GET";
-                                   $.ajax({
-                                       url: ACC.config.encodedContextPath + '/cart/emptyCart',
-                                       type: method,
-                                       success: function (data) {
-                                            window.location.reload();
-                                       },
-                                       error: function (xht, textStatus, ex) {
-                                           console.log("Cart can't be cleared");
-                                       }
-
-                                   });
-            });
-            }
 };
