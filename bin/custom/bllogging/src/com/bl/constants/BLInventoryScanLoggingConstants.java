@@ -16,7 +16,11 @@ public class BLInventoryScanLoggingConstants {
     public static final int TWO = 2;
     public static final int THREE = 3;
     public static final int FOUR = 4;
+    public static final int SEVEN = 7;
     public static final int EIGHT = 8;
+    public static final int FORTY = 40;
+
+    public static final String HUN_PER = "100%";
 
     public static final String BIN = "BIN";
     public static final String MA = "MA";
@@ -29,19 +33,20 @@ public class BLInventoryScanLoggingConstants {
     public static final String IN_HOUSE = "In House Scrapped Items";
     public static final String UNKNOWN = "Unknown Carrier";
 
-    /* BL Inventory Scan Error Messages */
-    public static final String MUST_2_ERROR = "Must have two barcode scans or more";
-    public static final String LAST_SCAN_ERROR = "Last scan must be a location";
-    public static final String LAST_SCAN_INVALID_ERROR = "Last scan must be valid Inventory Location";
-    public static final String MANY_LOC_ERROR = "Too many location scans in sequence for an item";
-    public static final String MAX_BARCODE_LIMIT_ERROR = "Invalid number of barcodes in sequence, max: ";
-    public static final String SCAN_ERROR_FOR_BATCH = "Failed to update inventory location for: ";
-    public static final String SCAN_SUCCESS = "Successfully record scans: ";
-    public static final String SCAN_DATA_ERROR = "Scan data: ";
+    public static final String NOTIFICATION_HANDLER = "webSanToolNotification";
+    public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE = "maxBarcodeLimitErrorFailure";
+    public static final String MUST_TWO_BARCODE_ERROR_FAILURE = "mustTwoBarcodeErrorFailure";
+    public static final String SCAN_BATCH_ERROR_FAILURE = "scanBatchErrorFailure";
+    public static final String SCAN_BARCODE_SUCCESS = "scanBarcodeSuccess";
+    public static final String LAST_SCAN_INVALID_ERROR_FAILURE = "lastScanInvalidErrorFailure";
+    public static final String LAST_SCAN_ERROR_FAILURE = "lastScanErrorFailure";
+    public static final String MANY_LOCATION_ERROR_FAILURE = "manyLocationErrorFailure";
+    public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
+    public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
 
-    private BLInventoryScanLoggingConstants() {
+    public static final String MAX_SEQUENCE_LIMIT_KEY = "bl.inventory.scan.maxSequenceScan.limit";
 
-    }
+    private BLInventoryScanLoggingConstants() { }
 
     public static List<String> getDefaultInventoryLocation() {
         List<String> defaultLocations = new ArrayList<>();

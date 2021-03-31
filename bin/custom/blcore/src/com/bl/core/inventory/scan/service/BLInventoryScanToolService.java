@@ -1,8 +1,7 @@
 package com.bl.core.inventory.scan.service;
 
-import com.bl.core.jalo.BLInventoryLocation;
-import com.bl.core.jalo.BlSerialProduct;
-import com.bl.facades.inventoryScan.model.BlInventoryScanResultData;
+import com.bl.core.model.BLInventoryLocationModel;
+import com.bl.core.model.BlSerialProductModel;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,33 +21,33 @@ public interface BLInventoryScanToolService {
     boolean validateEmployeeByUsernameAndPassword(String username, String password);
 
     /**
+     * @param barcodes from input list
+     * @return int for success/error message
+     */
+    int checkValidLocationInBarcodeList(List<String> barcodes);
+
+    /**
      * @param locationId for BLInventoryLocation
      * @return BLInventoryLocation
      */
-    BLInventoryLocation getInventoryLocationById(String locationId);
+    BLInventoryLocationModel getInventoryLocationById(String locationId);
 
     /**
      * @param barcode for BLSerialProduct
      * @return BLSerial Product
      */
-    BlSerialProduct getSerialProductByBarcode(String barcode);
+    BlSerialProductModel getSerialProductByBarcode(String barcode);
 
     /**
      * @param barcode for BLSerialProduct
      * @return List of BLSerial Product
      */
-    Collection<BlSerialProduct> getSerialProductsByBarcode(Collection<String> barcode);
+    Collection<BlSerialProductModel> getSerialProductsByBarcode(Collection<String> barcode);
 
     /**
-     * @param serialId for BLSerialProduct
-     * @return BLSerial Product
+     * @param barcodes for BLSerialProduct
+     * @return List of BLSerial Product
      */
-    BlSerialProduct getSerialProductBySerialId(String serialId);
-
-    /**
-     * @param barcodes from frontend
-     * @return Scan Response Data
-     */
-    BlInventoryScanResultData webScanToolUpdateInventoryLocation(List<String> barcodes);
+    List<String> getFailedBarcodeList(List<String> barcodes);
 
 }
