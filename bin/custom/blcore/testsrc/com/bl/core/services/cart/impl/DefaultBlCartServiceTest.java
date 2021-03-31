@@ -1,31 +1,54 @@
 package com.bl.core.services.cart.impl;
 
 import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.commerceservices.order.CommerceCartService;
+import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartCalculationStrategy;
+import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartService;
+import de.hybris.platform.commerceservices.order.impl.DefaultCommerceRemoveEntriesStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.order.CalculationService;
+import de.hybris.platform.servicelayer.model.ModelService;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
+
 import java.util.Collections;
 import java.util.List;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+/**
+ * @author Neeraj Singh
+ */
 @UnitTest
 public class DefaultBlCartServiceTest {
 
-     @Mock
-     private CommerceCartService commerceCartService;
+    @InjectMocks
+    private final DefaultCommerceCartService commerceCartService = new DefaultCommerceCartService();
 
-     @Mock
-     private CartModel cartModel;
+    @InjectMocks
+    @Spy
+    private final DefaultCommerceRemoveEntriesStrategy commerceRemoveEntriesStrategy = new DefaultCommerceRemoveEntriesStrategy();
+
+    @InjectMocks
+    @Spy
+    private final DefaultCommerceCartCalculationStrategy cartCalculationStrategy = new DefaultCommerceCartCalculationStrategy();
+
+    @Mock
+    private CartModel cartModel;
+
+    @Mock
+    private ModelService modelService;
+
+    @Mock
+    private CalculationService calculationService;
 
     @Before
     public void setup(){
         MockitoAnnotations.initMocks(this);
+        commerceCartService.setCommerceCartCalculationStrategy(cartCalculationStrategy);
+        commerceCartService.setCommerceRemoveEntriesStrategy(commerceRemoveEntriesStrategy);
     }
 
     @Test
@@ -39,5 +62,6 @@ public class DefaultBlCartServiceTest {
         parameter.setEnableHooks(true);
         parameter.setCart(cartModel);
         commerceCartService.removeAllEntries(parameter);
+        Mockito.verify(modelService,Mockito.times(1)).removeAll(entries);
     }
 }
