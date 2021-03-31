@@ -8,6 +8,7 @@ import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandlerAdapter;
 import de.hybris.platform.util.Config;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
                     new Object[0]);
         } else {
             List<String> barcodes = webScanToolData.getBarcodeInputField();
-            if(barcodes != null){
+            if(CollectionUtils.isNotEmpty(barcodes)){
                 int barcodeSize = barcodes.size();
                 if (barcodeSize >= BLInventoryScanLoggingConstants.TWO && barcodeSize < BLInventoryScanLoggingConstants.EIGHT) {
                     createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes), barcodes);
@@ -69,7 +70,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
     private void createResponseMegForScan(int result, List<String> barcodes) {
         if (result == BLInventoryScanLoggingConstants.ONE) {
             List<String> failedBarcodeList = getBlInventoryScanToolService().getFailedBarcodeList(barcodes);
-            if (failedBarcodeList != null && failedBarcodeList.size() != 0) {
+            if (CollectionUtils.isNotEmpty(failedBarcodeList)) {
                 this.getNotificationService().notifyUser(BLInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                         BLInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.WARNING,
                         new Object[]{failedBarcodeList});

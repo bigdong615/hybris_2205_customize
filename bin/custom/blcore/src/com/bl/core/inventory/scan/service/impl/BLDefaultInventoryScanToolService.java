@@ -10,6 +10,7 @@ import de.hybris.platform.core.Constants;
 import de.hybris.platform.core.model.user.EmployeeModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
@@ -97,7 +98,7 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
      * @return int for success/error message
      */
     private int checkValidInventoryLocation(String inventoryLocation, List<String> filteredLocationList) {
-        if ((filteredLocationList != null && !filteredLocationList.isEmpty())) {
+        if (CollectionUtils.isNotEmpty(filteredLocationList)) {
             if (filteredLocationList.size() == BLInventoryScanLoggingConstants.ONE) {
                 return validateLocation(inventoryLocation, filteredLocationList);
             }
@@ -145,9 +146,11 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
     private void setInventoryLocationOnSerial(List<String> failedBarcodeList, Collection<BlSerialProductModel> blSerialProducts, String iteratorBarcode) {
         BlSerialProductModel blSerialProduct = blSerialProducts.stream().filter(p -> p.getBarcode().equals(iteratorBarcode)).findFirst().orElse(null);
         if (blSerialProduct != null) {
-            blSerialProduct.setSerialInventoryLocation(getBlInventoryLocation());
-            blSerialProduct.setSerialLastLocation(getBlInventoryLocation());
-            blSerialProduct.setSerialLastParentLocation(getBlInventoryLocation().getParentInventoryLocation());
+            BLInventoryLocationModel blInventoryLocation = getBlInventoryLocation();
+
+            blSerialProduct.setSerialInventoryLocation(blInventoryLocation);
+            blSerialProduct.setSerialLastLocation(blInventoryLocation);
+            blSerialProduct.setSerialLastParentLocation(blInventoryLocation.getParentInventoryLocation());
             modelService.save(blSerialProduct);
             modelService.refresh(blSerialProduct);
 
@@ -155,10 +158,21 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
             BLInventoryLocationScanHistoryModel blInventoryLocationScanHistory = new BLInventoryLocationScanHistoryModel();
             blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
             blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
-            blInventoryLocationScanHistory.setInventoryLocation(getBlInventoryLocation());
+            blInventoryLocationScanHistory.setInventoryLocation(blInventoryLocation);
             blInventoryLocationScanHistory.setScanTime(new Date());
             modelService.save(blInventoryLocationScanHistory);
             modelService.refresh(blInventoryLocationScanHistory);
+
+            /* History on Location*/
+            List<BLInventoryLocationScanHistoryModel> blInventoryLocationScanHistoryModels = blInventoryLocation.getInventoryLocationScanHistory();
+            if(CollectionUtils.isNotEmpty(blInventoryLocationScanHistoryModels)) {
+                blInventoryLocationScanHistoryModels.add(blInventoryLocationScanHistory);
+            } else {
+                List<BLInventoryLocationScanHistoryModel> blInventoryLocationScanHistoryTempModels = new ArrayList<>();
+                blInventoryLocationScanHistoryTempModels.add(blInventoryLocationScanHistory);
+            }
+            blInventoryLocation.setInventoryLocationScanHistory(blInventoryLocationScanHistoryModels);
+
         } else {
             failedBarcodeList.add(iteratorBarcode);
         }
