@@ -1,7 +1,5 @@
 package com.bl.core.services.cart;
 
-import de.hybris.platform.core.model.order.CartModel;
-
 /**
  * @author Neeraj Singh
  */

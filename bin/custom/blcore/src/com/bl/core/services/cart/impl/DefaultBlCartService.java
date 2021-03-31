@@ -44,10 +44,6 @@ public class DefaultBlCartService implements BlCartService {
                 commerceCartParameter.setEnableHooks(true);
                 commerceCartParameter.setCart(cartModel);
                 commerceCartService.removeAllEntries(commerceCartParameter);
-                getModelService().removeAll(cartModel.getAllPromotionResults());
-                cartModel.setAppliedCouponCodes(Collections.emptySet());
-                getModelService().save(cartModel);
-                getModelService().refresh(cartModel);
 
                 BlLogger.logFormattedMessage(LOGGER, Level.DEBUG, BlCoreConstants.EMPTY_STRING,"All entries removed from cart with code : {}", cartModel.getCode());
             } catch (final Exception ex) {
