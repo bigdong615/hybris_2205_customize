@@ -5,7 +5,7 @@
 #% impex.info("=============================== Importing content from BLInitialData core_custom_stores_data_sequence =========================");
 
 #mention custom paths here 
-$storesCustomPath = /blinitialdata/import/coredata/stores/bl/custom
+$storesCustomPath = /blinitialdata/import/coredata/stores/bl/custom/solr
 
  
 #Mention here store related custom impexes in sequence

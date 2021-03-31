@@ -682,6 +682,12 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Customer facing details of what comes with the for sale version of the item</description>
                      </attribute>
+                   <attribute qualifier="mostPopular" type="java.lang.Boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="false"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is most popular</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"

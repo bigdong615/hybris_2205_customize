@@ -58,9 +58,9 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFi
                       ;;5353841 ;;"Still shipped on order 1134356 - return tracking has not been shipped" ;;;;;;;;;
                       ;;5579698 ;;"Automatically set active by receiving barcode scan for order #1154291";;;;;;;;;
                       ;;5789775 ;;;;;;;;;;
-                      ;;198534 ;;;;;;;1ZE6W3113917380719,1ZE6W3113917395301,1ZE6W3113917396051,1ZE6W3113917396560,1ZE6W3113917397112;;;
-                      ;;207730 ;;;;;;;2570540792;;;
-                      ;;220232 ;;;;;;;800000000000;;;
+                      ;;198534 ;;;;;;;;1ZE6W3113917380719,1ZE6W3113917395301,1ZE6W3113917396051,1ZE6W3113917396560,1ZE6W3113917397112;;;;
+                      ;;207730 ;;;;;;;;2570540792;;;
+                      ;;220232 ;;;;;;;;800000000000;;;
 
 
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;forSaleNotes;withOrderID;finalSalePrice;dateOfSale;conditionRatingOverallScore

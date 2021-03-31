@@ -57,18 +57,18 @@ INSERT_UPDATE BLProduct ;$catalogVersion;$approved;productId[unique=true];code[u
                         ;;;567;sennheiser_lav;audio,Sennheiser;Sennheiser EW 122P G3 Wireless Lavalier Mic Pack (516-558 MHz);0;Sennheiser EW 122P G3 Wireless Lavalier Mic Pack (516-558 MHz);SEEW122PG3A;EW122PG3-A;7340000000000;AUDIO;true;true;false;false;BARCODE;true;true;87;Sennheiser
                         ;;;569;beachtek_DXA;audio,Beachtek;Beachtek DXA-SLR Active Audio Adapter;0;Beachtek DXA-SLR Active Audio Adapter;BEDXASLR;NA;NA;AUDIO;true;false;false;false;BARCODE;true;true;85;Beachtek
                         ;;;571;female_XLR;audio,exf_series;3 Foot Mini Female to 3-Pin XLR Male Cable;0;3 Foot Mini Female to 3-Pin XLR Male Cable;COCMMXM3;XLRP-MP-3ST;808000000000;AUDIO;true;false;false;false;BARCODE;true;true;145;EXF Series
-                        ;;;575;boom_pole;audio,K-Tek;K-Tek Aluminum Boompole with Internal XLR Cable;0;K-Tek Aluminum Boompole with Internal XLR Cable;KTKE110CCR;KE-110CCR;NA;AUDIO;true;false;false;false;BARCODE;true;true;130;K-Tek
+                        ;;;575;boom_pole;audio,ktek;K-Tek Aluminum Boompole with Internal XLR Cable;0;K-Tek Aluminum Boompole with Internal XLR Cable;KTKE110CCR;KE-110CCR;NA;AUDIO;true;false;false;false;BARCODE;true;true;130;K-Tek
 ## subparts
                         ;;;122;D23wR_Canon;subparts;Quantum Instruments D23wR QTTL Adapter for Canon;0;Quantum Instruments D23wR QTTL Adapter for Canon;QUD23WR;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
                         ;;;123;FW10w;subparts;Quantum Instruments FW10w FreeXwire Digital Transceiver;0;Quantum Instruments FW10w FreeXwire Digital Transceiver;NA;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
-                        ;;;182;macrolite_adapter;subparts;Canon 72C Macrolite Adapter;0;Canon 72C Macrolite Adapter;CAMLA72C;NA;NA;SUBPARTS;true;false;false;false;NA;false;false;2;Canon
+                        ;;;182;macrolite_adapter;subparts;Canon 72C Macrolite Adapter;0;Canon 72C Macrolite Adapter;CAMLA72C;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;2;Canon
                         ;;;269;D22wR_Nikon;subparts;Quantum Instruments D22wR QTTL Adapter for Nikon;0;Quantum Instruments D22wR QTTL Adapter for Nikon;QUD22WR;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
-                        ;;;294;d1_air_500w;subparts;Profoto D1 Air 500 w/s Monolight;0;Profoto D1 Air 500 w/s Monolight;PRD1A5002LK;NA;NA;SUBPARTS;true;false;false;false;NA;false;false;NA
+                        ;;;294;d1_air_500w;subparts;Profoto D1 Air 500 w/s Monolight;0;Profoto D1 Air 500 w/s Monolight;PRD1A5002LK;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
                         ;;;295;air_commander-d1;subparts;air_commander-d1;0;air_commander-d1;NA;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
                         ;;;404;aquatech_D2;subparts;aquatech_D2;0;aquatech_D2;NA;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;9;Aquatech
                         ;;;524;Redrock_arm;subparts;Redrock_arm;0;Redrock_arm;NA;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
-                        ;;;525;Redrock_micromount;subparts;Redrock_micromount;0;Redrock_micromount;RE4250001;NA;NA;SUBPARTS;true;false;false;false;NA;false;false;NA
-                        ;;;527;HDMI_Cable_3_Feet;subparts;HDMI to HDMI Cable (3-Foot);0;HDMI to HDMI Cable (3-Foot);HOHDMA403;NA;NA;SUBPARTS;true;false;false;false;NA;false;false;NA
+                        ;;;525;Redrock_micromount;subparts;Redrock_micromount;0;Redrock_micromount;RE4250001;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
+                        ;;;527;HDMI_Cable_3_Feet;subparts;HDMI to HDMI Cable (3-Foot);0;HDMI to HDMI Cable (3-Foot);HOHDMA403;NA;NA;SUBPARTS;true;false;false;false;BARCODE;false;false;NA
 #subpartsAndConsumables
                         ;;;811;Canon_back_cap;subparts;Canon EF Back Cap;0;Canon EF Back Cap;CALCRE;NA;NA;SUBPARTS;true;false;false;false;NONE;false;false;NA
                         ;;;812;77mm_front_cap;subparts;77mm Lens Cap;0;77mm Lens Cap;SELCC77;NA;NA;SUBPARTS;true;false;false;false;NONE;false;false;NA
@@ -95,10 +95,10 @@ INSERT_UPDATE BLProduct ;$catalogVersion;$approved;productId[unique=true];code[u
                         ;;;53;72mm_CP_Filter;audio-accessories;72mm Circular Polarizing Filter;0;72mm Circular Polarizing Filter;TICP72;72CP;49383048483;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;2;Canon
                         ;;;54;77mm_CP_Filter;audio-accessories;Circular Polarizing 77mm Filter;0;Circular Polarizing 77mm Filter;TICP77;77CP;49383050455;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;179;Other
                         ;;;55;58mm_CP_Filter;audio-accessories;58mm Circular Polarizing Filter;0;58mm Circular Polarizing Filter;TICP58;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;2;Canon
-                        ;;;56;BW_67mm_102_ND;audio-accessories;B+W 67mm 102 ND Filter;0;B+W 67mm 102 ND Filter;BW102MC67;NA;NA;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;NA;false;false;NA
+                        ;;;56;BW_67mm_102_ND;audio-accessories;B+W 67mm 102 ND Filter;0;B+W 67mm 102 ND Filter;BW102MC67;NA;NA;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;false;false;NA
                         ;;;57;Fotod'oX_Grad_ND_4_77mm;audio-accessories;Graduated Neutral Density 4x 77mm Filter;0;Graduated Neutral Density 4x 77mm Filter;HEGND.677;NA;NA;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;2;Canon
                         ;;;58;67mm_Skylight_1B;audio-accessories;67mm Skylight 1B Filter;0;67mm Skylight 1B Filter;HOSLMC67;A-67SKY-GB;NA;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;179;Other
-                        ;;;59;heliopan_77;audio-accessories;heliopan_77;0;heliopan_77;NA;h77;NA;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;SERIAL;true;false;131;Heliopan
+                        ;;;59;heliopan_77;audio-accessories;heliopan_77;0;heliopan_77;NA;h77;NA;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;131;Heliopan
                         ;;;61;77_intense;audio-accessories;77_intense;0;77_intense;NA;NA;NA;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;NA
                         ;;;76;RS-80N3_remote_switch;audio-accessories;Canon RS-80N3 Remote Shutter Cable;0;Canon RS-80N3 Remote Shutter Cable;CARS80N3;2476A001;82966581571;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;true;false;false;false;BARCODE;true;false;2;Canon
 #video
