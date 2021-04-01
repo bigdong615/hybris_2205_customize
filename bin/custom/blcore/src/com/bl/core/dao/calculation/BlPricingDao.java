@@ -30,6 +30,6 @@ public interface BlPricingDao {
    * @param blProductModel
    * @return the price row model
    */
-  PriceRowModel getPriceRowByDuration(DurationEnum duration, BlProductModel blProductModel);
+  PriceRowModel getPriceRowByDuration(final DurationEnum duration,final BlProductModel blProductModel);
 
 }

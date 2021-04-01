@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -47,7 +46,7 @@ public class DefaultBlPricingService implements BlPricingService {
 
   @Override
   public PriceRowModel createOrUpdateSevenDayPrice(final BlProductModel blProductModel, final Double retailPrice, final boolean isNew) {
-        PriceRowModel basePriceRow;
+    PriceRowModel basePriceRow;
     ProductTypeEnum productType = blProductModel.getProductType();
     List<BlPricingLogicModel> blPricingLogicModels = getBlPricingDao().getBlPricingByProductType(productType);
     if (CollectionUtils.isNotEmpty(blPricingLogicModels) && retailPrice != null) {
@@ -137,7 +136,7 @@ public class DefaultBlPricingService implements BlPricingService {
 
 
   @Override
-  public PriceRowModel getPriceRowByDuration(String duration, BlProductModel blProductModel) {
+  public PriceRowModel getPriceRowByDuration(final String duration, final BlProductModel blProductModel) {
     validateParameterNotNull(duration, "Duration must not be null");
     validateParameterNotNull(blProductModel, "BlProduct must not be null");
     DurationEnum durationEnum = getEnumerationService().getEnumerationValue(DurationEnum.class, duration);

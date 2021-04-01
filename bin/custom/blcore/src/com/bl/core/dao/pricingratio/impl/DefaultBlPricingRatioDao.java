@@ -1,5 +1,7 @@
 package com.bl.core.dao.pricingratio.impl;
 
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
 import com.bl.core.dao.pricingratio.BlPricingRatioDao;
 import com.bl.core.enums.DurationEnum;
 import com.bl.core.model.BlConstrainedPricingRatioModel;
@@ -11,6 +13,13 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
+/**
+ * This class is
+ * created for retrieving all the standard and constrained ratios
+ * based on duration(s)
+ *
+ * @author Ritika
+ */
 public class DefaultBlPricingRatioDao implements BlPricingRatioDao
 {
 
@@ -45,6 +54,8 @@ public class DefaultBlPricingRatioDao implements BlPricingRatioDao
   @Override
   public BlStandardPricingRatioModel getStandardPricingRatioByDuration(final DurationEnum duration)
   {
+    validateParameterNotNull(duration, "Duration must not be null");
+
     FlexibleSearchQuery query = new FlexibleSearchQuery(FIND_STANDARD_PRICING_RATIO_BY_DURATION);
     query.addQueryParameter("duration",duration);
     SearchResult<BlStandardPricingRatioModel> result = getFlexibleSearchService().search(query);
@@ -53,6 +64,8 @@ public class DefaultBlPricingRatioDao implements BlPricingRatioDao
 
   @Override
   public BlConstrainedPricingRatioModel getConstrainedPricingRatioByDuration(final DurationEnum duration) {
+    validateParameterNotNull(duration, "Duration must not be null");
+
     FlexibleSearchQuery query = new FlexibleSearchQuery(FIND_CONSTRAINED_PRICING_RATIO_BY_DURATION);
     query.addQueryParameter("duration",duration);
     SearchResult<BlConstrainedPricingRatioModel> result = getFlexibleSearchService().search(query);

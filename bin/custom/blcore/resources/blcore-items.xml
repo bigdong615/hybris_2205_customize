@@ -651,12 +651,6 @@
                          <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                          <description>Determines the product is Newly arrived</description>
                      </attribute>
-                   <attribute qualifier="mostPopular" type="java.lang.Boolean">
-                         <persistence type="property" />
-                         <modifiers read="true" write="true" search="true" optional="false"/>
-                         <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                         <description>Determines the product is most popular</description>
-                     </attribute>
                      <attribute qualifier="discontinued" type="java.lang.Boolean">
                          <persistence type="property" />
                          <modifiers read="true" write="true" search="true" optional="false"/>

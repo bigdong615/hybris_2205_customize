@@ -41,7 +41,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
 
 
   /**
-   * Create rental prices for BlProduct
+   * Create rental prices for BlProduct based on the available retail price
    * @param blProductModel
    */
   private void createRentalBlProductPrices(final BlProductModel blProductModel) {

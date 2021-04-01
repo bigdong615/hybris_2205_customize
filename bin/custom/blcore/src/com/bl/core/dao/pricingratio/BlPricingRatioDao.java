@@ -4,9 +4,12 @@ import com.bl.core.enums.DurationEnum;
 import com.bl.core.model.BlConstrainedPricingRatioModel;
 import com.bl.core.model.BlStandardPricingRatioModel;
 import java.util.List;
-
 /**
- * The interface Bl standard pricing ratio dao.
+ * This interface is
+ * created for retrieving the standard
+ * and constrained ratios
+ *
+ * @author Ritika
  */
 public interface BlPricingRatioDao {
 
@@ -23,9 +26,20 @@ public interface BlPricingRatioDao {
    */
   List<BlConstrainedPricingRatioModel> getConstrainedPricingRatio();
 
+  /**
+   * Get Standard Pricing Ratio by specific duration
+   * @param duration
+   * @return
+   */
+
   BlStandardPricingRatioModel getStandardPricingRatioByDuration(final DurationEnum duration);
 
 
+  /**
+   * get Constrained Pricing Ratio by Duration
+   * @param duration
+   * @return
+   */
   BlConstrainedPricingRatioModel getConstrainedPricingRatioByDuration(final DurationEnum duration);
 
 

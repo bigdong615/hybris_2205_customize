@@ -16,13 +16,13 @@ public class DefaultBlPricingRatioService  implements BlPricingRatioService {
   private BlPricingRatioDao blPricingRatioDao;
 
   @Override
-  public BlStandardPricingRatioModel getStandardPricingRatioByDuration(DurationEnum duration) {
+  public BlStandardPricingRatioModel getStandardPricingRatioByDuration(final DurationEnum duration) {
 
     return getBlPricingRatioDao().getStandardPricingRatioByDuration(duration);
   }
 
   @Override
-  public BlConstrainedPricingRatioModel getConstrainedPricingRatioByDuration(DurationEnum duration) {
+  public BlConstrainedPricingRatioModel getConstrainedPricingRatioByDuration(final DurationEnum duration) {
 
     return getBlPricingRatioDao().getConstrainedPricingRatioByDuration(duration);
   }

@@ -26,7 +26,7 @@ public class DefaultBlPricingDao  implements BlPricingDao {
 
 
   @Override
-  public List<BlPricingLogicModel> getBlPricingByProductType(ProductTypeEnum productType) {
+  public List<BlPricingLogicModel> getBlPricingByProductType(final ProductTypeEnum productType) {
       validateParameterNotNull(productType, "ProductType must not be null");
       final FlexibleSearchQuery query = new FlexibleSearchQuery(FIND_BL_PRICING_BY_PRODUCT_TYPE);
       query.addQueryParameter("productType",productType);
@@ -35,7 +35,7 @@ public class DefaultBlPricingDao  implements BlPricingDao {
   }
 
   @Override
-  public PriceRowModel getPriceRowByDuration(DurationEnum duration, BlProductModel blProduct){
+  public PriceRowModel getPriceRowByDuration(final DurationEnum duration,final BlProductModel blProduct){
       validateParameterNotNull(duration, "duration must not be null");
       validateParameterNotNull(blProduct, "BlProduct must not be null");
       final FlexibleSearchQuery query = new FlexibleSearchQuery(FIND_PRICE_BY_PRODUCT);

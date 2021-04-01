@@ -22,8 +22,7 @@ public interface BlPricingService {
    * @param isNew          isNew price
    * @return the updated/ newly created seven day price
    */
-  PriceRowModel createOrUpdateSevenDayPrice(final BlProductModel blProductModel,
-      final Double retailPrice, final boolean isNew);
+  PriceRowModel createOrUpdateSevenDayPrice(final BlProductModel blProductModel, final Double retailPrice, final boolean isNew);
 
   /**
    * Gets price row by duration.
@@ -32,7 +31,7 @@ public interface BlPricingService {
    * @param blProductModel the bl product model
    * @return the price row by duration
    */
-  PriceRowModel getPriceRowByDuration(String duration, BlProductModel blProductModel);
+  PriceRowModel getPriceRowByDuration(final String duration,final BlProductModel blProductModel);
 
   /**
    * Create or update fixed duration prices.
@@ -41,6 +40,6 @@ public interface BlPricingService {
    * @param sevenDayPrice  the base price row
    * @return list of updated/created price rows
    */
-  Collection<PriceRowModel> createOrUpdateFixedDurationPrices(BlProductModel blProductModel,Double sevenDayPrice, boolean isNew);
+  Collection<PriceRowModel> createOrUpdateFixedDurationPrices(final BlProductModel blProductModel,final Double sevenDayPrice,final boolean isNew);
 
 }
