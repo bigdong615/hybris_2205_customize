@@ -3,10 +3,11 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <config xmlns="http://www.hybris.com/cockpit/config"
-  xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
-  xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
-  xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
-  xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch">
+	xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+	xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+	xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+	xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
+	xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 
 	<!--Bl Specific custom nodes to be added here -->
 	<context component="explorer-tree">
@@ -16,6 +17,7 @@
 				<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 				<n:navigation-node id="BLProduct Inventory">
 					<n:type-node id="BLInventoryLocation" code="BLInventoryLocation"/>
+					<n:type-node id="BLInventoryLocationScanHistory" code="BLInventoryLocationScanHistory"/>
 				</n:navigation-node>
 			</n:navigation-node>
 		</n:explorer-tree>
@@ -125,7 +127,7 @@
 			<wz:prepare id="blInventoryLocationPrepare">
 				<wz:initialize property="newBLInventoryLocation" type="ctx.TYPE_CODE"/>
 			</wz:prepare>
-			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+			<wz:step id="step1" label="create.blinventorylocation.essential.label" sublabel="create.blinventorylocation.essential.sublabel">
 				<wz:content id="step1.content">
 					<wz:property-list root="newBLInventoryLocation">
 						<wz:property qualifier="code"/>
@@ -164,6 +166,7 @@
   <context type="BLInventoryLocation" component="advanced-search" merge-by="replace">
     <advanced-search:advanced-search>
       <advanced-search:field-list>
+				<advanced-search:field name="inventoryLocationID" selected="true"/>
         <advanced-search:field name="code" selected="true"/>
         <advanced-search:field name="name" selected="true"/>
         <advanced-search:field name="inventoryType" selected="true"/>
@@ -179,8 +182,69 @@
   <context type="BLInventoryLocation" component="simple-search" merge-by="replace">
     <ss:simple-search>
       <ss:field name="code"/>
+			<ss:field name="inventoryLocationID"/>
       <ss:field name="inventoryType"/>
     </ss:simple-search>
   </context>
+
+	<context type="BLInventoryLocation" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>inventoryLocationID</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<!--BLInventoryLocationScanHistory Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
+	<context component="create-wizard" type="BLInventoryLocationScanHistory" merge-by="replace">
+		<wz:flow id="BLInventoryLocationScanHistoryWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="blInventoryLocationScanHistoryPrepare">
+				<wz:initialize property="newBLInventoryLocationScanHistory" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blinventorylocationscanhistory.essential.label" sublabel="create.blinventorylocationscanhistory.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBLInventoryLocationScanHistory">
+						<wz:property qualifier="serialProduct"/>
+						<wz:property qualifier="scanUser"/>
+						<wz:property qualifier="scanTime"/>
+						<wz:property qualifier="inventoryLocation"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBLInventoryLocationScanHistory"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="BLInventoryLocationScanHistory" component="listview" merge-by="replace">
+		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+			<list-view:column qualifier="serialProduct"/>
+			<list-view:column qualifier="scanUser"/>
+			<list-view:column qualifier="scanTime"/>
+			<list-view:column qualifier="inventoryLocation"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="BLInventoryLocationScanHistory" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="serialProduct" selected="true"/>
+				<advanced-search:field name="scanUser" selected="true"/>
+				<advanced-search:field name="inventoryLocation" selected="true"/>
+				<advanced-search:field name="scanTime" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BLInventoryLocationScanHistory" component="simple-search" merge-by="replace">
+		<ss:simple-search>
+			<ss:field name="serialProduct"/>
+			<ss:field name="inventoryLocation"/>
+		</ss:simple-search>
+	</context>
 
 </config>
