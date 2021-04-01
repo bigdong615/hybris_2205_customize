@@ -573,6 +573,8 @@
 	<alias name="blProductPrepareInterceptor" alias="blProductPrepareInterceptor"/>
 	<bean id="blProductPrepareInterceptor"	class="com.bl.core.model.interceptor.BlProductPrepareInterceptor">
 		<property name="keyGenerator" ref="productIdGenerator"/>
+		<property name="enumerationService" ref="enumerationService"/>
+		<property name="blPricingService" ref="blPricingService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -671,5 +673,29 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
+	<!--Pricing Logic changes-->
+	<alias name="defaultBlPricingService" alias="blPricingService"/>
+	<bean id="defaultBlPricingService" class="com.bl.core.services.calculation.impl.DefaultBlPricingService">
+		<property name="blPricingDao" ref="blPricingDao"/>
+		<property name="blPricingRatioDao" ref="blPricingRatioDao"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="enumerationService" ref="enumerationService"/>
+		<property name="unitService" ref="unitService"/>
+	</bean>
+
+	<alias name="defaultBlPricingDao" alias="blPricingDao"/>
+	<bean id="defaultBlPricingDao" class="com.bl.core.dao.calculation.impl.DefaultBlPricingDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<alias name="defaultBlPricingRatioDao" alias="blPricingRatioDao"/>
+	<bean id="defaultBlPricingRatioDao" class="com.bl.core.dao.pricingratio.impl.DefaultBlPricingRatioDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+	<alias name="defaultBlPricingRatioService" alias="blPricingRatioService"/>
+	<bean id="defaultBlPricingRatioService" class="com.bl.core.services.pricingratio.impl.DefaultBlPricingRatioService">
+		<property name="blPricingRatioDao" ref="blPricingRatioDao"/>
+	</bean>
 
 </beans>

@@ -27,4 +27,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMPTY_STRING = "";
 	public static final String CODE = "code";
 	public static final String BRANDS = "Brands";
+	public static final String SEVEN_DAY_PRICE = "7";
+	public static final String PIECES = "pieces";
+	public static final String USD="USD";
+
 }
