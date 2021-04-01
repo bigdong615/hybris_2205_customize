@@ -673,9 +673,9 @@
 
 	<!--BL Inventory Scan Tool-->
 	<bean id="blInventoryScanToolDao" name="blInventoryScanToolDao"
-		  class="com.bl.core.inventory.scan.dao.impl.BLDefaultInventoryScanToolDao"/>
+		  class="com.bl.core.inventory.scan.dao.impl.BlDefaultInventoryScanToolDao"/>
 
 	<bean id="blInventoryScanToolService" name="blInventoryScanToolService"
-		  class="com.bl.core.inventory.scan.service.impl.BLDefaultInventoryScanToolService"/>
+		  class="com.bl.core.inventory.scan.service.impl.BlDefaultInventoryScanToolService"/>
 
 </beans>

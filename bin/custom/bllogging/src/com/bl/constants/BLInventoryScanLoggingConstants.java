@@ -9,7 +9,7 @@ import java.util.List;
  * @auther Namrata Lohar
  * Scanning specific response messages
  */
-public class BLInventoryScanLoggingConstants {
+public class BlInventoryScanLoggingConstants {
 
     public static final int ZERO = 0;
     public static final int ONE = 1;
@@ -46,7 +46,7 @@ public class BLInventoryScanLoggingConstants {
 
     public static final String MAX_SEQUENCE_LIMIT_KEY = "bl.inventory.scan.maxSequenceScan.limit";
 
-    private BLInventoryScanLoggingConstants() { }
+    private BlInventoryScanLoggingConstants() { }
 
     public static List<String> getDefaultInventoryLocation() {
         List<String> defaultLocations = new ArrayList<>();
@@ -62,6 +62,4 @@ public class BLInventoryScanLoggingConstants {
         defaultLocations.add(IN_HOUSE);
         return defaultLocations;
     }
-
-
 }

@@ -1,13 +1,11 @@
 package com.bl.core.inventory.scan.service.impl;
 
-import com.bl.constants.BLInventoryScanLoggingConstants;
-import com.bl.core.inventory.scan.dao.BLInventoryScanToolDao;
-import com.bl.core.inventory.scan.service.BLInventoryScanToolService;
-import com.bl.core.model.BLInventoryLocationModel;
-import com.bl.core.model.BLInventoryLocationScanHistoryModel;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
+import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlInventoryLocationScanHistoryModel;
 import com.bl.core.model.BlSerialProductModel;
-import de.hybris.platform.core.Constants;
-import de.hybris.platform.core.model.user.EmployeeModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.collections.CollectionUtils;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
  *
  * @author Namrata Lohar
  **/
-public class BLDefaultInventoryScanToolService implements BLInventoryScanToolService {
+public class BlDefaultInventoryScanToolService implements BlInventoryScanToolService {
 
     @Autowired
     UserService userService;
@@ -31,54 +29,23 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
     private ModelService modelService;
 
     @Resource(name = "blInventoryScanToolDao")
-    BLInventoryScanToolDao blInventoryScanToolDao;
+    BlInventoryScanToolDao blInventoryScanToolDao;
 
-    private BLInventoryLocationModel blInventoryLocation;
-
-    public BLInventoryLocationModel getBlInventoryLocation() {
-        return blInventoryLocation;
-    }
-
-    public void setBlInventoryLocation(BLInventoryLocationModel blInventoryLocation) {
-        this.blInventoryLocation = blInventoryLocation;
-    }
+    private BlInventoryLocationModel blInventoryLocation;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean validateEmployeeByUsernameAndPassword(String username, String password) {
-        EmployeeModel employee = userService.getUserForUID(username, EmployeeModel.class);
-        if (!userService.isMemberOfGroup(employee, userService.getUserGroupForUID(Constants.USER.EMPLOYEE_USERGROUP))) {
-            return employee != null && (username.equals(employee.getUid()) && password.equals(employee.getEncodedPassword()));
-        }
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @return
-     */
-    @Override
-    public BLInventoryLocationModel getInventoryLocationById(String locationId) {
+    public BlInventoryLocationModel getInventoryLocationById(final String locationId) {
         return blInventoryScanToolDao.getInventoryLocationById(locationId);
     }
 
     /**
      * {@inheritDoc}
-     * @return
      */
     @Override
-    public BlSerialProductModel getSerialProductByBarcode(String barcode) {
-        return blInventoryScanToolDao.getSerialProductByBarcode(barcode);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @return
-     */
-    @Override
-    public Collection<BlSerialProductModel> getSerialProductsByBarcode(Collection<String> barcode) {
+    public Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode) {
         return blInventoryScanToolDao.getSerialProductsByBarcode(barcode);
     }
 
@@ -86,10 +53,11 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
      * {@inheritDoc}
      */
     @Override
-    public int checkValidLocationInBarcodeList(List<String> barcodes) {
-        List<String> defaultLocations = BLInventoryScanLoggingConstants.getDefaultInventoryLocation();
-        List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith)).collect(Collectors.toList());
-        return checkValidInventoryLocation(barcodes.get(barcodes.size() - BLInventoryScanLoggingConstants.ONE), filteredLocationList);
+    public int checkValidLocationInBarcodeList(final List<String> barcodes) {
+        final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultInventoryLocation();
+        final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream()
+                .anyMatch(b::startsWith)).collect(Collectors.toList());
+        return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE), filteredLocationList);
     }
 
     /**
@@ -97,14 +65,14 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
      * @param filteredLocationList all locations in batch
      * @return int for success/error message
      */
-    private int checkValidInventoryLocation(String inventoryLocation, List<String> filteredLocationList) {
+    private int checkValidInventoryLocation(final String inventoryLocation, final List<String> filteredLocationList) {
         if (CollectionUtils.isNotEmpty(filteredLocationList)) {
-            if (filteredLocationList.size() == BLInventoryScanLoggingConstants.ONE) {
+            if (filteredLocationList.size() == BlInventoryScanLoggingConstants.ONE) {
                 return validateLocation(inventoryLocation, filteredLocationList);
             }
-            return BLInventoryScanLoggingConstants.FOUR;
+            return BlInventoryScanLoggingConstants.FOUR;
         }
-        return BLInventoryScanLoggingConstants.THREE;
+        return BlInventoryScanLoggingConstants.THREE;
     }
 
     /**
@@ -112,29 +80,29 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
      * @param filteredLocationList all locations in batch
      * @return int for success/error message
      */
-    private int validateLocation(String inventoryLocation, List<String> filteredLocationList) {
-        if (filteredLocationList.get(BLInventoryScanLoggingConstants.ZERO).equals(inventoryLocation)) {
-            BLInventoryLocationModel blLocalInventoryLocation = blInventoryScanToolDao.getInventoryLocationById(inventoryLocation);
+    private int validateLocation(final String inventoryLocation, final List<String> filteredLocationList) {
+        if (filteredLocationList.get(BlInventoryScanLoggingConstants.ZERO).equals(inventoryLocation)) {
+            final BlInventoryLocationModel blLocalInventoryLocation = blInventoryScanToolDao.getInventoryLocationById(inventoryLocation);
             if (blLocalInventoryLocation != null) {
                 setBlInventoryLocation(blLocalInventoryLocation);
-                return BLInventoryScanLoggingConstants.ONE;
+                return BlInventoryScanLoggingConstants.ONE;
             }
-            return BLInventoryScanLoggingConstants.TWO;
+            return BlInventoryScanLoggingConstants.TWO;
         }
-        return BLInventoryScanLoggingConstants.THREE;
+        return BlInventoryScanLoggingConstants.THREE;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> getFailedBarcodeList(List<String> barcodes) {
-        List<String> failedBarcodeList = new ArrayList<>();
-        List<String> subList = barcodes.subList(0, barcodes.size()-1);
-        Collection<BlSerialProductModel> blSerialProducts = blInventoryScanToolDao.getSerialProductsByBarcode(subList);
-        for (String barcode : subList) {
+    public List<String> getFailedBarcodeList(final List<String> barcodes) {
+        final List<String> failedBarcodeList = new ArrayList<>();
+        final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+        final Collection<BlSerialProductModel> blSerialProducts = blInventoryScanToolDao.getSerialProductsByBarcode(subList);
+        subList.forEach(barcode -> {
             setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode);
-        }
+        });
         return failedBarcodeList;
     }
 
@@ -143,11 +111,12 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
      * @param blSerialProducts  from barcodes
      * @param iteratorBarcode   current iterator
      */
-    private void setInventoryLocationOnSerial(List<String> failedBarcodeList, Collection<BlSerialProductModel> blSerialProducts, String iteratorBarcode) {
-        BlSerialProductModel blSerialProduct = blSerialProducts.stream().filter(p -> p.getBarcode().equals(iteratorBarcode)).findFirst().orElse(null);
+    private void setInventoryLocationOnSerial(final List<String> failedBarcodeList, final Collection<BlSerialProductModel> blSerialProducts,
+                                              final String iteratorBarcode) {
+        final BlSerialProductModel blSerialProduct = blSerialProducts.stream()
+                .filter(p -> p.getBarcode().equals(iteratorBarcode)).findFirst().orElse(null);
         if (blSerialProduct != null) {
-            BLInventoryLocationModel blInventoryLocation = getBlInventoryLocation();
-
+            final BlInventoryLocationModel blInventoryLocation = getBlInventoryLocation();
             blSerialProduct.setSerialInventoryLocation(blInventoryLocation);
             blSerialProduct.setSerialLastLocation(blInventoryLocation);
             blSerialProduct.setSerialLastParentLocation(blInventoryLocation.getParentInventoryLocation());
@@ -155,26 +124,23 @@ public class BLDefaultInventoryScanToolService implements BLInventoryScanToolSer
             modelService.refresh(blSerialProduct);
 
             /* Scan History Entry*/
-            BLInventoryLocationScanHistoryModel blInventoryLocationScanHistory = new BLInventoryLocationScanHistoryModel();
+            final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService.create(BlInventoryLocationScanHistoryModel.class);
             blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
             blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
-            blInventoryLocationScanHistory.setInventoryLocation(blInventoryLocation);
+            blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);
             blInventoryLocationScanHistory.setScanTime(new Date());
             modelService.save(blInventoryLocationScanHistory);
             modelService.refresh(blInventoryLocationScanHistory);
-
-            /* History on Location*/
-            List<BLInventoryLocationScanHistoryModel> blInventoryLocationScanHistoryModels = blInventoryLocation.getInventoryLocationScanHistory();
-            if(CollectionUtils.isNotEmpty(blInventoryLocationScanHistoryModels)) {
-                blInventoryLocationScanHistoryModels.add(blInventoryLocationScanHistory);
-            } else {
-                List<BLInventoryLocationScanHistoryModel> blInventoryLocationScanHistoryTempModels = new ArrayList<>();
-                blInventoryLocationScanHistoryTempModels.add(blInventoryLocationScanHistory);
-            }
-            blInventoryLocation.setInventoryLocationScanHistory(blInventoryLocationScanHistoryModels);
-
         } else {
             failedBarcodeList.add(iteratorBarcode);
         }
+    }
+
+    public BlInventoryLocationModel getBlInventoryLocation() {
+        return blInventoryLocation;
+    }
+
+    public void setBlInventoryLocation(final BlInventoryLocationModel blInventoryLocation) {
+        this.blInventoryLocation = blInventoryLocation;
     }
 }
