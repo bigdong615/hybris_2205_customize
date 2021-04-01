@@ -247,4 +247,17 @@
 		</property>
 	</bean>
 
+	<bean id="blProductPopulator" class="com.bl.facades.populators.BLProductPopulator" >
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<bean id="productVariantConfiguredPopulator" parent="defaultProductConfiguredPopulator">
+		<property name="populators">
+			<map key-type="de.hybris.platform.commercefacades.product.ProductOption" merge="true">
+				<entry key="REQUIRED_DATA" value-ref="blProductPopulator"/>
+			</map>
+		</property>
+	</bean>
+
+
 </beans>
