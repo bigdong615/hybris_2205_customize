@@ -1,23 +1,23 @@
 package com.bl.core.model.interceptor;
 
-import com.bl.core.model.BLInventoryLocationModel;
+import com.bl.core.model.BlInventoryLocationModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 
 public class BlInventoryLocationPrepareInterceptor implements
-    PrepareInterceptor<BLInventoryLocationModel> {
+    PrepareInterceptor<BlInventoryLocationModel> {
 
   private KeyGenerator keyGenerator;
 
   @Override
-  public void onPrepare(BLInventoryLocationModel blInventoryLocationModel,
+  public void onPrepare(BlInventoryLocationModel blInventoryLocationModel,
       InterceptorContext interceptorContext) throws InterceptorException {
 
     if (blInventoryLocationModel.getInventoryLocationID() == null)
     {
-      blInventoryLocationModel.setInventoryLocationID(Integer.parseInt(getKeyGenerator().generate().toString()));
+      blInventoryLocationModel.setInventoryLocationID(getKeyGenerator().generate().toString());
     }
 
   }
