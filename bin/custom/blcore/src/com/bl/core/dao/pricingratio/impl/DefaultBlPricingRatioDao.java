@@ -23,16 +23,10 @@ import org.apache.commons.collections.CollectionUtils;
 public class DefaultBlPricingRatioDao implements BlPricingRatioDao
 {
 
-  public static final String SELECT = "SELECT {";
-  public static final String FROM = "} FROM {";
-  public static final String FIND_STANDARD_PRICING_RATIOS = SELECT + BlStandardPricingRatioModel.PK + FROM
-      + BlStandardPricingRatioModel._TYPECODE + "}";
-  public static final String FIND_CONSTRAINED_PRICING_RATIOS = SELECT + BlConstrainedPricingRatioModel.PK + FROM
-      + BlConstrainedPricingRatioModel._TYPECODE + "}";
-  public static final String FIND_STANDARD_PRICING_RATIO_BY_DURATION = SELECT + BlStandardPricingRatioModel.PK + FROM
-      + BlStandardPricingRatioModel._TYPECODE + "} WHERE {" + BlStandardPricingRatioModel.DURATION+ "} =?duration";
-  public static final String FIND_CONSTRAINED_PRICING_RATIO_BY_DURATION = SELECT + BlConstrainedPricingRatioModel.PK + FROM
-      + BlConstrainedPricingRatioModel._TYPECODE + "} WHERE {" + BlConstrainedPricingRatioModel.DURATION+ "} =?duration";
+  public static final String FIND_STANDARD_PRICING_RATIOS = "SELECT {" + BlStandardPricingRatioModel.PK + "} FROM {" + BlStandardPricingRatioModel._TYPECODE + "}"; //NOSONAR
+  public static final String FIND_CONSTRAINED_PRICING_RATIOS = "SELECT {" + BlConstrainedPricingRatioModel.PK + "} FROM {" + BlConstrainedPricingRatioModel._TYPECODE + "}"; //NOSONAR
+  public static final String FIND_STANDARD_PRICING_RATIO_BY_DURATION = "SELECT {" + BlStandardPricingRatioModel.PK + "} FROM {" + BlStandardPricingRatioModel._TYPECODE + "} WHERE {" + BlStandardPricingRatioModel.DURATION+ "} =?duration"; //NOSONAR
+  public static final String FIND_CONSTRAINED_PRICING_RATIO_BY_DURATION = "SELECT {" + BlConstrainedPricingRatioModel.PK + "} FROM {" + BlConstrainedPricingRatioModel._TYPECODE + "} WHERE {" + BlConstrainedPricingRatioModel.DURATION+ "} =?duration"; //NOSONAR
 
   private FlexibleSearchService flexibleSearchService;
 
