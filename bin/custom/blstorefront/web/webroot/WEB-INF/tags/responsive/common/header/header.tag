@@ -25,7 +25,14 @@
             <div class="nav-account"><a href="#">My Account</a></div>
             <div class="nav-cart"><a href="#">Cart <span class="cart-count">3</span></a></div>
   </div>	
-  
+  <!-- Mobile Menu -->	
+  <nav id="my-menu">	
+  	<ul>
+  		 <cms:pageSlot position="NavigationBarMobileSlot" var="component">
+			<cms:component component="${component}" />	
+         </cms:pageSlot>
+  	</ul>
+  </nav>
   <div class="collapse navbar-collapse" id="blnav">
   	<ul class="navbar-nav me-auto mb-2 mb-md-0" role="menu">
 	  	<cms:pageSlot position="NavigationBarSlot" var="component" class="">
