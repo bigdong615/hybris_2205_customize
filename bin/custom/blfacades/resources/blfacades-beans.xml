@@ -12,4 +12,5 @@
 		<property name="code" type="String"/>
 		<property name="name" type="String"/>
 	</bean>
+
 </beans>

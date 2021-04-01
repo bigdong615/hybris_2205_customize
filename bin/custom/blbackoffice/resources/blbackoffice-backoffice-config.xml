@@ -23,6 +23,75 @@
 		</n:explorer-tree>
 	</context>
 
+	<!-- BL Inventory Web Scan Tool -->
+	<context component="explorer-tree" merge-by="module">
+		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+			<n:navigation-node id="BLInventoryScan">
+				<n:navigation-node id="WebScanTool"/>
+			</n:navigation-node>
+		</n:explorer-tree>
+	</context>
+
+	<context type="WebScanTool" component="create-wizard">
+		<wz:flow id="WebScanTool" title="BorrowLenses Web Scan Tool">
+			<wz:prepare id="userPasswordChangePrepare">
+				<wz:initialize property="webScanToolData" template-bean="webScanToolData"/>
+			</wz:prepare>
+			<wz:step id="step1" label="Enter your barcodes here: ">
+				<wz:content>
+					<wz:custom-view id="step1.content.customView" lang="zul">
+						<wz:renderer spring-bean="defaultWebScanToolRenderer">
+							<wz:parameter>
+								<wz:name>webScanToolDataModelKey</wz:name>
+								<wz:value>webScanToolData</wz:value>
+							</wz:parameter>
+						</wz:renderer>
+					</wz:custom-view>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:custom label="Scan" handler="defaultWebScanToolHandler" >
+						<wz:parameter>
+							<wz:name>webScanToolDataModelKey</wz:name>
+							<wz:value>webScanToolData</wz:value>
+						</wz:parameter>
+					</wz:custom>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context component="notification-area" source="webSanToolNotification" merge-by="source">
+		<na:notification-area>
+			<na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+			</na:notifications>
+			<na:notifications eventType="mustTwoBarcodeErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.must2.failure</na:message>
+			</na:notifications>
+			<na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
+			</na:notifications>
+			<na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+			</na:notifications>
+			<na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
+			</na:notifications>
+			<na:notifications eventType="lastScanErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.failure</na:message>
+			</na:notifications>
+			<na:notifications eventType="manyLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.many.location.failure</na:message>
+			</na:notifications>
+
+			<na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
+				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
+			</na:notifications>
+		</na:notification-area>
+	</context>
+	<!-- End -->
+
 	<context merge-by="module" component="editorareaactions" type="Consignment">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 			<y:group qualifier="common">

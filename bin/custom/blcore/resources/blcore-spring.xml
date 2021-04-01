@@ -692,4 +692,11 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
+	<!--BL Inventory Scan Tool-->
+	<bean id="blInventoryScanToolDao" name="blInventoryScanToolDao"
+		  class="com.bl.core.inventory.scan.dao.impl.BlDefaultInventoryScanToolDao"/>
+
+	<bean id="blInventoryScanToolService" name="blInventoryScanToolService"
+		  class="com.bl.core.inventory.scan.service.impl.BlDefaultInventoryScanToolService"/>
+
 </beans>
