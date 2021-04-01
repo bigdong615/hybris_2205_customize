@@ -90,8 +90,8 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                 ; $contentCV
 #####################################################################
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                  ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
 # Cameras -- all cameras       
-                               ;                         ; AllUsedGearLink           ; AllUsedGear Link      ; "#" ;                            ;                                    ; All Used Gear        ;  
-                               ;                         ; NewArrivalsLink_UsedGears ; NewArrivals Link      ; "#" ;                            ;                                    ; New Arrivals         ;  
+                               ;                         ; AllUsedGearLink           ; AllUsedGear Link      ; "" ;                            ;                                    ; All Used Gear        ;
+                               ;                         ; NewArrivalsLink_UsedGears ; NewArrivals Link      ; "#" ;                            ;                                    ; New Arrivals         ;
                                ;                         ; UsedLensesLink            ; Used Lenses Link      ; "#" ;                            ;                                    ; Used Lenses          ;  
                                ;                         ; UsedCamerasLink           ; Used Cameras Link     ; "#" ;                            ;                                    ; Used Cameras         ;  
                                ;                         ; UsedLightingLink          ; Used Lighting Link    ; "#" ;                            ;                                    ; Used Lighting        ;  

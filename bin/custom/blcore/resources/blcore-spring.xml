@@ -671,5 +671,11 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
+	<bean id="blUsedGearProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUsedGearProductValueProvider"
+		parent="abstractPropertyFieldValueProvider">
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+
+
 
 </beans>

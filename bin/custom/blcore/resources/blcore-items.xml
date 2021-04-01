@@ -690,6 +690,7 @@
                    </attribute>
                  </attributes>
              </itemtype>
+
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
                jaloclass="com.bl.core.jalo.BlSerialProduct">
                  <description>Extending BlSerialProduct with additional attributes</description>

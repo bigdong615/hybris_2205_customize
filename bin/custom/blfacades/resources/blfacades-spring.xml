@@ -247,4 +247,13 @@
 		</property>
 	</bean>
 
+
+	<alias name="blSearchFiltersPopulator" alias="commerceSearchFiltersPopulator" />
+	<bean id="blSearchFiltersPopulator" class="com.bl.facades.populators.BlSearchFiltersPopulator" />
+
+	<alias name="blSolrSearchQueryDecoderPopulator" alias="solrSearchQueryDecoderPopulator"/>
+	<bean id="blSolrSearchQueryDecoderPopulator"
+		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
+
+
 </beans>

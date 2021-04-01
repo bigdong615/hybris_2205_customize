@@ -31,6 +31,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
 	public static final String BL_PAGE_TYPE ="blPageType";
 	public static final String USED_GEAR ="Used Gear";
+	public static final String USED_CATEGORY_CODE ="usedGear";
 	public static final String USED_GEAR_PAGE ="usedGear";
 	public static final String RENTAL_GEAR_PAGE ="rentalGear";
+	public final static String RATIO =":";
+	public final static String DELIMETER ="|";
+	public final static String ALL_CATEGORIES ="allCategories";
 }

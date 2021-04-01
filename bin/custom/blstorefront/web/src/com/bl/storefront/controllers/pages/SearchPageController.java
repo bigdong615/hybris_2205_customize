@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -73,6 +74,7 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@RequestMapping(method = RequestMethod.GET, params = "!q")
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
+			@RequestParam(value="blPageType") final String blPageType,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
@@ -82,6 +84,7 @@ public class SearchPageController extends AbstractSearchPageController
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
 			searchQueryData.setValue(searchText);
+			searchQueryData.setBlPage(blPageType);
 			searchState.setQuery(searchQueryData);
 
 			ProductSearchPageData<SearchStateData, ProductData> searchPageData = null;
@@ -126,6 +129,7 @@ public class SearchPageController extends AbstractSearchPageController
 			}
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
 
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,

@@ -88,6 +88,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
                 }
             }
         }
+
         final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
         if (StringUtils.isNotEmpty(redirection))
         {
@@ -152,12 +153,19 @@ public class CategoryPageController extends AbstractCategoryPageController {
      */
 
     private void usedGearCategory(CategoryModel category, Model model) {
-        if(category.getSupercategories().stream().anyMatch(categoryModel -> BlCoreConstants.USED_GEAR.equalsIgnoreCase(categoryModel.getName())
-            ||  BlCoreConstants.USED_GEAR.equalsIgnoreCase(category.getName()))) {
+        if(BlCoreConstants.USED_GEAR.equalsIgnoreCase(category.getName())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_PAGE);
         }
         else {
-            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlCoreConstants.RENTAL_GEAR_PAGE);
+            for (CategoryModel superCategory : category.getSupercategories()) {
+                if (BlCoreConstants.USED_GEAR.equalsIgnoreCase(superCategory.getName())) {
+                    model
+                        .addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.USED_GEAR_PAGE);
+                } else {
+                    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,
+                        BlCoreConstants.RENTAL_GEAR_PAGE);
+                }
+            }
         }
     }
 }
