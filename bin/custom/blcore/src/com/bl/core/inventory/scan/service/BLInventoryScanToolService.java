@@ -36,4 +36,11 @@ public interface BlInventoryScanToolService {
      * @return List of BlSerial Product
      */
     List<String> getFailedBarcodeList(final List<String> barcodes);
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    String getConfigKeyFromScanConfiguration(final String key);
 }

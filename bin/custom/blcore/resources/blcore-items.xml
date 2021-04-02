@@ -93,6 +93,16 @@
             <value code="WORK_STATION"/>
         </enumtype>
     </enumtypes>
+
+    <!--Bl Scan Config Map-->
+    <maptypes>
+        <maptype code="BlScanConfigEditorParameterMap"
+                 argumenttype="java.lang.String"
+                 returntype="java.lang.String"
+                 autocreate="true"
+                 generate="false"/>
+    </maptypes>
+
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
             <sourceElement qualifier="blProduct" type="BlProduct" cardinality="one">
@@ -1002,6 +1012,25 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="false"/>
                         <description>Time when user scanned inventory</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <!-- InventoryLocationScanConfiguration for tracking logs-->
+            <itemtype code="BlInventoryScanConfiguration" autocreate="true" generate="true"
+                      jaloclass="com.bl.core.jalo.BlInventoryScanConfiguration">
+                <description>This table is for storing configuration related to InventoryScan.</description>
+                <deployment table="blInventoryScanConfig" typecode="12207" />
+                <attributes>
+                    <attribute qualifier="blScanConfigKey" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" unique="true" optional="false"/>
+                        <description>Config Key</description>
+                    </attribute>
+                    <attribute qualifier="blScanConfigValue" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Config Value</description>
                     </attribute>
                 </attributes>
             </itemtype>

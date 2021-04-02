@@ -18,6 +18,7 @@ public class BlInventoryScanLoggingConstants {
     public static final int FOUR = 4;
     public static final int SEVEN = 7;
     public static final int EIGHT = 8;
+    public static final int TEN = 10;
     public static final int FORTY = 40;
 
     public static final String HUN_PER = "100%";
@@ -44,7 +45,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
 
-    public static final String MAX_SEQUENCE_LIMIT_KEY = "bl.inventory.scan.maxSequenceScan.limit";
+    public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
+    public static final String EMPTY_STRING = "";
+
 
     private BlInventoryScanLoggingConstants() { }
 

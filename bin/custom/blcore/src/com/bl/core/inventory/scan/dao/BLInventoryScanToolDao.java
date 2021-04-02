@@ -1,6 +1,7 @@
 package com.bl.core.inventory.scan.dao;
 
 import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
 
 import java.util.Collection;
@@ -22,5 +23,12 @@ public interface BlInventoryScanToolDao {
      * @return List of Serials
      */
     Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode);
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key);
 
 }

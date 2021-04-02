@@ -5,6 +5,7 @@ import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryLocationScanHistoryModel;
+import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
@@ -104,6 +105,13 @@ public class BlDefaultInventoryScanToolService implements BlInventoryScanToolSer
             setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode);
         });
         return failedBarcodeList;
+    }
+
+    @Override
+    public String getConfigKeyFromScanConfiguration(String key) {
+        BlInventoryScanConfigurationModel blInventoryScanConfigurationModel = blInventoryScanToolDao.getConfigKeyFromScanConfiguration(key);
+        return blInventoryScanConfigurationModel != null ? blInventoryScanConfigurationModel.getBlScanConfigValue() :
+                String.valueOf(BlInventoryScanLoggingConstants.TEN);
     }
 
     /**

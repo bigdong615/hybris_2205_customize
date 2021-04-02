@@ -9,7 +9,9 @@ import com.hybris.cockpitng.dataaccess.facades.type.DataType;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.renderer.DefaultCustomViewRenderer;
+import de.hybris.platform.util.Config;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 
 import java.util.Map;
@@ -43,6 +45,7 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
 
             barcodeInputField.addEventListener("onChange", event ->
                     this.webScanToolUtil.onBarcodeInputFieldTextChanged(barcodeInputField, webScanToolData));
+
             component.appendChild(barcodeInputField);
         }
     }

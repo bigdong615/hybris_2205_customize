@@ -3,9 +3,10 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <config xmlns="http://www.hybris.com/cockpit/config"
-	xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
-	xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
-	xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch">
+		xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+		xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+		xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+		xmlns:ss="file://D:/BorrowLenses/BL-Hybris/hybris/bin/modules/search-and-navigation/solrfacetsearch/resources/indexer/solrSearchAddDocuments.xsd">
 
 	<!--Bl Specific custom nodes to be added here -->
 	<context component="explorer-tree">
@@ -22,16 +23,17 @@
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 			<n:navigation-node id="BLInventoryScan">
 				<n:navigation-node id="WebScanTool"/>
+				<n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
 			</n:navigation-node>
 		</n:explorer-tree>
 	</context>
 
 	<context type="WebScanTool" component="create-wizard">
-		<wz:flow id="WebScanTool" title="BorrowLenses Web Scan Tool">
+		<wz:flow id="WebScanTool" title="blbackoffice.web.scan.tool.title">
 			<wz:prepare id="userPasswordChangePrepare">
 				<wz:initialize property="webScanToolData" template-bean="webScanToolData"/>
 			</wz:prepare>
-			<wz:step id="step1" label="Enter your barcodes here: ">
+			<wz:step id="step1" label="blbackoffice.web.scan.tool.label">
 				<wz:content>
 					<wz:custom-view id="step1.content.customView" lang="zul">
 						<wz:renderer spring-bean="defaultWebScanToolRenderer">
@@ -44,7 +46,7 @@
 				</wz:content>
 				<wz:navigation id="step1.navigation">
 					<wz:cancel/>
-					<wz:custom label="Scan" handler="defaultWebScanToolHandler" >
+					<wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultWebScanToolHandler" >
 						<wz:parameter>
 							<wz:name>webScanToolDataModelKey</wz:name>
 							<wz:value>webScanToolData</wz:value>
@@ -59,31 +61,104 @@
 		<na:notification-area>
 			<na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
 			</na:notifications>
 			<na:notifications eventType="mustTwoBarcodeErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.must2.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
 			</na:notifications>
 			<na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true" />
+				</na:references>
 			</na:notifications>
 			<na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
 			</na:notifications>
 			<na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
 			</na:notifications>
 			<na:notifications eventType="lastScanErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
 			</na:notifications>
 			<na:notifications eventType="manyLocationErrorFailure" level="FAILURE" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.many.location.failure</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
 			</na:notifications>
 
 			<na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
 				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
+				<na:references linksEnabled="true">
+					<na:reference placeholder="0" link="true"/>
+				</na:references>
 			</na:notifications>
 		</na:notification-area>
 	</context>
+	<!-- End -->
+
+	<!-- Bl Scan Config -->
+	<context type="BlInventoryScanConfiguration" component="simple-search" merge-by="replace">
+		<ss:simple-search>
+			<ss:field name="blScanConfigKey"/>
+			<ss:field name="blScanConfigValue"/>
+		</ss:simple-search>
+	</context>
+
+	<context type="BlInventoryScanConfiguration" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="blScanConfigKey" selected="true"/>
+				<advanced-search:field name="blScanConfigValue" selected="true"/>
+				<advanced-search:field name="PK" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BlInventoryScanConfiguration" component="listview" merge-by="replace">
+		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+			<list-view:column qualifier="blScanConfigKey"/>
+			<list-view:column qualifier="blScanConfigValue"/>
+		</list-view:list-view>
+	</context>
+
+	<context component="create-wizard" type="BlInventoryScanConfiguration" merge-by="replace">
+		<wz:flow id="BlInventoryScanConfigurationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="blInventoryScanConfigurationPrepare">
+				<wz:initialize property="newBlInventoryScanConfiguration" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blinventoryscanconfiguration.essential.label" sublabel="create.blinventoryscanconfiguration.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlInventoryScanConfiguration">
+						<wz:property qualifier="blScanConfigKey"/>
+						<wz:property qualifier="blScanConfigValue"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlInventoryScanConfiguration"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
 	<!-- End -->
 
 	<context merge-by="module" component="editorareaactions" type="Consignment">

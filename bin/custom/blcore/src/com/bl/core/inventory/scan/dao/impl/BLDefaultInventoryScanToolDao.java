@@ -2,6 +2,7 @@ package com.bl.core.inventory.scan.dao.impl;
 
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
@@ -44,5 +45,14 @@ public class BlDefaultInventoryScanToolDao implements BlInventoryScanToolDao {
         query.addQueryParameter("barcodeList", barcodes);
         final List<BlSerialProductModel> results = flexibleSearchService.<BlSerialProductModel>search(query).getResult();
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+    }
+
+    @Override
+    public BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(String key) {
+        final String barcodeList = "SELECT {pk} FROM {BlInventoryScanConfiguration!} WHERE {blScanConfigKey} = ?key";
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("key", key);
+        final List<BlInventoryScanConfigurationModel> results = flexibleSearchService.<BlInventoryScanConfigurationModel>search(query).getResult();
+        return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
 }
