@@ -7,6 +7,10 @@ import de.hybris.platform.commerceservices.category.CommerceCategoryService;
 import de.hybris.platform.commerceservices.url.UrlResolver;
 import de.hybris.platform.commerceservices.url.impl.AbstractUrlResolver;
 
+/**
+ * @author Manikandan
+ * This Resolver is added for UsedGear Category
+ */
 public class BlDefaultCategoryDataUrlResolver extends AbstractUrlResolver<CategoryData> {
 
   private final String CACHE_KEY = DefaultCategoryDataUrlResolver.class.getName();
@@ -20,6 +24,9 @@ public class BlDefaultCategoryDataUrlResolver extends AbstractUrlResolver<Catego
     return CACHE_KEY + "." + source.getCode();
   }
 
+  /*
+   * This Method resolve the URL pattern for UsedGearCategories
+   */
   @Override
   protected String resolveInternal(final CategoryData source) {
     final CategoryModel categoryModel = getCommerceCategoryService()

@@ -363,4 +363,5 @@
 		<property name="cmsSiteService" ref="cmsSiteService"/>
 		<property name="defaultTheme" value="blue"/>
 	</bean>
+
 </beans>
