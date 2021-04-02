@@ -13,6 +13,7 @@
 		<property name="name" type="String"/>
 	</bean>
 
+	<!--BL-80 Added new entry in SearchQueryData-->
 	<bean class="de.hybris.platform.commercefacades.search.data.SearchQueryData">
 		<property name="blPage" type="String"/>
 	</bean>

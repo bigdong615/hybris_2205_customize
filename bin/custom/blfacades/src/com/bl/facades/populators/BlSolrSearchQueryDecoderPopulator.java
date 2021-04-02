@@ -12,6 +12,9 @@ import org.apache.commons.lang.StringUtils;
 
 public class BlSolrSearchQueryDecoderPopulator  extends SolrSearchQueryDecoderPopulator {
 
+  /**
+   * BL -80 Since it's a OOB Populate Method override for adding one property
+   */
   @Override
   public void populate(final SearchQueryData source, final SolrSearchQueryData target)
   {

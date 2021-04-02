@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Manikandan
+ * This Value Provider is created to send forSale values to solr
+ */
 public class BlUsedGearProductValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
 
@@ -34,6 +38,7 @@ public class BlUsedGearProductValueProvider extends AbstractPropertyFieldValuePr
     final List<FieldValue> fieldValues = new ArrayList<>();
     boolean isForSale = false;
 
+    // BL-80 this condition added to check whether any of the BlSerialProduct having forSale as true also for BlProduct forSale attribute
     if(product.getSerialProducts().stream().anyMatch(BlProductModel::getForSale) && product.getForSale()) {
       isForSale = true;
     }
