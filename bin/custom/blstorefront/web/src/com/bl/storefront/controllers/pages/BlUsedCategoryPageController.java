@@ -1,7 +1,7 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.storefront.url.BlDefaultCategoryModelUrlResolver;
+import com.bl.core.resolver.BlDefaultCategoryModelUrlResolver;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -29,6 +29,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * @author ManiKandan
+ *
+ * This controller added for Used Gear Categories
+ */
 
 @Controller
 @RequestMapping(value = "/buy/category/")
@@ -72,8 +77,9 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
 
     final CategoryPageModel categoryPage = getCategoryPage(category);
 
-    if(StringUtils.isBlank(searchQuery) && "Used-NewArrivals".equalsIgnoreCase(category.getCode())) {
-      searchQuery = ":newest";
+    //BL-80 Added to get default sorting as newest for Used New Arrivals Category
+    if(StringUtils.isBlank(searchQuery) && BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(category.getCode())) {
+      searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
     }
 
     final CategorySearchEvaluator categorySearch = new CategorySearchEvaluator(categoryCode, searchQuery, page, showMode,
@@ -104,6 +110,7 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
     model.addAttribute("footerContent",category.getFooterContent());
 
     updatePageTitle(category, model);
+    // BL-80 To check whether current category is used gear category
     usedGearCategory(category,model);
 
     final RequestContextData requestContextData = getRequestContextData(request);
@@ -126,11 +133,8 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
   }
 
   /**
-   * @author ManiKandan
-   *
    * This method is created to identify whether category belongs to used gear category
    */
-
   private void usedGearCategory(CategoryModel category, Model model) {
     if(BlCoreConstants.USED_GEAR.equalsIgnoreCase(category.getName())){
       model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_PAGE);

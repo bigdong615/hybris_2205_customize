@@ -21,9 +21,18 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 
+
+/**
+ * @author ManiKandan
+ * The Populator Added for Adding extra parameters to Solr Query
+ */
+
 public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> implements
     Populator<SearchQueryPageableData<SolrSearchQueryData>, SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE>> {
 
+  /**
+   * Overrided the OOB populator to customize the solr parameters
+   */
   @Override
   public void populate(final SearchQueryPageableData<SolrSearchQueryData> source,
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
@@ -32,24 +41,18 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     final Map<String, SolrSearchFilterQueryData> filterQueriesMap = new HashMap<>();
     final List<SolrSearchQueryTermData> terms = target.getSearchQueryData().getFilterTerms();
     target.setIndexedPropertyValues(addTerms(terms, target, indexedPropertyValues));
-
     populateFilterQueries(target.getSearchQueryData(), filterQueriesMap);
-
     // Add the facet filters
     for (final IndexedPropertyValueData<IndexedProperty> indexedPropertyValue : target
         .getIndexedPropertyValues()) {
       target.getSearchQuery().addFacetValue(indexedPropertyValue.getIndexedProperty().getName(),
           indexedPropertyValue.getValue());
     }
-
-    // Add category restriction
+    // BL-80 Add category restriction for used and rental gear category
     categoryRestriction(target);
-
-
     // Add filter queries
     final List<SolrSearchFilterQueryData> filterQueries = target.getSearchQueryData()
         .getFilterQueries();
-
     if (CollectionUtils.isNotEmpty(filterQueries)) {
       for (final SolrSearchFilterQueryData solrSearchFilterQuery : filterQueries) {
         target.getSearchQuery().addFilterQuery(convertFilterQuery(solrSearchFilterQuery));
@@ -62,7 +65,6 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     if (solrSearchQueryData.getFilterQueries() == null) {
       solrSearchQueryData.setFilterQueries(new ArrayList<>());
     }
-
     solrSearchQueryData.getFilterQueries().addAll(filterQueriesMap.values());
   }
 
@@ -81,22 +83,30 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
         solrSearchFilterQuery.getValues());
   }
 
+  /**
+   * This Method add forRent Property is true when we hit rental gear page
+   */
   private void addFilterQueryFalse(
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-    target.getSearchQuery().addFilterQuery("forRent", String.valueOf(true));
-    target.getSearchQuery().addFilterQuery("itemtype", "BlProduct");
+    target.getSearchQuery().addFilterQuery(BlCoreConstants.FOR_RENT, BlCoreConstants.TRUE);
+    target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
   }
 
+  /**
+   * This Method add forSale Property is true when we hit usedgear Page
+   */
   private void addFilterQueryTrue(
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-    if("Used-Video".equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
-      target.getSearchQuery().addFilterQuery("isVideo", String.valueOf(true));
+    // Added condition for used gear video category
+    if(BlCoreConstants.USED_VIDEO.equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
+      target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_VIDEO, BlCoreConstants.TRUE);
     }
-    if("Used-NewArrivals".equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
-      target.getSearchQuery().addFilterQuery("isNew", String.valueOf(true));
+    // Added Condition for used gear new arrivals category
+    if(BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
+      target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
     }
-    target.getSearchQuery().addFilterQuery("forSale", String.valueOf(true));
-    target.getSearchQuery().addFilterQuery("itemtype", "BlProduct");
+    target.getSearchQuery().addFilterQuery(BlCoreConstants.FOR_SALE, BlCoreConstants.TRUE);
+    target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
   }
 
   private List<IndexedPropertyValueData<IndexedProperty>> addTerms(
@@ -107,7 +117,6 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       for (final SolrSearchQueryTermData term : terms) {
         final IndexedProperty indexedProperty = target.getIndexedType().getIndexedProperties()
             .get(term.getKey());
-
         if (indexedProperty != null) {
           final IndexedPropertyValueData<IndexedProperty> indexedPropertyValue = new IndexedPropertyValueData<>();
           indexedPropertyValue.setIndexedProperty(indexedProperty);
@@ -119,27 +128,36 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     return indexedPropertyValues;
   }
 
+  /**
+   * To check the category mapping for used gear categories
+   */
   private String checkCategory(String categoryCode) {
-
-    String categoryParam = Config.getParameter("usedgear.rentalgear.map");
+    String categoryParam = Config.getParameter(BlCoreConstants.CATEGORY_MAP);
     final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER).withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
     return categoryCodeMap.get(categoryCode);
   }
 
+  /**
+   * To check whether the category is used gear
+   */
   private boolean isUsedGearCategory(String categoryCode) {
-    return categoryCode.startsWith("Used") || BlCoreConstants.USED_CATEGORY_CODE
+    return categoryCode.startsWith(BlCoreConstants.USED) || BlCoreConstants.USED_CATEGORY_CODE
         .equalsIgnoreCase(categoryCode);
   }
 
+  /**
+   * Adding some category restriction for used gear categories
+   */
   private void categoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     if (target.getSearchQueryData().getCategoryCode() != null && ! isUsedGearCategory(target.getSearchQueryData().getCategoryCode()))
     {
-      target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES, target.getSearchQueryData().getCategoryCode());
+      rentalCategory(target);
       addFilterQueryFalse(target);
     }
     else if (target.getSearchQueryData().getCategoryCode() != null){
         String catCode = target.getSearchQueryData().getCategoryCode();
-        if(!"Used-NewArrivals".equalsIgnoreCase(catCode) && !"usedgear".equalsIgnoreCase(catCode) && !"Used-Video".equalsIgnoreCase(catCode)) {
+        if(! BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(catCode) && ! BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(catCode)
+            && ! BlCoreConstants.USED_VIDEO.equalsIgnoreCase(catCode)) {
           target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
               checkCategory(target.getSearchQueryData().getCategoryCode()));
         }
@@ -154,6 +172,13 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       }
     }
 
+  }
+
+  private void rentalCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
+    if(!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
+      target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
+          target.getSearchQueryData().getCategoryCode());
+    }
   }
 }
 

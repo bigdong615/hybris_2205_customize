@@ -20,10 +20,12 @@
                 <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
                     <button type="submit" class="btn btn-outline btn-disabled"
                             aria-disabled="true" disabled="disabled">Add to Rental
+                            <spring:theme code="text.add.to.rental"/>
                     </button>
                 </c:when>
                 <c:otherwise>
-                    <button type="submit" class="btn btn-primary" disabled="disabled">Add to Rental
+                    <button type="submit" class="btn btn-primary" disabled="disabled">
+                    <spring:theme code="text.add.to.rental"/>
                     </button>
                 </c:otherwise>
             </c:choose>

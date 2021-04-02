@@ -110,6 +110,25 @@ INSERT_UPDATE CategoryCategoryRelation; $categories              ; $supercategor
                                       ; headphones               ; audio
                                       ; video-lighting-batteries ; batteries_power
 
+
+####### BL -80 Added Used Gear Category
+INSERT_UPDATE Category; code[unique = true]; active; name[lang = en]  ; onCategoryTree; displayName      ; titleTag; allowedPrincipals(uid)[default = 'customergroup']; $catalogVersion
+                      ; Used-Lenses        ; true  ; Used Lenses      ; true          ; Used Lenses      ;
+                      ; Used-Cameras       ; true  ; Used Cameras     ; true          ; Used Cameras     ;
+                      ; Used-Lighting      ; true  ; Used Lighting    ; true          ; Used Lighting    ;
+                      ; Used-Video         ; true  ; Used Video       ; true          ; Used Video       ;
+                      ; Used-Accessories   ; true  ; Used Accessories ; true          ; Used Accessories ;
+                      ; Used-NewArrivals   ; true  ; Used NewArrivals ; true          ; Used NewArrivals ;
+
+INSERT_UPDATE CategoryCategoryRelation; $categories      ; $supercategories
+                                      ; Used-Lenses      ; usedgear
+                                      ; Used-Cameras     ; usedgear
+                                      ; Used-Lighting    ; usedgear
+                                      ; Used-Video       ; usedgear
+                                      ; Used-Accessories ; usedgear
+                                      ; Used-NewArrivals ; usedgear
+
+
 $productCatalog = blProductCatalog
 $productCatalogName = BL Product Catalog
 

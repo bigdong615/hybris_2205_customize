@@ -10,7 +10,8 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-		
+
+
 	<context:annotation-config/> 
 
 	<alias alias="simpleSuggestionFacade" name="defaultSimpleSuggestionFacade"/>
@@ -248,6 +249,7 @@
 	</bean>
 
 
+	<!--BL-80 Added for BlSearchFilterPopulator to add the parameters to solr query-->
 	<alias name="blSearchFiltersPopulator" alias="commerceSearchFiltersPopulator" />
 	<bean id="blSearchFiltersPopulator" class="com.bl.facades.populators.BlSearchFiltersPopulator" />
 
@@ -255,5 +257,14 @@
 	<bean id="blSolrSearchQueryDecoderPopulator"
 		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
 
+	<!--BL-80 Added for Category URL resolver for Used Gear Category-->
+	<alias name="blDefaultSolrSearchStatePopulator" alias="solrSearchStatePopulator"/>
+	<bean id="blDefaultSolrSearchStatePopulator"
+		class="com.bl.facades.populators.BlSolrSearchStatePopulator">
+		<property name="searchPath" value="/search"/>
+		<property name="categoryDataUrlResolver" ref="categoryDataUrlResolver"/>
+		<property name="blDefaultCategoryDataUrlResolver" ref="blDefaultCategoryDataUrlResolver"/>
+		<property name="searchQueryConverter" ref="solrSearchQueryEncoder"/>
+	</bean>
 
 </beans>

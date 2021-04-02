@@ -6,7 +6,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="search" tagdir="/WEB-INF/tags/responsive/search" %>
 
-
+<%-- Added For Rentagear and Usedgear Page --%>
 <c:choose>
         <c:when test="${blPageType eq 'usedGear'}">
               <search:blUsedGearSearchBox/>

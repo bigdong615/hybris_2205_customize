@@ -8,7 +8,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="theme" tagdir="/WEB-INF/tags/shared/theme" %>
 
-
+<%-- Added for rentalgear and usedgear page --%>
 <c:choose>
         <c:when test="${blPageType eq 'usedGear'}">
               <product:blUsedGearProductListerGridItem product="${product}"/>

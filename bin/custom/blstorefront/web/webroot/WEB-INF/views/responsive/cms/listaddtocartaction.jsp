@@ -6,6 +6,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 
+<%-- Added for rentalgear and usedgear pages --%>
 <c:choose>
         <c:when test="${blPageType eq 'usedGear'}">
         <cart:blUsedGearAddToCart/>
