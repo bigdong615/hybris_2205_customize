@@ -82,6 +82,7 @@
 							<wz:property qualifier="approvalStatus"/>
 							<wz:property qualifier="productType"/>
 							<wz:property qualifier="procurementCost"/>
+							<wz:property qualifier="retailPrice"/>
 							<wz:property qualifier="procurementSource"/>
 							<wz:property qualifier="mpn"/>
 							<wz:property qualifier="upc"/>
@@ -160,6 +161,7 @@
 				<ea:section name="hmc.section.product.pricesdiscounts">
 					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
 						<ea:attribute qualifier="procurementCost"/>
+						<ea:attribute qualifier="retailPrice"/>
 						<ea:attribute description="hmc.text.product.pg"
 							editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
 							qualifier="europe1Prices">

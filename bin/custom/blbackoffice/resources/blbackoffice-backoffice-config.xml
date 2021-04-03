@@ -61,6 +61,7 @@
 						<wz:property qualifier="supercategories"/>
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="procurementCost"/>
+						<wz:property qualifier="retailPrice"/>
 						<wz:property qualifier="procurementSource"/>
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
