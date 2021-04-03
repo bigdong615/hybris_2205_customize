@@ -4,29 +4,22 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.calculation.BlPricingDao;
-import com.bl.core.dao.pricingratio.BlPricingRatioDao;
 import com.bl.core.enums.DurationEnum;
 import com.bl.core.enums.PricingTierEnum;
 import com.bl.core.enums.ProductTypeEnum;
-import com.bl.core.model.BlConstrainedPricingRatioModel;
 import com.bl.core.model.BlPricingLogicModel;
 import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlStandardPricingRatioModel;
 import com.bl.core.services.calculation.BlPricingService;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.product.UnitService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
-import java.util.Collection;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 
 /**
  * This class has implementation of methods
@@ -38,7 +31,6 @@ import org.apache.commons.lang.BooleanUtils;
 public class DefaultBlPricingService implements BlPricingService {
 
   private BlPricingDao blPricingDao;
-  private BlPricingRatioDao blPricingRatioDao;
   private ModelService modelService;
   private CommonI18NService commonI18NService;
   private EnumerationService enumerationService;
@@ -74,7 +66,6 @@ public class DefaultBlPricingService implements BlPricingService {
     if(priceRow != null) {
       priceRow.setPrice(price);
       getModelService().save(priceRow);
-      getModelService().refresh(blProductModel);
     }
     return  priceRow;
   }
@@ -143,72 +134,6 @@ public class DefaultBlPricingService implements BlPricingService {
     return getBlPricingDao().getPriceRowByDuration(durationEnum,blProductModel);
   }
 
-  @Override
-  public Collection<PriceRowModel> createOrUpdateFixedDurationPrices(final BlProductModel blProductModel,final Double sevenDayPrice,final boolean isNew) {
-    Collection<PriceRowModel> oldPriceRows = blProductModel.getEurope1Prices();
-    Collection<PriceRowModel> newPriceRows = new HashSet<>(oldPriceRows);
-    if (Boolean.TRUE.equals(blProductModel.getConstrained()) && CollectionUtils.isNotEmpty(getConstrainedPricingRatiosForProduct())) {
-      for(BlConstrainedPricingRatioModel pricingRatio: getConstrainedPricingRatiosForProduct()){
-        PriceRowModel durationPriceRow = createOrUpdatePriceByPricingRatios(sevenDayPrice,
-            pricingRatio.getPricingRatio(), pricingRatio.getDuration(), blProductModel,isNew);
-         newPriceRows.add(durationPriceRow);
-      }
-    }
-    else {
-      if (CollectionUtils.isNotEmpty(getStandardPricingRatiosForProduct())) {
-          for(BlStandardPricingRatioModel pricingRatio: getStandardPricingRatiosForProduct()){
-            PriceRowModel durationPriceRow = createOrUpdatePriceByPricingRatios(sevenDayPrice,
-                pricingRatio.getPricingRatio(), pricingRatio.getDuration(), blProductModel,isNew);
-            newPriceRows.add(durationPriceRow);
-          }
-        }
-      }
-    return newPriceRows;
-  }
-
-
-  /**
-   * *  Create Or Update Price Row By Duration
-   * TO-DO: Update logic is pending for testing
-   * @param basePrice
-   * @param pricingRatio
-   * @param duration
-   * @param blProductModel
-   * @param isNew
-   * @return
-   */
-  private PriceRowModel createOrUpdatePriceByPricingRatios(final Double basePrice,final Double pricingRatio, final DurationEnum duration, final BlProductModel blProductModel, final boolean isNew) {
-    // calculate Rental price rows based on number of days and save it
-    Double ratioPrice = basePrice * pricingRatio;
-    PriceRowModel durationPriceRow = getPriceRowByDuration(duration.getCode(), blProductModel);
-    if (null == durationPriceRow  && BooleanUtils.isTrue(isNew)) {
-      durationPriceRow = createNewDurationPrice(blProductModel, ratioPrice, duration.getCode());
-    }
-    else{
-      Objects.requireNonNull(durationPriceRow).setPrice(ratioPrice);
-    }
-    return durationPriceRow;
-  }
-
-  /**
-   *
-   * Get the ratios from Standard Pricing Ratio Table
-   * @return
-   */
-  private List<BlStandardPricingRatioModel> getStandardPricingRatiosForProduct() {
-      List<BlStandardPricingRatioModel> standardPricingRatio = getBlPricingRatioDao().getStandardPricingRatio();
-       return  CollectionUtils.isNotEmpty(standardPricingRatio) ? standardPricingRatio : Collections.emptyList();
-    }
-
-  /**
-   * Get the ratios from Constrained Pricing Ratio Table
-   * @return
-   */
-  private List<BlConstrainedPricingRatioModel> getConstrainedPricingRatiosForProduct() {
-      List<BlConstrainedPricingRatioModel> constrainedPricingRatio = getBlPricingRatioDao().getConstrainedPricingRatio();
-      return  CollectionUtils.isNotEmpty(constrainedPricingRatio) ? constrainedPricingRatio : Collections.emptyList();
-
-  }
 
 
   public BlPricingDao getBlPricingDao() {
@@ -251,11 +176,4 @@ public class DefaultBlPricingService implements BlPricingService {
     this.commonI18NService = commonI18NService;
   }
 
-  public BlPricingRatioDao getBlPricingRatioDao() {
-    return blPricingRatioDao;
-  }
-
-  public void setBlPricingRatioDao(BlPricingRatioDao blPricingRatioDao) {
-    this.blPricingRatioDao = blPricingRatioDao;
-  }
 }

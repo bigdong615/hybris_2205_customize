@@ -688,6 +688,11 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>Determines the product is most popular</description>
                    </attribute>
+                   <attribute qualifier="retailPrice" type="java.lang.Double">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="false"/>
+                     <description>Price, What the item currently sells for</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"

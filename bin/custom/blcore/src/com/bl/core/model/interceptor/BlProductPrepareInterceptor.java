@@ -10,10 +10,7 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.Collections;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -36,37 +33,30 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
     if( interceptorContext.isNew(blProductModel) && StringUtils.isBlank(blProductModel.getProductId())){
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
-    createRentalBlProductPrices(blProductModel);
+    createOrUpdateRentalBlProductPrice(blProductModel,interceptorContext);
   }
-
 
   /**
-   * Create rental prices for BlProduct based on the available retail price
+   * Create or update rental prices for BlProduct based on the available retail price
    * @param blProductModel
    */
-  private void createRentalBlProductPrices(final BlProductModel blProductModel) {
+  private void createOrUpdateRentalBlProductPrice(final BlProductModel blProductModel, final InterceptorContext ctx ) {
 
-    Collection<PriceRowModel> prices = blProductModel.getEurope1Prices();
-    Collection<PriceRowModel> newPrices = new HashSet<>(prices);
-    if (CollectionUtils.isNotEmpty(prices)) {
-      PriceRowModel sevenDayPriceRow;
-      Optional<PriceRowModel> retailPriceRow = prices.stream().filter(priceRow -> DurationEnum.RETAIL.equals(priceRow.getDuration())).findAny();
-      Optional<PriceRowModel> sevenDayPrice = prices.stream().filter(priceRow -> getEnumerationService().getEnumerationValue(DurationEnum.class,
-          BlCoreConstants.SEVEN_DAY_PRICE).equals(priceRow.getDuration())).findAny();
-      if (sevenDayPrice.isEmpty() && retailPriceRow.isPresent()) {
-        sevenDayPriceRow = getBlPricingService()
-            .createOrUpdateSevenDayPrice(blProductModel, retailPriceRow.get().getPrice(), true);
-        if (null != sevenDayPriceRow) {
-          newPrices.add(sevenDayPriceRow);
-          newPrices = getBlPricingService()
-              .createOrUpdateFixedDurationPrices(blProductModel, sevenDayPriceRow.getPrice(), true);
-        }
+    PriceRowModel sevenDayPrice = getBlPricingService().getPriceRowByDuration(getEnumerationService().getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE).getCode(),blProductModel);
+    final Double retailPrice = blProductModel.getRetailPrice();
+    if(retailPrice != null && retailPrice >0.0D) {
+      if (null == sevenDayPrice) {
+        sevenDayPrice = getBlPricingService()
+            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true);
+      } else if (null != sevenDayPrice && ctx
+          .isModified(blProductModel, BlProductModel.RETAILPRICE)) {
+        blProductModel.setRetailPrice(retailPrice);
+        sevenDayPrice = getBlPricingService()
+            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, false);
       }
-     blProductModel.setEurope1Prices(newPrices);
-
+      blProductModel.setEurope1Prices(Collections.singletonList(sevenDayPrice));
     }
   }
-
 
   public KeyGenerator getKeyGenerator() {
     return keyGenerator;
@@ -91,4 +81,5 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
   public void setBlPricingService(BlPricingService blPricingService) {
     this.blPricingService = blPricingService;
   }
+
 }

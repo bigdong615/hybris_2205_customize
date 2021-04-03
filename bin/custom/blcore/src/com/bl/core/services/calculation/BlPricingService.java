@@ -33,13 +33,4 @@ public interface BlPricingService {
    */
   PriceRowModel getPriceRowByDuration(final String duration,final BlProductModel blProductModel);
 
-  /**
-   * Create or update fixed duration prices.
-   *
-   * @param blProductModel the bl product model
-   * @param sevenDayPrice  the base price row
-   * @return list of updated/created price rows
-   */
-  Collection<PriceRowModel> createOrUpdateFixedDurationPrices(final BlProductModel blProductModel,final Double sevenDayPrice,final boolean isNew);
-
 }
