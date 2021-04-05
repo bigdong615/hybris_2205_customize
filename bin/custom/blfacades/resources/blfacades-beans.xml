@@ -20,6 +20,10 @@
 		<property name="purchaseNotes" type="java.lang.String"/>
 		<property name="data_Sheet"
 			type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.ImageData>"/>
+		<property name="isDiscontinued" type="Boolean"/>
+		<property name="isNew" type="Boolean"/>
+		<property name="isUpcoming" type="Boolean"/>
+		<property name="productPageType" type="java.lang.String"/>
 	</bean>
 
 	<bean class="com.bl.facades.product.data.GenderData">

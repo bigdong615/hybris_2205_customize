@@ -2,6 +2,7 @@ package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.ProductVideoModel;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ProductVideoData;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -23,6 +24,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
+/*
+ * This populator is used for populating bl related specific product attribute.
+ *  @author  Vijay Vishwakarma
+ */
 public class BlProductPopulator implements Populator<ProductModel, ProductData> {
 
   @Resource(name = "imageConverter")
@@ -44,7 +49,6 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
       target.setUsedIncludes(blProductModel.getUsedIncludes());
       target.setForSale(BooleanUtils.toBoolean(blProductModel.getForSale()));
       target.setUsedGearVideosLink(populateVideo(CollectionUtils.emptyIfNull(blProductModel.getUsedGearVideosLink())));
-      target.setResourcesLink(blProductModel.getResourcesLink().getURL());
       target.setRentalNote(blProductModel.getDisplayNotes());
       final Collection<MediaModel> dataSheets = (Collection<MediaModel>) getProductCollectionAttribute(blProductModel,
           ProductModel.DATA_SHEET);
@@ -57,6 +61,9 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
 
   }
 
+  /*
+   * This method is used for populating video related data.
+   */
   List<ProductVideoData> populateVideo( Collection<ProductVideoModel> populateVideos ){
     List<ProductVideoData> videoDataList =  new ArrayList<>();
     populateVideos.forEach(productVideoModel -> {
@@ -64,9 +71,9 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
           productVideoData.setVideoName(productVideoModel.getVideoTitle());
           productVideoData.setVideoUrl(productVideoModel.getVideoLink());
           Date duration= productVideoModel.getVideoDuration();
-          DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+          DateFormat dateFormat = new SimpleDateFormat(BlFacadesConstants.TIME_FORMAT_STRING);
           String formattedTime= dateFormat.format(duration);
-        productVideoData.setVideoDuration(formattedTime);
+          productVideoData.setVideoDuration(formattedTime);
           videoDataList.add(productVideoData);
         }
         );
@@ -84,7 +91,9 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
     return value;
   }
 
-
+ /*
+  * This method is used for populating resource related pdf data
+  */
   private void populateResourceData(final Collection<MediaModel> data_sheet, final ProductData target)
   {
     final Collection<ImageData> imageList = new ArrayList<ImageData>();
@@ -94,7 +103,6 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
       imageList.add(imagedata);
     }
     target.setData_Sheet(imageList);
-   // target.setData_sheet(imageList);
   }
 
   protected Object getProductAttribute(final ProductModel productModel, final String attribute)
@@ -118,7 +126,5 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
   }
-
-
 
 }

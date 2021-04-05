@@ -671,5 +671,15 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
-
+<!--This bean is override to change default product pattern-->
+	<alias name="defaultProductModelUrlResolver" alias="productModelUrlResolver"/>
+	<bean id="defaultProductModelUrlResolver"
+		class="de.hybris.platform.commerceservices.url.impl.DefaultProductModelUrlResolver">
+		<property name="threadContextService" ref="threadContextService"/>
+		<property name="commerceCategoryService" ref="commerceCategoryService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<!--<property name="defaultPattern" value="/{category-path}/{product-name}/product/{product-code}"/>-->
+		<property name="defaultPattern" value="/product/{product-code}"/>
+		<property name="productAndCategoryHelper" ref="productAndCategoryHelper"/>
+	</bean>
 </beans>

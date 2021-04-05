@@ -247,16 +247,25 @@
 		</property>
 	</bean>
 
-	<bean id="blProductPopulator" class="com.bl.facades.populators.BLProductPopulator" >
+	<!--This populator is created for populating bl related specific product attribute-->
+	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator" >
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
+	<!--This bean is override to configure bl related populator : BL-166-->
+  <alias name="defaultProductConfiguredPopulator" alias="productConfiguredPopulator"/>
 	<bean id="productVariantConfiguredPopulator" parent="defaultProductConfiguredPopulator">
 		<property name="populators">
 			<map key-type="de.hybris.platform.commercefacades.product.ProductOption" merge="true">
 				<entry key="REQUIRED_DATA" value-ref="blProductPopulator"/>
 			</map>
 		</property>
+	</bean>
+
+<!--This bean is override to resolve redirection url : BL-166-->
+	<alias name="defaultBlProductDataUrlResolver" alias="productDataUrlResolver"/>
+	<bean id="defaultBlProductDataUrlResolver"
+		class="com.bl.facades.resolver.DefaultBlProductDataUrlResolver" parent="defaultProductDataUrlResolver">
 	</bean>
 
 

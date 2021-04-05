@@ -6,10 +6,10 @@
 
 <template:page pageTitle="${pageTitle}">
    <c:choose>
-       <c:when test="${product.forRent}">
+       <c:when test="${IsRentalPage}">
               <product:blRentalProductDetailsPanel />
       </c:when>
-      <c:when test="${product.forSale}">
+      <c:when test="${!IsRentalPage}">
          <product:blUsedProductDetailsPanel/>
       </c:when>
    </c:choose>

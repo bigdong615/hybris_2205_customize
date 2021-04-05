@@ -866,7 +866,7 @@
                  </attribute>
                </attributes>
             </itemtype>
-
+<!--This item is created to store product related video information: BL-166-->
           <itemtype code="ProductVideo"  autocreate="true" generate="true"
             jaloclass="com.bl.core.jalo.ProductVideo">
             <deployment table="ProductVideo" typecode="12207"/>

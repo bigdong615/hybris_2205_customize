@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
  <div class="screen"></div>
      <section id="globalSearch">
@@ -59,7 +60,7 @@
                                 <div class="priceSummary">
                                   <span class="productPrice">$215</span>&emsp;<span class="rentalDates">7 day rental</span>
                                 </div>
-                                  <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5">Add to Rental</a>
+                                  <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5"><spring:theme code= "basket.add.to.rental.cart.button.text" /></a>
                             </div>
                         </div>
                     </div>
@@ -97,7 +98,7 @@
                             <div class="col-lg-11 col-xl-9">
                                 <hr>
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#overview" role="button" aria-expanded="true" aria-controls="overview">
-                                <h5>Overview</h5>
+                                <h5><spring:theme code= "pdp.overview.section.text"/></h5>
                                 </a>
                                 <div class="collapse show" id="overview">
                                      <p>${ycommerce:sanitizeHTML(product.description)}</p>
@@ -117,7 +118,8 @@
                                      </div>
                                      </div>
                                 <hr>
-                                <a class="filter-expand" data-bs-toggle="collapse" href="#specs" role="button" aria-expanded="false" aria-controls="specs"><h5>Specs</h5></a>
+                                <a class="filter-expand" data-bs-toggle="collapse" href="#specs" role="button" aria-expanded="false" aria-controls="specs">
+                                <h5><spring:theme code = "pdp.specification.section.text"/></h5></a>
                                 <div class="collapse" id="specs">
                                 <product:productDetailsClassifications product="${product}" />
                                     </div>
@@ -125,7 +127,7 @@
 
                                 <c:if test="${not empty product.rentalIncludes}">
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#rental-includes" role="button" aria-expanded="false" aria-controls="includes">
-                                <h5>Rental Includes</h5>
+                                <h5><spring:theme code="pdp.rental.includes.section.text"/></h5>
                                 </a>
                                 <div class="collapse" id="rental-includes">
                                     <p>${ycommerce:sanitizeHTML(product.rentalIncludes)}</p>
@@ -134,19 +136,20 @@
                                 </c:if>
                               <c:if test="${not empty product.rentalNote}">
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#rental-notes" role="button" aria-expanded="false" aria-controls="notes">
-                                <h5>Rental Notes</h5></a>
+                                <h5><spring:theme code= "pdp.rental.notes.section.text" /></h5></a>
                                 <div class="collapse" id="rental-notes">
                                     <p>${ycommerce:sanitizeHTML(product.rentalNote)}</p>
                                 </div>
                                  <hr>
                                 </c:if>
-                                <a class="filter-expand" data-bs-toggle="collapse" href="#manual" role="button" aria-expanded="false" aria-controls="notes"><h5>Manual</h5></a>
+                                <a class="filter-expand" data-bs-toggle="collapse" href="#manual" role="button" aria-expanded="false" aria-controls="notes">
+                                <h5><spring:theme code= "pdp.manual.section.text" /></h5></a>
                                 <div class="collapse" id="manual">
                                   <product:productResourcesPanel />
                                    </div>
                                 <hr>
                                 <!-- Additional Gear Slider -->
-                                <h5>Don't forget</h5>
+                                <h5><spring:theme code= "pdp.rental.product.recommendation.section.text" /></h5>
                                 <div id="gear-slider" class="splide mt-4 splide--slide splide--ltr splide--draggable is-active" style="visibility: visible;">
                                     <div class="splide__arrows"><button class="splide__arrow splide__arrow--prev" type="button" aria-controls="gear-slider-track" aria-label="Go to last slide"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><path d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"></path></svg></button><button class="splide__arrow splide__arrow--next" type="button" aria-controls="gear-slider-track" aria-label="Next slide"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><path d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"></path></svg></button></div><div class="splide__track" id="gear-slider-track" style="padding-left: 10px; padding-right: 10px;">
                                         <ul class="splide__list" id="gear-slider-list" style="transform: translateX(0px);">
@@ -269,7 +272,7 @@
                                 <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="gear-slider-slide01 gear-slider-slide02 gear-slider-slide03 gear-slider-slide04" aria-label="Go to page 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="gear-slider-slide03 gear-slider-slide04 gear-slider-slide05 gear-slider-slide06" aria-label="Go to page 2"></button></li></ul></div>
                                 <!-- Start Reviews -->
                                 <div id="reviews" class="mb-5">
-                                    <h5 class="mb-4">Reviews</h5><div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
+                                    <h5 class="mb-4"><spring:theme code= "pdp.review.section.text"/></h5><div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                     <div class="reviewBlock">
                                         <div class="reviewTitle">
                                             <div class="stars"><span class="stars-filled" style="width: 90%;"></span><img src="assets/stars-empty.svg"></div> <b>A superb camera with a remarkable kit lens.</b>
