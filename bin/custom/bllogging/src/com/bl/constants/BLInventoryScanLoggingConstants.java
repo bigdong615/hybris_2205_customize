@@ -47,6 +47,7 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
     public static final String EMPTY_STRING = "";
+    public static final String SCAN_STRING = "Scan data: ";
 
 
     private BlInventoryScanLoggingConstants() { }

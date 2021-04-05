@@ -66,7 +66,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
             if (barcodeSize < BlInventoryScanLoggingConstants.TWO) {
                 this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                         BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-                        barcodes);
+                        BlInventoryScanLoggingConstants.SCAN_STRING + barcodes);
             } else {
                 this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                         BlInventoryScanLoggingConstants.MAX_BARCODE_LIMIT_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
