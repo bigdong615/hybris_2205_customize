@@ -30,6 +30,7 @@ import com.bl.core.stock.BlStockLevelDao;
 /**
  * @author Moumita
  *
+ * Junit test for BlCommerceStockServiceImpl
  */
 @UnitTest
 public class BlCommerceStockServiceImplTest
@@ -50,6 +51,9 @@ public class BlCommerceStockServiceImplTest
 		MockitoAnnotations.initMocks(this);
 	}
 
+	/**
+	 * This is to check the condition for out of stock
+	 */
 	@Test
 	public void testGetStockForDateForOOS()
 	{
@@ -63,6 +67,9 @@ public class BlCommerceStockServiceImplTest
 		Assert.assertEquals(StockLevelStatus.OUTOFSTOCK, status);
 	}
 
+	/**
+	 * This is to check the condition for in stock
+	 */
 	@Test
 	public void testGetStockForDateForInStock() throws ParseException {
 		final List<WarehouseModel> warehouseModels = new ArrayList<WarehouseModel>();
@@ -84,6 +91,10 @@ public class BlCommerceStockServiceImplTest
 		StockLevelStatus status = blCommerceStockService.getStockLevelStatus(warehouseModels, productCode, startDate, endDate);
 		Assert.assertEquals(StockLevelStatus.INSTOCK, status);
 	}
+
+	/**
+	 * This is to check the condition for low stock
+	 */
 	@Test
 	public void testGetStockForDateForLowStock() throws ParseException {
 		final List<WarehouseModel> warehouseModels = new ArrayList<WarehouseModel>();
