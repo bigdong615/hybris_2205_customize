@@ -9,6 +9,7 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearc
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryData;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryTermData;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchRequest;
+import de.hybris.platform.commerceservices.search.solrfacetsearch.populators.SearchFiltersPopulator;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.IndexedType;
@@ -27,11 +28,11 @@ import org.apache.commons.collections4.CollectionUtils;
  * The Populator Added for Adding extra parameters to Solr Query
  */
 
-public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> implements
-    Populator<SearchQueryPageableData<SolrSearchQueryData>, SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE>> {
+public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> extends
+    SearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> {
 
   /**
-   * Overrided the OOB populator to customize the solr parameters
+   * Overrided the OOB populate to customize the solr parameters
    */
   @Override
   public void populate(final SearchQueryPageableData<SolrSearchQueryData> source,
@@ -58,29 +59,6 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
         target.getSearchQuery().addFilterQuery(convertFilterQuery(solrSearchFilterQuery));
       }
     }
-  }
-
-  private void populateFilterQueries(final SolrSearchQueryData solrSearchQueryData,
-      final Map<String, SolrSearchFilterQueryData> filterQueriesMap) {
-    if (solrSearchQueryData.getFilterQueries() == null) {
-      solrSearchQueryData.setFilterQueries(new ArrayList<>());
-    }
-    solrSearchQueryData.getFilterQueries().addAll(filterQueriesMap.values());
-  }
-
-  private QueryField convertFilterQuery(final SolrSearchFilterQueryData solrSearchFilterQuery) {
-    final FilterQueryOperator queryOperator = solrSearchFilterQuery.getOperator();
-
-    final SearchQuery.Operator operator;
-
-    if (queryOperator != null) {
-      operator = SearchQuery.Operator.valueOf(queryOperator.toString());
-    } else {
-      operator = SearchQuery.Operator.AND;
-    }
-
-    return new QueryField(solrSearchFilterQuery.getKey(), operator,
-        solrSearchFilterQuery.getValues());
   }
 
   /**
