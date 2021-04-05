@@ -45,7 +45,6 @@ $contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentC
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_navigation_myaccount.impex"), "utf-8", 0, 0);
 
 #Mention here Content page related impexes in sequence
- 3ba24fe2c338e93c4141648ab6c148cf6335c708
 
 #Mention here Category Page related impexes in sequence
 

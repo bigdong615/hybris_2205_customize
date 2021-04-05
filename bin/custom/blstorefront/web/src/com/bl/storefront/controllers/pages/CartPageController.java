@@ -3,7 +3,9 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.services.cart.BlCartService;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -39,7 +41,9 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.order.CartService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.util.Config;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -58,6 +62,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,6 +72,8 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Controller for cart page
@@ -120,8 +127,11 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "bruteForceAttackHandler")
 	private BruteForceAttackHandler bruteForceAttackHandler;
 
-	@Resource(name ="blCartFacade")
+	@Resource(name ="cartFacade")
 	private BlCartFacade blCartFacade;
+
+	@Resource(name = "cartService")
+	private BlCartService blCartService;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -632,7 +642,7 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	/**
-	 * Empty cart.
+	 * This method will remove all the cart items from cart page.
 	 *
 	 * @param model the model
 	 * @param redirectAttributes the redirect attributes
@@ -641,8 +651,15 @@ public class CartPageController extends AbstractCartPageController
 	@GetMapping(value = "/emptyCart")
 	public String emptyCart(final Model model, final RedirectAttributes redirectAttributes)
 	{
-		blCartFacade.removeCartEntries();
+		final CartModel cartModel = blCartService.getSessionCart();
+		try{
+			blCartFacade.removeCartEntries(cartModel);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER, "text.page.cart.clear.success");
 
+		}catch (final Exception exception) {
+			BlLogger.logMessage(LOG, Level.ERROR, "Unable to remove cart entries : {}",cartModel.getCode(), exception);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, "text.page.cart.clear.fail");
+		}
 		return REDIRECT_CART_URL;
 	}
 

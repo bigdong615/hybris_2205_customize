@@ -247,10 +247,10 @@
 		</property>
 	</bean>
 
-	<!--<BL-xyz entry for clear cart>-->
-	<alias name="defaultBlCartFacade" alias="blCartFacade" />
-	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade">
-		<property name="blCartService" ref="blCartService" />
+	<!--<BL-467 entry for clear cart>-->
+	<alias name="defaultBlCartFacade" alias="cartFacade" />
+	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
+		<property name="blCartService" ref="cartService" />
 	</bean>
 
 </beans>

@@ -8,7 +8,7 @@ $('.clear-cart-page').on("click", function (event) {
                      window.location.reload();
                      },
                      error: function (xht, textStatus, ex) {
-                       console.log("Cart can't be cleared");
+                       console.log("Error while removing cart entries");
                      }
 
             });
