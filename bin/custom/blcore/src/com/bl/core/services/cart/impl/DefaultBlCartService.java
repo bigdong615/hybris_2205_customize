@@ -19,7 +19,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 
     private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
 
-    private CommerceCartService commerceCartService;
+    private CommerceCartService commerceCartService; // NOSONAR
 
     /**
      * {@inheritDoc}
