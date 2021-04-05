@@ -865,7 +865,62 @@
                  </attribute>
                </attributes>
             </itemtype>
-         </typegroup>
+            
+          <itemtype code="StockLevel" autocreate="false" generate="false">
+					<description>Extending StockLevel type to include date related fields</description>
+		  	  	<attributes>
+					<attribute type="java.util.Date" qualifier="date">
+						<persistence type="property" />
+						<description>The inventory would be date specific for all the rental products</description>
+			  		</attribute>
+			  		<!-- <attribute type="java.lang.Long" qualifier="timeUnit">
+						<persistence type="property" />
+						<defaultvalue>Long.valueOf(86400000)</defaultvalue>
+					</attribute> -->
+					<attribute type="java.lang.String" qualifier="serialProductCode">
+						<persistence type="property" />
+						<modifiers read="true" write="true" unique="false"  optional="false"/>
+						<description>This is for serial product</description>
+					</attribute>
+				 	<attribute qualifier="reservedStatus" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>To identify whether it is reserved or not</description>
+                    </attribute>
+                    <attribute qualifier="order" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <description>To associate the order during allocation for rental orders</description>
+                    </attribute>
+                    <attribute qualifier="hardAssigned" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>To identify whether it is reserved or not</description>
+                    </attribute>
+                    <attribute qualifier="bufferedInventory" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>To identify whether the serial product is part of buffered inventory</description>
+                    </attribute>
+                    <attribute qualifier="serialStatus" type="SerialStatusEnum">
+                     	<persistence type="property" />
+                     	<modifiers read="true" write="true" optional="false"/>
+                     	<description>The status of the Serial Product</description>
+                   </attribute>
+				</attributes>
+				<indexes>
+					<index name="serialProductCodeIndex">
+					    <key attribute="serialProductCode"/>
+					</index>
+					<index name="dateIndex">
+					    <key attribute="date"/>
+					</index>
+				</indexes>
+		</itemtype>
+   </typegroup>
 
 
     </itemtypes>

@@ -671,5 +671,11 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
-
+	<bean id="blStockLevelDao" class="com.bl.core.stock.impl.BlStockLevelDaoImpl" parent="stockLevelDao">
+	</bean>
+	
+	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.BlCommerceStockServiceImpl">
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+	
 </beans>
