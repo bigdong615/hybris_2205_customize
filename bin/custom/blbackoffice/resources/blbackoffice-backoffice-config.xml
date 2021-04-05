@@ -3,17 +3,17 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <config xmlns="http://www.hybris.com/cockpit/config"
+		xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
 		xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
 		xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
-		xmlns:ss="file://D:/BorrowLenses/BL-Hybris/hybris/bin/modules/search-and-navigation/solrfacetsearch/resources/indexer/solrSearchAddDocuments.xsd"
-		xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
 		xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
 		xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
-		xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+		xmlns:y="http://www.hybris.com/cockpit/config/hybris"
+		xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
 
 	<!--Bl Specific custom nodes to be added here -->
 	<context component="explorer-tree">
-		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+		<n:explorer-tree>
 			<n:navigation-node id="BLBackoffice">
 				<n:type-node id="BlProduct" code="BlProduct"/>
 				<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
@@ -27,7 +27,7 @@
 
 	<!-- BL Inventory Web Scan Tool -->
 	<context component="explorer-tree" merge-by="module">
-		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+		<n:explorer-tree>
 			<n:navigation-node id="BLInventoryScan">
 				<n:navigation-node id="WebScanTool"/>
 				<n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
@@ -168,7 +168,7 @@
 	<!-- End -->
 
 	<context merge-by="module" component="editorareaactions" type="Consignment">
-		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+		<y:actions>
 			<y:group qualifier="common">
 				<y:label>actiongroup.common</y:label>				
 				<y:action action-id="com.bl.backoffice.actions.confirmpickupaction" property="currentObject"/>				
@@ -294,7 +294,7 @@
 	</context>
 
   <context type="BlInventoryLocation" component="listview" merge-by="replace">
-    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+    <list-view:list-view>
       <list-view:column qualifier="inventoryLocationID"/>
       <list-view:column qualifier="code"/>
       <list-view:column qualifier="name"/>
