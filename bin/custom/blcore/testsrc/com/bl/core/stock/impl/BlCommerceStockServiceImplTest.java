@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.core.stock.impl;
 
 import de.hybris.bootstrap.annotations.UnitTest;
