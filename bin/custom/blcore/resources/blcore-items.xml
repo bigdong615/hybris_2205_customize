@@ -7,9 +7,7 @@
     <collectiontypes>
         <collectiontype code="GenderList" elementtype="Gender" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
-                        type="set"/>
-        <collectiontype code="BlInventoryLocationScanHistoryList" elementtype="BlInventoryLocationScanHistory" autocreate="true" generate="true"
-                        type="list"/>
+          type="set"/>
     </collectiontypes>
 
     <enumtypes>
@@ -146,8 +144,8 @@
 
         <typegroup name="Apparel">
             <itemtype code="ApparelProduct" extends="Product"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ApparelProduct">
+              autocreate="true" generate="true"
+              jaloclass="com.bl.core.jalo.ApparelProduct">
                 <description>Base apparel product extension that contains additional attributes.</description>
                 <attributes>
                     <attribute qualifier="genders" type="GenderList">
@@ -159,13 +157,13 @@
             </itemtype>
 
             <itemtype code="ApparelStyleVariantProduct" extends="VariantProduct"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ApparelStyleVariantProduct">
+              autocreate="true" generate="true"
+              jaloclass="com.bl.core.jalo.ApparelStyleVariantProduct">
                 <description>Apparel style variant type that contains additional attribute describing variant style.
                 </description>
                 <attributes>
                     <attribute qualifier="style" type="localized:java.lang.String"
-                               metatype="VariantAttributeDescriptor">
+                      metatype="VariantAttributeDescriptor">
                         <description>Color/Pattern of the product.</description>
                         <modifiers/>
                         <persistence type="property"/>
@@ -182,13 +180,13 @@
             </itemtype>
 
             <itemtype code="ApparelSizeVariantProduct" extends="ApparelStyleVariantProduct"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ApparelSizeVariantProduct">
+              autocreate="true" generate="true"
+              jaloclass="com.bl.core.jalo.ApparelSizeVariantProduct">
                 <description>Apparel size variant type that contains additional attribute describing variant size.
                 </description>
                 <attributes>
                     <attribute qualifier="size" type="localized:java.lang.String"
-                               metatype="VariantAttributeDescriptor">
+                      metatype="VariantAttributeDescriptor">
                         <description>Size of the product.</description>
                         <modifiers/>
                         <persistence type="property"/>
@@ -199,13 +197,13 @@
 
         <typegroup name="Electronics">
             <itemtype code="ElectronicsColorVariantProduct" extends="VariantProduct"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ElectronicsColorVariantProduct">
+              autocreate="true" generate="true"
+              jaloclass="com.bl.core.jalo.ElectronicsColorVariantProduct">
                 <description>Electronics color variant type that contains additional attribute describing variant color.
                 </description>
                 <attributes>
                     <attribute qualifier="color" type="localized:java.lang.String"
-                               metatype="VariantAttributeDescriptor">
+                      metatype="VariantAttributeDescriptor">
                         <description>Color of the product.</description>
                         <modifiers/>
                         <persistence type="property"/>
@@ -217,7 +215,7 @@
         <!-- Custom CMS ItemTypes -->
         <typegroup name="cms">
             <itemtype code="CustomPromoMessageComponent" extends="CMSParagraphComponent" autocreate="true"
-                      generate="true">
+              generate="true">
                 <description>CMS Paragraph Component that contains the Promotion message section on header</description>
             </itemtype>
 
@@ -226,7 +224,7 @@
             </itemtype>
 
             <itemtype code="CustomBLParagraphComponent" extends="CMSParagraphComponent" autocreate="true"
-                      generate="true">
+              generate="true">
                 <description>Custom CMS Paragraph Component type that contains additional attribute to display required
                     information.
                 </description>
@@ -245,7 +243,7 @@
             </itemtype>
 
             <itemtype code="CustomFeaturedStoriesComponent" extends="SimpleBannerComponent" autocreate="true"
-                      generate="true">
+              generate="true">
                 <description>Custom Simple Banner Component type that contains additional attribute to display Featured
                     Stories.
                 </description>
@@ -269,15 +267,15 @@
             </itemtype>
 
             <itemtype code="CustomNavigationPromoComponent" extends="SimpleBannerComponent" autocreate="true"
-                      generate="true">
+              generate="true">
                 <description>Custom Simple Banner Component type that contains additional attribute to display Promotion
                     Image under category navigation.
                 </description>
             </itemtype>
 
             <itemtype code="RotatingHomePageImagesComponent" extends="AbstractBannerComponent" autocreate="true"
-                      generate="true"
-                      jaloclass="com.bl.core.cms.components.RotatingHomePageImagesComponent">
+              generate="true"
+              jaloclass="com.bl.core.cms.components.RotatingHomePageImagesComponent">
                 <description>Custom Banner Component type that contains additional attribute to display Hero Banner
                     Carousel on HomePage.
                 </description>
@@ -306,7 +304,7 @@
             </itemtype>
 
             <itemtype code="RentingGearIsEasyComponent" extends="CMSParagraphComponent" autocreate="true"
-                      generate="true">
+              generate="true">
                 <description>Custom CMS Paragraph Component type that contains additional attribute for renting gear is
                     easy section
                 </description>
@@ -335,8 +333,8 @@
             </itemtype>
 
             <itemtype code="HomePageCategoriesCarouselComponent" extends="AbstractBannerComponent" autocreate="true"
-                      generate="true"
-                      jaloclass="com.bl.core.cms.components.HomePageCategoriesCarouselComponent">
+              generate="true"
+              jaloclass="com.bl.core.cms.components.HomePageCategoriesCarouselComponent">
                 <description>Custom Banner Component type that contains additional attribute to display Categories
                     Carousel on HomePage.
                 </description>
@@ -350,7 +348,7 @@
             </itemtype>
 
             <itemtype code="CustomBrandsComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
-                      jaloclass="com.bl.core.cms.components.CustomBrandsComponent">
+              jaloclass="com.bl.core.cms.components.CustomBrandsComponent">
                 <description>Custom Banner Component type to display Brands Section on HomePage.</description>
                 <attributes>
                     <attribute qualifier="brandImageTitle" type="localized:java.lang.String">
@@ -362,14 +360,14 @@
             </itemtype>
 
             <itemtype code="CustomBorrowFromUsComponent" extends="AbstractBannerComponent" autocreate="true"
-                      generate="true"
-                      jaloclass="com.bl.core.jalo.CustomBorrowFromUsComponent">
+              generate="true"
+              jaloclass="com.bl.core.jalo.CustomBorrowFromUsComponent">
                 <description>Custom Banner Component type to display Borrow From Us Section on HomePage.</description>
             </itemtype>
 
             <itemtype code="CustomFooterSubscriptionComponent" extends="SimpleCMSComponent" autocreate="true"
-                      generate="true"
-                      jaloclass="com.bl.core.cms.components.CustomFooterSubscriptionComponent">
+              generate="true"
+              jaloclass="com.bl.core.cms.components.CustomFooterSubscriptionComponent">
                 <description>Custom Simple CMS Component type that contains additional attribute to display Footer
                     Subscription on footer
                 </description>
@@ -388,8 +386,8 @@
             </itemtype>
 
             <itemtype code="CustomFooterCopyRightComponent" extends="CMSParagraphComponent" autocreate="true"
-                      generate="true"
-                      jaloclass="com.bl.core.cms.components.CustomFooterCopyRightComponent">
+              generate="true"
+              jaloclass="com.bl.core.cms.components.CustomFooterCopyRightComponent">
                 <description>Custom Paragraph Component type that contains additional attribute for footer copyright
                     section
                 </description>
@@ -408,7 +406,7 @@
             </itemtype>
 
             <itemtype code="CustomWhyBorrowLensesBannerComponent" extends="RotatingImagesComponent" autocreate="true"
-                      generate="true">
+              generate="true">
                 <description>Custom Banner Component type that contains additional attribute to display Why Borrow
                     Lenses section.
                 </description>
@@ -448,13 +446,13 @@
             </itemtype>
 
             <itemtype code="PickUpOrDeliveryNavigationComponent" extends="NavigationComponent" autocreate="true"
-                      generate="true"
-                      jaloclass="de.hybris.platform.acceleratorcms.jalo.components.PickUpOrDeliveryNavigationComponent">
+              generate="true"
+              jaloclass="de.hybris.platform.acceleratorcms.jalo.components.PickUpOrDeliveryNavigationComponent">
                 <description>Custom Navigation component for PickUp Or Delivery navigation node on header.</description>
             </itemtype>
 
             <itemtype code="SupportNavigationComponent" extends="NavigationComponent" autocreate="true" generate="true"
-                      jaloclass="de.hybris.platform.acceleratorcms.jalo.components.SupportNavigationComponent">
+              jaloclass="de.hybris.platform.acceleratorcms.jalo.components.SupportNavigationComponent">
                 <description>Custom Navigation component for Support navigation node on header.</description>
             </itemtype>
         </typegroup>
@@ -513,247 +511,247 @@
             </itemtype>
 
             <itemtype code="BlProduct" extends="Product" autocreate="true" generate="true"
-                    jaloclass="com.bl.core.jalo.BlProduct">
-            <description>Extending to BL product containing the additional attributes.</description>
-            <attributes>
-                <!--  auto ID which is generated by NumberSeries -->
-                <attribute qualifier="productId" type="java.lang.String" autocreate="true" generate="true">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="false" optional="true" unique="true" initial="true"/>
-                    <description>Auto generated Product ID</description>
-                </attribute>
-                <attribute qualifier="displayName" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" search="true" write="true" optional="true"/>
-                    <description>Product Display Name</description>
-                </attribute>
-                <attribute qualifier="mpn" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="false"/>
-                    <description>Manufactuer's part number</description>
-                </attribute>
-                <attribute qualifier="titleTag" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Product Title Tag to show Product Page Title Name. Managed for SEO.</description>
-                </attribute>
-                <attribute qualifier="upc" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="false"/>
-                    <description>UPC code for the BL Product</description>
-                </attribute>
-                <attribute qualifier="techEngNotes" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Links to a doc with technical learning about the product</description>
-                </attribute>
-                <attribute qualifier="lrLink" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Link for the rental item on a competitive site</description>
-                </attribute>
-                <attribute qualifier="rentalVideoLinks" type="StringCollection">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>The video URL links for the Rental</description>
-                </attribute>
-                <attribute qualifier="usedGearVideoLinks" type="StringCollection">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>The video URL links for the Used Gear</description>
-                </attribute>
-                <attribute qualifier="resourceLink" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>The link from each uploaded document</description>
-                </attribute>
-                <attribute qualifier="procurementSource" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="false"/>
-                    <description>Link or number for the item at the source we can purchase replacements</description>
-                </attribute>
-                <attribute qualifier="alternativeProduct" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Message to show for discontinued items</description>
-                </attribute>
-                <attribute qualifier="isVideo" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false" />
-                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                    <description>Product classified as as video for reporting / order reporting</description>
-                </attribute>
-                <attribute qualifier="forSale" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false" />
-                    <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
-                    <description>If the item is available for sale</description>
-                </attribute>
-                <attribute qualifier="forRent" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false" />
-                    <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
-                    <description>If the item is available for rent</description>
-                </attribute>
-                <attribute qualifier="level1Required" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false" />
-                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                    <description>Level 1 Verification Required</description>
-                </attribute>
-                <attribute qualifier="level2Required" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false" />
-                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                    <description>Level 2 Verification Required</description>
-                </attribute>
-                <attribute qualifier="scheduled" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false" />
-                    <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
-                    <description>Determines if availability engine runs on item</description>
-                </attribute>
-                <attribute qualifier="reserveRatio" type="java.lang.Integer">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true" />
-                    <description>Sets an override than the default buffer inventory level</description>
-                </attribute>
-                <attribute qualifier="firmwareVersion" type="java.lang.String">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true" />
-                    <description>The version the SKU's firmware is currently at</description>
-                </attribute>
-                <attribute qualifier="batteryMaterial" type="BatteryMaterialEnum">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>The type of material the battery is made of</description>
-                </attribute>
-                <attribute qualifier="productType" type="ProductTypeEnum">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" optional="false"/>
-                    <description>The type of Product</description>
-                </attribute>
-                <attribute qualifier="shortDescription" type="java.lang.String">
-                    <persistence type="property">
-                        <columntype>
-                            <value>HYBRIS.LONG_STRING</value>
-                        </columntype>
-                    </persistence>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Customer facing notes on the item</description>
-                </attribute>
-                <attribute qualifier="purchaseNotes" type="java.lang.String">
-                    <persistence type="property">
-                        <columntype>
-                            <value>HYBRIS.LONG_STRING</value>
-                        </columntype>
-                    </persistence>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Purchase Notes</description>
-                </attribute>
-                <attribute qualifier="displayNotes" type="java.lang.String">
-                    <persistence type="property">
-                        <columntype>
-                            <value>HYBRIS.LONG_STRING</value>
-                        </columntype>
-                    </persistence>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Customer facing notes on the item</description>
-                </attribute>
-                <attribute qualifier="rentalIncludes" type="java.lang.String">
-                    <persistence type="property">
-                        <columntype>
-                            <value>HYBRIS.LONG_STRING</value>
-                        </columntype>
-                    </persistence>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Customer facing details of what comes with the rental version of the item</description>
-                </attribute>
-                <attribute qualifier="numberSystem" type="NumberingSystemEnum">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" optional="false"/>
-                    <description>Determines how we track inventory</description>
-                </attribute>
-                <!--Shipping Attributes-->
-                <attribute qualifier="weight" type="java.math.BigDecimal">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Used to determine the shipping rate for the item</description>
-                </attribute>
-                <attribute qualifier="height" type="java.lang.Integer">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Used to determine the shipping rate for the item</description>
-                </attribute>
-                <attribute qualifier="width" type="java.lang.Integer">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Used to determine the shipping rate for the item</description>
-                </attribute>
-                <attribute qualifier="length" type="java.lang.Integer">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Used to determine the shipping rate for the item</description>
-                </attribute>
-                <attribute qualifier="procurementCost" type="java.math.BigDecimal">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" optional="false"/>
-                    <description>Starting base price for the sku for used gear sales of all serials</description>
-                </attribute>
-                <attribute qualifier="constrained" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false" />
-                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                    <description>Determines the product will be constrained or non-constrained</description>
-                </attribute>
-                <attribute qualifier="isNew" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false"/>
-                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                    <description>Determines the product is Newly arrived</description>
-                </attribute>
-                <attribute qualifier="discontinued" type="java.lang.Boolean">
-                    <persistence type="property" />
-                    <modifiers read="true" write="true" search="true" optional="false"/>
-                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                    <description>Determines the product is Discontinued</description>
-                </attribute>
-                <attribute qualifier="manufacturerAID" type="java.lang.String" redeclare="true">
-                    <modifiers read="true" write="true" search="true" optional="false"/>
-                    <persistence type="property"/>
-                    <custom-properties>
-                        <property name="hmcIndexField"><value>"thefield"</value></property>
-                    </custom-properties>
-                </attribute>
-                <attribute qualifier="usedDescription" type="java.lang.String">
-                    <persistence type="property">
-                        <columntype>
-                            <value>HYBRIS.LONG_STRING</value>
-                        </columntype>
-                    </persistence>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Customer facing description of the product for used gear listings</description>
-                </attribute>
-                <attribute qualifier="usedIncludes" type="java.lang.String">
-                    <persistence type="property">
-                        <columntype>
-                            <value>HYBRIS.LONG_STRING</value>
-                        </columntype>
-                    </persistence>
-                    <modifiers read="true" write="true" optional="true"/>
-                    <description>Customer facing details of what comes with the for sale version of the item</description>
-                </attribute>
-                <attribute qualifier="mostPopular" type="java.lang.Boolean">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" search="true" optional="false"/>
-                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                    <description>Determines the product is most popular</description>
-                </attribute>
-            </attributes>
+              jaloclass="com.bl.core.jalo.BlProduct">
+                <description>Extending to BL product containing the additional attributes.</description>
+                <attributes>
+                    <!--  auto ID which is generated by NumberSeries -->
+                    <attribute qualifier="productId" type="java.lang.String" autocreate="true" generate="true">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="false" optional="true" unique="true" initial="true"/>
+                        <description>Auto generated Product ID</description>
+                    </attribute>
+                    <attribute qualifier="displayName" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" search="true" write="true" optional="true"/>
+                        <description>Product Display Name</description>
+                    </attribute>
+                    <attribute qualifier="mpn" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Manufactuer's part number</description>
+                    </attribute>
+                    <attribute qualifier="titleTag" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Product Title Tag to show Product Page Title Name. Managed for SEO.</description>
+                    </attribute>
+                    <attribute qualifier="upc" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>UPC code for the BL Product</description>
+                    </attribute>
+                    <attribute qualifier="techEngNotes" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Links to a doc with technical learning about the product</description>
+                    </attribute>
+                    <attribute qualifier="lrLink" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Link for the rental item on a competitive site</description>
+                    </attribute>
+                    <attribute qualifier="rentalVideoLinks" type="StringCollection">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>The video URL links for the Rental</description>
+                    </attribute>
+                    <attribute qualifier="usedGearVideoLinks" type="StringCollection">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>The video URL links for the Used Gear</description>
+                    </attribute>
+                    <attribute qualifier="resourceLink" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>The link from each uploaded document</description>
+                    </attribute>
+                    <attribute qualifier="procurementSource" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Link or number for the item at the source we can purchase replacements</description>
+                    </attribute>
+                    <attribute qualifier="alternativeProduct" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Message to show for discontinued items</description>
+                    </attribute>
+                    <attribute qualifier="isVideo" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Product classified as as video for reporting / order reporting</description>
+                    </attribute>
+                    <attribute qualifier="forSale" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+                        <description>If the item is available for sale</description>
+                    </attribute>
+                    <attribute qualifier="forRent" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+                        <description>If the item is available for rent</description>
+                    </attribute>
+                    <attribute qualifier="level1Required" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Level 1 Verification Required</description>
+                    </attribute>
+                    <attribute qualifier="level2Required" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Level 2 Verification Required</description>
+                    </attribute>
+                    <attribute qualifier="scheduled" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+                        <description>Determines if availability engine runs on item</description>
+                    </attribute>
+                    <attribute qualifier="reserveRatio" type="java.lang.Integer">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>Sets an override than the default buffer inventory level</description>
+                    </attribute>
+                    <attribute qualifier="firmwareVersion" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <description>The version the SKU's firmware is currently at</description>
+                    </attribute>
+                    <attribute qualifier="batteryMaterial" type="BatteryMaterialEnum">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>The type of material the battery is made of</description>
+                    </attribute>
+                    <attribute qualifier="productType" type="ProductTypeEnum">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>The type of Product</description>
+                    </attribute>
+                    <attribute qualifier="shortDescription" type="java.lang.String">
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Customer facing notes on the item</description>
+                    </attribute>
+                    <attribute qualifier="purchaseNotes" type="java.lang.String">
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Purchase Notes</description>
+                    </attribute>
+                    <attribute qualifier="displayNotes" type="java.lang.String">
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Customer facing notes on the item</description>
+                    </attribute>
+                    <attribute qualifier="rentalIncludes" type="java.lang.String">
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Customer facing details of what comes with the rental version of the item</description>
+                    </attribute>
+                    <attribute qualifier="numberSystem" type="NumberingSystemEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Determines how we track inventory</description>
+                    </attribute>
+                    <!--Shipping Attributes-->
+                    <attribute qualifier="weight" type="java.math.BigDecimal">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Used to determine the shipping rate for the item</description>
+                    </attribute>
+                    <attribute qualifier="height" type="java.lang.Integer">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Used to determine the shipping rate for the item</description>
+                    </attribute>
+                    <attribute qualifier="width" type="java.lang.Integer">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Used to determine the shipping rate for the item</description>
+                    </attribute>
+                    <attribute qualifier="length" type="java.lang.Integer">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Used to determine the shipping rate for the item</description>
+                    </attribute>
+                    <attribute qualifier="procurementCost" type="java.math.BigDecimal">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false"/>
+                        <description>Starting base price for the sku for used gear sales of all serials</description>
+                    </attribute>
+                    <attribute qualifier="constrained" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines the product will be constrained or non-constrained</description>
+                    </attribute>
+                    <attribute qualifier="isNew" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines the product is Newly arrived</description>
+                    </attribute>
+                    <attribute qualifier="discontinued" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines the product is Discontinued</description>
+                    </attribute>
+                    <attribute qualifier="manufacturerAID" type="java.lang.String" redeclare="true">
+                        <modifiers read="true" write="true" search="true" optional="false"/>
+                        <persistence type="property"/>
+                        <custom-properties>
+                            <property name="hmcIndexField"><value>"thefield"</value></property>
+                        </custom-properties>
+                    </attribute>
+                    <attribute qualifier="usedDescription" type="java.lang.String">
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Customer facing description of the product for used gear listings</description>
+                    </attribute>
+                    <attribute qualifier="usedIncludes" type="java.lang.String">
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>Customer facing details of what comes with the for sale version of the item</description>
+                    </attribute>
+                    <attribute qualifier="mostPopular" type="java.lang.Boolean">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" search="true" optional="false"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>Determines the product is most popular</description>
+                    </attribute>
+                </attributes>
             </itemtype>
 
             <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.BlSerialProduct">
+              jaloclass="com.bl.core.jalo.BlSerialProduct">
                 <description>Extending BlSerialProduct with additional attributes</description>
                 <attributes>
                     <attribute qualifier="serialStatus" type="SerialStatusEnum">
@@ -936,7 +934,7 @@
             </itemtype>
 
             <itemtype code="BlSubpart" extends="BlSerialProduct" autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.BlSubpart">
+              jaloclass="com.bl.core.jalo.BlSubpart">
                 <description>Extending BlSubPart with additional attributes</description>
                 <attributes>
                     <attribute qualifier="barcode" type="java.lang.String" redeclare="true">
@@ -949,7 +947,7 @@
 
             <!-- InventoryLocation for Scan -->
             <itemtype code="BlInventoryLocation" autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.BlInventoryLocation">
+              jaloclass="com.bl.core.jalo.BlInventoryLocation">
                 <description>This table is for storing InventoryLocation details.</description>
                 <deployment table="blInventoryLocation" typecode="12204" />
                 <attributes>
@@ -994,7 +992,7 @@
 
             <!-- InventoryLocationScanHistory for tracking logs-->
             <itemtype code="BlInventoryLocationScanHistory" autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.BlInventoryLocationScanHistory">
+              jaloclass="com.bl.core.jalo.BlInventoryLocationScanHistory">
                 <description>This table is for keeping track of Inventory being moved in warehouse by different users.</description>
                 <deployment table="blInvLocScanHistory" typecode="12205" />
                 <attributes>

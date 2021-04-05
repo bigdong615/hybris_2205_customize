@@ -5,8 +5,11 @@
 <config xmlns="http://www.hybris.com/cockpit/config"
 		xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
 		xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+		xmlns:ss="file://D:/BorrowLenses/BL-Hybris/hybris/bin/modules/search-and-navigation/solrfacetsearch/resources/indexer/solrSearchAddDocuments.xsd"
+		xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
 		xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
-		xmlns:ss="file://D:/BorrowLenses/BL-Hybris/hybris/bin/modules/search-and-navigation/solrfacetsearch/resources/indexer/solrSearchAddDocuments.xsd">
+		xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
+		xmlns:y="http://www.hybris.com/cockpit/config/hybris">
 
 	<!--Bl Specific custom nodes to be added here -->
 	<context component="explorer-tree">
@@ -14,6 +17,10 @@
 			<n:navigation-node id="BLBackoffice">
 				<n:type-node id="BlProduct" code="BlProduct"/>
 				<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+				<n:navigation-node id="BLProduct Inventory">
+					<n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
+					<n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
+				</n:navigation-node>
 			</n:navigation-node>
 		</n:explorer-tree>
 	</context>
@@ -158,7 +165,6 @@
 			</wz:step>
 		</wz:flow>
 	</context>
-
 	<!-- End -->
 
 	<context merge-by="module" component="editorareaactions" type="Consignment">
@@ -258,4 +264,132 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+
+	<!--BLInventoryLocation Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
+	<context component="create-wizard" type="BlInventoryLocation" merge-by="replace">
+		<wz:flow id="BLInventoryLocationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="blInventoryLocationPrepare">
+				<wz:initialize property="newBLInventoryLocation" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blinventorylocation.essential.label" sublabel="create.blinventorylocation.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBLInventoryLocation">
+						<wz:property qualifier="code"/>
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="inventoryType"/>
+						<wz:property qualifier="active"/>
+						<wz:property qualifier="parentInventoryLocation"/>
+						<wz:property qualifier="blInventoryLocationScanHistories"/>
+						<wz:property qualifier="lastModifiedTime"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBLInventoryLocation"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+  <context type="BlInventoryLocation" component="listview" merge-by="replace">
+    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+      <list-view:column qualifier="inventoryLocationID"/>
+      <list-view:column qualifier="code"/>
+      <list-view:column qualifier="name"/>
+      <list-view:column qualifier="inventoryType"/>
+      <list-view:column qualifier="active"/>
+      <list-view:column qualifier="creationtime"/>
+      <list-view:column qualifier="parentInventoryLocation"/>
+      <list-view:column qualifier="blInventoryLocationScanHistories"/>
+      <list-view:column qualifier="lastModifiedTime"/>
+    </list-view:list-view>
+  </context>
+
+  <context type="BlInventoryLocation" component="advanced-search" merge-by="replace">
+    <advanced-search:advanced-search>
+      <advanced-search:field-list>
+				<advanced-search:field name="inventoryLocationID" selected="true"/>
+        <advanced-search:field name="code" selected="true"/>
+        <advanced-search:field name="name" selected="true"/>
+        <advanced-search:field name="inventoryType" selected="true"/>
+        <advanced-search:field name="active" selected="false"/>
+        <advanced-search:field name="PK" selected="false"/>
+        <advanced-search:field name="parentInventoryLocation" selected="false"/>
+        <advanced-search:field name="blInventoryLocationScanHistories" selected="false"/>
+        <advanced-search:field name="lastModifiedTime" selected="false"/>
+      </advanced-search:field-list>
+    </advanced-search:advanced-search>
+  </context>
+
+  <context type="BlInventoryLocation" component="simple-search" merge-by="replace">
+    <ss:simple-search>
+      <ss:field name="code"/>
+			<ss:field name="inventoryLocationID"/>
+      <ss:field name="inventoryType"/>
+    </ss:simple-search>
+  </context>
+
+	<context type="BlInventoryLocation" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>inventoryLocationID</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<!--BLInventoryLocationScanHistory Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
+	<context component="create-wizard" type="BlInventoryLocationScanHistory" merge-by="replace">
+		<wz:flow id="BlInventoryLocationScanHistoryWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+			<wz:prepare id="BlInventoryLocationScanHistoryPrepare">
+				<wz:initialize property="newBlInventoryLocationScanHistory" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.blinventorylocationscanhistory.essential.label" sublabel="create.blinventorylocationscanhistory.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlInventoryLocationScanHistory">
+						<wz:property qualifier="serialProduct"/>
+						<wz:property qualifier="scanUser"/>
+						<wz:property qualifier="scanTime"/>
+						<wz:property qualifier="blInventoryLocation"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlInventoryLocationScanHistory"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="BlInventoryLocationScanHistory" component="listview" merge-by="replace">
+		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+			<list-view:column qualifier="serialProduct"/>
+			<list-view:column qualifier="scanUser"/>
+			<list-view:column qualifier="scanTime"/>
+			<list-view:column qualifier="blInventoryLocation"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="BlInventoryLocationScanHistory" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<advanced-search:field name="serialProduct" selected="true"/>
+				<advanced-search:field name="scanUser" selected="true"/>
+				<advanced-search:field name="blInventoryLocation" selected="true"/>
+				<advanced-search:field name="scanTime" selected="false"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="BlInventoryLocationScanHistory" component="simple-search" merge-by="replace">
+		<ss:simple-search>
+			<ss:field name="serialProduct"/>
+			<ss:field name="blInventoryLocation"/>
+		</ss:simple-search>
+	</context>
+	<!-- End -->
+
 </config>

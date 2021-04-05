@@ -8,7 +8,7 @@
 $productCatalogsCustomPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom
 $productCatalogsCategoriesPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/categories
 $productCatalogsProductPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/product
-
+$productInventoryLocationPath = /blinitialdata/import/sampledata/productCatalogs/blProductCatalog/custom/inventory
 
 #Mention here categories related custom impexes in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCategoriesPath/categories.impex"), "utf-8", 0, 0);
@@ -29,3 +29,6 @@ $productCatalogsProductPath = /blinitialdata/import/sampledata/productCatalogs/b
 #Mention here catlog permission on user related custom impex in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCustomPath/user-permission.impex"), "utf-8", 0, 0);
 
+
+#Mention here InventoryLocation related custom impex in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/blproduct-Inventory-location.impex"), "utf-8", 0, 0);
