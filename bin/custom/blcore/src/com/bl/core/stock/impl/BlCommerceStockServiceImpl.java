@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
@@ -28,7 +27,7 @@ public class BlCommerceStockServiceImpl implements BlCommerceStockService
 	private BlStockLevelDao blStockLevelDao;
 	private static final long MAX_TOTAL = 20L;
 	private static final long MIN_TOTAL = 5L;
-	private static final long LOW_AVAILABILITY = 0L;
+	private static final long LOW_AVAILABILITY = 2L;
 	private static final long ZERO_AVAILABILITY = 0L;
 
 	/**
