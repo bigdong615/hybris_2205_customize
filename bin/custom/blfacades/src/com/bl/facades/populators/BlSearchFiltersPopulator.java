@@ -2,7 +2,6 @@ package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.google.common.base.Splitter;
-import de.hybris.platform.commerceservices.search.solrfacetsearch.data.FilterQueryOperator;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.IndexedPropertyValueData;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SearchQueryPageableData;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchFilterQueryData;
@@ -10,10 +9,8 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearc
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryTermData;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchRequest;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.populators.SearchFiltersPopulator;
-import de.hybris.platform.converters.Populator;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.IndexedType;
-import de.hybris.platform.solrfacetsearch.search.QueryField;
 import de.hybris.platform.solrfacetsearch.search.SearchQuery;
 import de.hybris.platform.util.Config;
 import java.util.ArrayList;

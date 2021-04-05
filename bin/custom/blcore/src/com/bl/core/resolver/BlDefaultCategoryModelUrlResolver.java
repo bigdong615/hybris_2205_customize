@@ -4,7 +4,6 @@ import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.commerceservices.category.CommerceCategoryService;
 import de.hybris.platform.commerceservices.url.impl.AbstractUrlResolver;
-import de.hybris.platform.commerceservices.url.impl.DefaultCategoryModelUrlResolver;
 import de.hybris.platform.site.BaseSiteService;
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public class BlDefaultCategoryModelUrlResolver  extends AbstractUrlResolver<CategoryModel>
 {
-  private final String CACHE_KEY = DefaultCategoryModelUrlResolver.class.getName(); // NOSONAR
+  private final String CACHE_KEY = BlDefaultCategoryModelUrlResolver.class.getName(); // NOSONAR
 
   private CommerceCategoryService commerceCategoryService;
   private BaseSiteService baseSiteService;

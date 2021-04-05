@@ -2,7 +2,6 @@ package com.bl.core.resolver;
 
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.commercefacades.product.data.CategoryData;
-import de.hybris.platform.commercefacades.url.impl.DefaultCategoryDataUrlResolver;
 import de.hybris.platform.commerceservices.category.CommerceCategoryService;
 import de.hybris.platform.commerceservices.url.UrlResolver;
 import de.hybris.platform.commerceservices.url.impl.AbstractUrlResolver;
@@ -13,7 +12,7 @@ import de.hybris.platform.commerceservices.url.impl.AbstractUrlResolver;
  */
 public class BlDefaultCategoryDataUrlResolver extends AbstractUrlResolver<CategoryData> {
 
-  private final String CACHE_KEY = DefaultCategoryDataUrlResolver.class.getName();
+  private final String CACHE_KEY = BlDefaultCategoryDataUrlResolver.class.getName(); // NOSONAR
 
   private CommerceCategoryService commerceCategoryService;
   private UrlResolver<CategoryModel> blDefaultCategoryModelUrlResolver;

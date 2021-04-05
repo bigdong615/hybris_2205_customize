@@ -15,6 +15,8 @@ public class BlSolrSearchQueryDecoderPopulator  extends SolrSearchQueryDecoderPo
   /**
    * BL -80 Since it's a OOB Populate Method override for adding one property
    */
+
+  private static final int TWO = 2;
   @Override
   public void populate(final SearchQueryData source, final SolrSearchQueryData target)
   {
@@ -36,9 +38,9 @@ public class BlSolrSearchQueryDecoderPopulator  extends SolrSearchQueryDecoderPo
         target.setSort(split[1]);
       }
 
-      final List<SolrSearchQueryTermData> terms = new ArrayList<SolrSearchQueryTermData>();
+      final List<SolrSearchQueryTermData> terms = new ArrayList<>();
 
-      for (int i = 2; (i + 1) < split.length; i += 2)
+      for (int i = TWO; (i + 1) < split.length; i += TWO)
       {
         final SolrSearchQueryTermData termData = new SolrSearchQueryTermData();
         termData.setKey(split[i]);
