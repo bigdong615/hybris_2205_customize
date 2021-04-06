@@ -60,15 +60,13 @@
                     <div class="row justify-content-center">
                         <div class="col-lg-11 col-xl-9">
                             <h5>
-                                <cms:pageSlot position="HomePageRentingGearIsEasyTitleSlot"
-                           							var="feature">
+                             <cms:pageSlot position="HomePageRentingGearIsEasyTitleSlot" var="feature">
                            							<cms:component component="${feature}" />
-                           			</cms:pageSlot>
+                           	 </cms:pageSlot>
                             </h5>
                             <div class="row mt-5">
-                               <cms:pageSlot position="HomePageRentingGearSectionSlot"
-                               							var="feature">
-                               							<cms:component component="${feature}" />
+                               <cms:pageSlot position="HomePageRentingGearSectionSlot" var="feature">
+                               		<cms:component component="${feature}" />
                              	</cms:pageSlot>
                             </div>
                         </div>
