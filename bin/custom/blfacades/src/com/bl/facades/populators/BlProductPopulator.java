@@ -84,6 +84,9 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
     target.setData_Sheet(imageList);
   }
 
+  /*
+   * This method provide time in hh:mm:ss format.
+   */
   private String formattedTime(long duration){
     final int hour = (int)duration/3600;
     final int minutes = (int)duration%3600;
