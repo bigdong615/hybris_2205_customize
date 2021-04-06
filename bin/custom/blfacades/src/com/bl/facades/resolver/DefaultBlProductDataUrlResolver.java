@@ -7,6 +7,7 @@ import de.hybris.platform.commercefacades.url.impl.DefaultProductDataUrlResolver
 
 /*
  * This is created to resolved redirect url.
+ * @author  Vijay Vishwakarma
  */
 public class DefaultBlProductDataUrlResolver extends DefaultProductDataUrlResolver {
 

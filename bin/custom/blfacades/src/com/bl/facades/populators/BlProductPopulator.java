@@ -30,7 +30,7 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
 
   @Override
   public void populate(ProductModel source, ProductData target)
-      throws ConversionException {
+       {
     if(PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(source)){
       BlProductModel blProductModel = (BlProductModel)source;
       target.setPurchaseNotes(blProductModel.getPurchaseNotes());
@@ -43,7 +43,7 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
       target.setForSale(BooleanUtils.toBoolean(blProductModel.getForSale()));
       target.setUsedGearVideosLink(populateVideo(CollectionUtils.emptyIfNull(blProductModel.getUsedGearVideosLink())));
       target.setRentalNote(blProductModel.getDisplayNotes());
-      final Collection<MediaModel> dataSheets = (Collection<MediaModel>) getProductCollectionAttribute(blProductModel,
+      final Collection<MediaModel> dataSheets = (Collection<MediaModel>)  getModelService().getAttributeValue(blProductModel,
           ProductModel.DATA_SHEET);
       if (CollectionUtils.isNotEmpty(dataSheets))
       {
@@ -63,33 +63,11 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
           ProductVideoData productVideoData=new ProductVideoData();
           productVideoData.setVideoName(productVideoModel.getVideoTitle());
           productVideoData.setVideoUrl(productVideoModel.getVideoLink());
-          final long duretion =  productVideoModel.getVideoDuration();
-          final int hour = (int)duretion/3600;
-          final int minuts = (int)duretion%3600;
-          final int remainingMinuts= minuts/60;
-          final int remainingSecond= minuts%60;
-          String formattedTime = hour>1 ? hour+(remainingMinuts>1 ? ":":""):"";
-          formattedTime+=(remainingMinuts>1? remainingMinuts+(remainingSecond>1? ":":"") :"");
-          formattedTime+=remainingSecond;
-          productVideoData.setVideoDuration(formattedTime);
+          productVideoData.setVideoDuration(formattedTime(productVideoModel.getVideoDuration()));
           videoDataList.add(productVideoData);
         }
         );
     return videoDataList;
-  }
-
-  /*
-   * This method provide media resource.
-   */
-  private Object getProductCollectionAttribute(final ProductModel productModel, final String attribute)
-  {
-    final Object value = getModelService().getAttributeValue(productModel, attribute);
-    if (value instanceof Collection && CollectionUtils.isEmpty((Collection) value))
-    {
-      return getProductAttribute(productModel, attribute);
-
-    }
-    return value;
   }
 
  /*
@@ -105,12 +83,16 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
     }
     target.setData_Sheet(imageList);
   }
-/*
- * This method provide product media
- */
-  private Object getProductAttribute(final ProductModel productModel, final String attribute)
-  {
-    return  getModelService().getAttributeValue(productModel, attribute);
+
+  private String formattedTime(long duration){
+    final int hour = (int)duration/3600;
+    final int minutes = (int)duration%3600;
+    final int remainingMinutes= minutes/60;
+    final int remainingSecond= minutes%60;
+    String formattedTime = hour>1 ? (hour+(remainingMinutes>1 ? ":":"")):"";
+    formattedTime+=(remainingMinutes>1? (remainingMinutes+(remainingSecond>1? ":":"") ):"");
+    formattedTime+=remainingSecond;
+    return formattedTime;
   }
 
   public ModelService getModelService() {
