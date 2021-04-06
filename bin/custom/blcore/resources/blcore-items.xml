@@ -502,11 +502,6 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>The video URL links for the Used Gear</description>
                      </attribute>
-                   <attribute qualifier="resourcesLink" type="Media">
-                         <persistence type="property" />
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>The link from each uploaded document</description>
-                     </attribute>
                      <attribute qualifier="procurementSource" type="java.lang.String">
                          <persistence type="property" />
                          <modifiers read="true" write="true" optional="false"/>
@@ -881,7 +876,7 @@
                 <modifiers read="true" write="true" optional="true" />
                 <description>Localized video link</description>
               </attribute>
-              <attribute qualifier="videoDuration" type="java.util.Date" >
+              <attribute qualifier="videoDuration" type="java.lang.Long" >
                 <persistence type="property" />
                 <modifiers read="true" write="true" optional="true" />
                 <description> video duration </description>

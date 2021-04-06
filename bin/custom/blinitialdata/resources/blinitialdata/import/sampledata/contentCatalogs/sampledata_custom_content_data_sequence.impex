@@ -46,6 +46,7 @@ $contentCatalogsCustomProductPagePath = /blinitialdata/import/sampledata/content
 
 #Mention here Product Details Page related impexes in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productpage_sample.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productVideo.impex"), "utf-8", 0, 0);
 
 
 #Mention here MyAccount Page related impexes in sequence

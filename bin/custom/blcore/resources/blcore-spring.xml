@@ -678,7 +678,6 @@
 		<property name="threadContextService" ref="threadContextService"/>
 		<property name="commerceCategoryService" ref="commerceCategoryService"/>
 		<property name="baseSiteService" ref="baseSiteService"/>
-		<!--<property name="defaultPattern" value="/{category-path}/{product-name}/product/{product-code}"/>-->
 		<property name="defaultPattern" value="/product/{product-code}"/>
 		<property name="productAndCategoryHelper" ref="productAndCategoryHelper"/>
 	</bean>

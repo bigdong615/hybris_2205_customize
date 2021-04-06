@@ -6,24 +6,9 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
  <div class="screen"></div>
-     <section id="globalSearch">
-        <div class="container">
-            <div  class="row justify-content-center">
-                <div class="col-12">
-                    <div class="input-group">
-                        <input type="text" class="d-none d-md-inline-block form-control" placeholder="Search photo & video rentals…">
-                        <input type="text" class="d-inline-block d-md-none form-control" placeholder="Search…">
-                        <span class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> Rental Dates</span>
-                        <input type="text" id="litepicker" class="form-control d-none d-md-inline-block" placeholder="Select rental dates…">
-                        <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="Dates…">
-                        <div class="input-group-append d-none d-md-block">
-                            <button class="btn btn-search" type="button">Search</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+ <cms:pageSlot position="SearchBoxBl" var="component">
+ 				<cms:component component="${component}"/>
+ </cms:pageSlot>
 
     <section id="theProduct">
             <div class="container">
@@ -45,13 +30,13 @@
                                 <h1 class="mb-4">${product.displayName}</h1>
                                 <span class="badge badge-limited-stock">Only 2 Left</span> <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                  <ul class="checklist mt-4">
-                                     ${ycommerce:sanitizeHTML(product.shortDescription)}
+                                 ${product.shortDescription}
                                 </ul>
                                  <div id="productDates">
                                       <div class="input-group">
                                         <span class="rental-dates d-md-inline"><i class="icon-calendar"></i> Rental Dates</span>
-                                        <input type="text" id="product-litepicker" class="form-control d-none d-md-inline-block" placeholder="Select dates…">
-                                        <input type="text" id="mobile-product-litepicker" class="form-control d-inline-block d-md-none" placeholder="Dates…">
+                                        <input type="text" id="product-litepicker" class="form-control d-none d-md-inline-block" placeholder="Select dates...">
+                                        <input type="text" id="mobile-product-litepicker" class="form-control d-inline-block d-md-none" placeholder="Dates...">
                                        </div>
                                  </div>
                                  <div id="pickupDelivery">
@@ -142,13 +127,14 @@
                                 </div>
                                  <hr>
                                 </c:if>
-                                <a class="filter-expand" data-bs-toggle="collapse" href="#manual" role="button" aria-expanded="false" aria-controls="notes">
-                                <h5><spring:theme code= "pdp.manual.section.text" /></h5></a>
-                                <div class="collapse" id="manual">
+                                <a class="filter-expand" data-bs-toggle="collapse" href="#resources" role="button" aria-expanded="false" aria-controls="notes">
+                                <h5><spring:theme code= "pdp.resources.section.text" /></h5></a>
+                                <div class="collapse" id="resources">
                                   <product:productResourcesPanel />
                                    </div>
                                 <hr>
                                 <!-- Additional Gear Slider -->
+                                <!--TO-DO : This section will be fixed in bl-174  -->
                                 <h5><spring:theme code= "pdp.rental.product.recommendation.section.text" /></h5>
                                 <div id="gear-slider" class="splide mt-4 splide--slide splide--ltr splide--draggable is-active" style="visibility: visible;">
                                     <div class="splide__arrows"><button class="splide__arrow splide__arrow--prev" type="button" aria-controls="gear-slider-track" aria-label="Go to last slide"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><path d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"></path></svg></button><button class="splide__arrow splide__arrow--next" type="button" aria-controls="gear-slider-track" aria-label="Next slide"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40"><path d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"></path></svg></button></div><div class="splide__track" id="gear-slider-track" style="padding-left: 10px; padding-right: 10px;">

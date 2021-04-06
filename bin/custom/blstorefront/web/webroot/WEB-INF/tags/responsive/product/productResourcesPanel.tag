@@ -5,7 +5,8 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<c:if test = "${not empty product.data_Sheet}">
+<c:choose>
+<c:when test = "${not empty product.data_Sheet}">
 <c:forEach var="resourceData" items="${product.data_Sheet}">
 <div>
 <a href="${resourceData.url}" target="_blank">
@@ -13,4 +14,8 @@
 </a>
 </div>
 </c:forEach>
-</c:if>
+</c:when>
+<c:otherwise>
+<p> <spring:theme code = "pdp.noresources.text"/></p>
+</c:otherwise>
+</c:choose>

@@ -9,7 +9,6 @@
 		<property name="displayName" type="java.lang.String"/>
 		<property name="rentalVideosLink" type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
 		<property name="usedGearVideosLink" type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
-		<property name="resourcesLink" type="java.lang.String"/>
 		<property name="forSale" type="java.lang.Boolean"/>
 		<property name="forRent" type="java.lang.Boolean"/>
 		<property name="shortDescription" type="java.lang.String"/>

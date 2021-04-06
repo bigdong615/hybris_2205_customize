@@ -1,0 +1,17 @@
+$productCatalog=blProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$siteResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/images
+#jar:classPath
+$data_sheet=data_sheet(code, $catalogVersion);
+
+INSERT_UPDATE Media;mediaFormat(qualifier)  ;code[unique=true]                       ;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator];mime[default='application/pdf'];$catalogVersion;folder(qualifier);realFileName ;
+                   ;                   ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf;$siteResource/HOLIDAYCALENDAR2021.pdf                        ;                               ;               ;images;HOLIDAYCALENDAR2021.pdf;
+
+INSERT_UPDATE BlProduct;code[unique=true]             ;$data_sheet                           ;$catalogVersion ;
+                     ;Nikon_17-55mm_f2.8_AF-S_ED_DX ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
+
+INSERT_UPDATE ProductVideo ; videoTitle[unique=true];videoLink                                ;videoDuration
+                           ;Canon EOS R5 featuresr   ;https://www.youtube.com/embed/8jtaappbWtE ; 383
+                           ;Canon EOS R5 featuressecond; https://www.youtube.com/embed/4EBEwxWxCK8 ;145
+                           ; Canon EOS R5 featuresthiird  ;https://www.youtube.com/embed/-EZO9RbATDk ; 155
+                           ;Canon EOS R5 featuresforth ;https://www.youtube.com/embed/f1peSTA8tRk ;335

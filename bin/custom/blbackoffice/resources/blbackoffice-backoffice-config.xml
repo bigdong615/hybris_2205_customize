@@ -122,7 +122,7 @@
 					<wz:property-list root="newProductVideo" >
 						<wz:property qualifier="videoTitle" />
 						<wz:property qualifier="videoLink" />
-						<wz:property qualifier="videoDuration" editor="com.hybris.cockpitng.editor.defaulttime"/>
+						<wz:property qualifier="videoDuration" />
 					</wz:property-list>
 				</wz:content>
 				<wz:navigation id="step1.navigation">
@@ -141,12 +141,7 @@
 				<editorArea:section name="" >
 					<ea:attribute qualifier="videoTitle" />
 					<ea:attribute qualifier="videoLink" />
-					<ea:attribute qualifier="videoDuration" editor="com.hybris.cockpitng.editor.defaulttime" >
-            <editorArea:editor-parameter>
-              <editorArea:name>timeFormat</editorArea:name>
-              <editorArea:value>medium</editorArea:value>
-            </editorArea:editor-parameter>
-          </ea:attribute>
+					<ea:attribute qualifier="videoDuration" />
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>

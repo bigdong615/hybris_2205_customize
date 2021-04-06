@@ -2,7 +2,6 @@ package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.ProductVideoModel;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ProductVideoData;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -12,14 +11,9 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.variants.model.VariantProductModel;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -30,7 +24,6 @@ import org.apache.commons.lang3.BooleanUtils;
  */
 public class BlProductPopulator implements Populator<ProductModel, ProductData> {
 
-  @Resource(name = "imageConverter")
   private Converter<MediaModel, ImageData> imageConverter;
 
   private ModelService modelService;
@@ -70,9 +63,14 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
           ProductVideoData productVideoData=new ProductVideoData();
           productVideoData.setVideoName(productVideoModel.getVideoTitle());
           productVideoData.setVideoUrl(productVideoModel.getVideoLink());
-          Date duration= productVideoModel.getVideoDuration();
-          DateFormat dateFormat = new SimpleDateFormat(BlFacadesConstants.TIME_FORMAT_STRING);
-          String formattedTime= dateFormat.format(duration);
+          final long duretion =  productVideoModel.getVideoDuration();
+          final int hour = (int)duretion/3600;
+          final int minuts = (int)duretion%3600;
+          final int remainingMinuts= minuts/60;
+          final int remainingSecond= minuts%60;
+          String formattedTime = hour>1 ? hour+(remainingMinuts>1 ? ":":""):"";
+          formattedTime+=(remainingMinuts>1? remainingMinuts+(remainingSecond>1? ":":"") :"");
+          formattedTime+=remainingSecond;
           productVideoData.setVideoDuration(formattedTime);
           videoDataList.add(productVideoData);
         }
@@ -80,7 +78,10 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
     return videoDataList;
   }
 
-  protected Object getProductCollectionAttribute(final ProductModel productModel, final String attribute)
+  /*
+   * This method provide media resource.
+   */
+  private Object getProductCollectionAttribute(final ProductModel productModel, final String attribute)
   {
     final Object value = getModelService().getAttributeValue(productModel, attribute);
     if (value instanceof Collection && CollectionUtils.isEmpty((Collection) value))
@@ -99,24 +100,17 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
     final Collection<ImageData> imageList = new ArrayList<ImageData>();
     for (final MediaModel mediaModel : data_sheet)
     {
-      final ImageData imagedata = imageConverter.convert(mediaModel);
+      final ImageData imagedata = getImageConverter().convert(mediaModel);
       imageList.add(imagedata);
     }
     target.setData_Sheet(imageList);
   }
-
-  protected Object getProductAttribute(final ProductModel productModel, final String attribute)
+/*
+ * This method provide product media
+ */
+  private Object getProductAttribute(final ProductModel productModel, final String attribute)
   {
-    final Object value = getModelService().getAttributeValue(productModel, attribute);
-    if (value == null && productModel instanceof VariantProductModel)
-    {
-      final ProductModel baseProduct = ((VariantProductModel) productModel).getBaseProduct();
-      if (baseProduct != null)
-      {
-        return getProductAttribute(baseProduct, attribute);
-      }
-    }
-    return value;
+    return  getModelService().getAttributeValue(productModel, attribute);
   }
 
   public ModelService getModelService() {
@@ -126,5 +120,15 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
   }
+
+  public Converter<MediaModel, ImageData> getImageConverter() {
+    return imageConverter;
+  }
+
+  public void setImageConverter(
+      Converter<MediaModel, ImageData> imageConverter) {
+    this.imageConverter = imageConverter;
+  }
+
 
 }

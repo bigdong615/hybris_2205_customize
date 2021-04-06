@@ -23,7 +23,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; HomePageRentingGearIsEasyTitleSlot ;                                                                       ;                           ; wide
                               ; HomePageRentingGearSectionSlot     ;                                                                       ;                           ; wide
                               ; BreadcrumbSection                 ;                                                                        ;                           ;wide
-#                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
+                             ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
 
 
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
@@ -47,7 +47,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; HomePageRentingGearIsEasyTitleSlot-productDetails ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true
                                      ;                         ; HomePageRentingGearSectionSlot-productDetails     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
                                       ;                        ; BreadcrumbSlot-productDetails                     ; BreadcrumbSection                 ;                                                        ; BreadcrumbSlot                           ; true
-#                                     ;                          ; SearchBox-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
+                                    ;                          ; SearchBox-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
 
 
 # Product Details Page
