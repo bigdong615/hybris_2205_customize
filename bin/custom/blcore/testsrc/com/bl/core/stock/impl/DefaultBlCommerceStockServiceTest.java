@@ -30,11 +30,11 @@ import com.bl.core.stock.BlStockLevelDao;
  * Junit test for BlCommerceStockServiceImpl
  */
 @UnitTest
-public class BlCommerceStockServiceImplTest
+public class DefaultBlCommerceStockServiceTest
 {
 	private static final String productCode = "Canon_24-105mm_f4_IS";
 	@InjectMocks
-	private final BlCommerceStockServiceImpl blCommerceStockService = new BlCommerceStockServiceImpl();
+	private final DefaultBlCommerceStockService blCommerceStockService = new DefaultBlCommerceStockService();
 
 	@Mock
 	private BlStockLevelDao blStockLevelDao;

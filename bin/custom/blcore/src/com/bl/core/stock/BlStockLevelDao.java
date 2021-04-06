@@ -23,5 +23,5 @@ public interface BlStockLevelDao
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
 	 */
 	public Collection<StockLevelModel> findStockLevelForDate(final String productCode, final Collection<WarehouseModel> warehouses,
-			final Date date);
+			final Date startDate, final Date endDate);
 }

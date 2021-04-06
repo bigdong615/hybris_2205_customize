@@ -672,10 +672,11 @@
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
 	<!--Bl-57 new stock related service and dao classes added-->
-	<bean id="blStockLevelDao" class="com.bl.core.stock.impl.BlStockLevelDaoImpl" parent="stockLevelDao">
+	<alias alias="blStockLevelDao" name="defaultBlStockLevelDao"/>
+	<bean id="defaultBlStockLevelDao" class="com.bl.core.stock.impl.DefaultBlStockLevelDao" parent="stockLevelDao">
 	</bean>
 	
-	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.BlCommerceStockServiceImpl">
+	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 	

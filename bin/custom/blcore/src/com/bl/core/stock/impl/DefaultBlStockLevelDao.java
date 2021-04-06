@@ -1,6 +1,6 @@
 package com.bl.core.stock.impl;
 
-import com.bl.core.enums.SerialStatusEnum;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -18,75 +18,69 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.stock.BlStockLevelDao;
 
 
 /**
  * @author Moumita
- *
+ * This class is used to get the inventory for a product
  */
-public class BlStockLevelDaoImpl extends DefaultStockLevelDao implements BlStockLevelDao
+public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlStockLevelDao
 {
-	private static final Logger LOG = Logger.getLogger(BlStockLevelDaoImpl.class);
+	private static final Logger LOG = Logger.getLogger(DefaultBlStockLevelDao.class);
 
 	private static final String STOCK_LEVEL_FOR_DATE_QUERY = "SELECT {" + StockLevelModel.PK + "} from {"
-			+ StockLevelModel._TYPECODE + "} WHERE {" + StockLevelModel.PRODUCTCODE + "} = ?productCode " + 
+			+ StockLevelModel._TYPECODE + "} WHERE {" + StockLevelModel.PRODUCTCODE + "} = ?productCode " +
 			"AND {" + StockLevelModel.DATE + "} BETWEEN ?startDate AND ?endDate " +
 			"AND {" + StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE +
 			" as sse} WHERE {sse:CODE} = (?active)}}) " +
 			"AND {" + StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
-	private static final String ACTIVE = "active";
-	private static final String PRODUCT_CODE = "productCode";
-	private static final String START_DATE = "startDate";
-	private static final String END_DATE = "endDate";
-	private static final String WAREHOUSES = "warehouses";
-	private static final int END_HOURS = 23;
-	private static final int END_MINUTES = 59;
-	private static final int END_SECONDS = 59;
-	private static final int START_HOURS = 0;
-	private static final int START_MINUTES = 0;
-	private static final int START_SECONDS = 0;
+
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public Collection<StockLevelModel> findStockLevelForDate(final String productCode, final Collection<WarehouseModel> warehouseModels,
-			final Date date)
+			final Date startDay, final Date endDay)
 	{
 		final List warehouses = filterWarehouseModels(warehouseModels);
-		if (warehouses.isEmpty())
+		if (CollectionUtils.isEmpty(warehouses))
 		{
-			return Collections.emptyList();
+				throw new IllegalArgumentException("warehouses cannot be null.");
 		}
 		else
 		{
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVEL_FOR_DATE_QUERY);
-			fQuery.addQueryParameter(PRODUCT_CODE, productCode);
+			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 
 			final Calendar startDate = new GregorianCalendar();
-			startDate.setTime(date);
-			startDate.set(Calendar.HOUR_OF_DAY, START_HOURS);
-			startDate.set(Calendar.MINUTE, START_MINUTES);
-			startDate.set(Calendar.SECOND, START_SECONDS);
-			fQuery.addQueryParameter(START_DATE, startDate.getTime());
+			startDate.setTime(startDay);
+			startDate.set(Calendar.HOUR_OF_DAY, BlCoreConstants.START_HOURS);
+			startDate.set(Calendar.MINUTE, BlCoreConstants.START_MINUTES);
+			startDate.set(Calendar.SECOND, BlCoreConstants.START_SECONDS);
+			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
 
 			final Calendar endDate = new GregorianCalendar();
-			endDate.setTime(date);
-			endDate.set(Calendar.HOUR_OF_DAY, END_HOURS);
-			endDate.set(Calendar.MINUTE, END_MINUTES);
-			endDate.set(Calendar.SECOND, END_SECONDS);
-			fQuery.addQueryParameter(END_DATE, endDate.getTime());
+			endDate.setTime(endDay);
+			endDate.set(Calendar.HOUR_OF_DAY, BlCoreConstants.END_HOURS);
+			endDate.set(Calendar.MINUTE, BlCoreConstants.END_MINUTES);
+			endDate.set(Calendar.SECOND, BlCoreConstants.END_SECONDS);
+			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
 
-			fQuery.addQueryParameter(ACTIVE, SerialStatusEnum.ACTIVE.getCode());
-			fQuery.addQueryParameter(WAREHOUSES, warehouses);
+			fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
+			fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouses);
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
 			final List<StockLevelModel> stockLevels = result.getResult();
 			if (CollectionUtils.isEmpty(stockLevels))
 			{
-				LOG.debug("No Stock Levels found for product: " + productCode + " and date: " + date);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and date between : {} and {}",
+						productCode, startDate, endDate);
 				return Collections.emptyList();
 			}
 			return stockLevels;
@@ -100,10 +94,6 @@ public class BlStockLevelDaoImpl extends DefaultStockLevelDao implements BlStock
 	 */
 	protected List<WarehouseModel> filterWarehouseModels(final Collection<WarehouseModel> warehouses)
 	{
-		if (warehouses == null)
-		{
-			throw new IllegalArgumentException("warehouses cannot be null.");
-		}
 		final Set<WarehouseModel> result = new HashSet<>();
 		for (final WarehouseModel house : warehouses)
 		{
