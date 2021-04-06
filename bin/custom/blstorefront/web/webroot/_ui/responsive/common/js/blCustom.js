@@ -1,6 +1,5 @@
-
+//BL-467 clear cart functionality from cart page.
 $('.clear-cart-page').on("click", function (event) {
-
             $.ajax({
                      url: ACC.config.encodedContextPath + '/cart/emptyCart',
                      type: "GET",
@@ -10,6 +9,5 @@ $('.clear-cart-page').on("click", function (event) {
                      error: function (xht, textStatus, ex) {
                        console.log("Error while removing cart entries");
                      }
-
             });
        });

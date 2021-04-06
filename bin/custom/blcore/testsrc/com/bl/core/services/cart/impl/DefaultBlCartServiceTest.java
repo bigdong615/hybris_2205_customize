@@ -15,6 +15,7 @@ import org.mockito.*;
 
 import java.util.Collections;
 import java.util.List;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -24,44 +25,44 @@ import static org.mockito.Mockito.mock;
 @UnitTest
 public class DefaultBlCartServiceTest {
 
-    @InjectMocks
-    private final DefaultCommerceCartService commerceCartService = new DefaultCommerceCartService();
+  @InjectMocks
+  private final DefaultCommerceCartService commerceCartService = new DefaultCommerceCartService();
 
-    @InjectMocks
-    @Spy
-    private final DefaultCommerceRemoveEntriesStrategy commerceRemoveEntriesStrategy = new DefaultCommerceRemoveEntriesStrategy();
+  @InjectMocks
+  @Spy
+  private final DefaultCommerceRemoveEntriesStrategy commerceRemoveEntriesStrategy = new DefaultCommerceRemoveEntriesStrategy();
 
-    @InjectMocks
-    @Spy
-    private final DefaultCommerceCartCalculationStrategy cartCalculationStrategy = new DefaultCommerceCartCalculationStrategy();
+  @InjectMocks
+  @Spy
+  private final DefaultCommerceCartCalculationStrategy cartCalculationStrategy = new DefaultCommerceCartCalculationStrategy();
 
-    @Mock
-    private CartModel cartModel;
+  @Mock
+  private CartModel cartModel;
 
-    @Mock
-    private ModelService modelService;
+  @Mock
+  private ModelService modelService;
 
-    @Mock
-    private CalculationService calculationService;
+  @Mock
+  private CalculationService calculationService;
 
-    @Before
-    public void setup(){
-        MockitoAnnotations.initMocks(this);
-        commerceCartService.setCommerceCartCalculationStrategy(cartCalculationStrategy);
-        commerceCartService.setCommerceRemoveEntriesStrategy(commerceRemoveEntriesStrategy);
-    }
+  @Before
+  public void setup() {
+    MockitoAnnotations.initMocks(this);
+    commerceCartService.setCommerceCartCalculationStrategy(cartCalculationStrategy);
+    commerceCartService.setCommerceRemoveEntriesStrategy(commerceRemoveEntriesStrategy);
+  }
 
-    @Test
-    public void testClearCartEntries(){
+  @Test
+  public void testClearCartEntries() {
 
-        final AbstractOrderEntryModel entryModel = mock(AbstractOrderEntryModel.class);
-        final List<AbstractOrderEntryModel> entries = Collections.singletonList(entryModel);
+    final AbstractOrderEntryModel entryModel = mock(AbstractOrderEntryModel.class);
+    final List<AbstractOrderEntryModel> entries = Collections.singletonList(entryModel);
 
-        given(cartModel.getEntries()).willReturn(entries);
-        final CommerceCartParameter parameter = new CommerceCartParameter();
-        parameter.setEnableHooks(true);
-        parameter.setCart(cartModel);
-        commerceCartService.removeAllEntries(parameter);
-        Mockito.verify(modelService,Mockito.times(1)).removeAll(entries);
-    }
+    given(cartModel.getEntries()).willReturn(entries);
+    final CommerceCartParameter parameter = new CommerceCartParameter();
+    parameter.setEnableHooks(true);
+    parameter.setCart(cartModel);
+    commerceCartService.removeAllEntries(parameter);
+    Mockito.verify(modelService, Mockito.times(1)).removeAll(entries);
+  }
 }
