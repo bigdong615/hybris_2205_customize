@@ -246,7 +246,7 @@
 			</set>
 		</property>
 	</bean>
-
+	
 	<!--This populator is created for populating bl related specific product attribute-->
 	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator" >
 		<property name="imageConverter" ref="imageConverter"/>
@@ -269,5 +269,10 @@
 		class="com.bl.facades.resolver.DefaultBlProductDataUrlResolver" parent="defaultProductDataUrlResolver">
 	</bean>
 
+	<!--<BL-467 entry for clear cart>-->
+	<alias name="defaultBlCartFacade" alias="cartFacade" />
+	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
+		<property name="blCartService" ref="cartService" />
+	</bean>
 
 </beans>
