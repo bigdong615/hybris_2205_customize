@@ -9,7 +9,6 @@
  <cms:pageSlot position="SearchBoxBl" var="component">
  				<cms:component component="${component}"/>
  </cms:pageSlot>
-
     <section id="theProduct">
             <div class="container">
                 <div class="row justify-content-center">
@@ -52,9 +51,6 @@
                 </div>
             </div>
     </section>
-
-
-
     <section id="theProcess">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -73,8 +69,6 @@
                     </div>
                 </div>
     </section>
-
-
     <section id="productExtras">
                     <div class="container">
                         <div class="row justify-content-center">
@@ -107,7 +101,6 @@
                                 <product:productDetailsClassifications product="${product}" />
                                     </div>
                                 <hr>
-
                                 <c:if test="${not empty product.rentalIncludes}">
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#rental-includes" role="button" aria-expanded="false" aria-controls="includes">
                                 <h5><spring:theme code="pdp.rental.includes.section.text"/></h5>

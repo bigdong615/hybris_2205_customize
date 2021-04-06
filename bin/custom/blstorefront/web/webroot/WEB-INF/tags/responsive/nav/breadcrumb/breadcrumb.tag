@@ -22,28 +22,3 @@
 			</c:otherwise>
 		</c:choose>
 	</c:forEach>
-
-<!-- <ol class="breadcrumb">
-	<li>
-		<a href="${homeUrl}"><spring:theme code="breadcrumb.home" /></a>
-	</li>
-
-	<c:forEach items="${breadcrumbs}" var="breadcrumb" varStatus="status">
-		<spring:url htmlEscape="false" value="${breadcrumb.url}" var="breadcrumbUrl" />
-		<c:choose>
-			<c:when test="${status.last}">
-				<li class="active">${fn:escapeXml(breadcrumb.name)}</li>
-			</c:when>
-			<c:when test="${breadcrumb.url eq '#'}">
-				<li>
-					<a href="#">${fn:escapeXml(breadcrumb.name)}</a>
-				</li>
-			</c:when>
-			<c:otherwise>
-				<li>
-					<a href="${fn:escapeXml(breadcrumbUrl)}">${fn:escapeXml(breadcrumb.name)}</a>
-				</li>
-			</c:otherwise>
-		</c:choose>
-	</c:forEach>
-</ol>  -->
