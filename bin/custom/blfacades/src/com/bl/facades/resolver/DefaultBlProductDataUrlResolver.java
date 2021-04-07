@@ -15,15 +15,17 @@ public class DefaultBlProductDataUrlResolver extends DefaultProductDataUrlResolv
   protected String resolveInternal(final ProductData source) {
 
     if (BlFacadesConstants.RENTAL_PAGE_IDENTIFIER.equals(source.getProductPageType())) {
-      return BlFacadesConstants.DEFAULT_REDIRECT_URL + BlFacadesConstants.RENTAL_PAGE_IDENTIFIER + BlFacadesConstants.PRODUCT_URL
-          + source.getCode();
+      return urlProvider( BlFacadesConstants.RENTAL_PAGE_IDENTIFIER ,source.getCode());
     } else if (BlFacadesConstants.USED_PAGE_IDENTIFIER.equals(source.getProductPageType())) {
-      return BlFacadesConstants.DEFAULT_REDIRECT_URL + BlFacadesConstants.USED_PAGE_IDENTIFIER + BlFacadesConstants.PRODUCT_URL + source
-          .getCode();
+      return  urlProvider(BlFacadesConstants.USED_PAGE_IDENTIFIER , source.getCode());
     }else{
       return super.resolveInternal(source);
     }
   }
 
-
+private String urlProvider(String pageIdentifier,String productCode){
+    StringBuffer urlPatter = new StringBuffer();
+  urlPatter.append(BlFacadesConstants.DEFAULT_REDIRECT_URL).append(pageIdentifier).append(BlFacadesConstants.PRODUCT_URL).append(productCode);
+  return urlPatter.toString();
+}
 }
