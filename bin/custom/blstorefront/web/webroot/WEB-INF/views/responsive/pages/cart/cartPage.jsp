@@ -8,8 +8,13 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<c:set value="cart/emptyCart" var="emptyCart" />
 
 <template:page pageTitle="${pageTitle}">
+
+  <div class="clear-cart-page">
+   	<a href="${emptyCart}"><spring:theme code="text.cart.emptycart" /></a>
+   </div>
 
 	<cart:cartValidation/>
 	<cart:cartPickupValidation/>

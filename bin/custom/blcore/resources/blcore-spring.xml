@@ -673,6 +673,11 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
+	<!--<BL-467 bean entry is for clear cart>-->
+	<alias name="defaultBlCartService" alias="cartService" />
+	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
+		<property name="commerceCartService" ref="commerceCartService" />
+	</bean>
 	<!--Pricing Logic changes-->
 
 	<alias name="defaultBlPricingService" alias="blPricingService"/>
@@ -695,7 +700,7 @@
 	</bean>
 	<alias name="defaultBlPricingRatioService" alias="blPricingRatioService"/>
 	<bean id="defaultBlPricingRatioService" class="com.bl.core.services.pricingratio.impl.DefaultBlPricingRatioService">
-		<property name="blPricingRatioDao" ref="blPricingRatioDao"/>
+	<property name="blPricingRatioDao" ref="blPricingRatioDao"/>
 	</bean>
 
 </beans>
