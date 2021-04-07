@@ -15,4 +15,14 @@
 		<property name="code" type="String"/>
 		<property name="name" type="String"/>
 	</bean>
+
+	<!--BL-80 Added new entry in SearchQueryData-->
+	<bean class="de.hybris.platform.commercefacades.search.data.SearchQueryData">
+		<property name="blPage" type="String"/>
+	</bean>
+
+	<bean class="de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryData">
+		<property name="blPage" type="String"/>
+	</bean>
+
 </beans>

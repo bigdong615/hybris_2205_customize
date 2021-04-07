@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,6 +72,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
         return performSearchAndGetResultsData(categoryCode, searchQuery, page, showMode, sortCode);
     }
 
+
     protected String performSearchAndGetResultsPage(final String categoryCode, String searchQuery, final int page, // NOSONAR
         final ShowMode showMode, final String sortCode, final Model model, final HttpServletRequest request,
         final HttpServletResponse response) throws UnsupportedEncodingException
@@ -98,6 +100,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
                 }
             }
         }
+
         final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
         if (StringUtils.isNotEmpty(redirection))
         {
@@ -127,13 +130,15 @@ public class CategoryPageController extends AbstractCategoryPageController {
 
         populateModel(model, searchPageData, showMode);
         model.addAttribute(WebConstants.BREADCRUMBS_KEY, getSearchBreadcrumbBuilder().getBreadcrumbs(categoryCode, searchPageData));
-        model.addAttribute("showCategoriesOnly", Boolean.valueOf(showCategoriesOnly));
+        model.addAttribute("showCategoriesOnly", showCategoriesOnly);
         model.addAttribute("categoryName", category.getName());
         model.addAttribute("pageType", PageType.CATEGORY.name());
         model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
         model.addAttribute("footerContent",category.getFooterContent());
 
         updatePageTitle(category, model);
+        // To check whether the category is Rental Gear
+        usedGearCategory(category,model);
 
         final RequestContextData requestContextData = getRequestContextData(request);
         requestContextData.setCategory(category);
@@ -154,9 +159,6 @@ public class CategoryPageController extends AbstractCategoryPageController {
         return getViewPage(categorySearch.getCategoryPage());
 
     }
-<<<<<<< Updated upstream
-=======
-
     /**
      * This method is created to identify whether category belongs to used gear category
      */
@@ -193,5 +195,5 @@ public class CategoryPageController extends AbstractCategoryPageController {
             model.addAttribute("clearAllQuery", "/Rental-Gear/c/rentalgear");
         }
     }
->>>>>>> Stashed changes
+
 }

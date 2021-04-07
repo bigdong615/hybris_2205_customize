@@ -18,7 +18,6 @@
 
 <div class="col-md-6 col-lg-4">
 <div class="card">
-
 <c:if test ="${product.productTagValues ne null}">
 <span class="badge badge-limited-stock">${product.productTagValues}</span>
 </c:if>

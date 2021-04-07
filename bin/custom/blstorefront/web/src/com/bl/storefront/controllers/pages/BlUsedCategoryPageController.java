@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,8 +58,6 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
   {
     final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
 
-    // BL-268 Added For Faceted PLP & Default Sorting for PLP
-
     final String redirection = checkRequestUrl(request, response, blDefaultCategoryModelUrlResolver.resolve(category));
     if (StringUtils.isNotEmpty(redirection))
     {
@@ -77,6 +74,7 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
         searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE);
       }
     }
+
     final CategorySearchEvaluator categorySearch = new CategorySearchEvaluator(categoryCode, searchQuery, page, showMode,
         sortCode, categoryPage);
 
@@ -118,6 +116,7 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
     }
 
     addClearAllQuery(category,model);
+
     final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
         category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
             Collectors.toSet()));
@@ -153,5 +152,4 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
       model.addAttribute("clearAllQuery", "/buy/category/usedgear");
     }
   }
-
 }

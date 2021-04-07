@@ -90,13 +90,13 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                 ; $contentCV
 #####################################################################
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]          ; name                  ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
 # Cameras -- all cameras       
-                               ;                         ; AllUsedGearLink           ; AllUsedGear Link      ; "#" ;                            ;                                    ; All Used Gear        ;  
-                               ;                         ; NewArrivalsLink_UsedGears ; NewArrivals Link      ; "#" ;                            ;                                    ; New Arrivals         ;  
-                               ;                         ; UsedLensesLink            ; Used Lenses Link      ; "#" ;                            ;                                    ; Used Lenses          ;  
-                               ;                         ; UsedCamerasLink           ; Used Cameras Link     ; "#" ;                            ;                                    ; Used Cameras         ;  
-                               ;                         ; UsedLightingLink          ; Used Lighting Link    ; "#" ;                            ;                                    ; Used Lighting        ;  
-                               ;                         ; UsedVideoGearLink         ; Used VideoGear Link   ; "#" ;                            ;                                    ; Used Video Gear      ;  
-                               ;                         ; UsedAccessoriesLink       ; Used Accessories Link ; "#" ;                            ;                                    ; Used Accessories     ;  
+                               ;                         ; AllUsedGearLink           ; AllUsedGear Link      ; "/buy/category/usedgear" ;                            ;                                    ; All Used Gear        ;
+                               ;                         ; NewArrivalsLink_UsedGears ; NewArrivals Link      ; "/buy/category/Used-NewArrivals" ;                            ;                                    ; New Arrivals         ;
+                               ;                         ; UsedLensesLink            ; Used Lenses Link      ; "/buy/category/Used-Lenses" ;                            ;                                    ; Used Lenses          ;
+                               ;                         ; UsedCamerasLink           ; Used Cameras Link     ; "/buy/category/Used-Cameras" ;                            ;                                    ; Used Cameras         ;
+                               ;                         ; UsedLightingLink          ; Used Lighting Link    ; "/buy/category/Used-Lighting" ;                            ;                                    ; Used Lighting        ;
+                               ;                         ; UsedVideoGearLink         ; Used VideoGear Link   ; "/buy/category/Used-Video" ;                            ;                                    ; Used Video Gear      ;
+                               ;                         ; UsedAccessoriesLink       ; Used Accessories Link ; "/buy/category/Used-Accessories" ;                            ;                                    ; Used Accessories     ;
                                
                                
 #                              ; BLCategoryNavNode       ;                           ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode

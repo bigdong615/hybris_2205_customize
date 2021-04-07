@@ -29,4 +29,26 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BRANDS = "Brands";
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
+	public static final String BL_PAGE_TYPE ="blPageType";
+	public static final String USED_GEAR ="Used Gear";
+	public static final String USED_CATEGORY_CODE ="usedGear";
+	public static final String USED_GEAR_PAGE ="usedGear";
+	public static final String RENTAL_GEAR_PAGE ="rentalGear";
+	public static final String RATIO =":";
+	public static final String DELIMETER ="|";
+	public static final String ALL_CATEGORIES ="allCategories";
+	public static final String USED_NEW_ARRIVALS ="Used-NewArrivals";
+	public static final String DEFAULT_SORT_NEWEST_CODE = "default.sort.newest";
+	public static final String USED_VIDEO = "Used-Video";
+	public static final String FOR_RENT = "forRent";
+	public static final String FOR_SALE = "forSale";
+	public static final String ITEM_TYPE = "itemtype";
+	public static final String BLPRODUCT = "BlProduct";
+	public static final String USED = "Used";
+	public static final String CATEGORY_MAP = "usedgear.rentalgear.map";
+	public static final String RENTAL_GEAR = "rentalgear";
+	public static final String IS_VIDEO = "isVideo";
+	public static final String IS_NEW = "isNew";
+	public static final String TRUE = "true";
+	public static final String FALSE = "false";
 }

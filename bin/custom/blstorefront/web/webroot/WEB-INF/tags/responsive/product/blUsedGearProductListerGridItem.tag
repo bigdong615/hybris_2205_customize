@@ -21,6 +21,7 @@
 <c:if test ="${product.productTagValues ne null && product.productTagValues ne 'Great Value' && product.productTagValues ne 'Staff Pick'}">
 <span class="badge badge-limited-stock">${product.productTagValues}</span>
 </c:if>
+ <span class="bookmark"></span>
   <c:choose>
      <c:when test ="${not empty product.images}">
         <div class="card-slider splide">
