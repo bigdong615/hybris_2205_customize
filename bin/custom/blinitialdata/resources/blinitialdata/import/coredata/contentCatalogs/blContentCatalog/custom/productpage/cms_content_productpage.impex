@@ -2,7 +2,7 @@ $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 # Language
 $lang=en
-#% impex.info("importing sample data cms_content_productpage.impex");
+#% impex.info("Importing content from BLInitialData coredata cms_content_productpage.impex");
 
 INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                      ; frontendTemplateName              ; restrictedPageTypes(code) ; active[default=true]
                            ;                         ; ProductDetailsPageTemplate           ; Product Details Page Template             ; product/productLayout2Page        ; ProductPage
