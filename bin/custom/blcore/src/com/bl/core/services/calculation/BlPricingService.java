@@ -2,8 +2,8 @@ package com.bl.core.services.calculation;
 
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.europe1.model.PriceRowModel;
-import java.util.Collection;
-import java.util.List;
+import java.math.BigDecimal;
+
 
 /**
  * This interface includes all methods for create/update seven day price,
@@ -33,4 +33,11 @@ public interface BlPricingService {
    */
   PriceRowModel getPriceRowByDuration(final String duration,final BlProductModel blProductModel);
 
+  /**
+   * Calculate Serial for Sale price based on conditional rating
+   * @param forSaleBasePrice
+   * @param conditionRatingOverallScore
+   * @return
+   */
+  BigDecimal calculateSerialForSalePrice(final BigDecimal forSaleBasePrice,final Double conditionRatingOverallScore);
 }

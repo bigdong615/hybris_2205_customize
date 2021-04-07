@@ -3,7 +3,6 @@ package com.bl.core.services.calculation.impl;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.dao.calculation.BlPricingDao;
 import com.bl.core.enums.DurationEnum;
 import com.bl.core.enums.PricingTierEnum;
 import com.bl.core.enums.ProductTypeEnum;
@@ -14,9 +13,16 @@ import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.product.UnitService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 
+import de.hybris.platform.util.Config;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
@@ -30,7 +36,8 @@ import org.apache.commons.collections.CollectionUtils;
 
 public class DefaultBlPricingService implements BlPricingService {
 
-  private BlPricingDao blPricingDao;
+  private GenericDao<BlPricingLogicModel> blPricingGenericDao;
+  private GenericDao<PriceRowModel> priceRowGenericDao;
   private ModelService modelService;
   private CommonI18NService commonI18NService;
   private EnumerationService enumerationService;
@@ -38,21 +45,33 @@ public class DefaultBlPricingService implements BlPricingService {
 
   @Override
   public PriceRowModel createOrUpdateSevenDayPrice(final BlProductModel blProductModel, final Double retailPrice, final boolean isNew) {
-    PriceRowModel basePriceRow;
     ProductTypeEnum productType = blProductModel.getProductType();
-    List<BlPricingLogicModel> blPricingLogicModels = getBlPricingDao().getBlPricingByProductType(productType);
+    validateParameterNotNull(productType, "ProductType must not be null");
+    final Map<String, Object> queryParams = Collections.singletonMap(BlPricingLogicModel.PRODUCTTYPE, productType);
+    final List<BlPricingLogicModel> blPricingLogicModels = getBlPricingGenericDao().find(queryParams);
     if (CollectionUtils.isNotEmpty(blPricingLogicModels) && retailPrice != null) {
-      int pctOfRetail = getPctValueFromBlPricingLogic(blPricingLogicModels, retailPrice);
-      Double basePrice = (retailPrice * pctOfRetail) / 100;
-      if(isNew) {
-        basePriceRow = createNewDurationPrice(blProductModel, basePrice, BlCoreConstants.SEVEN_DAY_PRICE);
-      }
-      else {
-        basePriceRow = updateSevenDayPrice(blProductModel,basePrice);
-      }
-      return basePriceRow;
+      final int pctOfRetail = getPctValueFromBlPricingLogic(blPricingLogicModels, retailPrice);
+      return createOrUpdatePrice(pctOfRetail,retailPrice,blProductModel, isNew);
     }
     return null;
+  }
+
+  /**
+   * Create or update Price row
+   * @param pctOfRetail
+   * @param retailPrice
+   * @param blProductModel
+   * @param isNew
+   * @return
+   */
+  private PriceRowModel createOrUpdatePrice(final int pctOfRetail, final Double retailPrice, final BlProductModel blProductModel,final boolean isNew) {
+    final Double basePrice = (retailPrice * pctOfRetail) / 100;
+    if(isNew) {
+      return createNewDurationPrice(blProductModel, basePrice, BlCoreConstants.SEVEN_DAY_PRICE);
+    }
+    else {
+      return updateSevenDayPrice(blProductModel,basePrice);
+    }
   }
 
   /**
@@ -66,6 +85,7 @@ public class DefaultBlPricingService implements BlPricingService {
     if(priceRow != null) {
       priceRow.setPrice(price);
       getModelService().save(priceRow);
+      getModelService().refresh(priceRow);
     }
     return  priceRow;
   }
@@ -78,9 +98,9 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private int getPctValueFromBlPricingLogic(final List<BlPricingLogicModel> blPricingLogicModels,final Double retailPrice) {
     int pctOfRetail = 0;
-    BlPricingLogicModel tier1 = getTierPricing(blPricingLogicModels, PricingTierEnum.ONE);
-    BlPricingLogicModel tier2 = getTierPricing(blPricingLogicModels, PricingTierEnum.TWO);
-    BlPricingLogicModel tier3 = getTierPricing(blPricingLogicModels, PricingTierEnum.THREE);
+    final BlPricingLogicModel tier1 = getTierPricing(blPricingLogicModels, PricingTierEnum.ONE);
+    final BlPricingLogicModel tier2 = getTierPricing(blPricingLogicModels, PricingTierEnum.TWO);
+    final BlPricingLogicModel tier3 = getTierPricing(blPricingLogicModels, PricingTierEnum.THREE);
     if (null != tier1 &&  Double.compare(retailPrice, tier1.getLessThan()) <= 0) {
       pctOfRetail = tier1.getPctOfRetail();
     } else if (null != tier2 && Double.compare(retailPrice, tier2.getGreaterThan()) > 0 && Double.compare(retailPrice, tier2.getLessThan()) <= 0) {
@@ -131,18 +151,42 @@ public class DefaultBlPricingService implements BlPricingService {
     validateParameterNotNull(duration, "Duration must not be null");
     validateParameterNotNull(blProductModel, "BlProduct must not be null");
     DurationEnum durationEnum = getEnumerationService().getEnumerationValue(DurationEnum.class, duration);
-    return getBlPricingDao().getPriceRowByDuration(durationEnum,blProductModel);
+    final Map<String, Object> queryParams = new HashMap<>();
+    queryParams.put(PriceRowModel.DURATION, durationEnum);
+    queryParams.put(PriceRowModel.PRODUCT, blProductModel);
+    List<PriceRowModel> resultSet = getPriceRowGenericDao().find(queryParams);
+    return CollectionUtils.isNotEmpty(resultSet)? resultSet.get(0) : null ;
   }
 
 
-
-  public BlPricingDao getBlPricingDao() {
-    return blPricingDao;
+  @Override
+  public BigDecimal calculateSerialForSalePrice(final BigDecimal forSaleBasePrice,final Double conditionRatingOverallScore) {
+     final int pricePercentage= getPricePercentageByRating(conditionRatingOverallScore);
+     return (forSaleBasePrice.setScale(2, RoundingMode.DOWN).multiply(new BigDecimal(pricePercentage))).divide(new BigDecimal(100)).setScale(2,RoundingMode.DOWN) ;
   }
 
-  public void setBlPricingDao(BlPricingDao blPricingDao) {
-    this.blPricingDao = blPricingDao;
+  /**
+   * Get price percentage based on rating
+   * @param conditionRatingOverallScore
+   * @return
+   */
+  private int getPricePercentageByRating(final Double conditionRatingOverallScore) {
+    int pricePercent = 0;
+    if(conditionRatingOverallScore > 4){
+      pricePercent= Integer.parseInt(Config.getParameter("conditionrating.abovefour.price.percentage"));
+    }
+    else if(conditionRatingOverallScore > 3 && conditionRatingOverallScore <= 4){
+      pricePercent = Integer.parseInt(Config.getParameter("conditionrating.abovethree.price.percentage"));
+    }
+    else if(conditionRatingOverallScore >= 2 && conditionRatingOverallScore <= 3){
+      pricePercent = Integer.parseInt(Config.getParameter("conditionrating.belowthree.price.percentage"));
+    }
+    else if(conditionRatingOverallScore < 2 && conditionRatingOverallScore > 0){
+      pricePercent = Integer.parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
+    }
+    return pricePercent;
   }
+
 
   public ModelService getModelService() {
     return modelService;
@@ -176,4 +220,21 @@ public class DefaultBlPricingService implements BlPricingService {
     this.commonI18NService = commonI18NService;
   }
 
+  public GenericDao<BlPricingLogicModel> getBlPricingGenericDao() {
+    return blPricingGenericDao;
+  }
+
+  public void setBlPricingGenericDao(
+      GenericDao<BlPricingLogicModel> blPricingGenericDao) {
+    this.blPricingGenericDao = blPricingGenericDao;
+  }
+
+  public GenericDao<PriceRowModel> getPriceRowGenericDao() {
+    return priceRowGenericDao;
+  }
+
+  public void setPriceRowGenericDao(
+      GenericDao<PriceRowModel> priceRowGenericDao) {
+    this.priceRowGenericDao = priceRowGenericDao;
+  }
 }

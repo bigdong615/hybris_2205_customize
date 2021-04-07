@@ -138,3 +138,61 @@ INSERT_UPDATE BLProduct ;$catalogVersion;$approved;productId[unique=true];code[u
                         ;;;1359;sony_battery_a55;batteries_power,sony;Extra Sony NP-FW50 Battery;52.99;Extra Sony NP-FW50 Battery;SONPFW50;NPFW50;5711045713071;BATTERIES;true;false;false;false;BARCODE;true;false;14;Sony
                         ;;;1498;Sony_NP-FV70;batteries_power,sony;Extra Sony NP-FV70 Battery;57.48;Extra Sony NP-FV70 Battery;SONPFV70;NPFV70;NA;BATTERIES;true;false;false;false;BARCODE;true;false;14;Sony
                         ;;;1521;Panasonic_Battery_DMW-BLC12;batteries_power,Panasonic;Extra Panasonic DMW-BLC12 Battery;60;Extra Panasonic DMW-BLC12 Battery;PADMWBLC12;DMW-BLC12;799559307080;BATTERIES;true;false;false;false;BARCODE;true;false;13;Panasonic
+
+
+UPDATE BlProduct;$catalogVersion;productCode;weight;height;width;length;keywords;purchaseNotes;techEngNotes;lrLink;batteryMaterial;firmwareVersion;titleTag;reserveRatio
+#nikon
+                ;;Nikon_17-55mm_f2.8_AF-S_ED_DX;1;;;;Nikon crop, Nikon DX, DX lens, crop lens, crop sensor lens, 17-55, 17-55mm, Nikon f/2.8, Nikon landscape, nikon wide angle, wide angle zoom;;;http://cdn-10.nikon-cdn.com/pdf/manuals/lenses/DX/AFSDX17-55_2.8G.pdf;;;;
+                ;;Nikon_10.5mm_f2.8_Fisheye;1;;;;10.5, 10.5mm, fisheye, nikon, dx, Nikon 10.5mm f/2.8G AF DX ED Fisheye, 10.5/2.8;;;http://www.lensrentals.com/rent/nikon/lenses/wide-angle/nikon-10.5mm-f2.8g-af-dx-fisheye;;;;
+                ;;Nikon_80-400mm_f4.5-5.6D_ED_VR;1;;;;nikon 80-400mm 80-400 ED VR, Nikon 80-400mm f/4.5-5.6D AF VR ED, 80400;;;http://www.lensrentals.com/rent/nikon/lenses/telephoto/nikon-80-400mm-f4.5-5.6d-ed-af-vr;;;;
+                ;;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon;1;;;;Sigma 10-20mm 10-20mm nikon;;;0;;;;
+                ;;Nikon_18-200_f3.5-5.6_AF-S_VR;1;;;;;;;;;;;;
+                ;;Nikon_14mm_f2.8_AF_ED;1;;;;ultrawide, prime, nikkor;;;http://www.lensrentals.com/rent/nikon/lenses/wide-angle/nikon-14mm-f2.8d-ed-af;;;;
+                ;;Nikon_70-200_f2.8_VR;1;;;;Nikon AF-S Zoom-Nikkor 70-200mm f/2.8G ED VR 2.8G 70-200 f2.8 f2.8G;;;;;;;;
+                ;;Nikon_17-35mm_f2.8 AF-S_IF_ED;1;;;;;;;;;;;;
+                ;;Nikon_85mm_f1.4_AF;1;;;;portrait lens, nikkor;;;http://www.lensrentals.com/rent/nikon/lenses/normal-range/nikon-85mm-f1.4d-af;;;;
+                ;;Nikkor_105mm_f2.8_Micro_AF-S_VR;1;;;;macro, telephoto, portrait, prime;;;http://www.lensrentals.com/rent/nikon/lenses/normal-range/nikon-85mm-f1.4d-af;;;;
+#cameras
+                ;;Canon_Rebel_XTi;0;;;;;;;;;
+                ;;Canon-EOS-1D-Mark-II;1;;;;;;;;;
+                ;;Canon_1Ds_Mark_II;1;;;;;;;;;
+                ;;Canon_EOS_1D_Mk_III;1;;;;1D III body;;;;;
+                ;;1DmkIIN;1;;;;;;;;;
+                ;;Canon_EOS_40D;1;;;;40d eos;;;;;
+                ;;Nikon_D70;1;;;;Nikon D70 Digital SLR, d-70, dx;;;;;
+                ;;Nikon_d300;1;;;;d300, Nikon D300 Digital SLR, d-300, dx;;;;;A1.11 B1.11;
+                ;;1Ds_MkIII;1;;;;Full Frame, 1d-s, mk3, mk 3, mk-3, Canon EOS 1Ds Mark III Digital SLR;;;http://www.lensrentals.com/rent/canon/cameras/canon-eos-1ds-mark-iii;;1.2.3;
+                ;;Canon_EOS_5D;1;;;;Full Frame, Canon EOS 5D Digital SLR;;;;;
+#canon
+                ;;Canon-EF-100-400mm-f4556L-IS-USM;1;;;;telephoto, telephoto zoom, tele, tele zoom;;;http://www.lensrentals.com/rent/canon/lenses/telephoto/canon-100-400mm-f4.5-5.6l-is;;;
+                ;;Canon_EF_17-40mm_f4L_USM;1;;;;wide angle zoom lens, wide angle, zoom, L-series, L series, USM, Ultra Sonic Motor, landscape, full frame, 5d, 5d mark ii, 5d mark iii, 1dx, 1dx mark ii, 6d, 6d mark ii, 1740;;;http://www.lensrentals.com/rent/canon/lenses/wide-angle/canon-17-40mm-f4l;;;
+                ;;Canon_EF_300mm_F_4_IS;1;;;;300mmf4, Canon 300mm f4 IS 300, Canon EF 300mm f/4L IS USM, IS, three hundred, long lens;;;http://www.lensrentals.com/rent/canon/lenses/supertelephoto/canon-300mm-f4l-is;;;
+                ;;Canon_EF_70-200mm_f4_IS;1;;;;stormchasers, 70200f4, Canon 70-200 70-200mm f4 IS f/4 f4L f/4L IS, tele photo, tele-photo, 70200;;;http://www.lensrentals.com/rent/canon/lenses/telephoto/canon-70-200mm-f4l-is;;;
+                ;;Canon_16-35_F2.8_L;1;;;;Canon 16-35mm F2.8 16-35 2.8;;;;;;
+                ;;Canon_24-70mm_f2.8_L;1;;;;L Series Lens, mid-range zoom, original 24-70;;;http://www.lensrentals.com/rent/canon/lenses/normal-range/canon-24-70mm-f2.8l;;;
+                ;;Canon_100mm_f2.8_Macro;1;;;;Canon EF 100mm f/2.8 Macro USM, Mac; close up;;;;http://www.lensrentals.com/rent/canon/lenses/telephoto/canon-100mm-f2.8-macro;;;
+                ;;Canon_24-105mm_f4_IS;1;;;;EF 24-105, 24-105mm, 24105mm, Canon zoom, Canon L, L series;;;http://www.lensrentals.com/rent/canon/lenses/normal-range/canon-24-105mm-f4l-is;;;
+                ;;Canon_17-55_f2.8_IS_EF-S;1;;;;EFS, crop sensor, APS-C, APSC, USM, Ultra sonic motor, image stabilization, optical image stabilization, standard zoom, zoom lens;;;http://www.lensrentals.com/rent/canon/lenses/wide-angle/canon-ef-s-17-55mm-f2.8-is;;;
+                ;;Canon_50mm_f1.2_L;1;;;;prime, portrait, normal view;;;http://www.lensrentals.com/rent/canon/lenses/normal-range/canon-50mm-f1.2l;;;
+#accessories
+                ;;67mm_CP_Filter;0.5;;;;pola, polarizer, circular, filter;;;http://www.lensrentals.com/rent/filters/circular-polarizing/circular-polarizing-filter-67mm;;;
+                ;;72mm_CP_Filter;0.5;;;;;;;http://www.lensrentals.com/rent/filters/circular-polarizing/circular-polarizing-filter-72mm;;;
+                ;;77mm_CP_Filter;0.5;;;;tiffen, screw-on;;;http://www.lensrentals.com/rent/filters/circular-polarizing/circular-polarizing-filter-77mm;;;
+                ;;58mm_CP_Filter;0.5;;;;;;;http://www.lensrentals.com/rent/filters/circular-polarizing/circular-polarizing-filter-58mm;;;
+                ;;BW_67mm_102_ND;0.5;;;;;;;;;;
+                ;;Fotod'oX_Grad_ND_4_77mm;0.5;;;;;;;0;;;
+                ;;67mm_Skylight_1B;0.5;;;;;;;0;;;
+                ;;heliopan_77;0;;;;;;;;;;
+                ;;77_intense;0;;;;;;;;;;
+                ;;RS-80N3_remote_switch;1;;;;remote switch, Canon RS-80N3 Remote Shutter Cable, 80n3,;;;0;;;
+#audio
+                ;;Rode_videomic;1;;;;rode, videomic, microphone, mic, mics, Rode VideoMic Hotshoe Mounted Shotgun Microphone;;;0;;;
+                ;;Sennheiser_MKE;1;;;;sennheiser, videomic, microphone, mic, mics, Sennheiser MKE 400 Compact Video Camera Shotgun Microphone;;;http://www.lensrentals.com/rent/audio/microphones/sennheiser-compact-shotgun;;;
+                ;;Tascam_DR100;1;;;;audi, tascam, dr-100, microphone, mic, mics, Tascam DR-100 Professional Portable Digital Audio Recorder;;;0;;;
+                ;;Rode_videomic_stereo;1;;;;rode, videomic, microphone, mic, mics, stereo, hotshoe, shoe, Rode Stereo VideoMic Hotshoe Microphone, ;;;http://www.lensrentals.com/rent/audio/microphones/rode-videomic-pro-compact-shotgun;;;
+                ;;Azden_lav;1;;;;microphone, lavalier, lav, mic, mics;;;;;;
+                ;;Sennheiser_ME66;1;;;;cardioid, senheiser, sennheizer, super-cardioid;;;0;;;
+                ;;sennheiser_lav;1;;;;microphone, mic, lav, lapel, lavaleir, clip, collar, neck, transmitter, receiver, omnidirectional;;;https://www.lensrentals.com/rent/sennheiser-g3-wireless-mic-kit-freq-a;;;
+                ;;beachtek_DXA;1;;;;audio, beachek, DXA, beach, Beach, Beachtek DXA-SLR Active Audio Adapter, Beachtek DXA-SLR Active Audio Adapter;;;http://www.lensrentals.com/rent/pentax/accessories/audio/audio-adapter-beachtek-dxa-slr;;;
+                ;;female_XLR;1;;;;EXF Series;;;0;;;
+                ;;boom_pole;3;;;;xlr cable, xlr, 3-pin XLR Male to 3-pin XLR Female Balanced 25 Feet, female, male;;;http://www.lensrentals.com/rent/pentax/accessories/audio/boom-pole;;;

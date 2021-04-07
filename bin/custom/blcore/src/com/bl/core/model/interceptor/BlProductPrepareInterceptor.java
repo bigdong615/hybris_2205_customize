@@ -54,7 +54,9 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
         sevenDayPrice = getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, false);
       }
-      blProductModel.setEurope1Prices(Collections.singletonList(sevenDayPrice));
+      if(sevenDayPrice != null) {
+        blProductModel.setEurope1Prices(Collections.singletonList(sevenDayPrice));
+      }
     }
   }
 

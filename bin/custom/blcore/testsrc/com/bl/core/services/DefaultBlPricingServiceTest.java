@@ -1,6 +1,7 @@
 package com.bl.core.services;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 
 import com.bl.core.constants.BlCoreConstants;
@@ -19,8 +20,10 @@ import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.product.UnitService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+import de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,7 +39,9 @@ public class DefaultBlPricingServiceTest {
 
   private DefaultBlPricingService blPricingService;
   @Mock
-  private BlPricingDao blPricingDao;
+  private DefaultGenericDao blPricingDao;
+  @Mock
+  private DefaultGenericDao priceRowDao;
   @Mock
   private ModelService modelService;
   @Mock
@@ -57,11 +62,11 @@ public class DefaultBlPricingServiceTest {
   public void setUp()
   {
     MockitoAnnotations.initMocks(this);
+    blPricingDao = new DefaultGenericDao(BlPricingLogicModel._TYPECODE);
     blPricingService= new DefaultBlPricingService();
     blPricingService.setEnumerationService(enumerationService);
     blPricingService.setModelService(modelService);
     blPricingService.setUnitService(unitService);
-    blPricingService.setBlPricingDao(blPricingDao);
     blPricingService.setCommonI18NService(commonI18NService);
     blProductModel = new BlProductModel();
     blProductModel.setProductType(ProductTypeEnum.CAMERAS);
@@ -85,9 +90,9 @@ public class DefaultBlPricingServiceTest {
     blPricingList.add(pricingLogicModel1);
     blPricingList.add(pricingLogicModel2);
     blPricingList.add(pricingLogicModel3);
-    given(blPricingDao.getBlPricingByProductType(blProductModel.getProductType())).willReturn(blPricingList);
+    given(blPricingDao.find(Collections.singletonMap(BlPricingLogicModel.PRODUCTTYPE,blProductModel.getProductType()))).willReturn(blPricingList);
     given(modelService.create(PriceRowModel.class)).willReturn(new PriceRowModel());
-    given(blPricingDao.getPriceRowByDuration(Matchers.any(),Matchers.any())).willReturn(priceRowModel);
+    given(priceRowDao.find(anyMap())).willReturn((List)priceRowModel);
   }
 
   @Test
