@@ -23,9 +23,9 @@ public class DefaultBlProductDataUrlResolver extends DefaultProductDataUrlResolv
     }
   }
 
-private String urlProvider(String pageIdentifier,String productCode){
-    StringBuffer urlPatter = new StringBuffer();
-  urlPatter.append(BlFacadesConstants.DEFAULT_REDIRECT_URL).append(pageIdentifier).append(BlFacadesConstants.PRODUCT_URL).append(productCode);
-  return urlPatter.toString();
+private String urlProvider(final String pageIdentifier,final String productCode){
+    StringBuilder urlPattern = new StringBuilder();
+  urlPattern.append(BlFacadesConstants.DEFAULT_REDIRECT_URL).append(pageIdentifier).append(BlFacadesConstants.PRODUCT_URL).append(productCode);
+  return urlPattern.toString();
 }
 }

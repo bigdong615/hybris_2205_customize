@@ -84,7 +84,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
   /*
    * This method provide time in hh:mm:ss format.
    */
-  private String formattedTime(long duration){
+  private String formattedTime(final long duration){
     final int hour = (int)duration/3600;
     final int minutes = (int)duration%3600;
     final int remainingMinutes= minutes/60;
