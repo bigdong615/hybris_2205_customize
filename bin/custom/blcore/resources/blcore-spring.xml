@@ -671,5 +671,10 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
+	<!--<BL-467 bean entry is for clear cart>-->
+	<alias name="defaultBlCartService" alias="cartService" />
+	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
+		<property name="commerceCartService" ref="commerceCartService" />
+	</bean>
 
 </beans>
