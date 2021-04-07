@@ -51,4 +51,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String IS_NEW = "isNew";
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
+	public static final String BASE_SITE_UID = "{baseSite-uid}";
+	public static final String CATEGORY_PATTERN_CODE = "{category-code}";
+	public static final String CATALOG_ID = "{catalog-id}";
+	public static final String CATALOG_VERSION = "{catalogVersion}";
+	public static final String REPLACE_STRING = "%20";
 }

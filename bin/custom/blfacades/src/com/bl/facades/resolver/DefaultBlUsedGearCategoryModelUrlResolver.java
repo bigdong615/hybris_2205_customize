@@ -9,7 +9,9 @@ import de.hybris.platform.commerceservices.url.impl.DefaultCategoryModelUrlResol
  * This Class created to override the OOB DefaultCategoryModelUrlResolver to get URL pattern for used gear category
  */
 public class DefaultBlUsedGearCategoryModelUrlResolver  extends DefaultCategoryModelUrlResolver {
+
   private String usedGearPattern;
+
   /**
    * This Method is overiden for ressolving URL pattern for used gear category
    */
@@ -21,19 +23,19 @@ public class DefaultBlUsedGearCategoryModelUrlResolver  extends DefaultCategoryM
       // Work out values
       // Replace pattern values
       String url = getUsedGearPattern();
-      if (url.contains("{baseSite-uid}")) {
-        url = url.replace("{baseSite-uid}", urlEncode(getBaseSiteUid().toString()));
+      if (url.contains(BlCoreConstants.BASE_SITE_UID)) {
+        url = url.replace(BlCoreConstants.BASE_SITE_UID, urlEncode(getBaseSiteUid().toString()));
       }
-      if (url.contains("{category-code}")) {
-        final String categoryCode = urlEncode(source.getCode()).replaceAll("\\+", "%20");
-        url = url.replace("{category-code}", categoryCode);
+      if (url.contains(BlCoreConstants.CATEGORY_PATTERN_CODE)) {
+        final String categoryCode = urlEncode(source.getCode()).replaceAll("\\+", BlCoreConstants.REPLACE_STRING);
+        url = url.replace(BlCoreConstants.CATEGORY_PATTERN_CODE, categoryCode);
       }
-      if (url.contains("{catalog-id}")) {
+      if (url.contains(BlCoreConstants.CATALOG_ID)) {
         url = url
-            .replace("{catalog-id}", urlEncode(source.getCatalogVersion().getCatalog().getId()));
+            .replace(BlCoreConstants.CATALOG_ID, urlEncode(source.getCatalogVersion().getCatalog().getId()));
       }
-      if (url.contains("{catalogVersion}")) {
-        url = url.replace("{catalogVersion}", urlEncode(source.getCatalogVersion().getVersion()));
+      if (url.contains(BlCoreConstants.CATALOG_VERSION)) {
+        url = url.replace(BlCoreConstants.CATALOG_VERSION, urlEncode(source.getCatalogVersion().getVersion()));
       }
       return url;
     }

@@ -256,10 +256,17 @@
 	<bean id="blSolrSearchQueryDecoderPopulator"
 		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
 
+	<!--BL-80 entry for Used Gear Category Model Resolver-->
 	<alias name="defaultBlUsedGearCategoryModelUrlResolver" alias="categoryModelUrlResolver"/>
 	<bean id="defaultBlUsedGearCategoryModelUrlResolver"
 		class="com.bl.facades.resolver.DefaultBlUsedGearCategoryModelUrlResolver" parent="defaultCategoryModelUrlResolver">
 		<property name="usedGearPattern" value="/buy/category/{category-code}"/>
+	</bean>
+
+	<!--<BL-467 entry for clear cart>-->
+	<alias name="defaultBlCartFacade" alias="cartFacade" />
+	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
+		<property name="blCartService" ref="cartService" />
 	</bean>
 
 </beans>

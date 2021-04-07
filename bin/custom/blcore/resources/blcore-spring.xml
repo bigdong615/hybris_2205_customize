@@ -677,4 +677,10 @@
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
+	<!--<BL-467 bean entry is for clear cart>-->
+	<alias name="defaultBlCartService" alias="cartService" />
+	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
+		<property name="commerceCartService" ref="commerceCartService" />
+	</bean>
+
 </beans>
