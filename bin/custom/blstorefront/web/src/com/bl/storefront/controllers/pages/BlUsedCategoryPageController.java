@@ -1,7 +1,6 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.resolver.BlDefaultCategoryModelUrlResolver;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -18,7 +17,6 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -38,9 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/buy/category/")
 public class BlUsedCategoryPageController extends AbstractCategoryPageController {
-
-  @Resource(name="blCategoryModelUrlResolver")
-  private BlDefaultCategoryModelUrlResolver blDefaultCategoryModelUrlResolver;
 
   @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
   public String category(@PathVariable("categoryCode") final String categoryCode, // NOSONAR
@@ -69,7 +64,7 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
         }
       }
     }
-    final String redirection = checkRequestUrl(request, response, blDefaultCategoryModelUrlResolver.resolve(category));
+    final String redirection = checkRequestUrl(request, response,  getCategoryModelUrlResolver().resolve(category));
     if (StringUtils.isNotEmpty(redirection))
     {
       return redirection;

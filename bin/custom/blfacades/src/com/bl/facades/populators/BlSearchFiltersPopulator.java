@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -73,17 +74,21 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   private void addFilterQueryTrue(
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     // Added condition for used gear video category
-    if(BlCoreConstants.USED_VIDEO.equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
+    final String categoryCode = target.getSearchQueryData().getCategoryCode();
+    if(BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
       target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_VIDEO, BlCoreConstants.TRUE);
     }
     // Added Condition for used gear new arrivals category
-    if(BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
+    if(BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)) {
       target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
     }
     target.getSearchQuery().addFilterQuery(BlCoreConstants.FOR_SALE, BlCoreConstants.TRUE);
     target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
   }
 
+  /**
+   * This Method is created for adding term into indexedPropertyValues to prepare solr query
+   */
   private List<IndexedPropertyValueData<IndexedProperty>> addTerms(
       List<SolrSearchQueryTermData> terms,
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target,
@@ -124,21 +129,21 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    * Adding some category restriction for used gear categories
    */
   private void categoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-    if (target.getSearchQueryData().getCategoryCode() != null && ! isUsedGearCategory(target.getSearchQueryData().getCategoryCode()))
+    String categoryCode = target.getSearchQueryData().getCategoryCode();
+    if (StringUtils.isNotBlank(categoryCode)&& ! isUsedGearCategory(categoryCode))
     {
       rentalCategory(target);
       addFilterQueryFalse(target);
     }
-    else if (target.getSearchQueryData().getCategoryCode() != null){
-        String catCode = target.getSearchQueryData().getCategoryCode();
-        if(! BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(catCode) && ! BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(catCode)
-            && ! BlCoreConstants.USED_VIDEO.equalsIgnoreCase(catCode)) {
+    else if (StringUtils.isNotBlank(categoryCode)){
+        if(! BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode) && ! BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(categoryCode)
+            && ! BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
           target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
-              checkCategory(target.getSearchQueryData().getCategoryCode()));
+              checkCategory(categoryCode));
         }
          addFilterQueryTrue(target);
     }
-    if(null == target.getSearchQueryData().getCategoryCode()) {
+    if(null == categoryCode) {
       if (BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(target.getSearchQueryData().getBlPage())) {
         addFilterQueryTrue(target);
       }
@@ -149,10 +154,13 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
 
   }
 
+  /**
+   * This method is created for adding category to filter query fields for prepare solr query
+   */
   private void rentalCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-    if(!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
-      target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
-          target.getSearchQueryData().getCategoryCode());
+    final String categoryCode = target.getSearchQueryData().getCategoryCode();
+    if(!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
+      target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCode);
     }
   }
 }

@@ -256,11 +256,10 @@
 	<bean id="blSolrSearchQueryDecoderPopulator"
 		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
 
-	<!--BL-80 Added for Category URL resolver for Used Gear Category-->
-	<alias name="blDefaultSolrSearchStatePopulator" alias="solrSearchStatePopulator"/>
-	<bean id="blDefaultSolrSearchStatePopulator"
-		class="com.bl.facades.populators.BlSolrSearchStatePopulator" parent="defaultSolrSearchStatePopulator">
-		<property name="blDefaultCategoryDataUrlResolver" ref="blDefaultCategoryDataUrlResolver"/>
+	<alias name="defaultBlUsedGearCategoryModelUrlResolver" alias="categoryModelUrlResolver"/>
+	<bean id="defaultBlUsedGearCategoryModelUrlResolver"
+		class="com.bl.facades.resolver.DefaultBlUsedGearCategoryModelUrlResolver" parent="defaultCategoryModelUrlResolver">
+		<property name="usedGearPattern" value="/buy/category/{category-code}"/>
 	</bean>
 
 </beans>
