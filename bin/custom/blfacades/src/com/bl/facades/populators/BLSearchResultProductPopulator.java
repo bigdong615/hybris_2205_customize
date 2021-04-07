@@ -181,7 +181,7 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
     }
     if(null != this.getValue(source,"upComing")){
       if (!this.<Boolean>getValue(source, "upComing")) {
-        target.setIsGreatValue(true); // needs to change the name
+        target.setIsUpcoming(true);
       }
     }
     populatePrices(source, target);

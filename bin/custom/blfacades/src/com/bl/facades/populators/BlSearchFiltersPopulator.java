@@ -150,9 +150,18 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   }
 
   private void rentalCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-    if(!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(target.getSearchQueryData().getCategoryCode())) {
-      target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
-          target.getSearchQueryData().getCategoryCode());
+    final String categoryCode = target.getSearchQueryData().getCategoryCode();
+    if(!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
+      if(categoryCode.startsWith("New")) {
+        String categoryParam = Config.getParameter("key.rentalgear.new");
+        final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER).withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
+      }
+      else {
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
+            categoryCode);
+      }
     }
   }
 }

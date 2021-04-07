@@ -16,7 +16,7 @@
             <input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
             <input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
             <input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
-            <c:if test="${product.isGreatValue ne null && product.isGreatValue eq true}">
+            <c:if test="${product.isUpcoming ne null && product.isUpcoming eq true}">
                  <button type="submit" class="btn btn-outline btn-disabled dis"
                             aria-disabled="true" disabled="disabled">
                             NOtify Me

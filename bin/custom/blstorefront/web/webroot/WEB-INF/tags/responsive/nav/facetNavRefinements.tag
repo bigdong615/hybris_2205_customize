@@ -13,10 +13,11 @@
            <c:if test="${clearAllQuery ne null}">
             <c:url var= "clearUrl" value ="${clearAllQuery}"/>
            </c:if>
+
            <c:if test="${clearAllQuery eq null && breadcrumbs.size()>1}">
             <c:url var= "clearUrl" value ="${breadcrumbs[1].url}"/>
            </c:if>
-            <c:if test="${clearAllQuery eq null}">
+            <c:if test="${clearAllQuery eq null && breadcrumbs.size()<2}">
                        <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
             </c:if>
          <p>Refine by <a class="clear-filters" href="${clearUrl}"><spring:theme code="text.button.clear.all"/></a></p>
