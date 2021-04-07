@@ -147,7 +147,7 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]     ; $contentCV[unique=true
 
 #Mobile device navigation entry
 INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                ; $contentCV[unique=true] ; name                               ; navigationNode(uid,$contentCV) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;
-                                 ; MobilePickUpOrDeliveryEntryComponent1 ;                         ; Mobile PickUp Or Delivery Nav Node Entry1 ; PickUpOrDeliveryNavNode  ; MobilePickUpAndDeliveryLink
+                                 ; MobilePickUpOrDeliveryEntry1 ;                         ; Mobile PickUp Or Delivery Nav Node Entry1 ; PickUpOrDeliveryNavNode  ; MobilePickUpAndDeliveryLink
                                  ; MobileSupportNavNodeEntry1 ;                         ; Mobile Support Nav Node Entry1 ; HeaderSupportNavNode     ; MobileSupportLink
                                  ; MobileAccountNavNodeEntry1 ;                         ; Mobile My Account Nav Node Entry1 ; AccountNavNode     ; MobileAccountNavLink
 
