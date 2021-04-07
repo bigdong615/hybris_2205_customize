@@ -121,7 +121,13 @@ INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]
                                     ;                         ; RentingGearIsEasyTitleComponent ; Renting Gear IsEasy Title Component ; RentingGearIsEasyTitleComponent ; "Renting gear is easy" 
                                     ;                         ; CategoriesTitleComponent        ; Categories Title Component          ; CategoriesTitleComponent        ; "Categories"           
                                     ;                         ; TheyBorrowFromUsTitleComponent  ; They BorrowFromUs Title Component   ; TheyBorrowFromUsTitleComponent  ; "They Borrow From Us"  
-                                    
+
+#Mobile device navigation link component for ship or pickup, support and Account nav link                                    
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url  ; target(code)[default='sameWindow'] 
+								;						; MobilePickUpAndDeliveryLink; Mobile PickUp And Delivery Link; "/shiporpickup";
+								;						; MobileSupportLink; Mobile Support Link; "/support";
+								;						; MobileAccountNavLink; Mobile My Account Link; "/myaccount";
+
                                     
 INSERT_UPDATE CMSNavigationNode ; uid[unique=true]        ; $contentCV[unique=true] ; name               ; &nodeRef                ; parent(uid, $contentCV) ; children(uid,$contentCV) ; links(&linkRef) ;  
                                 ; PickUpOrDeliveryNavNode ;                         ; Pickup or Delivery ; PickUpOrDeliveryNavNode ; BLNavNode               ;                          
@@ -138,6 +144,18 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]     ; $contentCV[unique=true
                                  ; SupportNavNodeEntry2 ;                         ; Support Nav Node Entry2 ; HeaderSupportNavNode     ; SupportLinkComponent2                                                      
                                  ; SupportNavNodeEntry3 ;                         ; Support Nav Node Entry3 ; HeaderSupportNavNode     ; SupportLinkComponent3                                                      
                                  ; SupportNavNodeEntry4 ;                         ; Support Nav Node Entry4 ; HeaderSupportNavNode     ; SupportLinkComponent4                                                      
+
+#Mobile device navigation entry
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                ; $contentCV[unique=true] ; name                               ; navigationNode(uid,$contentCV) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;
+                                 ; MobilePickUpOrDeliveryEntryComponent1 ;                         ; Mobile PickUp Or Delivery Nav Node Entry1 ; PickUpOrDeliveryNavNode  ; MobilePickUpAndDeliveryLink
+                                 ; MobileSupportNavNodeEntry1 ;                         ; Mobile Support Nav Node Entry1 ; HeaderSupportNavNode     ; MobileSupportLink
+                                 ; MobileAccountNavNodeEntry1 ;                         ; Mobile My Account Nav Node Entry1 ; AccountNavNode     ; MobileAccountNavLink
+
+#Mobile header bottom information
+INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name                               ; &componentRef                  ; content[lang=$lang]
+                                         ;                         ; MobileHeaderBottomInfoComponent1 ; Mobile Header Bottom Info Component1 ; MobileHeaderBottomInfoComponent1 ;"<i class='icon-availability'></i> Real time availability"
+										;                         ; MobileHeaderBottomInfoComponent2 ; Mobile Header Bottom Info Component2 ; MobileHeaderBottomInfoComponent2 ;"<i class='icon-checkbadge'></i> Free changes & cancellations"
+										;                         ; MobileHeaderBottomInfoComponent3 ; Mobile Header Bottom Info Component3 ; MobileHeaderBottomInfoComponent3 ;"<i class='icon-truck'></i> Free 2-day shipping"
                                  
                                  
 ###  Assign Components to the Slots  ###
@@ -162,7 +180,10 @@ UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 
                    ;                         ; HomePageRentingGearIsEasyTitleSlot ; RentingGearIsEasyTitleComponent                                                                                                                                                                                               
                    ;                         ; HomePageCategoriesTitleSlot        ; CategoriesTitleComponent                                                                                                                                                                                                      
                    ;                         ; HomePageTheyBorrowFromUsTitleSlot  ; TheyBorrowFromUsTitleComponent                                                                                                                                                                                                
-                   
+                   ;                         ; MobileHeaderLinkForShipOrPickupSlot      ; BLPickUpOrDeliveryNavComponent			
+                   ;                         ; MobileHeaderLinkForSupportSlot           ; BLSupportNavComponent
+                   ;                         ; MobileHeaderLinkForAccountSlot           ; AccountNavigationComponent				   
+                   ;                         ; MobileHeaderBottomInfo                       ; MobileHeaderBottomInfoComponent1,MobileHeaderBottomInfoComponent2,MobileHeaderBottomInfoComponent3                   
                    
                    
                    
