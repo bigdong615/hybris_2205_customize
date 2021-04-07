@@ -25,7 +25,12 @@
                                 <product:productImagePanel galleryImages="${galleryImages}" />
                               </div>
                             <div id="productInfo" class="col-lg-5 offset-lg-1">
-                                <p class="overline">${product.manufacturer}</p>
+                            <c:forEach items="${product.categories}" var="categoryData">
+                             <c:if test="${product.manufacturer eq categoryData.name}">
+                              <c:url var="brandUrl" value="${categoryData.url}"/>
+                              <p class="overline"><a href="${brandUrl}">${product.manufacturer}</a></p>
+                             </c:if>
+                                </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
                                 <span class="badge badge-limited-stock">Only 2 Left</span> <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                  <ul class="checklist mt-4">

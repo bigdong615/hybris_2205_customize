@@ -49,9 +49,10 @@ public class BlProductPopulator implements Populator<ProductModel, ProductData> 
       {
         populateResourceData(dataSheets, target);
       }
-
+      target.setIsDiscontinued(BooleanUtils.toBoolean(blProductModel.getDiscontinued()));
+      target.setIsNew(BooleanUtils.toBoolean(blProductModel.getIsNew()));
+      target.setIsUpcoming(CollectionUtils.isEmpty(blProductModel.getSerialProducts()));
     }
-
   }
 
   /*
