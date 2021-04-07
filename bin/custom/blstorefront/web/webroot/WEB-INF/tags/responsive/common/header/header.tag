@@ -19,7 +19,7 @@
 <div class="container">
 <a class="mobileNavToggle d-inline-block d-lg-none" href="#my-menu"><span></span></a>
 <cms:pageSlot position="SiteLogoHeaderSlot" var="logo" limit="1">
-						<cms:component component="${logo}" element="div" class="yComponentWrapper"/>
+						<cms:component component="${logo}"/>
 					</cms:pageSlot>
  <div class="mobile-right d-inline-block d-lg-none">  
             <div class="nav-account"><a href="#">My Account</a></div>
