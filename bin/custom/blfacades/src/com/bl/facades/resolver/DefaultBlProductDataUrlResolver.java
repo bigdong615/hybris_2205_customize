@@ -14,10 +14,10 @@ public class DefaultBlProductDataUrlResolver extends DefaultProductDataUrlResolv
   @Override
   protected String resolveInternal(final ProductData source) {
 
-    if (source.getProductPageType().equals(BlFacadesConstants.RENTAL_PAGE_IDENTIFIER)) {
+    if (BlFacadesConstants.RENTAL_PAGE_IDENTIFIER.equals(source.getProductPageType())) {
       return BlFacadesConstants.DEFAULT_REDIRECT_URL + BlFacadesConstants.RENTAL_PAGE_IDENTIFIER + BlFacadesConstants.PRODUCT_URL
           + source.getCode();
-    } else if (source.getProductPageType().equals(BlFacadesConstants.USED_PAGE_IDENTIFIER)) {
+    } else if (BlFacadesConstants.USED_PAGE_IDENTIFIER.equals(source.getProductPageType())) {
       return BlFacadesConstants.DEFAULT_REDIRECT_URL + BlFacadesConstants.USED_PAGE_IDENTIFIER + BlFacadesConstants.PRODUCT_URL + source
           .getCode();
     }else{

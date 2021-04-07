@@ -120,6 +120,7 @@
 			<wz:step id="step1" label="essential.label" sublabel="essential.sublabel">
 				<wz:content id="step1.content">
 					<wz:property-list root="newProductVideo" >
+						<wz:property qualifier="uid"/>
 						<wz:property qualifier="videoTitle" />
 						<wz:property qualifier="videoLink" />
 						<wz:property qualifier="videoDuration" />
@@ -139,6 +140,7 @@
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="">
 				<editorArea:section name="" >
+					<ea:attribute qualifier="uid"/>
 					<ea:attribute qualifier="videoTitle" />
 					<ea:attribute qualifier="videoLink" />
 					<ea:attribute qualifier="videoDuration" />

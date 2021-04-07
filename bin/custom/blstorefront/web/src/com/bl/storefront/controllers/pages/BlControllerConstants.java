@@ -1,6 +1,9 @@
 package com.bl.storefront.controllers.pages;
 
 public class BlControllerConstants {
+  private BlControllerConstants(){
+    //empty
+  }
   public static final String FORM_GLOBAL_ERROR = "form.global.error";
   public static final String VALIDATE_CHECKPWD_EQUALS = "validation.checkPwd.equals";
   public static final String REGISTER_CHECKPWD_INVALID = "register.checkPwd.invalid";
@@ -17,7 +20,4 @@ public class BlControllerConstants {
   public static final String PRODUCT_CODE_PATH_VARIABLE_PATTERN = "/{productCode:.*}";
   public static final String IS_RENTAL_PAGE = "IsRentalPage";
 
-  private BlControllerConstants(){
-    //empty
-  }
 }

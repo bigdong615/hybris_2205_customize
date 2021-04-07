@@ -7,7 +7,6 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
    <c:choose>
         <c:when test="${galleryImages == null || galleryImages.size() == 0}">
              <div id="product-slider" class="splide" >
@@ -44,7 +43,7 @@
                    </ul>
             </div>
           </div>
-                 <div id="product-thumbnails" class="splide">
+               <div id="product-thumbnails" class="splide">
                        <div class="splide__track">
                            <ul class="splide__list">
                                  <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
@@ -52,6 +51,6 @@
                                  </c:forEach>
                            </ul>
                        </div>
-                 </div>
+                </div>
         </c:otherwise>
     </c:choose>

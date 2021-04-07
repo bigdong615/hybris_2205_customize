@@ -6,6 +6,7 @@
 
 	<bean class="de.hybris.platform.commercefacades.product.data.ProductData">
 		<property name="genders" type="java.util.List&lt;com.bl.facades.product.data.GenderData>"/>
+	<!--BL-166:These attribute created for populating bl related specific product attribute.-->
 		<property name="displayName" type="java.lang.String"/>
 		<property name="rentalVideosLink" type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
 		<property name="usedGearVideosLink" type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
@@ -35,7 +36,7 @@
 		<property name="videoUrl" type="String"/>
 		<property name="videoDuration" type="String"/>
 	</bean>
-	<!-- Add accelerator facades specific product options -->
+	<!--BL-166 : Add accelerator facades specific product options -->
 	<enum class="de.hybris.platform.commercefacades.product.ProductOption">
 		<value>REQUIRED_DATA</value>
 	</enum>
