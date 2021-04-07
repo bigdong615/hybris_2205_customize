@@ -683,6 +683,7 @@
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
+
 	<!--BL-80 Adding for usedgear product value provider-->
 	<bean id="blUsedGearProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUsedGearProductValueProvider"
 		parent="abstractPropertyFieldValueProvider">
@@ -704,5 +705,10 @@
 		<property name="threadContextService" ref="threadContextService"/>
 		<property name="commerceCategoryService" ref="commerceCategoryService"/>
 		<property name="blDefaultCategoryModelUrlResolver" ref="blCategoryModelUrlResolver"/>
+	</bean>
+	<!--<BL-467 bean entry is for clear cart>-->
+	<alias name="defaultBlCartService" alias="cartService" />
+	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
+		<property name="commerceCartService" ref="commerceCartService" />
 	</bean>
 </beans>

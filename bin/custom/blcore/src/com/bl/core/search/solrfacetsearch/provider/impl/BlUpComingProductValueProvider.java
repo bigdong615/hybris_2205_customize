@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Manikandan
+ *
+ * This Class is created for indexing upcomingProduct Value to solr
+ */
 public class BlUpComingProductValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
 
@@ -29,10 +34,14 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
     return fieldValues;
   }
 
+  /**
+   * This Method is created for checking upcomingProducts
+   */
   private List<FieldValue> createFieldValue(final BlProductModel product, final IndexedProperty indexedProperty)
   {
     final List<FieldValue> fieldValues = new ArrayList<>();
     boolean upComing = true;
+    // Condition added for Blproducts and their respective SerialProducts
     if(product.getSerialProducts().stream().anyMatch(BlProductModel::getForRent) && product.getForRent()) {
       upComing = false;
     }
