@@ -6,6 +6,9 @@
 
 	<bean class="de.hybris.platform.commercefacades.product.data.ProductData">
 		<property name="genders" type="java.util.List&lt;com.bl.facades.product.data.GenderData>"/>
+		<property name="isGreatValue" type="boolean"/>
+		<property name="productTagValues" type="String"/>
+		<property name="isUpcoming" type="boolean"/>
 	</bean>
 
 	<bean class="com.bl.facades.product.data.GenderData">

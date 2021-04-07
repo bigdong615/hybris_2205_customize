@@ -677,4 +677,10 @@
 		<property name="commerceCartService" ref="commerceCartService" />
 	</bean>
 
+	<!--Added for upcoming products-->
+	<bean id="blUpComingProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUpComingProductValueProvider"
+		parent="abstractPropertyFieldValueProvider">
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+
 </beans>

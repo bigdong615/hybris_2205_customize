@@ -139,21 +139,51 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
   }
 
   @Override
-  public void populate(final SearchResultValueData source, final ProductData target)
-  {
+  public void populate(final SearchResultValueData source, final ProductData target) {
     Assert.notNull(source, "Parameter source cannot be null.");
     Assert.notNull(target, "Parameter target cannot be null.");
     // Pull the values directly from the SearchResult object
-    target.setCode(this.<String> getValue(source, "code"));
-    target.setName(this.<String> getValue(source, "name"));
-    target.setManufacturer(this.<String> getValue(source, "manufacturerName"));
-    target.setDescription(this.<String> getValue(source, "description"));
-    target.setSummary(this.<String> getValue(source, "summary"));
-    target.setAverageRating(this.<Double> getValue(source, "reviewAvgRating"));
-    target.setConfigurable(this.<Boolean> getValue(source, "configurable"));
-    target.setConfiguratorType(this.<String> getValue(source, "configuratorType"));
-    target.setBaseProduct(this.<String> getValue(source, "baseProductCode"));
-
+    target.setCode(this.<String>getValue(source, "code"));
+    target.setName(this.<String>getValue(source, "name"));
+    target.setManufacturer(this.<String>getValue(source, "manufacturerName"));
+    target.setDescription(this.<String>getValue(source, "description"));
+    target.setSummary(this.<String>getValue(source, "summary"));
+    target.setAverageRating(this.<Double>getValue(source, "reviewAvgRating"));
+    target.setConfigurable(this.<Boolean>getValue(source, "configurable"));
+    target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
+    target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
+        if (null != this.getValue(source, "isNew")) {
+          if (this.<Boolean>getValue(source, "isNew")) {
+            target.setProductTagValues("New");
+          }
+        }
+    if (null != this.getValue(source, "mostPopular") && StringUtils
+        .isBlank(target.getProductTagValues())) {
+      if (this.<Boolean>getValue(source, "mostPopular")) {
+        target.setProductTagValues("Popular");
+      }
+    }
+    if (null != this.getValue(source, "forRent")) {
+      if (this.<Boolean>getValue(source, "forRent")) {
+        if (null != this.getValue(source, "greatValue") && StringUtils
+            .isBlank(target.getProductTagValues())) {
+          if (this.<Boolean>getValue(source, "greatValue")) {
+            target.setProductTagValues("Great Value");
+          }
+        }
+        if (null != this.getValue(source, "staffPick") && StringUtils
+            .isBlank(target.getProductTagValues())) {
+          if (this.<Boolean>getValue(source, "staffPick")) {
+            target.setProductTagValues("Staff Pick");
+          }
+        }
+      }
+    }
+    if(null != this.getValue(source,"upComing")){
+      if (!this.<Boolean>getValue(source, "upComing")) {
+        target.setIsGreatValue(true); // needs to change the name
+      }
+    }
     populatePrices(source, target);
 
     // Populate product's classification features

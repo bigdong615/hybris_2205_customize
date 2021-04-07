@@ -80,11 +80,21 @@ public class CategoryPageController extends AbstractCategoryPageController {
         // BL-268 Added For Faceted PLP & Default Sorting for PLP
         StringBuilder configParam  = new StringBuilder();
         if(StringUtils.isBlank(searchQuery)) {
-            for (CategoryModel superCategory : category.getSupercategories()) {
-                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
-                    searchQuery= String.valueOf(
-                        configParam.append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)).append(Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME))
-                            .append(categoryCode));
+            if(CollectionUtils.isEmpty(category.getSupercategories())){
+                searchQuery= String.valueOf(configParam.append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)));
+            }
+            else {
+                for (CategoryModel superCategory : category.getSupercategories()) {
+                    if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
+                        searchQuery = String.valueOf(
+                            configParam
+                                .append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE))
+                                .append(Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME))
+                                .append(categoryCode));
+                    } else {
+                        searchQuery = String.valueOf(configParam
+                            .append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)));
+                    }
                 }
             }
         }
@@ -134,6 +144,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
             model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
         }
 
+        addClearAllQuery(category,model);
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
             category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
                 Collectors.toSet()));
@@ -143,4 +154,44 @@ public class CategoryPageController extends AbstractCategoryPageController {
         return getViewPage(categorySearch.getCategoryPage());
 
     }
+<<<<<<< Updated upstream
+=======
+
+    /**
+     * This method is created to identify whether category belongs to used gear category
+     */
+
+    private void usedGearCategory(CategoryModel category, Model model) {
+        if(BlCoreConstants.USED_GEAR.equalsIgnoreCase(category.getName())){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_PAGE);
+        }
+        else if(CollectionUtils.isNotEmpty(category.getSupercategories())){
+            for (CategoryModel superCategory : category.getSupercategories()) {
+                if (BlCoreConstants.USED_GEAR.equalsIgnoreCase(superCategory.getName())) {
+                    model
+                        .addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.USED_GEAR_PAGE);
+                } else {
+                    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,
+                        BlCoreConstants.RENTAL_GEAR_PAGE);
+                }
+            }
+        }
+        else if(!BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(category.getName())){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR_PAGE);
+        }
+    }
+
+    private void addClearAllQuery(CategoryModel category, Model model) {
+        if(CollectionUtils.isNotEmpty(category.getSupercategories())) {
+            for (CategoryModel superCategory : category.getSupercategories()) {
+                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
+                    model.addAttribute("clearAllQuery", "/Rental-Gear/c/rentalgear");
+                }
+            }
+        }
+        else if(BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName())) {
+            model.addAttribute("clearAllQuery", "/Rental-Gear/c/rentalgear");
+        }
+    }
+>>>>>>> Stashed changes
 }

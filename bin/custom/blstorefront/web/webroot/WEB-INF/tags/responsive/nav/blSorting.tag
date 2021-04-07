@@ -22,6 +22,7 @@
 
 <c:set var="themeMsgKey" value="${not empty msgKey ? msgKey : 'search.page'}"/>
 
+
 <c:if test="${searchPageData.pagination.totalNumberOfResults > 0}">
    <div class="btn-group">
       <c:if test="${not empty searchPageData.sorts}">
@@ -62,6 +63,9 @@
                <%-- This will throw an exception is it is not supported --%>
                <!-- searchPageData.currentQuery.query.value is html output encoded in the backend -->
                <input type="hidden" name="q" value="${searchPageData.currentQuery.query.value}"/>
+               <c:if test="${pageType == 'PRODUCTSEARCH'}">
+               <input type="hidden" name="blPageType" value="${blPageType}"/>
+               </c:if>
             </c:catch>
          </form>
       </c:if>

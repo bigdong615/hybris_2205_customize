@@ -10,11 +10,19 @@
    <h6 class="mb-4">Filters</h6>
    <c:choose>
       <c:when test="${pageType == 'CATEGORY'}">
-            <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
+           <c:if test="${clearAllQuery ne null}">
+            <c:url var= "clearUrl" value ="${clearAllQuery}"/>
+           </c:if>
+           <c:if test="${clearAllQuery eq null && breadcrumbs.size()>1}">
+            <c:url var= "clearUrl" value ="${breadcrumbs[1].url}"/>
+           </c:if>
+            <c:if test="${clearAllQuery eq null}">
+                       <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
+            </c:if>
          <p>Refine by <a class="clear-filters" href="${clearUrl}"><spring:theme code="text.button.clear.all"/></a></p>
       </c:when>
       <c:otherwise>
-         <p>Refine by <a class="clear-filters" href="?q=${searchPageData.freeTextSearch}"><spring:theme code="text.button.clear.all"/></a></p>
+         <p>Refine by <a class="clear-filters" href="?q=${searchPageData.freeTextSearch}&blPageType=${blPageType}"><spring:theme code="text.button.clear.all"/></a></p>
       </c:otherwise>
    </c:choose>
    <c:forEach items="${pageData.facets}" var="facet">

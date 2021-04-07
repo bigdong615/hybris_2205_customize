@@ -448,6 +448,13 @@
                     <modifiers read="true" write="true" search="true" optional="true"/>
                     <description>Customer facing header notes on the item</description>
                   </attribute>
+                  <attribute qualifier="isfacetedCategory" type="boolean">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" search="true" optional="false" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                    <description>If the category is active</description>
+                  </attribute>
+
                 </attributes>
 
             </itemtype>
@@ -688,6 +695,19 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>Determines the product is most popular</description>
                    </attribute>
+                   <attribute qualifier="greatValue" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" search="true" optional="false" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is Great Value</description>
+                   </attribute>
+                   <attribute qualifier="staffPick" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" search="true" optional="false" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is Staff Pick</description>
+                   </attribute>
+
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
