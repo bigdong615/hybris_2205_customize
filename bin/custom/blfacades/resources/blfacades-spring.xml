@@ -247,6 +247,29 @@
 		</property>
 	</bean>
 
+	<!-- BL-166 :This populator is created for populating bl related specific product attribute-->
+	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator">
+		<property name="imageConverter" ref="imageConverter"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<!-- BL-166:This bean is override to configure bl related populator-->
+	<alias name="defaultProductConfiguredPopulator" alias="productConfiguredPopulator"/>
+	<bean id="productVariantConfiguredPopulator" parent="defaultProductConfiguredPopulator">
+		<property name="populators">
+			<map key-type="de.hybris.platform.commercefacades.product.ProductOption" merge="true">
+				<entry key="REQUIRED_DATA" value-ref="blProductPopulator"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- BL-166 :This bean is override to resolve redirection url-->
+	<alias name="defaultBlProductDataUrlResolver" alias="productDataUrlResolver"/>
+	<bean id="defaultBlProductDataUrlResolver"
+		class="com.bl.facades.resolver.DefaultBlProductDataUrlResolver"
+		parent="defaultProductDataUrlResolver">
+	</bean>
+
 	<!--<BL-467 entry for clear cart>-->
 	<alias name="defaultBlCartFacade" alias="cartFacade" />
 	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">

@@ -1,6 +1,7 @@
 package com.bl.storefront.controllers.pages;
 
 public class BlControllerConstants {
+
   public static final String FORM_GLOBAL_ERROR = "form.global.error";
   public static final String VALIDATE_CHECKPWD_EQUALS = "validation.checkPwd.equals";
   public static final String REGISTER_CHECKPWD_INVALID = "register.checkPwd.invalid";
@@ -12,8 +13,13 @@ public class BlControllerConstants {
   public static final String DUBLICATE_UID_ERROR = "registration.error.account.exists.title";
   public static final String REGISTRATION_CONFIRMATION_MESSAGE = "registration.confirmation.message.title";
   public static final String EMAIL = "email";
+  public static final String RENTAL_PAGE_IDENTIFIER = "rent";
+  public static final String USED_PAGE_IDENTIFIER = "buy";
+  public static final String PRODUCT_CODE_PATH_VARIABLE_PATTERN = "/{productCode:.*}";
+  public static final String IS_RENTAL_PAGE = "IsRentalPage";
 
-  private BlControllerConstants(){
+  private BlControllerConstants() {
     //empty
   }
+
 }
