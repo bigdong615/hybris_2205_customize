@@ -75,12 +75,14 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     // Added condition for used gear video category
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if(BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
-      target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_VIDEO, BlCoreConstants.TRUE);
-    }
-    // Added Condition for used gear new arrivals category
-    if(BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)) {
-      target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
+    if(StringUtils.isNotBlank(categoryCode)) {
+      if (BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_VIDEO, BlCoreConstants.TRUE);
+      }
+      // Added Condition for used gear new arrivals category
+      if (BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)) {
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
+      }
     }
     target.getSearchQuery().addFilterQuery(BlCoreConstants.FOR_SALE, BlCoreConstants.TRUE);
     target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
@@ -93,11 +95,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       List<SolrSearchQueryTermData> terms,
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target,
       List<IndexedPropertyValueData<IndexedProperty>> indexedPropertyValues) {
-    if (terms != null && !terms.isEmpty()) {
+    if (CollectionUtils.isNotEmpty(terms)) {
       for (final SolrSearchQueryTermData term : terms) {
         final IndexedProperty indexedProperty = target.getIndexedType().getIndexedProperties()
             .get(term.getKey());
-        if (indexedProperty != null) {
+        if (null != indexedProperty) {
           final IndexedPropertyValueData<IndexedProperty> indexedPropertyValue = new IndexedPropertyValueData<>();
           indexedPropertyValue.setIndexedProperty(indexedProperty);
           indexedPropertyValue.setValue(term.getValue());
@@ -113,8 +115,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    */
   private String checkCategory(String categoryCode) {
     String categoryParam = Config.getParameter(BlCoreConstants.CATEGORY_MAP);
-    final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER).withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
-    return categoryCodeMap.get(categoryCode);
+     if(StringUtils.isNotBlank(categoryParam)) {
+       final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER).withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+       return categoryCodeMap.get(categoryCode);
+     }
+   return categoryCode;
   }
 
   /**
@@ -130,14 +135,14 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    */
   private void categoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if (StringUtils.isNotBlank(categoryCode)&& ! isUsedGearCategory(categoryCode))
+    if (StringUtils.isNotBlank(categoryCode)&& !isUsedGearCategory(categoryCode))
     {
       rentalCategory(target);
       addFilterQueryFalse(target);
     }
     else if (StringUtils.isNotBlank(categoryCode)){
-        if(! BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode) && ! BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(categoryCode)
-            && ! BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
+        if(!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode) && !BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(categoryCode)
+            && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
           target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
               checkCategory(categoryCode));
         }
@@ -159,7 +164,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    */
   private void rentalCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if(!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
+    if(StringUtils.isNotBlank(categoryCode) && !BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
       target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCode);
     }
   }
