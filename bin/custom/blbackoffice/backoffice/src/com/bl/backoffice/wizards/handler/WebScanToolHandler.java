@@ -52,7 +52,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
     }
 
     /**
-     *
+     * javadoc
      * @param barcodes
      */
     private void createResponseForScanResult(final List<String> barcodes) {
@@ -76,7 +76,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
     }
 
     /**
-     *
+     * javadoc
      * @param result
      * @param barcodes
      */

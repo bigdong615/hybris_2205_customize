@@ -26,7 +26,7 @@ public class BlInventoryLocationPrepareInterceptor implements
     return keyGenerator;
   }
 
-  public void setKeyGenerator(KeyGenerator keyGenerator) {
+  public void setKeyGenerator(final KeyGenerator keyGenerator) {
     this.keyGenerator = keyGenerator;
   }
 }

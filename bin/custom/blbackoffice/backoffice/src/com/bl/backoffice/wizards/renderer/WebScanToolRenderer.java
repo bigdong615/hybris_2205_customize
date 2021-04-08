@@ -25,6 +25,14 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
     private NotificationService notificationService;
     private WebScanToolUtil webScanToolUtil;
 
+    /**
+     * javadoc
+     * @param component
+     * @param viewType
+     * @param map
+     * @param dataType
+     * @param widgetInstanceManager
+     */
     @Override
     public void render(final Component component, final ViewType viewType, final Map<String, String> map,
                        final DataType dataType, final WidgetInstanceManager widgetInstanceManager) {

@@ -11,6 +11,11 @@ import java.util.Arrays;
  **/
 public class WebScanToolUtil {
 
+    /**
+     * javadoc
+     * @param newPwdInput of InputElement
+     * @param webScanToolData pojo
+     */
     public void onBarcodeInputFieldTextChanged(final InputElement newPwdInput, final WebScanToolData webScanToolData) {
         webScanToolData.setBarcodeInputField(Arrays.asList(newPwdInput.getText().split("\n")));
     }

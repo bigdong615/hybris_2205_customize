@@ -157,7 +157,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         return blInventoryScanToolDao;
     }
 
-    public void setBlInventoryScanToolDao(BlInventoryScanToolDao blInventoryScanToolDao) {
+    public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao) {
         this.blInventoryScanToolDao = blInventoryScanToolDao;
     }
 }
