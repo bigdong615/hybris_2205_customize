@@ -121,6 +121,14 @@
 			<div class="row justify-content-center my-5">
 				<div class="divider col-xl-10"></div>
 			</div>
+			<!-- BL-52 : HomePage Featured Gear section -->
+			<div id="featured" class="row justify-content-center">
+				<div class="col-lg-11 col-xl-9">
+					<cms:pageSlot position="HomePageFeaturedGearSectionSlot" var="feature">
+						<cms:component component="${feature}" />
+					</cms:pageSlot>
+				</div>
+			</div>
 		</div>
 	</section>
 	<section id="whyBorrow">
