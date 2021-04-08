@@ -3,197 +3,58 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <config xmlns="http://www.hybris.com/cockpit/config"
-		xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
-		xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
-		xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
-		xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
-		xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
-		xmlns:y="http://www.hybris.com/cockpit/config/hybris"
-		xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+        xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
+        xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+        xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+        xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+        xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
+        xmlns:y="http://www.hybris.com/cockpit/config/hybris"
+        xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+        xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea">
 
-	<!--Bl Specific custom nodes to be added here -->
-	<context component="explorer-tree">
-		<n:explorer-tree>
-			<n:navigation-node id="BLBackoffice">
-				<n:type-node id="BlProduct" code="BlProduct"/>
-				<n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
-				<n:navigation-node id="BLProduct Inventory">
-					<n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
-					<n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
-					<n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
-				</n:navigation-node>
-			</n:navigation-node>
-		</n:explorer-tree>
-	</context>
-
-	<!-- BL Inventory Web Scan Tool -->
-	<context component="explorer-tree" merge-by="module">
-		<n:explorer-tree>
-			<n:navigation-node id="BLInventoryScan">
-				<n:navigation-node id="WebScanTool"/>
-			</n:navigation-node>
-		</n:explorer-tree>
-	</context>
-
-	<context type="WebScanTool" component="create-wizard">
-		<wz:flow id="WebScanTool" title="blbackoffice.web.scan.tool.title">
-			<wz:prepare id="userPasswordChangePrepare">
-				<wz:initialize property="webScanToolData" template-bean="webScanToolData"/>
-			</wz:prepare>
-			<wz:step id="step1" label="blbackoffice.web.scan.tool.label">
-				<wz:content>
-					<wz:custom-view id="step1.content.customView" lang="zul">
-						<wz:renderer spring-bean="defaultWebScanToolRenderer">
-							<wz:parameter>
-								<wz:name>webScanToolDataModelKey</wz:name>
-								<wz:value>webScanToolData</wz:value>
-							</wz:parameter>
-						</wz:renderer>
-					</wz:custom-view>
-				</wz:content>
-				<wz:navigation id="step1.navigation">
-					<wz:cancel/>
-					<wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultWebScanToolHandler" >
-						<wz:parameter>
-							<wz:name>webScanToolDataModelKey</wz:name>
-							<wz:value>webScanToolData</wz:value>
-						</wz:parameter>
-					</wz:custom>
-				</wz:navigation>
-			</wz:step>
-		</wz:flow>
-	</context>
-
-	<context component="notification-area" source="webSanToolNotification" merge-by="source">
-		<na:notification-area>
-			<na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true"/>
-				</na:references>
-			</na:notifications>
-			<na:notifications eventType="mustTwoBarcodeErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.must2.failure</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true"/>
-				</na:references>
-			</na:notifications>
-			<na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true" />
-				</na:references>
-			</na:notifications>
-			<na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true"/>
-				</na:references>
-			</na:notifications>
-			<na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true"/>
-				</na:references>
-			</na:notifications>
-			<na:notifications eventType="lastScanErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.failure</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true"/>
-				</na:references>
-			</na:notifications>
-			<na:notifications eventType="manyLocationErrorFailure" level="FAILURE" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.many.location.failure</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true"/>
-				</na:references>
-			</na:notifications>
-
-			<na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
-				<na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
-				<na:references linksEnabled="true">
-					<na:reference placeholder="0" link="true"/>
-				</na:references>
-			</na:notifications>
-		</na:notification-area>
-	</context>
-	<!-- End -->
-
-	<!-- Bl Scan Config -->
-	<context type="BlInventoryScanConfiguration" component="simple-search" merge-by="replace">
-		<ss:simple-search>
-			<ss:field name="blScanConfigKey"/>
-			<ss:field name="blScanConfigValue"/>
-		</ss:simple-search>
-	</context>
-
-	<context type="BlInventoryScanConfiguration" component="advanced-search" merge-by="replace">
-		<advanced-search:advanced-search>
-			<advanced-search:field-list>
-				<advanced-search:field name="blScanConfigKey" selected="true"/>
-				<advanced-search:field name="blScanConfigValue" selected="true"/>
-				<advanced-search:field name="PK" selected="false"/>
-			</advanced-search:field-list>
-		</advanced-search:advanced-search>
-	</context>
-
-	<context type="BlInventoryScanConfiguration" component="listview" merge-by="replace">
-		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
-			<list-view:column qualifier="blScanConfigKey"/>
-			<list-view:column qualifier="blScanConfigValue"/>
-		</list-view:list-view>
-	</context>
-
-	<context component="create-wizard" type="BlInventoryScanConfiguration" merge-by="replace">
-		<wz:flow id="BlInventoryScanConfigurationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
-			<wz:prepare id="blInventoryScanConfigurationPrepare">
-				<wz:initialize property="newBlInventoryScanConfiguration" type="ctx.TYPE_CODE"/>
-			</wz:prepare>
-			<wz:step id="step1" label="create.blinventoryscanconfiguration.essential.label" sublabel="create.blinventoryscanconfiguration.essential.sublabel">
-				<wz:content id="step1.content">
-					<wz:property-list root="newBlInventoryScanConfiguration">
-						<wz:property qualifier="blScanConfigKey"/>
-						<wz:property qualifier="blScanConfigValue"/>
-					</wz:property-list>
-				</wz:content>
-				<wz:navigation id="step1.navigation">
-					<wz:cancel/>
-					<wz:done>
-						<wz:save property="newBlInventoryScanConfiguration"/>
-					</wz:done>
-				</wz:navigation>
-			</wz:step>
-		</wz:flow>
-	</context>
-	<!-- End -->
+    <!--Bl Specific custom nodes to be added here -->
+    <context component="explorer-tree">
+        <n:explorer-tree>
+            <n:navigation-node id="BLBackoffice">
+                <n:type-node id="BlProduct" code="BlProduct"/>
+                <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+                <n:navigation-node id="BLProduct Inventory">
+                    <n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
+                    <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
+                    <n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
+                </n:navigation-node>
+            </n:navigation-node>
+        </n:explorer-tree>
+    </context>
 
 	<context merge-by="module" component="editorareaactions" type="Consignment">
 		<y:actions>
 			<y:group qualifier="common">
-				<y:label>actiongroup.common</y:label>				
-				<y:action action-id="com.bl.backoffice.actions.confirmpickupaction" property="currentObject"/>				
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="com.bl.backoffice.actions.confirmpickupaction" property="currentObject"/>
 			</y:group>
 		</y:actions>
-    </context>
+	</context>
 
 	<!-- Notification Area-->
 	<context component="notification-area">
-	    <na:notification-area>	        
-	        <na:notifications eventType="blbackoffice.confirmpickup.event" level="SUCCESS">
-	            <na:message>hmc.action.confirmpickup.success</na:message>
-	        </na:notifications>
-	   </na:notification-area>
+		<na:notification-area>
+			<na:notifications eventType="blbackoffice.confirmpickup.event" level="SUCCESS">
+				<na:message>hmc.action.confirmpickup.success</na:message>
+			</na:notifications>
+		</na:notification-area>
 	</context>
 
 	<!--BlProduct Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
-	<context component="create-wizard" type="BlProduct"  extends="Product" merge-by="replace">
+	<context component="create-wizard" type="BlProduct" extends="Product" merge-by="replace">
 		<wz:flow id="BlProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
 			<wz:prepare id="blProductPrepare">
 				<wz:initialize property="newBlProduct" type="ctx.TYPE_CODE"/>
 				<wz:assign property="newBlProduct.code" value="ctx.code"/>
 				<wz:assign property="newBlProduct.catalogVersion" value="ctx.catalogVersion"/>
 				<wz:assign property="newBlProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
-				<wz:assign property="newBlProduct.supercategories" value="T(com.hybris.cockpitng.util.ListJoiner).join(newBlProduct.supercategories, ctx?.actionContext?.supercategories)"/>
+				<wz:assign property="newBlProduct.supercategories"
+						   value="T(com.hybris.cockpitng.util.ListJoiner).join(newBlProduct.supercategories, ctx?.actionContext?.supercategories)"/>
 				<wz:assign property="newBlProduct.procurementCost" value="0.0"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
@@ -224,7 +85,7 @@
 	</context>
 
 	<!--BlSerialProduct Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
-	<context component="create-wizard" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace">
+	<context component="create-wizard" type="BlSerialProduct" extends="BlSerialProduct" merge-by="replace">
 		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="blSerialProductPrepare">
 				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
@@ -265,131 +126,309 @@
 		</wz:flow>
 	</context>
 
-	<!--BLInventoryLocation Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
-	<context component="create-wizard" type="BlInventoryLocation" merge-by="replace">
-		<wz:flow id="BLInventoryLocationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
-			<wz:prepare id="blInventoryLocationPrepare">
-				<wz:initialize property="newBLInventoryLocation" type="ctx.TYPE_CODE"/>
-			</wz:prepare>
-			<wz:step id="step1" label="create.blinventorylocation.essential.label" sublabel="create.blinventorylocation.essential.sublabel">
+	<context component="create-wizard" type="ProductVideo" merge-by="type">
+		<wz:flow id="ProductVideoWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:step id="step1" label="essential.label" sublabel="essential.sublabel">
 				<wz:content id="step1.content">
-					<wz:property-list root="newBLInventoryLocation">
-						<wz:property qualifier="code"/>
-						<wz:property qualifier="name"/>
-						<wz:property qualifier="inventoryType"/>
-						<wz:property qualifier="active"/>
-						<wz:property qualifier="parentInventoryLocation"/>
-						<wz:property qualifier="blInventoryLocationScanHistories"/>
-						<wz:property qualifier="lastModifiedTime"/>
+					<wz:property-list root="newProductVideo">
+						<wz:property qualifier="uid"/>
+						<wz:property qualifier="videoTitle"/>
+						<wz:property qualifier="videoLink"/>
+						<wz:property qualifier="videoDuration"/>
 					</wz:property-list>
 				</wz:content>
 				<wz:navigation id="step1.navigation">
 					<wz:cancel/>
 					<wz:done>
-						<wz:save property="newBLInventoryLocation"/>
+						<wz:save property="newProductVideo"/>
 					</wz:done>
 				</wz:navigation>
 			</wz:step>
 		</wz:flow>
 	</context>
 
-  <context type="BlInventoryLocation" component="listview" merge-by="replace">
-    <list-view:list-view>
-      <list-view:column qualifier="inventoryLocationID"/>
-      <list-view:column qualifier="code"/>
-      <list-view:column qualifier="name"/>
-      <list-view:column qualifier="inventoryType"/>
-      <list-view:column qualifier="active"/>
-      <list-view:column qualifier="creationtime"/>
-      <list-view:column qualifier="parentInventoryLocation"/>
-      <list-view:column qualifier="blInventoryLocationScanHistories"/>
-      <list-view:column qualifier="lastModifiedTime"/>
-    </list-view:list-view>
-  </context>
-
-  <context type="BlInventoryLocation" component="advanced-search" merge-by="replace">
-    <advanced-search:advanced-search>
-      <advanced-search:field-list>
-				<advanced-search:field name="inventoryLocationID" selected="true"/>
-        <advanced-search:field name="code" selected="true"/>
-        <advanced-search:field name="name" selected="true"/>
-        <advanced-search:field name="inventoryType" selected="true"/>
-        <advanced-search:field name="active" selected="false"/>
-        <advanced-search:field name="PK" selected="false"/>
-        <advanced-search:field name="parentInventoryLocation" selected="false"/>
-        <advanced-search:field name="blInventoryLocationScanHistories" selected="false"/>
-        <advanced-search:field name="lastModifiedTime" selected="false"/>
-      </advanced-search:field-list>
-    </advanced-search:advanced-search>
-  </context>
-
-  <context type="BlInventoryLocation" component="simple-search" merge-by="replace">
-    <ss:simple-search>
-      <ss:field name="code"/>
-			<ss:field name="code"/>
-      <ss:field name="inventoryType"/>
-    </ss:simple-search>
-  </context>
-
-	<context type="BlInventoryLocation" component="base">
-		<y:base>
-			<y:labels>
-				<y:label>code</y:label>
-			</y:labels>
-		</y:base>
+	<context component="editor-area" merge-by="type" parent="ProductVideo">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="">
+				<editorArea:section name="">
+					<ea:attribute qualifier="uid"/>
+					<ea:attribute qualifier="videoTitle"/>
+					<ea:attribute qualifier="videoLink"/>
+					<ea:attribute qualifier="videoDuration"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
 	</context>
 
-	<!--BLInventoryLocationScanHistory Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
-	<context component="create-wizard" type="BlInventoryLocationScanHistory" merge-by="replace">
-		<wz:flow id="BlInventoryLocationScanHistoryWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
-			<wz:prepare id="BlInventoryLocationScanHistoryPrepare">
-				<wz:initialize property="newBlInventoryLocationScanHistory" type="ctx.TYPE_CODE"/>
-			</wz:prepare>
-			<wz:step id="step1" label="create.blinventorylocationscanhistory.essential.label" sublabel="create.blinventorylocationscanhistory.essential.sublabel">
-				<wz:content id="step1.content">
-					<wz:property-list root="newBlInventoryLocationScanHistory">
-						<wz:property qualifier="serialProduct"/>
-						<wz:property qualifier="scanUser"/>
-						<wz:property qualifier="scanTime"/>
-						<wz:property qualifier="blInventoryLocation"/>
-					</wz:property-list>
-				</wz:content>
-				<wz:navigation id="step1.navigation">
-					<wz:cancel/>
-					<wz:done>
-						<wz:save property="newBlInventoryLocationScanHistory"/>
-					</wz:done>
-				</wz:navigation>
-			</wz:step>
-		</wz:flow>
-	</context>
+    <!-- BL-110 Inventory Web Scan Tool -->
+    <context component="explorer-tree" merge-by="module">
+        <n:explorer-tree>
+            <n:navigation-node id="BLInventoryScan">
+                <n:navigation-node id="WebScanTool"/>
+            </n:navigation-node>
+        </n:explorer-tree>
+    </context>
 
-	<context type="BlInventoryLocationScanHistory" component="listview" merge-by="replace">
-		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
-			<list-view:column qualifier="serialProduct"/>
-			<list-view:column qualifier="scanUser"/>
-			<list-view:column qualifier="scanTime"/>
-			<list-view:column qualifier="blInventoryLocation"/>
-		</list-view:list-view>
-	</context>
+    <context type="WebScanTool" component="create-wizard">
+        <wz:flow id="WebScanTool" title="blbackoffice.web.scan.tool.title">
+            <wz:prepare id="userPasswordChangePrepare">
+                <wz:initialize property="webScanToolData" template-bean="webScanToolData"/>
+            </wz:prepare>
+            <wz:step id="step1" label="blbackoffice.web.scan.tool.label">
+                <wz:content>
+                    <wz:custom-view id="step1.content.customView" lang="zul">
+                        <wz:renderer spring-bean="defaultWebScanToolRenderer">
+                            <wz:parameter>
+                                <wz:name>webScanToolDataModelKey</wz:name>
+                                <wz:value>webScanToolData</wz:value>
+                            </wz:parameter>
+                        </wz:renderer>
+                    </wz:custom-view>
+                </wz:content>
+                <wz:navigation id="step1.navigation">
+                    <wz:cancel/>
+                    <wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultWebScanToolHandler">
+                        <wz:parameter>
+                            <wz:name>webScanToolDataModelKey</wz:name>
+                            <wz:value>webScanToolData</wz:value>
+                        </wz:parameter>
+                    </wz:custom>
+                </wz:navigation>
+            </wz:step>
+        </wz:flow>
+    </context>
 
-	<context type="BlInventoryLocationScanHistory" component="advanced-search" merge-by="replace">
-		<advanced-search:advanced-search>
-			<advanced-search:field-list>
-				<advanced-search:field name="serialProduct" selected="true"/>
-				<advanced-search:field name="scanUser" selected="true"/>
-				<advanced-search:field name="blInventoryLocation" selected="true"/>
-				<advanced-search:field name="scanTime" selected="false"/>
-			</advanced-search:field-list>
-		</advanced-search:advanced-search>
-	</context>
+    <context component="notification-area" source="webSanToolNotification" merge-by="source">
+        <na:notification-area>
+            <na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="mustTwoBarcodeErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.must2.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="manyLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.many.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
 
-	<context type="BlInventoryLocationScanHistory" component="simple-search" merge-by="replace">
-		<ss:simple-search>
-			<ss:field name="serialProduct"/>
-			<ss:field name="blInventoryLocation"/>
-		</ss:simple-search>
-	</context>
-	<!-- End -->
+            <na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+        </na:notification-area>
+    </context>
+
+    <!-- Bl Scan Config -->
+    <context type="BlInventoryScanConfiguration" component="simple-search" merge-by="replace">
+        <ss:simple-search>
+            <ss:field name="blScanConfigKey"/>
+            <ss:field name="blScanConfigValue"/>
+        </ss:simple-search>
+    </context>
+
+    <context type="BlInventoryScanConfiguration" component="advanced-search" merge-by="replace">
+        <advanced-search:advanced-search>
+            <advanced-search:field-list>
+                <advanced-search:field name="blScanConfigKey" selected="true"/>
+                <advanced-search:field name="blScanConfigValue" selected="true"/>
+                <advanced-search:field name="PK" selected="false"/>
+            </advanced-search:field-list>
+        </advanced-search:advanced-search>
+    </context>
+
+    <context type="BlInventoryScanConfiguration" component="listview" merge-by="replace">
+        <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+            <list-view:column qualifier="blScanConfigKey"/>
+            <list-view:column qualifier="blScanConfigValue"/>
+        </list-view:list-view>
+    </context>
+
+    <context component="create-wizard" type="BlInventoryScanConfiguration" merge-by="replace">
+        <wz:flow id="BlInventoryScanConfigurationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+            <wz:prepare id="blInventoryScanConfigurationPrepare">
+                <wz:initialize property="newBlInventoryScanConfiguration" type="ctx.TYPE_CODE"/>
+            </wz:prepare>
+            <wz:step id="step1" label="create.blinventoryscanconfiguration.essential.label"
+                     sublabel="create.blinventoryscanconfiguration.essential.sublabel">
+                <wz:content id="step1.content">
+                    <wz:property-list root="newBlInventoryScanConfiguration">
+                        <wz:property qualifier="blScanConfigKey"/>
+                        <wz:property qualifier="blScanConfigValue"/>
+                    </wz:property-list>
+                </wz:content>
+                <wz:navigation id="step1.navigation">
+                    <wz:cancel/>
+                    <wz:done>
+                        <wz:save property="newBlInventoryScanConfiguration"/>
+                    </wz:done>
+                </wz:navigation>
+            </wz:step>
+        </wz:flow>
+    </context>
+
+    <!--BLInventoryLocation Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
+    <context component="create-wizard" type="BlInventoryLocation" merge-by="replace">
+        <wz:flow id="BLInventoryLocationWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+            <wz:prepare id="blInventoryLocationPrepare">
+                <wz:initialize property="newBLInventoryLocation" type="ctx.TYPE_CODE"/>
+            </wz:prepare>
+            <wz:step id="step1" label="create.blinventorylocation.essential.label"
+                     sublabel="create.blinventorylocation.essential.sublabel">
+                <wz:content id="step1.content">
+                    <wz:property-list root="newBLInventoryLocation">
+                        <wz:property qualifier="code"/>
+                        <wz:property qualifier="name"/>
+                        <wz:property qualifier="inventoryType"/>
+                        <wz:property qualifier="active"/>
+                        <wz:property qualifier="parentInventoryLocation"/>
+                        <wz:property qualifier="blInventoryLocationScanHistories"/>
+                        <wz:property qualifier="lastModifiedTime"/>
+                    </wz:property-list>
+                </wz:content>
+                <wz:navigation id="step1.navigation">
+                    <wz:cancel/>
+                    <wz:done>
+                        <wz:save property="newBLInventoryLocation"/>
+                    </wz:done>
+                </wz:navigation>
+            </wz:step>
+        </wz:flow>
+    </context>
+
+    <context type="BlInventoryLocation" component="listview" merge-by="replace">
+        <list-view:list-view>
+            <list-view:column qualifier="inventoryLocationID"/>
+            <list-view:column qualifier="code"/>
+            <list-view:column qualifier="name"/>
+            <list-view:column qualifier="inventoryType"/>
+            <list-view:column qualifier="active"/>
+            <list-view:column qualifier="creationtime"/>
+            <list-view:column qualifier="parentInventoryLocation"/>
+            <list-view:column qualifier="blInventoryLocationScanHistories"/>
+            <list-view:column qualifier="lastModifiedTime"/>
+        </list-view:list-view>
+    </context>
+
+    <context type="BlInventoryLocation" component="advanced-search" merge-by="replace">
+        <advanced-search:advanced-search>
+            <advanced-search:field-list>
+                <advanced-search:field name="inventoryLocationID" selected="true"/>
+                <advanced-search:field name="code" selected="true"/>
+                <advanced-search:field name="name" selected="true"/>
+                <advanced-search:field name="inventoryType" selected="true"/>
+                <advanced-search:field name="active" selected="false"/>
+                <advanced-search:field name="PK" selected="false"/>
+                <advanced-search:field name="parentInventoryLocation" selected="false"/>
+                <advanced-search:field name="blInventoryLocationScanHistories" selected="false"/>
+                <advanced-search:field name="lastModifiedTime" selected="false"/>
+            </advanced-search:field-list>
+        </advanced-search:advanced-search>
+    </context>
+
+    <context type="BlInventoryLocation" component="simple-search" merge-by="replace">
+        <ss:simple-search>
+            <ss:field name="code"/>
+            <ss:field name="code"/>
+            <ss:field name="inventoryType"/>
+        </ss:simple-search>
+    </context>
+
+    <context type="BlInventoryLocation" component="base">
+        <y:base>
+            <y:labels>
+                <y:label>code</y:label>
+            </y:labels>
+        </y:base>
+    </context>
+
+    <!--BLInventoryLocationScanHistory Create wizard for admin cockpit for the Admin Cockpit with Mandatory attributes-->
+    <context component="create-wizard" type="BlInventoryLocationScanHistory" merge-by="replace">
+        <wz:flow id="BlInventoryLocationScanHistoryWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+            <wz:prepare id="BlInventoryLocationScanHistoryPrepare">
+                <wz:initialize property="newBlInventoryLocationScanHistory" type="ctx.TYPE_CODE"/>
+            </wz:prepare>
+            <wz:step id="step1" label="create.blinventorylocationscanhistory.essential.label"
+                     sublabel="create.blinventorylocationscanhistory.essential.sublabel">
+                <wz:content id="step1.content">
+                    <wz:property-list root="newBlInventoryLocationScanHistory">
+                        <wz:property qualifier="serialProduct"/>
+                        <wz:property qualifier="scanUser"/>
+                        <wz:property qualifier="scanTime"/>
+                        <wz:property qualifier="blInventoryLocation"/>
+                    </wz:property-list>
+                </wz:content>
+                <wz:navigation id="step1.navigation">
+                    <wz:cancel/>
+                    <wz:done>
+                        <wz:save property="newBlInventoryLocationScanHistory"/>
+                    </wz:done>
+                </wz:navigation>
+            </wz:step>
+        </wz:flow>
+    </context>
+
+    <context type="BlInventoryLocationScanHistory" component="listview" merge-by="replace">
+        <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+            <list-view:column qualifier="serialProduct"/>
+            <list-view:column qualifier="scanUser"/>
+            <list-view:column qualifier="scanTime"/>
+            <list-view:column qualifier="blInventoryLocation"/>
+        </list-view:list-view>
+    </context>
+
+    <context type="BlInventoryLocationScanHistory" component="advanced-search" merge-by="replace">
+        <advanced-search:advanced-search>
+            <advanced-search:field-list>
+                <advanced-search:field name="serialProduct" selected="true"/>
+                <advanced-search:field name="scanUser" selected="true"/>
+                <advanced-search:field name="blInventoryLocation" selected="true"/>
+                <advanced-search:field name="scanTime" selected="false"/>
+            </advanced-search:field-list>
+        </advanced-search:advanced-search>
+    </context>
+
+    <context type="BlInventoryLocationScanHistory" component="simple-search" merge-by="replace">
+        <ss:simple-search>
+            <ss:field name="serialProduct"/>
+            <ss:field name="blInventoryLocation"/>
+        </ss:simple-search>
+    </context>
+    <!--BL-110 End -->
 
 </config>
+
+
