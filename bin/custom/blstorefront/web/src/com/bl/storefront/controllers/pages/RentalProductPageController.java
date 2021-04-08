@@ -17,14 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
+ * This is created to render rental product details related data .
  *
- *This is created to render rental product details related data .
  * @author vijay vishwakarma
- *
  */
 @Controller
 @RequestMapping(value = "/rent/product")
-public class RentalProductPageController extends AbstractBlProductPageController{
+public class RentalProductPageController extends AbstractBlProductPageController {
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
@@ -33,7 +32,8 @@ public class RentalProductPageController extends AbstractBlProductPageController
    * This method is used for render rental pdp.
    */
   @RequestMapping(value = BlControllerConstants.PRODUCT_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
-  public String rentalProductDetailPage(@PathVariable("productCode") final String encodedProductCode, final Model model,
+  public String rentalProductDetailPage(
+      @PathVariable("productCode") final String encodedProductCode, final Model model,
       final HttpServletRequest request, final HttpServletResponse response)
       throws CMSItemNotFoundException, UnsupportedEncodingException {
 
@@ -42,9 +42,10 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .asList(ProductOption.VARIANT_MATRIX_BASE, ProductOption.VARIANT_MATRIX_URL,
             ProductOption.VARIANT_MATRIX_MEDIA);
 
-      final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, extraOptions);
-      productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
-      model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-      return  productDetail(encodedProductCode,extraOptions,productData,model,request,response);
+    final ProductData productData = productFacade
+        .getProductForCodeAndOptions(productCode, extraOptions);
+    productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
+    model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
+    return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }
 }

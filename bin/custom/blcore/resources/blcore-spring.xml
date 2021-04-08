@@ -671,7 +671,7 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
-<!--BL-166 : This bean is override to change default product pattern-->
+	<!--BL-166 : This bean is override to change default product pattern-->
 	<alias name="defaultProductModelUrlResolver" alias="productModelUrlResolver"/>
 	<bean id="defaultProductModelUrlResolver"
 		class="de.hybris.platform.commerceservices.url.impl.DefaultProductModelUrlResolver">

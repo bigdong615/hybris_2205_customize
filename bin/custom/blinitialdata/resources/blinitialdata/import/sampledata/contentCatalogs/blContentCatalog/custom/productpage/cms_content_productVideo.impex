@@ -1,12 +1,10 @@
+#This Impex create pdf media and product video data and associated it to product.
+#% impex.info("=============================== Importing content from sampledata cms_content_productVideo.impex =========================");
 $productCatalog=blProductCatalog
 $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
 $siteResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/images
 #jar:classPath
 $data_sheet=data_sheet(code, $catalogVersion);
-
-#% impex.info("importing sample data cms_content_productVideo.impex");
-#This Impex create pdf media and product video data and associated it to product.
-
 
 INSERT_UPDATE Media;mediaFormat(qualifier)  ;code[unique=true]                       ;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator];mime[default='application/pdf'];$catalogVersion;folder(qualifier);realFileName ;
                    ;                   ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf;$siteResource/HOLIDAYCALENDAR2021.pdf                        ;                               ;               ;images;HOLIDAYCALENDAR2021.pdf;

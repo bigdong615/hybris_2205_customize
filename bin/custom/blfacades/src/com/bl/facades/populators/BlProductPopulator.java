@@ -28,21 +28,22 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
   private ModelService modelService;
 
   @Override
-  public void populate(final BlProductModel source,final ProductData target)
-  {
+  public void populate(final BlProductModel source, final ProductData target) {
     target.setDisplayName(source.getDisplayName());
     target.setRentalIncludes(source.getRentalIncludes());
     target.setForRent(BooleanUtils.toBoolean(source.getForRent()));
     target.setShortDescription(source.getShortDescription());
-    target.setRentalVideosLink(populateVideo(CollectionUtils.emptyIfNull(source.getRentalVideosLink())));
+    target.setRentalVideosLink(
+        populateVideo(CollectionUtils.emptyIfNull(source.getRentalVideosLink())));
     target.setUsedIncludes(source.getUsedIncludes());
     target.setForSale(BooleanUtils.toBoolean(source.getForSale()));
-    target.setUsedGearVideosLink(populateVideo(CollectionUtils.emptyIfNull(source.getUsedGearVideosLink())));
+    target.setUsedGearVideosLink(
+        populateVideo(CollectionUtils.emptyIfNull(source.getUsedGearVideosLink())));
     target.setRentalNote(source.getDisplayNotes());
-    final Collection<MediaModel> dataSheets = (Collection<MediaModel>)  getModelService().getAttributeValue(source,
-        ProductModel.DATA_SHEET);
-    if (CollectionUtils.isNotEmpty(dataSheets))
-    {
+    final Collection<MediaModel> dataSheets = (Collection<MediaModel>) getModelService()
+        .getAttributeValue(source,
+            ProductModel.DATA_SHEET);
+    if (CollectionUtils.isNotEmpty(dataSheets)) {
       populateResourceData(dataSheets, target);
     }
     target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
@@ -54,10 +55,10 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
   /*
    * This method is used for populating video related data.
    */
-  private List<ProductVideoData> populateVideo( final Collection<ProductVideoModel> populateVideos ){
-    final List<ProductVideoData> videoDataList =  new ArrayList<>();
+  private List<ProductVideoData> populateVideo(final Collection<ProductVideoModel> populateVideos) {
+    final List<ProductVideoData> videoDataList = new ArrayList<>();
     populateVideos.forEach(productVideoModel -> {
-          ProductVideoData productVideoData=new ProductVideoData();
+          ProductVideoData productVideoData = new ProductVideoData();
           productVideoData.setVideoName(productVideoModel.getVideoTitle());
           productVideoData.setVideoUrl(productVideoModel.getVideoLink());
           productVideoData.setVideoDuration(formattedTime(productVideoModel.getVideoDuration()));
@@ -70,28 +71,30 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
   /*
    * This method is used for populating resource related pdf data
    */
-  private void populateResourceData(final Collection<MediaModel> data_sheet, final ProductData target)
-  {
+  private void populateResourceData(final Collection<MediaModel> dataSheet,
+      final ProductData target) {
     final Collection<ImageData> imageList = new ArrayList<ImageData>();
-    for (final MediaModel mediaModel : data_sheet)
-    {
+    for (final MediaModel mediaModel : dataSheet) {
       final ImageData imagedata = getImageConverter().convert(mediaModel);
       imageList.add(imagedata);
     }
-    target.setData_Sheet(imageList);
+    target.setDataSheet(imageList);
   }
 
   /*
    * This method provide time in hh:mm:ss format.
    */
-  private String formattedTime(final long duration){
-    final int hour = (int)duration/3600;
-    final int minutes = (int)duration%3600;
-    final int remainingMinutes= minutes/60;
-    final int remainingSecond= minutes%60;
-    String formattedTime = hour>1 ? (hour+(remainingMinutes>1 ? BlFacadesConstants.COLON:BlFacadesConstants.BLANK_STRING)):BlFacadesConstants.BLANK_STRING;
-    formattedTime+=(remainingMinutes>1? (remainingMinutes+(remainingSecond>1? BlFacadesConstants.COLON:BlFacadesConstants.BLANK_STRING) ):BlFacadesConstants.BLANK_STRING);
-    formattedTime+=remainingSecond;
+  private String formattedTime(final long duration) {
+    final int hour = (int) duration / 3600;
+    final int minutes = (int) duration % 3600;
+    final int remainingMinutes = minutes / 60;
+    final int remainingSecond = minutes % 60;
+    String formattedTime = hour > 1 ? (hour + (remainingMinutes > 1 ? BlFacadesConstants.COLON
+        : BlFacadesConstants.BLANK_STRING)) : BlFacadesConstants.BLANK_STRING;
+    formattedTime += (remainingMinutes > 1 ? (remainingMinutes + (remainingSecond > 1
+        ? BlFacadesConstants.COLON : BlFacadesConstants.BLANK_STRING))
+        : BlFacadesConstants.BLANK_STRING);
+    formattedTime += remainingSecond;
     return formattedTime;
   }
 

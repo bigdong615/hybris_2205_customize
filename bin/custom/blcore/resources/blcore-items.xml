@@ -861,30 +861,30 @@
                  </attribute>
                </attributes>
             </itemtype>
-<!--BL-166: This item is created to store product related video information-->
-          <itemtype code="ProductVideo"  autocreate="true" generate="true"
+          <!--BL-166: This item is created to store product related video information-->
+          <itemtype code="ProductVideo" autocreate="true" generate="true"
             jaloclass="com.bl.core.jalo.ProductVideo">
             <deployment table="ProductVideo" typecode="12207"/>
             <attributes>
-              <attribute qualifier="uid" type="java.lang.String" >
-                <persistence type="property" />
-                <modifiers read="true" write="true" optional="false" unique="true" />
-                <description>Localized Video title </description>
+              <attribute qualifier="uid" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false" unique="true"/>
+                <description>Localized Video title</description>
               </attribute>
-              <attribute qualifier="videoTitle" type="java.lang.String" >
-                <persistence type="property" />
-                <modifiers read="true" write="true" optional="false" />
-                <description>Localized Video title </description>
+              <attribute qualifier="videoTitle" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false"/>
+                <description>Localized Video title</description>
               </attribute>
-              <attribute qualifier="videoLink" type="java.lang.String" >
-                <persistence type="property" />
-                <modifiers read="true" write="true" optional="false" />
+              <attribute qualifier="videoLink" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false"/>
                 <description>Localized video link</description>
               </attribute>
-              <attribute qualifier="videoDuration" type="java.lang.Long" >
-                <persistence type="property" />
-                <modifiers read="true" write="true" optional="false" />
-                <description> video duration need to be put in second </description>
+              <attribute qualifier="videoDuration" type="java.lang.Long">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false"/>
+                <description>video duration need to be put in second</description>
               </attribute>
             </attributes>
           </itemtype>

@@ -6,8 +6,8 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <c:choose>
-<c:when test = "${not empty product.data_Sheet}">
-<c:forEach var="resourceData" items="${product.data_Sheet}">
+<c:when test = "${not empty product.dataSheet}">
+<c:forEach var="resourceData" items="${product.dataSheet}">
 <div>
 <a href="${resourceData.url}" target="_blank">
 <img src="${commonResourcePath}/images/manuapdficon.png" />

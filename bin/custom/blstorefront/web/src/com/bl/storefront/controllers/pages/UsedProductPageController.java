@@ -25,7 +25,8 @@ public class UsedProductPageController extends AbstractBlProductPageController {
   private ProductFacade productFacade;
 
   @RequestMapping(value = BlControllerConstants.PRODUCT_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
-  public String rentalProductDetail(@PathVariable("productCode") final String encodedProductCode, final Model model,
+  public String rentalProductDetail(@PathVariable("productCode") final String encodedProductCode,
+      final Model model,
       final HttpServletRequest request, final HttpServletResponse response)
       throws CMSItemNotFoundException, UnsupportedEncodingException {
     final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
@@ -33,10 +34,11 @@ public class UsedProductPageController extends AbstractBlProductPageController {
         .asList(ProductOption.VARIANT_MATRIX_BASE, ProductOption.VARIANT_MATRIX_URL,
             ProductOption.VARIANT_MATRIX_MEDIA);
 
-    final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, extraOptions);
+    final ProductData productData = productFacade
+        .getProductForCodeAndOptions(productCode, extraOptions);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, false);
-    return  productDetail(encodedProductCode,extraOptions,productData,model,request,response);
+    return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
 
   }
 }

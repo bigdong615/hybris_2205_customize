@@ -68,7 +68,6 @@ import com.google.common.collect.Maps;
  * Renaming controller for handling common section for used and rental gear product.
  * @author  Vijay Vishwakarma
  */
-
 public class AbstractBlProductPageController extends AbstractPageController
 {
 	@SuppressWarnings("unused")
@@ -110,30 +109,31 @@ public class AbstractBlProductPageController extends AbstractPageController
 	@Resource(name = "futureStockFacade")
 	private FutureStockFacade futureStockFacade;
 
-/*
- * This method is used for render pdp.
- */
-	public  String productDetail(final String productCode,final List<ProductOption> extraOptions ,final ProductData productData,
-			final Model model , final HttpServletRequest request, final HttpServletResponse response)
-			throws CMSItemNotFoundException, UnsupportedEncodingException
-	{
-		final String redirection = checkRequestUrl(request, response, productDataUrlResolver.resolve(productData));
-		if (StringUtils.isNotEmpty(redirection))
-		{
+	/*
+	 * This method is used for render pdp.
+	 */
+	public String productDetail(final String productCode, final List<ProductOption> extraOptions,
+			final ProductData productData,
+			final Model model, final HttpServletRequest request, final HttpServletResponse response)
+			throws CMSItemNotFoundException, UnsupportedEncodingException {
+		final String redirection = checkRequestUrl(request, response,
+				productDataUrlResolver.resolve(productData));
+		if (StringUtils.isNotEmpty(redirection)) {
 			return redirection;
 		}
 
 		updatePageTitle(productCode, model);
 
-
 		populateProductDetailForDisplay(productCode, model, request, extraOptions);
 
 		model.addAttribute(new ReviewForm());
 		model.addAttribute("pageType", PageType.PRODUCT.name());
-		model.addAttribute("futureStockEnabled", Boolean.valueOf(Config.getBoolean(FUTURE_STOCK_ENABLED, false)));
+		model.addAttribute("futureStockEnabled",
+				Boolean.valueOf(Config.getBoolean(FUTURE_STOCK_ENABLED, false)));
 
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(productData.getKeywords());
-		final String metaDescription = MetaSanitizerUtil.sanitizeDescription(productData.getDescription());
+		final String metaDescription = MetaSanitizerUtil
+				.sanitizeDescription(productData.getDescription());
 		setUpMetaData(model, metaKeywords, metaDescription);
 		return getViewForPage(model);
 	}
