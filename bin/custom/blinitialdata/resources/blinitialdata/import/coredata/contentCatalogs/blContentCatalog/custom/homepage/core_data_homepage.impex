@@ -53,7 +53,11 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; HomePageRentingGearIsEasyTitleSlot ;                                                                       ;                           ; wide                
                               ; HomePageCategoriesTitleSlot        ;                                                                       ;                           ; wide                
                               ; HomePageTheyBorrowFromUsTitleSlot  ;                                                                       ;                           ; wide                
-                              
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                                                                        
                               
 INSERT_UPDATE ComponentTypeGroup ; code[unique=true] 
                                  ; logo              
@@ -113,6 +117,11 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; HomePageRentingGearIsEasyTitleSlot ; HomePage RentingGearIsEasy Title Slot  
                           ;                         ; HomePageCategoriesTitleSlot        ; HomePage Categories Title Slot         
                           ;                         ; HomePageTheyBorrowFromUsTitleSlot  ; HomePage TheyBorrowFromUs Title Slot   
+                          ;                         ; MobileHeaderLinkForShipOrPickupSlot      ; Mobile Header Link for ShipOrPickup Slot;
+                          ;                         ; MobileHeaderLinkForSupportSlot           ; Mobile Header Link For Support Slot;
+                          ;                         ; MobileHeaderLinkForAccountSlot           ; Mobile Header Link For Account Slot;
+                          ;                         ; MobileHeaderBottomInfo             ; Mobile Header Bottom Info              ;           
+                          
                           
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
@@ -127,7 +136,10 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; FooterSlot-LandingPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true           
                                      ;                         ; FooterSubscriptionSlot-LandingPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true           
                                      ;                         ; FooterCopyRightslot-LandingPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true           
-                                     
+                                     ;                         ; MobileHeaderLinkForShipOrPickupSlot-LandingPage ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-LandingPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-LandingPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
+                                     ;                         ; MobileHeaderBottomInfo-LandingPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
                                      
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='homepage'] ; contentSlot(uid,$contentCV)[unique=true] 

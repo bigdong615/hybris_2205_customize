@@ -8,6 +8,7 @@
         <collectiontype code="GenderList" elementtype="Gender" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
                         type="set"/>
+      <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -490,20 +491,15 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Link for the rental item on a competitive site</description>
                      </attribute>
-                   <attribute qualifier="rentalVideoLinks" type="StringCollection">
+                   <attribute qualifier="rentalVideosLink" type="ProductVideoCollection">
                          <persistence type="property" />
                          <modifiers read="true" write="true" optional="true"/>
                          <description>The video URL links for the Rental</description>
                      </attribute>
-                   <attribute qualifier="usedGearVideoLinks" type="StringCollection">
+                   <attribute qualifier="usedGearVideosLink" type="ProductVideoCollection">
                          <persistence type="property" />
                          <modifiers read="true" write="true" optional="true"/>
                          <description>The video URL links for the Used Gear</description>
-                     </attribute>
-                   <attribute qualifier="resourceLink" type="java.lang.String">
-                         <persistence type="property" />
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>The link from each uploaded document</description>
                      </attribute>
                      <attribute qualifier="procurementSource" type="java.lang.String">
                          <persistence type="property" />
@@ -918,8 +914,36 @@
               </index>
             </indexes>
           </itemtype>
-   </typegroup>
 
+          <!--BL-166: This item is created to store product related video information-->
+          <itemtype code="ProductVideo" autocreate="true" generate="true"
+            jaloclass="com.bl.core.jalo.ProductVideo">
+            <deployment table="ProductVideo" typecode="12207"/>
+            <attributes>
+              <attribute qualifier="uid" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false" unique="true"/>
+                <description>Localized Video title</description>
+              </attribute>
+              <attribute qualifier="videoTitle" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false"/>
+                <description>Localized Video title</description>
+              </attribute>
+              <attribute qualifier="videoLink" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false"/>
+                <description>Localized video link</description>
+              </attribute>
+              <attribute qualifier="videoDuration" type="java.lang.Long">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="false"/>
+                <description>video duration need to be put in second</description>
+              </attribute>
+            </attributes>
+          </itemtype>
+
+        </typegroup>
 
     </itemtypes>
 </items>
