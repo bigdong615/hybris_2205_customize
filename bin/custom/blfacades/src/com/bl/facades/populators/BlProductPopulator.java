@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /*
  * This populator is used for populating bl related specific product attribute.
@@ -49,6 +50,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
     target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
     target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
+    target.setUsedDescription(source.getUsedDescription());
 
   }
 
@@ -61,7 +63,9 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
           ProductVideoData productVideoData = new ProductVideoData();
           productVideoData.setVideoName(productVideoModel.getVideoTitle());
           productVideoData.setVideoUrl(productVideoModel.getVideoLink());
-          productVideoData.setVideoDuration(formattedTime(productVideoModel.getVideoDuration()));
+          productVideoData.setVideoDuration(
+              DurationFormatUtils.formatDuration(productVideoModel.getVideoDuration() * 1000,
+                  BlFacadesConstants.TIME_FORMAT_STRING));
           videoDataList.add(productVideoData);
         }
     );
@@ -79,23 +83,6 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
       imageList.add(imagedata);
     }
     target.setDataSheet(imageList);
-  }
-
-  /*
-   * This method provide time in hh:mm:ss format.
-   */
-  private String formattedTime(final long duration) {
-    final int hour = (int) duration / 3600;
-    final int minutes = (int) duration % 3600;
-    final int remainingMinutes = minutes / 60;
-    final int remainingSecond = minutes % 60;
-    String formattedTime = hour > 1 ? (hour + (remainingMinutes > 1 ? BlFacadesConstants.COLON
-        : BlFacadesConstants.BLANK_STRING)) : BlFacadesConstants.BLANK_STRING;
-    formattedTime += (remainingMinutes > 1 ? (remainingMinutes + (remainingSecond > 1
-        ? BlFacadesConstants.COLON : BlFacadesConstants.BLANK_STRING))
-        : BlFacadesConstants.BLANK_STRING);
-    formattedTime += remainingSecond;
-    return formattedTime;
   }
 
   public ModelService getModelService() {
