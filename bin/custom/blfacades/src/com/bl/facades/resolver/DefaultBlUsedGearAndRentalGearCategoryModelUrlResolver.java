@@ -53,6 +53,9 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver  extends Def
    */
   private String resolveRentalGear (final CategoryModel source) {
     String url = getRentalGearPattern();
+    if(BlCoreConstants.BRANDS.equalsIgnoreCase(source.getCode()) || "lenses".equalsIgnoreCase(source.getCode()) || "production".equalsIgnoreCase(source.getCode()) || "cameras".equalsIgnoreCase(source.getCode())) {
+          url = "/rent/category/{category-code}";
+    }
     if (url.contains(BlCoreConstants.BASE_SITE_UID)) {
       url = url.replace(BlCoreConstants.BASE_SITE_UID, urlEncode(getBaseSiteUid().toString()));
     }
