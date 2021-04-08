@@ -6,7 +6,7 @@ package com.bl.core.constants;
 /**
  * Global class for all BlCore constants. You can add global constants for your extension into this class.
  */
-public final class BlCoreConstants
+public final class BlCoreConstants extends GeneratedBlCoreConstants
 {
 	public static final String EXTENSIONNAME = "blcore";
 
