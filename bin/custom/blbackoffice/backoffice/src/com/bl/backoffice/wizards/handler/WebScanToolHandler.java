@@ -8,7 +8,7 @@ import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.FlowActionHandlerAdapter;
 import org.apache.commons.collections.CollectionUtils;
-import static org.zkoss.util.resource.Labels.getLabel;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
         if (webScanToolData == null) {
             this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
-                    BlInventoryScanLoggingConstants.EMPTY_STRING);
+                    StringUtils.EMPTY);
         } else {
             final List<String> barcodes = webScanToolData.getBarcodeInputField();
             if (CollectionUtils.isNotEmpty(barcodes)) {
@@ -46,7 +46,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
             } else {
                 this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                         BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-                        BlInventoryScanLoggingConstants.EMPTY_STRING);
+                        StringUtils.EMPTY);
             }
         }
     }
@@ -96,15 +96,15 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
         } else if (result == BlInventoryScanLoggingConstants.TWO) {
             this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                     BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-                    BlInventoryScanLoggingConstants.EMPTY_STRING);
+                    StringUtils.EMPTY);
         } else if (result == BlInventoryScanLoggingConstants.THREE) {
             this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                     BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-                    BlInventoryScanLoggingConstants.EMPTY_STRING);
+                    StringUtils.EMPTY);
         } else {
             this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                     BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-                    BlInventoryScanLoggingConstants.EMPTY_STRING);
+                    StringUtils.EMPTY);
         }
     }
 

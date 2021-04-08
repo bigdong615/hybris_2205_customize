@@ -23,6 +23,11 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String HUN_PER = "100%";
 
+    public static final String SAMPLE1 = "sample1%";
+    public static final String SAMPLE2 = "sample2%";
+    public static final String SAMPLE3 = "sample3%";
+    public static final String LOCATION = "MAR001 S01";
+
     public static final String BIN = "BIN";
     public static final String MA = "MA";
     public static final String CA = "CA";
@@ -46,7 +51,6 @@ public class BlInventoryScanLoggingConstants {
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
 
     public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
-    public static final String EMPTY_STRING = "";
     public static final String SCAN_STRING = "Scan data: ";
 
 

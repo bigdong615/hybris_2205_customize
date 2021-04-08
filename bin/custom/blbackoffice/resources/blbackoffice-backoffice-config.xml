@@ -326,7 +326,7 @@
   <context type="BlInventoryLocation" component="simple-search" merge-by="replace">
     <ss:simple-search>
       <ss:field name="code"/>
-			<ss:field name="inventoryLocationID"/>
+			<ss:field name="code"/>
       <ss:field name="inventoryType"/>
     </ss:simple-search>
   </context>
@@ -334,7 +334,7 @@
 	<context type="BlInventoryLocation" component="base">
 		<y:base>
 			<y:labels>
-				<y:label>inventoryLocationID</y:label>
+				<y:label>code</y:label>
 			</y:labels>
 		</y:base>
 	</context>
