@@ -13,21 +13,23 @@ import java.util.Collection;
 public interface BlInventoryScanToolDao {
 
     /**
+     * javadoc
      * @param locationId for InventoryLocation
      * @return InventoryLocation
      */
     BlInventoryLocationModel getInventoryLocationById(final String locationId);
 
     /**
+     * javadoc
      * @param barcode for Serial
      * @return List of Serials
      */
     Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode);
 
     /**
-     *
-     * @param key
-     * @return
+     * javadoc
+     * @param key for config
+     * @return BlInventoryScanConfigurationModel
      */
     BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key);
 

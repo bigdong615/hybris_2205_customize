@@ -27,7 +27,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     UserService userService;
 
     @Autowired
-    private ModelService modelService;
+    ModelService modelService;
 
     @Resource(name = "blInventoryScanToolDao")
     BlInventoryScanToolDao blInventoryScanToolDao;
@@ -62,6 +62,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     }
 
     /**
+     * javadoc
      * @param inventoryLocation    for update
      * @param filteredLocationList all locations in batch
      * @return int for success/error message
@@ -77,6 +78,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     }
 
     /**
+     * javadoc
      * @param inventoryLocation    for update
      * @param filteredLocationList all locations in batch
      * @return int for success/error message
@@ -101,9 +103,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         final List<String> failedBarcodeList = new ArrayList<>();
         final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
         final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
-        subList.forEach(barcode -> {
-            setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode);
-        });
+        subList.forEach(barcode -> setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode));
         return failedBarcodeList;
     }
 
@@ -115,6 +115,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     }
 
     /**
+     * javadoc
      * @param failedBarcodeList from scanned barcode list
      * @param blSerialProducts  from barcodes
      * @param iteratorBarcode   current iterator
@@ -124,10 +125,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         final BlSerialProductModel blSerialProduct = blSerialProducts.stream()
                 .filter(p -> p.getBarcode().equals(iteratorBarcode)).findFirst().orElse(null);
         if (blSerialProduct != null) {
-            final BlInventoryLocationModel blInventoryLocation = getBlInventoryLocation();
-            blSerialProduct.setSerialInventoryLocation(blInventoryLocation);
-            blSerialProduct.setSerialLastLocation(blInventoryLocation);
-            blSerialProduct.setSerialLastParentLocation(blInventoryLocation.getParentInventoryLocation());
+            final BlInventoryLocationModel blInventoryLocationLocal = getBlInventoryLocation();
+            blSerialProduct.setSerialInventoryLocation(blInventoryLocationLocal);
+            blSerialProduct.setSerialLastLocation(blInventoryLocationLocal);
+            blSerialProduct.setSerialLastParentLocation(blInventoryLocationLocal.getParentInventoryLocation());
             modelService.save(blSerialProduct);
             modelService.refresh(blSerialProduct);
 

@@ -14,33 +14,37 @@ import java.util.List;
 public interface BlInventoryScanToolService {
 
     /**
+     * javadoc
      * @param barcodes from input list
-     * @return int for success/error message
+     * @return int
      */
     int checkValidLocationInBarcodeList(final List<String> barcodes);
 
     /**
+     * javadoc
      * @param locationId for BlInventoryLocation
      * @return BlInventoryLocation
      */
     BlInventoryLocationModel getInventoryLocationById(final String locationId);
 
     /**
+     * javadoc
      * @param barcode for BlSerialProduct
-     * @return List of BLSerial Product
+     * @return Collection<BlSerialProductModel>
      */
     Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode);
 
     /**
+     * javadoc
      * @param barcodes for BlSerialProduct
-     * @return List of BlSerial Product
+     * @return List<String>
      */
     List<String> getFailedBarcodeList(final List<String> barcodes);
 
     /**
-     *
-     * @param key
-     * @return
+     * javadoc
+     * @param key for config
+     * @return String
      */
     String getConfigKeyFromScanConfiguration(final String key);
 }
