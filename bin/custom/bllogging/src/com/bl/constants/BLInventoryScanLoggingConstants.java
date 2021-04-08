@@ -56,6 +56,10 @@ public class BlInventoryScanLoggingConstants {
 
     private BlInventoryScanLoggingConstants() { }
 
+    /**
+     * javadoc
+     * @return List<String> for default locations
+     */
     public static List<String> getDefaultInventoryLocation() {
         List<String> defaultLocations = new ArrayList<>();
         defaultLocations.add(BIN);
