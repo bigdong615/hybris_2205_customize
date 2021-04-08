@@ -12,24 +12,24 @@
   		<property name="name" value="labels"/>
   	</bean>
 
-	<!-- BL Web Scan Tool Renderer -->
+	<!-- BL-110 Web Scan Tool Renderer -->
 	<bean id="defaultWebScanToolRenderer" class="com.bl.backoffice.wizards.renderer.WebScanToolRenderer">
 		<property name="notificationService" ref="notificationService"/>
 		<property name="webScanToolUtil" ref="webScanToolUtil"/>
 	</bean>
 
-	<!-- BL Web Scan Tool Handler -->
+	<!-- BL-110 Web Scan Tool Handler -->
 	<bean id="defaultWebScanToolHandler" class="com.bl.backoffice.wizards.handler.WebScanToolHandler">
 		<property name="notificationService" ref="notificationService"/>
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
 
-	<!-- BL Web Scan Tool Data -->
+	<!-- BL-110 Web Scan Tool Data -->
 	<alias name="defaultWebScanToolData" alias="webScanToolData"/>
 	<bean id="defaultWebScanToolData"
 		  class="com.bl.backoffice.wizards.util.WebScanToolData" scope="prototype"/>
 
-	<!-- BL Web Scan Tool Util -->
+	<!-- BL-110 Web Scan Tool Util -->
 	<alias name="defaultWebScanToolDataUtil" alias="webScanToolUtil"/>
 	<bean id="defaultWebScanToolDataUtil"
 		  class="com.bl.backoffice.wizards.util.WebScanToolUtil">

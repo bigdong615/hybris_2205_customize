@@ -959,7 +959,7 @@
             </attributes>
           </itemtype>
 
-            <!-- InventoryLocation for Scan -->
+            <!--BL-110 InventoryLocation for Scan -->
             <itemtype code="BlInventoryLocation" autocreate="true" generate="true"
               jaloclass="com.bl.core.jalo.BlInventoryLocation">
                 <description>This table is for storing InventoryLocation details.</description>
@@ -1004,7 +1004,7 @@
                 </attributes>
             </itemtype>
 
-            <!-- InventoryLocationScanHistory for tracking logs-->
+            <!--BL-110 InventoryLocationScanHistory for tracking logs-->
             <itemtype code="BlInventoryLocationScanHistory" autocreate="true" generate="true"
               jaloclass="com.bl.core.jalo.BlInventoryLocationScanHistory">
                 <description>This table is for keeping track of Inventory being moved in warehouse by different users.</description>
@@ -1028,7 +1028,7 @@
                 </attributes>
             </itemtype>
 
-            <!-- InventoryLocationScanConfiguration for tracking logs-->
+            <!--BL-110 InventoryLocationScanConfiguration for tracking logs-->
             <itemtype code="BlInventoryScanConfiguration" autocreate="true" generate="true"
                       jaloclass="com.bl.core.jalo.BlInventoryScanConfiguration">
                 <description>This table is for storing configuration related to InventoryScan.</description>

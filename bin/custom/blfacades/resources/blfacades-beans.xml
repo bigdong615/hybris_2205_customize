@@ -33,7 +33,6 @@
     <property name="code" type="String"/>
     <property name="name" type="String"/>
   </bean>
-
   <!--BL-166: This DTO contain product video related information-->
   <bean class="com.bl.facades.product.data.ProductVideoData">
     <property name="videoName" type="String"/>
@@ -44,7 +43,6 @@
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
   </enum>
-
 </beans>
 
 
