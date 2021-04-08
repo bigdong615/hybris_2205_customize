@@ -4,7 +4,7 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-
+<c:url value="/cart/add" var="addToCartUrl"/>
  <div class="screen"></div>
  <cms:pageSlot position="SearchBoxBl" var="component">
  				<cms:component component="${component}"/>
@@ -49,8 +49,13 @@
                                 <div class="priceSummary">
                                   <span class="productPrice">$215</span>&emsp;<span class="rentalDates">7 day rental</span>
                                 </div>
-                                  <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5"><spring:theme code= "basket.add.to.rental.cart.button.text" /></a>
-                            </div>
+                                <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                  <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
+                                  <input type="hidden" name="productCodePost" value="${product.code}">
+                                  <button id="addToCartButton" type="submit" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn">
+                           				<spring:theme code= "basket.add.to.rental.cart.button.text" /></button>
+                           			</form>
+                              </div>
                         </div>
                     </div>
                 </div>
@@ -152,7 +157,12 @@
                                                     <p class="overline">Canon</p>
                                                     <h6 class="product">BG-10 Battery Grip</h6>
                                                     <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
-                                                    <a href="#" class="btn btn-primary">Add to Rental</a>
+                                                    <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                                       <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
+                                                       <input type="hidden" name="productCodePost" value="${product.code}">
+                                                       <button id="addToCartButton" type="submit" class="btn btn-primary js-add-to-cart js-enable-btn">
+                                                    <spring:theme code= "basket.add.to.rental.cart.button.text" /></button>
+                                                    </form>
                                                 </div>
                                             </li>
                                             <li class="splide__slide is-visible" id="gear-slider-slide02" style="margin-right: 20px; width: 205.25px;" aria-hidden="false" tabindex="0">

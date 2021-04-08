@@ -24,56 +24,80 @@
 	<spring:theme code="text.addToCart" var="addToCartText"/>
 	<c:url value="/cart" var="cartUrl"/>
 	<ycommerce:testId code="addToCartPopup">
-		<div id="addToCartLayer" class="add-to-cart">
-            <div class="cart_popup_error_msg">
-                <c:choose>
-	                <c:when test="${quickOrderErrorData ne null and not empty quickOrderErrorData}">
-	                	<spring:theme code="${quickOrderErrorMsg}" arguments="${fn:length(quickOrderErrorData)}" />
-                    </c:when>
-                    <c:when test="${multidErrorMsgs ne null and not empty multidErrorMsgs}">
-                        <c:forEach items="${multidErrorMsgs}" var="multidErrorMsg">
-                            <spring:theme code="${multidErrorMsg}" />
-                        </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                        <spring:theme code="${errorMsg}" />
-                    </c:otherwise>
-                </c:choose>
+	<!-- BL-456 add to cart Modal -->
+      <div class="modal fade show" style="display: block; padding-right: 17px;" id="addToCart" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Added to Cart <i class="cart-check"></i></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
+                  <div class="col-md-7 mt-4"><b>${product.name}</b><span class="gray80">Rental Dates</span></div>
+                  <div class="col-md-3 mt-4 text-md-end">
+                      <b>${product.price.formattedValue}$XX</b>
+                      Qty
+                      <select class="mt-3">
+                          <option>1</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                          <option>5</option>
+                          <option>6</option>
+                          <option>7</option>
+                          <option>8</option>
+                      </select>
+                  </div>
+              </div>
+              <hr>
+              <!-- Additional Gear Slider -->
+              <h5 class="d-none d-md-block">Dont forget</h5>
+              <div class="row d-none d-md-flex mt-4">
+                  <div class="col-md-4">
+                      <div class="card">
+                          <span class="badge badge-new">New</span>
+                          <span class="bookmark"></span>
+                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg"></li>
+                          <p class="overline"><a href="#">Canon</a></p>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
+                          <a href="#" class="btn btn-primary">Add to Rental</a>
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="card">
+                          <span class="badge badge-new">New</span>
+                          <span class="bookmark"></span>
+                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                          <p class="overline"><a href="#">Canon</a></p>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
+                          <a href="#" class="btn btn-primary">Add to Rental</a>
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="card">
+                          <span class="badge badge-new">New</span>
+                          <span class="bookmark"></span>
+                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                          <p class="overline"><a href="#">Canon</a></p>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
+                          <a href="#" class="btn btn-primary">Add to Rental</a>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-outline js-mini-cart-close-button"><spring:theme code="text.popup.button.continue"/></a>
+                <a href="/blstorefront/bl/en/cart" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <c:choose>
-                <c:when test="${modifications ne null}">
-                    <c:forEach items="${modifications}" var="modification">
-                        <c:set var="product" value="${modification.entry.product}" />
-                        <c:set var="entry" value="${modification.entry}" />
-                        <c:set var="quantity" value="${modification.quantityAdded}" />
-                        <cart:popupCartItems entry="${entry}" product="${product}" quantity="${quantity}"/>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-
-                    <cart:popupCartItems entry="${entry}" product="${product}" quantity="${quantity}"/>
-                </c:otherwise>
-            </c:choose>
-
-            <ycommerce:testId code="checkoutLinkInPopup">
-                <a href="${fn:escapeXml(cartUrl)}" class="btn btn-primary btn-block add-to-cart-button">
-	                <c:choose>
-		                <c:when test="${isQuote}">
-		                	<spring:theme code="quote.view" />
-	                    </c:when>
-	                    <c:otherwise>
-	                        <spring:theme code="checkout.checkout" />
-	                    </c:otherwise>
-                	</c:choose>
-                </a>
-            </ycommerce:testId>
-
-
-            <a href="" class="btn btn-default btn-block js-mini-cart-close-button">
-                <spring:theme code="cart.page.continue"/>
-            </a>
-		</div>
 	</ycommerce:testId>
 	</spring:htmlEscape>
 </spring:escapeBody>"
