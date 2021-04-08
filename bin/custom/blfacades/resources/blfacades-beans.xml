@@ -2,11 +2,32 @@
 <!--
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="beans.xsd">
 
-	<bean class="de.hybris.platform.commercefacades.product.data.ProductData">
-		<property name="genders" type="java.util.List&lt;com.bl.facades.product.data.GenderData>"/>
-	</bean>
+  <bean class="de.hybris.platform.commercefacades.product.data.ProductData">
+    <property name="genders" type="java.util.List&lt;com.bl.facades.product.data.GenderData>"/>
+    <!--BL-166:These attribute created for populating bl related specific product attribute.-->
+    <property name="displayName" type="java.lang.String"/>
+    <property name="rentalVideosLink"
+      type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
+    <property name="usedGearVideosLink"
+      type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
+    <property name="forSale" type="java.lang.Boolean"/>
+    <property name="forRent" type="java.lang.Boolean"/>
+    <property name="shortDescription" type="java.lang.String"/>
+    <property name="rentalNote" type="java.lang.String"/>
+    <property name="rentalIncludes" type="java.lang.String"/>
+    <property name="usedIncludes" type="java.lang.String"/>
+    <property name="usedDescription" type="java.lang.String"/>
+    <property name="purchaseNotes" type="java.lang.String"/>
+    <property name="dataSheet"
+      type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.ImageData>"/>
+    <property name="isDiscontinued" type="Boolean"/>
+    <property name="isNew" type="Boolean"/>
+    <property name="isUpcoming" type="Boolean"/>
+    <property name="productPageType" type="java.lang.String"/>
+  </bean>
 
 	<bean class="com.bl.facades.product.data.GenderData">
 		<property name="code" type="String"/>
@@ -22,4 +43,17 @@
 		<property name="blPage" type="String"/>
 	</bean>
 
+
+  <!--BL-166: This DTO contain product video related information-->
+  <bean class="com.bl.facades.product.data.ProductVideoData">
+    <property name="videoName" type="String"/>
+    <property name="videoUrl" type="String"/>
+    <property name="videoDuration" type="String"/>
+  </bean>
+  <!--BL-166 : Add accelerator facades specific product options -->
+  <enum class="de.hybris.platform.commercefacades.product.ProductOption">
+    <value>REQUIRED_DATA</value>
+  </enum>
 </beans>
+
+
