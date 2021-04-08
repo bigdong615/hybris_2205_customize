@@ -3,6 +3,48 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 
+<!-- Mobile Category Navigation Menu -->
+<c:if test="${positionAttribute == 'NavigationBarMobileSlot'}">
+	<c:if test="${component.visible}">
+		<c:forEach items="${component.navigationNode.children}"	var="childLevel1">
+            	<c:forEach items="${childLevel1.entries}" var="childlink1">
+            		<li><span><i class="icon-${fn:toLowerCase(childlink1.item.category.code)}"></i> ${childlink1.item.linkName}</span>
+            			<ul>
+		            		<c:if test="${childlink1.item.type  eq 'Link'}">
+		            			<c:if test="${childlink1.item.visible}">
+			            			<c:if test="${not empty childLevel1.children}">
+				            			<c:set var="hasChildren" value="false"/>
+				            			<c:forEach items="${childLevel1.children}" var="childLevel2" varStatus="loopStatus">
+					            			<c:if test="${not empty childLevel2.children }">
+												<c:set var="hasChildren" value="true"/>
+											</c:if>
+					            			<c:forEach items="${childLevel2.entries}" var="childlink2">							
+												<c:url value="${childlink2.item.url}" var="linkNode"/>
+												<li><a href="${linkNode }">${childlink2.item.linkName}</a></li> 
+											</c:forEach>
+											<c:if test="${loopStatus.isLast() and hasChildren}">	
+												<c:forEach items="${childLevel1.children}" var="childLevel2" varStatus="childLevel2loopStatus">
+													<c:forEach items="${childLevel2.children}" var="childLevel3" varStatus="childLevel3loopStatus">
+														<c:forEach items="${childLevel3.entries}" var="childlink3">							
+															<c:url value="${childlink3.item.url}" var="linkNode"/>
+															<li><a href="${linkNode }">${childlink3.item.linkName}</a></li> 
+														</c:forEach>
+													</c:forEach>
+												</c:forEach>
+											</c:if>													
+				            			</c:forEach>
+			            			</c:if>
+		            			</c:if>
+		            		</c:if>
+            			</ul>
+            		</li>
+            	</c:forEach>
+            </c:forEach>            
+	</c:if>
+</c:if>
+
+<!-- Category Navigation Menu -->
+<c:if test="${positionAttribute == 'NavigationBarSlot'}">
 <c:if test="${component.visible}">
 	<c:set var="numberOfRows" value="${component.wrapAfter }"/>
 	<c:forEach items="${component.navigationNode.children}"	var="childLevel1">
@@ -86,4 +128,5 @@
 			</c:if>
 		</c:forEach>
 	</c:forEach>	
+</c:if>
 </c:if>
