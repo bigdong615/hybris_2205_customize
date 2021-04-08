@@ -39,11 +39,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Controller for a category page
  */
 @Controller
-@RequestMapping(value = "/**/c")
+@RequestMapping(value = "**/rent/category")
 public class CategoryPageController extends AbstractCategoryPageController {
+    private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";
 
     @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
-    public String category(@PathVariable("categoryCode") final String categoryCode, // NOSONAR
+    public String category(@PathVariable("parentcategory") final String parentcategory,
+                           @PathVariable("categoryCode") final String categoryCode, // NOSONAR
                            @RequestParam(value = "q", required = false) final String searchQuery,
                            @RequestParam(value = "page", defaultValue = "0") final int page,
                            @RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -187,12 +189,12 @@ public class CategoryPageController extends AbstractCategoryPageController {
         if(CollectionUtils.isNotEmpty(category.getSupercategories())) {
             for (CategoryModel superCategory : category.getSupercategories()) {
                 if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
-                    model.addAttribute("clearAllQuery", "/Rental-Gear/c/rentalgear");
+                    model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, "/Rental-Gear/c/rentalgear");
                 }
             }
         }
         else if(BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName())) {
-            model.addAttribute("clearAllQuery", "/Rental-Gear/c/rentalgear");
+            model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, "/Rental-Gear/c/rentalgear");
         }
     }
 

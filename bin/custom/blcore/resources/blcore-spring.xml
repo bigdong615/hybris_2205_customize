@@ -690,25 +690,4 @@
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
-	<!--BL-80 Adding for used gear category URL resolver to update pattern for usedgear category -->
-
-	<alias name="blDefaultCategoryModelUrlResolver" alias="blCategoryModelUrlResolver"/>
-	<bean id="blDefaultCategoryModelUrlResolver"
-		class="com.bl.core.resolver.BlDefaultCategoryModelUrlResolver">
-		<property name="threadContextService" ref="threadContextService"/>
-		<property name="commerceCategoryService" ref="commerceCategoryService"/>
-		<property name="baseSiteService" ref="baseSiteService"/>
-		<property name="pattern" value="/buy/category/{category-code}"/>
-	</bean>
-
-	<bean id="blDefaultCategoryDataUrlResolver" class="com.bl.core.resolver.BlDefaultCategoryDataUrlResolver">
-		<property name="threadContextService" ref="threadContextService"/>
-		<property name="commerceCategoryService" ref="commerceCategoryService"/>
-		<property name="blDefaultCategoryModelUrlResolver" ref="blCategoryModelUrlResolver"/>
-	</bean>
-	<!--<BL-467 bean entry is for clear cart>-->
-	<alias name="defaultBlCartService" alias="cartService" />
-	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
-		<property name="commerceCartService" ref="commerceCartService" />
-	</bean>
 </beans>

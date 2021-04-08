@@ -56,4 +56,15 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CATALOG_ID = "{catalog-id}";
 	public static final String CATALOG_VERSION = "{catalogVersion}";
 	public static final String REPLACE_STRING = "%20";
+	public static final String MOST_POPULAR = "mostPopular";
+	public static final String STAFF_PICK = "staffPick";
+	public static final String UPCOMING = "upComing";
+	public static final String NEW = "New";
+	public static final String POPULAR = "Popular";
+	public static final String GREAT_VALUE = "greatValue";
+	public static final String GREAT_VALUE_STRING = "Great Value";
+	public static final String STAFF_PICK_STRING = "Staff Pick";
+	public static final String CLEAR_ALL_QUERY = "clearAllQuery";
+	public static final String CLEAR_ALL = "usedgear.clear.all";
+	public static final String PARENT_CATEGORY = "{parentcategory}";
 }

@@ -112,21 +112,31 @@ INSERT_UPDATE CategoryCategoryRelation; $categories              ; $supercategor
 
 
 ####### BL -80 Added Used Gear Category
-INSERT_UPDATE Category; code[unique = true]; active; name[lang = en]  ; onCategoryTree; displayName      ; titleTag; allowedPrincipals(uid)[default = 'customergroup']; $catalogVersion
-                      ; Used-Lenses        ; true  ; Used Lenses      ; true          ; Used Lenses      ;
-                      ; Used-Cameras       ; true  ; Used Cameras     ; true          ; Used Cameras     ;
-                      ; Used-Lighting      ; true  ; Used Lighting    ; true          ; Used Lighting    ;
-                      ; Used-Video         ; true  ; Used Video       ; true          ; Used Video       ;
-                      ; Used-Accessories   ; true  ; Used Accessories ; true          ; Used Accessories ;
-                      ; Used-NewArrivals   ; true  ; Used NewArrivals ; true          ; Used NewArrivals ;
+INSERT_UPDATE Category; code[unique = true]    ; active; name[lang = en]  ; onCategoryTree; displayName      ; titleTag; allowedPrincipals(uid)[default = 'customergroup']; $catalogVersion
+                      ; Used-Lenses            ; true  ; Used Lenses      ; true          ; Used Lenses      ;
+                      ; Used-Cameras           ; true  ; Used Cameras     ; true          ; Used Cameras     ;
+                      ; Used-Lighting          ; true  ; Used Lighting    ; true          ; Used Lighting    ;
+                      ; Used-Video             ; true  ; Used Video       ; true          ; Used Video       ;
+                      ; Used-Accessories       ; true  ; Used Accessories ; true          ; Used Accessories ;
+                      ; Used-NewArrivals       ; true  ; Used NewArrivals ; true          ; Used NewArrivals ;
+###### BL -331 Added for rental gear PLP
+                      ; NewArrivals-Cameras    ; true  ; New Cameras      ; true          ; New Cameras      ;
+                      ; NewArrivals-Lenses     ; true  ; New Lenses       ; true          ; New Lenses       ;
+                      ; NewArrivals-Production ; true  ; New Production   ; true          ; New Production   ;
 
-INSERT_UPDATE CategoryCategoryRelation; $categories      ; $supercategories
-                                      ; Used-Lenses      ; usedgear
-                                      ; Used-Cameras     ; usedgear
-                                      ; Used-Lighting    ; usedgear
-                                      ; Used-Video       ; usedgear
-                                      ; Used-Accessories ; usedgear
-                                      ; Used-NewArrivals ; usedgear
+
+INSERT_UPDATE CategoryCategoryRelation; $categories            ; $supercategories
+                                      ; Used-Lenses            ; usedgear
+                                      ; Used-Cameras           ; usedgear
+                                      ; Used-Lighting          ; usedgear
+                                      ; Used-Video             ; usedgear
+                                      ; Used-Accessories       ; usedgear
+                                      ; Used-NewArrivals       ; usedgear
+####### BL -331 Added for rental gear PLP
+                                      ; NewArrivals-Cameras    ; cameras
+                                      ; NewArrivals-Lenses     ; lenses
+                                      ; NewArrivals-Production ; production
+
 
 
 $productCatalog = blProductCatalog

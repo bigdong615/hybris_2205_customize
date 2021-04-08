@@ -144,8 +144,9 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
   }
 
   private void addClearAllQuery(CategoryModel category, Model model) {
-    /*if(category.isIsfacetedCategory()) {
-      model.addAttribute("clearAllQuery", "/buy/category/usedgear");
-    }*/
+    if(category.isFacetedCategory()) {
+      final String clearALL = Config.getParameter(BlCoreConstants.CLEAR_ALL);
+      model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, clearALL);
+    }
   }
 }

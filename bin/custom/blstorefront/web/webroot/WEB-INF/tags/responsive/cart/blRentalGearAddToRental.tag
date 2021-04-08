@@ -16,25 +16,31 @@
             <input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
             <input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
             <input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
-            <c:if test="${product.isUpcoming ne null && product.isUpcoming eq true}">
-                 <button type="submit" class="btn btn-outline btn-disabled dis"
-                            aria-disabled="true" disabled="disabled">
-                            NOtify Me
-                    </button>
-           </c:if>
             <c:choose>
-                <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
-                    <button type="submit" class="btn btn-outline btn-disabled"
-                            aria-disabled="true" disabled="disabled">
-                            <spring:theme code="text.add.to.rental"/>
-                    </button>
-                </c:when>
-                <c:otherwise>
-                    <button type="submit" class="btn btn-primary" disabled="disabled">
-                    <spring:theme code="text.add.to.rental"/>
-                    </button>
-                </c:otherwise>
+            <c:when test="${product.isUpcoming eq true}">
+             <button type="submit" class="btn btn-outline btn-disabled dis"
+                                        aria-disabled="true" disabled="disabled">
+                                       <spring:theme code="text.notify.me"/>
+                                </button>
+            </c:when>
+            <c:otherwise>
+             <c:choose>
+                            <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
+                                <button type="submit" class="btn btn-outline btn-disabled"
+                                        aria-disabled="true" disabled="disabled">
+                                        <spring:theme code="text.add.to.rental"/>
+                                </button>
+                            </c:when>
+                            <c:otherwise>
+                                <button type="submit" class="btn btn-primary" disabled="disabled">
+                                <spring:theme code="text.add.to.rental"/>
+                                </button>
+                            </c:otherwise>
+                        </c:choose>
+            </c:otherwise>
             </c:choose>
+
+
 
     </form:form>
 

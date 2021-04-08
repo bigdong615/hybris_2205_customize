@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -152,35 +153,35 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
     target.setConfigurable(this.<Boolean>getValue(source, "configurable"));
     target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
-        if (null != this.getValue(source, "isNew")) {
-          if (this.<Boolean>getValue(source, "isNew")) {
-            target.setProductTagValues("New");
+        if (null != this.getValue(source, BlCoreConstants.IS_NEW)) {
+          if (this.<Boolean>getValue(source, BlCoreConstants.IS_NEW)) {
+            target.setProductTagValues(BlCoreConstants.NEW);
           }
         }
-    if (null != this.getValue(source, "mostPopular") && StringUtils
+    if (null != this.getValue(source, BlCoreConstants.MOST_POPULAR) && StringUtils
         .isBlank(target.getProductTagValues())) {
-      if (this.<Boolean>getValue(source, "mostPopular")) {
-        target.setProductTagValues("Popular");
+      if (this.<Boolean>getValue(source, BlCoreConstants.MOST_POPULAR)) {
+        target.setProductTagValues(BlCoreConstants.POPULAR);
       }
     }
-    if (null != this.getValue(source, "forRent")) {
-      if (this.<Boolean>getValue(source, "forRent")) {
-        if (null != this.getValue(source, "greatValue") && StringUtils
+    if (null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
+      if (this.<Boolean>getValue(source, BlCoreConstants.FOR_RENT)) {
+        if (null != this.getValue(source, BlCoreConstants.GREAT_VALUE) && StringUtils
             .isBlank(target.getProductTagValues())) {
-          if (this.<Boolean>getValue(source, "greatValue")) {
-            target.setProductTagValues("Great Value");
+          if (this.<Boolean>getValue(source, BlCoreConstants.GREAT_VALUE)) {
+            target.setProductTagValues(BlCoreConstants.GREAT_VALUE_STRING);
           }
         }
-        if (null != this.getValue(source, "staffPick") && StringUtils
+        if (null != this.getValue(source, BlCoreConstants.STAFF_PICK) && StringUtils
             .isBlank(target.getProductTagValues())) {
-          if (this.<Boolean>getValue(source, "staffPick")) {
-            target.setProductTagValues("Staff Pick");
+          if (this.<Boolean>getValue(source, BlCoreConstants.STAFF_PICK)) {
+            target.setProductTagValues(BlCoreConstants.STAFF_PICK_STRING);
           }
         }
       }
     }
-    if(null != this.getValue(source,"upComing")){
-      if (!this.<Boolean>getValue(source, "upComing")) {
+    if(null != this.getValue(source,BlCoreConstants.UPCOMING)){
+      if (this.<Boolean>getValue(source, BlCoreConstants.UPCOMING)) {
         target.setIsUpcoming(true);
       }
     }
