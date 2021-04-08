@@ -6,15 +6,9 @@ package com.bl.core.constants;
 /**
  * Global class for all BlCore constants. You can add global constants for your extension into this class.
  */
-public final class BlCoreConstants extends GeneratedBlCoreConstants
+public final class BlCoreConstants
 {
 	public static final String EXTENSIONNAME = "blcore";
-
-
-	private BlCoreConstants()
-	{
-		//empty
-	}
 
 	// implement here constants used by this extension
 	public static final String QUOTE_BUYER_PROCESS = "quote-buyer-process";
@@ -46,4 +40,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final long MIN_TOTAL = 5L;
 	public static final long LOW_AVAILABILITY = 2L;
 	public static final long ZERO_AVAILABILITY = 0L;
+
+	private BlCoreConstants()
+	{
+		//empty
+	}
 }

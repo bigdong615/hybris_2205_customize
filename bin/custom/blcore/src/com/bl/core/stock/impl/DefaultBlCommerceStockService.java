@@ -159,8 +159,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 * @param date the date
 	 * @return LocalDateTime
 	 */
-	private LocalDateTime getFormattedDateTime(Date date) {
-		Instant instant = Instant.ofEpochMilli(date.getTime());
+	private LocalDateTime getFormattedDateTime(final Date date) {
+		final Instant instant = Instant.ofEpochMilli(date.getTime());
 		return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 	}
 

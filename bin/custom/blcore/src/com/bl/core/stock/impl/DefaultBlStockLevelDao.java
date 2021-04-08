@@ -32,13 +32,14 @@ import com.bl.core.stock.BlStockLevelDao;
 public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlStockLevelDao
 {
 	private static final Logger LOG = Logger.getLogger(DefaultBlStockLevelDao.class);
+	private static final String AND = "AND {";
 
 	private static final String STOCK_LEVEL_FOR_DATE_QUERY = "SELECT {" + StockLevelModel.PK + "} from {"
 			+ StockLevelModel._TYPECODE + "} WHERE {" + StockLevelModel.PRODUCTCODE + "} = ?productCode " +
-			"AND {" + StockLevelModel.DATE + "} BETWEEN ?startDate AND ?endDate " +
-			"AND {" + StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE +
+			AND + StockLevelModel.DATE + "} BETWEEN ?startDate AND ?endDate " +
+			AND + StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE +
 			" as sse} WHERE {sse:CODE} = (?active)}}) " +
-			"AND {" + StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
+			AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
 
 
 	/**
@@ -54,7 +55,8 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		}
 		else
 		{
-			final Set<WarehouseModel> warehouses = filterWarehouseModels(warehouseModels);
+			//Filters warehouse list to remove null's and duplicate elements.
+			final Set<WarehouseModel> warehouses = new HashSet<>(warehouseModels);
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVEL_FOR_DATE_QUERY);
 			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 
@@ -88,7 +90,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	 * @param seconds the seconds
 	 * @return Calendar
 	 */
-	private Calendar getFormattedDate(Date day, int hours, int minutes, int seconds) {
+	private Calendar getFormattedDate(final Date day, final int hours, final int minutes, final int seconds) {
 		final Calendar startDate = new GregorianCalendar();
 		startDate.setTime(day);
 		startDate.set(Calendar.HOUR_OF_DAY, hours);
@@ -97,21 +99,4 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		return startDate;
 	}
 
-	/**
-	 * Filters warehouse list to remove null's and duplicate elements.
-	 * @param warehouses the list of warehouseModel
-	 * @return List<WarehouseModel> the list of warehouseModel
-	 */
-	protected Set<WarehouseModel> filterWarehouseModels(final Collection<WarehouseModel> warehouses)
-	{
-		final Set<WarehouseModel> setOfWarehouses = new HashSet<>();
-		for (final WarehouseModel house : warehouses)
-		{
-			if (house != null)
-			{
-				setOfWarehouses.add(house);
-			}
-		}
-		return setOfWarehouses;
-	}
 }
