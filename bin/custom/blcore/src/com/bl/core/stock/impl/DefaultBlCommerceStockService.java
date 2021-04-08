@@ -1,10 +1,10 @@
 package com.bl.core.stock.impl;
 
-import com.bl.core.data.StockResult;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -13,14 +13,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.data.StockResult;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
@@ -50,7 +51,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 */
 	@Override
 	public StockResult getStockForEntireDuration(final String productCode, final Collection<WarehouseModel> warehouses,
-			final LocalDateTime startDate, LocalDateTime endDate)
+			final Date startDate, final Date endDate)
 	{
 		final List<Long> availableCount = new ArrayList<>();
 		final List<Long> totalCount = new ArrayList<>();
@@ -63,7 +64,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock Level found for product : {} and date between: {} and {} with "
 					+ "total count : {} and avaiable count : {}", productCode, startDate, endDate, totalUnits, availability);
 		}
-		StockResult stockResult = new StockResult();
+		final StockResult stockResult = new StockResult();
 		stockResult.setTotalCount(totalUnits);
 		stockResult.setAvailableCount(availability);
 		return stockResult;
@@ -73,11 +74,22 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Long getAvailableCount(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate)
+	{
+		final StockResult stockResult = getStockForEntireDuration(productCode, warehouses, startDate, endDate);
+		return stockResult.getAvailableCount();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public StockLevelStatus getStockLevelStatus(final Collection<WarehouseModel> warehouses, final String productCode,
-			final LocalDateTime startDate, final LocalDateTime endDate) {
-		StockResult stockResult = getStockForEntireDuration(productCode, warehouses, startDate, endDate);
-		Long totalUnits = stockResult.getTotalCount();
-		Long availability = stockResult.getAvailableCount();
+			final Date startDate, final Date endDate) {
+		final StockResult stockResult = getStockForEntireDuration(productCode, warehouses, startDate, endDate);
+		final Long totalUnits = stockResult.getTotalCount();
+		final Long availability = stockResult.getAvailableCount();
 		StockLevelStatus resultStatus;
 		if (totalUnits >= BlCoreConstants.MIN_TOTAL && totalUnits < BlCoreConstants.MAX_TOTAL
 				&& availability <= BlCoreConstants.LOW_AVAILABILITY)
@@ -106,34 +118,62 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 * @param warehouses the list of warehouse associated to base store
 	 * @param availability the available quantity
 	 * @param totalUnits the total quantity
-	 * @return StockLevelStatus
 	 */
-	protected void collectAvailability(final LocalDateTime startDate, final LocalDateTime endDate, final String productCode,
+	protected void collectAvailability(final Date startDate, final Date endDate, final String productCode,
 			final Collection<WarehouseModel> warehouses, final List<Long> availability, final List<Long> totalUnits)
 	{
-		final Date convertedStartDate = Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant());
-		final Date convertedEndDate = Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant());
 		final Collection<StockLevelModel> stockLevels = getStockForDate(productCode, warehouses,
-				convertedStartDate, convertedEndDate);
+				startDate, endDate);
 		if (CollectionUtils.isNotEmpty(stockLevels))
 		{
 			final Map<Object, List<StockLevelModel>> stockLevelsDatewise = stockLevels.stream()
 					.collect(Collectors.groupingBy(stockLevel -> stockLevel.getDate()));
-			stockLevelsDatewise.forEach((date, stockLevelModels) -> {
-				final Long reservedQty = stockLevelModels.stream().filter((StockLevelModel::getReservedStatus)).count();
-				final Long totalQty = Long.valueOf(stockLevelModels.size());
-				final Long availableQty = totalQty - reservedQty;
-				availability.add(availableQty);
-				totalUnits.add(totalQty);
-		});
+			final LocalDateTime rentalStartDate = getFormattedDateTime(startDate);
+			final LocalDateTime rentalEndDate = getFormattedDateTime(endDate);
+			final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
+			final Set<Object> datesPresentInStockTable = stockLevelsDatewise.keySet();
+			//This is to check whether stock for any particular day is missing in inventory table
+			if(datesPresentInStockTable.size() == stayDuration) {
+				stockLevelsDatewise.forEach((date, stockLevelModels) -> {
+					final Long reservedQty = stockLevelModels.stream()
+							.filter((StockLevelModel::getReservedStatus)).count();
+					final Long totalQty = Long.valueOf(stockLevelModels.size());
+					final Long availableQty = totalQty - reservedQty;
+					availability.add(availableQty);
+					totalUnits.add(totalQty);
+				});
+			}
+			else {
+				makeZeroAvailability(availability, totalUnits);
+			}
 		}
 		else
 		{
-			availability.add(Long.valueOf(0));
-			totalUnits.add(Long.valueOf(0));
+			makeZeroAvailability(availability, totalUnits);
 		}
 	}
 
+	/**
+	 * This is to get the date in LocalDateTime format
+	 *
+	 * @param date the date
+	 * @return LocalDateTime
+	 */
+	private LocalDateTime getFormattedDateTime(Date date) {
+		Instant instant = Instant.ofEpochMilli(date.getTime());
+		return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+	}
+
+	/**
+	 * This is to get the date in LocalDateTime format
+	 *
+	 * @param availability the available count
+	 * @param totalUnits the total count
+	 */
+	private void makeZeroAvailability(final List<Long> availability, final List<Long> totalUnits) {
+		availability.add(Long.valueOf(0));
+		totalUnits.add(Long.valueOf(0));
+	}
 
 	/**
 	 * @return the blStockLevelDao

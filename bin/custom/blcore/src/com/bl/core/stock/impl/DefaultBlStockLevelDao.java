@@ -49,28 +49,22 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	public Collection<StockLevelModel> findStockLevelForDate(final String productCode, final Collection<WarehouseModel> warehouseModels,
 			final Date startDay, final Date endDay)
 	{
-		final List warehouses = filterWarehouseModels(warehouseModels);
-		if (CollectionUtils.isEmpty(warehouses))
+		if (CollectionUtils.isEmpty(warehouseModels))
 		{
 				throw new IllegalArgumentException("warehouses cannot be null.");
 		}
 		else
 		{
+			final Set<WarehouseModel> warehouses = filterWarehouseModels(warehouseModels);
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVEL_FOR_DATE_QUERY);
 			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 
-			final Calendar startDate = new GregorianCalendar();
-			startDate.setTime(startDay);
-			startDate.set(Calendar.HOUR_OF_DAY, BlCoreConstants.START_HOURS);
-			startDate.set(Calendar.MINUTE, BlCoreConstants.START_MINUTES);
-			startDate.set(Calendar.SECOND, BlCoreConstants.START_SECONDS);
+			final Calendar startDate = getFormattedDate(startDay, BlCoreConstants.START_HOURS, BlCoreConstants.START_MINUTES, 
+					BlCoreConstants.START_SECONDS);
 			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
 
-			final Calendar endDate = new GregorianCalendar();
-			endDate.setTime(endDay);
-			endDate.set(Calendar.HOUR_OF_DAY, BlCoreConstants.END_HOURS);
-			endDate.set(Calendar.MINUTE, BlCoreConstants.END_MINUTES);
-			endDate.set(Calendar.SECOND, BlCoreConstants.END_SECONDS);
+			final Calendar endDate = getFormattedDate(endDay, BlCoreConstants.END_HOURS, BlCoreConstants.END_MINUTES,
+					BlCoreConstants.END_SECONDS);
 			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
 
 			fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
@@ -88,20 +82,37 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	}
 
 	/**
+	 * To get the formatted date
+	 * @param day the date
+	 * @param hours the hours
+	 * @param minutes the minutes
+	 * @param seconds the seconds
+	 * @return Calendar
+	 */
+	private Calendar getFormattedDate(Date day, int hours, int minutes, int seconds) {
+		final Calendar startDate = new GregorianCalendar();
+		startDate.setTime(day);
+		startDate.set(Calendar.HOUR_OF_DAY, hours);
+		startDate.set(Calendar.MINUTE, minutes);
+		startDate.set(Calendar.SECOND, seconds);
+		return startDate;
+	}
+
+	/**
 	 * Filters warehouse list to remove null's and duplicate elements.
 	 * @param warehouses the list of warehouseModel
 	 * @return List<WarehouseModel> the list of warehouseModel
 	 */
-	protected List<WarehouseModel> filterWarehouseModels(final Collection<WarehouseModel> warehouses)
+	protected Set<WarehouseModel> filterWarehouseModels(final Collection<WarehouseModel> warehouses)
 	{
-		final Set<WarehouseModel> result = new HashSet<>();
+		final Set<WarehouseModel> setOfWarehouses = new HashSet<>();
 		for (final WarehouseModel house : warehouses)
 		{
 			if (house != null)
 			{
-				result.add(house);
+				setOfWarehouses.add(house);
 			}
 		}
-		return new ArrayList<>(result);
+		return setOfWarehouses;
 	}
 }
