@@ -84,6 +84,7 @@
                                 </a>
                                 <div class="collapse show" id="overview">
                                      <p>${ycommerce:sanitizeHTML(product.description)}</p>
+                                     <c:if test="${not empty product.rentalVideosLink}">
                                      <div id="overview-slider" class="splide mt-5">
                                            <div class="splide__track">
                                              <ul class="splide__list">
@@ -97,7 +98,7 @@
                                                 </c:forEach>
                                             </ul>
                                         </div>
-                                     </div>
+                                     </div></c:if>
                                      </div>
                                 <hr>
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#specs" role="button" aria-expanded="false" aria-controls="specs">
