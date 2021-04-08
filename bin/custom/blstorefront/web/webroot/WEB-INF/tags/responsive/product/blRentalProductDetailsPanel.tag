@@ -26,9 +26,9 @@
                               </div>
                             <div id="productInfo" class="col-lg-5 offset-lg-1">
                             <c:forEach items="${product.categories}" var="categoryData">
-                             <c:if test="${product.manufacturer eq categoryData.name}">
+                             <c:if test="${product.manufacturer eq categoryData.code}">
                               <c:url var="brandUrl" value="${categoryData.url}"/>
-                              <p class="overline"><a href="${brandUrl}">${product.manufacturer}</a></p>
+                              <p class="overline"><a href="${brandUrl}">${categoryData.name}</a></p>
                              </c:if>
                                 </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
@@ -49,7 +49,7 @@
                                 <div class="priceSummary">
                                   <span class="productPrice">$215</span>&emsp;<span class="rentalDates">7 day rental</span>
                                 </div>
-                                  <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5"><spring:theme code= "basket.add.to.rental.cart.button.text" /></a>
+                                   <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code= "basket.add.to.rental.cart.button.text" /></a>
                             </div>
                         </div>
                     </div>
@@ -84,8 +84,8 @@
                                 </a>
                                 <div class="collapse show" id="overview">
                                      <p>${ycommerce:sanitizeHTML(product.description)}</p>
-                                     <c:if test="${not empty product.rentalVideosLink}">
-                                     <div id="overview-slider" class="splide mt-5">
+                                    <div id="overview-slider" class="splide mt-5">
+                                      <c:if test="${not empty product.rentalVideosLink}">
                                            <div class="splide__track">
                                              <ul class="splide__list">
                                                <c:forEach items="${product.rentalVideosLink}" var="productVideo"  varStatus="count">
@@ -98,8 +98,9 @@
                                                 </c:forEach>
                                             </ul>
                                         </div>
-                                     </div></c:if>
-                                     </div>
+                                      </c:if>
+                                    </div>
+                                 </div>
                                 <hr>
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#specs" role="button" aria-expanded="false" aria-controls="specs">
                                 <h5><spring:theme code = "pdp.specification.section.text"/></h5></a>

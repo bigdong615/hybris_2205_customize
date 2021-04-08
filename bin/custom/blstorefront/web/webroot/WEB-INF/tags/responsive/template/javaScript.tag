@@ -284,6 +284,18 @@
 	</c:if>
 	<c:if test="${cmsPage.uid eq 'productDetails'}">
 		 <script>
+		  // Expand Used Gear Items
+          var swap = document.getElementById("showmore");
+           $(swap).click(function (event) {
+            event.preventDefault();
+              $('.hide-product-row').toggle('slow');
+                if(swap.innerHTML === "Show More") {
+                   swap.innerHTML = "Show Less";
+                    } else {
+                  swap.innerHTML = "Show More";
+                   }
+                });
+
              // Mobile Menu styles - #my-menu is required for ALL pages
              document.addEventListener(
                  "DOMContentLoaded", () => {
@@ -383,6 +395,20 @@
                  resetButton: true,
                  buttonText : {"reset":"Reset"},
              });
+
+// Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+            type   : 'loop',
+            perPage: 1,
+            drag   : false,
+            breakpoints: {
+                '991': {
+                    pagination: false,
+                },
+            },
+            keyboard: false,
+        } ).mount());
+
          </script>
 
 		</c:if>

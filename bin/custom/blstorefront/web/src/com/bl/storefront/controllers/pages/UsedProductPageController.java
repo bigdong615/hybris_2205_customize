@@ -36,10 +36,9 @@ public class UsedProductPageController extends AbstractBlProductPageController {
 
     final ProductData productData = productFacade
         .getProductForCodeAndOptions(productCode, extraOptions);
-    productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
+    productData.setProductPageType(BlControllerConstants.USED_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, false);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
-
   }
 }
 
