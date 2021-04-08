@@ -9,6 +9,7 @@ import com.hybris.cockpitng.dataaccess.facades.type.DataType;
 import com.hybris.cockpitng.engine.WidgetInstanceManager;
 import com.hybris.cockpitng.util.notifications.NotificationService;
 import com.hybris.cockpitng.widgets.configurableflow.renderer.DefaultCustomViewRenderer;
+import org.apache.commons.lang.StringUtils;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Textbox;
 
@@ -32,7 +33,7 @@ public class WebScanToolRenderer extends DefaultCustomViewRenderer {
         if (webScanToolData == null) {
             this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.NOTIFICATION_HANDLER,
                     BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE, NotificationEvent.Level.FAILURE,
-                    "");
+                    StringUtils.EMPTY);
         } else {
             final Textbox barcodeInputField = new Textbox();
             barcodeInputField.setRows(BlInventoryScanLoggingConstants.SEVEN);
