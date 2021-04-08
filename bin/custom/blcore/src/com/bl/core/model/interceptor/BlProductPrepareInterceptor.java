@@ -11,12 +11,12 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import java.util.Collections;
+import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * This class is for setting the auto generated product Id on BlProduct
- * when it is created and has no productID associated to it
- * Creating rental prices on product based on retail price
+ * This class is for setting the auto generated product Id on BlProduct when it is created and has
+ * no productID associated to it Creating rental prices on product based on retail price
  *
  * @author Ritika
  */
@@ -27,36 +27,39 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
   private BlPricingService blPricingService;
 
   @Override
-  public void onPrepare(final BlProductModel blProductModel, final InterceptorContext interceptorContext)
+  public void onPrepare(final BlProductModel blProductModel,
+      final InterceptorContext interceptorContext)
       throws InterceptorException {
 
-    if( interceptorContext.isNew(blProductModel) && StringUtils.isBlank(blProductModel.getProductId())){
+    if (interceptorContext.isNew(blProductModel) && StringUtils
+        .isBlank(blProductModel.getProductId())) {
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
-    createOrUpdateRentalBlProductPrice(blProductModel,interceptorContext);
+    createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
   }
 
   /**
    * Create or update rental prices for BlProduct based on the available retail price
+   *
    * @param blProductModel
    */
-  private void createOrUpdateRentalBlProductPrice(final BlProductModel blProductModel, final InterceptorContext ctx ) {
-
-    PriceRowModel sevenDayPrice = getBlPricingService().getPriceRowByDuration(getEnumerationService().getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE).getCode(),blProductModel);
+  private void createOrUpdateRentalBlProductPrice(final BlProductModel blProductModel,
+      final InterceptorContext ctx) {
+    Optional<PriceRowModel> sevenDayPrice = blProductModel.getEurope1Prices().stream().filter(
+        price -> getEnumerationService()
+            .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
+            .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
-    if(retailPrice != null && retailPrice >0.0D) {
-      if (null == sevenDayPrice) {
-        sevenDayPrice = getBlPricingService()
-            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true);
-      } else if (null != sevenDayPrice && ctx
-          .isModified(blProductModel, BlProductModel.RETAILPRICE)) {
+    if (retailPrice != null && retailPrice > 0.0D) {
+      if (sevenDayPrice.isEmpty()) {
+        blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
+            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));
+      } else if (ctx.isModified(blProductModel, BlProductModel.RETAILPRICE)) {
         blProductModel.setRetailPrice(retailPrice);
-        sevenDayPrice = getBlPricingService()
-            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, false);
+        blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
+            .createOrUpdateSevenDayPrice(blProductModel, retailPrice, false)));
       }
-      if(sevenDayPrice != null) {
-        blProductModel.setEurope1Prices(Collections.singletonList(sevenDayPrice));
-      }
+
     }
   }
 
