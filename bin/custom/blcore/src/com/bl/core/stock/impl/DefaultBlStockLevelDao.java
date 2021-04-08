@@ -7,7 +7,6 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.stock.impl.DefaultStockLevelDao;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,8 +26,8 @@ import com.bl.core.stock.BlStockLevelDao;
 
 
 /**
- * @author Moumita
  * This class is used to get the inventory for a product
+ * @author Moumita
  */
 public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlStockLevelDao
 {

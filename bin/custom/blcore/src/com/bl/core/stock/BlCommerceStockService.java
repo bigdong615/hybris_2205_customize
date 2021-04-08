@@ -4,7 +4,6 @@ import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -12,8 +11,8 @@ import com.bl.core.data.StockResult;
 
 
 /**
- * @author Moumita
  * This class is used to get the inventory for a product
+ * @author Moumita
  */
 public interface BlCommerceStockService
 {
@@ -23,7 +22,7 @@ public interface BlCommerceStockService
 	 * @param productCode the product code
 	 * @param warehouses the list of warehouse associated to base store
 	 * @param startDate the start date
-	 * @param startDate the end date
+	 * @param endDate the end date
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
 	 */
 	Collection<StockLevelModel> getStockForDate(final String productCode, final Collection<WarehouseModel> warehouses,

@@ -8,9 +8,8 @@ import java.util.Date;
 
 
 /**
- * @author Moumita
- *
  * This method is used to fetch the data from stockLevel table
+ * @author Moumita
  */
 public interface BlStockLevelDao
 {

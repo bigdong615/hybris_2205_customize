@@ -28,8 +28,8 @@ import com.bl.logging.BlLogger;
 
 
 /**
- * @author Moumita
  * This class is used to get the inventory for a product
+ * @author Moumita
  */
 public class DefaultBlCommerceStockService implements BlCommerceStockService
 {
