@@ -23,8 +23,8 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
   private FieldNameProvider fieldNameProvider;
 
   @Override
-  public Collection<FieldValue> getFieldValues(IndexConfig indexConfig,
-      IndexedProperty indexedProperty, Object model) {
+  public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig,
+      final IndexedProperty indexedProperty, final Object model) {
     final Collection<FieldValue> fieldValues = new ArrayList<>();
 
     if (model instanceof ProductModel) {

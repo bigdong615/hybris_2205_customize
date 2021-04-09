@@ -1,6 +1,6 @@
 package com.bl.core.search.solrfacetsearch.provider.impl;
 
-import com.bl.core.media.impl.BLDefaultMediaContainerService;
+import com.bl.core.media.impl.DefaultBlMediaContainerService;
 import de.hybris.platform.core.model.media.MediaContainerModel;
 import de.hybris.platform.core.model.media.MediaFormatModel;
 import de.hybris.platform.core.model.media.MediaModel;
@@ -24,16 +24,18 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-public class BLImageValueProvider  extends AbstractPropertyFieldValueProvider implements
+public class BlImageValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
 
-  private static final Logger LOG = Logger.getLogger(BLImageValueProvider.class);
+  private static final Logger LOG = Logger.getLogger(BlImageValueProvider.class);
   private static final String BL_IMAGE = "blimage";
 
   private String mediaFormat;
   private MediaService mediaService;
   private FieldNameProvider fieldNameProvider;
-  private BLDefaultMediaContainerService blDefaultMediaContainerService;
+
+
+  private DefaultBlMediaContainerService defaultBlMediaContainerService;
 
   @Override
   public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig, final IndexedProperty indexedProperty,
@@ -70,7 +72,7 @@ public class BLImageValueProvider  extends AbstractPropertyFieldValueProvider im
         {
           try
           {
-            final List<MediaModel> mediaModelList =  getBlDefaultMediaContainerService().getMediaForFormatList(container,mediaFormatModel);
+            final List<MediaModel> mediaModelList =  getDefaultBlMediaContainerService().getMediaForFormatList(container,mediaFormatModel);
 
              if (!mediaModelList.isEmpty())
             {
@@ -154,13 +156,13 @@ public class BLImageValueProvider  extends AbstractPropertyFieldValueProvider im
   }
 
 
-  public BLDefaultMediaContainerService getBlDefaultMediaContainerService() {
-    return blDefaultMediaContainerService;
+  public DefaultBlMediaContainerService getDefaultBlMediaContainerService() {
+    return defaultBlMediaContainerService;
   }
 
-  public void setBlDefaultMediaContainerService(
-      BLDefaultMediaContainerService blDefaultMediaContainerService) {
-    this.blDefaultMediaContainerService = blDefaultMediaContainerService;
+  public void setDefaultBlMediaContainerService(
+      DefaultBlMediaContainerService defaultBlMediaContainerService) {
+    this.defaultBlMediaContainerService = defaultBlMediaContainerService;
   }
 
 }

@@ -1,6 +1,6 @@
 package com.bl.core.media.dao.impl;
 
-import com.bl.core.media.dao.BLMediaDao;
+import com.bl.core.media.dao.MediaBlDao;
 import de.hybris.platform.core.model.media.MediaContainerModel;
 import de.hybris.platform.core.model.media.MediaFormatModel;
 import de.hybris.platform.core.model.media.MediaModel;
@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class BLDefaultMediaDao implements BLMediaDao {
+public class DefaultBlMediaDao implements MediaBlDao {
 
   private FlexibleSearchService flexibleSearchService;
 
   @Override
-  public List<MediaModel> findMediaListByFormat(MediaContainerModel container, MediaFormatModel format) {
+  public List<MediaModel> findMediaListByFormat(final MediaContainerModel container, final MediaFormatModel format) {
     try {
       Map<String, Object> params = new TreeMap<>();
       params.put("container", container);

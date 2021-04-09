@@ -123,6 +123,8 @@ INSERT_UPDATE Category; code[unique = true]    ; active; name[lang = en]  ; onCa
                       ; NewArrivals-Cameras    ; true  ; New Cameras      ; true          ; New Cameras      ;
                       ; NewArrivals-Lenses     ; true  ; New Lenses       ; true          ; New Lenses       ;
                       ; NewArrivals-Production ; true  ; New Production   ; true          ; New Production   ;
+                      ; rentalgear             ; true  ; Rental Gear      ; true          ; Rental Gear      ;
+
 
 
 INSERT_UPDATE CategoryCategoryRelation; $categories            ; $supercategories
@@ -316,6 +318,9 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
                ;                ; audio-accessories
                ;                ; headphones
                ;                ; video-lighting-batteries
+
+
+
 
 
 

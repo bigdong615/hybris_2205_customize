@@ -79,6 +79,7 @@ INSERT_UPDATE Category; code[unique = true]    ; $catalogVersion; name[lang = $l
                       ; NewArrivals-Cameras    ;                ; New Cameras
                       ; NewArrivals-Lenses     ;                ; New Lenses
                       ; NewArrivals-Production ;                ; New Production
+               ;rentalgear;;Rental Gear
 
 
 

@@ -159,7 +159,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      * This method is created to identify whether category belongs to used gear category
      */
 
-    private void usedGearCategory(CategoryModel category, Model model) {
+    private void usedGearCategory(final CategoryModel category, final Model model) {
         if(!category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
         }
@@ -168,7 +168,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
     }
 
-    private void addClearAllQuery(CategoryModel category, Model model) {
+    private void addClearAllQuery(final CategoryModel category, final Model model) {
         if(CollectionUtils.isNotEmpty(category.getSupercategories())) {
             for (CategoryModel superCategory : category.getSupercategories()) {
                 if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {

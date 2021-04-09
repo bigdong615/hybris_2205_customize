@@ -596,30 +596,25 @@
 
 	<!--This is created for override OOB classes to get the media to be indexed to solr -->
 
-	<alias alias="flexibleSearchService" name="blDefaultFlexibleSearchService"/>
-	<bean id="blDefaultFlexibleSearchService" parent="defaultFlexibleSearchService"
-		class="com.bl.core.media.impl.BLDefaultFlexibleSearchService">
-	</bean>
-
-	<bean id="blDefaultMediaDao" class="com.bl.core.media.dao.impl.BLDefaultMediaDao">
+	<bean id="defaultBlMediaDao" class="com.bl.core.media.dao.impl.DefaultBlMediaDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-	<bean  id="blDefaultMediaService" class="com.bl.core.media.impl.BLDefaultMediaService">
-		<property name="blDefaultMediaDao" ref="blDefaultMediaDao"/>
+	<bean  id="defaultBlMediaService" class="com.bl.core.media.impl.DefaultBlMediaService">
+		<property name="defaultBlMediaDao" ref="defaultBlMediaDao"/>
 	</bean>
 
-	<bean id="blDefaultMediaContainerService" class="com.bl.core.media.impl.BLDefaultMediaContainerService">
-		<property name="blDefaultMediaService" ref="blDefaultMediaService"/>
+	<bean id="defaultBlMediaContainerService" class="com.bl.core.media.impl.DefaultBlMediaContainerService">
+		<property name="defaultBlMediaService" ref="defaultBlMediaService"/>
 	</bean>
 
  <!--Custom Value provider created for image format 300Wx300H to have multiple images to be indexed to solr-->
-	<bean id="blDefaultImageValueProvider"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BLImageValueProvider">
+	<bean id="defaultBlImageValueProvider"
+		class="com.bl.core.search.solrfacetsearch.provider.impl.BlImageValueProvider">
 		<property name="mediaFormat" value="300Wx300H"/>
 		<property name="mediaService" ref="mediaService" />
 		<property name="fieldNameProvider" ref="solrFieldNameProvider" />
-		<property name="blDefaultMediaContainerService" ref="blDefaultMediaContainerService" />
+		<property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
 	</bean>
 
 	<!--BL-75-->
