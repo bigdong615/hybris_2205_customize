@@ -383,6 +383,26 @@
                  resetButton: true,
                  buttonText : {"reset":"Reset"},
              });
+               // Initialize Additional Gear Slider - required for Single Product Page
+                  new Splide( '#gear-slider', {
+                      perPage: 4,
+                      breakpoints: {
+                         '991': {
+                         perPage: 3,
+                                },
+                         '767': {
+                          perPage: 2,
+                          arrows: false,
+                                },
+                         '640': {
+                          perPage: 1,
+                          arrows: false,
+                               },
+                         },
+                         rewind : true,
+                            gap: 20,
+                         padding: 10,
+             } ).mount();
          </script>
 
 		</c:if>

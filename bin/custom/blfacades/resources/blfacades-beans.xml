@@ -43,6 +43,13 @@
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
   </enum>
+
+  <!--BL-174 : This DTO contains date related information(for temporary purpose) -->
+  <bean class="com.bl.facades.product.data.RentalDateDto">
+    <property name="selectedFromDate" type="String"/>
+    <property name="selectedToDate" type="String"/>
+    <property name="numberOfDays" type="String"/>
+  </bean>
 </beans>
 
 
