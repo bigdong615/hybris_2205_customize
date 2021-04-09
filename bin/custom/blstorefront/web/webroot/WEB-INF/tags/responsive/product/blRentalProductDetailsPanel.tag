@@ -133,13 +133,12 @@
                                 <!-- Additional Gear Slider -->
                                 <!--TO-DO : This section will be fixed in bl-174  -->
                                  <h5><spring:theme code= "pdp.rental.product.recommendation.section.text" /></h5>
-                                 <div id="gear-slider" class="splide mt-4">
+                                  <div id="gear-slider" class="splide mt-4">
                                      <cms:pageSlot position="CrossSelling" var="comp" element="div" class="productDetailsPageSectionCrossSelling">
-                                             <cms:component component="${comp}" element="div" class="productDetailsPageSectionCrossSelling-component"/>
+                                         <cms:component component="${comp}" element="div" class="productDetailsPageSectionCrossSelling-component"/>
                                      </cms:pageSlot>
-                                 </div>
-                                <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="gear-slider-slide01 gear-slider-slide02 gear-slider-slide03 gear-slider-slide04" aria-label="Go to page 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="gear-slider-slide03 gear-slider-slide04 gear-slider-slide05 gear-slider-slide06" aria-label="Go to page 2"></button></li></ul></div>
-                                <!-- Start Reviews -->
+                                  </div>
+                               <!-- Start Reviews -->
                                 <div id="reviews" class="mb-5">
                                     <h5 class="mb-4"><spring:theme code= "pdp.review.section.text"/></h5><div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                     <div class="reviewBlock">
