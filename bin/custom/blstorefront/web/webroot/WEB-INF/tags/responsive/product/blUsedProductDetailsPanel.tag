@@ -35,52 +35,30 @@
                                 <table id="usedProductList">
                                     <thead>
                                         <tr>
-                                            <th>Condition</th>
-                                            <th class="d-none d-md-table-cell">Retail</th>
-                                            <th>Price</th>
-                                            <th class="d-none d-md-table-cell">Serial</th>
+                                            <th><spring:theme code="pdp.serial.table.rating.text"/></th>
+                                            <th class="d-none d-md-table-cell"><spring:theme code="pdp.serial.table.retail.price.text"/></th>
+                                            <th><spring:theme code="pdp.serial.table.price.text"/></th>
+                                            <th class="d-none d-md-table-cell"><spring:theme code="pdp.serial.table.number.text"/></th>
                                             <th></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">9.2</a></td>
+                                  <tbody>
+                                     <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
+                                         <tr class= " ${loop.index > 2 ? 'hide-product-row' : ''}">
+                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku${serialProduct.serialId}">${serialProduct.conditionRating}</a></td>
                                             <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
                                             <td>$1,550</td>
-                                            <td class="d-none d-md-table-cell">#52678</td>
+                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
                                             <td class="text-end"><a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
                                         </tr>
-                                        <tr>
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">9.2</a></td>
-                                            <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
-                                            <td>$1,550</td>
-                                            <td class="d-none d-md-table-cell">#52678</td>
-                                            <td class="text-end"><a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">9.2</a></td>
-                                            <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
-                                            <td>$1,550</td>
-                                            <td class="d-none d-md-table-cell">#52678</td>
-                                            <td class="text-end"><a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
-                                        </tr>
-                                        <tr class="hide-product-row">
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">9.2</a></td>
-                                            <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
-                                            <td>$1,550</td>
-                                            <td class="d-none d-md-table-cell">#52678</td>
-                                            <td class="text-end"><a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
-                                        </tr>
-                                        <tr class="hide-product-row">
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">9.2</a></td>
-                                            <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
-                                            <td>$1,550</td>
-                                            <td class="d-none d-md-table-cell">#52678</td>
-                                            <td class="text-end"><a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
-                                        </tr>
+                                       </c:forEach>
                                     </tbody>
                                 </table>
-                                <p class="mt-4"><a href="#" id="showmore"><spring:theme code="pdp.show.more.button.text"/></a> <a href="#" class="btn btn-sm btn-secondary float-end"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
+                                <p class="mt-4"><a href="#" id="showmore"><spring:theme code="pdp.show.more.button.text"/></a>
+                                <c:if test="${product.forRent}">
+                                <c:url var="rentUrl" value="/rent/product/${product.code}"/>
+                                <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
+                                </c:if>
                             </div>
                         </div>
                     </div>

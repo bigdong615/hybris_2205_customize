@@ -27,7 +27,7 @@
     <property name="isNew" type="Boolean"/>
     <property name="isUpcoming" type="Boolean"/>
     <property name="productPageType" type="java.lang.String"/>
-    <property name="serialproducts" type="java.util.List&lt;com.bl.facades.product.data.SerialProductData>"/>
+   <property name="serialproducts" type="java.util.List"/>
   </bean>
 
   <bean class="com.bl.facades.product.data.GenderData">
@@ -44,12 +44,6 @@
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
   </enum>
-
-  <bean class="com.bl.facades.product.data.SerialProductData">
-    <property name="conditionRating" type="double"/>
-    <property name="serialProductPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
-    <property name="serialId" type="String"/>
-  </bean>
 
 </beans>
 

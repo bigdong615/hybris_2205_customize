@@ -5,7 +5,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ProductVideoData;
-import com.bl.facades.product.data.SerialProductData;
+import com.bl.facades.product.SerialProductData;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
@@ -15,6 +15,7 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -54,7 +55,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
     target.setUsedDescription(source.getUsedDescription());
 
-    populatedSerialProduct(source.getSerialProducts());
+    target.setSerialproducts(populatedSerialProduct(source.getSerialProducts()));
 
   }
 
@@ -89,10 +90,21 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setDataSheet(imageList);
   }
 
-
-  private List populatedSerialProduct(Collection<BlSerialProductModel> blSerialProductModels){
+  /*
+   * This method is used for populating serial product.
+   */
+  private List populatedSerialProduct(Collection<BlSerialProductModel> blSerialProductModels) {
     List<SerialProductData> serialProductDataList = new ArrayList<>();
-    //serialProductDataList.forEach( );
+    blSerialProductModels.forEach(serialProductModel -> {
+          SerialProductData serialProductData = new SerialProductData();
+          serialProductData
+              .setConditionRating(serialProductModel.getConditionRatingOverallScore() + 5); //NOSONAR
+          serialProductData.setSerialId(serialProductModel.getProductId());
+          serialProductDataList.add(serialProductData);
+        }
+    );
+    Collections.sort(serialProductDataList);
+    Collections.reverse(serialProductDataList);
     return serialProductDataList;
   }
 
