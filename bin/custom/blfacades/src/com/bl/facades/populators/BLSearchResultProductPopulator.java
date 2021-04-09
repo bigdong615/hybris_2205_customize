@@ -361,11 +361,8 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
   }
 
   private void sourceNotEmpty (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
-    if(null!=this.<Boolean>getValue(source, key)) {
-      if (StringUtils.isBlank(target.getProductTagValues()) && this.<Boolean>getValue(source,
-          key)) {
-        target.setProductTagValues(value);
-      }
+    if (null!=this.<Boolean>getValue(source, key) && StringUtils.isBlank(target.getProductTagValues()) && this.<Boolean>getValue(source, key)) {
+      target.setProductTagValues(value);
     }
 
   }
