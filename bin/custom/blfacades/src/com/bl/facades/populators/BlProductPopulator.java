@@ -1,9 +1,11 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ProductVideoData;
+import com.bl.facades.product.data.SerialProductData;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
@@ -52,6 +54,8 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
     target.setUsedDescription(source.getUsedDescription());
 
+    populatedSerialProduct(source.getSerialProducts());
+
   }
 
   /*
@@ -83,6 +87,13 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
       imageList.add(imagedata);
     }
     target.setDataSheet(imageList);
+  }
+
+
+  private List populatedSerialProduct(Collection<BlSerialProductModel> blSerialProductModels){
+    List<SerialProductData> serialProductDataList = new ArrayList<>();
+    //serialProductDataList.forEach( );
+    return serialProductDataList;
   }
 
   public ModelService getModelService() {
