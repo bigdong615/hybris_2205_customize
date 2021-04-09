@@ -195,7 +195,7 @@
 	<!--This is created to Override OOB Populator to use custom logic for Price and Images which retrieving from solr-->
 
 	<bean id="blSearchResultProductPopulator"
-		class="com.bl.facades.populators.BLSearchResultProductPopulator">
+		class="com.bl.facades.populators.BlSearchResultProductPopulator">
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="imageFormatMapping" ref="imageFormatMapping"/>
 		<property name="priceDataFactory" ref="priceDataFactory"/>
@@ -209,7 +209,7 @@
 
 	<alias name="blSearchResultVariantProductPopulator" alias="blSearchResultVariantProductPopulator"/>
 	<bean id="blSearchResultVariantProductPopulator"
-		class="com.bl.facades.populators.BLSearchResultVariantProductPopulator"
+		class="com.bl.facades.populators.BlSearchResultVariantProductPopulator"
 		parent="blSearchResultProductPopulator">
 		<property name="categoryManager" ref="solrFirstVariantCategoryManager"/>
 		<property name="priceDataFactory" ref="priceDataFactory"/>
@@ -231,7 +231,7 @@
 
 	<alias name="blSearchResultVariantOptionsProductPopulator" alias="blCommerceSearchResultProductPopulator"/>
 	<bean id="blSearchResultVariantOptionsProductPopulator"
-		class="com.bl.facades.populators.BLSearchResultVariantOptionsProductPopulator"
+		class="com.bl.facades.populators.BlSearchResultVariantOptionsProductPopulator"
 		parent="blSearchResultVariantProductPopulator">
 		<property name="variantsService" ref="variantsService"/>
 		<property name="configurationService" ref="configurationService"/>

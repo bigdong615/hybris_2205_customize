@@ -37,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
-public class BLSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
+public class BlSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
 
   private static final String BL_IMAGE = "blimage";
   private static final String MEDIA_FORMAT = "300Wx300H";

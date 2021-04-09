@@ -24,7 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 
-public class BLSearchResultVariantOptionsProductPopulator extends BLSearchResultVariantProductPopulator{
+public class BlSearchResultVariantOptionsProductPopulator extends BlSearchResultVariantProductPopulator{
   public static final String ITEMTYPE_VARIANT_PROPERTY = "itemtype";
   public static final String CODE_VARIANT_PROPERTY = "code";
   public static final String URL_VARIANT_PROPERTY = "url";
