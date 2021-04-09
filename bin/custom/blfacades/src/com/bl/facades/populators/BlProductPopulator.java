@@ -4,8 +4,8 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.product.data.ProductVideoData;
 import com.bl.facades.product.SerialProductData;
+import com.bl.facades.product.data.ProductVideoData;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
@@ -54,9 +54,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
     target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
     target.setUsedDescription(source.getUsedDescription());
-
     target.setSerialproducts(populatedSerialProduct(source.getSerialProducts()));
-
   }
 
   /*
@@ -93,8 +91,8 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
   /*
    * This method is used for populating serial product.
    */
-  private List populatedSerialProduct(Collection<BlSerialProductModel> blSerialProductModels) {
-    List<SerialProductData> serialProductDataList = new ArrayList<>();
+  private List populatedSerialProduct(final Collection<BlSerialProductModel> blSerialProductModels) {
+   final List<SerialProductData> serialProductDataList = new ArrayList<>();
     blSerialProductModels.forEach(serialProductModel -> {
           SerialProductData serialProductData = new SerialProductData();
           serialProductData

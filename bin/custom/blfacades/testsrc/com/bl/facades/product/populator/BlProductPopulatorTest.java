@@ -37,25 +37,23 @@ public class BlProductPopulatorTest {
   ProductData productData;
 
   @Before
-  public void prepare(){
+  public void prepare() {
     MockitoAnnotations.initMocks(this);
     productData = new ProductData();
   }
 
   @Test
-  public void shouldPopulateData()
-  {
-   when(productModel.getCode()).thenReturn(PRODUCT_CODE);
-   when(productModel.getDisplayName()).thenReturn(DISPLAY_NAME);
-   when(productModel.getRentalIncludes()).thenReturn(RENTAL_INCLUDE);
-   when(productModel.getForRent()).thenReturn(Boolean.TRUE);
-   when(productModel.getShortDescription()).thenReturn(SHORT_DESCRIPTION);
-
-populator.populate(productModel,productData);
-    assertEquals(productData.getDisplayName(),DISPLAY_NAME);
-    assertEquals(productData.getRentalIncludes(),RENTAL_INCLUDE);
-    assertEquals(productData.getForRent(),Boolean.TRUE);
-    assertEquals(productData.getShortDescription(),SHORT_DESCRIPTION);
+  public void shouldPopulateData() {
+    when(productModel.getCode()).thenReturn(PRODUCT_CODE);
+    when(productModel.getDisplayName()).thenReturn(DISPLAY_NAME);
+    when(productModel.getRentalIncludes()).thenReturn(RENTAL_INCLUDE);
+    when(productModel.getForRent()).thenReturn(Boolean.TRUE);
+    when(productModel.getShortDescription()).thenReturn(SHORT_DESCRIPTION);
+    populator.populate(productModel, productData);
+    assertEquals(productData.getDisplayName(), DISPLAY_NAME);
+    assertEquals(productData.getRentalIncludes(), RENTAL_INCLUDE);
+    assertEquals(productData.getForRent(), Boolean.TRUE);
+    assertEquals(productData.getShortDescription(), SHORT_DESCRIPTION);
   }
 
 }

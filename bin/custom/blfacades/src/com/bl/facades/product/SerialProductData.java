@@ -16,15 +16,15 @@ public class SerialProductData implements Comparable<SerialProductData>, Seriali
   private String serialId;
 
   @Override
-  public int compareTo(SerialProductData o) { // NOSONAR
-    if (o == null) {
+  public int compareTo(SerialProductData serialProductData) { // NOSONAR
+    if (serialProductData == null) {
       return -1;
     }
-    int c = Double.valueOf(conditionRating).compareTo(o.conditionRating);
+    int c = Double.valueOf(conditionRating).compareTo(serialProductData.conditionRating);
     if (c != 0) {
       return c;
     }
-    return (int) o.getConditionRating();
+    return (int) serialProductData.getConditionRating();
   }
 
   public void setConditionRating(final double conditionRating) {

@@ -7,7 +7,7 @@
 
  <div class="screen"></div>
      <cms:pageSlot position="SearchBoxBl" var="component">
-     				<cms:component component="${component}"/>
+     		<cms:component component="${component}"/>
      </cms:pageSlot>
      <section id="theProduct">
             <div class="container">
