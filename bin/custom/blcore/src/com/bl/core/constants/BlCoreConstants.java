@@ -67,4 +67,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CLEAR_ALL_QUERY = "clearAllQuery";
 	public static final String CLEAR_ALL = "usedgear.clear.all";
 	public static final String PARENT_CATEGORY = "{parentcategory}";
+	public static final String RENTAL_CLEAR_ALL = "rentalgear.clear.all";
+	public static final String RENTAL_GEAR_MAP = "key.rentalgear.new";
+	public static final String CLEAR_BRAND = "brandClear";
 }

@@ -22,10 +22,20 @@
               				</c:forEach>
               </c:when>
               <c:otherwise>
+              <c:choose>
+              <c:when test="${pageData.breadcrumbs.size()<2 && superCategory ne null}">
+              <c:url var= "clearUrl" value ="${brandClear}"/>
+                <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
+                             						    <a href="${fn:escapeXml(clearUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
+                 </c:forEach>
+              </c:when>
+              <c:otherwise>
                <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
                						<c:url value="${breadcrumb.removeQuery.url}" var="removeQueryUrl"/>
                						    <a href="${fn:escapeXml(removeQueryUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
                				</c:forEach>
+              </c:otherwise>
+              </c:choose>
               </c:otherwise>
               </c:choose>
 			</ul>

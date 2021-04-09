@@ -456,6 +456,13 @@
                     <description>If the category is active</description>
                   </attribute>
 
+                  <attribute qualifier="rentalCategory" type="boolean">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" search="true" optional="false" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                    <description>Defines Category is Rental</description>
+                  </attribute>
+
                 </attributes>
 
             </itemtype>

@@ -257,12 +257,6 @@
 	<bean id="blSolrSearchQueryDecoderPopulator"
 		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
 
-	<!--BL-80 entry for Used Gear Category Model Resolver-->
-	<alias name="defaultBlUsedGearCategoryModelUrlResolver" alias="categoryModelUrlResolver"/>
-	<bean id="defaultBlUsedGearCategoryModelUrlResolver"
-		class="com.bl.facades.resolver.DefaultBlUsedGearCategoryModelUrlResolver" parent="defaultCategoryModelUrlResolver">
-		<property name="usedGearPattern" value="/buy/category/{category-code}"/>
-	</bean>
 
 	<!-- BL-166 :This populator is created for populating bl related specific product attribute-->
 	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator">
@@ -292,14 +286,6 @@
 	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
 		<property name="blCartService" ref="cartService" />
 	</bean>
-
-	<!--BL-80 Added for BlSearchFilterPopulator to add the parameters to solr query-->
-	<alias name="blSearchFiltersPopulator" alias="commerceSearchFiltersPopulator" />
-	<bean id="blSearchFiltersPopulator" class="com.bl.facades.populators.BlSearchFiltersPopulator" parent="defaultCommerceSearchFiltersPopulator" />
-
-	<alias name="blSolrSearchQueryDecoderPopulator" alias="solrSearchQueryDecoderPopulator"/>
-	<bean id="blSolrSearchQueryDecoderPopulator"
-		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
 
 	<!--BL-80 entry for Used Gear Category Model Resolver-->
 	<alias name="defaultBlUsedGearAndRentalGearCategoryModelUrlResolver" alias="categoryModelUrlResolver"/>

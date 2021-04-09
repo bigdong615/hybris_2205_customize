@@ -35,7 +35,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/buy/category/")
-public class BlUsedCategoryPageController extends AbstractCategoryPageController {
+public class BlUsedCategoryPageController extends AbstractBlCategoryPageController {
+
+  protected static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{categoryCode:.*}";
 
   @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
   public String category(@PathVariable("categoryCode") final String categoryCode, // NOSONAR
@@ -47,106 +49,4 @@ public class BlUsedCategoryPageController extends AbstractCategoryPageController
     return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, request, response);
   }
 
-  protected String performSearchAndGetResultsPage(final String categoryCode, String searchQuery, final int page, // NOSONAR
-      final ShowMode showMode, final String sortCode, final Model model, final HttpServletRequest request,
-      final HttpServletResponse response) throws UnsupportedEncodingException
-  {
-    final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
-
-
-    final String redirection = checkRequestUrl(request, response,  getCategoryModelUrlResolver().resolve(category));
-    if (StringUtils.isNotEmpty(redirection))
-    {
-      return redirection;
-    }
-
-    final CategoryPageModel categoryPage = getCategoryPage(category);
-
-    //BL-80 Added to get default sorting as newest for Used New Arrivals Category
-    if(StringUtils.isBlank(searchQuery)) {
-      if (BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(category.getCode())) {
-        searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
-      } else {
-        searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE);
-      }
-    }
-
-    final CategorySearchEvaluator categorySearch = new CategorySearchEvaluator(categoryCode, searchQuery, page, showMode,
-        sortCode, categoryPage);
-
-    ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData = null;
-    try
-    {
-      categorySearch.doSearch();
-      searchPageData = categorySearch.getSearchPageData();
-    }
-    catch (final ConversionException e) // NOSONAR
-    {
-      searchPageData = createEmptySearchResult(categoryCode);
-    }
-
-    final boolean showCategoriesOnly = categorySearch.isShowCategoriesOnly();
-
-    storeCmsPageInModel(model, categorySearch.getCategoryPage());
-    storeContinueUrl(request);
-
-    populateModel(model, searchPageData, showMode);
-    model.addAttribute(WebConstants.BREADCRUMBS_KEY, getSearchBreadcrumbBuilder().getBreadcrumbs(categoryCode, searchPageData));
-    model.addAttribute("showCategoriesOnly", Boolean.valueOf(showCategoriesOnly));
-    model.addAttribute("categoryName", category.getName());
-    model.addAttribute("pageType", PageType.CATEGORY.name());
-    model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
-    model.addAttribute("footerContent",category.getFooterContent());
-
-    updatePageTitle(category, model);
-    // BL-80 To check whether current category is used gear category
-    usedGearCategory(category,model);
-
-    final RequestContextData requestContextData = getRequestContextData(request);
-    requestContextData.setCategory(category);
-    requestContextData.setSearch(searchPageData);
-
-    if (searchQuery != null)
-    {
-      model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
-    }
-
-    addClearAllQuery(category,model);
-
-    final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
-        category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
-            Collectors.toSet()));
-    final String metaDescription = MetaSanitizerUtil.sanitizeDescription(category.getDescription());
-    setUpMetaData(model, metaKeywords, metaDescription);
-
-    return getViewPage(categorySearch.getCategoryPage());
-
-  }
-
-  /**
-   * This method is created to identify whether category belongs to used gear category
-   */
-  private void usedGearCategory(CategoryModel category, Model model) {
-    if(BlCoreConstants.USED_GEAR.equalsIgnoreCase(category.getName())){
-      model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_PAGE);
-    }
-    else {
-      for (CategoryModel superCategory : category.getSupercategories()) {
-        if (BlCoreConstants.USED_GEAR.equalsIgnoreCase(superCategory.getName())) {
-          model
-              .addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.USED_GEAR_PAGE);
-        } else {
-          model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,
-              BlCoreConstants.RENTAL_GEAR_PAGE);
-        }
-      }
-    }
-  }
-
-  private void addClearAllQuery(CategoryModel category, Model model) {
-    if(category.isFacetedCategory()) {
-      final String clearALL = Config.getParameter(BlCoreConstants.CLEAR_ALL);
-      model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, clearALL);
-    }
-  }
 }
