@@ -24,6 +24,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
 
+	public static final String SEVEN_DAY_PRICE = "7";
+	public static final String PIECES = "pieces";
+	public static final String USD = "USD";
+
 	//Inventory Availability
 	public static final String ACTIVE = "active";
 	public static final String PRODUCT_CODE = "productCode";
