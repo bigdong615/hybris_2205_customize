@@ -145,8 +145,7 @@
             rewind : true,
             gap: 30,
         } ).mount();
-        /* Uncomment below piece of JS after adding feature gear section on homepage */ 
-        /* new Splide( '#gear-slider', {
+         new Splide( '#gear-slider', {
             perPage: 3,
             breakpoints: {
                 '991': {
@@ -159,7 +158,7 @@
             rewind : true,
             gap: 20,
             padding: 10,
-        } ).mount();  */
+        } ).mount();  
         document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 1,

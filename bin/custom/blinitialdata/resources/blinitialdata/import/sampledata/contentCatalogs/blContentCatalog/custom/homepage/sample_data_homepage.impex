@@ -156,6 +156,9 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
                                          ;                         ; MobileHeaderBottomInfoComponent1 ; Mobile Header Bottom Info Component1 ; MobileHeaderBottomInfoComponent1 ;"<i class='icon-availability'></i> Real time availability"
 										;                         ; MobileHeaderBottomInfoComponent2 ; Mobile Header Bottom Info Component2 ; MobileHeaderBottomInfoComponent2 ;"<i class='icon-checkbadge'></i> Free changes & cancellations"
 										;                         ; MobileHeaderBottomInfoComponent3 ; Mobile Header Bottom Info Component3 ; MobileHeaderBottomInfoComponent3 ;"<i class='icon-truck'></i> Free 2-day shipping"
+
+INSERT_UPDATE ProductCarouselComponent;$contentCV[unique=true];uid[unique=true]				;name					;title		 ;&componentRef					; products(code, $productCV)
+									  ;						  ;HomePageFeaturedGearComponent;Homepage Featured Gear;Featured Gear;HomePageFeaturedGearComponent ; Canon_1Ds_Mark_II,Nikon_D70,Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon,67mm_CP_Filter,72mm_CP_Filter,Hasselblad_H5D40_Medium_Format_DSLR_Camera,Nikon-D5300-Digital-SLR-Camera,Panasonic_Battery_DMW-BLC12
                                  
                                  
 ###  Assign Components to the Slots  ###
@@ -184,6 +187,6 @@ UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 
                    ;                         ; MobileHeaderLinkForSupportSlot           ; BLSupportNavComponent
                    ;                         ; MobileHeaderLinkForAccountSlot           ; AccountNavigationComponent				   
                    ;                         ; MobileHeaderBottomInfo                       ; MobileHeaderBottomInfoComponent1,MobileHeaderBottomInfoComponent2,MobileHeaderBottomInfoComponent3                   
-                   
+				   ;						 ; HomePageFeaturedGearSectionSlot    ; HomePageFeaturedGearComponent                   
                    
                    

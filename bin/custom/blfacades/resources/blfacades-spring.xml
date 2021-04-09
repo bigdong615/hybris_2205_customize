@@ -276,4 +276,16 @@
 		<property name="blCartService" ref="cartService" />
 	</bean>
 
+	<!-- BL-52 : Overrided OOTB Product Carousel Facade to add extra ProductOptions to populate Product Data. -->
+	<alias name="defaultblProductCarouselFacade" alias="productCarouselFacade"/>
+	<bean id="defaultblProductCarouselFacade" class="com.bl.facades.product.carousel.DefaultBlProductCarouselFacade" parent="defaultProductCarouselFacade"/>
+	
+	<!-- BL-52 : Added Existing Populator to populate Products required data in Carousel Component -->
+	<bean parent="configurablePopulatorModification">
+		<property name="target" ref="productConfiguredPopulator" />
+		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
+		<property name="key" value="REQUIRED_DATA" />
+		<property name="add" ref="blProductPopulator" />
+	</bean>
+	
 </beans>
