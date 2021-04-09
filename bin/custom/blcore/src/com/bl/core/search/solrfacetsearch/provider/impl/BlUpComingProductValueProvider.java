@@ -10,38 +10,47 @@ import de.hybris.platform.solrfacetsearch.provider.FieldValueProvider;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractPropertyFieldValueProvider;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Manikandan
- *
- * This Class is created for indexing upcomingProduct Value to solr
+ *This Class is created for indexing upcomingProduct Value to solr
  */
+
 public class BlUpComingProductValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
 
   private FieldNameProvider fieldNameProvider;
 
+  /**
+   *
+   * @param indexConfig indexConfig for solr
+   * @param indexedProperty indexed property for solr
+   * @param model defines product
+   * @return Collection<FieldValue> to solr
+   */
   @Override
   public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig,
       final IndexedProperty indexedProperty, final Object model) {
-    final Collection<FieldValue> fieldValues = new ArrayList<>();
 
-    if (model instanceof ProductModel) {
-      final BlProductModel product = (BlProductModel) model;
-      fieldValues.addAll(createFieldValue(product, indexedProperty));
+    if (model instanceof BlProductModel) {
+      return createFieldValue((BlProductModel) model, indexedProperty);
     }
-    return fieldValues;
+    return Collections.emptyList();
   }
 
   /**
-   * This Method is created for checking upcomingProducts
+   * This method is created for getting upcoming products to solr
+   * @param product defines product
+   * @param indexedProperty indexedproperty of solr
+   * @retur  List<FieldValue> to be index to solr
    */
   private List<FieldValue> createFieldValue(final BlProductModel product, final IndexedProperty indexedProperty)
   {
     final List<FieldValue> fieldValues = new ArrayList<>();
     boolean upComing = true;
-    // Condition added for Blproducts and their respective SerialProducts
+    // Condition added to check current blproduct and their respective serial products  is forrent
     if(product.getSerialProducts().stream().anyMatch(BlProductModel::getForRent) && product.getForRent()) {
       upComing = false;
     }
@@ -49,6 +58,12 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
     return fieldValues;
   }
 
+  /**
+   *
+   * @param fieldValues list of values
+   * @param indexedProperty indexedproperty for solr
+   * @param value determines the upcoming boolean
+   */
   private void addFieldValues(final List<FieldValue> fieldValues,
       final IndexedProperty indexedProperty, final boolean value)
   {

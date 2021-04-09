@@ -17,8 +17,8 @@ import java.util.List;
 public class DefaultBlMediaService implements BlMediaService {
   private DefaultBlMediaDao defaultBlMediaDao;
 
-  /*
-   * This method is created to get List of media model which to be index to solr
+  /**
+   * @inheritdoc
    */
   @Override
   public List<MediaModel> getMediaListByFormat(final MediaContainerModel container, final MediaFormatModel format) {

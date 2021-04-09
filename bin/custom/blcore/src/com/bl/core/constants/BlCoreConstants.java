@@ -57,9 +57,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GREAT_VALUE_STRING = "Great Value";
 	public static final String STAFF_PICK_STRING = "Staff Pick";
 	public static final String CLEAR_ALL_QUERY = "clearAllQuery";
-	public static final String CLEAR_ALL = "usedgear.clear.all";
 	public static final String PARENT_CATEGORY = "{parentcategory}";
-	public static final String RENTAL_CLEAR_ALL = "rentalgear.clear.all";
+	public static final String RENTAL_CLEAR_ALL = "/rent/category/rentalgear";
 	public static final String RENTAL_GEAR_MAP = "key.rentalgear.new";
 	public static final String CLEAR_BRAND = "brandClear";
 	public static final String SUPER_CATEGORY = "superCategory";
@@ -84,6 +83,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final long MIN_TOTAL = 5L;
 	public static final long LOW_AVAILABILITY = 2L;
 	public static final long ZERO_AVAILABILITY = 0L;
+
 
 	private BlCoreConstants()
 	{

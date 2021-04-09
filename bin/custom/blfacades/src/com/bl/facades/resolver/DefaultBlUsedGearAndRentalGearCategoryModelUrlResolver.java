@@ -21,34 +21,43 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver extends
    */
   @Override
   protected String resolveInternal(final CategoryModel source) {
-    String url = "";
-    // Added condition based on rental and used gear category
-    if (!source.isRentalCategory()) {
-      url = getUsedGearPattern();
-    } else if (source.isRentalCategory() && CollectionUtils.isEmpty(source.getSupercategories())) {
-      url = getDefaultPattern();
-    } else if (source.isRentalCategory()) {
-      url = getRentalGearPattern();
+
+    // if source is renatal get the url for renatal gear
+    if(source.isRentalCategory()) {
+      if(CollectionUtils.isEmpty(source.getSupercategories())) {
+        return getUrl(getDefaultPattern() , source);
+      }
+       return getUrl(getRentalGearPattern(),source);
     }
-    return getUrl(url ,source);
+    else {
+      return getUrl(getUsedGearPattern() , source);
+    }
   }
 
+  /**
+   * This method is created to get the url for rental and used gear category
+   * @param url url pattern
+   * @param source defines categorymodel
+   * @return String of url
+   */
   private String getUrl(String url ,final CategoryModel source) {
 
     if (url.contains(BlCoreConstants.BASE_SITE_UID)) {
       url = url.replace(BlCoreConstants.BASE_SITE_UID, urlEncode(getBaseSiteUid().toString()));
     }
+    // Addd to check whether the url contains level 1 category code for rental gear
     if (url.contains(BlCoreConstants.PARENT_CATEGORY)) {
-      String parentCode = "";
-      for (CategoryModel superCategory : source.getSupercategories()) {
-        if (!BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(superCategory.getName())) {
-          parentCode = superCategory.getCode();
+      if(source.isRentalCategory()) {
+        String parentCode = "";
+        for (CategoryModel superCategory : source.getSupercategories()) {
+            parentCode = superCategory.getCode();
         }
+        final String parentCategoryCode = urlEncode(parentCode)
+            .replaceAll("\\+", BlCoreConstants.REPLACE_STRING);
+        url = url.replace(BlCoreConstants.PARENT_CATEGORY, parentCategoryCode);
       }
-      final String parentCategoryCode = urlEncode(parentCode)
-          .replaceAll("\\+", BlCoreConstants.REPLACE_STRING);
-      url = url.replace(BlCoreConstants.PARENT_CATEGORY, parentCategoryCode);
     }
+    // added to check whether the url contains category code for rental and used gear
     if (url.contains(BlCoreConstants.CATEGORY_PATTERN_CODE)) {
       final String categoryCode = urlEncode(source.getCode())
           .replaceAll("\\+", BlCoreConstants.REPLACE_STRING);

@@ -37,7 +37,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
-public class DefaultBlSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
+/**
+ * This class is completly overriden for adding custom logics on populator
+ * @author Manikandan
+ */
+public class BlSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
 
   private static final String BL_IMAGE = "blimage";
   private static final String MEDIA_FORMAT = "300Wx300H";
@@ -51,94 +55,12 @@ public class DefaultBlSearchResultProductPopulator implements Populator<SearchRe
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
 
-  protected PriceDataFactory getPriceDataFactory()
-  {
-    return priceDataFactory;
-  }
 
-  @Required
-  public void setPriceDataFactory(final PriceDataFactory priceDataFactory)
-  {
-    this.priceDataFactory = priceDataFactory;
-  }
-
-  protected ImageFormatMapping getImageFormatMapping()
-  {
-    return imageFormatMapping;
-  }
-
-  @Required
-  public void setImageFormatMapping(final ImageFormatMapping imageFormatMapping)
-  {
-    this.imageFormatMapping = imageFormatMapping;
-  }
-
-  protected UrlResolver<ProductData> getProductDataUrlResolver()
-  {
-    return productDataUrlResolver;
-  }
-
-  @Required
-  public void setProductDataUrlResolver(final UrlResolver<ProductData> productDataUrlResolver)
-  {
-    this.productDataUrlResolver = productDataUrlResolver;
-  }
-
-  protected Populator<FeatureList, ProductData> getProductFeatureListPopulator()
-  {
-    return productFeatureListPopulator;
-  }
-
-  @Required
-  public void setProductFeatureListPopulator(final Populator<FeatureList, ProductData> productFeatureListPopulator)
-  {
-    this.productFeatureListPopulator = productFeatureListPopulator;
-  }
-
-  protected ProductService getProductService()
-  {
-    return productService;
-  }
-
-  @Required
-  public void setProductService(final ProductService productService)
-  {
-    this.productService = productService;
-  }
-
-  protected CommonI18NService getCommonI18NService()
-  {
-    return commonI18NService;
-  }
-
-  @Required
-  public void setCommonI18NService(final CommonI18NService commonI18NService)
-  {
-    this.commonI18NService = commonI18NService;
-  }
-
-  protected Converter<ProductModel, StockData> getStockConverter()
-  {
-    return stockConverter;
-  }
-
-  @Required
-  public void setStockConverter(final Converter<ProductModel, StockData> stockConverter)
-  {
-    this.stockConverter = stockConverter;
-  }
-
-  protected Converter<StockLevelStatus, StockData> getStockLevelStatusConverter()
-  {
-    return stockLevelStatusConverter;
-  }
-
-  @Required
-  public void setStockLevelStatusConverter(final Converter<StockLevelStatus, StockData> stockLevelStatusConverter)
-  {
-    this.stockLevelStatusConverter = stockLevelStatusConverter;
-  }
-
+  /**
+   * this method is created for populating values from source to target
+   * @param source the source object
+   * @param target the target to fill
+   */
   @Override
   public void populate(final SearchResultValueData source, final ProductData target) {
     Assert.notNull(source, "Parameter source cannot be null.");
@@ -153,6 +75,7 @@ public class DefaultBlSearchResultProductPopulator implements Populator<SearchRe
     target.setConfigurable(this.<Boolean>getValue(source, "configurable"));
     target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
+    // Add Product Tags to product
     addProductTag(source,target);
     populatePrices(source, target);
 
@@ -345,29 +268,65 @@ public class DefaultBlSearchResultProductPopulator implements Populator<SearchRe
     return new FeatureList(featuresList);
   }
 
+  /**
+   *  this is method is created for adding product tags to target
+   * @param source source object
+   * @param target target to fill
+   */
   private void addProductTag(final SearchResultValueData source, final ProductData target) {
-    sourceNotEmpty(source,target,BlCoreConstants.IS_NEW,BlCoreConstants.NEW);
-    sourceNotEmpty(source,target,BlCoreConstants.MOST_POPULAR,BlCoreConstants.POPULAR);
-    addProductTagIsRent(source,target);
-    addGreatValue(source,target,BlCoreConstants.UPCOMING);
-
+    addProductTag(source,target,BlCoreConstants.IS_NEW,BlCoreConstants.NEW);
+    addProductTag(source,target,BlCoreConstants.MOST_POPULAR,BlCoreConstants.POPULAR);
+    if(StringUtils.isBlank(target.getProductTagValues()) && null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
+      addProductTagIsRent(source, target);
+    }
+    getUpcoming(source, target, BlCoreConstants.UPCOMING);
   }
 
+  /**
+   * This method is created to add pproduct tags to target in case if rental product
+   * @param source soucre object
+   * @param target target to be fill
+   */
   private void addProductTagIsRent(final SearchResultValueData source, final ProductData target) {
-    if (null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
-      sourceNotEmpty(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
-      sourceNotEmpty(source,target,BlCoreConstants.STAFF_PICK,BlCoreConstants.STAFF_PICK_STRING);
+      addProductTagForRent(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
+      if(StringUtils.isBlank(target.getProductTagValues())) {
+        addProductTagForRent(source, target, BlCoreConstants.STAFF_PICK, BlCoreConstants.STAFF_PICK_STRING);
       }
   }
 
-  private void sourceNotEmpty (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
-    if (null!=this.<Boolean>getValue(source, key) && StringUtils.isBlank(target.getProductTagValues()) && this.<Boolean>getValue(source, key)) {
+  /**
+   * This method is created for adding product tags to target in case rental and used gear product
+   * @param source source onject
+   * @param target target to be fill
+   * @param key key to fetch value from source
+   * @param value value to be set for target
+   */
+  private void addProductTag (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
+    if (StringUtils.isBlank(target.getProductTagValues()) && null!=this.<Boolean>getValue(source, key)  && this.<Boolean>getValue(source, key)) {
       target.setProductTagValues(value);
     }
-
   }
 
-  private void addGreatValue (final SearchResultValueData source, final ProductData target ,final String key) {
+  /**
+   * This method is created to add pproduct tags to target in case if rental product
+   * @param source soucre object
+   * @param target target to be fill
+   * @param key key to fetch value from source
+   * @param value value to be set for target
+   */
+  private void addProductTagForRent (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
+    if (null!=this.<Boolean>getValue(source, key)  && this.<Boolean>getValue(source, key)) {
+      target.setProductTagValues(value);
+    }
+  }
+
+  /**
+   * This method is greated for setting upcoming product to target
+   * @param source source objet
+   * @param target target to be fill
+   * @param key key to get value from source
+   */
+  private void getUpcoming (final SearchResultValueData source, final ProductData target ,final String key) {
       if (this.<Boolean>getValue(source, key)) {
         target.setIsUpcoming(this.<Boolean>getValue(source,key));
     }
@@ -400,4 +359,93 @@ public class DefaultBlSearchResultProductPopulator implements Populator<SearchRe
   {
     return new ImageData();
   }
+
+  protected PriceDataFactory getPriceDataFactory()
+  {
+    return priceDataFactory;
+  }
+
+  @Required
+  public void setPriceDataFactory(final PriceDataFactory priceDataFactory)
+  {
+    this.priceDataFactory = priceDataFactory;
+  }
+
+  protected ImageFormatMapping getImageFormatMapping()
+  {
+    return imageFormatMapping;
+  }
+
+  @Required
+  public void setImageFormatMapping(final ImageFormatMapping imageFormatMapping)
+  {
+    this.imageFormatMapping = imageFormatMapping;
+  }
+
+  protected UrlResolver<ProductData> getProductDataUrlResolver()
+  {
+    return productDataUrlResolver;
+  }
+
+  @Required
+  public void setProductDataUrlResolver(final UrlResolver<ProductData> productDataUrlResolver)
+  {
+    this.productDataUrlResolver = productDataUrlResolver;
+  }
+
+  protected Populator<FeatureList, ProductData> getProductFeatureListPopulator()
+  {
+    return productFeatureListPopulator;
+  }
+
+  @Required
+  public void setProductFeatureListPopulator(final Populator<FeatureList, ProductData> productFeatureListPopulator)
+  {
+    this.productFeatureListPopulator = productFeatureListPopulator;
+  }
+
+  protected ProductService getProductService()
+  {
+    return productService;
+  }
+
+  @Required
+  public void setProductService(final ProductService productService)
+  {
+    this.productService = productService;
+  }
+
+  protected CommonI18NService getCommonI18NService()
+  {
+    return commonI18NService;
+  }
+
+  @Required
+  public void setCommonI18NService(final CommonI18NService commonI18NService)
+  {
+    this.commonI18NService = commonI18NService;
+  }
+
+  protected Converter<ProductModel, StockData> getStockConverter()
+  {
+    return stockConverter;
+  }
+
+  @Required
+  public void setStockConverter(final Converter<ProductModel, StockData> stockConverter)
+  {
+    this.stockConverter = stockConverter;
+  }
+
+  protected Converter<StockLevelStatus, StockData> getStockLevelStatusConverter()
+  {
+    return stockLevelStatusConverter;
+  }
+
+  @Required
+  public void setStockLevelStatusConverter(final Converter<StockLevelStatus, StockData> stockLevelStatusConverter)
+  {
+    this.stockLevelStatusConverter = stockLevelStatusConverter;
+  }
+
 }

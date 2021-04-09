@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 @RequestMapping(value = "**/rent/category")
-public class RentalGearCategoryPageController extends AbstractBlCategoryPageController {
+public class BlRentalGearCategoryPageController extends AbstractBlCategoryPageController {
 
   private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";
 

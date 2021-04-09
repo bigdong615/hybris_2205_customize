@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -75,7 +74,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         // BL-268 Added For Faceted PLP & Default Sorting for PLP
         StringBuilder configParam  = new StringBuilder();
         if(StringUtils.isBlank(searchQuery)) {
-            searchQuery = getDefaultSort(category ,configParam ,searchQuery,categoryCode);
+            if(category.isRentalCategory()) {
+                searchQuery = getDefaultSort(category, configParam, searchQuery, categoryCode);
+            }
         }
 
         final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
@@ -88,7 +89,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
         //BL-80 Added to get default sorting as newest for Used New Arrivals Category
         if(StringUtils.isBlank(searchQuery)) {
-            if (BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(category.getCode()) || category.getCode().startsWith(BlCoreConstants.NEW)) {
+            if (category.getCode().startsWith(BlCoreConstants.NEW) || BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(category.getCode())) {
                 searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
             } else {
                 searchQuery = Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE);
@@ -137,7 +138,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
 
 
-        addClearAllQuery(category,model);
+        if(category.isRentalCategory()) {
+            addClearAllQuery(category, model);
+        }
 
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
             category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
@@ -151,13 +154,12 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     /**
      * This method is created to identify whether category belongs to used gear category or rental gear
      */
-
     private void usedGearCategory(final CategoryModel category, final Model model) {
-        if(!category.isRentalCategory()){
-            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
+        if(category.isRentalCategory()){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
         }
         else {
-            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
         }
     }
 
@@ -167,22 +169,16 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     private void addClearAllQuery(final CategoryModel category, final Model model) {
         if(CollectionUtils.isNotEmpty(category.getSupercategories())) {
             for (CategoryModel superCategory : category.getSupercategories()) {
-                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
-                    final String clearALL = Config.getParameter(BlCoreConstants.RENTAL_CLEAR_ALL);
-                    model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, clearALL);
+                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getCode())) {
+                    model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, BlCoreConstants.RENTAL_CLEAR_ALL);
                     model.addAttribute(BlCoreConstants.SUPER_CATEGORY, BlCoreConstants.BRANDS);
 
                 }
             }
         }
-        else if(BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName())) {
+        else if(category.isFacetedCategory()) {
             model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY,  BlCoreConstants.RENTAL_CLEAR_ALL);
         }
-        if(category.isFacetedCategory() && !category.isRentalCategory()) {
-            final String clearALL = Config.getParameter(BlCoreConstants.CLEAR_ALL);
-            model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, clearALL);
-        }
-
     }
 
     private String getDefaultSort(final CategoryModel category ,final StringBuilder configParam ,String searchQuery ,final String categoryCode) {
@@ -191,7 +187,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
         else {
             for (CategoryModel superCategory : category.getSupercategories()) {
-                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
+                if (category.isFacetedCategory()) {
                     searchQuery = String.valueOf(configParam                                // NOSONAR
                             .append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)) // NOSONAR
                             .append(Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME)) //// NOSONAR

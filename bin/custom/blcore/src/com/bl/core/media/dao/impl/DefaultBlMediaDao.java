@@ -8,7 +8,6 @@ import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
-import de.hybris.platform.servicelayer.search.SearchResult;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,7 +21,7 @@ public class DefaultBlMediaDao implements BlMediaDao {
   private FlexibleSearchService flexibleSearchService;
 
   /**
-   * This method is created for getting list of media  model from DataBase
+   * @inheritdoc
    */
   @Override
   public List<MediaModel> findMediaListByFormat(final MediaContainerModel container, final MediaFormatModel format) {
@@ -31,8 +30,7 @@ public class DefaultBlMediaDao implements BlMediaDao {
       params.put("container", container);
       params.put("format", format);
       FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {Media} WHERE {mediaContainer} = ?container AND {mediaFormat} = ?format", params);
-      final SearchResult result = getFlexibleSearchService().search(query);
-      return result.getResult();
+      return (List<MediaModel>) getFlexibleSearchService().search(query);
     } catch (AmbiguousIdentifierException var5) {
       throw new ModelNotFoundException("Data inconsistency: Multiple medias with format '" + format + "' reside in container '" + container + "'.", var5);
     }

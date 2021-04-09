@@ -24,9 +24,10 @@ import org.apache.commons.lang.StringUtils;
 
 
 /**
- * @author ManiKandan
- * The Populator Added for Adding extra parameters to Solr Query
+ * The Populator Added for Adding extra parameters to Solr Query to fetch the results from solr
+ * @author Manikandan
  */
+
 
 public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> extends
     SearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SORT_TYPE> {
@@ -34,7 +35,9 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   private CommerceCategoryService commerceCategoryService;
 
   /**
-   * Overrided the OOB populate to customize the solr parameters
+   * This method is overriden for adding  search filter query to existing query to fetch results accordingly
+   * @param source determines the SolrSearchQueryData
+   * @param target determines the SolrSearchRequest
    */
   @Override
   public void populate(final SearchQueryPageableData<SolrSearchQueryData> source,
@@ -92,7 +95,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   private void categoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
 
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if (null == categoryCode) {
+    if (StringUtils.isBlank(categoryCode)) {
       if (BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(target.getSearchQueryData().getBlPage())) {
         addQueryForCategory(target,BlCoreConstants.FOR_SALE,BlCoreConstants.TRUE);
         addSaleAndRentQuery(target);
@@ -100,22 +103,22 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
         addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
         addSaleAndRentQuery(target);
       }
-    }
-    else if(StringUtils.isNotBlank(categoryCode)) {
+    } else {
+
       final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
       if (category.isRentalCategory()) {
         rentalCategory(target);
         addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
         addSaleAndRentQuery(target);
       } else if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
-            && !BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(categoryCode)
-            && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
-          addQueryForCategory(target,BlCoreConstants.ALL_CATEGORIES, checkCategory(categoryCode));
-        }
+          && !BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(categoryCode)
+          && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
+        getCategoryFromProperties(target,categoryCode,BlCoreConstants.CATEGORY_MAP);
+      }
       if(!category.isRentalCategory()) {
         addFilterQueryTrue(target, categoryCode);
       }
-      }
+    }
   }
 
   /**
@@ -126,11 +129,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
     if (!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
       if (categoryCode.startsWith(BlCoreConstants.NEW)) {
-        String categoryParam = Config.getParameter(BlCoreConstants.RENTAL_GEAR_MAP);
-        final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
-            .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
-        target.getSearchQuery()
-            .addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
+        getCategoryFromProperties(target,categoryCode,BlCoreConstants.RENTAL_GEAR_MAP);
         target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
       } else {
         target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
@@ -139,6 +138,16 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     }
   }
 
+  private void getCategoryFromProperties(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,
+      final String categoryCode,final String paramMap) {
+    String categoryParam = Config.getParameter(paramMap);
+    if(StringUtils.isNotBlank(categoryParam)) {
+      final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
+          .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+      target.getSearchQuery()
+          .addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
+    }
+  }
   /**
    * This Method add forSale Property is true when we hit usedgear Page
    */
@@ -156,25 +165,16 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     addSaleAndRentQuery(target);
   }
 
-
-  /**
-   * To check the category mapping for used gear categories
+  /*
+   * this method is created for adding itemType to solr query
    */
-  private String checkCategory(final String categoryCode) {
-    String categoryParam = Config.getParameter(BlCoreConstants.CATEGORY_MAP);
-    if (StringUtils.isNotBlank(categoryParam)) {
-      final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
-          .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
-      return categoryCodeMap.get(categoryCode);
-    }
-    return categoryCode;
-  }
-
-
   private void addSaleAndRentQuery(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
   }
 
+  /*
+   * This method is created for adding values dynamically
+   */
   private void addQueryForCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,final String key , final String value) {
     target.getSearchQuery().addFilterQuery(key,value);
   }
