@@ -452,7 +452,7 @@
                     <persistence type="property" />
                     <modifiers read="true" write="true" search="true" optional="false" />
                     <defaultvalue>Boolean.FALSE</defaultvalue>
-                    <description>If the category is active</description>
+                    <description>Defines Category is faceted category </description>
                   </attribute>
 
                   <attribute qualifier="rentalCategory" type="boolean">
