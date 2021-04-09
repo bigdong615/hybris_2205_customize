@@ -293,7 +293,7 @@
 		class="com.bl.facades.resolver.DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver" parent="defaultCategoryModelUrlResolver">
 		<property name="usedGearPattern" value="/buy/category/{category-code}"/>
 		<property name="rentalGearPattern" value="/rent/category/{parentcategory}/{category-code}"/>
+		<property name="defaultPattern" value="/rent/category/{category-code}"/>
 	</bean>
-
 
 </beans>

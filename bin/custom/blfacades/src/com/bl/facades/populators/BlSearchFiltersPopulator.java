@@ -127,7 +127,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    * To check whether the category is used gear
    */
   private boolean isUsedGearCategory(String categoryCode) {
-    return categoryCode.startsWith(BlCoreConstants.USED) || BlCoreConstants.USED_CATEGORY_CODE
+    return categoryCode.startsWith(BlCoreConstants.USED) || BlCoreConstants.USED_GEAR_CODE
         .equalsIgnoreCase(categoryCode);
   }
 
@@ -142,7 +142,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addFilterQueryFalse(target);
     } else if (StringUtils.isNotBlank(categoryCode)) {
       if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
-          && !BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(categoryCode)
+          && !BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(categoryCode)
           && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
         target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
             checkCategory(categoryCode));
@@ -150,7 +150,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addFilterQueryTrue(target);
     }
     if (null == categoryCode) {
-      if (BlCoreConstants.USED_CATEGORY_CODE
+      if (BlCoreConstants.USED_GEAR_CODE
           .equalsIgnoreCase(target.getSearchQueryData().getBlPage())) {
         addFilterQueryTrue(target);
       } else {

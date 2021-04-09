@@ -31,9 +31,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
 	public static final String BL_PAGE_TYPE ="blPageType";
 	public static final String USED_GEAR ="Used Gear";
-	public static final String USED_CATEGORY_CODE ="usedGear";
-	public static final String USED_GEAR_PAGE ="usedGear";
-	public static final String RENTAL_GEAR_PAGE ="rentalGear";
+	public static final String USED_GEAR_CODE ="usedGear";
 	public static final String RATIO =":";
 	public static final String DELIMETER ="|";
 	public static final String ALL_CATEGORIES ="allCategories";
@@ -70,4 +68,5 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RENTAL_CLEAR_ALL = "rentalgear.clear.all";
 	public static final String RENTAL_GEAR_MAP = "key.rentalgear.new";
 	public static final String CLEAR_BRAND = "brandClear";
+	public static final String SUPER_CATEGORY = "superCategory";
 }
