@@ -7,10 +7,9 @@ import java.util.List;
 
 /**
  * @author Manikandan
- * Interface creted for media container service
+ * This interface created for getting list of media model
  */
-public interface MediaContainerService {
+public interface BlMediaService {
 
-  List<MediaModel> getMediaForFormatList(final MediaContainerModel mediaContainerModel, final MediaFormatModel mediaFormatModel);
-
+  List<MediaModel> getMediaListByFormat(final MediaContainerModel container, final MediaFormatModel format);
 }
