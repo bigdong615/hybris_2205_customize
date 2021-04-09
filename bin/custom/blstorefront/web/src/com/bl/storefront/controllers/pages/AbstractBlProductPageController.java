@@ -51,7 +51,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -66,14 +65,13 @@ import com.google.common.collect.Maps;
 
 
 /**
- * Controller for product details page
+ * Renaming controller for handling common section for used and rental gear product.
+ * @author  Vijay Vishwakarma
  */
-@Controller
-@RequestMapping(value = "/**/p")
-public class ProductPageController extends AbstractPageController
+public class AbstractBlProductPageController extends AbstractPageController
 {
 	@SuppressWarnings("unused")
-	private static final Logger LOG = Logger.getLogger(ProductPageController.class);
+	private static final Logger LOG = Logger.getLogger(AbstractBlProductPageController.class);
 
 	/**
 	 * We use this suffix pattern because of an issue with Spring 3.1 where a Uri value is incorrectly extracted if it
@@ -111,34 +109,31 @@ public class ProductPageController extends AbstractPageController
 	@Resource(name = "futureStockFacade")
 	private FutureStockFacade futureStockFacade;
 
-	@RequestMapping(value = PRODUCT_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
-	public String productDetail(@PathVariable("productCode") final String encodedProductCode, final Model model,
-			final HttpServletRequest request, final HttpServletResponse response)
-			throws CMSItemNotFoundException, UnsupportedEncodingException
-	{
-		final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
-		final List<ProductOption> extraOptions = Arrays.asList(ProductOption.VARIANT_MATRIX_BASE, ProductOption.VARIANT_MATRIX_URL,
-				ProductOption.VARIANT_MATRIX_MEDIA);
-
-		final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, extraOptions);
-
-		final String redirection = checkRequestUrl(request, response, productDataUrlResolver.resolve(productData));
-		if (StringUtils.isNotEmpty(redirection))
-		{
+	/*
+	 * This method is used for render pdp.
+	 */
+	public String productDetail(final String productCode, final List<ProductOption> extraOptions,
+			final ProductData productData,
+			final Model model, final HttpServletRequest request, final HttpServletResponse response)
+			throws CMSItemNotFoundException, UnsupportedEncodingException {
+		final String redirection = checkRequestUrl(request, response,
+				productDataUrlResolver.resolve(productData));
+		if (StringUtils.isNotEmpty(redirection)) {
 			return redirection;
 		}
 
 		updatePageTitle(productCode, model);
 
-
 		populateProductDetailForDisplay(productCode, model, request, extraOptions);
 
 		model.addAttribute(new ReviewForm());
 		model.addAttribute("pageType", PageType.PRODUCT.name());
-		model.addAttribute("futureStockEnabled", Boolean.valueOf(Config.getBoolean(FUTURE_STOCK_ENABLED, false)));
+		model.addAttribute("futureStockEnabled",
+				Boolean.valueOf(Config.getBoolean(FUTURE_STOCK_ENABLED, false)));
 
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(productData.getKeywords());
-		final String metaDescription = MetaSanitizerUtil.sanitizeDescription(productData.getDescription());
+		final String metaDescription = MetaSanitizerUtil
+				.sanitizeDescription(productData.getDescription());
 		setUpMetaData(model, metaKeywords, metaDescription);
 		return getViewForPage(model);
 	}
@@ -407,7 +402,7 @@ public class ProductPageController extends AbstractPageController
 				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
 				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
 				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
-				ProductOption.DELIVERY_MODE_AVAILABILITY));
+				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA) );
 
 		options.addAll(extraOptions);
 

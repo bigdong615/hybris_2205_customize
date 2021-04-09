@@ -104,6 +104,8 @@
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
+    		<script src="${commonResourcePathHtml}/js/mburger.js"></script>
 
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>
@@ -208,8 +210,8 @@
 	</c:if>
 
 
-	<c:if test="${cmsPage.uid ne 'homepage'}">
-	<script>
+	<c:if test="${cmsPage.uid ne 'homepage' and cmsPage.uid ne 'productDetails'}">
+	  <script>
         // Mobile Menu styles - #my-menu is required for ALL pages
         // The second menu #filter-menu is required for ANY page with filtering - it is the mobile filter menu
         document.addEventListener(
@@ -278,7 +280,111 @@
             resetButton: true,
             buttonText : {"reset":"Reset"},
         }); */
-    </script> 	
+    </script>
+	</c:if>
+	<c:if test="${cmsPage.uid eq 'productDetails'}">
+		 <script>
+             // Mobile Menu styles - #my-menu is required for ALL pages
+             document.addEventListener(
+                 "DOMContentLoaded", () => {
+
+                 }
+             );
+             // Initialize Mega menu rollover - required for ALL pages
+             $('.menu-large').hover(
+                 function(){ $('.screen').addClass('show') },
+                 function(){ $('.screen').removeClass('show') }
+             );
+             // Create and mount the product thumbnail slider - Required for Single Product Page
+             var secondarySlider = new Splide( '#product-thumbnails', {
+                 rewind      : true,
+                 fixedWidth  : 115,
+                 fixedHeight : 115,
+                 isNavigation: true,
+                 gap         : 10,
+                 focus       : 'center',
+                 pagination  : false,
+                 cover       : true,
+                 breakpoints : {
+                     '600': {
+                         fixedWidth  : 80,
+                         fixedHeight : 80,
+                         arrows: false,
+                     }
+                 },
+                 keyboard: false,
+             } ).mount();
+             // Create the product slider - Required for Single Product Page
+             var primarySlider = new Splide( '#product-slider', {
+                 type       : 'fade',
+                 pagination : false,
+                 arrows     : false,
+                 keyboard: false,
+             } );
+             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+             primarySlider.sync( secondarySlider ).mount();
+             // Initialize Overview Video Slider - required for Single Product Page
+             new Splide( '#overview-slider', {
+                 perPage: 2,
+                 breakpoints: {
+                     '767': {
+                         perPage: 1,
+                         arrows: false,
+                     },
+                 },
+                 gap: 30,
+                 keyboard: false,
+             } ).mount();
+             // Initialize Additional Gear Slider - required for Single Product Page
+             new Splide( '#gear-slider', {
+                 perPage: 4,
+                 breakpoints: {
+                     '991': {
+                         perPage: 3,
+                     },
+                     '767': {
+                         perPage: 2,
+                         arrows: false,
+                     },
+                     '640': {
+                         perPage: 1,
+                         arrows: false,
+                     },
+                 },
+                 rewind : true,
+                 gap: 20,
+                 padding: 10,
+                 keyboard: false,
+             } ).mount();
+
+             // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+
+             // Initialize PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
+             const prodpicker = new Litepicker({
+                 element: document.getElementById('product-litepicker'),
+                 singleMode: false,
+                 numberOfMonths: 2,
+                 numberOfColumns: 2,
+                 autoApply: false,
+                 format: "MMM D",
+                 resetButton: true,
+                 buttonText : {"reset":"Reset Dates"},
+             });
+
+             // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
+             const mprodpicker = new Litepicker({
+                 element: document.getElementById('mobile-product-litepicker'),
+                 plugins: ['mobilefriendly'],
+                 singleMode: false,
+                 numberOfMonths: 1,
+                 numberOfColumns: 1,
+                 autoApply: false,
+                 format: "MMM D",
+                 resetButton: true,
+                 buttonText : {"reset":"Reset"},
+             });
+         </script>
+
 		</c:if>
 	</c:otherwise>
 </c:choose>

@@ -457,7 +457,7 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);
+				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);//NOSONAR
 				returnAction = setErrorMessagesAndCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
 			}
 		}

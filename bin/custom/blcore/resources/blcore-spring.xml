@@ -671,6 +671,17 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
+	<!--BL-166 : This bean is override to change default product pattern-->
+	<alias name="defaultProductModelUrlResolver" alias="productModelUrlResolver"/>
+	<bean id="defaultProductModelUrlResolver"
+		class="de.hybris.platform.commerceservices.url.impl.DefaultProductModelUrlResolver">
+		<property name="threadContextService" ref="threadContextService"/>
+		<property name="commerceCategoryService" ref="commerceCategoryService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="defaultPattern" value="/product/{product-code}"/>
+		<property name="productAndCategoryHelper" ref="productAndCategoryHelper"/>
+	</bean>
+
 	<!--<BL-467 bean entry is for clear cart>-->
 	<alias name="defaultBlCartService" alias="cartService" />
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
@@ -689,5 +700,6 @@
 		parent="abstractPropertyFieldValueProvider">
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
+
 
 </beans>
