@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.facades.product.carousel;
 
 import de.hybris.platform.acceleratorfacades.productcarousel.impl.DefaultProductCarouselFacade;
