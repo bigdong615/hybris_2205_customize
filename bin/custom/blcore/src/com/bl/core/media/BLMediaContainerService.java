@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface BlMediaContainerService {
 
-  List<MediaModel> getMediaForFormatList(MediaContainerModel mediaContainerModel, MediaFormatModel mediaFormatModel);
+  List<MediaModel> getMediaForFormatList(final MediaContainerModel mediaContainerModel, final MediaFormatModel mediaFormatModel);
 
 }

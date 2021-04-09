@@ -6,9 +6,10 @@ import de.hybris.platform.core.model.media.MediaModel;
 import java.util.List;
 
 /**
+ * @author Manikandan
  * This interface created for getting list of media model
  */
 public interface BlMediaService {
 
-  List<MediaModel> getMediaListByFormat(MediaContainerModel container, MediaFormatModel format);
+  List<MediaModel> getMediaListByFormat(final MediaContainerModel container, final MediaFormatModel format);
 }
