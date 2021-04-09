@@ -20,12 +20,12 @@
             <c:choose>
                 <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
                     <button type="submit" class="btn btn-outline btn-disabled"
-                            aria-disabled="true" disabled="disabled">Add to Rental
+                            aria-disabled="true" disabled="disabled"><spring:theme code= "basket.add.to.rental.cart.button.text" />
                     </button>
                 </c:when>
                 <c:otherwise>
-                    <button type="submit" class="btn btn-primary" disabled="disabled">Add to Rental
-                    </button>
+                    <button type="submit" class="btn btn-primary js-enable-btn">
+                    <spring:theme code= "basket.add.to.rental.cart.button.text" /></button>
                 </c:otherwise>
             </c:choose>
 
