@@ -17,11 +17,12 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver extends
   private String defaultPattern;
 
   /**
-   * This Method is overiden for ressolving URL pattern for used gear category
+   * This Method is overiden for ressolving URL pattern for used gear category , rental gear
    */
   @Override
   protected String resolveInternal(final CategoryModel source) {
     String url = "";
+    // Added condition based on rental and used gear category
     if (!source.isRentalCategory()) {
       url = getUsedGearPattern();
     } else if (source.isRentalCategory() && CollectionUtils.isEmpty(source.getSupercategories())) {
@@ -29,6 +30,11 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver extends
     } else if (source.isRentalCategory()) {
       url = getRentalGearPattern();
     }
+    return getUrl(url ,source);
+  }
+
+  private String getUrl(String url ,final CategoryModel source) {
+
     if (url.contains(BlCoreConstants.BASE_SITE_UID)) {
       url = url.replace(BlCoreConstants.BASE_SITE_UID, urlEncode(getBaseSiteUid().toString()));
     }

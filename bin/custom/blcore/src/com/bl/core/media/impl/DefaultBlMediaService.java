@@ -8,10 +8,18 @@ import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import java.util.List;
 
+/**
+ * This class is created for getting media model
+ * @author Manikandan
+ *
+ */
+
 public class DefaultBlMediaService implements BlMediaService {
-
-
   private DefaultBlMediaDao defaultBlMediaDao;
+
+  /*
+   * This method is created to get List of media model which to be index to solr
+   */
   @Override
   public List<MediaModel> getMediaListByFormat(final MediaContainerModel container, final MediaFormatModel format) {
     ServicesUtil.validateParameterNotNull(container, "Argument container must not be null.");

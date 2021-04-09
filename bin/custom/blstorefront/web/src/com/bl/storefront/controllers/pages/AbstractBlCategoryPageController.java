@@ -34,6 +34,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Since we have seperate controller for used gear and rental gear . Hence making as AbstractBlCategoryPageController
+ */
 
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
@@ -60,6 +63,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
 
+    /**
+     * To get the Products from Solr for both rental and used gear categories
+     */
     protected String performSearchAndGetResultsPage(final String categoryCode, String searchQuery, final int page, // NOSONAR
         final ShowMode showMode, final String sortCode, final Model model, final HttpServletRequest request,
         final HttpServletResponse response) throws UnsupportedEncodingException
@@ -69,20 +75,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         // BL-268 Added For Faceted PLP & Default Sorting for PLP
         StringBuilder configParam  = new StringBuilder();
         if(StringUtils.isBlank(searchQuery)) {
-            if(CollectionUtils.isEmpty(category.getSupercategories())){
-                searchQuery= String.valueOf(configParam.append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)));
-            }
-            else {
-                for (CategoryModel superCategory : category.getSupercategories()) {
-                    if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
-                        searchQuery = String.valueOf(
-                            configParam
-                                .append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE))
-                                .append(Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME))
-                                .append(categoryCode));
-                    }
-                }
-            }
+            searchQuery = getDefaultSort(category ,configParam ,searchQuery,categoryCode);
         }
 
         final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
@@ -156,7 +149,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
     }
     /**
-     * This method is created to identify whether category belongs to used gear category
+     * This method is created to identify whether category belongs to used gear category or rental gear
      */
 
     private void usedGearCategory(final CategoryModel category, final Model model) {
@@ -168,6 +161,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
     }
 
+    /**
+     * this method is created for maing clear all query
+     */
     private void addClearAllQuery(final CategoryModel category, final Model model) {
         if(CollectionUtils.isNotEmpty(category.getSupercategories())) {
             for (CategoryModel superCategory : category.getSupercategories()) {
@@ -187,6 +183,23 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, clearALL);
         }
 
+    }
+
+    private String getDefaultSort(final CategoryModel category ,final StringBuilder configParam ,String searchQuery ,final String categoryCode) {
+        if(CollectionUtils.isEmpty(category.getSupercategories())){
+            searchQuery= String.valueOf(configParam.append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE))); // NOSONAR
+        }
+        else {
+            for (CategoryModel superCategory : category.getSupercategories()) {
+                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
+                    searchQuery = String.valueOf(configParam                                // NOSONAR
+                            .append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)) // NOSONAR
+                            .append(Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME)) //// NOSONAR
+                            .append(categoryCode)); // NOSONAR
+                }
+            }
+        }
+        return searchQuery;
     }
 
 }

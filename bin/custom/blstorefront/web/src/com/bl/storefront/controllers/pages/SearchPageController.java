@@ -144,12 +144,12 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "q")
-	public String refineSearch(@RequestParam("q") final String searchQuery,
+	public String refineSearch(@RequestParam("q") final String searchQuery, //NOSONAR
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
 			@RequestParam(value = "sort", required = false) final String sortCode,
-			@RequestParam(value="blPageType",required = false) final String blPageType,
-			@RequestParam(value = "text", required = false) final String searchText, final HttpServletRequest request,
+			@RequestParam(value="blPageType",required = false) final String blPageType, //NOSONAR
+			@RequestParam(value = "text", required = false) final String searchText, final HttpServletRequest request, //NOSONAR
 			final Model model) throws CMSItemNotFoundException
 	{
 		final ProductSearchPageData<SearchStateData, ProductData> searchPageData = performSearch(searchQuery, page, showMode,

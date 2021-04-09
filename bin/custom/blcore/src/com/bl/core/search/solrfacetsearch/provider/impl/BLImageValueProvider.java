@@ -5,7 +5,6 @@ import de.hybris.platform.core.model.media.MediaContainerModel;
 import de.hybris.platform.core.model.media.MediaFormatModel;
 import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.media.MediaService;
 import de.hybris.platform.solrfacetsearch.config.IndexConfig;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
@@ -14,7 +13,6 @@ import de.hybris.platform.solrfacetsearch.provider.FieldNameProvider;
 import de.hybris.platform.solrfacetsearch.provider.FieldValue;
 import de.hybris.platform.solrfacetsearch.provider.FieldValueProvider;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractPropertyFieldValueProvider;
-import de.hybris.platform.variants.model.VariantProductModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,12 +20,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
+/**
+ * @author Manikandan
+ * This value provider created for indexing image to solr
+ */
 public class BlImageValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
 
-  private static final Logger LOG = Logger.getLogger(BlImageValueProvider.class);
   private static final String BL_IMAGE = "blimage";
 
   private String mediaFormat;
@@ -46,20 +46,19 @@ public class BlImageValueProvider extends AbstractPropertyFieldValueProvider imp
       final MediaFormatModel mediaFormatModel = getMediaService().getFormat(getMediaFormat());
       if (mediaFormatModel != null)
       {
+        // To get the list of media model to be index to solr
         final List<MediaModel> mediaModelList = findMediaList((ProductModel) model,mediaFormatModel);
         if (CollectionUtils.isNotEmpty(mediaModelList)) {
           return createFieldValues(indexedProperty, mediaModelList);
-        }
-        if (LOG.isDebugEnabled())
-        {
-          LOG.debug("No [" + mediaFormatModel.getQualifier() + "] image found for product ["
-              + ((ProductModel) model).getCode() + "]");
         }
       }
     }
     return Collections.emptyList();
   }
 
+  /*
+   * To get the list of media model
+   */
   private List<MediaModel> findMediaList(final ProductModel productModel,
       final MediaFormatModel mediaFormatModel) {
 
@@ -67,29 +66,10 @@ public class BlImageValueProvider extends AbstractPropertyFieldValueProvider imp
       final List<MediaContainerModel> galleryImages = productModel.getGalleryImages();
       if (null != galleryImages && !galleryImages.isEmpty())
       {
-        // Search each media container in the gallery for an image of the right format
         for (final MediaContainerModel container : galleryImages)
         {
-          try
-          {
-            final List<MediaModel> mediaModelList =  getDefaultBlMediaContainerService().getMediaForFormatList(container,mediaFormatModel);
-
-             if (!mediaModelList.isEmpty())
-            {
-              return mediaModelList;
-            }
+           return getDefaultBlMediaContainerService().getMediaForFormatList(container,mediaFormatModel); //NOSONAR
           }
-          catch (final ModelNotFoundException ignore)
-          {
-            // ignore
-          }
-        }
-      }
-      // Failed to find media in product
-      if (productModel instanceof VariantProductModel)
-      {
-        // Look in the base product
-        return findMediaList(((VariantProductModel) productModel).getBaseProduct(), mediaFormatModel);
       }
     }
     return Collections.emptyList();

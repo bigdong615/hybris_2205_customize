@@ -153,38 +153,7 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
     target.setConfigurable(this.<Boolean>getValue(source, "configurable"));
     target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
-        if (null != this.getValue(source, BlCoreConstants.IS_NEW)) {
-          if (this.<Boolean>getValue(source, BlCoreConstants.IS_NEW)) {
-            target.setProductTagValues(BlCoreConstants.NEW);
-          }
-        }
-    if (null != this.getValue(source, BlCoreConstants.MOST_POPULAR) && StringUtils
-        .isBlank(target.getProductTagValues())) {
-      if (this.<Boolean>getValue(source, BlCoreConstants.MOST_POPULAR)) {
-        target.setProductTagValues(BlCoreConstants.POPULAR);
-      }
-    }
-    if (null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
-      if (this.<Boolean>getValue(source, BlCoreConstants.FOR_RENT)) {
-        if (null != this.getValue(source, BlCoreConstants.GREAT_VALUE) && StringUtils
-            .isBlank(target.getProductTagValues())) {
-          if (this.<Boolean>getValue(source, BlCoreConstants.GREAT_VALUE)) {
-            target.setProductTagValues(BlCoreConstants.GREAT_VALUE_STRING);
-          }
-        }
-        if (null != this.getValue(source, BlCoreConstants.STAFF_PICK) && StringUtils
-            .isBlank(target.getProductTagValues())) {
-          if (this.<Boolean>getValue(source, BlCoreConstants.STAFF_PICK)) {
-            target.setProductTagValues(BlCoreConstants.STAFF_PICK_STRING);
-          }
-        }
-      }
-    }
-    if(null != this.getValue(source,BlCoreConstants.UPCOMING)){
-      if (this.<Boolean>getValue(source, BlCoreConstants.UPCOMING)) {
-        target.setIsUpcoming(true);
-      }
-    }
+    addProductTag(source,target);
     populatePrices(source, target);
 
     // Populate product's classification features
@@ -254,23 +223,7 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
 
       if (StockLevelStatus.LOWSTOCK.equals(stockLevelStatusEnum))
       {
-        try
-        {
-          // In case of low stock then make a call to the stock service to determine if in or out of stock.
-          // In this case (low stock) it is ok to load the product from the DB and do the real stock check
-          final ProductModel productModel = getProductService().getProductForCode(target.getCode());
-          if (productModel != null)
-          {
-            target.setStock(getStockConverter().convert(productModel));
-          }
-        }
-        catch (final UnknownIdentifierException ex)
-        {
-          // If the product is no longer visible to the customergroup then this exception can be thrown
-
-          // We can't remove the product from the results, but we can mark it as out of stock
-          target.setStock(getStockLevelStatusConverter().convert(StockLevelStatus.OUTOFSTOCK));
-        }
+        addStock(target);
       }
       else
       {
@@ -281,7 +234,7 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
 
   protected List<ImageData> createImageData(final SearchResultValueData source)
   {
-    final List<ImageData> result = new ArrayList<ImageData>();
+    final List<ImageData> result = new ArrayList<>();
 
     addImageData(source, "thumbnail", result);
     addImageData(source, "product", result);
@@ -363,7 +316,7 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
 
   protected FeatureList getFeaturesList(final SearchResultValueData source)
   {
-    final List<Feature> featuresList = new ArrayList<Feature>();
+    final List<Feature> featuresList = new ArrayList<>();
     final Locale currentLocale = getCommonI18NService().getLocaleForLanguage(getCommonI18NService().getCurrentLanguage());
 
     if (source != null && source.getFeatureValues() != null && !source.getFeatureValues().isEmpty())
@@ -378,7 +331,7 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
         final Feature feature;
         if (Boolean.TRUE.equals(classAttributeAssignment.getLocalized()))
         {
-          final Map<Locale, List<FeatureValue>> featureMap = new HashMap<Locale, List<FeatureValue>>();
+          final Map<Locale, List<FeatureValue>> featureMap = new HashMap<>();
           featureMap.put(currentLocale, Collections.singletonList(featureValue));
           feature = new LocalizedFeature(classAttributeAssignment, featureMap, currentLocale);
         }
@@ -390,6 +343,55 @@ public class BLSearchResultProductPopulator implements Populator<SearchResultVal
       }
     }
     return new FeatureList(featuresList);
+  }
+
+  private void addProductTag(final SearchResultValueData source, final ProductData target) {
+    sourceNotEmpty(source,target,BlCoreConstants.IS_NEW,BlCoreConstants.NEW);
+    sourceNotEmpty(source,target,BlCoreConstants.MOST_POPULAR,BlCoreConstants.POPULAR);
+    addProductTagIsRent(source,target);
+    addGreatValue(source,target,BlCoreConstants.UPCOMING);
+
+  }
+
+  private void addProductTagIsRent(final SearchResultValueData source, final ProductData target) {
+    if (null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
+      sourceNotEmpty(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
+      sourceNotEmpty(source,target,BlCoreConstants.STAFF_PICK,BlCoreConstants.STAFF_PICK_STRING);
+      }
+  }
+
+  private void sourceNotEmpty (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
+    if(null!=this.<Boolean>getValue(source, key)) {
+      if (StringUtils.isBlank(target.getProductTagValues()) && this.<Boolean>getValue(source,
+          key)) {
+        target.setProductTagValues(value);
+      }
+    }
+
+  }
+
+  private void addGreatValue (final SearchResultValueData source, final ProductData target ,final String key) {
+      if (this.<Boolean>getValue(source, key)) {
+        target.setIsUpcoming(this.<Boolean>getValue(source,key));
+    }
+  }
+
+  private void addStock(final ProductData target) {
+    try
+    {
+      // In case of low stock then make a call to the stock service to determine if in or out of stock.
+      // In this case (low stock) it is ok to load the product from the DB and do the real stock check
+      final ProductModel productModel = getProductService().getProductForCode(target.getCode());
+      if (productModel != null)
+      {
+        target.setStock(getStockConverter().convert(productModel));
+      }
+    }
+    catch (final UnknownIdentifierException ex)
+    {
+      target.setStock(getStockLevelStatusConverter().convert(StockLevelStatus.OUTOFSTOCK));
+    }
+
   }
 
   protected PromotionData createPromotionData()

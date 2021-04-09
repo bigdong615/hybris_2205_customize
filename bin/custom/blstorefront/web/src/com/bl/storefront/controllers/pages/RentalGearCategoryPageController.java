@@ -11,14 +11,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * @author Manikandan
+ * This controller created to get results for rental gear category
+ */
 @Controller
 @RequestMapping(value = "**/rent/category")
 public class RentalGearCategoryPageController extends AbstractBlCategoryPageController {
 
   private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";
 
+  /**
+   * This method created for getting results of level 2 categories
+   */
   @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
-  public String category(@PathVariable("parentcategory") final String parentcategory,
+  public String category(@PathVariable("parentcategory") final String parentcategory, //NOSONAR
       @PathVariable("categoryCode") final String categoryCode, // NOSONAR
       @RequestParam(value = "q", required = false) final String searchQuery,
       @RequestParam(value = "page", defaultValue = "0") final int page,
@@ -28,6 +35,9 @@ public class RentalGearCategoryPageController extends AbstractBlCategoryPageCont
     return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, request, response);
   }
 
+  /**
+   * This method created to get level 1 category results
+   */
 
   @RequestMapping(value = "/{categoryCode:.*}", method = RequestMethod.GET)
   public String superCategory(@PathVariable("categoryCode") final String categoryCode, // NOSONAR

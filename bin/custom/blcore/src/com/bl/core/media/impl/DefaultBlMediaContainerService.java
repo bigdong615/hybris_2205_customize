@@ -7,11 +7,19 @@ import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import java.util.List;
 
+/**
+ *  This class is created for getting media model
+ * @author Manikandan
+ *
+ */
 public class DefaultBlMediaContainerService implements BlMediaContainerService {
 
 
   private DefaultBlMediaService defaultBlMediaService;
 
+  /**
+   * This method created for getting list of media model from Data Base
+   */
   @Override
   public List<MediaModel> getMediaForFormatList(final
       MediaContainerModel mediaContainerModel, final MediaFormatModel mediaFormatModel) {

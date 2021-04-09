@@ -13,10 +13,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * This class is created for getting list of media to be index to solr
+ */
 public class DefaultBlMediaDao implements MediaBlDao {
 
   private FlexibleSearchService flexibleSearchService;
 
+  /**
+   * This method is created for getting list of media  model from DataBase
+   */
   @Override
   public List<MediaModel> findMediaListByFormat(final MediaContainerModel container, final MediaFormatModel format) {
     try {
