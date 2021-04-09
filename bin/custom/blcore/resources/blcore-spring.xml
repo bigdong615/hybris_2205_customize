@@ -573,6 +573,8 @@
 	<alias name="blProductPrepareInterceptor" alias="blProductPrepareInterceptor"/>
 	<bean id="blProductPrepareInterceptor"	class="com.bl.core.model.interceptor.BlProductPrepareInterceptor">
 		<property name="keyGenerator" ref="productIdGenerator"/>
+		<property name="enumerationService" ref="enumerationService"/>
+		<property name="blPricingService" ref="blPricingService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -694,6 +696,61 @@
 	<bean id="blUpComingProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUpComingProductValueProvider"
 		parent="abstractPropertyFieldValueProvider">
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+	<!--Pricing Logic changes-->
+	<alias name="defaultBlPricingService" alias="blPricingService"/>
+	<bean id="defaultBlPricingService" class="com.bl.core.services.calculation.impl.DefaultBlPricingService">
+		<property name="blPricingGenericDao" ref="blPricingGenericDao"/>
+		<property name="priceRowGenericDao" ref="priceRowGenericDao"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="enumerationService" ref="enumerationService"/>
+		<property name="unitService" ref="unitService"/>
+	</bean>
+
+	<alias name="defaultBlPricingGenericDao" alias="blPricingGenericDao"/>
+	<bean name="defaultBlPricingGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="BlPricingLogic"/>
+	</bean>
+	<alias name="defaultPriceRowGenericDao" alias="priceRowGenericDao"/>
+	<bean name="defaultPriceRowGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="PriceRow"/>
+	</bean>
+	<alias name="defaultBlStandardRatioGenericDao" alias="blStandardRatioGenericDao"/>
+	<bean name="defaultBlStandardRatioGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="BlStandardPricingRatio"/>
+	</bean>
+	<alias name="defaultBlConstrainedRatioGenericDao" alias="blConstrainedRatioGenericDao"/>
+	<bean name="defaultBlConstrainedRatioGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="BlConstrainedPricingRatio"/>
+	</bean>
+	<alias name="defaultBlPricingRatioService" alias="blPricingRatioService"/>
+	<bean id="defaultBlPricingRatioService" class="com.bl.core.services.pricingratio.impl.DefaultBlPricingRatioService">
+	<property name="blConstrainedRatioGenericDao" ref="blConstrainedRatioGenericDao"/>
+	<property name="blStandardRatioGenericDao" ref="blStandardRatioGenericDao"/>
+	</bean>
+
+	<alias name="blSerialProductPrepareInterceptor" alias="blSerialProductPrepareInterceptor"/>
+	<bean id="blSerialProductPrepareInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
+		<property name="blPricingService" ref="blPricingService"/>
+	</bean>
+
+	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blSerialProductPrepareInterceptor"/>
+		<property name="typeCode" value="BlSerialProduct"/>
+	</bean>
+	
+	<!--Bl-57 new stock related service and dao classes added-->
+	<alias alias="blStockLevelDao" name="defaultBlStockLevelDao"/>
+	<bean id="defaultBlStockLevelDao" class="com.bl.core.stock.impl.DefaultBlStockLevelDao" parent="stockLevelDao">
+	</bean>
+	
+	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 
 </beans>
