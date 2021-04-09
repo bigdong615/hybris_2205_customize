@@ -449,7 +449,6 @@
                     <description>Customer facing header notes on the item</description>
                   </attribute>
                 </attributes>
-
             </itemtype>
             <itemtype code="BlProduct" extends="Product" autocreate="true" generate="true"
                jaloclass="com.bl.core.jalo.BlProduct">
@@ -683,6 +682,11 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>Determines the product is most popular</description>
                    </attribute>
+                   <attribute qualifier="retailPrice" type="java.lang.Double">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="false"/>
+                     <description>Price, What the item currently sells for</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -860,8 +864,8 @@
                  </attribute>
                </attributes>
             </itemtype>
-
-          <itemtype code="StockLevel" autocreate="false" generate="false">
+         
+         	<itemtype code="StockLevel" autocreate="false" generate="false">
             <description>Extending StockLevel type to include date related fields</description>
             <attributes>
               <attribute type="java.util.Date" qualifier="date">
@@ -942,8 +946,86 @@
               </attribute>
             </attributes>
           </itemtype>
-
-        </typegroup>
-
-    </itemtypes>
+          
+         </typegroup>
+         
+         <typegroup name="Pricing">
+           <itemtype code="BlPricingLogic" autocreate="true" generate="true"
+             jaloclass="com.bl.core.jalo.BLPricingLogic">
+             <description>This table is for calculating the rental product 7 day price</description>
+             <deployment table="blPricingLogic" typecode="12201" />
+             <attributes>
+               <attribute qualifier="productType" type="ProductTypeEnum">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>Type of the Product</description>
+               </attribute>
+               <attribute qualifier="tier" type="PricingTierEnum">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>This attribute is defined to </description>
+               </attribute>
+               <attribute qualifier="greaterThan" type="java.lang.Double">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="true"/>
+                 <description>Determines the minimum or lowest value</description>
+               </attribute>
+               <attribute qualifier="lessThan" type="java.lang.Double">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="true"/>
+                 <description>Determines the maximum or highest value</description>
+               </attribute>
+               <attribute qualifier="pctOfRetail" type="java.lang.Integer">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="true"/>
+                 <description>Additional Discount for used gear</description>
+               </attribute>
+             </attributes>
+           </itemtype>
+           <itemtype code="BlStandardPricingRatio" autocreate="true" generate="true"
+             jaloclass="com.bl.core.jalo.BlStandardPricingRatio">
+             <description>This table is for calculating the duration prices based on the pricing ratio</description>
+             <deployment table="blStandardPricingRatio" typecode="12202" />
+             <attributes>
+               <attribute qualifier="pricingRatio" type="java.lang.Double">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>Pricing Ratio per duration</description>
+               </attribute>
+               <attribute qualifier="duration" type="DurationEnum">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>Duration in days</description>
+               </attribute>
+             </attributes>
+           </itemtype>
+           <itemtype code="BlConstrainedPricingRatio" autocreate="true" generate="true"
+             jaloclass="com.bl.core.jalo.BlConstrainedPricingRatio">
+             <description>This table is for calculating the duration prices based on the pricing ratio</description>
+             <deployment table="blConsPricingRatio" typecode="12203" />
+             <attributes>
+               <attribute qualifier="pricingRatio" type="java.lang.Double">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>Pricing Ratio per duration</description>
+               </attribute>
+               <attribute qualifier="duration" type="DurationEnum">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>Duration in days</description>
+               </attribute>
+             </attributes>
+           </itemtype>
+           <itemtype code="PriceRow" autocreate="false" generate="false">
+             <description>Extending the PriceRow with additional attributes.</description>
+             <attributes>
+               <attribute qualifier="duration" type="DurationEnum">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="true"/>
+                 <description>Duration in days</description>
+               </attribute>
+             </attributes>
+           </itemtype>
+         </typegroup>
+	</itemtypes>
 </items>
