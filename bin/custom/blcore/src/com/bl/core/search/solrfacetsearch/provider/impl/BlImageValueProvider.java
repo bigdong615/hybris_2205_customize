@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Manikandan
  * This value provider created for indexing image to solr
  */
-public class ImageValueProvider extends AbstractPropertyFieldValueProvider implements
+public class BlImageValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
 
   private static final String BL_IMAGE = "blimage";
