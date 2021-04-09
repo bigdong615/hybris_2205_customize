@@ -8,7 +8,7 @@ import de.hybris.platform.servicelayer.util.ServicesUtil;
 import java.util.List;
 
 /**
- *  This class is created for getting media model
+ *  This class is Created to get list of media model from database
  * @author Manikandan
  *
  */
