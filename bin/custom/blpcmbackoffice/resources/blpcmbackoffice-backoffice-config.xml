@@ -124,15 +124,15 @@
 						<ea:attribute
 							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 							qualifier="description"/>
-						<ea:attribute qualifier="rentalVideoLinks"/>
+						<ea:attribute qualifier="rentalVideosLink" />
 						<ea:attribute qualifier="summary"/>
-						<ea:attribute qualifier="resourceLink"/>
+						<ea:attribute qualifier="data_sheet"/>
 						<ea:attribute qualifier="rentalIncludes"/>
 						<ea:attribute qualifier="displayNotes"/>
 						<ea:attribute qualifier="purchaseNotes"/>
 						<ea:attribute qualifier="shortDescription"/>
 						<ea:attribute qualifier="usedDescription"/>
-						<ea:attribute qualifier="usedGearVideoLinks"/>
+						<ea:attribute qualifier="usedGearVideosLink" />
 						<ea:attribute qualifier="usedIncludes"/>
 						<ea:attribute qualifier="techEngNotes"/>
 					</ea:panel>

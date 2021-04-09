@@ -6,7 +6,8 @@
 	xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
 	xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
 	xmlns:lv="http://www.hybris.com/cockpitng/component/listView"
-	xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch">
+	xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch"
+	xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea">
 
 	<!--Bl Specific custom nodes to be added here -->
 	<context component="explorer-tree">
@@ -120,6 +121,7 @@
 			</wz:step>
 		</wz:flow>
 	</context>
+
 	<context merge-by="type" type="BlPricingLogic" component="listview">
 		<lv:list-view>
 			<lv:column qualifier="productType"/>
@@ -181,11 +183,12 @@
 				<wz:navigation id="step1.navigation">
 					<wz:cancel/>
 					<wz:back/>
-					<wz:done/>
+					<wz:done/>					
 				</wz:navigation>
 			</wz:step>
 		</wz:flow>
 	</context>
+
 
 	<context merge-by="type" type="BlStandardPricingRatio" component="listview">
 		<lv:list-view>
@@ -234,6 +237,40 @@
 			<lv:column qualifier="currency"/>
 			<lv:column qualifier="net" merge-mode="REMOVE"/>
 		</lv:list-view>
+	</context>
+	
+	<context component="create-wizard" type="ProductVideo"  merge-by="type">
+		<wz:flow id="ProductVideoWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:step id="step1" label="essential.label" sublabel="essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newProductVideo" >
+						<wz:property qualifier="uid"/>
+						<wz:property qualifier="videoTitle" />
+						<wz:property qualifier="videoLink" />
+						<wz:property qualifier="videoDuration" />
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newProductVideo"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+	
+	<context component="editor-area" merge-by="type" parent="ProductVideo">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="">
+				<editorArea:section name="" >
+					<ea:attribute qualifier="uid"/>
+					<ea:attribute qualifier="videoTitle" />
+					<ea:attribute qualifier="videoLink" />
+					<ea:attribute qualifier="videoDuration" />
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
 	</context>
 
 </config>
