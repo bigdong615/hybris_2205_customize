@@ -671,6 +671,13 @@
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
+
+	<!--BL-80 Adding for usedgear product value provider-->
+	<bean id="blUsedGearProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUsedGearProductValueProvider"
+		parent="abstractPropertyFieldValueProvider">
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
+
 	<!--BL-166 : This bean is override to change default product pattern-->
 	<alias name="defaultProductModelUrlResolver" alias="productModelUrlResolver"/>
 	<bean id="defaultProductModelUrlResolver"
@@ -693,13 +700,5 @@
 		parent="abstractPropertyFieldValueProvider">
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
-
-
-	<!--BL-80 Adding for usedgear product value provider-->
-	<bean id="blUsedGearProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUsedGearProductValueProvider"
-		parent="abstractPropertyFieldValueProvider">
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-	</bean>
-
 
 </beans>

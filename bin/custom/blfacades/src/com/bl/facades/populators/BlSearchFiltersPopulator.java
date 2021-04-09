@@ -75,12 +75,14 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     // Added condition for used gear video category
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if(BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
-      target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_VIDEO, BlCoreConstants.TRUE);
-    }
-    // Added Condition for used gear new arrivals category
-    if(BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)) {
-      target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
+    if (StringUtils.isNotBlank(categoryCode)) {
+      if (BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_VIDEO, BlCoreConstants.TRUE);
+      }
+      // Added Condition for used gear new arrivals category
+      if (BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)) {
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
+      }
     }
     target.getSearchQuery().addFilterQuery(BlCoreConstants.FOR_SALE, BlCoreConstants.TRUE);
     target.getSearchQuery().addFilterQuery(BlCoreConstants.ITEM_TYPE, BlCoreConstants.BLPRODUCT);
@@ -93,11 +95,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       List<SolrSearchQueryTermData> terms,
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target,
       List<IndexedPropertyValueData<IndexedProperty>> indexedPropertyValues) {
-    if (terms != null && !terms.isEmpty()) {
+    if (CollectionUtils.isNotEmpty(terms)) {
       for (final SolrSearchQueryTermData term : terms) {
         final IndexedProperty indexedProperty = target.getIndexedType().getIndexedProperties()
             .get(term.getKey());
-        if (indexedProperty != null) {
+        if (null != indexedProperty) {
           final IndexedPropertyValueData<IndexedProperty> indexedPropertyValue = new IndexedPropertyValueData<>();
           indexedPropertyValue.setIndexedProperty(indexedProperty);
           indexedPropertyValue.setValue(term.getValue());
@@ -113,8 +115,12 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    */
   private String checkCategory(String categoryCode) {
     String categoryParam = Config.getParameter(BlCoreConstants.CATEGORY_MAP);
-    final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER).withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
-    return categoryCodeMap.get(categoryCode);
+    if (StringUtils.isNotBlank(categoryParam)) {
+      final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
+          .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+      return categoryCodeMap.get(categoryCode);
+    }
+    return categoryCode;
   }
 
   /**
@@ -128,26 +134,26 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   /**
    * Adding some category restriction for used gear categories
    */
-  private void categoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
+  private void categoryRestriction(
+      final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if (StringUtils.isNotBlank(categoryCode)&& ! isUsedGearCategory(categoryCode))
-    {
+    if (StringUtils.isNotBlank(categoryCode) && !isUsedGearCategory(categoryCode)) {
       rentalCategory(target);
       addFilterQueryFalse(target);
-    }
-    else if (StringUtils.isNotBlank(categoryCode)){
-        if(! BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode) && ! BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(categoryCode)
-            && ! BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
-          target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
-              checkCategory(categoryCode));
-        }
-         addFilterQueryTrue(target);
-    }
-    if(null == categoryCode) {
-      if (BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(target.getSearchQueryData().getBlPage())) {
-        addFilterQueryTrue(target);
+    } else if (StringUtils.isNotBlank(categoryCode)) {
+      if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
+          && !BlCoreConstants.USED_CATEGORY_CODE.equalsIgnoreCase(categoryCode)
+          && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
+        target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
+            checkCategory(categoryCode));
       }
-      else {
+      addFilterQueryTrue(target);
+    }
+    if (null == categoryCode) {
+      if (BlCoreConstants.USED_CATEGORY_CODE
+          .equalsIgnoreCase(target.getSearchQueryData().getBlPage())) {
+        addFilterQueryTrue(target);
+      } else {
         addFilterQueryFalse(target);
       }
     }
@@ -157,16 +163,18 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   /**
    * This method is created for adding category to filter query fields for prepare solr query
    */
-  private void rentalCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
+  private void rentalCategory(
+      final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if(!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
-      if(categoryCode.startsWith("New")) {
+    if (!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
+      if (categoryCode.startsWith("New")) {
         String categoryParam = Config.getParameter("key.rentalgear.new");
-        final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER).withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
-        target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
+        final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
+            .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+        target.getSearchQuery()
+            .addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
         target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
-      }
-      else {
+      } else {
         target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
             categoryCode);
       }
