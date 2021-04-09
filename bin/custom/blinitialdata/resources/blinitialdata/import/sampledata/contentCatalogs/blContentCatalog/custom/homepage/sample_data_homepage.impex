@@ -188,5 +188,5 @@ UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 
                    ;                         ; MobileHeaderLinkForAccountSlot           ; AccountNavigationComponent				   
                    ;                         ; MobileHeaderBottomInfo                       ; MobileHeaderBottomInfoComponent1,MobileHeaderBottomInfoComponent2,MobileHeaderBottomInfoComponent3                   
 				   ;						 ; HomePageFeaturedGearSectionSlot    ; HomePageFeaturedGearComponent                   
-                   
+                   ;                         ; MobileMiniCartSlot                 ; MiniCart                   
                    
