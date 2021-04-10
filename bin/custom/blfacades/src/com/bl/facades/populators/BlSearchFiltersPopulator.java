@@ -16,7 +16,6 @@ import de.hybris.platform.solrfacetsearch.config.IndexedType;
 import de.hybris.platform.solrfacetsearch.search.SearchQuery;
 import de.hybris.platform.util.Config;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +170,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     if(StringUtils.isNotBlank(categoryParam)) {
       final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
           .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
-      if(CollectionUtils.isNotEmpty(Collections.singleton(categoryCodeMap.get(categoryCode)))) {
+      if(StringUtils.isNotBlank(categoryCodeMap.get(categoryCode))) {
         target.getSearchQuery()
             .addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
       }
