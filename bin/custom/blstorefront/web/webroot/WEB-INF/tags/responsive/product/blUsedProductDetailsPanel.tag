@@ -98,77 +98,23 @@
                        <div class="row justify-content-center">
                            <div class="col-lg-11 col-xl-9">
                                <hr>
+                               <!-- Product overview -->
                                <a class="filter-expand" data-bs-toggle="collapse" href="#overview" role="button" aria-expanded="true" aria-controls="overview">
                                 <h5><spring:theme code= "pdp.overview.section.text"/></h5></a>
                                <div class="collapse show" id="overview">
                                    <p>${ycommerce:sanitizeHTML(product.usedDescription)}</p>
-                                   <c:if test="${not empty product.usedGearVideosLink}">
-                                   <div id="overview-slider" class="splide mt-5">
-                                       <div class="splide__track">
-                                           <ul class="splide__list">
-                                              <c:forEach items="${product.usedGearVideosLink}" var="productVideo"  varStatus="count">
-                                                 <li class="splide__slide">
-                                                    <div class="embed-responsive embed-responsive-16by9">
-                                                            <iframe class="embed-responsive-item" src="${productVideo.videoUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
-                                                    </div>
-                                                  <p class="text-start mt-1">${productVideo.videoName}<span class="gray80 float-end">${productVideo.videoDuration}</span></p>
-                                                </li>
-                                              </c:forEach>
-                                           </ul>
-                                       </div>
-                                   </div>
-                                   </c:if>
+                                   <product:productVideo  productVideos= "${product.usedGearVideosLink}"/>
                                </div>
                                <hr>
-                               <a class="filter-expand" data-bs-toggle="collapse" href="#specs" role="button" aria-expanded="false" aria-controls="specs">
-                               <h5><spring:theme code = "pdp.specification.section.text"/></h5></a>
-                               <div class="collapse" id="specs">
-                                    <product:productDetailsClassifications product="${product}" />
-                               </div>
-                               <hr>
-                               <a class="filter-expand" data-bs-toggle="collapse" href="#rental-includes" role="button" aria-expanded="false" aria-controls="includes">
-                               <h5><spring:theme code="pdp.product.includes.section.text"/></h5></a>
-                               <div class="collapse" id="rental-includes">
-                                   <p>${ycommerce:sanitizeHTML(product.usedIncludes)}</p>
-                               </div>
-                               <hr>
-                               <a class="filter-expand" data-bs-toggle="collapse" href="#rental-notes" role="button" aria-expanded="false" aria-controls="notes">
-                               <h5><spring:theme code= "pdp.product.notes.section.text" /></h5></a>
-                               <div class="collapse" id="rental-notes">
-                                   <p><p>${ycommerce:sanitizeHTML(product.rentalNote)}</p></p>
-                               </div>
-                               <hr>
-                               <a class="filter-expand" data-bs-toggle="collapse" href="#resources" role="button" aria-expanded="false" aria-controls="notes">
-                               <h5><spring:theme code= "pdp.resources.section.text" /></h5></a>
-                               <div class="collapse" id="resources">
-                                  <product:productResourcesPanel />
-                               </div>
-                               <hr>
-
-<div id="gear-slider" class="splide mt-4">
-</div>
+                               <!--Product specification -->
+                               <product:specification />
+                               <!-- Product include -->
+                               <product:productInclude />
+                               <!-- Product notes -->
+                               <product:rentalNotes />
+                               <!-- product resource  -->
+                               <product:resource />
+                               <div id="gear-slider" class="splide mt-4">
+                              </div>
                                <!-- Start Reviews -->
-                               <div id="reviews" class="mb-5">
-                                   <h5 class="mb-4">Reviews</h5><div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
-                                   <div class="reviewBlock">
-                                       <div class="reviewTitle">
-                                           <div class="stars"><span class="stars-filled" style="width: 100%;"></span><img src="assets/stars-empty.svg"></div> <b>A superb camera with a remarkable kit lens.</b>
-                                           <p class="my-4">I received this camera just over a week ago and have shot about 1000 pictures in various conditions with the kit lens and an RF f/4 24 to 105 mm L series lens I got with the Canon R camera I also own. I mostly shoot JPG and use RAW for those difficult pictures that in camera processing may not produce the best results. The R6 was purchased to replace the R.</p>
-                                           <p><b>– Kate</b></p>
-                                       </div>
-                                   </div>
-                                   <div class="reviewBlock">
-                                       <div class="reviewTitle">
-                                           <div class="stars"><span class="stars-filled" style="width: 100%;"></span><img src="assets/stars-empty.svg"></div> <b>A superb camera with a remarkable kit lens.</b>
-                                           <p class="my-4">I received this camera just over a week ago and have shot about 1000 pictures in various conditions with the kit lens and an RF f/4 24 to 105 mm L series lens I got with the Canon R camera I also own. I mostly shoot JPG and use RAW for those difficult pictures that in camera processing may not produce the best results. The R6 was purchased to replace the R.</p>
-                                           <p><b>– Kate</b></p>
-                                       </div>
-                                   </div>
-                                   <div class="reviewActions">
-                                       <a href="#" class="btn btn-outline"><img src="assets/icon-filter-open.svg">&emsp;Write Review</a> <a href="#" class="btn btn-outline">More Reviews</a>
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
-                   </div>
-               </section>
+                              <product:blProductReview />
