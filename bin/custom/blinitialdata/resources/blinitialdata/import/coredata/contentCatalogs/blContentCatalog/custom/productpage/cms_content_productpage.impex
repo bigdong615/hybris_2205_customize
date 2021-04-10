@@ -30,9 +30,6 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
                           ;                         ;BreadcrumbSlot                      ;Breadcrumb slot
 
-INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid, $contentCV)
-                         ;                       ;CrossSellingSlot;accessories
-
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='ProductDetailsPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
@@ -52,7 +49,6 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; HomePageRentingGearSectionSlot-productDetails     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
                                       ;                        ; BreadcrumbSlot-productDetails                     ; BreadcrumbSection                 ;                                                        ; BreadcrumbSlot                           ; true
                                     ;                          ; SearchBox-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
-                                    ;                         ; CrossSelling-ProductDetails                    ; CrossSelling           ;                                                                                 ; CrossSellingSlot                         ; true
 
 
 # Product Details Page

@@ -28,7 +28,9 @@
     <property name="isNew" type="Boolean"/>
     <property name="isUpcoming" type="Boolean"/>
     <property name="productPageType" type="java.lang.String"/>
+    <property name="serialproducts" type="java.util.List"/>
     <property name="productTagValues" type="String"/>
+
   </bean>
 
 
@@ -64,6 +66,7 @@
     <property name="selectedToDate" type="String"/>
     <property name="numberOfDays" type="String"/>
   </bean>
+
 </beans>
 
 

@@ -9,10 +9,3 @@ INSERT_UPDATE BreadcrumbComponent;$contentCV[unique=true];uid[unique=true];name;
 
 INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid, $contentCV)
                          ;;BreadcrumbSlot;breadcrumbComponent
-
-INSERT_UPDATE ProductReferencesComponent;$contentCV[unique=true];uid[unique=true];name;productReferenceTypes(code);maximumNumberProducts;&componentRef
-                                        ;;accessories;Accessories;ACCESSORIES;50;accessories
-                                        ;;CrossSelling;Cross Selling;CROSSELLING;50;CrossSelling
-                                        ;;Others;Others;OTHERS;50;Others
-                                        ;;Similar;Similar;SIMILAR;50;Similar
-                                        ;;UpSelling;UpSelling;UPSELLING;50;UpSelling
