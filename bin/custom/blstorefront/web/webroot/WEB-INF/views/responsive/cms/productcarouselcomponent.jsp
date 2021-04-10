@@ -47,7 +47,7 @@
                                 <c:choose>
                                 	<c:when test="${product.isDiscontinued}">
                                 	<!-- TO-DO : Need to add Add to rental button with disabled action-->
-                                		<a href="#" class="btn btn-primary btn-disabled">Add to Rental</a>
+                                		<a href="#" class="btn btn-outline btn-disabled">Add to Rental</a>
                                 	</c:when>
                                 	<c:when test="${product.isUpcoming}">
                                 	<!-- TO-DO : Need to add Notify Me button -->
