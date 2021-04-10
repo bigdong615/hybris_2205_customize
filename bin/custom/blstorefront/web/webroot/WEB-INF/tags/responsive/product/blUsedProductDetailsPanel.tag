@@ -45,11 +45,12 @@
                                   <tbody>
                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
                                          <tr class= " ${loop.index > 2 ? 'hide-product-row' : ''}">
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku${serialProduct.serialId}">${serialProduct.conditionRating}</a></td>
+                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
                                             <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
                                             <td>$1,550</td>
                                             <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
-                                            <td class="text-end"><a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
+                                            <td class="text-end">
+                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
                                         </tr>
                                        </c:forEach>
                                     </tbody>
