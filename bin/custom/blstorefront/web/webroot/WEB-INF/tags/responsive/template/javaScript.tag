@@ -169,7 +169,7 @@
                 },
             },
             //,
-          } ).mount();
+          } ).mount());
         document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 3,
@@ -406,19 +406,6 @@
             keyboard: false,
         } ).mount());
 
-
-             // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
-             const mprodpicker = new Litepicker({
-                 element: document.getElementById('mobile-product-litepicker'),
-                 plugins: ['mobilefriendly'],
-                 singleMode: false,
-                 numberOfMonths: 1,
-                 numberOfColumns: 1,
-                 autoApply: false,
-                 format: "MMM D",
-                 resetButton: true,
-                 buttonText : {"reset":"Reset"},
-             });
          </script>
 
 		</c:if>
