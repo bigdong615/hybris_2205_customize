@@ -136,7 +136,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
 
         // If its rental gear
-        if(category.isRentalCategory()) {
+        if(category.isRentalCategory() && category.isFacetedCategory()) {
             addClearAllQuery(category, model);
         }
 
@@ -165,18 +165,8 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      * this method is created for making clear all query for faceted rental category
      */
     private void addClearAllQuery(final CategoryModel category, final Model model) {
-        if(CollectionUtils.isNotEmpty(category.getSupercategories())) {
-            for (CategoryModel superCategory : category.getSupercategories()) {
-                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getCode())) {
-                    model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY, BlCoreConstants.RENTAL_CLEAR_ALL);
-                    model.addAttribute(BlCoreConstants.SUPER_CATEGORY, BlCoreConstants.BRANDS);
-
-                }
-            }
-        }
-        else if(category.isFacetedCategory()) {
             model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY,  BlCoreConstants.RENTAL_CLEAR_ALL);
-        }
+            model.addAttribute(BlCoreConstants.SUPER_CATEGORY, BlCoreConstants.BRANDS);
     }
 
     /**
