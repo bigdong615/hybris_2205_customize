@@ -48,6 +48,7 @@
                                    <p><span class="arrival">Get it on Jan 31</span> <a href="#" class="pickupDeliveryLink">Pickup or Delivery</a></p>
                                   </div>
                                 <div class="priceSummary">
+                                <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                   <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">7 day rental</span>
                                 </div>
                                 <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
