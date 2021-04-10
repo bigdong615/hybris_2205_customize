@@ -448,6 +448,20 @@
                     <modifiers read="true" write="true" search="true" optional="true"/>
                     <description>Customer facing header notes on the item</description>
                   </attribute>
+                  <attribute qualifier="facetedCategory" type="boolean">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" search="true" optional="false" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                    <description>Defines Category is faceted category </description>
+                  </attribute>
+
+                  <attribute qualifier="rentalCategory" type="boolean">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" search="true" optional="false" />
+                    <defaultvalue>Boolean.FALSE</defaultvalue>
+                    <description>Defines Category is Rental</description>
+                  </attribute>
+
                 </attributes>
             </itemtype>
             <itemtype code="BlProduct" extends="Product" autocreate="true" generate="true"
@@ -682,6 +696,19 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>Determines the product is most popular</description>
                    </attribute>
+                   <attribute qualifier="greatValue" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" search="true" optional="false" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is Great Value</description>
+                   </attribute>
+                   <attribute qualifier="staffPick" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" search="true" optional="false" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is Staff Pick</description>
+                   </attribute>
+
                    <attribute qualifier="retailPrice" type="java.lang.Double">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="false"/>

@@ -24,8 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,23 +33,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
 /**
- * Controller for a category page
+ * Since we have seperate controller for used gear and rental gear . Hence making as AbstractBlCategoryPageController
  */
-@Controller
-@RequestMapping(value = "/**/c")
-public class CategoryPageController extends AbstractCategoryPageController {
 
-    @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
-    public String category(@PathVariable("categoryCode") final String categoryCode, // NOSONAR
-                           @RequestParam(value = "q", required = false) final String searchQuery,
-                           @RequestParam(value = "page", defaultValue = "0") final int page,
-                           @RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
-                           @RequestParam(value = "sort", required = false) final String sortCode, final Model model,
-                           final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
-        return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, request, response);
-    }
+
+public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
+    private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";
 
     @ResponseBody
     @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
@@ -71,6 +61,10 @@ public class CategoryPageController extends AbstractCategoryPageController {
         return performSearchAndGetResultsData(categoryCode, searchQuery, page, showMode, sortCode);
     }
 
+
+    /**
+     * this method is created commonly for both rental and used gear categories to fetch the products
+     */
     protected String performSearchAndGetResultsPage(final String categoryCode, String searchQuery, final int page, // NOSONAR
         final ShowMode showMode, final String sortCode, final Model model, final HttpServletRequest request,
         final HttpServletResponse response) throws UnsupportedEncodingException
@@ -79,15 +73,10 @@ public class CategoryPageController extends AbstractCategoryPageController {
 
         // BL-268 Added For Faceted PLP & Default Sorting for PLP
         StringBuilder configParam  = new StringBuilder();
-        if(StringUtils.isBlank(searchQuery)) {
-            for (CategoryModel superCategory : category.getSupercategories()) {
-                if (BlCoreConstants.BRANDS.equalsIgnoreCase(superCategory.getName())) {
-                    searchQuery= String.valueOf(
-                        configParam.append(Config.getParameter(BlCoreConstants.DEFAULT_SORT_CODE)).append(Config.getParameter(BlCoreConstants.FACTED_CATEGORY_NAME))
-                            .append(categoryCode));
-                }
-            }
+        if(StringUtils.isBlank(searchQuery) && category.isRentalCategory()) {
+                searchQuery = getDefaultSort(category, configParam, searchQuery, categoryCode);
         }
+
         final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
         if (StringUtils.isNotEmpty(redirection))
         {
@@ -95,6 +84,15 @@ public class CategoryPageController extends AbstractCategoryPageController {
         }
 
         final CategoryPageModel categoryPage = getCategoryPage(category);
+
+        //BL-80 Added to get default sorting as newest for Used New Arrivals Category
+        if(StringUtils.isBlank(searchQuery)) {
+            if (category.getCode().startsWith(BlCoreConstants.NEW) || BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(category.getCode())) {
+                searchQuery = getConfigParametrs(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
+            } else {
+                searchQuery = getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE);
+            }
+        }
 
         final CategorySearchEvaluator categorySearch = new CategorySearchEvaluator(categoryCode, searchQuery, page, showMode,
             sortCode, categoryPage);
@@ -105,7 +103,7 @@ public class CategoryPageController extends AbstractCategoryPageController {
             categorySearch.doSearch();
             searchPageData = categorySearch.getSearchPageData();
         }
-        catch (final ConversionException e) // NOSONAR
+        catch (final ConversionException e)
         {
             searchPageData = createEmptySearchResult(categoryCode);
         }
@@ -117,13 +115,16 @@ public class CategoryPageController extends AbstractCategoryPageController {
 
         populateModel(model, searchPageData, showMode);
         model.addAttribute(WebConstants.BREADCRUMBS_KEY, getSearchBreadcrumbBuilder().getBreadcrumbs(categoryCode, searchPageData));
-        model.addAttribute("showCategoriesOnly", Boolean.valueOf(showCategoriesOnly));
+        model.addAttribute("showCategoriesOnly", showCategoriesOnly);
         model.addAttribute("categoryName", category.getName());
         model.addAttribute("pageType", PageType.CATEGORY.name());
         model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
         model.addAttribute("footerContent",category.getFooterContent());
+        model.addAttribute(BlCoreConstants.CLEAR_BRAND,BlCoreConstants.RENTAL_CLEAR_ALL);
 
         updatePageTitle(category, model);
+        // To check whether the category is Rental Gear
+        addModelAttributeForRentalAndUsedCategory(category,model);
 
         final RequestContextData requestContextData = getRequestContextData(request);
         requestContextData.setCategory(category);
@@ -134,6 +135,11 @@ public class CategoryPageController extends AbstractCategoryPageController {
             model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
         }
 
+        // If its rental gear
+        if(category.isRentalCategory() && category.isFacetedCategory()) {
+            addClearAllModelAttribute(model);
+        }
+
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
             category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
                 Collectors.toSet()));
@@ -142,5 +148,54 @@ public class CategoryPageController extends AbstractCategoryPageController {
 
         return getViewPage(categorySearch.getCategoryPage());
 
+    }
+    /**
+     *  this method is created for adding model attribute to rental and used gear category
+     */
+    private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
+        if(category.isRentalCategory()){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+        }
+        else {
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
+        }
+    }
+
+    /**
+     * this method is created for adding clear attribute for rental category
+     */
+    private void addClearAllModelAttribute( final Model model) {
+            model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY,  BlCoreConstants.RENTAL_CLEAR_ALL);
+            model.addAttribute(BlCoreConstants.SUPER_CATEGORY, BlCoreConstants.BRANDS);
+    }
+
+    /**
+     * this method is created for getting default sort from properties
+     */
+    private String getDefaultSort(final CategoryModel category ,final StringBuilder configParam , String searchQuery ,final String categoryCode) {
+        if(CollectionUtils.isEmpty(category.getSupercategories())){
+            searchQuery= String.valueOf(configParam.append(getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE)));
+        }
+        else {
+                if (category.isFacetedCategory()) {
+                    searchQuery = String.valueOf(configParam.append(getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE))
+                            .append(getConfigParametrs(BlCoreConstants.FACTED_CATEGORY_NAME))
+                            .append(categoryCode));
+            }
+        }
+        return searchQuery;
+    }
+
+    /**
+     * this method is created for getting com
+     * @param configParam property key
+     * @return String values
+     */
+    private String getConfigParametrs(final String configParam) {
+        final String value = Config.getParameter(configParam);
+        if(StringUtils.isNotBlank(value)) {
+            return value;
+        }
+        return BlCoreConstants.EMPTY_STRING;
     }
 }

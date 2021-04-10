@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -73,6 +74,7 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@RequestMapping(method = RequestMethod.GET, params = "!q")
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
+			@RequestParam(value="blPageType") final String blPageType,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
@@ -82,6 +84,7 @@ public class SearchPageController extends AbstractSearchPageController
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
 			searchQueryData.setValue(searchText);
+			searchQueryData.setBlPage(blPageType);
 			searchState.setQuery(searchQueryData);
 
 			ProductSearchPageData<SearchStateData, ProductData> searchPageData = null;
@@ -126,6 +129,7 @@ public class SearchPageController extends AbstractSearchPageController
 			}
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
 
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,
@@ -140,15 +144,16 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "q")
-	public String refineSearch(@RequestParam("q") final String searchQuery,
+	public String refineSearch(@RequestParam("q") final String searchQuery, //NOSONAR
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
 			@RequestParam(value = "sort", required = false) final String sortCode,
-			@RequestParam(value = "text", required = false) final String searchText, final HttpServletRequest request,
+			@RequestParam(value="blPageType",required = false) final String blPageType, //NOSONAR
+			@RequestParam(value = "text", required = false) final String searchText, final HttpServletRequest request, //NOSONAR
 			final Model model) throws CMSItemNotFoundException
 	{
 		final ProductSearchPageData<SearchStateData, ProductData> searchPageData = performSearch(searchQuery, page, showMode,
-				sortCode, getSearchPageSize());
+				sortCode, getSearchPageSize(),blPageType);
 
 		populateModel(model, searchPageData, showMode);
 		model.addAttribute("userLocation", customerLocationService.getUserLocation());
@@ -166,6 +171,7 @@ public class SearchPageController extends AbstractSearchPageController
 		}
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, searchBreadcrumbBuilder.getBreadcrumbs(null, searchPageData));
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
 
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,
@@ -181,14 +187,16 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
-			final ShowMode showMode, final String sortCode, final int pageSize)
+			final ShowMode showMode, final String sortCode, final int pageSize ,String blPageType)
 	{
 		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);
 
 		final SearchStateData searchState = new SearchStateData();
 		final SearchQueryData searchQueryData = new SearchQueryData();
 		searchQueryData.setValue(searchQuery);
+		searchQueryData.setBlPage(blPageType);
 		searchState.setQuery(searchQueryData);
+
 
 		return encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
 	}
@@ -201,7 +209,7 @@ public class SearchPageController extends AbstractSearchPageController
 			@RequestParam(value = "sort", required = false) final String sortCode) throws CMSItemNotFoundException
 	{
 		final ProductSearchPageData<SearchStateData, ProductData> searchPageData = performSearch(searchQuery, page, showMode,
-				sortCode, getSearchPageSize());
+				sortCode, getSearchPageSize(),null);
 		final SearchResultsData<ProductData> searchResultsData = new SearchResultsData<>();
 		searchResultsData.setResults(searchPageData.getResults());
 		searchResultsData.setPagination(searchPageData.getPagination());

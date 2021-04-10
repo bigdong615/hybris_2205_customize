@@ -15,7 +15,6 @@
 <section id="products">
    <div class="container">
       <div class="row">
-
             <cms:pageSlot position="ProductLeftRefinements" var="feature" >
                <cms:component component="${feature}"/>
             </cms:pageSlot>
