@@ -99,19 +99,14 @@
 							<cms:component component="${feature}" />
 						</cms:pageSlot>
 					</ul>
+					<!-- BL-351 : Homepage Mobile Device Brands Section --> 
 					<div class="logo-slider splide mt-4 d-block d-md-none">
 						<div class="splide__track">
 							<ul class="splide__list">
-								<li class="splide__slide my-auto canon"><a href="#"><img
-										src="assets/logo-canon.svg"></a></li>
-								<li class="splide__slide my-auto sony"><a href="#"><img
-										src="assets/logo-sony.svg"></a></li>
-								<li class="splide__slide my-auto nikon"><a href="#"><img
-										src="assets/logo-nikon.svg"></a></li>
-								<li class="splide__slide my-auto dji"><a href="#"><img
-										src="assets/logo-dji.svg"></a></li>
-								<li class="splide__slide my-auto panasonic"><a href="#"><img
-										src="assets/logo-animal-planet.svg"></a></li>
+								<cms:pageSlot position="MobileHomePageBrandSectionSlot"
+									var="feature">
+									<cms:component component="${feature}" />
+								</cms:pageSlot>
 							</ul>
 						</div>
 					</div>
@@ -120,6 +115,14 @@
 			</div>
 			<div class="row justify-content-center my-5">
 				<div class="divider col-xl-10"></div>
+			</div>
+			<!-- BL-52 : HomePage Featured Gear section -->
+			<div id="featured" class="row justify-content-center">
+				<div class="col-lg-11 col-xl-9">
+					<cms:pageSlot position="HomePageFeaturedGearSectionSlot" var="feature">
+						<cms:component component="${feature}" />
+					</cms:pageSlot>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -147,19 +150,14 @@
 							<cms:component component="${feature}" />
 						</cms:pageSlot>
 					</ul>
+					<!-- BL-345 : HomePage Mobile Device They Borrow from us section -->
 					<div class="logo-slider splide mt-5 d-block d-md-none">
 						<div class="splide__track">
 							<ul class="splide__list">
-								<li class="splide__slide my-auto"><a href="#"><img
-										src="assets/logo-netflix.svg"></a></li>
-								<li class="splide__slide my-auto"><a href="#"><img
-										src="assets/logo-disney.svg"></a></li>
-								<li class="splide__slide my-auto"><a href="#"><img
-										src="assets/logo-hbo.svg"></a></li>
-								<li class="splide__slide my-auto"><a href="#"><img
-										src="assets/logo-animal-planet.svg"></a></li>
-								<li class="splide__slide my-auto"><a href="#"><img
-										src="assets/logo-al-jazeera.svg"></a></li>
+								<cms:pageSlot position="MobileHomePageBorrowFromUsSectionSlot"
+									var="feature">
+									<cms:component component="${feature}" />
+								</cms:pageSlot>
 							</ul>
 						</div>
 					</div>

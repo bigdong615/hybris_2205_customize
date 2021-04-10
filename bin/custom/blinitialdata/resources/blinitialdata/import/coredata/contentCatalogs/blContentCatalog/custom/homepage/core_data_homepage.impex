@@ -57,7 +57,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
                               ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
                               ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
-                                                                        
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart                                                                                    
                               
 INSERT_UPDATE ComponentTypeGroup ; code[unique=true] 
                                  ; logo              
@@ -121,7 +121,7 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; MobileHeaderLinkForSupportSlot           ; Mobile Header Link For Support Slot;
                           ;                         ; MobileHeaderLinkForAccountSlot           ; Mobile Header Link For Account Slot;
                           ;                         ; MobileHeaderBottomInfo             ; Mobile Header Bottom Info              ;           
-                          
+                          ;                         ; MobileMiniCartSlot                 ; Mobile Mini Cart Slot                                                   
                           
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
@@ -140,6 +140,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MobileHeaderLinkForSupportSlot-LandingPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
                                      ;                         ; MobileHeaderLinkForAccountSlot-LandingPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true									 
                                      ;                         ; MobileHeaderBottomInfo-LandingPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
+                                     ;                         ; MobileMiniCartSlot-LandingPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true           
                                      
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='homepage'] ; contentSlot(uid,$contentCV)[unique=true] 

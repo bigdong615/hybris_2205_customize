@@ -4,60 +4,67 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="component" tagdir="/WEB-INF/tags/shared/component" %>
+<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <c:choose>
 	<c:when test="${not empty productData}">
-		<div class="carousel__component">
-			<div class="carousel__component--headline">${fn:escapeXml(title)}</div>
-
-			<c:choose>
-				<c:when test="${component.popup}">
-					<div class="carousel__component--carousel js-owl-carousel js-owl-lazy-reference js-owl-carousel-reference">
-						<div id="quickViewTitle" class="quickView-header display-none">
-							<div class="headline">
-								<span class="headline-text"><spring:theme code="popup.quick.view.select"/></span>
-							</div>
-						</div>
-						<c:forEach items="${productData}" var="product">
-
-							<c:url value="${product.url}/quickView" var="productQuickViewUrl"/>
-							<div class="carousel__item">
-								<a href="${productQuickViewUrl}" class="js-reference-item">
-									<div class="carousel__item--thumb">
-										<product:productPrimaryReferenceImage product="${product}" format="product"/>
+		<h5>${title}</h5>
+		<div id="gear-slider" class="splide mt-4">
+			<div class="splide__track">
+				<ul class="splide__list">
+					<c:forEach items="${productData}" var="product">
+						<li class="splide__slide">
+							<div class="card">
+							<c:choose>
+                                	<c:when test="${product.isNew}">
+                                		<span class="badge badge-new"><spring:theme code="text.product.tile.flag.new" /></span>
+                                	</c:when>
+                                	<c:otherwise>
+                                	<!-- TO-DO Need to add Stock related flag once the stock related changes is implemented --> 
+                                	</c:otherwise>
+                                </c:choose>
+								
+								<span class="bookmark"></span>
+								<div class="card-slider splide">
+									<div class="splide__track">
+										<ul class="splide__list">
+											<c:forEach items="${product.images}" var="productImage">
+												<c:if test="${productImage.format eq 'product' and productImage.imageType eq 'GALLERY'}">
+													<c:url value="${productImage.url}" var="primaryImageUrl" />
+	                       							<c:set value="this is alternate" var="altTextHtml"/>
+													<li class="splide__slide"><img src="${primaryImageUrl}"></li>
+												</c:if>
+											</c:forEach>
+										</ul>
 									</div>
-									<div class="carousel__item--name">${fn:escapeXml(product.name)}</div>
-									<div class="carousel__item--price"><format:fromPrice priceData="${product.price}"/></div>
-								</a>
+								</div>
+								<p class="overline">${product.manufacturer}</p>
+								<h6 class="product"><c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></h6>
+                                <h6 class="price"><product:productListerItemPrice product="${product}"/> <span class="period"><spring:theme code="text.product.tile.rental.days" arguments="7"/></span></h6>
+                                <c:choose>
+                                	<c:when test="${product.isDiscontinued}">
+                                	<!-- TO-DO : Need to add Add to rental button with disabled action-->
+                                		<a href="#" class="btn btn-outline btn-disabled">Add to Rental</a>
+                                	</c:when>
+                                	<c:when test="${product.isUpcoming}">
+                                	<!-- TO-DO : Need to add Notify Me button -->
+                                		<a href="#" class="btn btn-primary">Notify Me</a>
+                                	</c:when>
+                                	<c:otherwise>
+                                	<!-- TO-DO : Need to add Add to rental button -->
+                                		<a href="#" class="btn btn-primary">Add to Rental</a>
+                                	</c:otherwise>
+                                </c:choose>
 							</div>
-						</c:forEach>
-					</div>
-				</c:when>
-				<c:otherwise>
-					<div class="carousel__component--carousel js-owl-carousel js-owl-default">
-						<c:forEach items="${productData}" var="product">
-
-							<c:url value="${product.url}" var="productUrl"/>
-
-							<div class="carousel__item">
-								<a href="${productUrl}">
-									<div class="carousel__item--thumb">
-										<product:productPrimaryImage product="${product}" format="product"/>
-									</div>
-									<div class="carousel__item--name">${fn:escapeXml(product.name)}</div>
-									<div class="carousel__item--price"><format:fromPrice priceData="${product.price}"/></div>
-								</a>
-							</div>
-						</c:forEach>
-					</div>
-				</c:otherwise>
-			</c:choose>
+						</li>
+					</c:forEach>
+				</ul>
+			</div>
 		</div>
 	</c:when>
-
 	<c:otherwise>
 		<component:emptyComponent/>
 	</c:otherwise>

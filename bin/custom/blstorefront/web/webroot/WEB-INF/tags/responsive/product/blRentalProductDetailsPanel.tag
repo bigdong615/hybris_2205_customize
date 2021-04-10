@@ -5,6 +5,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
+<c:url value="/cart/add" var="addToCartUrl"/>
  <div class="screen"></div>
  <cms:pageSlot position="SearchBoxBl" var="component">
  				<cms:component component="${component}"/>
@@ -47,10 +48,16 @@
                                    <p><span class="arrival">Get it on Jan 31</span> <a href="#" class="pickupDeliveryLink">Pickup or Delivery</a></p>
                                   </div>
                                 <div class="priceSummary">
-                                  <span class="productPrice">$215</span>&emsp;<span class="rentalDates">7 day rental</span>
+                                <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
+                                  <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">7 day rental</span>
                                 </div>
-                                  <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5"><spring:theme code= "basket.add.to.rental.cart.button.text" /></a>
-                            </div>
+                                <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                  <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
+                                  <input type="hidden" name="productCodePost" value="${product.code}">
+                                  <button id="addToCartButton" type="submit" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn">
+                           				<spring:theme code= "basket.add.to.rental.cart.button.text" /></button>
+                           			</form>
+                              </div>
                         </div>
                     </div>
                 </div>
@@ -131,14 +138,13 @@
                                    </div>
                                 <hr>
                                 <!-- Additional Gear Slider -->
-                                <!--TO-DO : This section will be fixed in bl-174  -->
                                  <h5><spring:theme code= "pdp.rental.product.recommendation.section.text" /></h5>
                                   <div id="gear-slider" class="splide mt-4">
                                      <cms:pageSlot position="CrossSelling" var="comp" element="div" class="productDetailsPageSectionCrossSelling">
                                          <cms:component component="${comp}" element="div" class="productDetailsPageSectionCrossSelling-component"/>
                                      </cms:pageSlot>
                                   </div>
-                               <!-- Start Reviews -->
+                                <!-- Start Reviews -->
                                 <div id="reviews" class="mb-5">
                                     <h5 class="mb-4"><spring:theme code= "pdp.review.section.text"/></h5><div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                     <div class="reviewBlock">
