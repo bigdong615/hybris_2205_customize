@@ -54,7 +54,9 @@
                                        </c:forEach>
                                     </tbody>
                                 </table>
+                                <c:if test="${product.serialproducts.size() >2}">
                                 <p class="mt-4"><a href="#" id="showmore"><spring:theme code="pdp.show.more.button.text"/></a>
+                                </c:if>
                                 <c:if test="${product.forRent}">
                                 <c:url var="rentUrl" value="/rent/product/${product.code}"/>
                                 <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>

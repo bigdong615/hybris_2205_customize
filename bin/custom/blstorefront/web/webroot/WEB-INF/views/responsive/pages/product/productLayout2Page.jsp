@@ -6,10 +6,10 @@
 
 <template:page pageTitle="${pageTitle}">
    <c:choose>
-       <c:when test="${IsRentalPage eq 'true'}">
+       <c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">
               <product:blRentalProductDetailsPanel />
       </c:when>
-      <c:when test="${IsRentalPage eq 'false'}">
+      <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">
          <product:blUsedProductDetailsPanel/>
       </c:when>
    </c:choose>

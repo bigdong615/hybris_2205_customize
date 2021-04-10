@@ -16,7 +16,7 @@ public class SerialProductData implements Comparable<SerialProductData>, Seriali
   private String serialId;
 
   @Override
-  public int compareTo(SerialProductData serialProductData) { // NOSONAR
+  public int compareTo(final SerialProductData serialProductData) { // NOSONAR
     if (serialProductData == null) {
       return -1;
     }

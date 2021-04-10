@@ -54,7 +54,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
     target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
     target.setUsedDescription(source.getUsedDescription());
-    target.setSerialproducts(populatedSerialProduct(source.getSerialProducts()));
+    target.setSerialproducts(populatedSerialProduct(CollectionUtils.emptyIfNull(source.getSerialProducts())));
   }
 
   /*
