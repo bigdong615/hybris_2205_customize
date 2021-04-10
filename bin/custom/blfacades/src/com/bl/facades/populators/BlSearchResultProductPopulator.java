@@ -75,6 +75,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setConfigurable(this.<Boolean>getValue(source, "configurable"));
     target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
+    target.setIsDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
     // Add Product Tags to product
     addProductTag(source,target);
     populatePrices(source, target);
