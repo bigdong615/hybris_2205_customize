@@ -5,217 +5,217 @@
 #% impex.info("=============================== Importing content from BLInitialData suppliers.impex =========================");
 
 # Macros / Replacement Parameter definitions
-$productCatalog=blProductCatalog
-$productCatalogName=BL Product Catalog
+$productCatalog = blProductCatalog
+$productCatalogName = BL Product Catalog
 
-$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-$superCategories=superCategories(code, $catalogVersion)
+$catalogVersion = catalogversion(catalog(id[default=$productCatalog]), version[default='Staged'])[unique=true, default=$productCatalog:Staged]
+$superCategories = superCategories(code, $catalogVersion)
 
-INSERT_UPDATE Category;categoryId[unique=true];code[unique=true];active;name[lang=en];onCategoryTree;displayName;$superCategories;allowedPrincipals(uid)[default='customergroup'];$catalogVersion
-                      ;;brands;true;Brands;true;Brands
-                      ;1;nikon;true;Nikon;true;Nikon;brands
-                      ;2;canon;true;Canon;true;Canon;brands
-                      ;3;Leica;true;Leica;false;Leica;brands
-                      ;4;Mamiya;true;Mamiya;false;Mamiya;brands
-                      ;5;Profoto;true;Profoto;true;Profoto;brands
-                      ;6;Lensbaby;true;Lensbaby;false;Lensbaby;brands
-                      ;7;Zeiss;true;Zeiss;true;Zeiss;brands
-                      ;8;redrock_micro;true;Redrock Micro;false;Redrock Micro;brands
-                      ;9;aquatech;true;Aquatech;false;Aquatech;brands
-                      ;10;Olympus;true;Olympus;false;Olympus;brands
-                      ;11;Pentax;true;false;false;Pentax;brands
-                      ;13;Panasonic;true;Panasonic;true;Panasonic;brands
-                      ;14;Sony;true;Sony;true;Sony;brands
-                      ;15;RED;true;RED;true;RED;brands
-                      ;16;Sigma;true;Sigma;true;Sigma;brands
-                      ;17;Fuji;true;Fuji;true;Fuji;brands
-                      ;18;GoPro;true;GoPro;true;GoPro;brands
-                      ;19;Tamron;true;Tamron;false;Tamron;brands
-                      ;20;Manfrotto;true;Manfrotto;false;Manfrotto;brands
-                      ;21;Rokinon;true;Rokinon;false;Rokinon;brands
-                      ;22;Tokina;true;Tokina;false;Tokina;brands
-                      ;23;pocket_wizard;true;Pocket Wizard;false;Pocket Wizard;brands
-                      ;24;Hasselblad;true;Hasselblad;true;Hasselblad;brands
-                      ;25;Metabones;true;Metabones;false;Metabones;brands
-                      ;26;paul_buff;true;Paul Buff;false;Paul Buff;brands
-                      ;27;Samsung;true;Samsung;false;Samsung;brands
-                      ;28;Schneider;true;Schneider;false;Schneider;brands
-                      ;29;Lowepro;true;Lowepro;false;Lowepro;brands
-                      ;30;Quantum;true;Quantum;false;Quantum;brands
-                      ;31;Sandisk;true;SanDisk;false;SanDisk;brands
-                      ;32;ARRI;true;ARRI;true;ARRI;brands
-                      ;33;Elinchrom;true;Elinchrom;false;Elinchrom;brands
-                      ;34;Kessler;true;Kessler;false;Kessler;brands
-                      ;35;Litepanels;true;Litepanels;false;Litepanels;brands
-                      ;36;Matthews;true;Matthews;false;Matthews;brands
-                      ;37;Bowens;true;Bowens;false;Bowens;brands
-                      ;38;Cinevate;true;Cinevate;false;Cinevate;brands
-                      ;39;Fiilex;true;Fiilex;false;Fiilex;brands
-                      ;40;Gura_Gear;true;Gura Gear;false;Gura Gear;brands
-                      ;41;Induro;true;Induro;false;Induro;brands
-                      ;42;Photoflex;true;Photoflex;false;Photoflex;brands
-                      ;43;Veydra;true;Veydra;false;Veydra;brands
-                      ;44;Westcott;true;Westcott;false;Westcott;brands
-                      ;45;Zacuto;true;Zacuto;false;Zacuto;brands
-                      ;46;Broncolor;true;Broncolor;false;Broncolor;brands
-                      ;47;Gary_Fong;true;Gary Fong;false;Gary Fong;brands
-                      ;48;Kino_Flo;true;Kino Flo;false;Kino Flo;brands
-                      ;49;Voigtlander;true;Voigtlander;false;Voigtlander;brands
-                      ;50;Lowel;true;Lowel;false;Lowel;brands
-                      ;51;Marshall;true;Marshall;false;Marshall;brands
-                      ;52;Lexar;true;Lexar;false;Lexar;brands
-                      ;53;Lytro;true;Lytro;false;Lytro;brands
-                      ;54;Peleng;true;Peleng;false;Peleng;brands
-                      ;55;Transcend;true;Transcend;false;Transcend;brands
-                      ;56;Anton_Bauer;true;Anton Bauer;false;Anton Bauer;brands
-                      ;57;Blackmagic;true;Blackmagic;false;Blackmagic;brands
-                      ;58;Cooke;true;Cooke;false;Cooke;brands
-                      ;59;DJI;true;DJI;false;DJI;brands
-                      ;60;Glidecam;true;Glidecam;false;Glidecam;brands
-                      ;61;SmallHD;true;SmallHD;false;SmallHD;brands
-                      ;62;AJA;true;AJA;false;AJA;brands
-                      ;63;Atomos;true;Atomos;false;Atomos;brands
-                      ;64;Wooden_Camera;true;Wooden Camera;false;Wooden Camera;brands
-                      ;65;OConnor;true;OConnor;false;OConnor;brands
-                      ;66;Sachtler;true;Sachtler;false;Sachtler;brands
-                      ;67;IKAN;true;Ikan;false;Ikan;brands
-                      ;68;Lectrosonics;true;Lectrosonics;false;Lectrosonics;brands
-                      ;69;Steadicam;true;Steadicam;false;Steadicam;brands
-                      ;70;Zoom;true;Zoom;false;Zoom;brands
-                      ;71;Paralinx;true;Paralinx;false;Paralinx;brands
-                      ;72;Porta_Brace;true;Porta Brace;false;Porta Brace;brands
-                      ;73;Shure;true;Shure;false;Shure;brands
-                      ;74;Sound_Devices;true;Sound Devices;false;Sound Devices;brands
-                      ;75;Tascam;true;Tascam;false;Tascam;brands
-                      ;76;Teradek;true;Teradek;false;Teradek;brands
-                      ;77;Freefly;true;Freefly;false;Freefly;brands
-                      ;78;Bolex;true;Bolex;false;Bolex;brands
-                      ;79;SLR_Magic;true;SLR Magic;false;SLR Magic;brands
-                      ;80;Think_Tank;true;Think Tank;false;Think Tank;brands
-                      ;81;Tiffen;true;Tiffen;false;Tiffen;brands
-                      ;82;EasyRig;true;Easyrig;false;Easyrig;brands
-                      ;83;Sekonic;true;Sekonic;false;Sekonic;brands
-                      ;84;CameraSlingers;true;CameraSlingers;false;CameraSlingers;brands
-                      ;85;Beachtek;true;Beachtek;false;Beachtek;brands
-                      ;86;Casio;true;Casio;false;Casio;brands
-                      ;87;Sennheiser;true;Sennheiser;false;Sennheiser;brands
-                      ;88;SunBounce;true;Sunbounce;false;Sunbounce;brands
-                      ;89;Drop_It_Modern;true;Drop It Modern;false;Drop It Modern;brands
-                      ;90;Lastolite;true;Lastolite;false;Lastolite;brands
-                      ;91;Switronix;true;Switronix;false;Switronix;brands
-                      ;92;Adaptimax;true;Adaptimax;false;Adaptimax;brands
-                      ;93;BW;true;B+W;false;B+W;brands
-                      ;94;Bower;true;Bower;false;Bower;brands
-                      ;95;Heden;true;Heden;false;Heden;brands
-                      ;96;Rode;true;Rode;false;Rode;brands
-                      ;97;Video_Devices;true;Video Devices;false;Video Devices;brands
-                      ;98;kodak;true;Kodak;false;Kodak;brands
-                      ;99;impact;true;Impact;false;Impact;brands
-                      ;100;wimberley;true;Wimberley;false;Wimberley;brands
-                      ;101;360fly;true;360fly;false;360fly;brands
-                      ;102;voyager;true;Voyager;false;Voyager;brands
-                      ;103;blue;true;Blue;false;Blue;brands
-                      ;104;kenko;true;Kenko;false;Kenko;brands
-                      ;105;joby;true;Joby;false;Joby;brands
-                      ;106;giottos;true;Giottos;false;Giottos;brands
-                      ;107;kirk;true;Kirk;false;Kirk;brands
-                      ;108;epson;true;Epson;false;Epson;brands
-                      ;109;creative_light;true;Creative Light;false;Creative Light;brands
-                      ;110;custom_brackets;true;Custom Brackets;false;Custom Brackets;brands
-                      ;111;crumpler;true;Crumpler;false;Crumpler;brands
-                      ;112;nodal_ninja;true;Nodal Ninja;false;Nodal Ninja;brands
-                      ;113;gitzo;true;Gitzo;false;Gitzo;brands
-                      ;114;black_rapid;true;Black Rapid;false;Black Rapid;brands
-                      ;115;datacolor;true;Datacolor;false;Datacolor;brands
-                      ;116;omni_tracker;true;Omni-Tracker;false;Omni-Tracker;brands
-                      ;117;singh_ray;true;Singh-Ray;false;Singh-Ray;brands
-                      ;118;novoflex;true;Novoflex;false;Novoflex;brands
-                      ;119;plustek;true;Plustek;false;Plustek;brands
-                      ;120;wendt;true;Wendt;false;Wendt;brands
-                      ;121;audio_technica;true;Audio-Technica;false;Audio-Technica;brands
-                      ;122;skimmer_sack;true;SkimmerSack;false;SkimmerSack;brands
-                      ;123;apple;true;Apple;false;Apple;brands
-                      ;124;ray_flash;true;Ray Flash;false;Ray Flash;brands
-                      ;125;x_rite;true;X-Rite;false;X-Rite;brands
-                      ;126;miller;true;Miller;false;Miller;brands
-                      ;127;chimera;true;Chimera;false;Chimera;brands
-                      ;128;stackshot;true;StackShot;false;StackShot;brands
-                      ;129;gigapan;true;Giga Pan;false;Giga Pan;brands
-                      ;130;ktek;true;K-Tek;false;K-Tek;brands
-                      ;131;heliopan;true;Heliopan;false;Heliopan;brands
-                      ;132;lumapro;true;LumaPro;false;LumaPro;brands
-                      ;133;lenscoat;true;LensCoat;false;LensCoat;brands
-                      ;134;mtf_services;true;MTF Services;false;MTF Services;brands
-                      ;135;genaray;true;Genaray;false;Genaray;brands
-                      ;136;vello;true;Vello;false;Vello;brands
-                      ;137;fotodiox;true;Fotodiox;false;Fotodiox;brands
-                      ;138;noga;true;Noga;false;Noga;brands
-                      ;139;countryman;true;Countryman;false;Countryman;brands
-                      ;140;cinemilled;true;CineMilled;false;CineMilled;brands
-                      ;141;hive;true;Hive;false;Hive;brands
-                      ;142;delkin;true;Delkin;false;Delkin;brands
-                      ;143;convergent_design;true;Convergent Design;false;Convergent Design;brands
-                      ;144;timbuk2;true;Timbuk2;false;Timbuk2;brands
-                      ;145;exf_series;true;EXF Series;false;EXF Series;brands
-                      ;146;pearstone;true;Pearstone;false;Pearstone;brands
-                      ;147;boommate;true;BoomMate;false;BoomMate;brands
-                      ;148;atomic;true;Atomic;false;Atomic;brands
-                      ;149;inside_line_equipment;true;Inside Line Equipment;false;Inside Line Equipment;brands
-                      ;150;bolt;true;Bolt;false;Bolt;brands
-                      ;151;denecke;true;Denecke;false;Denecke;brands
-                      ;152;cinebags;true;CineBags;false;CineBags;brands
-                      ;153;rogue;true;Rogue;false;Rogue;brands
-                      ;154;lumedyne;true;Lumedyne;false;Lumedyne;brands
-                      ;155;genus;true;Genus;false;Genus;brands
-                      ;156;moment;true;Moment;false;Moment;brands
-                      ;157;pixelstick;true;Pixelstick;false;Pixelstick;brands
-                      ;158;syrp;true;Syrp;false;Syrp;brands
-                      ;159;modern_studio;true;Modern Studio;false;Modern Studio;brands
-                      ;160;benro;true;Benro;false;Benro;brands
-                      ;161;mophie_juice;true;Mophie Juice;false;Mophie Juice;brands
-                      ;162;cineroid;true;Cineroid;false;Cineroid;brands
-                      ;163;letus35;true;Letus35;false;Letus35;brands
-                      ;164;pelican;true;Pelican;false;Pelican;brands
-                      ;165;celestron;true;Celestron;false;Celestron;brands
-                      ;166;velbon;true;Velbon;false;Velbon;brands
-                      ;167;angenieux;true;Angenieux;false;Angenieux;brands
-                      ;169;hoya;true;Hoya;false;Hoya;brands
-                      ;170;peak design;true;Peak Design;false;Peak Design;brands
-                      ;171;digital_sputnik;true;Digital Sputnik;false;Digital Sputnik;brands
-                      ;172;orah;true;Orah;false;Orah;brands
-                      ;173;videostitch;true;VideoStitch;false;VideoStitch;brands
-                      ;174;360rize;true;360RIZE;false;360RIZE;brands
-                      ;175;rhino;true;Rhino;false;Rhino;brands
-                      ;176;borrowlenses;true;Borrowlenses;false;Borrowlenses;brands
-                      ;177;really_right_stuff;true;Really Right Stuff;false;Really Right Stuff;brands
-                      ;178;bright_tangerine;true;Bright Tangerine;false;Bright Tangerine;brands
-                      ;179;other;true;Other;false;Other;brands
-                      ;180;hahnel;true;Hahnel;false;Hahnel;brands
-                      ;181;canare;true;Canare;false;Canare;brands
-                      ;182;sling-studio;true;SlingStudio;false;SlingStudio;brands
-                      ;183;livestream;true;Livestream;false;Livestream;brands
-                      ;184;ready_rig;true;Ready Rig;false;Ready Rig;brands
-                      ;185;insta360;true;Insta360;false;Insta360;brands
-                      ;186;core-swx;true;Core SWX;false;Core SWX;brands
-                      ;187;aputure;true;Aputure;false;Aputure;brands
-                      ;188;intellytech;true;Intellytech;false;Intellytech;brands
-                      ;189;zhiyun-tech;true;Zhiyun-Tech;false;Zhiyun-Tech;brands
-                      ;190;da-lite;true;Da-Lite;false;Da-Lite;brands
-                      ;191;quasar_science;true;Quasar Science;false;Quasar Science;brands
-                      ;192;angelbird;true;Angelbird;false;Angelbird;brands
-                      ;193;tilta;true;Tilta;false;Tilta;brands
-                      ;194;venus_optics;true;Venus Optics;false;Venus Optics;brands
-                      ;195;eartec;true;Eartec;false;Eartec;brands
-                      ;196;deity;true;Deity;false;Deity;brands
-                      ;197;kupo;true;Kupo;false;Kupo;brands
-                      ;198;inovativ;true;Inovativ;false;Inovativ;brands
-                      ;199;smallrig;true;SmallRig;false;SmallRig;brands
-                      ;200;litegear;true;LiteGear;false;LiteGear;brands
-                      ;201;avenger;true;Avenger;false;Avenger;brands
-                      ;202;watson;true;Watson;false;Watson;brands
-                      ;203;godox;true;Godox;false;Godox;brands
-                      ;204;pacific_image;true;Pacific Image;false;Pacific Image;brands
-                      ;205;flashery;true;Flashery;false;Flashery;brands
-                      ;206;zillow;true;Zillow;false;Zillow;brands
-                      ;207;edelkrone;true;Edelkrone;false;Edelkrone;brands
-
+#BL-331 Added rnetal category attribute and faceted category attribute as true to define rental and faceted category
+INSERT_UPDATE Category; categoryId[unique = true]; code[unique = true]   ; active; name[lang = en]       ; onCategoryTree; displayName           ; $superCategories; allowedPrincipals(uid)[default = 'customergroup']; $catalogVersion; rentalCategory; facetedCategory
+                      ;                          ; brands                ; true  ; Brands                ; true          ; Brands
+                      ; 1                        ; nikon                 ; true  ; Nikon                 ; true          ; Nikon                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 2                        ; canon                 ; true  ; Canon                 ; true          ; Canon                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 3                        ; Leica                 ; true  ; Leica                 ; false         ; Leica                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 4                        ; Mamiya                ; true  ; Mamiya                ; false         ; Mamiya                ; brands          ;                                                  ;                ; true          ; true
+                      ; 5                        ; Profoto               ; true  ; Profoto               ; true          ; Profoto               ; brands          ;                                                  ;                ; true          ; true
+                      ; 6                        ; Lensbaby              ; true  ; Lensbaby              ; false         ; Lensbaby              ; brands          ;                                                  ;                ; true          ; true
+                      ; 7                        ; Zeiss                 ; true  ; Zeiss                 ; true          ; Zeiss                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 8                        ; redrock_micro         ; true  ; Redrock Micro         ; false         ; Redrock Micro         ; brands          ;                                                  ;                ; true          ; true
+                      ; 9                        ; aquatech              ; true  ; Aquatech              ; false         ; Aquatech              ; brands          ;                                                  ;                ; true          ; true
+                      ; 10                       ; Olympus               ; true  ; Olympus               ; false         ; Olympus               ; brands          ;                                                  ;                ; true          ; true
+                      ; 11                       ; Pentax                ; true  ; false                 ; false         ; Pentax                ; brands          ;                                                  ;                ; true          ; true
+                      ; 13                       ; Panasonic             ; true  ; Panasonic             ; true          ; Panasonic             ; brands          ;                                                  ;                ; true          ; true
+                      ; 14                       ; Sony                  ; true  ; Sony                  ; true          ; Sony                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 15                       ; RED                   ; true  ; RED                   ; true          ; RED                   ; brands          ;                                                  ;                ; true          ; true
+                      ; 16                       ; Sigma                 ; true  ; Sigma                 ; true          ; Sigma                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 17                       ; Fuji                  ; true  ; Fuji                  ; true          ; Fuji                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 18                       ; GoPro                 ; true  ; GoPro                 ; true          ; GoPro                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 19                       ; Tamron                ; true  ; Tamron                ; false         ; Tamron                ; brands          ;                                                  ;                ; true          ; true
+                      ; 20                       ; Manfrotto             ; true  ; Manfrotto             ; false         ; Manfrotto             ; brands          ;                                                  ;                ; true          ; true
+                      ; 21                       ; Rokinon               ; true  ; Rokinon               ; false         ; Rokinon               ; brands          ;                                                  ;                ; true          ; true
+                      ; 22                       ; Tokina                ; true  ; Tokina                ; false         ; Tokina                ; brands          ;                                                  ;                ; true          ; true
+                      ; 23                       ; pocket_wizard         ; true  ; Pocket Wizard         ; false         ; Pocket Wizard         ; brands          ;                                                  ;                ; true          ; true
+                      ; 24                       ; Hasselblad            ; true  ; Hasselblad            ; true          ; Hasselblad            ; brands          ;                                                  ;                ; true          ; true
+                      ; 25                       ; Metabones             ; true  ; Metabones             ; false         ; Metabones             ; brands          ;                                                  ;                ; true          ; true
+                      ; 26                       ; paul_buff             ; true  ; Paul Buff             ; false         ; Paul Buff             ; brands          ;                                                  ;                ; true          ; true
+                      ; 27                       ; Samsung               ; true  ; Samsung               ; false         ; Samsung               ; brands          ;                                                  ;                ; true          ; true
+                      ; 28                       ; Schneider             ; true  ; Schneider             ; false         ; Schneider             ; brands          ;                                                  ;                ; true          ; true
+                      ; 29                       ; Lowepro               ; true  ; Lowepro               ; false         ; Lowepro               ; brands          ;                                                  ;                ; true          ; true
+                      ; 30                       ; Quantum               ; true  ; Quantum               ; false         ; Quantum               ; brands          ;                                                  ;                ; true          ; true
+                      ; 31                       ; Sandisk               ; true  ; SanDisk               ; false         ; SanDisk               ; brands          ;                                                  ;                ; true          ; true
+                      ; 32                       ; ARRI                  ; true  ; ARRI                  ; true          ; ARRI                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 33                       ; Elinchrom             ; true  ; Elinchrom             ; false         ; Elinchrom             ; brands          ;                                                  ;                ; true          ; true
+                      ; 34                       ; Kessler               ; true  ; Kessler               ; false         ; Kessler               ; brands          ;                                                  ;                ; true          ; true
+                      ; 35                       ; Litepanels            ; true  ; Litepanels            ; false         ; Litepanels            ; brands          ;                                                  ;                ; true          ; true
+                      ; 36                       ; Matthews              ; true  ; Matthews              ; false         ; Matthews              ; brands          ;                                                  ;                ; true          ; true
+                      ; 37                       ; Bowens                ; true  ; Bowens                ; false         ; Bowens                ; brands          ;                                                  ;                ; true          ; true
+                      ; 38                       ; Cinevate              ; true  ; Cinevate              ; false         ; Cinevate              ; brands          ;                                                  ;                ; true          ; true
+                      ; 39                       ; Fiilex                ; true  ; Fiilex                ; false         ; Fiilex                ; brands          ;                                                  ;                ; true          ; true
+                      ; 40                       ; Gura_Gear             ; true  ; Gura Gear             ; false         ; Gura Gear             ; brands          ;                                                  ;                ; true          ; true
+                      ; 41                       ; Induro                ; true  ; Induro                ; false         ; Induro                ; brands          ;                                                  ;                ; true          ; true
+                      ; 42                       ; Photoflex             ; true  ; Photoflex             ; false         ; Photoflex             ; brands          ;                                                  ;                ; true          ; true
+                      ; 43                       ; Veydra                ; true  ; Veydra                ; false         ; Veydra                ; brands          ;                                                  ;                ; true          ; true
+                      ; 44                       ; Westcott              ; true  ; Westcott              ; false         ; Westcott              ; brands          ;                                                  ;                ; true          ; true
+                      ; 45                       ; Zacuto                ; true  ; Zacuto                ; false         ; Zacuto                ; brands          ;                                                  ;                ; true          ; true
+                      ; 46                       ; Broncolor             ; true  ; Broncolor             ; false         ; Broncolor             ; brands          ;                                                  ;                ; true          ; true
+                      ; 47                       ; Gary_Fong             ; true  ; Gary Fong             ; false         ; Gary Fong             ; brands          ;                                                  ;                ; true          ; true
+                      ; 48                       ; Kino_Flo              ; true  ; Kino Flo              ; false         ; Kino Flo              ; brands          ;                                                  ;                ; true          ; true
+                      ; 49                       ; Voigtlander           ; true  ; Voigtlander           ; false         ; Voigtlander           ; brands          ;                                                  ;                ; true          ; true
+                      ; 50                       ; Lowel                 ; true  ; Lowel                 ; false         ; Lowel                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 51                       ; Marshall              ; true  ; Marshall              ; false         ; Marshall              ; brands          ;                                                  ;                ; true          ; true
+                      ; 52                       ; Lexar                 ; true  ; Lexar                 ; false         ; Lexar                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 53                       ; Lytro                 ; true  ; Lytro                 ; false         ; Lytro                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 54                       ; Peleng                ; true  ; Peleng                ; false         ; Peleng                ; brands          ;                                                  ;                ; true          ; true
+                      ; 55                       ; Transcend             ; true  ; Transcend             ; false         ; Transcend             ; brands          ;                                                  ;                ; true          ; true
+                      ; 56                       ; Anton_Bauer           ; true  ; Anton Bauer           ; false         ; Anton Bauer           ; brands          ;                                                  ;                ; true          ; true
+                      ; 57                       ; Blackmagic            ; true  ; Blackmagic            ; false         ; Blackmagic            ; brands          ;                                                  ;                ; true          ; true
+                      ; 58                       ; Cooke                 ; true  ; Cooke                 ; false         ; Cooke                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 59                       ; DJI                   ; true  ; DJI                   ; false         ; DJI                   ; brands          ;                                                  ;                ; true          ; true
+                      ; 60                       ; Glidecam              ; true  ; Glidecam              ; false         ; Glidecam              ; brands          ;                                                  ;                ; true          ; true
+                      ; 61                       ; SmallHD               ; true  ; SmallHD               ; false         ; SmallHD               ; brands          ;                                                  ;                ; true          ; true
+                      ; 62                       ; AJA                   ; true  ; AJA                   ; false         ; AJA                   ; brands          ;                                                  ;                ; true          ; true
+                      ; 63                       ; Atomos                ; true  ; Atomos                ; false         ; Atomos                ; brands          ;                                                  ;                ; true          ; true
+                      ; 64                       ; Wooden_Camera         ; true  ; Wooden Camera         ; false         ; Wooden Camera         ; brands          ;                                                  ;                ; true          ; true
+                      ; 65                       ; OConnor               ; true  ; OConnor               ; false         ; OConnor               ; brands          ;                                                  ;                ; true          ; true
+                      ; 66                       ; Sachtler              ; true  ; Sachtler              ; false         ; Sachtler              ; brands          ;                                                  ;                ; true          ; true
+                      ; 67                       ; IKAN                  ; true  ; Ikan                  ; false         ; Ikan                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 68                       ; Lectrosonics          ; true  ; Lectrosonics          ; false         ; Lectrosonics          ; brands          ;                                                  ;                ; true          ; true
+                      ; 69                       ; Steadicam             ; true  ; Steadicam             ; false         ; Steadicam             ; brands          ;                                                  ;                ; true          ; true
+                      ; 70                       ; Zoom                  ; true  ; Zoom                  ; false         ; Zoom                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 71                       ; Paralinx              ; true  ; Paralinx              ; false         ; Paralinx              ; brands          ;                                                  ;                ; true          ; true
+                      ; 72                       ; Porta_Brace           ; true  ; Porta Brace           ; false         ; Porta Brace           ; brands          ;                                                  ;                ; true          ; true
+                      ; 73                       ; Shure                 ; true  ; Shure                 ; false         ; Shure                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 74                       ; Sound_Devices         ; true  ; Sound Devices         ; false         ; Sound Devices         ; brands          ;                                                  ;                ; true          ; true
+                      ; 75                       ; Tascam                ; true  ; Tascam                ; false         ; Tascam                ; brands          ;                                                  ;                ; true          ; true
+                      ; 76                       ; Teradek               ; true  ; Teradek               ; false         ; Teradek               ; brands          ;                                                  ;                ; true          ; true
+                      ; 77                       ; Freefly               ; true  ; Freefly               ; false         ; Freefly               ; brands          ;                                                  ;                ; true          ; true
+                      ; 78                       ; Bolex                 ; true  ; Bolex                 ; false         ; Bolex                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 79                       ; SLR_Magic             ; true  ; SLR Magic             ; false         ; SLR Magic             ; brands          ;                                                  ;                ; true          ; true
+                      ; 80                       ; Think_Tank            ; true  ; Think Tank            ; false         ; Think Tank            ; brands          ;                                                  ;                ; true          ; true
+                      ; 81                       ; Tiffen                ; true  ; Tiffen                ; false         ; Tiffen                ; brands          ;                                                  ;                ; true          ; true
+                      ; 82                       ; EasyRig               ; true  ; Easyrig               ; false         ; Easyrig               ; brands          ;                                                  ;                ; true          ; true
+                      ; 83                       ; Sekonic               ; true  ; Sekonic               ; false         ; Sekonic               ; brands          ;                                                  ;                ; true          ; true
+                      ; 84                       ; CameraSlingers        ; true  ; CameraSlingers        ; false         ; CameraSlingers        ; brands          ;                                                  ;                ; true          ; true
+                      ; 85                       ; Beachtek              ; true  ; Beachtek              ; false         ; Beachtek              ; brands          ;                                                  ;                ; true          ; true
+                      ; 86                       ; Casio                 ; true  ; Casio                 ; false         ; Casio                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 87                       ; Sennheiser            ; true  ; Sennheiser            ; false         ; Sennheiser            ; brands          ;                                                  ;                ; true          ; true
+                      ; 88                       ; SunBounce             ; true  ; Sunbounce             ; false         ; Sunbounce             ; brands          ;                                                  ;                ; true          ; true
+                      ; 89                       ; Drop_It_Modern        ; true  ; Drop It Modern        ; false         ; Drop It Modern        ; brands          ;                                                  ;                ; true          ; true
+                      ; 90                       ; Lastolite             ; true  ; Lastolite             ; false         ; Lastolite             ; brands          ;                                                  ;                ; true          ; true
+                      ; 91                       ; Switronix             ; true  ; Switronix             ; false         ; Switronix             ; brands          ;                                                  ;                ; true          ; true
+                      ; 92                       ; Adaptimax             ; true  ; Adaptimax             ; false         ; Adaptimax             ; brands          ;                                                  ;                ; true          ; true
+                      ; 93                       ; BW                    ; true  ; B+W                   ; false         ; B+W                   ; brands          ;                                                  ;                ; true          ; true
+                      ; 94                       ; Bower                 ; true  ; Bower                 ; false         ; Bower                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 95                       ; Heden                 ; true  ; Heden                 ; false         ; Heden                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 96                       ; Rode                  ; true  ; Rode                  ; false         ; Rode                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 97                       ; Video_Devices         ; true  ; Video Devices         ; false         ; Video Devices         ; brands          ;                                                  ;                ; true          ; true
+                      ; 98                       ; kodak                 ; true  ; Kodak                 ; false         ; Kodak                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 99                       ; impact                ; true  ; Impact                ; false         ; Impact                ; brands          ;                                                  ;                ; true          ; true
+                      ; 100                      ; wimberley             ; true  ; Wimberley             ; false         ; Wimberley             ; brands          ;                                                  ;                ; true          ; true
+                      ; 101                      ; 360fly                ; true  ; 360fly                ; false         ; 360fly                ; brands          ;                                                  ;                ; true          ; true
+                      ; 102                      ; voyager               ; true  ; Voyager               ; false         ; Voyager               ; brands          ;                                                  ;                ; true          ; true
+                      ; 103                      ; blue                  ; true  ; Blue                  ; false         ; Blue                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 104                      ; kenko                 ; true  ; Kenko                 ; false         ; Kenko                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 105                      ; joby                  ; true  ; Joby                  ; false         ; Joby                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 106                      ; giottos               ; true  ; Giottos               ; false         ; Giottos               ; brands          ;                                                  ;                ; true          ; true
+                      ; 107                      ; kirk                  ; true  ; Kirk                  ; false         ; Kirk                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 108                      ; epson                 ; true  ; Epson                 ; false         ; Epson                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 109                      ; creative_light        ; true  ; Creative Light        ; false         ; Creative Light        ; brands          ;                                                  ;                ; true          ; true
+                      ; 110                      ; custom_brackets       ; true  ; Custom Brackets       ; false         ; Custom Brackets       ; brands          ;                                                  ;                ; true          ; true
+                      ; 111                      ; crumpler              ; true  ; Crumpler              ; false         ; Crumpler              ; brands          ;                                                  ;                ; true          ; true
+                      ; 112                      ; nodal_ninja           ; true  ; Nodal Ninja           ; false         ; Nodal Ninja           ; brands          ;                                                  ;                ; true          ; true
+                      ; 113                      ; gitzo                 ; true  ; Gitzo                 ; false         ; Gitzo                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 114                      ; black_rapid           ; true  ; Black Rapid           ; false         ; Black Rapid           ; brands          ;                                                  ;                ; true          ; true
+                      ; 115                      ; datacolor             ; true  ; Datacolor             ; false         ; Datacolor             ; brands          ;                                                  ;                ; true          ; true
+                      ; 116                      ; omni_tracker          ; true  ; Omni-Tracker          ; false         ; Omni-Tracker          ; brands          ;                                                  ;                ; true          ; true
+                      ; 117                      ; singh_ray             ; true  ; Singh-Ray             ; false         ; Singh-Ray             ; brands          ;                                                  ;                ; true          ; true
+                      ; 118                      ; novoflex              ; true  ; Novoflex              ; false         ; Novoflex              ; brands          ;                                                  ;                ; true          ; true
+                      ; 119                      ; plustek               ; true  ; Plustek               ; false         ; Plustek               ; brands          ;                                                  ;                ; true          ; true
+                      ; 120                      ; wendt                 ; true  ; Wendt                 ; false         ; Wendt                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 121                      ; audio_technica        ; true  ; Audio-Technica        ; false         ; Audio-Technica        ; brands          ;                                                  ;                ; true          ; true
+                      ; 122                      ; skimmer_sack          ; true  ; SkimmerSack           ; false         ; SkimmerSack           ; brands          ;                                                  ;                ; true          ; true
+                      ; 123                      ; apple                 ; true  ; Apple                 ; false         ; Apple                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 124                      ; ray_flash             ; true  ; Ray Flash             ; false         ; Ray Flash             ; brands          ;                                                  ;                ; true          ; true
+                      ; 125                      ; x_rite                ; true  ; X-Rite                ; false         ; X-Rite                ; brands          ;                                                  ;                ; true          ; true
+                      ; 126                      ; miller                ; true  ; Miller                ; false         ; Miller                ; brands          ;                                                  ;                ; true          ; true
+                      ; 127                      ; chimera               ; true  ; Chimera               ; false         ; Chimera               ; brands          ;                                                  ;                ; true          ; true
+                      ; 128                      ; stackshot             ; true  ; StackShot             ; false         ; StackShot             ; brands          ;                                                  ;                ; true          ; true
+                      ; 129                      ; gigapan               ; true  ; Giga Pan              ; false         ; Giga Pan              ; brands          ;                                                  ;                ; true          ; true
+                      ; 130                      ; ktek                  ; true  ; K-Tek                 ; false         ; K-Tek                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 131                      ; heliopan              ; true  ; Heliopan              ; false         ; Heliopan              ; brands          ;                                                  ;                ; true          ; true
+                      ; 132                      ; lumapro               ; true  ; LumaPro               ; false         ; LumaPro               ; brands          ;                                                  ;                ; true          ; true
+                      ; 133                      ; lenscoat              ; true  ; LensCoat              ; false         ; LensCoat              ; brands          ;                                                  ;                ; true          ; true
+                      ; 134                      ; mtf_services          ; true  ; MTF Services          ; false         ; MTF Services          ; brands          ;                                                  ;                ; true          ; true
+                      ; 135                      ; genaray               ; true  ; Genaray               ; false         ; Genaray               ; brands          ;                                                  ;                ; true          ; true
+                      ; 136                      ; vello                 ; true  ; Vello                 ; false         ; Vello                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 137                      ; fotodiox              ; true  ; Fotodiox              ; false         ; Fotodiox              ; brands          ;                                                  ;                ; true          ; true
+                      ; 138                      ; noga                  ; true  ; Noga                  ; false         ; Noga                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 139                      ; countryman            ; true  ; Countryman            ; false         ; Countryman            ; brands          ;                                                  ;                ; true          ; true
+                      ; 140                      ; cinemilled            ; true  ; CineMilled            ; false         ; CineMilled            ; brands          ;                                                  ;                ; true          ; true
+                      ; 141                      ; hive                  ; true  ; Hive                  ; false         ; Hive                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 142                      ; delkin                ; true  ; Delkin                ; false         ; Delkin                ; brands          ;                                                  ;                ; true          ; true
+                      ; 143                      ; convergent_design     ; true  ; Convergent Design     ; false         ; Convergent Design     ; brands          ;                                                  ;                ; true          ; true
+                      ; 144                      ; timbuk2               ; true  ; Timbuk2               ; false         ; Timbuk2               ; brands          ;                                                  ;                ; true          ; true
+                      ; 145                      ; exf_series            ; true  ; EXF Series            ; false         ; EXF Series            ; brands          ;                                                  ;                ; true          ; true
+                      ; 146                      ; pearstone             ; true  ; Pearstone             ; false         ; Pearstone             ; brands          ;                                                  ;                ; true          ; true
+                      ; 147                      ; boommate              ; true  ; BoomMate              ; false         ; BoomMate              ; brands          ;                                                  ;                ; true          ; true
+                      ; 148                      ; atomic                ; true  ; Atomic                ; false         ; Atomic                ; brands          ;                                                  ;                ; true          ; true
+                      ; 149                      ; inside_line_equipment ; true  ; Inside Line Equipment ; false         ; Inside Line Equipment ; brands          ;                                                  ;                ; true          ; true
+                      ; 150                      ; bolt                  ; true  ; Bolt                  ; false         ; Bolt                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 151                      ; denecke               ; true  ; Denecke               ; false         ; Denecke               ; brands          ;                                                  ;                ; true          ; true
+                      ; 152                      ; cinebags              ; true  ; CineBags              ; false         ; CineBags              ; brands          ;                                                  ;                ; true          ; true
+                      ; 153                      ; rogue                 ; true  ; Rogue                 ; false         ; Rogue                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 154                      ; lumedyne              ; true  ; Lumedyne              ; false         ; Lumedyne              ; brands          ;                                                  ;                ; true          ; true
+                      ; 155                      ; genus                 ; true  ; Genus                 ; false         ; Genus                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 156                      ; moment                ; true  ; Moment                ; false         ; Moment                ; brands          ;                                                  ;                ; true          ; true
+                      ; 157                      ; pixelstick            ; true  ; Pixelstick            ; false         ; Pixelstick            ; brands          ;                                                  ;                ; true          ; true
+                      ; 158                      ; syrp                  ; true  ; Syrp                  ; false         ; Syrp                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 159                      ; modern_studio         ; true  ; Modern Studio         ; false         ; Modern Studio         ; brands          ;                                                  ;                ; true          ; true
+                      ; 160                      ; benro                 ; true  ; Benro                 ; false         ; Benro                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 161                      ; mophie_juice          ; true  ; Mophie Juice          ; false         ; Mophie Juice          ; brands          ;                                                  ;                ; true          ; true
+                      ; 162                      ; cineroid              ; true  ; Cineroid              ; false         ; Cineroid              ; brands          ;                                                  ;                ; true          ; true
+                      ; 163                      ; letus35               ; true  ; Letus35               ; false         ; Letus35               ; brands          ;                                                  ;                ; true          ; true
+                      ; 164                      ; pelican               ; true  ; Pelican               ; false         ; Pelican               ; brands          ;                                                  ;                ; true          ; true
+                      ; 165                      ; celestron             ; true  ; Celestron             ; false         ; Celestron             ; brands          ;                                                  ;                ; true          ; true
+                      ; 166                      ; velbon                ; true  ; Velbon                ; false         ; Velbon                ; brands          ;                                                  ;                ; true          ; true
+                      ; 167                      ; angenieux             ; true  ; Angenieux             ; false         ; Angenieux             ; brands          ;                                                  ;                ; true          ; true
+                      ; 169                      ; hoya                  ; true  ; Hoya                  ; false         ; Hoya                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 170                      ; peak design           ; true  ; Peak Design           ; false         ; Peak Design           ; brands          ;                                                  ;                ; true          ; true
+                      ; 171                      ; digital_sputnik       ; true  ; Digital Sputnik       ; false         ; Digital Sputnik       ; brands          ;                                                  ;                ; true          ; true
+                      ; 172                      ; orah                  ; true  ; Orah                  ; false         ; Orah                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 173                      ; videostitch           ; true  ; VideoStitch           ; false         ; VideoStitch           ; brands          ;                                                  ;                ; true          ; true
+                      ; 174                      ; 360rize               ; true  ; 360RIZE               ; false         ; 360RIZE               ; brands          ;                                                  ;                ; true          ; true
+                      ; 175                      ; rhino                 ; true  ; Rhino                 ; false         ; Rhino                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 176                      ; borrowlenses          ; true  ; Borrowlenses          ; false         ; Borrowlenses          ; brands          ;                                                  ;                ; true          ; true
+                      ; 177                      ; really_right_stuff    ; true  ; Really Right Stuff    ; false         ; Really Right Stuff    ; brands          ;                                                  ;                ; true          ; true
+                      ; 178                      ; bright_tangerine      ; true  ; Bright Tangerine      ; false         ; Bright Tangerine      ; brands          ;                                                  ;                ; true          ; true
+                      ; 179                      ; other                 ; true  ; Other                 ; false         ; Other                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 180                      ; hahnel                ; true  ; Hahnel                ; false         ; Hahnel                ; brands          ;                                                  ;                ; true          ; true
+                      ; 181                      ; canare                ; true  ; Canare                ; false         ; Canare                ; brands          ;                                                  ;                ; true          ; true
+                      ; 182                      ; sling-studio          ; true  ; SlingStudio           ; false         ; SlingStudio           ; brands          ;                                                  ;                ; true          ; true
+                      ; 183                      ; livestream            ; true  ; Livestream            ; false         ; Livestream            ; brands          ;                                                  ;                ; true          ; true
+                      ; 184                      ; ready_rig             ; true  ; Ready Rig             ; false         ; Ready Rig             ; brands          ;                                                  ;                ; true          ; true
+                      ; 185                      ; insta360              ; true  ; Insta360              ; false         ; Insta360              ; brands          ;                                                  ;                ; true          ; true
+                      ; 186                      ; core-swx              ; true  ; Core SWX              ; false         ; Core SWX              ; brands          ;                                                  ;                ; true          ; true
+                      ; 187                      ; aputure               ; true  ; Aputure               ; false         ; Aputure               ; brands          ;                                                  ;                ; true          ; true
+                      ; 188                      ; intellytech           ; true  ; Intellytech           ; false         ; Intellytech           ; brands          ;                                                  ;                ; true          ; true
+                      ; 189                      ; zhiyun-tech           ; true  ; Zhiyun-Tech           ; false         ; Zhiyun-Tech           ; brands          ;                                                  ;                ; true          ; true
+                      ; 190                      ; da-lite               ; true  ; Da-Lite               ; false         ; Da-Lite               ; brands          ;                                                  ;                ; true          ; true
+                      ; 191                      ; quasar_science        ; true  ; Quasar Science        ; false         ; Quasar Science        ; brands          ;                                                  ;                ; true          ; true
+                      ; 192                      ; angelbird             ; true  ; Angelbird             ; false         ; Angelbird             ; brands          ;                                                  ;                ; true          ; true
+                      ; 193                      ; tilta                 ; true  ; Tilta                 ; false         ; Tilta                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 194                      ; venus_optics          ; true  ; Venus Optics          ; false         ; Venus Optics          ; brands          ;                                                  ;                ; true          ; true
+                      ; 195                      ; eartec                ; true  ; Eartec                ; false         ; Eartec                ; brands          ;                                                  ;                ; true          ; true
+                      ; 196                      ; deity                 ; true  ; Deity                 ; false         ; Deity                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 197                      ; kupo                  ; true  ; Kupo                  ; false         ; Kupo                  ; brands          ;                                                  ;                ; true          ; true
+                      ; 198                      ; inovativ              ; true  ; Inovativ              ; false         ; Inovativ              ; brands          ;                                                  ;                ; true          ; true
+                      ; 199                      ; smallrig              ; true  ; SmallRig              ; false         ; SmallRig              ; brands          ;                                                  ;                ; true          ; true
+                      ; 200                      ; litegear              ; true  ; LiteGear              ; false         ; LiteGear              ; brands          ;                                                  ;                ; true          ; true
+                      ; 201                      ; avenger               ; true  ; Avenger               ; false         ; Avenger               ; brands          ;                                                  ;                ; true          ; true
+                      ; 202                      ; watson                ; true  ; Watson                ; false         ; Watson                ; brands          ;                                                  ;                ; true          ; true
+                      ; 203                      ; godox                 ; true  ; Godox                 ; false         ; Godox                 ; brands          ;                                                  ;                ; true          ; true
+                      ; 204                      ; pacific_image         ; true  ; Pacific Image         ; false         ; Pacific Image         ; brands          ;                                                  ;                ; true          ; true
+                      ; 205                      ; flashery              ; true  ; Flashery              ; false         ; Flashery              ; brands          ;                                                  ;                ; true          ; true
+                      ; 206                      ; zillow                ; true  ; Zillow                ; false         ; Zillow                ; brands          ;                                                  ;                ; true          ; true
+                      ; 207                      ; edelkrone             ; true  ; Edelkrone             ; false         ; Edelkrone             ; brands          ;                                                  ;                ; true          ; true

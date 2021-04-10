@@ -50,7 +50,7 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
   {
     final List<FieldValue> fieldValues = new ArrayList<>();
     boolean upComing = true;
-    // Condition added to check current blproduct and their respective serial products  is forrent
+    // Condition added to check current blproduct and their respective serial products  is forRent
     if(product.getSerialProducts().stream().anyMatch(BlProductModel::getForRent) && product.getForRent()) {
       upComing = false;
     }
@@ -59,7 +59,7 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
   }
 
   /**
-   *
+   * This method is created to add the filed values to be index
    * @param fieldValues list of values
    * @param indexedProperty indexedproperty for solr
    * @param value determines the upcoming boolean

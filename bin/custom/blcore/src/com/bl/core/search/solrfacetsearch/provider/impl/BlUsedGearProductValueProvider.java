@@ -10,6 +10,7 @@ import de.hybris.platform.solrfacetsearch.provider.FieldValueProvider;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractPropertyFieldValueProvider;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,18 +22,29 @@ public class BlUsedGearProductValueProvider extends AbstractPropertyFieldValuePr
 
   private FieldNameProvider fieldNameProvider;
 
+  /**
+   * this method created for creating values for solr property
+   * @param indexConfig indexConfig of solr
+   * @param indexedProperty indexedProperty of solr
+   * @param model defines product
+   * @return Collection<FieldValue> to solr
+   */
   @Override
-  public Collection<FieldValue> getFieldValues(IndexConfig indexConfig,
-      IndexedProperty indexedProperty, Object model) {
-    final Collection<FieldValue> fieldValues = new ArrayList<>();
+  public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig,
+      final IndexedProperty indexedProperty, final Object model) {
 
-    if (model instanceof ProductModel) {
-      final BlProductModel product = (BlProductModel) model;
-      fieldValues.addAll(createFieldValue(product, indexedProperty));
+    if (model instanceof BlProductModel) {
+      return createFieldValue((BlProductModel) model, indexedProperty);
     }
-      return fieldValues;
+      return Collections.emptyList();
   }
 
+  /**
+   * this mehod is created for creating field values to solr
+   * @param product defines product
+   * @param indexedProperty indexedProperty for solr
+   * @return List<FieldValue> to solr
+   */
   private List<FieldValue> createFieldValue(final BlProductModel product, final IndexedProperty indexedProperty)
   {
     final List<FieldValue> fieldValues = new ArrayList<>();
@@ -46,6 +58,12 @@ public class BlUsedGearProductValueProvider extends AbstractPropertyFieldValuePr
     return fieldValues;
   }
 
+  /**
+   * this method is created for adding field values to solr
+   * @param fieldValues field value for solr
+   * @param indexedProperty indexedProperty for solr
+   * @param value defines forSale attribute value
+   */
   private void addFieldValues(final List<FieldValue> fieldValues,
       final IndexedProperty indexedProperty, final boolean value)
   {

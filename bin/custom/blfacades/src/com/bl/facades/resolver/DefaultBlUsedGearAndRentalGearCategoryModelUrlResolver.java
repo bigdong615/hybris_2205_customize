@@ -22,7 +22,7 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver extends
   @Override
   protected String resolveInternal(final CategoryModel source) {
 
-    // if source is renatal get the url for renatal gear
+    // if source is renatal get the url for renatal gear else for usedgear
     if(source.isRentalCategory()) {
       if(CollectionUtils.isEmpty(source.getSupercategories())) {
         return getUrl(getDefaultPattern() , source);

@@ -88,10 +88,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     return indexedPropertyValues;
   }
 
-
   /**
-   * Adding some category restriction for used gear categories
+   * This method is created for adding restriction for usedgear and rentalgear cateory
+   * @param target target objects to fill
    */
+
   private void categoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
 
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
@@ -104,10 +105,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
         addSaleAndRentQuery(target);
       }
     } else {
-
       final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
       if (category.isRentalCategory()) {
-        rentalCategory(target);
+        if (!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
+          rentalCategory(target, categoryCode);
+        }
         addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
         addSaleAndRentQuery(target);
       } else if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
@@ -125,9 +127,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    * This method is created for adding category to filter query fields for prepare solr query
    */
   private void rentalCategory(
-      final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
-    final String categoryCode = target.getSearchQueryData().getCategoryCode();
-    if (!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
+      final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,final String categoryCode) {
       if (categoryCode.startsWith(BlCoreConstants.NEW)) {
         getCategoryFromProperties(target,categoryCode,BlCoreConstants.RENTAL_GEAR_MAP);
         target.getSearchQuery().addFilterQuery(BlCoreConstants.IS_NEW, BlCoreConstants.TRUE);
@@ -135,12 +135,17 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
         target.getSearchQuery().addFilterQuery(BlCoreConstants.ALL_CATEGORIES,
             categoryCode);
       }
-    }
   }
 
+  /**
+   * this method is created for getting values from the properties based on rental or used gear category
+   * @param target target object to be fill
+   * @param categoryCode categoryCode
+   * @param paramMap defines the property key
+   */
   private void getCategoryFromProperties(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,
       final String categoryCode,final String paramMap) {
-    String categoryParam = Config.getParameter(paramMap);
+    final String categoryParam = Config.getParameter(paramMap);
     if(StringUtils.isNotBlank(categoryParam)) {
       final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
           .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
@@ -148,8 +153,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
           .addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
     }
   }
+
   /**
-   * This Method add forSale Property is true when we hit usedgear Page
+   * this method created for adding boolean true for used video and used new arrivals to query
+   * @param target target object to fill
+   * @param categoryCode category code
    */
   private void addFilterQueryTrue(
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,final String categoryCode) {

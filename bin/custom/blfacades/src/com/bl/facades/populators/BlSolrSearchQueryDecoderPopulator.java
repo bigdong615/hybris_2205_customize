@@ -4,6 +4,10 @@ import de.hybris.platform.commercefacades.search.data.SearchQueryData;
 import de.hybris.platform.commercefacades.search.solrfacetsearch.converters.populator.SolrSearchQueryDecoderPopulator;
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryData;
 
+/**
+ * This populator is created to populate blpage
+ * @author Manikandan
+ */
 public class BlSolrSearchQueryDecoderPopulator  extends SolrSearchQueryDecoderPopulator {
 
   /**
