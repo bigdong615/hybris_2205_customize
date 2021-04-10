@@ -191,7 +191,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      * @param configParam property key
      * @return String values
      */
-    private String getConfigParametrs(final String configParam) { 
+    private String getConfigParametrs(final String configParam) {
         final String value = Config.getParameter(configParam);
         if(StringUtils.isNotBlank(value)) {
             return value;

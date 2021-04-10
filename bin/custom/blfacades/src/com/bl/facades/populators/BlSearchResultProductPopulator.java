@@ -316,7 +316,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param key key to get value from source
    */
   private void setUpcomingAttributeValue(final SearchResultValueData source, final ProductData target ,final String key) {
-      if (this.<Boolean>getValue(source, key)) {
+      if (null != this.<Boolean>getValue(source, key) && this.<Boolean>getValue(source, key)) {
         target.setIsUpcoming(this.<Boolean>getValue(source,key));
     }
   }
