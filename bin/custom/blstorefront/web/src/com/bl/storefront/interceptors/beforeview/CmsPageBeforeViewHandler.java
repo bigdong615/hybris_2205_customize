@@ -56,6 +56,9 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 	private static final String CSS_LABEL_PREFIX = "pageLabel-";
 	private static final String CSS_TYPE_PREFIX = "pageType-";
 	private static final String CSS_TEMPLATE_PREFIX = "template-";
+	
+	private static final String HOME_CSS = "home ";
+	private static final String HOMEPAGE = "homepage";
 
 	@Resource(name = "cmsSiteService")
 	private CMSSiteService cmsSiteService;
@@ -204,6 +207,11 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 
 		final String regEx = "[^a-zA-Z0-9-]";
 		final StringBuilder cssClasses = new StringBuilder();
+		// Adding css class if it is homepage on body tag 
+		if (page.getUid().equals(HOMEPAGE))
+		{
+			cssClasses.append(HOME_CSS);
+		}
 		cssClasses.append(CSS_CODE_PREFIX).append(page.getUid().replaceAll(regEx, "-"));
 		cssClasses.append(' ');
 		cssClasses.append(CSS_TYPE_PREFIX).append(page.getItemtype().replaceAll(regEx, "-"));
