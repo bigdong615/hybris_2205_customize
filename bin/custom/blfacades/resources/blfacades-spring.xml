@@ -309,4 +309,26 @@
 		<property name="key" value="REQUIRED_DATA" />
 		<property name="add" ref="blProductPopulator" />
 	</bean>
+	
+	<!-- To populate the stock data -->
+	<alias name="defaultBlStockPopulator" alias="blStockPopulator"/>
+    <bean id="defaultBlStockPopulator" parent="abstractPopulatingConverter"
+          class="com.bl.facades.populators.BlStockPopulator">
+        <property name="commerceStockService" ref="commerceStockService"/>
+        <property name="baseStoreService" ref="baseStoreService"/>
+        <property name="categoryService" ref="categoryService"/>
+        <property name="baseSiteService" ref="baseSiteService"/>
+        <property name="blCommerceStockService" ref="blCommerceStockService"/>
+        <property name="sessionService" ref="sessionService"/>
+    </bean>
+	
+	<alias name="defaultStockConverter" alias="stockConverter"/>
+    <bean id="defaultStockConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="de.hybris.platform.commercefacades.product.data.StockData"/>
+        <property name="populators">
+            <list>
+                <ref bean="blStockPopulator"/>
+            </list>
+        </property>
+    </bean>
 </beans>

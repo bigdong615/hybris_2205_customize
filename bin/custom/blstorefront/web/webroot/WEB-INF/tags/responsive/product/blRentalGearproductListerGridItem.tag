@@ -18,9 +18,23 @@
 
 <div class="col-md-6 col-lg-4">
 <div class="card">
-<c:if test ="${product.productTagValues ne null}">
-<span class="badge badge-limited-stock">${product.productTagValues}</span>
-</c:if>
+<c:choose>
+			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+				<span class="badge badge-limited-stock"><spring:theme
+						code="text.product.tile.flag.only.left"
+						arguments="${product.stock.stockLevel}" /></span>
+			</c:when>
+			<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
+				<span class="badge badge-limited-stock"><spring:theme
+						code="text.product.tile.flag.outOfStock"
+						arguments="${product.stock.stockLevel}" /></span>
+			</c:when>
+	<c:otherwise>
+			<c:if test ="${product.productTagValues ne null}">
+          <span class="badge badge-limited-stock">${product.productTagValues}</span>
+      </c:if>
+	</c:otherwise>
+</c:choose>
 
  <span class="bookmark"></span>
   <c:choose>

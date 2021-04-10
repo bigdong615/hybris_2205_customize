@@ -1,6 +1,5 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -25,6 +24,7 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,10 +32,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
 
 /**
  * This class is completly overriden for adding custom logics on populator
@@ -75,9 +79,9 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setConfigurable(this.<Boolean>getValue(source, "configurable"));
     target.setConfiguratorType(this.<String>getValue(source, "configuratorType"));
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
-    target.setIsDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
+    target.setIsDiscontinued(this.<Boolean>getValue(source, "isDiscontinued"));
     // Add Product Tags to product
-    addProductTag(source,target);
+    addProductTag(source, target);
     populatePrices(source, target);
 
     // Populate product's classification features
@@ -140,20 +144,23 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
   protected void populateStock(final SearchResultValueData source, final ProductData target)
   {
-    final String stockLevelStatus = this.<String> getValue(source, "stockLevelStatus");
-    if (StringUtils.isNotEmpty(stockLevelStatus))
-    {
-      final StockLevelStatus stockLevelStatusEnum = StockLevelStatus.valueOf(stockLevelStatus);
+		try
+		{
+			// In case of low stock then make a call to the stock service to determine if in or out of stock.
+			// In this case (low stock) it is ok to load the product from the DB and do the real stock check
+			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+			if (blProductModel != null)
+			{
+				target.setStock(getStockConverter().convert(blProductModel));
+			}
+		}
+		catch (final UnknownIdentifierException ex)
+		{
+			// If the product is no longer visible to the customergroup then this exception can be thrown
 
-      if (StockLevelStatus.LOWSTOCK.equals(stockLevelStatusEnum))
-      {
-        addStock(target);
-      }
-      else
-      {
-        target.setStock(getStockLevelStatusConverter().convert(stockLevelStatusEnum));
-      }
-    }
+			// We can't remove the product from the results, but we can mark it as out of stock
+			target.setStock(getStockLevelStatusConverter().convert(StockLevelStatus.OUTOFSTOCK));
+		}
   }
 
   protected List<ImageData> createImageData(final SearchResultValueData source)
@@ -179,8 +186,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       final ImageDataType type, final List<ImageData> images)
   {
     if(mediaFormatQualifier.equalsIgnoreCase(MEDIA_FORMAT)) {
-      String splitter = BL_IMAGE;
-      String multiImage = getValue(source, "img-" + mediaFormatQualifier);
+      final String splitter = BL_IMAGE;
+      final String multiImage = getValue(source, "img-" + mediaFormatQualifier);
 
       if(null != multiImage && !multiImage.isEmpty() && multiImage.contains(splitter)) {
         final String[] split = multiImage.split(splitter);
@@ -275,13 +282,15 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target target to fill
    */
   private void addProductTag(final SearchResultValueData source, final ProductData target) {
-    setProductTagValues(source,target,BlCoreConstants.IS_NEW,BlCoreConstants.NEW);
-    setProductTagValues(source,target,BlCoreConstants.MOST_POPULAR,BlCoreConstants.POPULAR);
-    if(null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
-      setProductTagValues(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
-      setProductTagValues(source, target, BlCoreConstants.STAFF_PICK, BlCoreConstants.STAFF_PICK_STRING);
-    }
-    setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
+      setProductTagValues(source, target, BlCoreConstants.IS_NEW, BlCoreConstants.NEW);
+      setProductTagValues(source, target, BlCoreConstants.MOST_POPULAR, BlCoreConstants.POPULAR);
+      if (null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
+        setProductTagValues(source, target, BlCoreConstants.GREAT_VALUE,
+            BlCoreConstants.GREAT_VALUE_STRING);
+        setProductTagValues(source, target, BlCoreConstants.STAFF_PICK,
+            BlCoreConstants.STAFF_PICK_STRING);
+      }
+      setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
   }
 
   /**

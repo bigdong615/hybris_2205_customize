@@ -30,7 +30,7 @@
                     <input type = "hidden" value="rentalGear" name="blPageType"/>
                   <input type="text" class="d-inline-block d-md-none form-control" placeholder="Search…">
                   <span class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> Rental Dates</span>
-                  <input type="text" id="litepicker" class="form-control d-none d-md-inline-block" placeholder="Select rental dates…">
+                  <input type="text" id="litepicker" name="selectedDate" class="form-control d-none d-md-inline-block" placeholder="Select rental dates…">
                   <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="Dates…">
                   </ycommerce:testId>
                   <div class="input-group-append d-none d-md-block">

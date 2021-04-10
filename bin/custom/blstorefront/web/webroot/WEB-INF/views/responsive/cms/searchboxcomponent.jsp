@@ -43,7 +43,7 @@
             numberOfMonths: 2,
             numberOfColumns: 2,
             autoApply: false,
-            format: "MMM D",
+            format: "MMM D, YYYY",
             resetButton: true,
             buttonText : {"reset":"Reset Dates"},
         });

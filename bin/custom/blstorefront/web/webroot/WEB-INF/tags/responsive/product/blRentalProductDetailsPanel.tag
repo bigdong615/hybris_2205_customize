@@ -33,7 +33,14 @@
                              </c:if>
                                 </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
-                                <span class="badge badge-limited-stock">Only 2 Left</span> <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
+                                <c:if test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+                                  	<span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
+                                </c:if>
+                                <c:if test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                		<span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.outOfStock" arguments="${product.stock.stockLevel}"/></span>
+                                </c:if>
+
+                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
                                 </ul>
@@ -54,8 +61,21 @@
                                 <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                   <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
                                   <input type="hidden" name="productCodePost" value="${product.code}">
-                                  <button id="addToCartButton" type="submit" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn">
-                           				<spring:theme code= "basket.add.to.rental.cart.button.text" /></button>
+                                  <c:choose>
+                                  		<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
+                                  				<button id="addToCartButton" type="submit"
+                                  					  class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn"
+                                  					  aria-disabled="true" disabled="disabled">
+                                  				  <spring:theme code="basket.add.to.rental.cart.button.text" />
+                                  				</button>
+                                  		</c:when>
+                                  		<c:otherwise>
+                                  		  	<button id="addToCartButton" type="submit"
+                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn">
+                                  					<spring:theme code="basket.add.to.rental.cart.button.text" />
+                                  				</button>
+                                  		</c:otherwise>
+                                  </c:choose>
                            			</form>
                               </div>
                         </div>
