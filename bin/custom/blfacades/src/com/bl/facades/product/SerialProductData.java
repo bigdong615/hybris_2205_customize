@@ -4,7 +4,7 @@ import de.hybris.platform.commercefacades.product.data.PriceData;
 import java.io.Serializable;
 
 /*
- * This DTO created for serial product
+ * This DTO created to take serial product related information.
  * @author Vijay Vishwakarma
  */
 public class SerialProductData implements Comparable<SerialProductData>, Serializable {
@@ -20,9 +20,9 @@ public class SerialProductData implements Comparable<SerialProductData>, Seriali
     if (serialProductData == null) {
       return -1;
     }
-    int c = Double.valueOf(conditionRating).compareTo(serialProductData.conditionRating);
-    if (c != 0) {
-      return c;
+    final int rating = Double.valueOf(conditionRating).compareTo(serialProductData.conditionRating);
+    if (rating != 0) {
+      return rating;
     }
     return (int) serialProductData.getConditionRating();
   }

@@ -58,7 +58,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
   }
 
   /*
-   * This method is used for populating video related data.
+   * This method used to populate video related information.
    */
   private List<ProductVideoData> populateVideo(final Collection<ProductVideoModel> populateVideos) {
     final List<ProductVideoData> videoDataList = new ArrayList<>();
