@@ -85,21 +85,16 @@
 
 		<script src="${commonResourcePathHtml}/js/_autoload.js"></script>
 
-        <%-- custom js file --%>
-        <c:if test="${cmsPage.uid eq 'cartpage'}">
-        <script src="${commonResourcePathHtml}/js/blCustom.js"></script>
-        </c:if>
-
 		<%-- Cms Action JavaScript files --%>
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
 		</c:forEach>
-		
+
 		<%-- AddOn JavaScript files --%>
 		<c:forEach items="${addOnJavaScriptPaths}" var="addOnJavaScript">
 		    <script src="${fn:escapeXml(addOnJavaScript)}"></script>
 		</c:forEach>
-		
+
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
@@ -116,8 +111,8 @@
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ]
-                    }],          
-                } ); 
+                    }],
+                } );
             }
         );
         $('.menu-large').hover(
@@ -139,38 +134,14 @@
                     perPage: 3,
                 },
                 '480': {
-                    perPage: 2,  
+                    perPage: 2,
                 },
             },
             rewind : true,
             gap: 30,
         } ).mount();
-        /* Uncomment below piece of JS after adding feature gear section on homepage */ 
-        /* new Splide( '#gear-slider', {
-            perPage: 3,
-            breakpoints: {
-                '991': {
-                    perPage: 2,
-                },
-                '640': {
-                    perPage: 1,
-                },
-            },
-            rewind : true,
-            gap: 20,
-            padding: 10,
-        } ).mount();  */
-        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
-            type   : 'loop',
-            perPage: 1,
-            drag   : false,
-            breakpoints: {
-                '991': {
-                    pagination: false,
-                },
-            },
-            //,
-        } ).mount());
+
+
         document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 3,
@@ -181,7 +152,7 @@
             perPage: 1,
             type: 'fade',
             arrows: false,
-        } ).mount(); 
+        } ).mount();
         new Splide( '#blog-slider', {
             perPage: 3,
             breakpoints: {
@@ -196,7 +167,7 @@
             gap: 20,
             padding: 10,
         } ).mount();
-         const picker = new Litepicker({ 
+         const picker = new Litepicker({
             element: document.getElementById('litepicker'),
             singleMode: false,
             numberOfMonths: 2,
@@ -205,13 +176,13 @@
             format: "MMM D",
             resetButton: true,
             buttonText : {"reset":"Reset Dates"},
-        }); 
-    </script>  
+        });
+    </script>
 	</c:if>
 
 
 	<c:if test="${cmsPage.uid ne 'homepage' and cmsPage.uid ne 'productDetails'}">
-	  <script>
+	<script>
         // Mobile Menu styles - #my-menu is required for ALL pages
         // The second menu #filter-menu is required for ANY page with filtering - it is the mobile filter menu
         document.addEventListener(
@@ -221,17 +192,17 @@
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ]
-                    }],          
+                    }],
                 } );
                 new Mmenu( "#filter-menu", {
                     extensions: ["position-front","fullscreen"],
                     navbar: {
-                      title: "Filters",  
+                      title: "Filters",
                     },
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ],
-                    }],          
+                    }],
                 } ); */
             }
         );
@@ -244,20 +215,9 @@
         $(".dropdown-menu li a").click(function(){
           $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
         });
-        // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
-        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
-            type   : 'loop',
-            perPage: 1,
-            drag   : false,
-            breakpoints: {
-                '991': {
-                    pagination: false,
-                },
-            },
-            //,
-        } ).mount());
+
         // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-        /* const picker = new Litepicker({ 
+        /* const picker = new Litepicker({
             element: document.getElementById('litepicker'),
             //plugins: ['mobilefriendly'],
             singleMode: false,
@@ -269,7 +229,7 @@
             buttonText : {"reset":"Reset Dates"},
         }); */
         // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
-        /* const mpicker = new Litepicker({ 
+        /* const mpicker = new Litepicker({
             element: document.getElementById('mobile-litepicker'),
             plugins: ['mobilefriendly'],
             singleMode: false,
@@ -281,129 +241,144 @@
             buttonText : {"reset":"Reset"},
         }); */
     </script>
-	</c:if>
-	<c:if test="${cmsPage.uid eq 'productDetails'}">
+		</c:if>
+		<c:if test="${cmsPage.uid eq 'productDetails'}">
 		 <script>
-             // Mobile Menu styles - #my-menu is required for ALL pages
-             document.addEventListener(
-                 "DOMContentLoaded", () => {
+            // Mobile Menu styles - #my-menu is required for ALL pages
+            document.addEventListener(
+                "DOMContentLoaded", () => {
+                 /*   new Mmenu( "#my-menu", {
+                        extensions: ["fullscreen","position-front"],
+                        navbars		: [{
+                            position: "top",
+                            content : [ "close", "logo" ]
+                        }],
+                    } ); */
+                }
+            );
+            // Initialize Mega menu rollover - required for ALL pages
+            $('.menu-large').hover(
+                function(){ $('.screen').addClass('show') },
+                function(){ $('.screen').removeClass('show') }
+            );
+            // Create and mount the product thumbnail slider - Required for Single Product Page
+            var secondarySlider = new Splide( '#product-thumbnails', {
+                rewind      : true,
+                fixedWidth  : 115,
+                fixedHeight : 115,
+                isNavigation: true,
+                gap         : 10,
+                focus       : 'center',
+                pagination  : false,
+                cover       : true,
+                breakpoints : {
+                    '600': {
+                        fixedWidth  : 80,
+                        fixedHeight : 80,
+                        arrows: false,
+                    }
+                }
+            } ).mount();
+            // Create the product slider - Required for Single Product Page
+            var primarySlider = new Splide( '#product-slider', {
+                type       : 'fade',
+                pagination : false,
+                arrows     : false,
+            } );
+            // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+            primarySlider.sync( secondarySlider ).mount();
+            // Initialize Overview Video Slider - required for Single Product Page
+            new Splide( '#overview-slider', {
+                perPage: 2,
+                breakpoints: {
+                    '767': {
+                        perPage: 1,
+                        arrows: false,
+                    },
+                },
+                gap: 30,
+            } ).mount();
+            // Initialize Additional Gear Slider - required for Single Product Page
+            new Splide( '#gear-slider', {
+                perPage: 4,
+                breakpoints: {
+                    '991': {
+                        perPage: 3,
+                    },
+                    '767': {
+                        perPage: 2,
+                        arrows: false,
+                    },
+                    '640': {
+                        perPage: 1,
+                        arrows: false,
+                    },
+                },
+                rewind : true,
+                gap: 20,
+                padding: 10,
+            } ).mount();
+            // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+            document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+                type   : 'loop',
+                perPage: 1,
+                drag   : false,
+                breakpoints: {
+                    '991': {
+                        pagination: false,
+                    },
+                },
+                //,
+            } ).mount());
+            // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+            const picker = new Litepicker({
+                element: document.getElementById('litepicker'),
+                singleMode: false,
+                numberOfMonths: 2,
+                numberOfColumns: 2,
+                autoApply: false,
+                format: "MMM D",
+                resetButton: true,
+                buttonText : {"reset":"Reset Dates"},
+            });
+            // Initialize PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
+            const prodpicker = new Litepicker({
+                element: document.getElementById('product-litepicker'),
+                singleMode: false,
+                numberOfMonths: 2,
+                numberOfColumns: 2,
+                autoApply: false,
+                format: "MMM D",
+                resetButton: true,
+                buttonText : {"reset":"Reset Dates"},
+            });
+            // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
+            const mpicker = new Litepicker({
+                element: document.getElementById('mobile-litepicker'),
+                plugins: ['mobilefriendly'],
+                singleMode: false,
+                numberOfMonths: 1,
+                numberOfColumns: 1,
+                autoApply: false,
+                format: "MMM D",
+                resetButton: true,
+                buttonText : {"reset":"Reset"},
+            });
+            // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
+            const mprodpicker = new Litepicker({
+                element: document.getElementById('mobile-product-litepicker'),
+                plugins: ['mobilefriendly'],
+                singleMode: false,
+                numberOfMonths: 1,
+                numberOfColumns: 1,
+                autoApply: false,
+                format: "MMM D",
+                resetButton: true,
+                buttonText : {"reset":"Reset"},
+            });
 
-                 }
-             );
-             // Initialize Mega menu rollover - required for ALL pages
-             $('.menu-large').hover(
-                 function(){ $('.screen').addClass('show') },
-                 function(){ $('.screen').removeClass('show') }
-             );
-             // Create and mount the product thumbnail slider - Required for Single Product Page
-             var secondarySlider = new Splide( '#product-thumbnails', {
-                 rewind      : true,
-                 fixedWidth  : 115,
-                 fixedHeight : 115,
-                 isNavigation: true,
-                 gap         : 10,
-                 focus       : 'center',
-                 pagination  : false,
-                 cover       : true,
-                 breakpoints : {
-                     '600': {
-                         fixedWidth  : 80,
-                         fixedHeight : 80,
-                         arrows: false,
-                     }
-                 },
-                 keyboard: false,
-             } ).mount();
-             // Create the product slider - Required for Single Product Page
-             var primarySlider = new Splide( '#product-slider', {
-                 type       : 'fade',
-                 pagination : false,
-                 arrows     : false,
-                 keyboard: false,
-             } );
-             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
-             primarySlider.sync( secondarySlider ).mount();
-             // Initialize Overview Video Slider - required for Single Product Page
-             new Splide( '#overview-slider', {
-                 perPage: 2,
-                 breakpoints: {
-                     '767': {
-                         perPage: 1,
-                         arrows: false,
-                     },
-                 },
-                 gap: 30,
-                 keyboard: false,
-             } ).mount();
-             // Initialize Additional Gear Slider - required for Single Product Page
-             new Splide( '#gear-slider', {
-                 perPage: 4,
-                 breakpoints: {
-                     '991': {
-                         perPage: 3,
-                     },
-                     '767': {
-                         perPage: 2,
-                         arrows: false,
-                     },
-                     '640': {
-                         perPage: 1,
-                         arrows: false,
-                     },
-                 },
-                 rewind : true,
-                 gap: 20,
-                 padding: 10,
-                 keyboard: false,
-             } ).mount();
+        </script>
 
-             // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-
-             // Initialize PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
-             const prodpicker = new Litepicker({
-                 element: document.getElementById('product-litepicker'),
-                 singleMode: false,
-                 numberOfMonths: 2,
-                 numberOfColumns: 2,
-                 autoApply: false,
-                 format: "MMM D",
-                 resetButton: true,
-                 buttonText : {"reset":"Reset Dates"},
-             });
-
-             // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
-             const mprodpicker = new Litepicker({
-                 element: document.getElementById('mobile-product-litepicker'),
-                 plugins: ['mobilefriendly'],
-                 singleMode: false,
-                 numberOfMonths: 1,
-                 numberOfColumns: 1,
-                 autoApply: false,
-                 format: "MMM D",
-                 resetButton: true,
-                 buttonText : {"reset":"Reset"},
-             });
-               // Initialize Additional Gear Slider - required for Single Product Page
-                  new Splide( '#gear-slider', {
-                      perPage: 4,
-                      breakpoints: {
-                         '991': {
-                         perPage: 3,
-                                },
-                         '767': {
-                          perPage: 2,
-                          arrows: false,
-                                },
-                         '640': {
-                          perPage: 1,
-                          arrows: false,
-                               },
-                         },
-                         rewind : true,
-                            gap: 20,
-                         padding: 10,
-             } ).mount();
-         </script>
 
 		</c:if>
 	</c:otherwise>
