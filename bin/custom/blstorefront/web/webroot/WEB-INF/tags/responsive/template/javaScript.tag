@@ -94,12 +94,12 @@
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
 		</c:forEach>
-		
+
 		<%-- AddOn JavaScript files --%>
 		<c:forEach items="${addOnJavaScriptPaths}" var="addOnJavaScript">
 		    <script src="${fn:escapeXml(addOnJavaScript)}"></script>
 		</c:forEach>
-		
+
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
@@ -116,8 +116,8 @@
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ]
-                    }],          
-                } ); 
+                    }],
+                } );
             }
         );
         $('.menu-large').hover(
@@ -139,7 +139,7 @@
                     perPage: 3,
                 },
                 '480': {
-                    perPage: 2,  
+                    perPage: 2,
                 },
             },
             rewind : true,
@@ -158,18 +158,7 @@
             rewind : true,
             gap: 20,
             padding: 10,
-        } ).mount();  
-        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
-            type   : 'loop',
-            perPage: 1,
-            drag   : false,
-            breakpoints: {
-                '991': {
-                    pagination: false,
-                },
-            },
-            //,
-        } ).mount());
+        } ).mount();
         document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 3,
@@ -180,7 +169,7 @@
             perPage: 1,
             type: 'fade',
             arrows: false,
-        } ).mount(); 
+        } ).mount();
         new Splide( '#blog-slider', {
             perPage: 3,
             breakpoints: {
@@ -195,7 +184,7 @@
             gap: 20,
             padding: 10,
         } ).mount();
-         const picker = new Litepicker({ 
+         const picker = new Litepicker({
             element: document.getElementById('litepicker'),
             singleMode: false,
             numberOfMonths: 2,
@@ -204,8 +193,8 @@
             format: "MMM D",
             resetButton: true,
             buttonText : {"reset":"Reset Dates"},
-        }); 
-    </script>  
+        });
+    </script>
 	</c:if>
 
 
@@ -220,17 +209,17 @@
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ]
-                    }],          
+                    }],
                 } );
                 new Mmenu( "#filter-menu", {
                     extensions: ["position-front","fullscreen"],
                     navbar: {
-                      title: "Filters",  
+                      title: "Filters",
                     },
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ],
-                    }],          
+                    }],
                 } ); */
             }
         );
@@ -256,7 +245,7 @@
             //,
         } ).mount());
         // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-        /* const picker = new Litepicker({ 
+        /* const picker = new Litepicker({
             element: document.getElementById('litepicker'),
             //plugins: ['mobilefriendly'],
             singleMode: false,
@@ -268,7 +257,7 @@
             buttonText : {"reset":"Reset Dates"},
         }); */
         // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
-        /* const mpicker = new Litepicker({ 
+        /* const mpicker = new Litepicker({
             element: document.getElementById('mobile-litepicker'),
             plugins: ['mobilefriendly'],
             singleMode: false,
@@ -334,28 +323,6 @@
                  gap: 30,
                  keyboard: false,
              } ).mount();
-             // Initialize Additional Gear Slider - required for Single Product Page
-             new Splide( '#gear-slider', {
-                 perPage: 4,
-                 breakpoints: {
-                     '991': {
-                         perPage: 3,
-                     },
-                     '767': {
-                         perPage: 2,
-                         arrows: false,
-                     },
-                     '640': {
-                         perPage: 1,
-                         arrows: false,
-                     },
-                 },
-                 rewind : true,
-                 gap: 20,
-                 padding: 10,
-                 keyboard: false,
-             } ).mount();
-
              // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
 
              // Initialize PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
