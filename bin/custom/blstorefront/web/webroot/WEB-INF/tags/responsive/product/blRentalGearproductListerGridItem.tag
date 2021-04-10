@@ -47,7 +47,8 @@
 
  <p class="overline">${product.manufacturer}</p>
  <h6 class="product">
-            <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" />
+          <c:url var="rentUrl" value="/rent/product/${product.code}"/>
+           <a href="${rentUrl}"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
   </h6>
 		<ycommerce:testId code="product_wholeProduct">
 

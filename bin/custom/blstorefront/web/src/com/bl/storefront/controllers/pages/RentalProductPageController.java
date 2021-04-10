@@ -1,5 +1,6 @@
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -46,6 +47,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, extraOptions);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
+    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }
 }
