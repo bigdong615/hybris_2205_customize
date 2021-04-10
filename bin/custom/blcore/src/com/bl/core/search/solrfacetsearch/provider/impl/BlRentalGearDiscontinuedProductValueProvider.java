@@ -3,7 +3,6 @@
  */
 package com.bl.core.search.solrfacetsearch.provider.impl;
 
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.solrfacetsearch.config.IndexConfig;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.provider.FieldNameProvider;
@@ -48,13 +47,10 @@ public class BlRentalGearDiscontinuedProductValueProvider extends AbstractProper
 	public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig, final IndexedProperty indexedProperty,
 			final Object model)
 	{
-		if (model instanceof ProductModel)
-		{
-			final BlProductModel product = (BlProductModel) model;
-			return addFieldValues(new ArrayList<>(), indexedProperty, BooleanUtils.toBoolean(product.getDiscontinued()));
-
-		}
-		return Collections.emptyList();
+		return model instanceof BlProductModel
+				? addFieldValues(new ArrayList<>(), indexedProperty,
+						BooleanUtils.toBoolean(((BlProductModel) model).getDiscontinued()))
+				: Collections.emptyList();
 	}
 
 	/**
