@@ -6,6 +6,7 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="component" tagdir="/WEB-INF/tags/shared/component"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -16,7 +17,14 @@
                                 <c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
             				        	<li class="splide__slide">
                                             <div class="card">
-                                               <span class="badge badge-new">New</span>
+                                            <c:choose>
+                                               <c:when test="${productReferences.target.isNew}">
+                                                    <span class="badge badge-new"><spring:theme code="pdp.rental.product.recommendation.section.new.text" /></span>
+                                               </c:when>
+                                               <c:otherwise>
+                                                <!-- TO-DO Need to add Stock related flag once the stock related changes is implemented -->
+                                               </c:otherwise>
+                                            </c:choose>
                                                <span class="bookmark"></span>
                                                    <div class="card-slider splide">
                                                      <div class="splide__track">
@@ -36,13 +44,13 @@
                                                    <h6 class="price">$44 <span class="period">${datedata.selectedFromDate} - ${datedata.selectedToDate}</span></h6>
                                                     <c:choose>
                                                           <c:when test="${productReference.target.isDiscontinued}">
-                                                                <a href="#" class="btn btn-primary" disabled="disabled">Add to Rental</a>
+                                                                <a href="#" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" /></a>
                                                           </c:when>
                                                           <c:when test="${productReference.target.isUpcoming}">
-                                                                <a href="#" class="btn btn-primary">Notify Me</a>
+                                                                <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
                                                           </c:when>
                                                            <c:otherwise>
-                                                                <a href="#" class="btn btn-primary">Add to Rental</a>
+                                                                <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" /></a>
                                                             </c:otherwise>
                                                     </c:choose>
                                             </div>
