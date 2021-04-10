@@ -1,7 +1,6 @@
 package com.bl.core.search.solrfacetsearch.provider.impl;
 
 import com.bl.core.model.BlProductModel;
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.solrfacetsearch.config.IndexConfig;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.provider.FieldNameProvider;

@@ -46,8 +46,7 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver extends
       url = url.replace(BlCoreConstants.BASE_SITE_UID, urlEncode(getBaseSiteUid().toString()));
     }
     // Addd to check whether the url contains level 1 category code for rental gear
-    if (url.contains(BlCoreConstants.PARENT_CATEGORY)) {
-      if(source.isRentalCategory()) {
+    if (url.contains(BlCoreConstants.PARENT_CATEGORY) && source.isRentalCategory()) {
         String parentCode = "";
         for (CategoryModel superCategory : source.getSupercategories()) {
             parentCode = superCategory.getCode();
@@ -55,7 +54,6 @@ public class DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver extends
         final String parentCategoryCode = urlEncode(parentCode)
             .replaceAll("\\+", BlCoreConstants.REPLACE_STRING);
         url = url.replace(BlCoreConstants.PARENT_CATEGORY, parentCategoryCode);
-      }
     }
     // added to check whether the url contains category code for rental and used gear
     if (url.contains(BlCoreConstants.CATEGORY_PATTERN_CODE)) {
