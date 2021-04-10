@@ -4,7 +4,6 @@
 package com.bl.storefront.controllers.cms;
 
 import de.hybris.platform.acceleratorcms.model.components.ProductReferencesComponentModel;
-import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
@@ -17,7 +16,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import de.hybris.platform.enumeration.EnumerationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,13 +29,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ProductReferencesComponentController extends
 		AbstractAcceleratorCMSComponentController<ProductReferencesComponentModel>
 {
-	protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,ProductOption.REQUIRED_DATA, ProductOption.GALLERY);
+	protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE);
 
 	@Resource(name = "productVariantFacade")
 	private ProductFacade productFacade;
-
-	@Resource(name = "enumerationService")
-	private EnumerationService enumerationService;
 
 	@Override
 	protected void fillModel(final HttpServletRequest request, final Model model, final ProductReferencesComponentModel component)
@@ -46,18 +41,10 @@ public class ProductReferencesComponentController extends
 		if (currentProduct != null)
 		{
 			final List<ProductReferenceData> productReferences = productFacade.getProductReferencesForCode(currentProduct.getCode(),
-					getEnumerationService().getEnumerationValues(ProductReferenceTypeEnum._TYPECODE), PRODUCT_OPTIONS, component.getMaximumNumberProducts());
+					component.getProductReferenceTypes(), PRODUCT_OPTIONS, component.getMaximumNumberProducts());
 
 			model.addAttribute("title", component.getTitle());
 			model.addAttribute("productReferences", productReferences);
 		}
-	}
-
-	public EnumerationService getEnumerationService() {
-		return enumerationService;
-	}
-
-	public void setEnumerationService(EnumerationService enumerationService) {
-		this.enumerationService = enumerationService;
 	}
 }
