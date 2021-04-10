@@ -8,6 +8,7 @@ import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
+import de.hybris.platform.servicelayer.search.SearchResult;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,7 +31,8 @@ public class DefaultBlMediaDao implements BlMediaDao {
       params.put("container", container);
       params.put("format", format);
       FlexibleSearchQuery query = new FlexibleSearchQuery("SELECT {pk} FROM {Media} WHERE {mediaContainer} = ?container AND {mediaFormat} = ?format", params);
-      return (List<MediaModel>) getFlexibleSearchService().search(query);
+      final SearchResult result = getFlexibleSearchService().search(query);
+      return result.getResult();
     } catch (AmbiguousIdentifierException var5) {
       throw new ModelNotFoundException("Data inconsistency: Multiple medias with format '" + format + "' reside in container '" + container + "'.", var5);
     }
