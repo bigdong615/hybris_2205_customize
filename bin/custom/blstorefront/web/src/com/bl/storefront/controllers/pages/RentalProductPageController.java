@@ -1,6 +1,10 @@
 package com.bl.storefront.controllers.pages;
 
+<<<<<<< HEAD
 import com.bl.facades.product.data.RentalDateDto;
+=======
+import com.bl.core.constants.BlCoreConstants;
+>>>>>>> develop
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -47,7 +51,6 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, extraOptions);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-
     //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
     getSessionService().setAttribute("selectedFromDate", "Apr 12");
     getSessionService().setAttribute("selectedToDate", "Apr 19");
@@ -57,7 +60,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
     date.setSelectedToDate(getSessionService().getAttribute("selectedToDate"));
     date.setNumberOfDays(getSessionService().getAttribute("numberOfDays"));
     model.addAttribute("datedata", date);
-
+    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }
 }

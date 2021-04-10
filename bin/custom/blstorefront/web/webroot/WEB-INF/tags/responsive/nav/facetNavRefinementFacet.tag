@@ -8,6 +8,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
+
 <c:if test="${not empty facetData.values}">
 <ycommerce:testId code="facetNav_title_${facetData.name}">
 <hr>
@@ -24,6 +25,9 @@
 								<!-- facetValue.query.query.value and searchPageData.freeTextSearch are html output encoded in the backend -->
 									<input type="hidden" name="q" value="${facetValue.query.query.value}"/>
 									<input type="hidden" name="text" value="${searchPageData.freeTextSearch}"/>
+									<c:if test="${pageType == 'PRODUCTSEARCH'}">
+                                                 <input type="hidden" name="blPageType" value="${blPageType}"/>
+                  </c:if>
 									<label>
 										<input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" />
 										<span class="facet__list__label">
@@ -61,6 +65,9 @@
 							<!-- facetValue.query.query.value and searchPageData.freeTextSearch are html output encoded in the backend -->
 								<input type="hidden" name="q" value="${facetValue.query.query.value}"/>
 								<input type="hidden" name="text" value="${searchPageData.freeTextSearch}"/>
+								 <c:if test="${pageType == 'PRODUCTSEARCH'}">
+                               <input type="hidden" name="blPageType" value="${blPageType}"/>
+                               </c:if>
 								<label>
 									<input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" />
 									<span class="facet__list__label">

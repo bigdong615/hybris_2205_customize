@@ -5,125 +5,159 @@
 #% impex.info("=============================== Importing content from BLInitialData categories.impex =========================");
 
 # Macros / Replacement Parameter definitions
-$productCatalog=blProductCatalog
-$productCatalogName=BL Product Catalog
+$productCatalog = blProductCatalog
+$productCatalogName = BL Product Catalog
 
-$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-$supercategories=source(code, $catalogVersion)[unique=true]
-$categories=target(code, $catalogVersion)[unique=true]
+$catalogVersion = catalogversion(catalog(id[default=$productCatalog]), version[default='Staged'])[unique=true, default=$productCatalog:Staged]
+$supercategories = source(code, $catalogVersion)[unique=true]
+$categories = target(code, $catalogVersion)[unique=true]
 
+#BL-331 added new attribute as rental gear to define rental category
 # Insert Categories
-INSERT_UPDATE Category;code[unique=true];active;name[lang=en];onCategoryTree;displayName;titleTag;allowedPrincipals(uid)[default='customergroup'];$catalogVersion
-                      ;cameras;true;Cameras;true;Cameras;Camera Rental | BorrowLenses
-                      ;lenses;true;Lenses;true;Lenses;
-                      ;production;true;Production;true;Production;
-                      ;subparts;true;Subparts;false;Subparts;
-                      ;newgear;true;New Gear;false;New Gear;
-                      ;usedgear;true;Used Gear;true;Used Gear;
-                      ;audio;true;Audio;true;Audio;Camera microphones | Audio Mixers | UHF Lavaliers | Borrow Lenses
-                      ;lighting;true;Lighting;true;Lighting;
-                      ;camcorders;true;Camcorders;true;Camcorders;Camcorder Rentals | Video Cameras | BorrowLenses
-                      ;dslr-cameras;true;DSLR ;true;DSLR ;Rent DSLR Cameras | DSLR Camera Rentals | BorrowLenses
-                      ;mirrorless-cameras;true;Mirrorless ;true;Mirrorless ;Mirrorless Camera Rentals | BorrowLenses
-                      ;medium-format-cameras;true;Medium Format ;true;Medium Format ;Medium Format Camera Rentals | BorrowLenses
-                      ;point-and-shoot-cameras;true;Point and Shoot ;true;Point and Shoot ;Rent Point and Shoot Cameras | Travel Cameras | BorrowLenses
-                      ;action-and-pov-cameras;true;Action ;true;Action Cameras;Rent Action Cameras | Action Camera Rentals | BorrowLenses
-                      ;professional;true;Cinema ;true;Cinema Cameras;Rent Professional Cinema Cameras | BorrowLenses
-                      ;vr-video-cameras;true;360;true;360 Cameras;Rent 360 Cameras | 360 Camera Rentals for VR | BorrowLenses
-                      ;webcams;true;Webcams;true;Webcams;
-                      ;camera_packages;true;Camera Packages;true;Camera Packages;
-                      ;macro;true;Macro;true;Macro;
-                      ;wide_angle;true;Wide Angle;true;Wide Angle;Wide Angle Lens Rental | Rent Wide Lenses | BorrowLenses
-                      ;super-telephoto;true;Telephoto;true;Telephoto;Super Telephoto Lens Rental | BorrowLenses
-                      ;normal;true;Standard;true;Standard;Normal Lens Rental | Rent Standard Lenses | BorrowLenses
-                      ;lens_adapters;true;Lens Adapters;true;Lens Adapters;Rent Lens Adapters and Rings | BorrowLenses
-                      ;tilt-shift;true;Tilt Shift ;true;Tilt Shift ;Rent Tilt-Shift Lenses | Tilt-Shift Photography | BorrowLenses
-                      ;fisheye;true;Fisheye;true;Fisheye;Rent Fisheye Lenses | Fisheye Lens Rentals | BorrowLenses
-                      ;teleconverters;true;Lens Extenders;true;Lens Extenders;Teleconverter Rentals | Rent a Tele Extender | BorrowLenses
-                      ;cine-lenses;true;Cinema Lenses;true;Cinema Lenses;Rent Cine Lenses | Cinema Lens Rentals | BorrowLenses
-                      ;telescopes;true;Telescopes;true;Telescopes;
-                      ;lens_packages;true;Lens Packages;true;Lens Packages;
-                      ;filters;true;Filters;true;Filters;Rent Lens Filters | Lens Filter Rentals | BorrowLenses
-                      ;batteries_power;true;Batteries/Power;true;Batteries/Power;
-                      ;tripods_heads;true;Tripods/Heads;true;Tripods/Heads;Rent Photo Tripod Heads | Tripod Head Rentals | BorrowLenses
-                      ;dollies_sliders;true;Dollies & Sliders;true;Dollies & Sliders;Dollies & Sliders | Rent Camera Sliders | BorrowLenses
-                      ;cables_adapters;true;Cables/Adapters;true;Cables/Adapters;Accessory Cables for Photography | BorrowLenses
-                      ;monitors_video_recorders;true;Monitors/Video Recorders;true;Monitors/Video Recorders;Rent Monitors for Photography and Workshops | BorrowLenses
-                      ;follow_focus;true;Follow Focus and Matte Boxes;true;Follow Focus and Matte Boxes;
-                      ;camera-bags;true;Camera Bags / Cases;true;Camera Bags / Cases;Camera Bag Rentals | Rent Camera Bags | BorrowLenses
-                      ;memory_cards_storage;true;Memory Cards & Storage;true;Memory Cards & Storage;
-                      ;projectors;true;Projectors;true;Projectors;Projector Rentals | Rent Projectors | BorrowLenses
-                      ;underwater-housing;true;Underwater Housings;true;Underwater Housings;Rent Underwater Camera Housings | Waterproof Your Gear | BorrowLenses
-                      ;streaming;true;Streaming;true;Streaming;Rent Streaming Gear | BorrowLenses
-                      ;viewfinders;true;Viewfinders;true;Viewfinders;Rent Viewfinders for Photo and Video | BorrowLenses
-                      ;gimbals-stabilizers;true;Gimbals and Stabilizers;true;Gimbals and Stabilizers;
-                      ;flashes-and-on-camera;true;Flashes;true;Flashes;Rent Camera Flash | Lighting Equipment Rental | BorrowLenses
-                      ;backdrops;true;Backdrops;true;Backdrops;Photo Backdrop Rental | Photo Booth Backdrop | BorrowLenses
-                      ;audio-accessories;true;Audio Accessories;true;Audio Accessories;Audio Visual Rentals | Rent AV Equipment | BorrowLenses
-                      ;headphones;true;Headphones;true;Headphones;Rent Audio Headphones | Headphones Rental | BorrowLenses
-                      ;video-lighting-batteries;true;Lighting Batteries;true;Lighting Batteries;Lighting Batteries | Rent Video Lighting | BorrowLenses
-                      ;cameraRigs;true;Camera Rigs;true;Camera Rigs;
+INSERT_UPDATE Category; code[unique = true]             ; active; name[lang = en]                     ; onCategoryTree; displayName                  ; titleTag                                                              ; allowedPrincipals(uid)[default = 'customergroup']             ; $catalogVersion; rentalCategory
+                      ; cameras                  ; true  ; Cameras                      ; true          ; Cameras                      ; Camera Rental | BorrowLenses                                          ;                                                  ;                ; true
+                      ; lenses                   ; true  ; Lenses                       ; true          ; Lenses                       ;                                                                       ;                                                  ;                ; true
+                      ; production               ; true  ; Production                   ; true          ; Production                   ;                                                                       ;                                                  ;                ; true
+                      ; subparts                 ; true  ; Subparts                     ; false         ; Subparts                     ;                                                                       ;                                                  ;                ; true
+                      ; newgear                  ; true  ; New Gear                     ; false         ; New Gear                     ;                                                                       ;                                                  ;                ; true
+                      ; usedgear                 ; true  ; Used Gear                    ; true          ; Used Gear                    ;                                                                       ;                                                  ;                ; false
+                      ; audio                    ; true  ; Audio                        ; true          ; Audio                        ; Camera microphones | Audio Mixers | UHF Lavaliers | Borrow Lenses     ;                                                  ;                ; true
+                      ; lighting                 ; true  ; Lighting                     ; true          ; Lighting                     ;                                                                       ;                                                  ;                ; true
+                      ; camcorders               ; true  ; Camcorders                   ; true          ; Camcorders                   ; Camcorder Rentals | Video Cameras | BorrowLenses                      ;                                                  ;                ; true
+                      ; dslr-cameras             ; true  ; DSLR                         ; true          ; DSLR                         ; Rent DSLR Cameras | DSLR Camera Rentals | BorrowLenses                ;                                                  ;                ; true
+                      ; mirrorless-cameras       ; true  ; Mirrorless                   ; true          ; Mirrorless                   ; Mirrorless Camera Rentals | BorrowLenses                              ;                                                  ;                ; true
+                      ; medium-format-cameras    ; true  ; Medium Format                ; true          ; Medium Format                ; Medium Format Camera Rentals | BorrowLenses                           ;                                                  ;                ; true
+                      ; point-and-shoot-cameras  ; true  ; Point and Shoot              ; true          ; Point and Shoot              ; Rent Point and Shoot Cameras | Travel Cameras | BorrowLenses          ;                                                  ;                ; true
+                      ; action-and-pov-cameras   ; true  ; Action                       ; true          ; Action Cameras               ; Rent Action Cameras | Action Camera Rentals | BorrowLenses            ;                                                  ;                ; true
+                      ; professional             ; true  ; Cinema                       ; true          ; Cinema Cameras               ; Rent Professional Cinema Cameras | BorrowLenses                       ;                                                  ;                ; true
+                      ; vr-video-cameras         ; true  ; 360                          ; true          ; 360 Cameras                  ; Rent 360 Cameras | 360 Camera Rentals for VR | BorrowLenses           ;                                                  ;                ; true
+                      ; webcams                  ; true  ; Webcams                      ; true          ; Webcams                      ;                                                                       ;                                                  ;                ; true
+                      ; camera_packages          ; true  ; Camera Packages              ; true          ; Camera Packages              ;                                                                       ;                                                  ;                ; true
+                      ; macro                    ; true  ; Macro                        ; true          ; Macro                        ;                                                                       ;                                                  ;                ; true
+                      ; wide_angle               ; true  ; Wide Angle                   ; true          ; Wide Angle                   ; Wide Angle Lens Rental | Rent Wide Lenses | BorrowLenses              ;                                                  ;                ; true
+                      ; super-telephoto          ; true  ; Telephoto                    ; true          ; Telephoto                    ; Super Telephoto Lens Rental | BorrowLenses                            ;                                                  ;                ; true
+                      ; normal                   ; true  ; Standard                     ; true          ; Standard                     ; Normal Lens Rental | Rent Standard Lenses | BorrowLenses              ;                                                  ;                ; true
+                      ; lens_adapters            ; true  ; Lens Adapters                ; true          ; Lens Adapters                ; Rent Lens Adapters and Rings | BorrowLenses                           ;                                                  ;                ; true
+                      ; tilt-shift               ; true  ; Tilt Shift                   ; true          ; Tilt Shift                   ; Rent Tilt-Shift Lenses | Tilt-Shift Photography | BorrowLenses        ;                                                  ;                ; true
+                      ; fisheye                  ; true  ; Fisheye                      ; true          ; Fisheye                      ; Rent Fisheye Lenses | Fisheye Lens Rentals | BorrowLenses             ;                                                  ;                ; true
+                      ; teleconverters           ; true  ; Lens Extenders               ; true          ; Lens Extenders               ; Teleconverter Rentals | Rent a Tele Extender | BorrowLenses           ;                                                  ;                ; true
+                      ; cine-lenses              ; true  ; Cinema Lenses                ; true          ; Cinema Lenses                ; Rent Cine Lenses | Cinema Lens Rentals | BorrowLenses                 ;                                                  ;                ; true
+                      ; telescopes               ; true  ; Telescopes                   ; true          ; Telescopes                   ;                                                                       ;                                                  ;                ; true
+                      ; lens_packages            ; true  ; Lens Packages                ; true          ; Lens Packages                ;                                                                       ;                                                  ;                ; true
+                      ; filters                  ; true  ; Filters                      ; true          ; Filters                      ; Rent Lens Filters | Lens Filter Rentals | BorrowLenses                ;                                                  ;                ; true
+                      ; batteries_power          ; true  ; Batteries/Power              ; true          ; Batteries/Power              ;                                                                       ;                                                  ;                ; true
+                      ; tripods_heads            ; true  ; Tripods/Heads                ; true          ; Tripods/Heads                ; Rent Photo Tripod Heads | Tripod Head Rentals | BorrowLenses          ;                                                  ;                ; true
+                      ; dollies_sliders          ; true  ; Dollies & Sliders            ; true          ; Dollies & Sliders            ; Dollies & Sliders | Rent Camera Sliders | BorrowLenses                ;                                                  ;                ; true
+                      ; cables_adapters          ; true  ; Cables/Adapters              ; true          ; Cables/Adapters              ; Accessory Cables for Photography | BorrowLenses                       ;                                                  ;                ; true
+                      ; monitors_video_recorders ; true  ; Monitors/Video Recorders     ; true          ; Monitors/Video Recorders     ; Rent Monitors for Photography and Workshops | BorrowLenses            ;                                                  ;                ; true
+                      ; follow_focus             ; true  ; Follow Focus and Matte Boxes ; true          ; Follow Focus and Matte Boxes ;                                                                       ;                                                  ;                ; true
+                      ; camera-bags              ; true  ; Camera Bags / Cases          ; true          ; Camera Bags / Cases          ; Camera Bag Rentals | Rent Camera Bags | BorrowLenses                  ;                                                  ;                ; true
+                      ; memory_cards_storage     ; true  ; Memory Cards & Storage       ; true          ; Memory Cards & Storage       ;                                                                       ;                                                  ;                ; true
+                      ; projectors               ; true  ; Projectors                   ; true          ; Projectors                   ; Projector Rentals | Rent Projectors | BorrowLenses                    ;                                                  ;                ; true
+                      ; underwater-housing       ; true  ; Underwater Housings          ; true          ; Underwater Housings          ; Rent Underwater Camera Housings | Waterproof Your Gear | BorrowLenses ;                                                  ;                ; true
+                      ; streaming                ; true  ; Streaming                    ; true          ; Streaming                    ; Rent Streaming Gear | BorrowLenses                                    ;                                                  ;                ; true
+                      ; viewfinders              ; true  ; Viewfinders                  ; true          ; Viewfinders                  ; Rent Viewfinders for Photo and Video | BorrowLenses                   ;                                                  ;                ; true
+                      ; gimbals-stabilizers      ; true  ; Gimbals and Stabilizers      ; true          ; Gimbals and Stabilizers      ;                                                                       ;                                                  ;                ; true
+                      ; flashes-and-on-camera    ; true  ; Flashes                      ; true          ; Flashes                      ; Rent Camera Flash | Lighting Equipment Rental | BorrowLenses          ;                                                  ;                ; true
+                      ; backdrops                ; true  ; Backdrops                    ; true          ; Backdrops                    ; Photo Backdrop Rental | Photo Booth Backdrop | BorrowLenses           ;                                                  ;                ; true
+                      ; audio-accessories        ; true  ; Audio Accessories            ; true          ; Audio Accessories            ; Audio Visual Rentals | Rent AV Equipment | BorrowLenses               ;                                                  ;                ; true
+                      ; headphones               ; true  ; Headphones                   ; true          ; Headphones                   ; Rent Audio Headphones | Headphones Rental | BorrowLenses              ;                                                  ;                ; true
+                      ; video-lighting-batteries ; true  ; Lighting Batteries           ; true          ; Lighting Batteries           ; Lighting Batteries | Rent Video Lighting | BorrowLenses               ;                                                  ;                ; true
+                      ; cameraRigs               ; true  ; Camera Rigs                  ; true          ; Camera Rigs                  ;                                                                       ;                                                  ;                ; true
+
+
 
 # Insert Category Structure
-INSERT_UPDATE CategoryCategoryRelation;$categories;$supercategories
-                                      ;audio;production
-                                      ;lighting;production
-                                      ;camcorders;cameras
-                                      ;dslr-cameras;cameras
-                                      ;mirrorless-cameras;cameras
-                                      ;medium-format-cameras;cameras
-                                      ;point-and-shoot-cameras;cameras
-                                      ;action-and-pov-cameras;cameras
-                                      ;professional;cameras
-                                      ;vr-video-cameras;cameras
-                                      ;webcams;cameras
-                                      ;camera_packages;cameras
-                                      ;macro;lenses
-                                      ;wide_angle;lenses
-                                      ;super-telephoto;lenses
-                                      ;normal;lenses
-                                      ;lens_adapters;lenses
-                                      ;tilt-shift;lenses
-                                      ;fisheye;lenses
-                                      ;teleconverters;lenses
-                                      ;cine-lenses;lenses
-                                      ;telescopes;lenses
-                                      ;lens_packages;lenses
-                                      ;filters;production
-                                      ;batteries_power;production
-                                      ;tripods_heads;production
-                                      ;dollies_sliders;production
-                                      ;cables_adapters;production
-                                      ;monitors_video_recorders;production
-                                      ;follow_focus;production
-                                      ;camera-bags;production
-                                      ;memory_cards_storage;production
-                                      ;projectors;production
-                                      ;underwater-housing;production
-                                      ;streaming;production
-                                      ;viewfinders;production
-                                      ;gimbals-stabilizers;production
-                                      ;cameraRigs;production
-                                      ;flashes-and-on-camera;lighting
-                                      ;backdrops;lighting
-                                      ;audio-accessories;audio
-                                      ;headphones;audio
-                                      ;video-lighting-batteries;batteries_power
+INSERT_UPDATE CategoryCategoryRelation; $categories              ; $supercategories
+                                      ; audio                    ; production
+                                      ; lighting                 ; production
+                                      ; camcorders               ; cameras
+                                      ; dslr-cameras             ; cameras
+                                      ; mirrorless-cameras       ; cameras
+                                      ; medium-format-cameras    ; cameras
+                                      ; point-and-shoot-cameras  ; cameras
+                                      ; action-and-pov-cameras   ; cameras
+                                      ; professional             ; cameras
+                                      ; vr-video-cameras         ; cameras
+                                      ; webcams                  ; cameras
+                                      ; camera_packages          ; cameras
+                                      ; macro                    ; lenses
+                                      ; wide_angle               ; lenses
+                                      ; super-telephoto          ; lenses
+                                      ; normal                   ; lenses
+                                      ; lens_adapters            ; lenses
+                                      ; tilt-shift               ; lenses
+                                      ; fisheye                  ; lenses
+                                      ; teleconverters           ; lenses
+                                      ; cine-lenses              ; lenses
+                                      ; telescopes               ; lenses
+                                      ; lens_packages            ; lenses
+                                      ; filters                  ; production
+                                      ; batteries_power          ; production
+                                      ; tripods_heads            ; production
+                                      ; dollies_sliders          ; production
+                                      ; cables_adapters          ; production
+                                      ; monitors_video_recorders ; production
+                                      ; follow_focus             ; production
+                                      ; camera-bags              ; production
+                                      ; memory_cards_storage     ; production
+                                      ; projectors               ; production
+                                      ; underwater-housing       ; production
+                                      ; streaming                ; production
+                                      ; viewfinders              ; production
+                                      ; gimbals-stabilizers      ; production
+                                      ; cameraRigs               ; production
+                                      ; flashes-and-on-camera    ; lighting
+                                      ; backdrops                ; lighting
+                                      ; audio-accessories        ; audio
+                                      ; headphones               ; audio
+                                      ; video-lighting-batteries ; batteries_power
 
-$productCatalog=blProductCatalog
-$productCatalogName=BL Product Catalog
 
-$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-$supercategories=source(code, $catalogVersion)[unique=true]
-$categories=target(code, $catalogVersion)[unique=true]
+####### BL -80 Added Used Gear Category
+INSERT_UPDATE Category; code[unique = true]    ; active; name[lang = en]  ; onCategoryTree; displayName      ; titleTag; allowedPrincipals(uid)[default = 'customergroup']; $catalogVersion;rentalCategory
+                      ; Used-Lenses            ; true  ; Used Lenses      ; true          ; Used Lenses      ;;;;false
+                      ; Used-Cameras           ; true  ; Used Cameras     ; true          ; Used Cameras     ;;;;false
+                      ; Used-Lighting          ; true  ; Used Lighting    ; true          ; Used Lighting    ;;;;false
+                      ; Used-Video             ; true  ; Used Video       ; true          ; Used Video       ;;;;false
+                      ; Used-Accessories       ; true  ; Used Accessories ; true          ; Used Accessories ;;;;false
+                      ; Used-NewArrivals       ; true  ; Used NewArrivals ; true          ; Used NewArrivals ;;;;false
+###### BL -331 Added for rental gear PLP
+                      ; NewArrivals-Cameras    ; true  ; New Cameras      ; true          ; New Cameras      ;;;;true
+                      ; NewArrivals-Lenses     ; true  ; New Lenses       ; true          ; New Lenses       ;;;;true
+                      ; NewArrivals-Production ; true  ; New Production   ; true          ; New Production   ;;;;true
+                      ; rentalgear             ; true  ; Rental Gear      ; true          ; Rental Gear      ;;;;true
 
-UPDATE Category;$catalogVersion;code[unique=true];headerContent;footerContent
-               ;;cameras;;
-               ;;lenses;;
-               ;;production;;
-               ;;subparts;;
-               ;;newgear;;
-               ;;audio;;"<!-- Begin OrangeSoda Tracking Code -->
+
+
+INSERT_UPDATE CategoryCategoryRelation; $categories            ; $supercategories
+                                      ; Used-Lenses            ; usedgear
+                                      ; Used-Cameras           ; usedgear
+                                      ; Used-Lighting          ; usedgear
+                                      ; Used-Video             ; usedgear
+                                      ; Used-Accessories       ; usedgear
+                                      ; Used-NewArrivals       ; usedgear
+####### BL -331 Added for rental gear PLP
+                                      ; NewArrivals-Cameras    ; cameras
+                                      ; NewArrivals-Lenses     ; lenses
+                                      ; NewArrivals-Production ; production
+
+
+
+$productCatalog = blProductCatalog
+$productCatalogName = BL Product Catalog
+
+$catalogVersion = catalogversion(catalog(id[default=$productCatalog]), version[default='Staged'])[unique=true, default=$productCatalog:Staged]
+$supercategories = source(code, $catalogVersion)[unique=true]
+$categories = target(code, $catalogVersion)[unique=true]
+
+UPDATE Category; $catalogVersion; code[unique = true]      ; headerContent; footerContent
+               ;                ; cameras                  ;              ;
+               ;                ; lenses                   ;              ;
+               ;                ; production               ;              ;
+               ;                ; subparts                 ;              ;
+               ;                ; newgear                  ;              ;
+               ;                ; audio                    ;              ; "<!-- Begin OrangeSoda Tracking Code -->
 <!--
 <script language='javascript' type='text/javascript'>
 var trackCid = 130438;
@@ -136,10 +170,10 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
 -->
 <!-- End OrangeSoda Tracking Code -->"
 
-               ;;lighting;;
-               ;;camcorders;;
-               ;;dslr-cameras;;
-               ;;mirrorless-cameras;"<style scoped>
+               ;                ; lighting                 ;              ;
+               ;                ; camcorders               ;              ;
+               ;                ; dslr-cameras             ;              ;
+               ;                ; mirrorless-cameras       ; "<style scoped>
       /* Mobile View */
 	#divTextContent {
 		margin: auto;
@@ -160,19 +194,19 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
 </style>
 
 <div id='divTextContent'>The future is mirrorless. Explore the latest advances in full frame optical performance from <a href='https://www.borrowlenses.com/category/sony-full-frame-mirrorless' target='_blank'>Sony</a>, <a href='https://www.borrowlenses.com/category/canon-full-frame-mirrorless' target='_blank'>Canon</a>, <a href='https://www.borrowlenses.com/category/panasonic-full-frame-mirrorless' target='_blank'>Panasonic</a>, and <a href='https://www.borrowlenses.com/category/nikon-full-frame-mirrorless' target='_blank'>Nikon</a>. Below you'll find not only high resolution, full frame options but also ultra portable systems for travel and vlogging.
-</div>";
-               ;;medium-format-cameras;;
-               ;;point-and-shoot-cameras;;
-               ;;action-and-pov-cameras;;
-               ;;professional;;
-               ;;vr-video-cameras;;
-               ;;webcams;;
-               ;;camera_packages;;
-               ;;macro;;
-               ;;wide_angle;;
-               ;;super-telephoto;;
-               ;;normal;;
-               ;;lens_adapters;;"<h1>Rent a Lens Adapter to Use Any Lens with Your Camera</h1>
+</div>"      ;
+               ;                ; medium-format-cameras    ;              ;
+               ;                ; point-and-shoot-cameras  ;              ;
+               ;                ; action-and-pov-cameras   ;              ;
+               ;                ; professional             ;              ;
+               ;                ; vr-video-cameras         ;              ;
+               ;                ; webcams                  ;              ;
+               ;                ; camera_packages          ;              ;
+               ;                ; macro                    ;              ;
+               ;                ; wide_angle               ;              ;
+               ;                ; super-telephoto          ;              ;
+               ;                ; normal                   ;              ;
+               ;                ; lens_adapters            ;              ; "<h1>Rent a Lens Adapter to Use Any Lens with Your Camera</h1>
 <p>Lens adapters free you from the equipment limitations of a brand&rsquo;s proprietary design. Have a <a href='https://www.borrowlenses.com/sony'>Sony video camera</a> and want to use your Canon lens on it? No problem with a lens adapter!</p>
 <p>These small accessories attach quickly and easily between a lens and your camera, giving you big flexibility in what equipment you can use and where you can use it. Lens adapters also save you money. Instead of getting a host of unique lenses for each camera, you can get the camera you want and use the lenses you already have. A lens adapter rental from BorrowLenses saves even more money as you don&rsquo;t have to invest a lot in a piece of equipment you might only occasionally need.</p>
 <h2>Lens Adapters Give You More Flexibility When Filming or Photographing</h2>
@@ -184,9 +218,9 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
 <p>- <a href='https://www.borrowlenses.com/product/Wooden-Camera-PL-Lens-to-Sony-E-Mount-Camera-Adapter'>Wooden Camera PL Lens to Sony E Mount Camera Adapter</a>: Using a cinema standard PL mount lens but want to take advantage of the low-light prowess of Sony mirrorless E mount cameras? Now you can! This adapter is ideal for Sony E mount camera shooters who want to use cine-style PL mount lenses. It includes a set of color-coded, stackable shims for adjusting your flange focal distance.</p>
 <h2>What to Know About Lens Adapters</h2>
 <p>It&rsquo;s important to review all the details when you&rsquo;re looking at a lens adapter. Different lens adapters work in different ways, sometimes expanding functionality in some areas while reducing it in others. If you have any questions about lens adapters for your camera, just reach out to a BorrowLenses representative &ndash; we&rsquo;re happy to help!</p>"
-               ;;tilt-shift;;
-               ;;fisheye;;
-               ;;teleconverters;;"<h2>Magnify a Telephoto Lens with a Teleconverter</h2>
+               ;                ; tilt-shift               ;              ;
+               ;                ; fisheye                  ;              ;
+               ;                ; teleconverters           ;              ; "<h2>Magnify a Telephoto Lens with a Teleconverter</h2>
 <p>A teleconverter can be a photographer&rsquo;s best friend. Since a teleconverter extends the focal length of a lens by up to 100% &ndash; taking a zoom of 200mm up to 400mm &ndash; it can be the difference between cropping/enlarging a shot (with quality loss) and getting the perfectly sharp, up-close shot you actually want.</p>
 <p>Renting a teleconverter, also called an extender, for your lens comes with incredible benefits for professional, amateur and student photographers alike.</p>
 <h2>The Many Benefits of Teleconverters</h2>
@@ -201,7 +235,7 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
 <h1>Save Money by Renting a Canon, Sony, or Nikon Teleconverter</h1>
 <p>At BorrowLenses, you can find a variety of <a href='https://www.borrowlenses.com/category/canon/'>Canon</a> and Nikon teleconverters (or &ldquo;extenders&rdquo; as Canon calls them) for your cameras. Olympus, Panasonic and Sony teleconverters are also available. Just remember, not all teleconverters work with all cameras and lenses, so you always want to check compatibility before renting or buying.</p>"
 
-               ;;cine-lenses;"<style scoped>
+               ;                ; cine-lenses              ; "<style scoped>
       /* Mobile View */
       #divMainContent {
             margin: auto;
@@ -241,10 +275,10 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
 <div id='divTextContent'><h1>Cine Lens Rentals</h1>
 <p>Long focus throws, precision markings, and no breathing are among the professional qualities<br />
 you'll find in our selection of production-ready cinema lenses.</p></div>
-";
-               ;;telescopes;;
-               ;;lens_packages;;
-               ;;filters;;"<!-- Begin OrangeSoda Tracking Code -->
+"            ;
+               ;                ; telescopes               ;              ;
+               ;                ; lens_packages            ;              ;
+               ;                ; filters                  ;              ; "<!-- Begin OrangeSoda Tracking Code -->
 <!--
 <script language='javascript' type='text/javascript'>
 var trackCid = 130438;
@@ -257,21 +291,21 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
 -->
 <!-- End OrangeSoda Tracking Code -->"
 
-               ;;batteries_power;;
-               ;;tripods_heads;;
-               ;;dollies_sliders;;
-               ;;cables_adapters;;
-               ;;monitors_video_recorders;;
-               ;;follow_focus;;
-               ;;camera-bags;;
-               ;;memory_cards_storage;;
-               ;;projectors;;
-               ;;underwater-housing;;
-               ;;streaming;;
-               ;;viewfinders;;
-               ;;gimbals-stabilizers;;
-               ;;flashes-and-on-camera;;
-               ;;backdrops;;"<!-- Begin OrangeSoda Tracking Code -->
+               ;                ; batteries_power          ;              ;
+               ;                ; tripods_heads            ;              ;
+               ;                ; dollies_sliders          ;              ;
+               ;                ; cables_adapters          ;              ;
+               ;                ; monitors_video_recorders ;              ;
+               ;                ; follow_focus             ;              ;
+               ;                ; camera-bags              ;              ;
+               ;                ; memory_cards_storage     ;              ;
+               ;                ; projectors               ;              ;
+               ;                ; underwater-housing       ;              ;
+               ;                ; streaming                ;              ;
+               ;                ; viewfinders              ;              ;
+               ;                ; gimbals-stabilizers      ;              ;
+               ;                ; flashes-and-on-camera    ;              ;
+               ;                ; backdrops                ;              ; "<!-- Begin OrangeSoda Tracking Code -->
 <!--
 <script language='javascript' type='text/javascript'>
 var trackCid = 130438;
@@ -284,9 +318,12 @@ document.write(unescape('%3Cscript src='' + proto + 'otracking.com/js/TrackingV2
 -->
 <!-- End OrangeSoda Tracking Code -->"
 
-               ;;audio-accessories
-               ;;headphones
-               ;;video-lighting-batteries
+               ;                ; audio-accessories
+               ;                ; headphones
+               ;                ; video-lighting-batteries
+
+
+
 
 
 

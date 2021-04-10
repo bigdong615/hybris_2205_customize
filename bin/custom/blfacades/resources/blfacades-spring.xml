@@ -10,8 +10,8 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-		
-	<context:annotation-config/> 
+
+	<context:annotation-config/>
 
 	<alias alias="simpleSuggestionFacade" name="defaultSimpleSuggestionFacade"/>
 	<bean id="defaultSimpleSuggestionFacade" class="com.bl.facades.suggestion.impl.DefaultSimpleSuggestionFacade" >
@@ -195,7 +195,7 @@
 	<!--This is created to Override OOB Populator to use custom logic for Price and Images which retrieving from solr-->
 
 	<bean id="blSearchResultProductPopulator"
-		class="com.bl.facades.populators.BLSearchResultProductPopulator">
+		class="com.bl.facades.populators.BlSearchResultProductPopulator">
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="imageFormatMapping" ref="imageFormatMapping"/>
 		<property name="priceDataFactory" ref="priceDataFactory"/>
@@ -209,7 +209,7 @@
 
 	<alias name="blSearchResultVariantProductPopulator" alias="blSearchResultVariantProductPopulator"/>
 	<bean id="blSearchResultVariantProductPopulator"
-		class="com.bl.facades.populators.BLSearchResultVariantProductPopulator"
+		class="com.bl.facades.populators.BlSearchResultVariantProductPopulator"
 		parent="blSearchResultProductPopulator">
 		<property name="categoryManager" ref="solrFirstVariantCategoryManager"/>
 		<property name="priceDataFactory" ref="priceDataFactory"/>
@@ -231,7 +231,7 @@
 
 	<alias name="blSearchResultVariantOptionsProductPopulator" alias="blCommerceSearchResultProductPopulator"/>
 	<bean id="blSearchResultVariantOptionsProductPopulator"
-		class="com.bl.facades.populators.BLSearchResultVariantOptionsProductPopulator"
+		class="com.bl.facades.populators.BlSearchResultVariantOptionsProductPopulator"
 		parent="blSearchResultVariantProductPopulator">
 		<property name="variantsService" ref="variantsService"/>
 		<property name="configurationService" ref="configurationService"/>
@@ -246,6 +246,19 @@
 			</set>
 		</property>
 	</bean>
+
+
+
+	<!--BL-80 Added for BlSearchFilterPopulator to add the parameters to solr query-->
+	<alias name="blSearchFiltersPopulator" alias="commerceSearchFiltersPopulator" />
+	<bean id="blSearchFiltersPopulator" class="com.bl.facades.populators.BlSearchFiltersPopulator" parent="defaultCommerceSearchFiltersPopulator" >
+		<property name="commerceCategoryService" ref="commerceCategoryService"/>
+	</bean>
+
+	<alias name="blSolrSearchQueryDecoderPopulator" alias="solrSearchQueryDecoderPopulator"/>
+	<bean id="blSolrSearchQueryDecoderPopulator"
+		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
+
 
 	<!-- BL-166 :This populator is created for populating bl related specific product attribute-->
 	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator">
@@ -276,6 +289,15 @@
 		<property name="blCartService" ref="cartService" />
 	</bean>
 
+	<!--BL-80 entry for Used Gear Category Model Resolver-->
+	<alias name="defaultBlUsedGearAndRentalGearCategoryModelUrlResolver" alias="categoryModelUrlResolver"/>
+	<bean id="defaultBlUsedGearAndRentalGearCategoryModelUrlResolver"
+		class="com.bl.facades.resolver.DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver" parent="defaultCategoryModelUrlResolver">
+		<property name="usedGearPattern" value="/buy/category/{category-code}"/>
+		<property name="rentalGearPattern" value="/rent/category/{parentcategory}/{category-code}"/>
+		<property name="defaultPattern" value="/rent/category/{category-code}"/>
+	</bean>
+
 	<!-- BL-52 : Overrided OOTB Product Carousel Facade to add extra ProductOptions to populate Product Data. -->
 	<alias name="defaultblProductCarouselFacade" alias="productCarouselFacade"/>
 	<bean id="defaultblProductCarouselFacade" class="com.bl.facades.product.carousel.DefaultBlProductCarouselFacade" parent="defaultProductCarouselFacade"/>
@@ -287,5 +309,4 @@
 		<property name="key" value="REQUIRED_DATA" />
 		<property name="add" ref="blProductPopulator" />
 	</bean>
-	
 </beans>

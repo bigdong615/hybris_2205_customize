@@ -117,29 +117,29 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                     ; $conte
 #####################################################################
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                          ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang]     ;  
 # Cameras -- all cameras       
-                               ;                         ; AllProductionLink            ; All Production Link           ; "/Production/c/production" ;                            ;                                    ; All Production           ;
-                               ;                         ; NewArrivalsLink_Production   ; NewArrivals Link              ; "#" ;                            ;                                    ; New Arrivals             ;  
-                               ;                         ; GimbalsOrStabilizersLink     ; GimbalsOrStabilizers Link     ; "/Gimbals-and-Stabilizers/c/gimbals-stabilizers" ; gimbals-stabilizers        ;                                    ; Gimbals/Stabilizers      ;
-                               ;                         ; CameraRigsSupportLink        ; CameraRigsSupport Link        ; "/Camera-Rigs/c/cameraRigs" ;                            ;                                    ; Camera Rigs/Support      ;
-                               ;                         ; TripodHeadsLink              ; TripodHeads Link              ; "/Tripods-Heads/c/tripods_heads" ; tripods_heads              ;                                    ; Tripods/Heads            ;
-                               ;                         ; SlidersOrDolliesLink         ; SlidersOrDollies Link         ; "/c/dollies_sliders" ; dollies_sliders            ;                                    ; Sliders/Dollies          ;
-                               ;                         ; FollowFocusOrMatteBoxesLink  ; FollowFocusOrMatteBoxes Link  ; "/Follow-Focus-and-Matte-Boxes/c/follow_focus" ; follow_focus               ;                                    ; Follow Focus/Matte Boxes ;
-                               ;                         ; MonitorsOrVideoRecordersLink ; MonitorsOrVideoRecorders Link ; "/Monitors-Video-Recorders/c/monitors_video_recorders" ; monitors_video_recorders   ;                                    ; Monitors/Video Recorders ;
-                               ;                         ; StreamingNavLink             ; StreamingNav Link             ; "/Streaming/c/streaming" ; streaming                  ;                                    ; Streaming                ;
-                               ;                         ; AudioNavLink                 ; AudioNav Link                 ; "/Audio/c/audio" ; audio                      ;                                    ; Audio                    ;
-                               ;                         ; LightingLink                 ; Lighting Link                 ; "/Lighting/c/lighting" ; lighting                   ;                                    ; Lighting                 ;
-                               ;                         ; ProjectorsOrScannersLink     ; ProjectorsOrScanners Link     ; "/Projectors/c/projectors" ; projectors                 ;                                    ; Projectors/Scanners      ;
-                               ;                         ; UnderwaterOrHousingsLink     ; UnderwaterOrHousings Link     ; "/Underwater-Housings/c/underwater-housing" ; underwater-housing         ;                                    ; Underwater Housings      ;
-                               ;                         ; BatteriesOrPowerLink         ; BatteriesOrPower Link         ; "/Batteries-Power/c/batteries_power" ; batteries_power            ;                                    ; Batteries/Power          ;
-                               ;                         ; MemoryCardsOrStorageLink     ; MemoryCardsOrStorage Link     ; "/c/memory_cards_storage" ; memory_cards_storage       ;                                    ; Memory Cards/Storage     ;
-                               ;                         ; FiltersLink                  ; Filters Link                  ; "/Filters/c/filters" ; filters                    ;                                    ; Filters                  ;
-                               ;                         ; CameraBagsOrCasesLink        ; CameraBagsOrCases Link        ; "/Camera-Bags-Cases/c/camera-bags" ; camera-bags                ;                                    ; Camera Bags/Cases        ;
-                               ;                         ; ViewfindersLink              ; Viewfinders Link              ; "/Viewfinders/c/viewfinders" ; viewfinders                ;                                    ; Viewfinders              ;
-                               ;                         ; CablesOrAdaptersLink         ; CablesOrAdapters Link         ; "/Cables-Adapters/c/cables_adapters" ; cables_adapters            ;                                    ; Cables/Adapters          ;
-#                              ;                         ; MicrophonesLink              ; Microphones Link              ; "/Micro-Phones/c/microphones" ;                            ;                                    ; Microphones              ;
-                               
-                               
-                               
+                              ;                         ; AllProductionLink            ; All Production Link           ; "/rent/category/production" ;                            ;                                    ; All Production           ;
+;                         ; NewArrivalsLink_Production   ; NewArrivals Link              ; "/rent/category/production/NewArrivals-Production" ;                            ;                                    ; New Arrivals             ;
+;                         ; GimbalsOrStabilizersLink     ; GimbalsOrStabilizers Link     ; "/rent/category/production/gimbals-stabilizers" ; gimbals-stabilizers        ;                                    ; Gimbals/Stabilizers      ;
+;                         ; CameraRigsSupportLink        ; CameraRigsSupport Link        ; "/rent/category/production/cameraRigs" ;                            ;                                    ; Camera Rigs/Support      ;
+;                         ; TripodHeadsLink              ; TripodHeads Link              ; "/rent/category/production/tripods_heads" ; tripods_heads              ;                                    ; Tripods/Heads            ;
+;                         ; SlidersOrDolliesLink         ; SlidersOrDollies Link         ; "/rent/category/production/dollies_sliders" ; dollies_sliders            ;                                    ; Sliders/Dollies          ;
+;                         ; FollowFocusOrMatteBoxesLink  ; FollowFocusOrMatteBoxes Link  ; "/rent/category/production/follow_focus" ; follow_focus               ;                                    ; Follow Focus/Matte Boxes ;
+;                         ; MonitorsOrVideoRecordersLink ; MonitorsOrVideoRecorders Link ; "/rent/category/production/monitors_video_recorders" ; monitors_video_recorders   ;                                    ; Monitors/Video Recorders ;
+;                         ; StreamingNavLink             ; StreamingNav Link             ; "/rent/category/production/streaming" ; streaming                  ;                                    ; Streaming                ;
+;                         ; AudioNavLink                 ; AudioNav Link                 ; "/rent/category/production/audio" ; audio                      ;                                    ; Audio                    ;
+;                         ; LightingLink                 ; Lighting Link                 ; "/rent/category/production/lighting" ; lighting                   ;                                    ; Lighting                 ;
+;                         ; ProjectorsOrScannersLink     ; ProjectorsOrScanners Link     ; "/rent/category/production/projectors" ; projectors                 ;                                    ; Projectors/Scanners      ;
+;                         ; UnderwaterOrHousingsLink     ; UnderwaterOrHousings Link     ; "/rent/category/production/underwater-housing" ; underwater-housing         ;                                    ; Underwater Housings      ;
+;                         ; BatteriesOrPowerLink         ; BatteriesOrPower Link         ; "/rent/category/production/batteries_power" ; batteries_power            ;                                    ; Batteries/Power          ;
+;                         ; MemoryCardsOrStorageLink     ; MemoryCardsOrStorage Link     ; "/rent/category/production/memory_cards_storage" ; memory_cards_storage       ;                                    ; Memory Cards/Storage     ;
+;                         ; FiltersLink                  ; Filters Link                  ; "/rent/category/production/filters" ; filters                    ;                                    ; Filters                  ;
+;                         ; CameraBagsOrCasesLink        ; CameraBagsOrCases Link        ; "/rent/category/production/camera-bags" ; camera-bags                ;                                    ; Camera Bags/Cases        ;
+;                         ; ViewfindersLink              ; Viewfinders Link              ; "/rent/category/production/viewfinders" ; viewfinders                ;                                    ; Viewfinders              ;
+;                         ; CablesOrAdaptersLink         ; CablesOrAdapters Link         ; "/rent/category/production/cables_adapters" ; cables_adapters            ;                                    ; Cables/Adapters          ;
+#                              ;                         ; MicrophonesLink              ; Microphones Link              ; "/rent/category/production/microphones" ;                            ;                                    ; Microphones              ;
+
+
+
 #####################################################################
 ######################  Level 3 Navigation Data #####################
 #####################################################################
