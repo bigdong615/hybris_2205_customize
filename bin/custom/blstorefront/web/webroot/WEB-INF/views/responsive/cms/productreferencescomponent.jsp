@@ -17,14 +17,7 @@
                                 <c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
             				        	<li class="splide__slide">
                                             <div class="card">
-                                            <c:choose>
-                                               <c:when test="${productReferences.target.isNew}">
-                                                    <span class="badge badge-new"><spring:theme code="pdp.rental.product.recommendation.section.new.text" /></span>
-                                               </c:when>
-                                               <c:otherwise>
-                                                <!-- TO-DO Need to add Stock related flag once the stock related changes is implemented -->
-                                               </c:otherwise>
-                                            </c:choose>
+                                          <span class="badge badge-new"><spring:theme code="pdp.rental.product.recommendation.section.new.text" /></span>
                                                <span class="bookmark"></span>
                                                    <div class="card-slider splide">
                                                      <div class="splide__track">

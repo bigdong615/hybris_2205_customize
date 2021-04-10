@@ -1,10 +1,7 @@
 package com.bl.storefront.controllers.pages;
 
-<<<<<<< HEAD
 import com.bl.facades.product.data.RentalDateDto;
-=======
 import com.bl.core.constants.BlCoreConstants;
->>>>>>> develop
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
