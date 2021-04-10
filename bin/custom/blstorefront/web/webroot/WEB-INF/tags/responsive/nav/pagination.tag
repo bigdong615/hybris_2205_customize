@@ -23,8 +23,17 @@
             <spring:param name="page" value="${searchPageData.pagination.currentPage + 1}"/>
          </spring:url>
       </c:if>
-       <a href="${previousPageUrl}" class="btn-arrow-left disabled"></a>
+      <c:choose>
+      <c:when test="${pageType == 'PRODUCTSEARCH'}">
+       <a href="${previousPageUrl}&blPageType=${blPageType}" class="btn-arrow-left disabled"></a>
       <span class="currentPage">${searchPageData.pagination.currentPage + 1}</span> / <span class="totalPages">${searchPageData.pagination.numberOfPages}</span>
-      <a href="${nextPageUrl}" class="btn-arrow-right"></a>
+      <a href="${nextPageUrl}&blPageType=${blPageType}" class="btn-arrow-right"></a>
+      </c:when>
+      <c:otherwise>
+       <a href="${previousPageUrl}" class="btn-arrow-left disabled"></a>
+            <span class="currentPage">${searchPageData.pagination.currentPage + 1}</span> / <span class="totalPages">${searchPageData.pagination.numberOfPages}</span>
+            <a href="${nextPageUrl}" class="btn-arrow-right"></a>
+      </c:otherwise>
+      </c:choose>
    </div>
 </c:if>

@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 
-public class BLSearchResultVariantProductPopulator extends BLSearchResultProductPopulator{
+public class BlSearchResultVariantProductPopulator extends BlSearchResultProductPopulator{
   public static final String MULTIDIMENSIONAL = "multidimensional";
   public static final String PRICE_RANGE = "priceRange";
   public static final String FIRST_CATEGORY_NAME_LIST = "firstCategoryNameList";

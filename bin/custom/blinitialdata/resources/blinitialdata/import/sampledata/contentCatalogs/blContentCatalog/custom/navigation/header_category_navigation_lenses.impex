@@ -103,20 +103,20 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]               ; $contentCV[u
 #### Navigation Node Link  ####  
 #####################################################################
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                  ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
-# Cameras -- all cameras       
-                               ;                         ; AllLensesLink          ; AllLenses Link        ; "/Lenses/c/lenses" ;                            ;                                    ; All Lenses           ;
-                               ;                         ; NewArrivalsLink_Lenses ; NewArrivals Link      ; "#" ;                            ;                                    ; New Arrivals         ;  
-                               ;                         ; WideAngleLensesLink    ; WideAngle Lenses Link ; "/Wide-Angle/c/wide_angle" ; wide_angle                 ;                                    ; Wide Angle Lenses    ;
-                               ;                         ; StandardLensesLink     ; Standard Lenses Link  ; "/Standard/c/normal" ; normal                     ;                                    ; Standard Lenses      ;
-                               ;                         ; TelephotoLensesLink    ; Telephoto Lenses Link ; "/Telephoto/c/super-telephoto" ; super-telephoto            ;                                    ; Telephoto Lenses     ;
-                               ;                         ; CineLensesLink         ; Cine Lenses Link      ; "Cinema-Lenses/c/cine-lenses" ; cine-lenses                ;                                    ; Cine Lenses          ;
-                               ;                         ; MacroLink              ; Macro Link            ; "/Macro/c/macro" ; macro                      ;                                    ; Macro                ;
-                               ;                         ; FisheyeLink            ; Fisheye Link          ; "/Fisheye/c/fisheye" ; fisheye                    ;                                    ; Fisheye              ;
-                               ;                         ; TiltShiftLink          ; TiltShift Link        ; "/Tilt-Shift/c/tilt-shift" ; tilt-shift                 ;                                    ; Tilt Shift           ;
-                               ;                         ; TelescopesLink         ; Tele scopes Link      ; "Telescopes/c/telescopes" ; telescopes                 ;                                    ; Telescopes           ;
-                               ;                         ; LensAdaptersLink       ; Lens Adapters Link    ; "/Lens-Adapters/c/lens_adapters" ; lens_adapters              ;                                    ; Lens Adapters        ;
-                               ;                         ; LensExtendersLink      ; Lens Extenders Link   ; "/Lens-Extenders/c/teleconverters" ; teleconverters             ;                                    ; Lens Extenders       ;
-                               ;                         ; LensPackagesLink       ; Lens Packages Link    ; "/Lens-Packages/c/lens_packages" ; lens_packages              ;                                    ; Lens Packages        ;
-                               
-                               
+# Cameras -- all cameras
+;                         ; AllLensesLink          ; AllLenses Link        ; "/rent/category/lenses" ;                            ;                                    ; All Lenses           ;
+;                         ; NewArrivalsLink_Lenses ; NewArrivals Link      ; "/rent/category/lenses/NewArrivals-Lenses" ;                            ;                                    ; New Arrivals         ;
+;                         ; WideAngleLensesLink    ; WideAngle Lenses Link ; "/rent/category/lenses/wide_angle" ; wide_angle                 ;                                    ; Wide Angle Lenses    ;
+;                         ; StandardLensesLink     ; Standard Lenses Link  ; "/rent/category/lenses/normal" ; normal                     ;                                    ; Standard Lenses      ;
+;                         ; TelephotoLensesLink    ; Telephoto Lenses Link ; "/rent/category/lenses/super-telephoto" ; super-telephoto            ;                                    ; Telephoto Lenses     ;
+;                         ; CineLensesLink         ; Cine Lenses Link      ; "/rent/category/lenses/cine-lenses" ; cine-lenses                ;                                    ; Cine Lenses          ;
+;                         ; MacroLink              ; Macro Link            ; "/rent/category/lenses/macro" ; macro                      ;                                    ; Macro                ;
+;                         ; FisheyeLink            ; Fisheye Link          ; "/rent/category/lenses/fisheye" ; fisheye                    ;                                    ; Fisheye              ;
+;                         ; TiltShiftLink          ; TiltShift Link        ; "/rent/category/lenses/tilt-shift" ; tilt-shift                 ;                                    ; Tilt Shift           ;
+;                         ; TelescopesLink         ; Tele scopes Link      ; "/rent/category/lenses/telescopes" ; telescopes                 ;                                    ; Telescopes           ;
+;                         ; LensAdaptersLink       ; Lens Adapters Link    ; "/rent/category/lenses/lens_adapters" ; lens_adapters              ;                                    ; Lens Adapters        ;
+;                         ; LensExtendersLink      ; Lens Extenders Link   ; "/rent/category/lenses/teleconverters" ; teleconverters             ;                                    ; Lens Extenders       ;
+;                         ; LensPackagesLink       ; Lens Packages Link    ; "/rent/category/lenses/lens_packages" ; lens_packages              ;                                    ; Lens Packages        ;
+
+
 #                              ; BLCategoryNavNode       ;                        ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode
