@@ -13,8 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Manikandan
- *This Class is created for indexing upcomingProduct Value to solr
+ * @author Manikandan This Class is created for indexing upcomingProduct Value to solr
  */
 
 public class BlUpComingProductValueProvider extends AbstractPropertyFieldValueProvider implements
@@ -23,10 +22,9 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
   private FieldNameProvider fieldNameProvider;
 
   /**
-   *
-   * @param indexConfig indexConfig for solr
+   * @param indexConfig     indexConfig for solr
    * @param indexedProperty indexed property for solr
-   * @param model defines product
+   * @param model           defines product
    * @return Collection<FieldValue> to solr
    */
   @Override
@@ -34,43 +32,30 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
       final IndexedProperty indexedProperty, final Object model) {
 
     if (model instanceof BlProductModel) {
-      return createFieldValue((BlProductModel) model, indexedProperty);
+      return addFieldValues(new ArrayList<>(), indexedProperty,
+          ((BlProductModel) model).getSerialProducts().stream()
+              .anyMatch(BlProductModel::getForRent) && ((BlProductModel) model).getForRent()
+              ? Boolean.FALSE : Boolean.TRUE);
+
     }
     return Collections.emptyList();
   }
 
   /**
-   * This method is created for getting upcoming products to solr
-   * @param product defines product
-   * @param indexedProperty indexedproperty of solr
-   * @retur  List<FieldValue> to be index to solr
-   */
-  private List<FieldValue> createFieldValue(final BlProductModel product, final IndexedProperty indexedProperty)
-  {
-    final List<FieldValue> fieldValues = new ArrayList<>();
-    boolean upComing = true;
-    // Condition added to check current blproduct and their respective serial products  is forRent
-    if(product.getSerialProducts().stream().anyMatch(BlProductModel::getForRent) && product.getForRent()) {
-      upComing = false;
-    }
-    addFieldValues(fieldValues, indexedProperty, upComing);
-    return fieldValues;
-  }
-
-  /**
    * This method is created to add the filed values to be index
-   * @param fieldValues list of values
+   *
+   * @param fieldValues     list of values
    * @param indexedProperty indexedproperty for solr
-   * @param value determines the upcoming boolean
+   * @param value           determines the upcoming boolean
    */
-  private void addFieldValues(final List<FieldValue> fieldValues,
-      final IndexedProperty indexedProperty, final boolean value)
-  {
-    final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
-    for (final String fieldName : fieldNames)
-    {
+  private List<FieldValue> addFieldValues(final List<FieldValue> fieldValues,
+      final IndexedProperty indexedProperty, final boolean value) {
+    final Collection<String> fieldNames = getFieldNameProvider()
+        .getFieldNames(indexedProperty, null);
+    for (final String fieldName : fieldNames) {
       fieldValues.add(new FieldValue(fieldName, value));
     }
+    return fieldValues;
   }
 
   private FieldNameProvider getFieldNameProvider() {

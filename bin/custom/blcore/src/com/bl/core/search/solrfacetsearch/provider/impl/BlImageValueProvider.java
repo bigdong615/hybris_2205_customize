@@ -66,18 +66,16 @@ public class BlImageValueProvider extends AbstractPropertyFieldValueProvider imp
    * @return List<MediaModel> to solr
    */
   private List<MediaModel> findMediaList(final BlProductModel productModel, final MediaFormatModel mediaFormatModel) {
-    if(null != productModel) {
       final List<MediaContainerModel> galleryImages = productModel.getGalleryImages();
       if (CollectionUtils.isNotEmpty(galleryImages))
       {
         return getMediaList(galleryImages,mediaFormatModel);
       }
-    }
     return Collections.emptyList();
   }
 
   /**
-   * This methdo created for getting list of media model
+   * This method created for getting list of media model
    * @param galleryImages list of galley images
    * @param mediaFormatModel media format type
    * @return  List<MediaModel> for product

@@ -88,9 +88,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         //BL-80 Added to get default sorting as newest for Used New Arrivals Category
         if(StringUtils.isBlank(searchQuery)) {
             if (category.getCode().startsWith(BlCoreConstants.NEW) || BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(category.getCode())) {
-                searchQuery = getValuesFromProperty(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
+                searchQuery = getConfigParametrs(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
             } else {
-                searchQuery = getValuesFromProperty(BlCoreConstants.DEFAULT_SORT_CODE);
+                searchQuery = getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE);
             }
         }
 
@@ -103,7 +103,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             categorySearch.doSearch();
             searchPageData = categorySearch.getSearchPageData();
         }
-        catch (final ConversionException e) // NOSONAR
+        catch (final ConversionException e)
         {
             searchPageData = createEmptySearchResult(categoryCode);
         }
@@ -124,7 +124,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
         updatePageTitle(category, model);
         // To check whether the category is Rental Gear
-        usedGearCategory(category,model);
+        addModelAttributeForRentalAndUsedCategory(category,model);
 
         final RequestContextData requestContextData = getRequestContextData(request);
         requestContextData.setCategory(category);
@@ -137,7 +137,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
         // If its rental gear
         if(category.isRentalCategory() && category.isFacetedCategory()) {
-            addClearAllQuery(category, model);
+            addClearAllModelAttribute(model);
         }
 
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
@@ -150,9 +150,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
 
     }
     /**
-     * This method is created to identify whether category belongs to used gear category or rental gear
+     *  this method is created for adding model attribute to rental and used gear category
      */
-    private void usedGearCategory(final CategoryModel category, final Model model) {
+    private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
         if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
         }
@@ -162,9 +162,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
     /**
-     * this method is created for making clear all query for faceted rental category
+     * this method is created for adding clear attribute for rental category
      */
-    private void addClearAllQuery(final CategoryModel category, final Model model) {
+    private void addClearAllModelAttribute( final Model model) {
             model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY,  BlCoreConstants.RENTAL_CLEAR_ALL);
             model.addAttribute(BlCoreConstants.SUPER_CATEGORY, BlCoreConstants.BRANDS);
     }
@@ -174,28 +174,28 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private String getDefaultSort(final CategoryModel category ,final StringBuilder configParam , String searchQuery ,final String categoryCode) {
         if(CollectionUtils.isEmpty(category.getSupercategories())){
-            searchQuery= String.valueOf(configParam.append(getValuesFromProperty(BlCoreConstants.DEFAULT_SORT_CODE))); // NOSONAR
+            searchQuery= String.valueOf(configParam.append(getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE)));
         }
         else {
                 if (category.isFacetedCategory()) {
-                    searchQuery = String.valueOf(configParam.append(getValuesFromProperty(BlCoreConstants.DEFAULT_SORT_CODE)) // NOSONAR
-                            .append(getValuesFromProperty(BlCoreConstants.FACTED_CATEGORY_NAME)) //// NOSONAR
-                            .append(categoryCode)); // NOSONAR
+                    searchQuery = String.valueOf(configParam.append(getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE))
+                            .append(getConfigParametrs(BlCoreConstants.FACTED_CATEGORY_NAME))
+                            .append(categoryCode));
             }
         }
         return searchQuery;
     }
 
     /**
-     *
+     * this method is created for getting com
      * @param configParam property key
      * @return String values
      */
-    private String getValuesFromProperty(final String configParam) {
+    private String getConfigParametrs(final String configParam) { 
         final String value = Config.getParameter(configParam);
         if(StringUtils.isNotBlank(value)) {
             return value;
         }
-        return "";
+        return BlCoreConstants.EMPTY_STRING;
     }
 }

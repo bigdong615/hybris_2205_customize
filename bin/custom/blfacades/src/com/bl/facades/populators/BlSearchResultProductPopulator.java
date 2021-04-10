@@ -269,39 +269,28 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   }
 
   /**
-   *  this is method is created for adding product tags to target
+   *  this is method is created for adding product tags to target in case rental and used gear product
    * @param source source object
    * @param target target to fill
    */
   private void addProductTag(final SearchResultValueData source, final ProductData target) {
-    addProductTag(source,target,BlCoreConstants.IS_NEW,BlCoreConstants.NEW);
-    addProductTag(source,target,BlCoreConstants.MOST_POPULAR,BlCoreConstants.POPULAR);
-    if(StringUtils.isBlank(target.getProductTagValues()) && null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
-      addProductTagIsRent(source, target);
+    setProductTagValues(source,target,BlCoreConstants.IS_NEW,BlCoreConstants.NEW);
+    setProductTagValues(source,target,BlCoreConstants.MOST_POPULAR,BlCoreConstants.POPULAR);
+    if(null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
+      setProductTagValues(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
+      setProductTagValues(source, target, BlCoreConstants.STAFF_PICK, BlCoreConstants.STAFF_PICK_STRING);
     }
-    getUpcoming(source, target, BlCoreConstants.UPCOMING);
+    setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
   }
 
   /**
-   * This method is created to add pproduct tags to target in case if rental product
-   * @param source soucre object
-   * @param target target to be fill
-   */
-  private void addProductTagIsRent(final SearchResultValueData source, final ProductData target) {
-      addProductTagForRent(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
-      if(StringUtils.isBlank(target.getProductTagValues())) {
-        addProductTagForRent(source, target, BlCoreConstants.STAFF_PICK, BlCoreConstants.STAFF_PICK_STRING);
-      }
-  }
-
-  /**
-   * This method is created for adding product tags to target in case rental and used gear product
+   * This method is created for adding product tags to target
    * @param source source onject
    * @param target target to be fill
    * @param key key to fetch value from source
    * @param value value to be set for target
    */
-  private void addProductTag (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
+  private void setProductTagValues (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
     if (StringUtils.isBlank(target.getProductTagValues()) && null!=this.<Boolean>getValue(source, key)  && this.<Boolean>getValue(source, key)) {
       target.setProductTagValues(value);
     }
@@ -326,7 +315,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target target to be fill
    * @param key key to get value from source
    */
-  private void getUpcoming (final SearchResultValueData source, final ProductData target ,final String key) {
+  private void setUpcomingAttributeValue(final SearchResultValueData source, final ProductData target ,final String key) {
       if (this.<Boolean>getValue(source, key)) {
         target.setIsUpcoming(this.<Boolean>getValue(source,key));
     }

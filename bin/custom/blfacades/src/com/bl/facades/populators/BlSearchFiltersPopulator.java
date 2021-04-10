@@ -55,7 +55,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
           indexedPropertyValue.getValue());
     }
     // BL-80 Add category restriction for used and rental gear category
-    categoryRestriction(target);
+    addCategoryRestriction(target);
     // Add filter queries
     final List<SolrSearchFilterQueryData> filterQueries = target.getSearchQueryData()
         .getFilterQueries();
@@ -93,40 +93,61 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    * @param target target objects to fill
    */
 
-  private void categoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
+  private void addCategoryRestriction(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
 
     final String categoryCode = target.getSearchQueryData().getCategoryCode();
     if (StringUtils.isBlank(categoryCode)) {
-      if (BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(target.getSearchQueryData().getBlPage())) {
-        addQueryForCategory(target,BlCoreConstants.FOR_SALE,BlCoreConstants.TRUE);
-        addSaleAndRentQuery(target);
-      } else {
-        addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
-        addSaleAndRentQuery(target);
-      }
+      addSaleAndRentalQueryParameters(target);
     } else {
-      final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
-      if (category.isRentalCategory()) {
-        if (!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
-          rentalCategory(target, categoryCode);
-        }
-        addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
-        addSaleAndRentQuery(target);
-      } else if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
+      addSearchParameterTrueForRentalPages(target, categoryCode);
+      if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
           && !BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(categoryCode)
           && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
         getCategoryFromProperties(target,categoryCode,BlCoreConstants.CATEGORY_MAP);
-      }
-      if(!category.isRentalCategory()) {
-        addFilterQueryTrue(target, categoryCode);
       }
     }
   }
 
   /**
-   * This method is created for adding category to filter query fields for prepare solr query
+   *  this method is created for adding forRent as true for all rental categories
+   * @param target target object to fill
+   * @param categoryCode defines catehoryCode
    */
-  private void rentalCategory(
+  private void addSearchParameterTrueForRentalPages(
+      final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target,
+     final String categoryCode) {
+    final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
+    if (category.isRentalCategory()) {
+      if (!BlCoreConstants.RENTAL_GEAR.equalsIgnoreCase(categoryCode)) {
+        addIsNewToRentalSearchQuery(target, categoryCode);
+      }
+      addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
+      addSaleAndRentQuery(target);
+    }
+    else {
+      addFilterQueryTrue(target, categoryCode);
+    }
+  }
+
+  /**
+   *  this method is created for adding forSale as true for used gear categories
+   * @param target target object to fill
+   */
+  private void addSaleAndRentalQueryParameters(
+      final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target) {
+    if (BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(target.getSearchQueryData().getBlPage())) {
+      addQueryForCategory(target,BlCoreConstants.FOR_SALE,BlCoreConstants.TRUE);
+      addSaleAndRentQuery(target);
+    } else {
+      addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
+      addSaleAndRentQuery(target);
+    }
+  }
+
+  /**
+   * This method is craeted for adding IsNew to search query to get the product set as IsNew true for rental category
+   */
+  private void addIsNewToRentalSearchQuery(
       final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,final String categoryCode) {
       if (categoryCode.startsWith(BlCoreConstants.NEW)) {
         getCategoryFromProperties(target,categoryCode,BlCoreConstants.RENTAL_GEAR_MAP);

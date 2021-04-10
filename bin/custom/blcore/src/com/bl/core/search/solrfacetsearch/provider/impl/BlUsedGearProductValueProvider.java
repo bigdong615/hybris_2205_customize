@@ -13,8 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Manikandan
- * This Value Provider is created to send forSale values to solr
+ * @author Manikandan This Value Provider is created to send forSale values to solr
  */
 public class BlUsedGearProductValueProvider extends AbstractPropertyFieldValueProvider implements
     FieldValueProvider {
@@ -23,9 +22,10 @@ public class BlUsedGearProductValueProvider extends AbstractPropertyFieldValuePr
 
   /**
    * this method created for creating values for solr property
-   * @param indexConfig indexConfig of solr
+   *
+   * @param indexConfig     indexConfig of solr
    * @param indexedProperty indexedProperty of solr
-   * @param model defines product
+   * @param model           defines product
    * @return Collection<FieldValue> to solr
    */
   @Override
@@ -33,44 +33,30 @@ public class BlUsedGearProductValueProvider extends AbstractPropertyFieldValuePr
       final IndexedProperty indexedProperty, final Object model) {
 
     if (model instanceof BlProductModel) {
-      return createFieldValue((BlProductModel) model, indexedProperty);
+      return addFieldValues(new ArrayList<>(), indexedProperty,
+          ((BlProductModel) model).getSerialProducts().stream()
+              .anyMatch(BlProductModel::getForSale) && ((BlProductModel) model).getForSale()
+              ? Boolean.TRUE : Boolean.FALSE);
     }
-      return Collections.emptyList();
-  }
-
-  /**
-   * this mehod is created for creating field values to solr
-   * @param product defines product
-   * @param indexedProperty indexedProperty for solr
-   * @return List<FieldValue> to solr
-   */
-  private List<FieldValue> createFieldValue(final BlProductModel product, final IndexedProperty indexedProperty)
-  {
-    final List<FieldValue> fieldValues = new ArrayList<>();
-    boolean isForSale = false;
-
-    // BL-80 this condition added to check whether any of the BlSerialProduct having forSale as true also for BlProduct forSale attribute
-    if(product.getSerialProducts().stream().anyMatch(BlProductModel::getForSale) && product.getForSale()) {
-      isForSale = true;
-    }
-    addFieldValues(fieldValues, indexedProperty, isForSale);
-    return fieldValues;
+    return Collections.emptyList();
   }
 
   /**
    * this method is created for adding field values to solr
-   * @param fieldValues field value for solr
+   *
+   * @param fieldValues     field value for solr
    * @param indexedProperty indexedProperty for solr
-   * @param value defines forSale attribute value
+   * @param value           defines forSale attribute value
+   * @return
    */
-  private void addFieldValues(final List<FieldValue> fieldValues,
-      final IndexedProperty indexedProperty, final boolean value)
-  {
-    final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
-    for (final String fieldName : fieldNames)
-    {
+  private Collection<FieldValue> addFieldValues(final List<FieldValue> fieldValues,
+      final IndexedProperty indexedProperty, final boolean value) {
+    final Collection<String> fieldNames = getFieldNameProvider()
+        .getFieldNames(indexedProperty, null);
+    for (final String fieldName : fieldNames) {
       fieldValues.add(new FieldValue(fieldName, value));
     }
+    return fieldValues;
   }
 
   private FieldNameProvider getFieldNameProvider() {
