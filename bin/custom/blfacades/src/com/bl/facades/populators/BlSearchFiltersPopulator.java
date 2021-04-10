@@ -16,6 +16,7 @@ import de.hybris.platform.solrfacetsearch.config.IndexedType;
 import de.hybris.platform.solrfacetsearch.search.SearchQuery;
 import de.hybris.platform.util.Config;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,11 +101,6 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addSaleAndRentalQueryParameters(target);
     } else {
       addSearchParameterTrueForRentalPages(target, categoryCode);
-      if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
-          && !BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(categoryCode)
-          && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
-        getCategoryFromProperties(target,categoryCode,BlCoreConstants.CATEGORY_MAP);
-      }
     }
   }
 
@@ -125,6 +121,11 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addSaleAndRentQuery(target);
     }
     else {
+      if (!BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(categoryCode)
+          && !BlCoreConstants.USED_GEAR_CODE.equalsIgnoreCase(categoryCode)
+          && !BlCoreConstants.USED_VIDEO.equalsIgnoreCase(categoryCode)) {
+        getCategoryFromProperties(target,categoryCode,BlCoreConstants.CATEGORY_MAP);
+      }
       addFilterQueryTrue(target, categoryCode);
     }
   }
@@ -170,8 +171,10 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     if(StringUtils.isNotBlank(categoryParam)) {
       final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
           .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
-      target.getSearchQuery()
-          .addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
+      if(CollectionUtils.isNotEmpty(Collections.singleton(categoryCodeMap.get(categoryCode)))) {
+        target.getSearchQuery()
+            .addFilterQuery(BlCoreConstants.ALL_CATEGORIES, categoryCodeMap.get(categoryCode));
+      }
     }
   }
 
