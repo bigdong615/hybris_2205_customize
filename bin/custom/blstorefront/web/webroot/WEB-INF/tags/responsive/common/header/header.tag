@@ -23,7 +23,12 @@
 					</cms:pageSlot>
  <div class="mobile-right d-inline-block d-lg-none">  
             <div class="nav-account"><a href="#">My Account</a></div>
-            <div class="nav-cart"><a href="#">Cart <span class="cart-count">3</span></a></div>
+            <!-- BL-380 : Mini Cart Section for Mobile Device -->
+            <div class="nav-cart">
+	            <cms:pageSlot position="MobileMiniCartSlot" var="component">
+					<cms:component component="${component}"/>
+			    </cms:pageSlot>
+	   		</div>
   </div>	
   <!-- Mobile Menu -->	
   <nav id="my-menu">	
