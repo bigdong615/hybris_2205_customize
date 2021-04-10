@@ -13,6 +13,7 @@ import de.hybris.platform.solrfacetsearch.provider.impl.AbstractPropertyFieldVal
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -21,6 +22,8 @@ import com.bl.core.model.BlProductModel;
 
 
 /**
+ * Added condtion for discontinued product on PLP
+ *
  * @author Aditi Sharma
  *
  */
@@ -30,7 +33,7 @@ public class BlRentalGearDiscontinuedProductValueProvider extends AbstractProper
 	private FieldNameProvider fieldNameProvider;
 
 	/**
-	 * this method created for creating values for solr property
+	 * this method created for get field values in solr property
 	 *
 	 * @param indexConfig
 	 *           indexConfig of solr
@@ -45,32 +48,27 @@ public class BlRentalGearDiscontinuedProductValueProvider extends AbstractProper
 	public Collection<FieldValue> getFieldValues(final IndexConfig indexConfig, final IndexedProperty indexedProperty,
 			final Object model)
 	{
-		final Collection<FieldValue> fieldValues = new ArrayList<>();
-
 		if (model instanceof ProductModel)
 		{
 			final BlProductModel product = (BlProductModel) model;
-			fieldValues.addAll(createFieldValue(product, indexedProperty));
+			return addFieldValues(new ArrayList<>(), indexedProperty, BooleanUtils.toBoolean(product.getDiscontinued()));
+
 		}
-		return fieldValues;
+		return Collections.emptyList();
 	}
 
-
-	private List<FieldValue> createFieldValue(final BlProductModel product, final IndexedProperty indexedProperty)
-	{
-		final List<FieldValue> fieldValues = new ArrayList<>();
-
-		addFieldValues(fieldValues, indexedProperty, BooleanUtils.toBoolean(product.getDiscontinued()));
-		return fieldValues;
-	}
-
-	private void addFieldValues(final List<FieldValue> fieldValues, final IndexedProperty indexedProperty, final boolean value)
+	/**
+	 * this method created for adding field values in solr property
+	 */
+	private List<FieldValue> addFieldValues(final List<FieldValue> fieldValues, final IndexedProperty indexedProperty,
+			final boolean value)
 	{
 		final Collection<String> fieldNames = getFieldNameProvider().getFieldNames(indexedProperty, null);
 		for (final String fieldName : fieldNames)
 		{
 			fieldValues.add(new FieldValue(fieldName, value));
 		}
+		return fieldValues;
 	}
 
 	private FieldNameProvider getFieldNameProvider()
