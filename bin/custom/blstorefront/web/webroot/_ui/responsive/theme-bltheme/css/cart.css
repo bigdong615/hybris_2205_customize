@@ -6,7 +6,7 @@ Designed by Veneer Studio
 **/
 
 .cart h1 { font-size: 34px; line-height: 40px; }
-#cartProcess { background-color: white; border-top: 1px solid #D4D3D3; border-bottom: 1px solid #D4D3D3; padding-bottom: 50px; margin-top: 10px; }
+#cartProcess, #confirmationWindow { background-color: white; border-top: 1px solid #D4D3D3; border-bottom: 1px solid #D4D3D3; padding-bottom: 50px; margin-top: 10px; }
 #cartSteps { padding: 30px 0 60px; }
 #cartSteps i.number { position: relative; background-color: #c4c4c4; }
 #cartSteps .active i.number { background-color: #52bfc0; }
@@ -17,7 +17,7 @@ Designed by Veneer Studio
 .cart input[type=text], .cart select.form-control { padding: 10px; margin-top: 6px; margin-bottom: 6px; }
 .cart .select-wrapper { position: relative; display: block; }
 .cart .select-wrapper:after { content:''; display: block; position: absolute; right: 20px; top: 50%; border: none; width: 6px; height: 4px; background: url(../assets/nav-arrow.svg) center no-repeat; margin-top: -2px; margin-left: .5em; }
-
+.cart-actions { display: block; overflow: auto; }
 
 #order .btn-outline:hover { background-color: white; }
 #order p a { color: #52bfc0; } /* target with litecal */
@@ -30,11 +30,15 @@ Designed by Veneer Studio
 #order #productOptions .dropdown a, #order #productOptions .dropdown-menu a { padding-left: 8px; line-height: 35px; }
 #order #productOptions .dropdown a img, #order #productOptions .dropdown-menu a img { margin-right: 8px; height: 35px; width: auto; }
 #order .dropdown-toggle:after { position: absolute; top: 50%; right: 20px; margin-top: -2px;  }
-#order .dropdown a.gearguard-plus { background: url(../assets/gear-guard-plus.png) 6px center no-repeat; background-size: 35px; }
-#order .dropdown a.gearguard { background: url(../assets/gear-guard.png) 6px center no-repeat; background-size: 30px; }
-#order .dropdown a.no-gearguard { background: url(../assets/gear-guard-none.png) 6px center no-repeat; background-size: 30px; }
+#order .dropdown a.gearguard-plus, .damage-waiver .gearguard-plus { background: url(../assets/gear-guard-plus.png) 6px center no-repeat; background-size: 35px; }
+#order .dropdown a.gearguard, .damage-waiver .gearguard { background: url(../assets/gear-guard.png) 6px center no-repeat; background-size: 30px; }
+#order .dropdown a.no-gearguard, .damage-waiver .no-gearguard { background: url(../assets/gear-guard-none.png) 6px center no-repeat; background-size: 30px; }
 .cartProduct, .shipProduct, .paymentOption, .reviewCart { padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid #d4d3d3; }
 .shipProduct .overline { font-size: 12px; }
+.order-actions { text-align: right; }
+.order-actions a { display: inline-block; margin-left: 15px; }
+.order-actions i { display: block; width: 24px; height: 24px; }
+.order-actions a.disabled { opacity: .3; cursor: default; }
 
 .sticky-md-top { align-self: flex-start; top: 30px; }
 #orderSummary { box-shadow: 0 3px 14px rgba(0,0,0,.5); -webkit-box-shadow: 0 3px 14px rgba(0,0,0,.5); }
@@ -64,6 +68,14 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
 .cvv-tooltip img { width: 16px; }
 .paymentOption hr { margin: 30px 0; }
 
+/* cart lightpicker */
+.cart-picker { border: none; color: #52bfc0; display: inline; width: auto; }
+.cart-picker::placeholder { color: #52bfc0; text-decoration: underline; cursor: pointer; }
+.cart-picker:active, .cart-picker:focus { outline: none; box-shadow: none; color: #52bfc0; }
+
+/* order confirmation */
+#confirmationWindow { padding: 100px 0 40px; }
+#confirmationWindow h1 { font-size: 34px; }
 
 @media screen and (min-width: 992px) and (max-width: 1199px) {
 
@@ -74,5 +86,10 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
 }
 
 @media screen and (max-width: 767px) {
-
+    .step1, .step2, .step3, .step4 { display: block; margin: 20px 0; }
+    #cartSteps { padding: 30px 0; }
+    #order img { max-width: 200px; }
+    #confirmationWindow { padding: 60px 0; }
+    #confirmationWindow h1 { font-size: 28px;}
+    .order-actions.text-center a { margin: 0 10px; }
 }

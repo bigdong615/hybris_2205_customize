@@ -37,7 +37,8 @@
 		<script src="${commonResourcePathHtml}/js/jquery.slideviewer.custom.1.2.js"></script>
 		
 		<%-- Custom ACC JS --%>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.autocomplete.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.carousel.js"></script>
@@ -409,6 +410,54 @@
          </script>
 
 		</c:if>
+
+		<!-- BL-457 added JS for rental cart page -->
+		<c:if test="${cmsPage.uid eq 'cartPage'}">
+
+        <script>
+                // Mobile Menu styles - #my-menu is required for ALL pages
+                document.addEventListener(
+                    "DOMContentLoaded", () => {
+                        new Mmenu( "#my-menu", {
+                            extensions: ["fullscreen","position-front"],
+                            navbars		: [{
+                                position: "top",
+                                content : [ "close", "logo" ]
+                            }],
+                        } );
+                    }
+                );
+                // Initialize Mega menu rollover - required for ALL pages
+                $('.menu-large').hover(
+                    function(){ $('.screen').addClass('show') },
+                    function(){ $('.screen').removeClass('show') }
+                );
+                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                const picker = new Litepicker({
+                    element: document.getElementById('litepicker'),
+                    plugins: ['mobilefriendly'],
+                    singleMode: false,
+                    numberOfMonths: 2,
+                    numberOfColumns: 2,
+                    autoApply: false,
+                    format: "MMM D",
+                    resetButton: true,
+                    buttonText : {"reset":"Reset Dates"},
+                });
+                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                const summarypicker = new Litepicker({
+                    element: document.getElementById('summary-litepicker'),
+                    plugins: ['mobilefriendly'],
+                    singleMode: false,
+                    numberOfMonths: 2,
+                    numberOfColumns: 2,
+                    autoApply: false,
+                    format: "MMM D",
+                    resetButton: true,
+                    buttonText : {"reset":"Reset Dates"},
+                });
+            </script>
+        </c:if>
 	</c:otherwise>
 </c:choose>
 
