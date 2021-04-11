@@ -28,7 +28,6 @@ import de.hybris.platform.jalo.c2l.LocalizableItem;
 import de.hybris.platform.servicelayer.model.AbstractItemModel;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.type.TypeService;
-import com.bl.storefront.filters.cms.CMSSiteFilter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,6 +42,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.filters.cms.CMSSiteFilter;
 
 
 /**
@@ -115,8 +117,8 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 		final RestrictionData restrictionData = requestContextRestrictionConverter.convert(requestContextData);
 
 		// Initialise CMS support
-		final CmsPageRequestContextData cmsPageRequestContextData = cmsPageContextService.updateCmsPageContextForPage(request,
-				page, restrictionData);
+		final CmsPageRequestContextData cmsPageRequestContextData = cmsPageContextService.updateCmsPageContextForPage(request, page,
+				restrictionData);
 		modelAndView.addObject("cmsPageRequestContextData", cmsPageRequestContextData);
 
 		sessionService.setAttribute(LocalizableItem.LANGUAGE_FALLBACK_ENABLED, Boolean.TRUE);
@@ -149,8 +151,8 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 	protected AbstractPageModel updateCmsPageInModelAndView(final HttpServletRequest request, final ModelAndView modelAndView)
 	{
 		// Look for the page in the model
-		final AbstractPageModel requestedPage = (AbstractPageModel) modelAndView.getModel().get(
-				AbstractPageController.CMS_PAGE_MODEL);
+		final AbstractPageModel requestedPage = (AbstractPageModel) modelAndView.getModel()
+				.get(AbstractPageController.CMS_PAGE_MODEL);
 		if (requestedPage != null)
 		{
 			final AbstractPageModel previewPage = lookupPreviewPage(request);
@@ -204,6 +206,11 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 
 		final String regEx = "[^a-zA-Z0-9-]";
 		final StringBuilder cssClasses = new StringBuilder();
+		// Adding css class if it is homepage on body tag
+		if (StringUtils.isNotBlank(page.getUid()) && page.getUid().equals(BlControllerConstants.HOMEPAGE))
+		{
+			cssClasses.append(BlControllerConstants.HOME_CSS);
+		}
 		cssClasses.append(CSS_CODE_PREFIX).append(page.getUid().replaceAll(regEx, "-"));
 		cssClasses.append(' ');
 		cssClasses.append(CSS_TYPE_PREFIX).append(page.getItemtype().replaceAll(regEx, "-"));
