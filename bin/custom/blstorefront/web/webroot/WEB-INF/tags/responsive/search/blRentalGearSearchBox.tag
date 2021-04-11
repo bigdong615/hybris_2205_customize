@@ -32,7 +32,7 @@
                   	 name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
                   <span class="rental-dates d-none d-md-inline"><i class="icon-calendar"></i> <spring:theme code="text.rental.dates.placeholder"/></span>
                   <input type="text" id="litepicker" class="form-control d-none d-md-inline-block" placeholder="<spring:theme code="text.rental.select.dates.placeholder"/>">
-                  <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="Dates...">
+                  <input type="text" id="mobile-litepicker" class="form-control d-inline-block d-md-none" placeholder="<spring:theme code="text.rental.date.placeholder"/>">
                   </ycommerce:testId>
                   <div class="input-group-append d-none d-md-block">
                      <button class="btn btn-search btn-link js_search_button" type="submit"><spring:theme code="text.rental.search"/></button>
