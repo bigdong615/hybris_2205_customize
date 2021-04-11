@@ -20,6 +20,7 @@ public class BlControllerConstants
 	public static final String IS_RENTAL_PAGE = "IsRentalPage";
 	public static final String HOME_CSS = "home ";
 	public static final String HOMEPAGE = "homepage";
+	public static final String COMMA = ",";
 
 	private BlControllerConstants()
 	{

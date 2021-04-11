@@ -17,25 +17,28 @@
 					</ul>
 				</div>
 			</div>
-			<div id="heroSearch" class="d-none d-md-block">
+			<div id="heroSearch">
 				<div class="container">
 					<div class="row justify-content-center">
 						<div class="col-md-10 col-lg-9">
-							<cms:pageSlot position="HomePageBannerSearchBoxSlot" var="feature">
-								<cms:component component="${feature}" />
-							</cms:pageSlot>
+							<div class="input-group">
+								<input type="text" class="form-control"
+									placeholder="<spring:theme code="text.hero.banner.searchbox.placeholder"/>">
+								<input type="text" id="litepicker" class="form-control"
+									placeholder="<spring:theme code="text.hero.banner.searchbox.datepicker.placeholder"/>">
+								<div class="input-group-append">
+									<button class="btn btn-search" type="button">
+										<spring:theme code="text.footer.subscription.button.search" />
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-	<!-- BL-360 : HomePage Mobile device Search Box Section -->
-	<section id="globalSearch" class="d-md-none">
-		<cms:pageSlot position="MobileHomePageBannerSearchBoxSlot" var="feature">
-			<cms:component component="${feature}" />
-		</cms:pageSlot>
-	</section>
+
 	<section id="theProcess">
 		<div class="container">
 			<div class="row justify-content-center">
