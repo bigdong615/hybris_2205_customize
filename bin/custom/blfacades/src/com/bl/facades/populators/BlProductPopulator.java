@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
@@ -55,9 +57,24 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
     target.setUsedDescription(source.getUsedDescription());
     target.setSerialproducts(populatedSerialProduct(CollectionUtils.emptyIfNull(source.getSerialProducts())));
+    addProductTagOnPdp(source,target);
   }
 
-  /*
+    private void addProductTagOnPdp(final BlProductModel source, final ProductData target) {
+        setProductTagValues(target,BooleanUtils.isTrue(source.getIsNew()) ? BlCoreConstants.NEW : StringUtils.EMPTY);
+        setProductTagValues(target,BooleanUtils.isTrue(source.getMostPopular()) ? BlCoreConstants.POPULAR : StringUtils.EMPTY);
+        if (BooleanUtils.isTrue(source.getForRent())) {
+            setProductTagValues(target,BooleanUtils.isTrue(source.getGreatValue()) ? BlCoreConstants.GREAT_VALUE_STRING : StringUtils.EMPTY);
+            setProductTagValues(target,BooleanUtils.isTrue(source.getStaffPick()) ? BlCoreConstants.STAFF_PICK_STRING : StringUtils.EMPTY);
+        }
+    }
+
+    private void setProductTagValues(final ProductData target, final String value) {
+        if (StringUtils.isBlank(target.getProductTagValues())) {
+            target.setProductTagValues(value);
+        }
+    }
+    /*
    * This method used to populate video related information.
    */
   private List<ProductVideoData> populateVideo(final Collection<ProductVideoModel> populateVideos) {

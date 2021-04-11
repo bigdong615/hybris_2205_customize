@@ -17,7 +17,9 @@
                                 <c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
             				        	<li class="splide__slide">
                                             <div class="card">
-                                          <span class="badge badge-new"><spring:theme code="pdp.rental.product.recommendation.section.new.text" /></span>
+                                            <c:if test ="${productReference.target.productTagValues ne null}">
+                                            <span class="badge badge-new">${productReference.target.productTagValues}</span>
+                                            </c:if>
                                                <span class="bookmark"></span>
                                                    <div class="card-slider splide">
                                                      <div class="splide__track">
@@ -38,7 +40,7 @@
                                                    <h6 class="price"><product:productListerItemPrice product="${productReference.target}"/> <span class="period">${datedata.selectedFromDate} - ${datedata.selectedToDate}</span></h6>
                                                     <c:choose>
                                                           <c:when test="${productReference.target.isDiscontinued}">
-                                                                <a href="#" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" /></a>
+                                                                <a href="#" class="btn btn-outline" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" /></a>
                                                           </c:when>
                                                           <c:when test="${productReference.target.isUpcoming}">
                                                                 <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
