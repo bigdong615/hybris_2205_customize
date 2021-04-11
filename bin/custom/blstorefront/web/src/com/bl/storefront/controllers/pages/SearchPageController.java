@@ -83,7 +83,8 @@ public class SearchPageController extends AbstractSearchPageController
 
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
-			searchQueryData.setValue(searchText);
+			searchQueryData.setValue(searchText.contains(BlCoreConstants.COMMA) ? searchText.replace(BlCoreConstants.COMMA, BlCoreConstants.EMPTY_STRING)
+					: searchText);
 			searchQueryData.setBlPage(blPageType);
 			searchState.setQuery(searchQueryData);
 
