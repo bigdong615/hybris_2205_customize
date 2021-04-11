@@ -27,7 +27,7 @@
                   </c:set>
                    <input type="text" id="js-site-search-input"  class="d-none d-md-inline-block form-control js-site-search-input" placeholder="Search photo & Videos gear for sale..."
                      name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
-                   <input type="text" id="js-site-search-input" class="d-inline-block d-md-none form-control js-site-search-input" placeholder="Search used gear…"
+                   <input type="text" id="js-site-search-input" class="d-inline-block d-md-none form-control js-site-search-input" placeholder="Search used gear..."
 					name="text" value="" maxlength="100" data-options="${fn:escapeXml(optionsJson)}">
                      <input type = "hidden" value="usedGear" name="blPageType"/>
                   </ycommerce:testId>
