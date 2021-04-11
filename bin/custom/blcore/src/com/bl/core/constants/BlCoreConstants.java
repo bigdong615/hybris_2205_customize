@@ -84,8 +84,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final long LOW_AVAILABILITY = 2L;
 	public static final long ZERO_AVAILABILITY = 0L;
 	
-	public static final String COMMA = ",";
-
 	private BlCoreConstants()
 	{
 		//empty

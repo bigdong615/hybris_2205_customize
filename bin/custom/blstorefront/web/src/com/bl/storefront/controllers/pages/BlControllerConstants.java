@@ -17,6 +17,8 @@ public class BlControllerConstants {
   public static final String USED_PAGE_IDENTIFIER = "buy";
   public static final String PRODUCT_CODE_PATH_VARIABLE_PATTERN = "/{productCode:.*}";
   public static final String IS_RENTAL_PAGE = "IsRentalPage";
+  public static final String COMMA = ",";
+  
 
   private BlControllerConstants() {
     //empty

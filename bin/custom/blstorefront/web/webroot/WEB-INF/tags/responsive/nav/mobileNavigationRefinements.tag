@@ -32,7 +32,7 @@
             	<c:when test="${facet.code eq 'availableInStores'}">
                 </c:when>
              <c:otherwise>
-               	<nav:mobileFacetNavRefinementFacet facetData="${facet}"/>
+               	<nav:mobileFacetNavigationRefinements facetData="${facet}"/>
              </c:otherwise>
              </c:choose>
                 </c:forEach>
