@@ -20,7 +20,10 @@
           <div class="container">
               <div id="cartSteps" class="row justify-content-center">
                   <div class="col-xl-10">
-                      <span class="step1 active"><i class="number">1</i> Your Rental</span><span class="step2"><i class="number">2</i> Delivery or Pickup</span><span class="step3"><i class="number">3</i> Payment</span><span class="step4"><i class="number">4</i> Review</span>
+                      <span class="step1 active"><i class="number">1</i> <spring:theme code="text.checkout.multi.order.rental"/></span>
+                      <span class="step2"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
+                      <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
+                      <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
                   </div>
               </div>
               <div class="row justify-content-center">
@@ -29,7 +32,7 @@
                           <div id="order" class="col-lg-7">
                               <h1><spring:theme code="text.rental.cart.title"/></h1>
                               <hr>
-                              <p><b><spring:theme code="text.rental.cart.date" /></b>&emsp;<input type="text" class="form-control cart-picker" id="litepicker" placeholder="Select Rental Dates"></p>
+                              <p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;<input type="text" class="form-control cart-picker" id="litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>"></p>
 
                               <c:forEach items="${cartData.entries}" var="entry">
                                  <cart:rentalCartItem entry="${entry}" cartData="${cartData}" />
@@ -44,41 +47,41 @@
                           </div>
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <div id="orderSummary" class="card">
-                                  <h5>Order Summary</h5>
+                                  <h5><spring:theme code="checkout.multi.order.summary"/></h5>
                                   <hr>
-                                  <p><b>Dates</b>&emsp;<input type="text" class="form-control cart-picker" id="summary-litepicker" placeholder="Select Rental Dates"></p>
+                                  <p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;<input type="text" class="form-control cart-picker" id="summary-litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>"></p>
                                   <hr>
                                   <table id="costSummary">
                                       <tbody>
                                           <tr>
-                                              <td class="gray80">Rental Cost</td>
+                                              <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
                                               <td class="text-end">$98.00</td>
                                           </tr>
                                           <tr>
-                                              <td class="gray80">Damage Waiver <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
+                                              <td class="gray80"><spring:theme code="text.cart.damage.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
                                               <td class="text-end">$98.00</td>
                                           </tr>
                                           <tr>
-                                              <td class="gray80">Shipping*</td>
+                                              <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.shipping"/></td>
                                               <td class="text-end">–</td>
                                           </tr>
                                           <tr>
-                                              <td class="gray80">Est. Taxes*</td>
+                                              <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
                                               <td class="text-end">–</td>
                                           </tr>
                                           <tr class="total">
-                                              <td>Total</td>
+                                              <td><spring:theme code="basket.page.total"/></td>
                                               <td class="text-end">$160.23</td>
                                           </tr>
                                       </tbody>
                                   </table>
                                   <div class="input-group my-3">
-                                    <input type="text" class="form-control" placeholder="Promo code">
+                                    <input type="text" class="form-control" placeholder="<spring:theme code="text.checkout.multi.order.summary.promocode.placeholder"/>">
                                     <div class="input-group-append">
-                                      <button class="btn btn-secondary" type="button">Apply</button>
+                                      <button class="btn btn-secondary" type="button"><spring:theme code="text.voucher.apply.button.label"/></button>
                                     </div>
                                   </div>
-                                  <small class="gray60">*Calculated at Delivery or Pickup.</small>
+                                  <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
                               </div>
                               <div class="notification notification-warning">This is a cart warning.</div>
                               <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>

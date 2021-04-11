@@ -30,7 +30,7 @@
      </div>
      <div id="damageOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
-             <p class="body14 mb-1">Damage Waiver <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></p>
+             <p class="body14 mb-1"><spring:theme code="text.cart.damage.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></p>
              <div class="dropdown">
                <a class="btn btn-block btn-outline dropdown-toggle text-start gearguard-plus" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
                  GearGuard Plus <span class="float-end">$25</span>
@@ -45,7 +45,7 @@
      </div>
      <div id="productOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
-             <p class="body14 mb-1">Options</p>
+             <p class="body14 mb-1"><spring:theme code="text.cart.options"/></p>
              <div class="dropdown">
                <a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
                  <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MDe5966894-1fa0-4dbb-89be-30c74da8f3a5.jpg">EF/EF-S Lens to EOS R Camera Adapter <span class="float-end">$25</span>
