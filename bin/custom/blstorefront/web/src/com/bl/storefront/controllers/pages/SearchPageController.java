@@ -72,7 +72,7 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "cmsComponentService")
 	private CMSComponentService cmsComponentService;
 
-	@RequestMapping(method = RequestMethod.GET, params = "!q")
+	@RequestMapping(method = RequestMethod.GET, params = "!q") // NOSONAR
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
 			@RequestParam(value="blPageType") final String blPageType,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
@@ -144,7 +144,7 @@ public class SearchPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = "q")
+	@RequestMapping(method = RequestMethod.GET, params = "q") // NOSONAR
 	public String refineSearch(@RequestParam("q") final String searchQuery, //NOSONAR
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -203,7 +203,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/results", method = RequestMethod.GET)
+	@RequestMapping(value = "/results", method = RequestMethod.GET) // NOSONAR
 	public SearchResultsData<ProductData> jsonSearchResults(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -218,7 +218,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/facets", method = RequestMethod.GET)
+	@RequestMapping(value = "/facets", method = RequestMethod.GET) // NOSONAR
 	public FacetRefinement<SearchStateData> getFacets(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -241,7 +241,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET) // NOSONAR
 	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable final String componentUid,
 			@RequestParam("term") final String term) throws CMSItemNotFoundException
 	{
