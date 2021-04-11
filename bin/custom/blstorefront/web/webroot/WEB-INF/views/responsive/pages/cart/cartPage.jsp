@@ -39,7 +39,7 @@
                               </c:forEach>
 
                               <div class="cart-actions">
-                                  <a href="#" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                  <a href="/blstorefront/bl/en/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                   <a href="#" class="btn btn-sm btn-primary float-end"><spring:theme code="general.continue.button" /></a>
                                   <a href="#" class="btn btn-sm btn-outline float-end me-3"><spring:theme code="general.update.button" /></a>
                               </div>
