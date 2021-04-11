@@ -16,7 +16,7 @@
                   <ul class="splide__list">
                                 <c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
             				        	<li class="splide__slide">
-                                            <div class="card">sea
+                                            <div class="card">
                                           <span class="badge badge-new"><spring:theme code="pdp.rental.product.recommendation.section.new.text" /></span>
                                                <span class="bookmark"></span>
                                                    <div class="card-slider splide">
