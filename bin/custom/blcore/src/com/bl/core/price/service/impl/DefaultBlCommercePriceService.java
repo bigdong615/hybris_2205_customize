@@ -32,6 +32,9 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 
 	private BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public PriceInformation getWebPriceForProduct(final ProductModel product)
 	{
@@ -53,6 +56,15 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 		return super.getWebPriceForProduct(product);
 	}
 
+	/**
+	 * Gets the dynamic price data for product.
+	 *
+	 * @param isConstrainedProduct
+	 *           the is constrained product
+	 * @param priceValue
+	 *           the price value
+	 * @return the dynamic price data for product
+	 */
 	@Override
 	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct, final Double priceValue)
 	{
@@ -62,6 +74,13 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 				: BigDecimal.valueOf(priceValue);
 	}
 
+	/**
+	 * Checks if the rental days is eligible for Dynamic pricing.
+	 *
+	 * @param rentalDays
+	 *           the rental days
+	 * @return true, if is rental days eligible
+	 */
 	private boolean isRentalDaysEligible(final Long rentalDays)
 	{
 		return PredicateUtils.notNullPredicate().evaluate(rentalDays)
