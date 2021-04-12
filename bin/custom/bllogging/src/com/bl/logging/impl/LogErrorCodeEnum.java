@@ -15,10 +15,6 @@ public enum LogErrorCodeEnum implements LogError
 	 INTEGRATION_ERROR("0003", "Integration Error"), 
 	 CRONJOB_ERROR("0004", "CRONJOB ERROR"),
 	 HOT_FOLDER_ERROR("0005", "HotFolder Error");
-    //ADDRESS_FALL_BACK_ERROR("0073", "Address Fallback Not Found."),
-    //SALES_ORDER_EXPORT_ERROR("0075","Error has occurred in sales order export"),
-    //PRODUCT_IMPORT_ERROR("0003","Error has occurred in product import process");
-    //TODO LOGGING -  further enums to be defined here...
 
 
     private String code;

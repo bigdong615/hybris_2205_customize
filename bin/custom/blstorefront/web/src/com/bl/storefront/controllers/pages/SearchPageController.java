@@ -79,7 +79,7 @@ public class SearchPageController extends AbstractSearchPageController
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
 
-			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
+			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);//NOSONAR
 
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
@@ -190,7 +190,7 @@ public class SearchPageController extends AbstractSearchPageController
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
 			final ShowMode showMode, final String sortCode, final int pageSize ,String blPageType)
 	{
-		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);
+		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);//NOSONAR
 
 		final SearchStateData searchState = new SearchStateData();
 		final SearchQueryData searchQueryData = new SearchQueryData();
