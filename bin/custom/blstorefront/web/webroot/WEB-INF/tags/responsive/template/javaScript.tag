@@ -103,6 +103,7 @@
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
     		<script src="${commonResourcePathHtml}/js/mburger.js"></script>
@@ -195,6 +196,7 @@
             gap: 20,
             padding: 10,
         } ).mount();
+     // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
          const picker = new Litepicker({ 
             element: document.getElementById('litepicker'),
             singleMode: false,
@@ -205,6 +207,18 @@
             resetButton: true,
             buttonText : {"reset":"Reset Dates"},
         }); 
+         // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
+         const mpicker = new Litepicker({ 
+             element: document.getElementById('mobile-litepicker'),
+             plugins: ['mobilefriendly'],
+             singleMode: false,
+             numberOfMonths: 1,
+             numberOfColumns: 1,
+             autoApply: false,
+             format: "MMM D",
+             resetButton: true,
+             buttonText : {"reset":"Reset"},
+         });
     </script>  
 	</c:if>
 
