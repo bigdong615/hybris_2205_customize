@@ -106,7 +106,7 @@ public class AccountReturnsPageController extends AbstractSearchPageController
 	}
 
 	@RequireHardLogIn
-	@RequestMapping(value = "/{returnRequestCode:.*}", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/{returnRequestCode:.*}", method = { RequestMethod.POST, RequestMethod.GET })//NOSONAR
 	public String showReturnRequestDetailsPage(@PathVariable(value = "returnRequestCode") final String returnRequestCode,
 			final Model model, final RedirectAttributes redirectModel) throws CMSItemNotFoundException // NOSONAR
 	{
