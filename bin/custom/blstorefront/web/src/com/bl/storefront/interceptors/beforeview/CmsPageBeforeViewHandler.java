@@ -207,7 +207,7 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 		final String regEx = "[^a-zA-Z0-9-]";
 		final StringBuilder cssClasses = new StringBuilder();
 		// Adding css class if it is homepage on body tag
-		if (StringUtils.isNotBlank(page.getUid()) && page.getUid().equals(BlControllerConstants.HOMEPAGE))
+		if (BlControllerConstants.HOMEPAGE.equals(page.getUid()))
 		{
 			cssClasses.append(BlControllerConstants.HOME_CSS);
 		}
