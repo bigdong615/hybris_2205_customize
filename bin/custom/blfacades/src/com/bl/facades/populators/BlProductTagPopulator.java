@@ -11,11 +11,17 @@ public class BlProductTagPopulator implements Populator<BlProductModel, ProductD
 
   @Override
   public void populate(final BlProductModel source, final ProductData target) {
-    setProductTagValues(target, BooleanUtils.isTrue(source.getIsNew()) ? BlCoreConstants.NEW : StringUtils.EMPTY);
-    setProductTagValues(target, BooleanUtils.isTrue(source.getMostPopular()) ? BlCoreConstants.POPULAR : StringUtils.EMPTY);
+    setProductTagValues(target,
+        BooleanUtils.isTrue(source.getIsNew()) ? BlCoreConstants.NEW : StringUtils.EMPTY);
+    setProductTagValues(target,
+        BooleanUtils.isTrue(source.getMostPopular()) ? BlCoreConstants.POPULAR : StringUtils.EMPTY);
     if (BooleanUtils.isTrue(source.getForRent())) {
-      setProductTagValues(target, BooleanUtils.isTrue(source.getGreatValue()) ? BlCoreConstants.GREAT_VALUE_STRING: StringUtils.EMPTY);
-      setProductTagValues(target, BooleanUtils.isTrue(source.getStaffPick()) ? BlCoreConstants.STAFF_PICK_STRING : StringUtils.EMPTY);
+      setProductTagValues(target,
+          BooleanUtils.isTrue(source.getGreatValue()) ? BlCoreConstants.GREAT_VALUE_STRING
+              : StringUtils.EMPTY);
+      setProductTagValues(target,
+          BooleanUtils.isTrue(source.getStaffPick()) ? BlCoreConstants.STAFF_PICK_STRING
+              : StringUtils.EMPTY);
     }
   }
 

@@ -41,7 +41,7 @@ public class BlProductTagPopulatorTest {
   public void populateProductTagNewDetails() {
     when(productModel.getIsNew()).thenReturn(Boolean.TRUE);
     populator.populate(productModel, productData);
-    Assert.assertEquals(productData.getProductTagValues(), BlCoreConstants.NEW );
+    Assert.assertEquals(productData.getProductTagValues(), BlCoreConstants.NEW);
   }
 
   @Test
@@ -52,9 +52,9 @@ public class BlProductTagPopulatorTest {
     when(productModel.getGreatValue()).thenReturn(Boolean.TRUE);
 
     populator.populate(productModel, productData);
-    Assert.assertEquals(productData.getProductTagValues(), BlCoreConstants.NEW );
-    Assert.assertNotEquals(productData.getProductTagValues(),BlCoreConstants.POPULAR);
-    Assert.assertNotEquals(productData.getProductTagValues(),BlCoreConstants.GREAT_VALUE);
+    Assert.assertEquals(productData.getProductTagValues(), BlCoreConstants.NEW);
+    Assert.assertNotEquals(productData.getProductTagValues(), BlCoreConstants.POPULAR);
+    Assert.assertNotEquals(productData.getProductTagValues(), BlCoreConstants.GREAT_VALUE);
   }
 
   @Test
@@ -63,8 +63,8 @@ public class BlProductTagPopulatorTest {
     when(productModel.getMostPopular()).thenReturn(Boolean.TRUE);
 
     populator.populate(productModel, productData);
-    Assert.assertNotEquals(productData.getProductTagValues(), BlCoreConstants.NEW );
-    Assert.assertEquals(productData.getProductTagValues(),BlCoreConstants.POPULAR);
+    Assert.assertNotEquals(productData.getProductTagValues(), BlCoreConstants.NEW);
+    Assert.assertEquals(productData.getProductTagValues(), BlCoreConstants.POPULAR);
   }
 }
 
