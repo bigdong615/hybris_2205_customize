@@ -45,9 +45,8 @@
 				<jsp:doBody />
 			</div>
 
-       <c:if test="${cmsPage.uid ne 'cartpage'}">
-          <footer:footer />
-			</c:if>
+      <footer:footer />
+
 	
 </div>
 </div>
