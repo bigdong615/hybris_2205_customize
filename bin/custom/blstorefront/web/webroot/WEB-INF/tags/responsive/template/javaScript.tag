@@ -361,8 +361,7 @@
 
 	<c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'true' && product.forRent eq 'true'}">
                                 		 <script>
-                                		 
-                                             // Mobile Menu styles - #my-menu is required for ALL pages
+                                        // Mobile Menu styles - #my-menu is required for ALL pages
                                              document.addEventListener(
                                                  "DOMContentLoaded", () => {
 

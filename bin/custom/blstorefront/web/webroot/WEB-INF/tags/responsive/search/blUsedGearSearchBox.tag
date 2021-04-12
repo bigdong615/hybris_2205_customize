@@ -40,4 +40,3 @@
       </div>
    </div>
 </section>
-<!-- This empty div id added to resolved js related error on used gear pdp-->
