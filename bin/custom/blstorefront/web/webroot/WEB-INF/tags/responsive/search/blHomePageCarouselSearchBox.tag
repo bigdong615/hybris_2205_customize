@@ -21,7 +21,6 @@
                      "displayProductImages" : "${ycommerce:encodeJSON(component.displayProductImages)}"
                      }
             </c:set>
-            <input type = "hidden" value="rentalGear" name="blPageType"/>
 			<c:if test="${positionAttribute == 'HomePageBannerSearchBoxSlot'}">
 				<input type="text" id="js-site-search-input"
 					class="form-control js-site-search-input"
@@ -43,6 +42,7 @@
 					class="form-control d-inline-block"
 					placeholder="<spring:theme code="text.hero.banner.searchbox.mobile.datepicker.placeholder" />">
 			</c:if>
+			<input type = "hidden" value="rentalGear" name="blPageType"/>
 		</ycommerce:testId>
 
 		<div class="input-group-append d-none d-md-block">
