@@ -3,7 +3,6 @@ package com.bl.facades.populators;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.logging.BlLogger;
-
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -83,6 +82,9 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setIsDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
     // Add Product Tags to product
     addProductTag(source,target);
+    //This is for Notify me button on PLP and SLP
+    setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
+
     populatePrices(source, target);
 
     // Populate product's classification features
@@ -292,7 +294,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       setProductTagValues(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
       setProductTagValues(source, target, BlCoreConstants.STAFF_PICK, BlCoreConstants.STAFF_PICK_STRING);
     }
-    setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
   }
 
   /**
