@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="121px" height="24px" viewBox="0 0 121 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>stars</title>
+    <g id="Designs" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Product-Detail" transform="translate(-836.000000, -351.000000)" fill="#F5A24F">
+            <g id="hero" transform="translate(0.000000, 179.000000)">
+                <g id="details" transform="translate(734.500000, 64.000000)">
+                    <g id="badge-+-stars" transform="translate(1.000000, 108.000000)">
+                        <g id="stars" transform="translate(101.000000, 0.000000)">
+                            <g id="icon/star-outline-copy-3">
+                                <polygon id="Path" points="14.43 10 12 2 9.57 10 2 10 8.18 14.41 5.83 22 12 17.31 18.18 22 15.83 14.41 22 10"></polygon>
+                            </g>
+                            <g id="icon/star-outline-copy-3" transform="translate(24.000000, 0.000000)">
+                                <polygon id="Path" points="14.43 10 12 2 9.57 10 2 10 8.18 14.41 5.83 22 12 17.31 18.18 22 15.83 14.41 22 10"></polygon>
+                            </g>
+                            <g id="icon/star-outline-copy-3" transform="translate(48.000000, 0.000000)">
+                                <polygon id="Path" points="14.43 10 12 2 9.57 10 2 10 8.18 14.41 5.83 22 12 17.31 18.18 22 15.83 14.41 22 10"></polygon>
+                            </g>
+                            <g id="icon/star-outline-copy-3" transform="translate(72.000000, 0.000000)">
+                                <polygon id="Path" points="14.43 10 12 2 9.57 10 2 10 8.18 14.41 5.83 22 12 17.31 18.18 22 15.83 14.41 22 10"></polygon>
+                            </g>
+                            <g id="icon/star-outline-copy-3" transform="translate(96.000000, 0.000000)">
+                                <polygon id="Path" points="14.43 10 12 2 9.57 10 2 10 8.18 14.41 5.83 22 12 17.31 18.18 22 15.83 14.41 22 10"></polygon>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

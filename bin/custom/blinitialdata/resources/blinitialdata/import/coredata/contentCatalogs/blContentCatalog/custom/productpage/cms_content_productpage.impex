@@ -48,7 +48,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; HomePageRentingGearIsEasyTitleSlot-productDetails ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true
                                      ;                         ; HomePageRentingGearSectionSlot-productDetails     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
                                       ;                        ; BreadcrumbSlot-productDetails                     ; BreadcrumbSection                 ;                                                        ; BreadcrumbSlot                           ; true
-                                    ;                          ; SearchBox-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
+                                    ;                          ; SearchBoxBl-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
 
 
 # Product Details Page
