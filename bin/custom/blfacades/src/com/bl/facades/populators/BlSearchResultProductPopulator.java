@@ -55,7 +55,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private CommonI18NService commonI18NService;
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
-  private Populator<BlProductModel, ProductData> blProductTagPopulator;
 
 
   /**
@@ -442,11 +441,4 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     this.stockLevelStatusConverter = stockLevelStatusConverter;
   }
 
-  public Populator<BlProductModel, ProductData> getBlProductTagPopulator() {
-    return blProductTagPopulator;
-  }
-
-  public void setBlProductTagPopulator(Populator<BlProductModel, ProductData> blProductTagPopulator) {
-    this.blProductTagPopulator = blProductTagPopulator;
-  }
 }
