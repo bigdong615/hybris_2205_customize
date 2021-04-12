@@ -14,8 +14,8 @@ public enum LogErrorCodeEnum implements LogError
     ORDER_INVALID("0002", "Order invalid"), 
 	 INTEGRATION_ERROR("0003", "Integration Error"), 
 	 CRONJOB_ERROR("0004", "CRONJOB ERROR"),
-	 HOT_FOLDER_ERROR("0005", "HotFolder Error");
-
+	 HOT_FOLDER_ERROR("0005", "HotFolder Error"),
+	 DYNAMIC_PRICING_ERROR("0006", "Dynamic Price Calculating Error");
 
     private String code;
     private String description;

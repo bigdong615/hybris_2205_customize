@@ -7,6 +7,8 @@ import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
@@ -48,15 +50,25 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, extraOptions);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-    //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
-    getSessionService().setAttribute("selectedFromDate", "Apr 12");
-    getSessionService().setAttribute("selectedToDate", "Apr 19");
-    getSessionService().setAttribute("numberOfDays", "7 Days Rental");
-    RentalDateDto date = new RentalDateDto();
-    date.setSelectedFromDate(getSessionService().getAttribute("selectedFromDate"));
-    date.setSelectedToDate(getSessionService().getAttribute("selectedToDate"));
-    date.setNumberOfDays(getSessionService().getAttribute("numberOfDays"));
-    model.addAttribute("datedata", date);
+  //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
+  		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
+  		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
+  		if (null != startDate && null != endDate)
+  		{
+  			final RentalDateDto date = new RentalDateDto();
+  			final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d");
+  			date.setSelectedToDate(startDate.format(formatter));
+  			date.setNumberOfDays(endDate.format(formatter));
+  			model.addAttribute("datedata", date);
+  		}
+  		else
+  		{
+  			final RentalDateDto date = new RentalDateDto();
+  			date.setSelectedFromDate("Apr 12");
+  			date.setSelectedToDate("Apr 19");
+  			date.setNumberOfDays("7");
+  			model.addAttribute("datedata", date);
+  		} // Temporary code ends here
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }

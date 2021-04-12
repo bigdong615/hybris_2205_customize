@@ -1,6 +1,9 @@
 package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.logging.BlLogger;
+
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -34,6 +37,8 @@ import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
 /**
@@ -42,6 +47,7 @@ import org.springframework.util.Assert;
  */
 public class BlSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
 
+	private static final Logger LOG = Logger.getLogger(BlSearchResultProductPopulator.class);
   private static final String BL_IMAGE = "blimage";
   private static final String MEDIA_FORMAT = "300Wx300H";
 
@@ -53,7 +59,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private CommonI18NService commonI18NService;
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
-
+  private BlCommercePriceService commercePriceService;
 
   /**
    * this method is created for populating values from source to target
@@ -105,14 +111,20 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
     // Pull the price value for the current currency
     final Double priceValue = this.<Double> getValue(source, "priceValue");
+    final Boolean constrained = this.<Boolean> getValue(source, "constrained");
     if (priceValue != null)
     {
-      final PriceData priceData = getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(priceValue.doubleValue()),
-          getCommonI18NService().getCurrentCurrency());
-      target.setPrice(priceData);
+   	 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {} for Product : {}", priceValue, target.getCode());
+   	//Getting Dynamic Price if eligible for Renatl Products and selected rental days
+		final BigDecimal dynamicPriceValue = getCommercePriceService().getDynamicPriceDataForProduct(constrained, priceValue);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dynamic Calculated Price Value is {} for Product : {}", dynamicPriceValue, target.getCode());
+		target.setPrice(getProductPriceData(dynamicPriceValue));
     }
   }
-
+  private PriceData getProductPriceData(final BigDecimal priceValue){
+	return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
+	}
+  
   protected void populateUrl(final SearchResultValueData source, final ProductData target)
   {
     final String url = this.<String> getValue(source, "url");
@@ -428,5 +440,21 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   {
     this.stockLevelStatusConverter = stockLevelStatusConverter;
   }
+
+/**
+ * @return the commercePriceService
+ */
+public BlCommercePriceService getCommercePriceService()
+{
+	return commercePriceService;
+}
+
+/**
+ * @param commercePriceService the commercePriceService to set
+ */
+public void setCommercePriceService(BlCommercePriceService commercePriceService)
+{
+	this.commercePriceService = commercePriceService;
+}
 
 }
