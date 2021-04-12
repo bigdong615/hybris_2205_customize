@@ -1,6 +1,7 @@
 package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -54,6 +55,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private CommonI18NService commonI18NService;
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
+  private Populator<BlProductModel, ProductData> blProductTagPopulator;
 
 
   /**
@@ -78,6 +80,9 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setIsDiscontinued(this.<Boolean> getValue(source, "isDiscontinued"));
     // Add Product Tags to product
     addProductTag(source,target);
+    //This is for Notify me button on PLP and SLP
+    setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
+
     populatePrices(source, target);
 
     // Populate product's classification features
@@ -281,7 +286,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       setProductTagValues(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
       setProductTagValues(source, target, BlCoreConstants.STAFF_PICK, BlCoreConstants.STAFF_PICK_STRING);
     }
-    setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
   }
 
   /**
@@ -438,4 +442,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     this.stockLevelStatusConverter = stockLevelStatusConverter;
   }
 
+  public Populator<BlProductModel, ProductData> getBlProductTagPopulator() {
+    return blProductTagPopulator;
+  }
+
+  public void setBlProductTagPopulator(Populator<BlProductModel, ProductData> blProductTagPopulator) {
+    this.blProductTagPopulator = blProductTagPopulator;
+  }
 }

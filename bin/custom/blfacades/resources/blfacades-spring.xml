@@ -264,6 +264,7 @@
 	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator">
 		<property name="imageConverter" ref="imageConverter"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="blProductTagPopulator" ref="blProductTagPopulator"/>
 	</bean>
 
 	<!-- BL-166:This bean is override to configure bl related populator-->
