@@ -28,7 +28,7 @@
    </c:choose>
    <%-- Removed Store Facet Entry --%>
    <c:forEach items="${pageData.facets}" var="facet">
-            <nav:facetNavRefinementFacet facetData="${facet}"/>
+            <nav:facetNavigationRefinements facetData="${facet}"/>
    </c:forEach>
 </div>
 

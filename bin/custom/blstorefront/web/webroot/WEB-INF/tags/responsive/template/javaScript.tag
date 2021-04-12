@@ -221,7 +221,7 @@
                         position: "top",
                         content : [ "close", "logo" ]
                     }],          
-                } );
+                } ); */
                 new Mmenu( "#filter-menu", {
                     extensions: ["position-front","fullscreen"],
                     navbar: {
@@ -231,7 +231,7 @@
                         position: "top",
                         content : [ "close", "logo" ],
                     }],          
-                } ); */
+                } ); 
             }
         );
         // Initialize Mega menu rollover - required for ALL pages

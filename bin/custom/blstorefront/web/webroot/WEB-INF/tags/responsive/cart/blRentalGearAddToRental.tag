@@ -23,7 +23,7 @@
                                        <spring:theme code="text.notify.me"/>
                                 </button>
             </c:when>
-            <!-- BL-73 Added condition for discontinued product -->
+            
              <c:when test="${product.isDiscontinued}">
                     <button type="submit" class="btn btn-outline btn-disabled"
                             aria-disabled="true" disabled="disabled">

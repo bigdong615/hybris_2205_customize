@@ -3,5 +3,6 @@
  <%-- Moved to Seperate tag file --%>
  <%-- <nav:facetNavAppliedFilters pageData="${searchPageData}"/> --%>
 
- <nav:facetNavRefinements pageData="${searchPageData}"/>
-
+ <nav:mobileNavigationRefinements pageData="${searchPageData}"/>
+ 
+ <nav:navigationRefinements pageData=""/> pageData="${searchPageData}"/> 
