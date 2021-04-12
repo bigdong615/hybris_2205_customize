@@ -752,5 +752,12 @@
 	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
+	
+	<!-- BL-73 Created bean for discontinued product -->
+	
+	<bean id="blRentalGearDiscontinuedProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRentalGearDiscontinuedProductValueProvider"
+		parent="abstractPropertyFieldValueProvider">
+		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
+	</bean>
 
 </beans>

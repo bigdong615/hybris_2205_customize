@@ -28,7 +28,9 @@
     <property name="isNew" type="Boolean"/>
     <property name="isUpcoming" type="Boolean"/>
     <property name="productPageType" type="java.lang.String"/>
+    <property name="serialproducts" type="java.util.List"/>
     <property name="productTagValues" type="String"/>
+
   </bean>
 
 
@@ -56,6 +58,15 @@
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
   </enum>
+
+  <!--BL-174 : This DTO contains date related information(for temporary purpose once local storage code is ready
+                this will be removed) -->
+  <bean class="com.bl.facades.product.data.RentalDateDto">
+    <property name="selectedFromDate" type="String"/>
+    <property name="selectedToDate" type="String"/>
+    <property name="numberOfDays" type="String"/>
+  </bean>
+
 </beans>
 
 

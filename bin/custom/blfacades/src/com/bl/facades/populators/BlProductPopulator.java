@@ -1,8 +1,10 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.SerialProductData;
 import com.bl.facades.product.data.ProductVideoData;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -13,6 +15,7 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -51,11 +54,11 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
     target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
     target.setUsedDescription(source.getUsedDescription());
-
+    target.setSerialproducts(populatedSerialProduct(CollectionUtils.emptyIfNull(source.getSerialProducts())));
   }
 
   /*
-   * This method is used for populating video related data.
+   * This method used to populate video related information.
    */
   private List<ProductVideoData> populateVideo(final Collection<ProductVideoModel> populateVideos) {
     final List<ProductVideoData> videoDataList = new ArrayList<>();
@@ -83,6 +86,24 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
       imageList.add(imagedata);
     }
     target.setDataSheet(imageList);
+  }
+
+  /*
+   * This method is used for populating serial product.
+   */
+  private List populatedSerialProduct(final Collection<BlSerialProductModel> blSerialProductModels) {
+   final List<SerialProductData> serialProductDataList = new ArrayList<>();
+    blSerialProductModels.forEach(serialProductModel -> {
+          SerialProductData serialProductData = new SerialProductData();
+          serialProductData
+              .setConditionRating(serialProductModel.getConditionRatingOverallScore() + 5); //NOSONAR
+          serialProductData.setSerialId(serialProductModel.getProductId());
+          serialProductDataList.add(serialProductData);
+        }
+    );
+    Collections.sort(serialProductDataList);
+    Collections.reverse(serialProductDataList);
+    return serialProductDataList;
   }
 
   public ModelService getModelService() {

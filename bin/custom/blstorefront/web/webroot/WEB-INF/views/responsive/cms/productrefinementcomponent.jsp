@@ -4,7 +4,6 @@
  <%-- <nav:facetNavAppliedFilters pageData="${searchPageData}"/> --%>
 
 
- <nav:facetNavRefinements pageData="${searchPageData}"/>
-
- <nav:mobileFacetNavRefinements pageData="${searchPageData}"/>
-
+ <nav:mobileNavigationRefinements pageData="${searchPageData}"/>
+ 
+ <nav:navigationRefinements pageData="${searchPageData}"/> 

@@ -27,8 +27,8 @@
 									<c:if test="${pageType == 'PRODUCTSEARCH'}">
                                                  <input type="hidden" name="blPageType" value="${blPageType}"/>
                   </c:if>
-									<label>
-										<input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" />
+                   <input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
+									<label for="${facetData.code}-${facetValue.name}">
 										<span class="facet__list__label">
 											<span class="facet__list__mark"></span>
 											<span class="facet__list__text">
@@ -67,8 +67,8 @@
 								 <c:if test="${pageType == 'PRODUCTSEARCH'}">
                                <input type="hidden" name="blPageType" value="${blPageType}"/>
                                </c:if>
-								<label>
-									<input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" />
+                               <input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
+								<label for="${facetData.code}-${facetValue.name}">
 									<span class="facet__list__label">
 										<span class="facet__list__mark"></span>
 										<span class="facet__list__text">

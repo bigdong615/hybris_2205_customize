@@ -4,6 +4,7 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib  prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
 
 <c:url value="/cart/add" var="addToCartUrl"/>
  <div class="screen"></div>
@@ -27,11 +28,11 @@
                               </div>
                             <div id="productInfo" class="col-lg-5 offset-lg-1">
                             <c:forEach items="${product.categories}" var="categoryData">
-                             <c:if test="${product.manufacturer eq categoryData.name}">
+                             <c:if test="${fn :toLowerCase(product.manufacturer) eq fn:toLowerCase(categoryData.code)}">
                               <c:url var="brandUrl" value="${categoryData.url}"/>
-                              <p class="overline"><a href="${brandUrl}">${product.manufacturer}</a></p>
+                              <p class="overline"><a href="${brandUrl}">${fn:toUpperCase(product.manufacturer)}</a></p>
                              </c:if>
-                                </c:forEach>
+                              </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
                                 <span class="badge badge-limited-stock">Only 2 Left</span> <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                  <ul class="checklist mt-4">
@@ -48,7 +49,8 @@
                                    <p><span class="arrival">Get it on Jan 31</span> <a href="#" class="pickupDeliveryLink">Pickup or Delivery</a></p>
                                   </div>
                                 <div class="priceSummary">
-                                  <span class="productPrice">$215</span>&emsp;<span class="rentalDates">7 day rental</span>
+                                <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
+                                  <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">7 day rental</span>
                                 </div>
                                 <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                   <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
@@ -90,8 +92,8 @@
                                 </a>
                                 <div class="collapse show" id="overview">
                                      <p>${ycommerce:sanitizeHTML(product.description)}</p>
-                                     <c:if test="${not empty product.rentalVideosLink}">
-                                     <div id="overview-slider" class="splide mt-5">
+                                    <div id="overview-slider" class="splide mt-5">
+                                      <c:if test="${not empty product.rentalVideosLink}">
                                            <div class="splide__track">
                                              <ul class="splide__list">
                                                <c:forEach items="${product.rentalVideosLink}" var="productVideo"  varStatus="count">
@@ -104,8 +106,9 @@
                                                 </c:forEach>
                                             </ul>
                                         </div>
-                                     </div></c:if>
-                                     </div>
+                                      </c:if>
+                                    </div>
+                                 </div>
                                 <hr>
                                 <a class="filter-expand" data-bs-toggle="collapse" href="#specs" role="button" aria-expanded="false" aria-controls="specs">
                                 <h5><spring:theme code = "pdp.specification.section.text"/></h5></a>
@@ -137,9 +140,12 @@
                                    </div>
                                 <hr>
                                 <!-- Additional Gear Slider -->
-                                <!--TO-DO : This section will be fixed in bl-174  -->
-                                <product:recommendationsSectionPanel />
-                                <ul class="splide__pagination"><li><button class="splide__pagination__page is-active" type="button" aria-current="true" aria-controls="gear-slider-slide01 gear-slider-slide02 gear-slider-slide03 gear-slider-slide04" aria-label="Go to page 1"></button></li><li><button class="splide__pagination__page" type="button" aria-controls="gear-slider-slide03 gear-slider-slide04 gear-slider-slide05 gear-slider-slide06" aria-label="Go to page 2"></button></li></ul></div>
+                                 <h5><spring:theme code= "pdp.rental.product.recommendation.section.text" /></h5>
+                                  <div id="gear-slider" class="splide mt-4">
+                                     <cms:pageSlot position="CrossSelling" var="comp" element="div" class="productDetailsPageSectionCrossSelling">
+                                         <cms:component component="${comp}" element="div" class="productDetailsPageSectionCrossSelling-component"/>
+                                     </cms:pageSlot>
+                                  </div>
                                 <!-- Start Reviews -->
                                 <div id="reviews" class="mb-5">
                                     <h5 class="mb-4"><spring:theme code= "pdp.review.section.text"/></h5><div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
