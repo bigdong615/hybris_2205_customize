@@ -203,7 +203,7 @@
             numberOfMonths: 2,
             numberOfColumns: 2,
             autoApply: false,
-            format: "MMM D, YYYY",
+            format: "MMM D",
             resetButton: true,
             buttonText : {"reset":"Reset Dates"},
         });
@@ -299,7 +299,7 @@
               numberOfMonths: 2,
               numberOfColumns: 2,
               autoApply: false,
-              format: "MMM D, YYYY",
+              format: "MMM D",
               resetButton: true,
               buttonText : {"reset":"Reset Dates"},
           });
@@ -424,7 +424,7 @@
                                                  numberOfMonths: 2,
                                                  numberOfColumns: 2,
                                                  autoApply: false,
-                                                 format: "MMM D, YYYY",
+                                                 format: "MMM D",
                                                  resetButton: true,
                                                  buttonText : {"reset":"Reset Dates"},
                                              });

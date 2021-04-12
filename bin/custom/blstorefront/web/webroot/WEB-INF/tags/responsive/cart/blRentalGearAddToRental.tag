@@ -29,8 +29,7 @@
                             aria-disabled="true" disabled="disabled">
                             <spring:theme code="text.add.to.rental"/>
                     </button>
-                </c:when> 
-
+                </c:when>
             <c:otherwise>
              <c:choose>
                             <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">

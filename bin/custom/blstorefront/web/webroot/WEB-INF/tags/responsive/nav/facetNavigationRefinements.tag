@@ -8,6 +8,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
+
 <c:if test="${not empty facetData.values}">
 <ycommerce:testId code="facetNav_title_${facetData.name}">
 <hr>
