@@ -28,7 +28,6 @@
 
 	
 	<jsp:body>
-	<div class="home">
 		<div id="my-page">
 		
 
@@ -48,7 +47,6 @@
       <footer:footer />
 
 	
-</div>
 </div>
 	</jsp:body >
 
