@@ -319,10 +319,7 @@
 	<alias name="defaultBlStockPopulator" alias="blStockPopulator"/>
     <bean id="defaultBlStockPopulator" parent="abstractPopulatingConverter"
           class="com.bl.facades.populators.BlStockPopulator">
-        <property name="commerceStockService" ref="commerceStockService"/>
         <property name="baseStoreService" ref="baseStoreService"/>
-        <property name="categoryService" ref="categoryService"/>
-        <property name="baseSiteService" ref="baseSiteService"/>
         <property name="blCommerceStockService" ref="blCommerceStockService"/>
         <property name="sessionService" ref="sessionService"/>
     </bean>

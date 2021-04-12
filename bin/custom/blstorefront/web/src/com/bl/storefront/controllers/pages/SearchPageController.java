@@ -80,8 +80,7 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@RequestMapping(method = RequestMethod.GET, params = "!q") // NOSONAR
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
-			@RequestParam(value="blPageType") final String blPageType,
-			@RequestParam(value = "selectedDate", defaultValue = "")
+			@RequestParam(value="blPageType") final String blPageType, @RequestParam(value = "selectedDate", defaultValue = "")
 			final String selectedDate,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
