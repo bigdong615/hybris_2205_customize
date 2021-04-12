@@ -4,6 +4,7 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib  prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
 
  <div class="screen"></div>
      <cms:pageSlot position="SearchBoxBl" var="component">
@@ -25,13 +26,8 @@
                                  <product:productImagePanel galleryImages="${galleryImages}" />
                             </div>
                             <div id="productInfo" class="col-lg-6 offset-lg-1">
-                               <c:forEach items="${product.categories}" var="categoryData">
-                               <c:if test="${product.manufacturer eq categoryData.code}">
-                                <c:url var="brandUrl" value="/used/category/${categoryData.code}"/>
-                                  <p class="overline"><a href="${brandUrl}">${categoryData.name}</a></p>
-                                  </c:if>
-                                 </c:forEach>
-                                <h1 class="mb-4">${product.displayName}</h1>
+                               <p class="overline" >${fn:toUpperCase(product.manufacturer)}</p>
+                               <h1 class="mb-4">${product.displayName}</h1>
                                 <table id="usedProductList">
                                     <thead>
                                         <tr>
@@ -44,7 +40,7 @@
                                     </thead>
                                   <tbody>
                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
-                                         <tr class= " ${loop.index > 2 ? 'hide-product-row' : ''}">
+                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
                                             <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
                                             <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
                                             <td>$1,550</td>
@@ -55,7 +51,7 @@
                                        </c:forEach>
                                     </tbody>
                                 </table>
-                                <c:if test="${product.serialproducts.size() >2}">
+                                <c:if test="${product.serialproducts.size() >3}">
                                 <p class="mt-4"><a href="#" id="showmore"><spring:theme code="pdp.show.more.button.text"/></a>
                                 </c:if>
                                 <c:if test="${product.forRent}">

@@ -4,6 +4,7 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib  prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
 
 <c:url value="/cart/add" var="addToCartUrl"/>
  <div class="screen"></div>
@@ -27,11 +28,11 @@
                               </div>
                             <div id="productInfo" class="col-lg-5 offset-lg-1">
                             <c:forEach items="${product.categories}" var="categoryData">
-                             <c:if test="${product.manufacturer eq categoryData.code}">
+                             <c:if test="${fn :toLowerCase(product.manufacturer) eq fn:toLowerCase(categoryData.code)}">
                               <c:url var="brandUrl" value="${categoryData.url}"/>
-                              <p class="overline"><a href="${brandUrl}">${categoryData.name}</a></p>
+                              <p class="overline"><a href="${brandUrl}">${fn:toUpperCase(product.manufacturer)}</a></p>
                              </c:if>
-                                </c:forEach>
+                              </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
                                 <span class="badge badge-limited-stock">Only 2 Left</span> <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                  <ul class="checklist mt-4">
