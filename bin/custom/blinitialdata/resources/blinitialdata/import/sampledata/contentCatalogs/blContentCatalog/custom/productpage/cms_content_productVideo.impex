@@ -11,6 +11,10 @@ INSERT_UPDATE Media;mediaFormat(qualifier)  ;code[unique=true]                  
 
 INSERT_UPDATE BlProduct;code[unique=true]             ;$data_sheet                           ;$catalogVersion ;
                      ;Nikon_17-55mm_f2.8_AF-S_ED_DX ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
+                     ;Nikon_D7100_Digital_SLR ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
+                     ;olympus_ep2_extra_battery ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
+                     ;Canon_50mm_f1.2_L ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
+
 
 INSERT_UPDATE ProductVideo ;uid[unique=true]; videoTitle;videoLink                                ;videoDuration
                            ;Canon_EOS_R1  ;Canon EOS R5 featuresr   ;https://www.youtube.com/embed/8jtaappbWtE ; 383

@@ -204,6 +204,7 @@
 		<property name="productService" ref="productService"/>
 		<property name="stockConverter" ref="stockConverter"/>
 		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
+		<property name="commercePriceService" ref="commercePriceService"/>
 	</bean>
 
 
