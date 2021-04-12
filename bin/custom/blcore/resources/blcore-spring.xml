@@ -753,11 +753,23 @@
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 	
-	<!-- BL-73 Created bean for discontinued product -->
-	
+	<!-- BL-73 Created bean for discontinued product -->	
 	<bean id="blRentalGearDiscontinuedProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRentalGearDiscontinuedProductValueProvider"
 		parent="abstractPropertyFieldValueProvider">
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
+	
+	<!-- BL-483 BL Pricing Strategy file to calculate Dynamic Price -->
+	<alias name="defaultBlProductDynamicPriceStrategy" alias="blProductDynamicPriceStrategy"/>
+	<bean id="defaultBlProductDynamicPriceStrategy" class="com.bl.core.price.strategies.impl.DefaultBlProductDynamicPriceStrategy">
+		<property name="blPricingRatioService" ref="blPricingRatioService"/>
+	</bean>
+	
+	<!-- BL-483 Extended OOTB Commerce Price Service to get Dynamic Pricing for Rental Products on the basis of seleted Rental Days -->
+	<alias alias="commercePriceService" name="defaultBlCommercePriceService"/>
+    <bean id="defaultBlCommercePriceService" class="com.bl.core.price.service.impl.DefaultBlCommercePriceService" parent="defaultCommercePriceService">
+        <property name="sessionService" ref="sessionService"/>
+        <property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
+    </bean>
 
 </beans>

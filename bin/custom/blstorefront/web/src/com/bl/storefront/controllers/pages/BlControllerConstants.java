@@ -21,6 +21,14 @@ public class BlControllerConstants
 	public static final String HOME_CSS = "home ";
 	public static final String HOMEPAGE = "homepage";
 	public static final String COMMA = ",";
+	public static final String DATE_FORMAT = "MMM d, yyyy";
+	public static final String SEPARATOR = "-";
+	public static final int PAIR_OF_DATES = 2;
+	public static final String NUMBER_OF_DAYS = "numberOfDays";
+	public static final String SELECTED_TO_DATE = "selectedToDate";
+	public static final String SELECTED_FROM_DATE = "selectedFromDate";
+	public static final int MIN_RENTAL_DAYS = 3;
+	public static final int MAX_RENTAL_DAYS = 90;
 
 	private BlControllerConstants()
 	{

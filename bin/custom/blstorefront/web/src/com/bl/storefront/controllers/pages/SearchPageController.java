@@ -27,6 +27,10 @@ import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageDat
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,10 +78,23 @@ public class SearchPageController extends AbstractSearchPageController
 
 	@RequestMapping(method = RequestMethod.GET, params = "!q") // NOSONAR
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
-			@RequestParam(value="blPageType") final String blPageType,
+			@RequestParam(value="blPageType") final String blPageType, @RequestParam(value = "selectedDate", defaultValue = "")
+			final String selectedDate,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
+		//Setting Rental Dates and Number of Days in Session if available - Temprory code, Once local staore code is done need to remove this code 
+		final List<String> lSelectedDates = Arrays.asList(selectedDate.split(BlControllerConstants.SEPARATOR));
+		if (CollectionUtils.isNotEmpty(lSelectedDates) && lSelectedDates.size() == BlControllerConstants.PAIR_OF_DATES) {
+			final LocalDate selectedFromDate = LocalDate.parse(lSelectedDates.get(0).trim(),	DateTimeFormatter.ofPattern(BlControllerConstants.DATE_FORMAT));
+			final LocalDate selectedToDate = LocalDate.parse(lSelectedDates.get(1).trim(), DateTimeFormatter.ofPattern(BlControllerConstants.DATE_FORMAT));
+			final long numberOfDays = ChronoUnit.DAYS.between(selectedFromDate, selectedToDate.plusDays(1));
+			if (numberOfDays >= BlControllerConstants.MIN_RENTAL_DAYS && numberOfDays <= BlControllerConstants.MAX_RENTAL_DAYS) {
+				getSessionService().setAttribute(BlControllerConstants.SELECTED_FROM_DATE, selectedFromDate);
+				getSessionService().setAttribute(BlControllerConstants.SELECTED_TO_DATE, selectedToDate);
+				getSessionService().setAttribute(BlControllerConstants.NUMBER_OF_DAYS, numberOfDays);
+			}
+		}
 
 			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
 

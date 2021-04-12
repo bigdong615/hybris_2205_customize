@@ -1,6 +1,8 @@
 package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.price.service.BlCommercePriceService;
+
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -54,7 +56,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private CommonI18NService commonI18NService;
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
-
+  private BlCommercePriceService commercePriceService;
 
   /**
    * this method is created for populating values from source to target
@@ -106,14 +108,18 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
     // Pull the price value for the current currency
     final Double priceValue = this.<Double> getValue(source, "priceValue");
+    final Boolean constrained = this.<Boolean> getValue(source, "constrained");
     if (priceValue != null)
     {
-      final PriceData priceData = getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(priceValue.doubleValue()),
-          getCommonI18NService().getCurrentCurrency());
-      target.setPrice(priceData);
+   	//Getting Dynamic Price if eligible for Renatl Products and selected rental days
+		final BigDecimal dynamicPriceValue = getCommercePriceService().getDynamicPriceDataForProduct(constrained, priceValue);
+		target.setPrice(getProductPriceData(dynamicPriceValue));
     }
   }
-
+  private PriceData getProductPriceData(final BigDecimal priceValue){
+	return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
+	}
+  
   protected void populateUrl(final SearchResultValueData source, final ProductData target)
   {
     final String url = this.<String> getValue(source, "url");
@@ -437,5 +443,21 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   {
     this.stockLevelStatusConverter = stockLevelStatusConverter;
   }
+
+/**
+ * @return the commercePriceService
+ */
+public BlCommercePriceService getCommercePriceService()
+{
+	return commercePriceService;
+}
+
+/**
+ * @param commercePriceService the commercePriceService to set
+ */
+public void setCommercePriceService(BlCommercePriceService commercePriceService)
+{
+	this.commercePriceService = commercePriceService;
+}
 
 }
