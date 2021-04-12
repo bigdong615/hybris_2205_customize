@@ -1,6 +1,5 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
@@ -21,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
@@ -86,7 +84,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
      */
     private void populateResourceData(final Collection<MediaModel> dataSheet,
                                       final ProductData target) {
-        final Collection<ImageData> imageList = new ArrayList<ImageData>();
+        final Collection<ImageData> imageList = new ArrayList<>();
         for (final MediaModel mediaModel : dataSheet) {
             final ImageData imagedata = getImageConverter().convert(mediaModel);
             imageList.add(imagedata);
@@ -97,7 +95,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     /*
      * This method is used for populating serial product.
      */
-    private List populatedSerialProduct(final Collection<BlSerialProductModel> blSerialProductModels) {
+    private List<SerialProductData> populatedSerialProduct(final Collection<BlSerialProductModel> blSerialProductModels) {
         final List<SerialProductData> serialProductDataList = new ArrayList<>();
         blSerialProductModels.forEach(serialProductModel -> {
                     SerialProductData serialProductData = new SerialProductData();
