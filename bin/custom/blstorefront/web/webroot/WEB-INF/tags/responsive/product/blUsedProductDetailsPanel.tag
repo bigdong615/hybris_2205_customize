@@ -114,7 +114,7 @@
                               </div>
                                <!-- Start Reviews -->
                               <product:blProductReview />
-
+                              <!-- This empty div id added to resolved js related error on used gear pdp-->
                               <div  id="product-litepicker" ></div>
                               <div id="mobile-product-litepicker"> </div>
                               <div id="litepicker"> </div>
