@@ -223,19 +223,19 @@
 	</c:if>
 
 
-	<c:if test="${cmsPage.uid ne 'homepage' and cmsPage.uid ne 'productDetails'}">
+	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search' }">
 	  <script>
         // Mobile Menu styles - #my-menu is required for ALL pages
         // The second menu #filter-menu is required for ANY page with filtering - it is the mobile filter menu
         document.addEventListener(
             "DOMContentLoaded", () => {
-                /* new Mmenu( "#my-menu", {
+                 new Mmenu( "#my-menu", {
                     extensions: ["fullscreen","position-front"],
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ]
-                    }],          
-                } ); */
+                    }],
+                } );
                 new Mmenu( "#filter-menu", {
                     extensions: ["position-front","fullscreen"],
                     navbar: {
@@ -269,32 +269,11 @@
             },
             //,
         } ).mount());
-        // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-        /* const picker = new Litepicker({ 
-            element: document.getElementById('litepicker'),
-            //plugins: ['mobilefriendly'],
-            singleMode: false,
-            numberOfMonths: 2,
-            numberOfColumns: 2,
-            autoApply: false,
-            format: "MMM D",
-            resetButton: true,
-            buttonText : {"reset":"Reset Dates"},
-        }); */
-        // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
-        /* const mpicker = new Litepicker({ 
-            element: document.getElementById('mobile-litepicker'),
-            plugins: ['mobilefriendly'],
-            singleMode: false,
-            numberOfMonths: 1,
-            numberOfColumns: 1,
-            autoApply: false,
-            format: "MMM D",
-            resetButton: true,
-            buttonText : {"reset":"Reset"},
-        }); */
+
     </script>
 	</c:if>
+
+	<!-- This js is used for rental search box component-->
 	<c:if test="${blPageType eq 'rentalgear'}">
 	<script type="text/javascript">
           $('.menu-large').hover(
@@ -337,6 +316,8 @@
           });
       </script>
 	</c:if>
+
+	<!-- This js is used for UsedGear search box component-->
 	<c:if test="${blPageType eq 'usedGear'}">
   	<script type="text/javascript">
             $('.menu-large').hover(
@@ -359,6 +340,7 @@
         </script>
   	</c:if>
 
+  <!-- This js will load on rental PDP  and it is required for all rental pdp component to make it work -->
 	<c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'true' && product.forRent eq 'true'}">
                                 		 <script>
                                         // Mobile Menu styles - #my-menu is required for ALL pages
@@ -477,6 +459,7 @@
 
                                 		</c:if>
 
+<!-- This js will load on usedGear PDP  and it is required for all usedGear pdp component to make it work -->
 <c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'false' && product.forSale eq 'true'}">
 		 <script>
 		  // Expand Used Gear Items
