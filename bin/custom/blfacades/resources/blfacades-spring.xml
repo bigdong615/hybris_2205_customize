@@ -259,6 +259,7 @@
 	<bean id="blSolrSearchQueryDecoderPopulator"
 		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
 
+	<!-- BL-174:This populator is created for populating product flags-->
 	<bean id="blProductTagPopulator" class="com.bl.facades.populators.BlProductTagPopulator">
 	</bean>
 
