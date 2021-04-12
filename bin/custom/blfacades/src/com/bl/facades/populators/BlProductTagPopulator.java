@@ -4,11 +4,11 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 public class BlProductTagPopulator implements Populator<BlProductModel, ProductData> {
+
     @Override
     public void populate(BlProductModel source, ProductData target){
         setProductTagValues(target, BooleanUtils.isTrue(source.getIsNew()) ? BlCoreConstants.NEW : StringUtils.EMPTY);
