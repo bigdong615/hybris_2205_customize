@@ -5,4 +5,4 @@
 
  <nav:mobileNavigationRefinements pageData="${searchPageData}"/>
  
- <nav:navigationRefinements pageData=""/> pageData="${searchPageData}"/> 
+ <nav:navigationRefinements pageData="${searchPageData}"/> 
