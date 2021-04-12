@@ -57,6 +57,8 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	{
 		try
 		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculating Dynamic Price for {} Rental Days for Product : {}",
+					selectedNumberOfDays.toString(), blProductModel.getCode());
 			final BigDecimal sevenDayPrice = BigDecimal.valueOf(priceInformation.getPriceValue().getValue());
 			return BooleanUtils.isTrue(blProductModel.getConstrained())
 					? createNewPriceInformation(priceInformation, getConstrainedDynamicPrice(sevenDayPrice, selectedNumberOfDays))
@@ -65,7 +67,8 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 		catch (final Exception exception)
 		{
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.DYNAMIC_PRICING_ERROR.getCode(), exception,
-					"Error while calculating dynamic price for Product with code : {}", blProductModel.getCode());
+					"Error while calculating dynamic price for Product with code : {} with default price {}", blProductModel.getCode(),
+					priceInformation.getPriceValue().getValue());
 			return priceInformation;
 		}
 
@@ -86,6 +89,8 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct, final Double priceValue,
 			final Long selectedNumberOfDays)
 	{
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculating Dynamic Price for {} Rental Days",
+				selectedNumberOfDays.toString());
 		return BooleanUtils.isTrue(isConstrainedProduct)
 				? getConstrainedDynamicPrice(BigDecimal.valueOf(priceValue), selectedNumberOfDays)
 				: getStandardDynamicPrice(BigDecimal.valueOf(priceValue), selectedNumberOfDays);
@@ -104,9 +109,11 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	{
 		final Map<Integer, Double> constrainedRatiosMap = getConstrainedRatiosMap(
 				getBlPricingRatioService().getConstrainedPricingRatio());
-
-		return calculateDynamicPriceforRentalDays(constrainedRatiosMap, selectedNumberOfDays,
+		final BigDecimal constrainedDynamicPrice = calculateDynamicPriceforRentalDays(constrainedRatiosMap, selectedNumberOfDays,
 				BigDecimal.valueOf(priceValue.longValue()));
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Dynamic Price for Constrained Product : {}",
+				constrainedDynamicPrice.toString());
+		return constrainedDynamicPrice;
 	}
 
 	/**
@@ -121,9 +128,11 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	private BigDecimal getStandardDynamicPrice(final BigDecimal priceValue, final Long selectedNumberOfDays)
 	{
 		final Map<Integer, Double> standardRatiosMap = getStandardRatiosMap(getBlPricingRatioService().getStandardPricingRatio());
-
-		return calculateDynamicPriceforRentalDays(standardRatiosMap, selectedNumberOfDays,
+		final BigDecimal standardDynamicPrice = calculateDynamicPriceforRentalDays(standardRatiosMap, selectedNumberOfDays,
 				BigDecimal.valueOf(priceValue.longValue()));
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Dynamic Price for Standard Product : {}",
+				standardDynamicPrice.toString());
+		return standardDynamicPrice;
 	}
 
 
@@ -148,8 +157,10 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 		//if the ratio duration matched with the duration we have in DB then returning the dynamic price for the particular durations price ratio
 		if (ratioMap.containsKey(noOfDays))
 		{
-			return (sevenDayPrice.multiply(BigDecimal.valueOf(ratioMap.get(noOfDays)))).setScale(BlCoreConstants.DECIMAL_PRECISION,
-					BlCoreConstants.ROUNDING_MODE);
+			final BigDecimal calculatePriceForDuration = calculatePriceForDuration(ratioMap, sevenDayPrice, noOfDays);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Dynamic Price {} for exact Duration {}",
+					calculatePriceForDuration.toString(), noOfDays);
+			return calculatePriceForDuration;
 		}
 		//Sort those durations which we are getting from keys
 		final Set<Integer> sortedDurationsKey = ratioMap.keySet().stream().sorted()
@@ -167,22 +178,54 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 				break;
 			}
 		}
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				"For {} Rental Days the Nearest Lowest Duration is {} and Highest Duration is {} from the Duration list", noOfDays,
+				lowestDuration, highestDuration);
 		//calculating the price for lowest duration
-		final BigDecimal lowestPrice = (sevenDayPrice.multiply(BigDecimal.valueOf(ratioMap.get(lowestDuration))))
-				.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+		final BigDecimal lowestPrice = calculatePriceForDuration(ratioMap, sevenDayPrice, lowestDuration);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Lowest Duration Price {} for Duration {}",
+				lowestPrice.toString(), lowestDuration);
 		//calculating the price for highest duration
-		final BigDecimal highestPrice = (sevenDayPrice.multiply(BigDecimal.valueOf(ratioMap.get(highestDuration))))
-				.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+		final BigDecimal highestPrice = calculatePriceForDuration(ratioMap, sevenDayPrice, highestDuration);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Highest Duration Price {} for Duration {}",
+				highestPrice.toString(), highestDuration);
 		//getting the differences between the highest and the lowest durations
 		final int diffInDurations = highestDuration - lowestDuration;
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Difference Between Highest Duration {} and Lowest Duration {} is {}",
+				highestDuration, lowestDuration, diffInDurations);
 		//calculating the differences between the highest price and the lowest price
 		final BigDecimal diffInPrice = highestPrice.subtract(lowestPrice);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				"Difference Between Highest Duration Price {} and Lowest Duration Price {} is {}", highestPrice.toString(),
+				lowestPrice.toString(), diffInPrice.toString());
 		//calculating per day price from differences in price and duration
 		final BigDecimal perDayPrice = diffInPrice.divide(BigDecimal.valueOf(diffInDurations),
 				new MathContext(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Per Day Price {}", perDayPrice.toString());
 		//returning the calculated dynamic price for the selected rental days
-		return lowestPrice.add((perDayPrice.multiply(BigDecimal.valueOf(Math.subtractExact(noOfDays, lowestDuration))))
-				.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+		final BigDecimal finalCalculatedPrice = lowestPrice
+				.add((perDayPrice.multiply(BigDecimal.valueOf(Math.subtractExact(noOfDays, lowestDuration))))
+						.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Calculated Final Price {}", finalCalculatedPrice.toString());
+		return finalCalculatedPrice;
+	}
+
+	/**
+	 * Calculates the price for given duration.
+	 *
+	 * @param ratioMap
+	 *           the ratio map
+	 * @param sevenDayPrice
+	 *           the seven day price
+	 * @param noOfDays
+	 *           the no of days
+	 * @return the big decimal
+	 */
+	private BigDecimal calculatePriceForDuration(final Map<Integer, Double> ratioMap, final BigDecimal sevenDayPrice,
+			final int noOfDays)
+	{
+		return (sevenDayPrice.multiply(BigDecimal.valueOf(ratioMap.get(noOfDays)))).setScale(BlCoreConstants.DECIMAL_PRECISION,
+				BlCoreConstants.ROUNDING_MODE);
 	}
 
 	/**

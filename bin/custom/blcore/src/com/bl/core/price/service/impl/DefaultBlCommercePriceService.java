@@ -12,11 +12,14 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -28,6 +31,7 @@ import com.bl.core.price.strategies.BlProductDynamicPriceStrategy;
  */
 public class DefaultBlCommercePriceService extends DefaultCommercePriceService implements BlCommercePriceService
 {
+	private static final Logger LOG = Logger.getLogger(DefaultBlCommercePriceService.class);
 	private SessionService sessionService;
 
 	private BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
@@ -45,6 +49,8 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 			if (CollectionUtils.isNotEmpty(prices))
 			{
 				final PriceInformation defaultPriceInformation = prices.get(0);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {} for product {}",
+						defaultPriceInformation.getPriceValue().getValue(), product.getCode());
 				final Long rentalDays = getSessionService().getAttribute(BlCoreConstants.SELECTED_RENTAL_DAYS);
 				return isRentalDaysEligible(rentalDays)
 						? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
@@ -68,6 +74,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	@Override
 	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct, final Double priceValue)
 	{
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {}", priceValue);
 		final Long rentalDays = getSessionService().getAttribute(BlCoreConstants.SELECTED_RENTAL_DAYS);
 		return isRentalDaysEligible(rentalDays)
 				? getBlProductDynamicPriceStrategy().getDynamicPriceDataForProduct(isConstrainedProduct, priceValue, rentalDays)

@@ -2,6 +2,7 @@ package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.logging.BlLogger;
 
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
@@ -36,6 +37,8 @@ import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
 /**
@@ -44,6 +47,7 @@ import org.springframework.util.Assert;
  */
 public class BlSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
 
+	private static final Logger LOG = Logger.getLogger(BlSearchResultProductPopulator.class);
   private static final String BL_IMAGE = "blimage";
   private static final String MEDIA_FORMAT = "300Wx300H";
 
@@ -110,8 +114,10 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     final Boolean constrained = this.<Boolean> getValue(source, "constrained");
     if (priceValue != null)
     {
+   	 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {} for Product : {}", priceValue, target.getCode());
    	//Getting Dynamic Price if eligible for Renatl Products and selected rental days
 		final BigDecimal dynamicPriceValue = getCommercePriceService().getDynamicPriceDataForProduct(constrained, priceValue);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dynamic Calculated Price Value is {} for Product : {}", dynamicPriceValue, target.getCode());
 		target.setPrice(getProductPriceData(dynamicPriceValue));
     }
   }

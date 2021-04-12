@@ -94,7 +94,7 @@ public class SearchPageController extends AbstractSearchPageController
 				getSessionService().setAttribute(BlControllerConstants.SELECTED_TO_DATE, selectedToDate);
 				getSessionService().setAttribute(BlControllerConstants.NUMBER_OF_DAYS, numberOfDays);
 			}
-		}
+		} //Temporary code ends here
 
 			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);//NOSONAR
 
