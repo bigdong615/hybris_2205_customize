@@ -9,19 +9,19 @@ import org.apache.commons.lang3.BooleanUtils;
 
 public class BlProductTagPopulator implements Populator<BlProductModel, ProductData> {
 
-    @Override
-    public void populate(BlProductModel source, ProductData target){
-        setProductTagValues(target, BooleanUtils.isTrue(source.getIsNew()) ? BlCoreConstants.NEW : StringUtils.EMPTY);
-        setProductTagValues(target,BooleanUtils.isTrue(source.getMostPopular()) ? BlCoreConstants.POPULAR : StringUtils.EMPTY);
-        if (BooleanUtils.isTrue(source.getForRent())) {
-            setProductTagValues(target,BooleanUtils.isTrue(source.getGreatValue()) ? BlCoreConstants.GREAT_VALUE_STRING : StringUtils.EMPTY);
-            setProductTagValues(target,BooleanUtils.isTrue(source.getStaffPick()) ? BlCoreConstants.STAFF_PICK_STRING : StringUtils.EMPTY);
-        }
+  @Override
+  public void populate(final BlProductModel source, final ProductData target) {
+    setProductTagValues(target, BooleanUtils.isTrue(source.getIsNew()) ? BlCoreConstants.NEW : StringUtils.EMPTY);
+    setProductTagValues(target, BooleanUtils.isTrue(source.getMostPopular()) ? BlCoreConstants.POPULAR : StringUtils.EMPTY);
+    if (BooleanUtils.isTrue(source.getForRent())) {
+      setProductTagValues(target, BooleanUtils.isTrue(source.getGreatValue()) ? BlCoreConstants.GREAT_VALUE_STRING: StringUtils.EMPTY);
+      setProductTagValues(target, BooleanUtils.isTrue(source.getStaffPick()) ? BlCoreConstants.STAFF_PICK_STRING : StringUtils.EMPTY);
     }
+  }
 
-    private void setProductTagValues(ProductData target, String value) {
-        if (StringUtils.isBlank(target.getProductTagValues())) {
-            target.setProductTagValues(value);
-        }
+  private void setProductTagValues(final ProductData target, final String value) {
+    if (StringUtils.isBlank(target.getProductTagValues())) {
+      target.setProductTagValues(value);
     }
+  }
 }
