@@ -1,5 +1,6 @@
 package com.bl.core.data;
 
+import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import java.io.Serializable;
 
 
@@ -12,6 +13,8 @@ public class StockResult implements Serializable
 	private long availableCount;
 
 	private long totalCount;
+
+	private StockLevelStatus stockLevelStatus;
 
 	/**
 	 * @return the availableCount
@@ -45,6 +48,14 @@ public class StockResult implements Serializable
 	public void setTotalCount(final long totalCount)
 	{
 		this.totalCount = totalCount;
+	}
+
+	public StockLevelStatus getStockLevelStatus() {
+		return stockLevelStatus;
+	}
+
+	public void setStockLevelStatus(StockLevelStatus stockLevelStatus) {
+		this.stockLevelStatus = stockLevelStatus;
 	}
 
 }

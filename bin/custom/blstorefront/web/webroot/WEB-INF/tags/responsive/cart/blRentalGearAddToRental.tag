@@ -39,7 +39,7 @@
 						</button>
 					</c:when>
 					<c:otherwise>
-						<button type="submit" class="btn btn-primary" disabled="disabled">
+						<button type="submit" class="btn btn-primary">
 							<spring:theme code="text.add.to.rental" />
 						</button>
 					</c:otherwise>
@@ -61,7 +61,7 @@
                     </button>
                 </c:when>
                 <c:otherwise>
-                    <button id="configureProduct" type="button" class="btn btn-primary btn-block js-enable-btn" disabled="disabled"
+                    <button id="configureProduct" type="button" class="btn btn-primary btn-block js-enable-btn"
                             onclick="location.href='${fn:escapeXml(configureProductUrl)}'">
                         <spring:theme code="basket.configure.product"/>
                     </button>

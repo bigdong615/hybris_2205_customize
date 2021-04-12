@@ -1,18 +1,20 @@
 package com.bl.facades.populators;
 
+import com.bl.core.data.StockResult;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.category.CategoryService;
 import de.hybris.platform.commercefacades.product.data.StockData;
 import de.hybris.platform.commerceservices.stock.CommerceStockService;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Date;
 
 import com.bl.core.stock.BlCommerceStockService;
@@ -36,46 +38,29 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 	/**
 	 * It populates the stock status and available quantity
 	 *
-	 * @param blproductModel
+	 * @param blProductModel
 	 * @param stockData
 	 */
 	@Override
-	public void populate(final SOURCE blproductModel, final TARGET stockData) throws ConversionException
+	public void populate(final SOURCE blProductModel, final TARGET stockData)
 	{
 		final BaseStoreModel baseStore = getBaseStoreService().getCurrentBaseStore();
-		if (!isStockSystemEnabled(baseStore))
-		{
-			stockData.setStockLevelStatus(StockLevelStatus.INSTOCK);
-			stockData.setStockLevel(Long.valueOf(0));
-		}
-		else
-		{
-			final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
-			final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
-			if (null != startDate && null != endDate)
-			{
-				final Date startDay = BookingDateUtils.convertStringDateToDate(startDate.toString(), "yyyy-MM-dd");
-				final Date endDay = BookingDateUtils.convertStringDateToDate(endDate.toString(), "yyyy-MM-dd");
-				final StockLevelStatus stockLevelStatus = getBlCommerceStockService().getStockLevelStatus(baseStore.getWarehouses(),
-						blproductModel.getCode(), startDay, endDay);
-				stockData.setStockLevelStatus(stockLevelStatus);
-				if (StockLevelStatus.LOWSTOCK.equals(stockLevelStatus))
-				{
-					stockData.setStockLevel(getBlCommerceStockService().getAvailableCount(blproductModel.getCode(),
-							baseStore.getWarehouses(), startDay, endDay));
-				}
+		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
+		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
+		if (null != startDate && null != endDate) {
+			final Date startDay = BookingDateUtils
+					.convertStringDateToDate(startDate.toString(), "yyyy-MM-dd");
+			final Date endDay = BookingDateUtils
+					.convertStringDateToDate(endDate.toString(), "yyyy-MM-dd");
+			final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
+					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
+			final StockLevelStatus stockLevelStatus = stockResult.getStockLevelStatus();
+			stockData.setStockLevelStatus(stockLevelStatus);
+			if (StockLevelStatus.LOWSTOCK.equals(stockLevelStatus)) {
+				stockData
+						.setStockLevel(stockResult.getAvailableCount());
 			}
 		}
-	}
-
-	protected boolean isStockSystemEnabled()
-	{
-		return getCommerceStockService().isStockSystemEnabled(getBaseStoreService().getCurrentBaseStore());
-	}
-
-	protected boolean isStockSystemEnabled(final BaseStoreModel baseStore)
-	{
-		return getCommerceStockService().isStockSystemEnabled(baseStore);
 	}
 
 	/**

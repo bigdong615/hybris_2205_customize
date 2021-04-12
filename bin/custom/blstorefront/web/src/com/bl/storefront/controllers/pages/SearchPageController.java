@@ -66,10 +66,6 @@ public class SearchPageController extends AbstractSearchPageController
 	private static final String SEARCH_CMS_PAGE_ID = "search";
 	private static final String NO_RESULTS_CMS_PAGE_ID = "searchEmpty";
 
-	private static final String DATE_FORMAT = "MMM d, yyyy";
-	private static final String SEPARATOR = "-";
-	private static final int PAIR_OF_DATES = 2;
-
 	@Resource(name = "productSearchFacade")
 	private ProductSearchFacade<ProductData> productSearchFacade;
 
