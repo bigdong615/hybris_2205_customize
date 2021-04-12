@@ -16,6 +16,7 @@
 	<c:otherwise>
 		<%-- jquery --%>
 		<script src="${commonResourcePathHtml}/js/jquery-3.5.1.min.js"></script>
+		
 		<%-- plugins --%>
 		<script src="${commonResourcePathHtml}/js/enquire.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/Imager.min.js"></script>
@@ -34,6 +35,7 @@
 		<script src="${commonResourcePathHtml}/js/jquery.currencies.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/jquery.waitforimages.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/jquery.slideviewer.custom.1.2.js"></script>
+		
 		<%-- Custom ACC JS --%>
 
 		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
@@ -92,12 +94,12 @@
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
 		</c:forEach>
-
+		
 		<%-- AddOn JavaScript files --%>
 		<c:forEach items="${addOnJavaScriptPaths}" var="addOnJavaScript">
 		    <script src="${fn:escapeXml(addOnJavaScript)}"></script>
 		</c:forEach>
-
+		
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
@@ -115,8 +117,8 @@
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ]
-                    }],
-                } );
+                    }],          
+                } ); 
             }
         );
         $('.menu-large').hover(
@@ -138,7 +140,7 @@
                     perPage: 3,
                 },
                 '480': {
-                    perPage: 2,
+                    perPage: 2,  
                 },
             },
             rewind : true,
@@ -157,7 +159,7 @@
             rewind : true,
             gap: 20,
             padding: 10,
-        } ).mount();
+        } ).mount();  
         document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 1,
@@ -179,7 +181,7 @@
             perPage: 1,
             type: 'fade',
             arrows: false,
-        } ).mount();
+        } ).mount(); 
         new Splide( '#blog-slider', {
             perPage: 3,
             breakpoints: {
@@ -195,18 +197,18 @@
             padding: 10,
         } ).mount();
      // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-         const picker = new Litepicker({
+         const picker = new Litepicker({ 
             element: document.getElementById('litepicker'),
             singleMode: false,
             numberOfMonths: 2,
             numberOfColumns: 2,
             autoApply: false,
-            format: "MMM D",
+            format: "MMM D, YYYY",
             resetButton: true,
             buttonText : {"reset":"Reset Dates"},
-        });
+        }); 
          // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
-         const mpicker = new Litepicker({
+         const mpicker = new Litepicker({ 
              element: document.getElementById('mobile-litepicker'),
              plugins: ['mobilefriendly'],
              singleMode: false,
@@ -217,7 +219,7 @@
              resetButton: true,
              buttonText : {"reset":"Reset"},
          });
-    </script>
+    </script>  
 	</c:if>
 
 
@@ -237,13 +239,13 @@
                 new Mmenu( "#filter-menu", {
                     extensions: ["position-front","fullscreen"],
                     navbar: {
-                      title: "Filters",
+                      title: "Filters",  
                     },
                     navbars		: [{
                         position: "top",
                         content : [ "close", "logo" ],
-                    }],
-                } );
+                    }],          
+                } ); 
             }
         );
         // Initialize Mega menu rollover - required for ALL pages
@@ -297,7 +299,7 @@
               numberOfMonths: 2,
               numberOfColumns: 2,
               autoApply: false,
-              format: "MMM D",
+              format: "MMM D, YYYY",
               resetButton: true,
               buttonText : {"reset":"Reset Dates"},
           });
@@ -422,7 +424,7 @@
                                                  numberOfMonths: 2,
                                                  numberOfColumns: 2,
                                                  autoApply: false,
-                                                 format: "MMM D",
+                                                 format: "MMM D, YYYY",
                                                  resetButton: true,
                                                  buttonText : {"reset":"Reset Dates"},
                                              });
