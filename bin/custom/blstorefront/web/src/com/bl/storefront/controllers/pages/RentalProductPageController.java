@@ -1,7 +1,7 @@
 package com.bl.storefront.controllers.pages;
 
-import com.bl.facades.product.data.RentalDateDto;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * This is created to render rental product details related data .
@@ -33,7 +33,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
   /*
    * This method is used for render rental pdp.
    */
-  @RequestMapping(value = BlControllerConstants.PRODUCT_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+  @GetMapping(value = BlControllerConstants.PRODUCT_CODE_PATH_VARIABLE_PATTERN)
   public String rentalProductDetailPage(
       @PathVariable("productCode") final String encodedProductCode, final Model model,
       final HttpServletRequest request, final HttpServletResponse response)
