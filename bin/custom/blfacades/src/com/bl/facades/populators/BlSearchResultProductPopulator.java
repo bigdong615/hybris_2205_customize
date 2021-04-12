@@ -1,9 +1,5 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.price.service.BlCommercePriceService;
-import com.bl.logging.BlLogger;
-
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -45,6 +41,8 @@ import org.springframework.util.Assert;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.logging.BlLogger;
 
 /**
  * This class is completly overriden for adding custom logics on populator
@@ -87,7 +85,10 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     target.setBaseProduct(this.<String>getValue(source, "baseProductCode"));
     target.setIsDiscontinued(this.<Boolean>getValue(source, "isDiscontinued"));
     // Add Product Tags to product
-    addProductTag(source, target);
+    addProductTag(source,target);
+    //This is for Notify me button on PLP and SLP
+    setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
+
     populatePrices(source, target);
 
     // Populate product's classification features
@@ -294,15 +295,12 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param target target to fill
    */
   private void addProductTag(final SearchResultValueData source, final ProductData target) {
-      setProductTagValues(source, target, BlCoreConstants.IS_NEW, BlCoreConstants.NEW);
-      setProductTagValues(source, target, BlCoreConstants.MOST_POPULAR, BlCoreConstants.POPULAR);
-      if (null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
-        setProductTagValues(source, target, BlCoreConstants.GREAT_VALUE,
-            BlCoreConstants.GREAT_VALUE_STRING);
-        setProductTagValues(source, target, BlCoreConstants.STAFF_PICK,
-            BlCoreConstants.STAFF_PICK_STRING);
-      }
-      setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
+    setProductTagValues(source,target,BlCoreConstants.IS_NEW,BlCoreConstants.NEW);
+    setProductTagValues(source,target,BlCoreConstants.MOST_POPULAR,BlCoreConstants.POPULAR);
+    if(null != this.getValue(source, BlCoreConstants.FOR_RENT)) {
+      setProductTagValues(source,target,BlCoreConstants.GREAT_VALUE,BlCoreConstants.GREAT_VALUE_STRING);
+      setProductTagValues(source, target, BlCoreConstants.STAFF_PICK, BlCoreConstants.STAFF_PICK_STRING);
+    }
   }
 
   /**
@@ -462,7 +460,7 @@ public BlCommercePriceService getCommercePriceService()
 /**
  * @param commercePriceService the commercePriceService to set
  */
-public void setCommercePriceService(BlCommercePriceService commercePriceService)
+public void setCommercePriceService(final BlCommercePriceService commercePriceService)
 {
 	this.commercePriceService = commercePriceService;
 }

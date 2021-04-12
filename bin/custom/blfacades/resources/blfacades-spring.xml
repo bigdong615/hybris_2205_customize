@@ -260,11 +260,15 @@
 	<bean id="blSolrSearchQueryDecoderPopulator"
 		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
 
+	<!-- BL-174:This populator is created for populating product flags-->
+	<bean id="blProductTagPopulator" class="com.bl.facades.populators.BlProductTagPopulator">
+	</bean>
 
 	<!-- BL-166 :This populator is created for populating bl related specific product attribute-->
 	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator">
 		<property name="imageConverter" ref="imageConverter"/>
 		<property name="modelService" ref="modelService"/>
+	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
 	</bean>
 
 	<!-- BL-166:This bean is override to configure bl related populator-->

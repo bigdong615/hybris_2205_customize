@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * @author Manikandan This Class is created for indexing upcomingProduct Value to solr
@@ -32,10 +33,9 @@ public class BlUpComingProductValueProvider extends AbstractPropertyFieldValuePr
       final IndexedProperty indexedProperty, final Object model) {
 
     if (model instanceof BlProductModel) {
-      return addFieldValues(new ArrayList<>(), indexedProperty,
-          ((BlProductModel) model).getSerialProducts().stream()
-              .anyMatch(BlProductModel::getForRent) && ((BlProductModel) model).getForRent()
-              ? Boolean.FALSE : Boolean.TRUE);
+      return addFieldValues(new ArrayList<>(), indexedProperty,((BlProductModel) model).getForRent() &&
+          CollectionUtils.isEmpty(((BlProductModel) model).getSerialProducts())
+              ? Boolean.TRUE : Boolean.FALSE);
 
     }
     return Collections.emptyList();
