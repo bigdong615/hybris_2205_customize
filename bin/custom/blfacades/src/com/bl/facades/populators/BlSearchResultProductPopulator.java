@@ -36,7 +36,6 @@ import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
 /**
@@ -298,7 +297,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * @param value value to be set for target
    */
   private void setProductTagValues (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
-    if (StringUtils.isBlank(target.getProductTagValues()) && null!=this.<Boolean>getValue(source, key)  && this.<Boolean>getValue(source, key)) {
+    if (StringUtils.isBlank(target.getProductTagValues()) && null!=this.<Boolean>getValue(source, key)  && this.<Boolean>getValue(source, key).booleanValue()) {
       target.setProductTagValues(value);
     }
   }
@@ -361,7 +360,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return priceDataFactory;
   }
 
-  @Required
   public void setPriceDataFactory(final PriceDataFactory priceDataFactory)
   {
     this.priceDataFactory = priceDataFactory;
@@ -372,7 +370,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return imageFormatMapping;
   }
 
-  @Required
   public void setImageFormatMapping(final ImageFormatMapping imageFormatMapping)
   {
     this.imageFormatMapping = imageFormatMapping;
@@ -383,7 +380,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return productDataUrlResolver;
   }
 
-  @Required
   public void setProductDataUrlResolver(final UrlResolver<ProductData> productDataUrlResolver)
   {
     this.productDataUrlResolver = productDataUrlResolver;
@@ -394,7 +390,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return productFeatureListPopulator;
   }
 
-  @Required
   public void setProductFeatureListPopulator(final Populator<FeatureList, ProductData> productFeatureListPopulator)
   {
     this.productFeatureListPopulator = productFeatureListPopulator;
@@ -405,7 +400,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return productService;
   }
 
-  @Required
   public void setProductService(final ProductService productService)
   {
     this.productService = productService;
@@ -416,7 +410,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return commonI18NService;
   }
 
-  @Required
   public void setCommonI18NService(final CommonI18NService commonI18NService)
   {
     this.commonI18NService = commonI18NService;
@@ -427,7 +420,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return stockConverter;
   }
 
-  @Required
   public void setStockConverter(final Converter<ProductModel, StockData> stockConverter)
   {
     this.stockConverter = stockConverter;
@@ -438,7 +430,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     return stockLevelStatusConverter;
   }
 
-  @Required
   public void setStockLevelStatusConverter(final Converter<StockLevelStatus, StockData> stockLevelStatusConverter)
   {
     this.stockLevelStatusConverter = stockLevelStatusConverter;

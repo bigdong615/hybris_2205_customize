@@ -16,7 +16,8 @@ public class BlControllerConstants
 	public static final String EMAIL = "email";
 	public static final String RENTAL_PAGE_IDENTIFIER = "rent";
 	public static final String USED_PAGE_IDENTIFIER = "buy";
-	public static final String PRODUCT_CODE_PATH_VARIABLE_PATTERN = "/{productCode:.*}";
+	public static final String FORWARD_SLASH = "/";
+	public static final String PRODUCT_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{productCode:.*}";
 	public static final String IS_RENTAL_PAGE = "IsRentalPage";
 	public static final String HOME_CSS = "home ";
 	public static final String HOMEPAGE = "homepage";
