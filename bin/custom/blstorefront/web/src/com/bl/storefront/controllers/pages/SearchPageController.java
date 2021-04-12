@@ -28,6 +28,8 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +82,7 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "cmsComponentService")
 	private CMSComponentService cmsComponentService;
 
-	@RequestMapping(method = RequestMethod.GET, params = "!q")
+	@RequestMapping(method = RequestMethod.GET, params = "!q") // NOSONAR
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
 			@RequestParam(value="blPageType") final String blPageType,
 			@RequestParam(value = "selectedDate", defaultValue = "")
@@ -88,22 +90,25 @@ public class SearchPageController extends AbstractSearchPageController
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
+		//Setting Rental Dates and Number of Days in Session if available - Temprory code, Once local staore code is done need to remove this code 
+		final List<String> lSelectedDates = Arrays.asList(selectedDate.split(BlControllerConstants.SEPARATOR));
+		if (CollectionUtils.isNotEmpty(lSelectedDates) && lSelectedDates.size() == BlControllerConstants.PAIR_OF_DATES) {
+			final LocalDate selectedFromDate = LocalDate.parse(lSelectedDates.get(0).trim(),	DateTimeFormatter.ofPattern(BlControllerConstants.DATE_FORMAT));
+			final LocalDate selectedToDate = LocalDate.parse(lSelectedDates.get(1).trim(), DateTimeFormatter.ofPattern(BlControllerConstants.DATE_FORMAT));
+			final long numberOfDays = ChronoUnit.DAYS.between(selectedFromDate, selectedToDate.plusDays(1));
+			if (numberOfDays >= BlControllerConstants.MIN_RENTAL_DAYS && numberOfDays <= BlControllerConstants.MAX_RENTAL_DAYS) {
+				getSessionService().setAttribute(BlControllerConstants.SELECTED_FROM_DATE, selectedFromDate);
+				getSessionService().setAttribute(BlControllerConstants.SELECTED_TO_DATE, selectedToDate);
+				getSessionService().setAttribute(BlControllerConstants.NUMBER_OF_DAYS, numberOfDays);
+			}
+		} //Temporary code ends here
 
-		final List<String> lSelectedDates = Arrays.asList(selectedDate.split(SEPARATOR));
-		if (CollectionUtils.isNotEmpty(lSelectedDates) && lSelectedDates.size() == PAIR_OF_DATES)
-		{
-			final LocalDate selectedFromDate = LocalDate.parse(lSelectedDates.get(0).trim(),
-					DateTimeFormatter.ofPattern(DATE_FORMAT));
-			final LocalDate selectedToDate = LocalDate.parse(lSelectedDates.get(1).trim(), DateTimeFormatter.ofPattern(DATE_FORMAT));
-			getSessionService().setAttribute("selectedFromDate", selectedFromDate);
-			getSessionService().setAttribute("selectedToDate", selectedToDate);
-		}
-
-			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
+			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);//NOSONAR
 
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
-			searchQueryData.setValue(searchText);
+			searchQueryData.setValue(searchText.contains(BlControllerConstants.COMMA) ? searchText.replace(BlControllerConstants.COMMA, BlCoreConstants.EMPTY_STRING)
+					: searchText);
 			searchQueryData.setBlPage(blPageType);
 			searchState.setQuery(searchQueryData);
 
@@ -163,7 +168,7 @@ public class SearchPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, params = "q")
+	@RequestMapping(method = RequestMethod.GET, params = "q") // NOSONAR
 	public String refineSearch(@RequestParam("q") final String searchQuery, //NOSONAR
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -209,7 +214,7 @@ public class SearchPageController extends AbstractSearchPageController
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
 			final ShowMode showMode, final String sortCode, final int pageSize ,final String blPageType)
 	{
-		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);
+		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);//NOSONAR
 
 		final SearchStateData searchState = new SearchStateData();
 		final SearchQueryData searchQueryData = new SearchQueryData();
@@ -222,7 +227,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/results", method = RequestMethod.GET)
+	@RequestMapping(value = "/results", method = RequestMethod.GET) // NOSONAR
 	public SearchResultsData<ProductData> jsonSearchResults(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -237,7 +242,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/facets", method = RequestMethod.GET)
+	@RequestMapping(value = "/facets", method = RequestMethod.GET) // NOSONAR
 	public FacetRefinement<SearchStateData> getFacets(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -260,7 +265,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET) // NOSONAR
 	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable final String componentUid,
 			@RequestParam("term") final String term) throws CMSItemNotFoundException
 	{

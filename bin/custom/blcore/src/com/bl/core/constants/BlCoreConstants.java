@@ -3,6 +3,9 @@
  */
 package com.bl.core.constants;
 
+import java.math.RoundingMode;
+
+
 /**
  * Global class for all BlCore constants. You can add global constants for your extension into this class.
  */
@@ -23,13 +26,13 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BRANDS = "Brands";
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
-	public static final String BL_PAGE_TYPE ="blPageType";
-	public static final String USED_GEAR ="Used Gear";
-	public static final String USED_GEAR_CODE ="usedGear";
-	public static final String RATIO =":";
-	public static final String DELIMETER ="|";
-	public static final String ALL_CATEGORIES ="allCategories";
-	public static final String USED_NEW_ARRIVALS ="Used-NewArrivals";
+	public static final String BL_PAGE_TYPE = "blPageType";
+	public static final String USED_GEAR = "Used Gear";
+	public static final String USED_GEAR_CODE = "usedGear";
+	public static final String RATIO = ":";
+	public static final String DELIMETER = "|";
+	public static final String ALL_CATEGORIES = "allCategories";
+	public static final String USED_NEW_ARRIVALS = "Used-NewArrivals";
 	public static final String DEFAULT_SORT_NEWEST_CODE = "default.sort.newest";
 	public static final String USED_VIDEO = "Used-Video";
 	public static final String FOR_RENT = "forRent";
@@ -84,6 +87,14 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final long LOW_AVAILABILITY = 2L;
 	public static final long ZERO_AVAILABILITY = 0L;
 
+	public static final int MINIMUM_RENTAL_DAYS = 3;
+	public static final int MAXIMUM_RENTAL_DAYS = 90;
+	public static final int DEFAULT_RENTAL_DAY = 7;
+	public static final String SELECTED_RENTAL_DAYS = "numberOfDays";
+
+	public static final RoundingMode ROUNDING_MODE = RoundingMode.DOWN;
+	public static final String PRICE_ROW = "pricerow";
+	public static final int DECIMAL_PRECISION = 2;
 
 	private BlCoreConstants()
 	{
