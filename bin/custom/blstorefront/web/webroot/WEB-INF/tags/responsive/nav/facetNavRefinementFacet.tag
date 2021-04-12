@@ -8,12 +8,11 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-
 <c:if test="${not empty facetData.values}">
 <ycommerce:testId code="facetNav_title_${facetData.name}">
 <hr>
- <p><a class="filter-expand" data-bs-toggle="collapse" href="#${facetData.name}" role="button" aria-expanded="false" aria-controls="${facetData.name}">${facetData.name}</a></p>
-	<div class="facet js-facet collapse" id="${facetData.name}">
+ <p><a class="filter-expand" data-bs-toggle="collapse" href="${facetData.code}-${facetData.name}" role="button" aria-expanded="false" aria-controls="${facetData.code}-${facetData.name}">${facetData.name}</a></p>
+	<div class="facet js-facet collapse" id="${facetData.code}-${facetData.name}">
 		<div class="facet__values js-facet-values js-facet-form">
 
 			<c:if test="${not empty facetData.topValues}">
