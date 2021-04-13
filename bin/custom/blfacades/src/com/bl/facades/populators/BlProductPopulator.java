@@ -102,16 +102,15 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
             if (serialProductModel.getConditionRatingOverallScore() != null) {
                 serialProductData
                     .setConditionRating(
-                        serialProductModel.getConditionRatingOverallScore() + 5); //NOSONAR
+                        serialProductModel.getConditionRatingOverallScore() + BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
             } else {
-                serialProductData.setConditionRating(5); //NOSONAR
+                serialProductData.setConditionRating(BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
             }
                     serialProductData.setSerialId(serialProductModel.getProductId());
                     serialProductDataList.add(serialProductData);
                 }
         );
         Collections.sort(serialProductDataList);
-        Collections.reverse(serialProductDataList);
         return serialProductDataList;
     }
 

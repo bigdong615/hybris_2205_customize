@@ -15,6 +15,7 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String USED_PAGE_IDENTIFIER = "buy";
   public static final String TIME_FORMAT_STRING = "HH:mm:ss";
   public static final String DEFAULT_REDIRECT_URL = "/";
+  public static final double DEFAULT_CONDITIONAL_RATING = 5;
 
   private BlFacadesConstants() {
     //empty
