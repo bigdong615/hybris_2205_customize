@@ -12,7 +12,7 @@
 
 <template:page pageTitle="${pageTitle}">
 
-<%-- if required then we can include this cart validation --%>
+<%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
 
   <div class="screen"></div>
