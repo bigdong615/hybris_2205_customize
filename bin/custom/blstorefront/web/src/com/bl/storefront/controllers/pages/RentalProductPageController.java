@@ -53,22 +53,17 @@ public class RentalProductPageController extends AbstractBlProductPageController
   //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
   		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
   		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
-  		if (null != startDate && null != endDate)
-  		{
-  			final RentalDateDto date = new RentalDateDto();
-  			final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d");
-  			date.setSelectedToDate(startDate.format(formatter));
-  			date.setNumberOfDays(endDate.format(formatter));
-  			model.addAttribute("datedata", date);
-  		}
-  		else
-  		{
-  			final RentalDateDto date = new RentalDateDto();
-  			date.setSelectedFromDate("Apr 12");
-  			date.setSelectedToDate("Apr 19");
-  			date.setNumberOfDays("7");
-  			model.addAttribute("datedata", date);
-  		} // Temporary code ends here
+  		if (null != startDate && null != endDate) {
+				final RentalDateDto date = new RentalDateDto();
+				final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d");
+				date.setSelectedFromDate(startDate.format(formatter));
+				date.setSelectedToDate(endDate.format(formatter));
+				model.addAttribute("datedata", date);
+			} else {
+				final RentalDateDto date = new RentalDateDto();
+				date.setNumberOfDays("7 Days Rental");
+				model.addAttribute("datedata", date);
+			} // Temporary code ends here
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }
