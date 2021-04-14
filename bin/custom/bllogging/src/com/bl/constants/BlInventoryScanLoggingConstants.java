@@ -3,7 +3,14 @@ package com.bl.constants;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * {javadoc}
+ *
+ * @auther Namrata Lohar
+ * Scanning specific response messages
+ */
 public class BlInventoryScanLoggingConstants {
+    
     public static final int ZERO = 0;
     public static final int ONE = 1;
     public static final int TWO = 2;
