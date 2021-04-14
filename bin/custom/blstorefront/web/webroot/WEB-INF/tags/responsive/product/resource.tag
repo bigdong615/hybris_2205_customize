@@ -7,4 +7,4 @@
      <div class="collapse" id="resources">
      <product:productResourcesPanel />
      </div>
-     <hr>
+   
