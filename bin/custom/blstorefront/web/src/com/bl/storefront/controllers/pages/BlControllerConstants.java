@@ -30,6 +30,8 @@ public class BlControllerConstants
 	public static final String SELECTED_FROM_DATE = "selectedFromDate";
 	public static final int MIN_RENTAL_DAYS = 3;
 	public static final int MAX_RENTAL_DAYS = 90;
+	public static final String CARTPAGE_CSS = "cart cart-rental ";
+	public static final String CARTPAGE = "cartpage";
 
 	private BlControllerConstants()
 	{

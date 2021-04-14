@@ -12,10 +12,10 @@
 
 <template:page pageTitle="${pageTitle}">
 
-  <%--<cart:cartValidation/>
-	<cart:cartPickupValidation/> --%>
+<%-- if required then we can include this cart validation --%>
+  <%-- <cart:cartValidation/> --%>
 
-   <div class="screen"></div>
+  <div class="screen"></div>
      <section id="cartProcess" class="cart cart-rental">
           <div class="container">
               <div id="cartSteps" class="row justify-content-center">
@@ -55,23 +55,23 @@
                                       <tbody>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
-                                              <td class="text-end">$98.00</td>
+                                              <td class="text-end">$XX.XX</td>
                                           </tr>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.cart.damage.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
-                                              <td class="text-end">$98.00</td>
+                                              <td class="text-end">$XX.XX</td>
                                           </tr>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.shipping"/></td>
-                                              <td class="text-end">–</td>
+                                              <td class="text-end">$XX</td>
                                           </tr>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
-                                              <td class="text-end">–</td>
+                                              <td class="text-end">$XX</td>
                                           </tr>
                                           <tr class="total">
                                               <td><spring:theme code="basket.page.total"/></td>
-                                              <td class="text-end">$160.23</td>
+                                              <td class="text-end">$XX.XX</td>
                                           </tr>
                                       </tbody>
                                   </table>
@@ -83,9 +83,9 @@
                                   </div>
                                   <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
                               </div>
-                              <div class="notification notification-warning">This is a cart warning.</div>
+                              <%-- <div class="notification notification-warning">This is a cart warning.</div>
                               <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
-                              <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div>
+                              <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                               <div class="order-actions my-4"><a href="#" alt="Print Order"><i class="icon-print"></i></a><a href="#"><i class="icon-save" alt="Save Order"></i></a><a href="${emptyCart}" alt="Trash Order" class="clear-cart-page"><i class="icon-trash"></i></a></div>
                           </div>
                       </div>
@@ -94,13 +94,12 @@
           </div>
      </section>
 
-
-
+    <%-- Damage Waivers Modal --%>
     <div class="modal fade" id="damageWaivers" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Damage Waivers Explained</h5>
+                <h5 class="modal-title"><spring:theme code="text.damage.Waiver.model.title"/></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -109,8 +108,8 @@
                         <img src="${themeResourcePath}/assets/gear-guard-plus.png">
                     </div>
                     <div class="col-md-9 col-lg-10">
-                        <p><b>GearGuard Pro Full Value Waiver</b></p>
-                        <p class="body14">Maximum protection from liability due to unintentional damage or loss, including theft and liquid damage, after the same 12% deductible.</p>
+                        <p><b><spring:theme code="text.damage.Waiver.model.option.pro"/></b></p>
+                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.pro.description"/></p>
                         <hr>
                     </div>
                 </div>
@@ -119,8 +118,8 @@
                         <img src="${themeResourcePath}/assets/gear-guard.png">
                     </div>
                     <div class="col-md-9 col-lg-10">
-                        <p><b>GearGuard Value Waiver</b></p>
-                        <p class="body14">Drop something? You’re protected. Just kick in a 12% deductible for any unintended damage.</p>
+                        <p><b><spring:theme code="text.damage.Waiver.model.option.gear"/></b></p>
+                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.gear.description"/></p>
                         <hr>
                     </div>
                 </div>
@@ -130,8 +129,8 @@
                         <img src="${themeResourcePath}/assets/gear-guard-none.png">
                     </div>
                     <div class="col-md-9 col-lg-10">
-                        <p><b>No Damage Waiver</b></p>
-                        <p class="body14">Any damaged or lost gear is completely on you to pay to repair or replace. Yikes!</p>
+                        <p><b><spring:theme code="text.damage.Waiver.model.option"/></b></p>
+                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.description"/></p>
                     </div>
                 </div>
             </div>

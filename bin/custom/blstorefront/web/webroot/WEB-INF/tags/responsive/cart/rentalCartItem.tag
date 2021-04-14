@@ -28,22 +28,25 @@
              </select>
          </div>
      </div>
+
+     <%-- This section will be covered in BL-462 --%>
      <div id="damageOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
-             <p class="body14 mb-1"><spring:theme code="text.cart.damage.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></p>
+             <p class="body14 mb-1"><spring:theme code="text.cart.damage.waiver"/><a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></p>
              <div class="dropdown">
                <a class="btn btn-block btn-outline dropdown-toggle text-start gearguard-plus" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
-                 GearGuard Plus <span class="float-end">$25</span>
+                 GearGuard Plus <span class="float-end">$XX</span>
                </a>
                <ul class="dropdown-menu" aria-labelledby="coverageOptions1">
-                 <li><a class="dropdown-item gearguard-plus" href="#">GearGuard Plus <span class="float-end">$25</span></a></li>
-                 <li><a class="dropdown-item gearguard" href="#">GearGuard <span class="float-end">$15</span></a></li>
-                 <li><a class="dropdown-item no-gearguard" href="#">No Damage Waiver</a></li>
+                 <li><a class="dropdown-item gearguard-plus" href="#"><spring:theme code="text.damage.waiver.option.gear.plus"/> <span class="float-end">$XX</span></a></li>
+                 <li><a class="dropdown-item gearguard" href="#"><spring:theme code="text.damage.waiver.option.gear"/> <span class="float-end">$XX</span></a></li>
+                 <li><a class="dropdown-item no-gearguard" href="#"><spring:theme code="text.damage.waiver"/></a></li>
                </ul>
              </div>
          </div>
      </div>
-     <div id="productOptions" class="row mt-3">
+     <%-- It will be handled in BL-463 --%>
+     <%--<div id="productOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
              <p class="body14 mb-1"><spring:theme code="text.cart.options"/></p>
              <div class="dropdown">
@@ -57,11 +60,12 @@
                </ul>
              </div>
          </div>
-     </div>
-     <div class="productNotifications row">
+     </div>--%>
+
+     <%--<div class="productNotifications row">
          <div class="col-12">
              <div class="notification notification-warning">This is a product warning.</div>
              <div class="notification notification-error">This item is no longer available for your selected date range. Change your dates or select a comparable item.</div>
          </div>
-     </div>
+     </div>--%>
 </div>

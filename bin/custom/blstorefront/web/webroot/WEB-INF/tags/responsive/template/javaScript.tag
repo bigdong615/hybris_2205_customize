@@ -565,8 +565,7 @@
 
 		<%-- BL-457 added JS for rental cart page --%>
 		<c:if test="${cmsPage.uid eq 'cartpage'}">
-
-        <script>
+            <script>
                 // Mobile Menu styles - #my-menu is required for ALL pages
                 document.addEventListener(
                     "DOMContentLoaded", () => {
