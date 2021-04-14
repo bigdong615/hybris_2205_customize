@@ -64,7 +64,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
   		else
   		{
   			final RentalDateDto date = new RentalDateDto();
-  			date.setNumberOfDays("7");
+  			date.setNumberOfDays("7 Days Rental");
   			model.addAttribute("datedata", date);
   		} // Temporary code ends here
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
