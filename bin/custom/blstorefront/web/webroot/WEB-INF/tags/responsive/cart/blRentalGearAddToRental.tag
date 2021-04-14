@@ -16,37 +16,6 @@
             <input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
             <input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
             <input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
-            <c:choose>
-            <c:when test="${product.isUpcoming eq true}">
-             <button type="submit" class="btn btn-outline btn-disabled dis"
-                                        aria-disabled="true" disabled="disabled">
-                                       <spring:theme code="text.notify.me"/>
-                                </button>
-            </c:when>
-            
-             <c:when test="${product.isDiscontinued}">
-                    <button type="submit" class="btn btn-outline btn-disabled"
-                            aria-disabled="true" disabled="disabled">
-                            <spring:theme code="text.add.to.rental"/>
-                    </button>
-                </c:when> 
-            <c:otherwise>
-             <c:choose>
-                            <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
-                                <button type="submit" class="btn btn-outline btn-disabled"
-                                        aria-disabled="true" disabled="disabled">
-                                        <spring:theme code="text.add.to.rental"/>
-                                </button>
-                            </c:when>
-                            <c:otherwise>
-                                <button type="submit" class="btn btn-primary">
-                                <spring:theme code="text.add.to.rental"/>
-                                </button>
-                            </c:otherwise>
-                        </c:choose>
-            </c:otherwise>
-            </c:choose>
-
 			<c:choose>
 				<c:when test="${product.isUpcoming eq true}">
 					<button type="submit" class="btn btn-outline btn-disabled dis"
@@ -77,7 +46,6 @@
 				</c:choose>
 			</c:otherwise>
 		</c:choose>
-
 
 
 
