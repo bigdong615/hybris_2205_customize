@@ -45,7 +45,7 @@ public class AssistedServiceAuthenticationToken extends UsernamePasswordAuthenti
 		if (!isEmulating())
 		{
 			final List<GrantedAuthority> authorirites = new ArrayList();
-			authorirites.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
+			authorirites.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));//NOSONAR
 			return Collections.unmodifiableCollection(authorirites);
 		}
 		else

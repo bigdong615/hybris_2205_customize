@@ -63,11 +63,11 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isEmpty(pwd))
         {
-            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);
+            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);//NOSONAR
         }
         else if (StringUtils.length(pwd) < BlControllerConstants.PASSWORD_MIN_LENGTH || StringUtils.length(pwd) >BlControllerConstants.PASSWORD_MAX_LENGTH)
         {
-            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);
+            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);//NOSONAR
         }
     }
 

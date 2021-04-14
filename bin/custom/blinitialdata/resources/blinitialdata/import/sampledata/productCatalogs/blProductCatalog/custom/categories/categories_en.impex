@@ -67,6 +67,22 @@ UPDATE Category;code[unique=true];$catalogVersion;name[lang=$lang]
                ;headphones;;Headphones
                ;video-lighting-batteries;;Lighting Batteries
 
+## BL-80 Added for Used Gear Categories
+INSERT_UPDATE Category; code[unique = true]    ; $catalogVersion; name[lang = $lang]
+                      ; Used-Lenses            ;                ; Used Lenses
+                      ; Used-Cameras           ;                ; Used Cameras
+                      ; Used-Lighting          ;                ; Used Lighting
+                      ; Used-Video             ;                ; Used Video
+                      ; Used-Accessories       ;                ; Used Accessories
+                      ; Used-NewArrivals       ;                ; Used NewArrivals
+###### BL -331 Added for rental gear PLP
+                      ; NewArrivals-Cameras    ;                ; New Cameras
+                      ; NewArrivals-Lenses     ;                ; New Lenses
+                      ; NewArrivals-Production ;                ; New Production
+               ;rentalgear;;Rental Gear
+
+
+
 # Insert Category Description
 UPDATE Category;$catalogVersion;code[unique=true];description[lang=en]
                ;;cameras;"<h1>Camera Rental</h1>

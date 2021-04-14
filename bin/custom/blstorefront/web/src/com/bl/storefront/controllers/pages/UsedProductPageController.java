@@ -1,5 +1,6 @@
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -36,10 +37,10 @@ public class UsedProductPageController extends AbstractBlProductPageController {
 
     final ProductData productData = productFacade
         .getProductForCodeAndOptions(productCode, extraOptions);
-    productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
+    productData.setProductPageType(BlControllerConstants.USED_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, false);
+    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
-
   }
 }
 

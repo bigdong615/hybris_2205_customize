@@ -6,9 +6,11 @@
         xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
         xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
         xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+		xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch"
         xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
         xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
         xmlns:y="http://www.hybris.com/cockpit/config/hybris"
+		xmlns:lv="http://www.hybris.com/cockpitng/component/listView"
         xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
         xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea">
 
@@ -18,6 +20,10 @@
             <n:navigation-node id="BLBackoffice">
                 <n:type-node id="BlProduct" code="BlProduct"/>
                 <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
+				<n:navigation-node id="BlPricingRatio">
+					<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
+					<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
+				</n:navigation-node>
                 <n:navigation-node id="BLProduct Inventory">
                     <n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
                     <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
@@ -67,6 +73,7 @@
 						<wz:property qualifier="supercategories"/>
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="procurementCost"/>
+						<wz:property qualifier="retailPrice"/>
 						<wz:property qualifier="procurementSource"/>
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
@@ -126,7 +133,124 @@
 		</wz:flow>
 	</context>
 
-	<context component="create-wizard" type="ProductVideo" merge-by="type">
+	<context merge-by="type" type="BlPricingLogic" component="listview">
+		<lv:list-view>
+			<lv:column qualifier="productType"/>
+			<lv:column qualifier="tier"/>
+			<lv:column qualifier="greaterThan"/>
+			<lv:column qualifier="lessThan"/>
+			<lv:column qualifier="pctOfRetail"/>
+		</lv:list-view>
+	</context>
+	<context type="BlPricingLogic" component="create-wizard">
+		<wz:flow id="BlPricingLogicWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="itemPrepare">
+				<wz:initialize property="newBlPricingLogic" type="ctx.TYPE_CODE"/>
+			</wz:prepare>
+			<wz:step id="step1" label="flow.allmanadatory">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlPricingLogic">
+						<wz:property qualifier="productType"/>
+						<wz:property qualifier="tier"/>
+						<wz:property qualifier="greaterThan"/>
+						<wz:property qualifier="lessThan"/>
+						<wz:property qualifier="pctOfRetail"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done/>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<context type="PriceRow" component="create-wizard-no-save" merge-by="type">
+		<wz:flow id="PriceRowWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="pricePrepare">
+				<wz:initialize property="newPrice" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newPrice.product" value="ctx.parentObject"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.pricetrow.essential.label">
+				<wz:content id="step1.content">
+					<wz:property-list root="newPrice">
+						<wz:property qualifier="product"/>
+						<wz:property qualifier="duration"/>
+						<wz:property qualifier="currency"/>
+						<wz:property qualifier="unit"/>
+						<wz:property qualifier="minqtd"/>
+						<wz:property qualifier="net">
+							<wz:editor-parameter>
+								<wz:name>trueLabel</wz:name>
+								<wz:value>netTrue</wz:value>
+							</wz:editor-parameter>
+							<wz:editor-parameter>
+								<wz:name>falseLabel</wz:name>
+								<wz:value>netFalse</wz:value>
+							</wz:editor-parameter>
+						</wz:property>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:back/>
+					<wz:done/>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+
+	<context merge-by="type" type="BlStandardPricingRatio" component="listview">
+		<lv:list-view>
+			<lv:column qualifier="duration"/>
+			<lv:column qualifier="pricingRatio"/>
+		</lv:list-view>
+	</context>
+	<context merge-by="type" type="BlConstrainedPricingRatio" component="listview">
+		<lv:list-view>
+			<lv:column qualifier="duration"/>
+			<lv:column qualifier="pricingRatio"/>
+		</lv:list-view>
+	</context>
+
+	<context merge-by="type" parent="PDTRow" type="PriceRow" component="listview">
+		<lv:list-view>
+			<lv:column qualifier="product"/>
+			<lv:column qualifier="price" spring-bean="standardCurrencyListViewRenderer"/>
+			<lv:column qualifier="currency"/>
+			<lv:column qualifier="duration"/>
+			<lv:column qualifier="pg" merge-mode="REMOVE"/>
+			<lv:column qualifier="user" merge-mode="REMOVE"/>
+			<lv:column qualifier="ug" merge-mode="REMOVE"/>
+			<lv:column qualifier="channel" merge-mode="REMOVE"/>
+		</lv:list-view>
+	</context>
+
+	<context type="Product" component="advanced-search" merge-by="type" parent="GenericItem">
+		<as:advanced-search>
+			<as:field-list>
+				<as:field name="constrained"/>
+				<as:field name="productType"/>
+			</as:field-list>
+		</as:advanced-search>
+	</context>
+	<context merge-by="type" parent="GenericItem" type="PriceRow" component="europe1PricesListView">
+		<lv:list-view>
+			<lv:column qualifier="product"/>
+			<lv:column qualifier="pg" merge-mode="REMOVE"/>
+			<lv:column qualifier="user" merge-mode="REMOVE"/>
+			<lv:column qualifier="ug" merge-mode="REMOVE"/>
+			<lv:column qualifier="duration"/>
+			<lv:column qualifier="minqtd"/>
+			<lv:column qualifier="unit" merge-mode="REMOVE"/>
+			<lv:column qualifier="price" spring-bean="standardCurrencyListViewRenderer"/>
+			<lv:column qualifier="currency"/>
+			<lv:column qualifier="net" merge-mode="REMOVE"/>
+		</lv:list-view>
+	</context>
+
+	<context component="create-wizard" type="ProductVideo"  merge-by="type">
 		<wz:flow id="ProductVideoWizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:step id="step1" label="essential.label" sublabel="essential.sublabel">
 				<wz:content id="step1.content">
@@ -146,7 +270,7 @@
 			</wz:step>
 		</wz:flow>
 	</context>
-
+	
 	<context component="editor-area" merge-by="type" parent="ProductVideo">
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="">

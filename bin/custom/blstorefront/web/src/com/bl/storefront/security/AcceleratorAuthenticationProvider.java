@@ -30,7 +30,7 @@ public class AcceleratorAuthenticationProvider extends AbstractAcceleratorAuthen
 {
 	private static final String ROLE_ADMIN_GROUP = "ROLE_" + Constants.USER.ADMIN_USERGROUP.toUpperCase();
 
-	private GrantedAuthority adminAuthority = new SimpleGrantedAuthority(ROLE_ADMIN_GROUP);
+	private GrantedAuthority adminAuthority = new SimpleGrantedAuthority(ROLE_ADMIN_GROUP);//NOSONAR
 
 	/**
 	 * @see de.hybris.platform.acceleratorstorefrontcommons.security.AbstractAcceleratorAuthenticationProvider#additionalAuthenticationChecks(org.springframework.security.core.userdetails.UserDetails,
@@ -57,7 +57,7 @@ public class AcceleratorAuthenticationProvider extends AbstractAcceleratorAuthen
 		}
 		else
 		{
-			adminAuthority = new SimpleGrantedAuthority(adminGroup);
+			adminAuthority = new SimpleGrantedAuthority(adminGroup);//NOSONAR
 		}
 	}
 
