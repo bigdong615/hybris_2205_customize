@@ -106,7 +106,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
     populateUrl(source, target);
     populatePromotions(source, target);
-    populateStock(source, target);
+    populateStock(target);
   }
 
   protected void populatePrices(final SearchResultValueData source, final ProductData target)
@@ -155,7 +155,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     }
   }
 
-  protected void populateStock(final SearchResultValueData source, final ProductData target)
+  /**
+   * It sets the stock data to productData
+   * @param target
+   */
+  protected void populateStock(final ProductData target)
   {
 		try
 		{
