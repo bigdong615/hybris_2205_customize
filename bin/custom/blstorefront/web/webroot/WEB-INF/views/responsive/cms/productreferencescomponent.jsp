@@ -35,7 +35,8 @@
                                                      </div>
                                                    </div>
                                                    <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
-                                                   <h6 class="product"><a href="#">${fn:escapeXml(productReference.target.name)}</a></h6>
+                                                   <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                   <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
                                                    <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                                    <h6 class="price"><product:productListerItemPrice product="${productReference.target}"/> <span class="period">${datedata.selectedFromDate} - ${datedata.selectedToDate}</span></h6>
                                                     <c:choose>

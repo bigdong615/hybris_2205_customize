@@ -99,14 +99,18 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
         final List<SerialProductData> serialProductDataList = new ArrayList<>();
         blSerialProductModels.forEach(serialProductModel -> {
                     SerialProductData serialProductData = new SerialProductData();
-                    serialProductData
-                            .setConditionRating(serialProductModel.getConditionRatingOverallScore() + 5); //NOSONAR
+            if (serialProductModel.getConditionRatingOverallScore() != null) {
+                serialProductData
+                    .setConditionRating(
+                        serialProductModel.getConditionRatingOverallScore() + BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
+            } else {
+                serialProductData.setConditionRating(BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
+            }
                     serialProductData.setSerialId(serialProductModel.getProductId());
                     serialProductDataList.add(serialProductData);
                 }
         );
         Collections.sort(serialProductDataList);
-        Collections.reverse(serialProductDataList);
         return serialProductDataList;
     }
 
