@@ -47,9 +47,41 @@
             </c:otherwise>
             </c:choose>
 
+			<c:choose>
+				<c:when test="${product.isUpcoming eq true}">
+					<button type="submit" class="btn btn-outline btn-disabled dis"
+						aria-disabled="true" disabled="disabled">
+						<spring:theme code="text.notify.me" />
+					</button>
+				</c:when>
+				<c:when test="${product.isDiscontinued}">
+					<button type="submit" class="btn btn-outline btn-disabled"
+						aria-disabled="true" disabled="disabled">
+						<spring:theme code="text.add.to.rental" />
+					</button>
+				</c:when>
+				<c:otherwise>
+				<c:choose>
+					<c:when
+						test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
+						<button type="submit" class="btn btn-outline btn-disabled"
+							aria-disabled="true" disabled="disabled">
+							<spring:theme code="text.add.to.rental" />
+						</button>
+					</c:when>
+					<c:otherwise>
+						<button type="submit" class="btn btn-primary">
+							<spring:theme code="text.add.to.rental" />
+						</button>
+					</c:otherwise>
+				</c:choose>
+			</c:otherwise>
+		</c:choose>
 
 
-    </form:form>
+
+
+	</form:form>
 
     <form:form id="configureForm${fn:escapeXml(product.code)}" action="${configureProductUrl}" method="get" class="configure_form">
         <c:if test="${product.configurable}">
@@ -61,7 +93,7 @@
                     </button>
                 </c:when>
                 <c:otherwise>
-                    <button id="configureProduct" type="button" class="btn btn-primary btn-block js-enable-btn" disabled="disabled"
+                    <button id="configureProduct" type="button" class="btn btn-primary btn-block js-enable-btn"
                             onclick="location.href='${fn:escapeXml(configureProductUrl)}'">
                         <spring:theme code="basket.configure.product"/>
                     </button>
