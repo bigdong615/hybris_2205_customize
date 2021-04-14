@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -28,7 +29,6 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,8 +46,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.bl.core.constants.BlCoreConstants;
 
 
 @Controller
@@ -207,7 +205,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
-			final ShowMode showMode, final String sortCode, final int pageSize ,final String blPageType)
+			final ShowMode showMode, final String sortCode, final int pageSize ,String blPageType)
 	{
 		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);//NOSONAR
 
