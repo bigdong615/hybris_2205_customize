@@ -14,7 +14,6 @@
 <div class="cartProduct">
      <div class="row">
          <div class="col-md-2 text-center">
-          <%--<img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD5796f428-6173-4219-8a48-683c1afd2b05.jpg">--%>
           <a href="${fn:escapeXml(productUrl)}"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
          </div>
          <div class="col-md-7 mt-3"><b>${entry.product.name}</b></div>
