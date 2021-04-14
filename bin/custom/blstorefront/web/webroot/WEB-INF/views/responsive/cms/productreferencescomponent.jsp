@@ -63,7 +63,7 @@
                                                    </c:choose>
                                                     <c:choose>
                                                           <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
-                                                                <button type="submit" class="btn btn-primary" disabled="disabled">Add To Rental </button>
+                                                                <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
                                                           </c:when>
                                                           <c:when test="${productReference.target.isUpcoming}">
                                                                 <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
