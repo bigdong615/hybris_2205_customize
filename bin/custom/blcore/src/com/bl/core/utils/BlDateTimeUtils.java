@@ -15,6 +15,8 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -29,6 +31,7 @@ public final class BlDateTimeUtils
 {
 	private static final Logger LOG = Logger.getLogger(BlDateTimeUtils.class);
 	private static final String UNABLE_TO_PARSE_DATE = "Unable to parse String : {} to Date.";
+	private static Map<String, DateTimeFormatter> formatterCache = new HashMap<>();
 
 	private BlDateTimeUtils()
 	{
@@ -148,11 +151,11 @@ public final class BlDateTimeUtils
 	private static DateTimeFormatter getFormatter(final String pattern)
 	{
 
-		if (!BlCoreConstants.formatterCache.containsKey(pattern))
+		if (!formatterCache.containsKey(pattern))
 		{
-			BlCoreConstants.formatterCache.put(pattern, DateTimeFormatter.ofPattern(pattern));
+			formatterCache.put(pattern, DateTimeFormatter.ofPattern(pattern));
 		}
-		return BlCoreConstants.formatterCache.get(pattern);
+		return formatterCache.get(pattern);
 	}
 
 	/**
