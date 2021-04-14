@@ -17,7 +17,6 @@
                                 <c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
             				        	<li class="splide__slide">
                                             <div class="card">
-                                            sahana${productReference.target.stock.stockLevelStatus.code}
                                          <c:choose>
                                                   <c:when test="${productReference.target.stock.stockLevelStatus.code eq 'lowStock'}">
                                             				<span class="badge badge-limited-stock"><spring:theme
