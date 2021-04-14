@@ -11,8 +11,6 @@
 <%@ taglib prefix="common" tagdir="/WEB-INF/tags/responsive/common"%>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -44,8 +42,7 @@
 				<jsp:doBody />
 			</div>
 
-      <footer:footer />
-
+			<footer:footer />
 	
 </div>
 	</jsp:body >
