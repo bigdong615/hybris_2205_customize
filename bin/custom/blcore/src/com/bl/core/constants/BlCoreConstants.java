@@ -4,6 +4,10 @@
 package com.bl.core.constants;
 
 import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.scheduling.support.CronSequenceGenerator;
 
 
 /**
@@ -95,6 +99,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final RoundingMode ROUNDING_MODE = RoundingMode.DOWN;
 	public static final String PRICE_ROW = "pricerow";
 	public static final int DECIMAL_PRECISION = 2;
+
+	public static Map<String, DateTimeFormatter> formatterCache = new HashMap<>();
+	public static Map<String, CronSequenceGenerator> cronSequenceGeneratorCache = new HashMap<>();
+	public static final String DEFAULT_ZONE_ID = "UTC";
 
 	private BlCoreConstants()
 	{
