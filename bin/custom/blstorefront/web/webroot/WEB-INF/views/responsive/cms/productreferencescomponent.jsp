@@ -58,7 +58,7 @@
                                                             <span class="period">${datedata.selectedFromDate} - ${datedata.selectedToDate}</span></h6>
                                                         </c:when>
                                                         <c:otherwise>
-                                                             <span class="period">${datedata.numberOfDays}Days Rental</span></h6>
+                                                             <span class="period">${datedata.numberOfDays}<spring:theme code="pdp.rental.product.recommendation.section.days rental.text" /></span></h6>
                                                         </c:otherwise>
                                                    </c:choose>
                                                     <c:choose>
