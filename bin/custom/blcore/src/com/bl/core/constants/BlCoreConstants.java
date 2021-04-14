@@ -96,6 +96,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PRICE_ROW = "pricerow";
 	public static final int DECIMAL_PRECISION = 2;
 
+	public static final String DEFAULT_ZONE_ID = "UTC";
+
 	private BlCoreConstants()
 	{
 		//empty

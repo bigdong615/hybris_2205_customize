@@ -13,7 +13,7 @@ import java.util.Date;
 
 import com.bl.core.data.StockResult;
 import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BookingDateUtils;
+import com.bl.core.utils.BlDateTimeUtils;
 
 
 /**
@@ -40,9 +40,9 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
 		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
 		if (null != startDate && null != endDate) {
-			final Date startDay = BookingDateUtils
+			final Date startDay = BlDateTimeUtils
 					.convertStringDateToDate(startDate.toString(), "yyyy-MM-dd");
-			final Date endDay = BookingDateUtils
+			final Date endDay = BlDateTimeUtils
 					.convertStringDateToDate(endDate.toString(), "yyyy-MM-dd");
 			final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
 					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
