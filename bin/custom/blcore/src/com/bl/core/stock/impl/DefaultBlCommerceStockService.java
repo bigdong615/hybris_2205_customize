@@ -67,7 +67,35 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final StockResult stockResult = new StockResult();
 		stockResult.setTotalCount(totalUnits);
 		stockResult.setAvailableCount(availability);
+		setStockLevelStatus(stockResult);
 		return stockResult;
+	}
+
+	/**
+	 * This is to set the stock level status of a SKU
+	 *
+	 * @param stockResult the stockResult object
+	 */
+	private void setStockLevelStatus(final StockResult stockResult) {
+		final Long totalUnits = stockResult.getTotalCount();
+		final Long availability = stockResult.getAvailableCount();
+		StockLevelStatus resultStatus;
+		if (totalUnits >= BlCoreConstants.MIN_TOTAL && totalUnits < BlCoreConstants.MAX_TOTAL
+				&& availability <= BlCoreConstants.LOW_AVAILABILITY)
+		{
+			resultStatus = StockLevelStatus.LOWSTOCK;
+		}
+		else if (totalUnits >= BlCoreConstants.MAX_TOTAL && availability <= BlCoreConstants.MIN_TOTAL)
+		{
+			resultStatus = StockLevelStatus.LOWSTOCK;
+		}
+		else if (availability <= BlCoreConstants.ZERO_AVAILABILITY)
+		{
+			resultStatus = StockLevelStatus.OUTOFSTOCK;
+		} else {
+			resultStatus = StockLevelStatus.INSTOCK;
+		}
+		stockResult.setStockLevelStatus(resultStatus);
 	}
 
 	/**
@@ -88,25 +116,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	public StockLevelStatus getStockLevelStatus(final Collection<WarehouseModel> warehouses, final String productCode,
 			final Date startDate, final Date endDate) {
 		final StockResult stockResult = getStockForEntireDuration(productCode, warehouses, startDate, endDate);
-		final Long totalUnits = stockResult.getTotalCount();
-		final Long availability = stockResult.getAvailableCount();
-		StockLevelStatus resultStatus;
-		if (totalUnits >= BlCoreConstants.MIN_TOTAL && totalUnits < BlCoreConstants.MAX_TOTAL
-				&& availability <= BlCoreConstants.LOW_AVAILABILITY)
-		{
-			resultStatus = StockLevelStatus.LOWSTOCK;
-		}
-		else if (totalUnits >= BlCoreConstants.MAX_TOTAL && availability <= BlCoreConstants.MIN_TOTAL)
-		{
-			resultStatus = StockLevelStatus.LOWSTOCK;
-		}
-		else if (availability <= BlCoreConstants.ZERO_AVAILABILITY)
-		{
-			resultStatus = StockLevelStatus.OUTOFSTOCK;
-		} else {
-			resultStatus = StockLevelStatus.INSTOCK;
-		}
-		return resultStatus;
+		return stockResult.getStockLevelStatus();
 	}
 
 	/**
@@ -145,6 +155,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 			}
 			else {
 				makeZeroAvailability(availability, totalUnits);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and date between : {} and {}",
+						productCode, startDate, endDate);
 			}
 		}
 		else
