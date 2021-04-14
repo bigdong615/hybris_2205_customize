@@ -112,5 +112,4 @@
                                <product:resource />
                                <div id="gear-slider" class="splide mt-4">
                               </div>
-                               <!-- Start Reviews -->
-                              <product:blProductReview />
+                             </div>
