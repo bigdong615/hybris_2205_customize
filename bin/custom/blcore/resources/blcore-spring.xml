@@ -662,6 +662,27 @@
 		<property name="rootCategory" value="1"/>
 	</bean>
 
+
+	<!-- BL-110-v2 BLInventoryLocation item Prepare Interceptor to generate inventoryLocationID-->
+	<alias name="blInventoryLocationPrepareInterceptor" alias="blInventoryLocationPrepareInterceptor"/>
+	<bean id="blInventoryLocationPrepareInterceptor" class="com.bl.core.model.interceptor.BlInventoryLocationPrepareInterceptor">
+		<property name="keyGenerator" ref="inventoryLocationIdGenerator"/>
+	</bean>
+
+	<bean id="blInventoryLocationPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blInventoryLocationPrepareInterceptor"/>
+		<property name="typeCode" value="BLInventoryLocation"/>
+	</bean>
+
+	<!-- InventoryLocation Id generator-->
+	<bean id="inventoryLocationIdGenerator" class="de.hybris.platform.servicelayer.keygenerator.impl.PersistentKeyGenerator">
+		<property name="key" value="${keygen.inventoryLocation.id.name}"/>
+		<property name="digits" value="${keygen.inventoryLocation.id.digits}"/>
+		<property name="start" value="${keygen.inventoryLocation.id.start}"/>
+		<property name="type" value="${keygen.inventoryLocation.id.type}"/>
+		<property name="template" value="${keygen.inventoryLocation.id.template}"/>
+	</bean>
+
 	<!--BL-91 Adding attribute handler classes for dynamic attributes-->
 	<bean id="serialProductNotInServiceHandler" class="com.bl.core.model.handler.SerialProductNotInServiceHandler"/>
 	<bean id="serialProductTotalRentedDaysHandler" class="com.bl.core.model.handler.SerialProductTotalRentedDaysHandler"/>
@@ -771,5 +792,12 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
     </bean>
+
+	<!--BL-110 Inventory Scan Tool-->
+	<bean id="blInventoryScanToolDao" name="blInventoryScanToolDao"
+		  class="com.bl.core.inventory.scan.dao.impl.DefaultBlInventoryScanToolDao"/>
+
+	<bean id="blInventoryScanToolService" name="blInventoryScanToolService"
+		  class="com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService"/>
 
 </beans>
