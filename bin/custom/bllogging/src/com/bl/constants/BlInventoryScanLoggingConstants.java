@@ -10,7 +10,7 @@ import java.util.List;
  * Scanning specific response messages
  */
 public class BlInventoryScanLoggingConstants {
-
+    
     public static final int ZERO = 0;
     public static final int ONE = 1;
     public static final int TWO = 2;
