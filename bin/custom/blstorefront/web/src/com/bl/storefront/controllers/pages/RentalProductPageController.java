@@ -57,15 +57,16 @@ public class RentalProductPageController extends AbstractBlProductPageController
   		{
   			final RentalDateDto date = new RentalDateDto();
   			final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d");
-  			date.setSelectedToDate(startDate.format(formatter));
-  			date.setNumberOfDays(endDate.format(formatter));
+  			date.setSelectedFromDate(startDate.format(formatter));
+				date.setSelectedToDate(endDate.format(formatter));
+  		//	date.setNumberOfDays(endDate.format(formatter));
   			model.addAttribute("datedata", date);
   		}
   		else
   		{
   			final RentalDateDto date = new RentalDateDto();
-  			date.setSelectedFromDate("Apr 12");
-  			date.setSelectedToDate("Apr 19");
+  		//	date.setSelectedFromDate("Apr 12");
+  		//	date.setSelectedToDate("Apr 19");
   			date.setNumberOfDays("7");
   			model.addAttribute("datedata", date);
   		} // Temporary code ends here
