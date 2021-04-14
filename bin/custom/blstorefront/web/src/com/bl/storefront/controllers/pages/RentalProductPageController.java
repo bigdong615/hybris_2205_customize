@@ -50,7 +50,6 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, extraOptions);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-
   //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
   		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
   		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
@@ -70,7 +69,6 @@ public class RentalProductPageController extends AbstractBlProductPageController
   			date.setNumberOfDays("7");
   			model.addAttribute("datedata", date);
   		} // Temporary code ends here
-
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }
