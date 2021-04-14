@@ -37,9 +37,7 @@
 		<script src="${commonResourcePathHtml}/js/jquery.slideviewer.custom.1.2.js"></script>
 		
 		<%-- Custom ACC JS --%>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
-		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+    <script src="${commonResourcePathHtml}/js/acc.address.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.autocomplete.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.carousel.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.cart.js"></script>
@@ -565,8 +563,8 @@
 
 		</c:if>
 
-		<!-- BL-457 added JS for rental cart page -->
-		<c:if test="${cmsPage.uid eq 'cartPage'}">
+		<%-- BL-457 added JS for rental cart page --%>
+		<c:if test="${cmsPage.uid eq 'cartpage'}">
 
         <script>
                 // Mobile Menu styles - #my-menu is required for ALL pages
