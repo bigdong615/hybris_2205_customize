@@ -17,7 +17,9 @@
                                 <c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
             				        	<li class="splide__slide">
                                             <div class="card">
-                                          <span class="badge badge-new"><spring:theme code="pdp.rental.product.recommendation.section.new.text" /></span>
+                                            <c:if test ="${productReference.target.productTagValues ne null}">
+                                            <span class="badge badge-new">${productReference.target.productTagValues}</span>
+                                            </c:if>
                                                <span class="bookmark"></span>
                                                    <div class="card-slider splide">
                                                      <div class="splide__track">
@@ -33,11 +35,13 @@
                                                      </div>
                                                    </div>
                                                    <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
-                                                   <h6 class="product"><a href="#">${fn:escapeXml(productReference.target.name)}</a></h6>
-                                                   <h6 class="price">$44 <span class="period">${datedata.selectedFromDate} - ${datedata.selectedToDate}</span></h6>
+                                                   <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                   <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
+                                                   <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
+                                                   <h6 class="price"><product:productListerItemPrice product="${productReference.target}"/> <span class="period">${datedata.selectedFromDate} - ${datedata.selectedToDate}</span></h6>
                                                     <c:choose>
                                                           <c:when test="${productReference.target.isDiscontinued}">
-                                                                <a href="#" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" /></a>
+                                                                <a href="#" class="btn btn-outline" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" /></a>
                                                           </c:when>
                                                           <c:when test="${productReference.target.isUpcoming}">
                                                                 <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>

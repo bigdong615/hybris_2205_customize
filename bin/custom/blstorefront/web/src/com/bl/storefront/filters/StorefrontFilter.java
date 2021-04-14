@@ -57,8 +57,8 @@ public class StorefrontFilter extends OncePerRequestFilter
 			if (StringUtils.isBlank(request.getHeader(AJAX_REQUEST_HEADER_NAME)) && !isRequestPathExcluded(request))
 			{
 				final String requestURL = request.getRequestURL().toString();
-				session.setAttribute(ORIGINAL_REFERER, StringUtils.isNotBlank(queryString) ? requestURL + "?" + queryString
-						: requestURL);	// NOSONAR
+				session.setAttribute(ORIGINAL_REFERER, StringUtils.isNotBlank(queryString) ? requestURL + "?" + queryString // NOSONAR
+						: requestURL);
 			}
 
 			getBrowseHistory().addBrowseHistoryEntry(new BrowseHistoryEntry(request.getRequestURI(), null));

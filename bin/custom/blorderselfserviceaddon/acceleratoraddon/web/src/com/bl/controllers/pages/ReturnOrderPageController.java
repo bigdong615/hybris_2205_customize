@@ -89,7 +89,7 @@ public class ReturnOrderPageController extends AbstractSearchPageController
 	 * Display the return order page
 	 */
 	@RequireHardLogIn
-	@RequestMapping(value = "/{orderCode:.*}/returns", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/{orderCode:.*}/returns", method = { RequestMethod.POST, RequestMethod.GET })//NOSONAR
 	public String showReturnOrderPage(@PathVariable(value = "orderCode") final String orderCode, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException // NOSONAR
 	{

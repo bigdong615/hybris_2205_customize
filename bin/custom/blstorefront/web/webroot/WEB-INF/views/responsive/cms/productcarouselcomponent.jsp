@@ -42,7 +42,8 @@
 									</div>
 								</div>
 								<p class="overline">${product.manufacturer}</p>
-								<h6 class="product"><c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></h6>
+								<c:url var="rentalPDPUrl" value="/rent/product/${product.code}"/>
+								<h6 class="product"><a href="${rentalPDPUrl}"><c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a></h6>
                                 <h6 class="price"><product:productListerItemPrice product="${product}"/> <span class="period"><spring:theme code="text.product.tile.rental.days" arguments="7"/></span></h6>
                                 <c:choose>
                                 	<c:when test="${product.isDiscontinued}">
