@@ -102,6 +102,10 @@ nav, .alert-promo { z-index: 1030; } /* was 1999 - interfered with modal */
 .icon-checkbadge { background: url(../assets/icon-checkbadge.svg) center no-repeat; }
 .icon-truck { background: url(../assets/icon-truck.svg) center no-repeat; }
 .icon-calendar { background: url(../assets/icon-calendar.svg) center no-repeat; }
+.icon-print { background: url(../assets/icon-print.svg) center no-repeat; }
+.icon-save { background: url(../assets/icon-save.svg) center no-repeat; }
+.icon-trash { background: url(../assets/icon-trash.svg) center no-repeat; }
+
 .submenu .card { transition: .2s; color: white; padding: 20px; border: none; margin: 20px 0; text-decoration: none; }
 .submenu .card:hover { box-shadow: 0 3px 14px rgba(0,0,0,.5); -webkit-box-shadow: 0 3px 14px rgba(0,0,0,.5); }
 .submenu .card-fast { background-color: #52bfc0; }
@@ -302,7 +306,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 /* Datepicker */
 .litepicker { border-radius: 10px; font-family: font-family: 'Poppins', 'Helvetica', Arial, sans-serif; font-weight: 400; box-shadow: 0 15px 20px rgb(0,0,0,.5); -webkit-box-shadow: 0 15px 20px rgb(0,0,0,.5); }
 /* Litepicker position override */
-.litepicker:not(.mobilefriendly) { left: auto!important; right: 40px!important; }
+#globalSearch .litepicker:not(.mobilefriendly) { left: auto!important; right: 40px!important; }
 .home .litepicker:not(.mobilefriendly) { left: 50%!important; margin-left: -385px; width: 770px; }
 .litepicker:not(.mobilefriendly) .container__months .month-item { width: calc(var(--litepicker-month-width) + 57px); padding: 10px 20px 0; }
 .litepicker:not(.mobilefriendly) .container__months.columns-2 { padding: 30px 20px 0; -webkit-box-shadow: none; box-shadow: none; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; width: calc((var(--litepicker-month-width) * 2) + 200px); }
@@ -355,6 +359,8 @@ ul.checklist li:before { opacity: .5; content: ''; display: block; position: abs
 .brand-logos li.canon img, .brand-logos li.panasonic img, .brand-logos li.dji img, .logo-slider li.canon img, .logo-slider li.panasonic img, .logo-slider li.dji img { filter: invert(59%) sepia(0%) saturate(0%) hue-rotate(177deg) brightness(127%) contrast(90%); }
 .brand-logos li:hover img { filter: none; }
 .splide__slide .card h6, .splide__slide .card p, #productList .card h6, #productList .card p  { text-align: left; }
+/* fix font-size/weight for product cards */
+.card h6.product { font-size: 15px; font-weight: 700; }
 .splide__slide .card p.overline, #productList .card p.overline { margin-bottom: 8px; }
 .splide__slide .card h6.product, #productList .card h6.product { height: 48px; margin-bottom: 15px; }
 .splide__slide .card h6 .period, #productList .card .period { font-size: 16px; float: right; line-height: 24px; }
@@ -527,7 +533,8 @@ footer .social a:hover { opacity: .7; }
 #signIn .modal-title { width: 100%; }
 #signIn .modal-title img { max-width: 84px; height: auto; }
 #signIn a { color: #52bfc0; }
-
+/* Damage Waiver */
+#damageWaivers img { width: 50px; height: auto; }
 
 @media screen and (min-width: 992px) and (max-width: 1199px) {
     .nav-item > a { font-size: 14px; }

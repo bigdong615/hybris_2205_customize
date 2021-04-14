@@ -24,7 +24,7 @@
                     </button>
                 </c:when>
                 <c:otherwise>
-                    <button type="submit" class="btn btn-primary" disabled="disabled">
+                    <button type="submit" class="btn btn-primary">
                      <spring:theme code="text.add.to.cart"/>
                     </button>
                 </c:otherwise>

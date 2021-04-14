@@ -1,0 +1,50 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata cms-content_rentalCartPage.impex =========================");
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
+$jarResourceCms=$config-jarResourceCmsValue
+
+###  Page Template For Borrow Lenses Rental Cart Page ###
+
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true] ; name               ; frontendTemplateName ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true]
+                           ;                         ; RentalCartPageTemplate ; Rental Cart Page Template ; layout/CartPage      ; $jarResourceCms/structure-view/structure_RentalCartPageTemplate.vm                                          ; CategoryPage,ContentPage
+
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='RentalCartPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                   ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                   ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                   ;                           ; headerlink
+                              ; MiniCartSlot                       ;                                                                   ;                           ; minicart
+                              ; FooterSlot                         ;                                                                   ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                   ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                   ;                           ; wide
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='RentalCartPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; PromoBannerSlot-RentalCartPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true
+                                     ;                         ; SiteLogoHeaderSlot-RentalCartPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true
+                                     ;                         ; HeaderLinkForSupportSlot-RentalCartPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MiniCartSlot-RentalCartPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true
+                                     ;                         ; FooterSlot-RentalCartPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true
+                                     ;                         ; FooterSubscriptionSlot-RentalCartPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true
+                                     ;                         ; FooterCopyRightslot-RentalCartPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true
+
+########################### Define Content slots for page######################
+#INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='homepage'] ; contentSlot(uid,$contentCV)[unique=true]
+#                                ;                         ; HomePageHeroBannerSlot-LandingPage              ; HomePageHeroBannerSlot             ;                                                       ; HomePageHeroBannerSlot                   ; true
+
+
+###  Create Content Page (Rental Cart Page)  ###
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true] ; name      ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
+                          ;                         ; cartpage         ; Cart Page ; RentalCartPageTemplate         ; cart
+
+
+
+
+
+
+
