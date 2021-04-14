@@ -16,6 +16,7 @@ public interface BlInventoryScanToolDao {
      * javadoc
      * @param locationId for InventoryLocation
      * @return InventoryLocation
+     * method will fetch InventoryLocation by its Id
      */
     BlInventoryLocationModel getInventoryLocationById(final String locationId);
 
@@ -23,6 +24,7 @@ public interface BlInventoryScanToolDao {
      * javadoc
      * @param barcode for Serial
      * @return List of Serials
+     * method will fetch SerialProducts by its barcode
      */
     Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode);
 
@@ -30,6 +32,7 @@ public interface BlInventoryScanToolDao {
      * javadoc
      * @param key for config
      * @return BlInventoryScanConfigurationModel
+     * method will fetch ConfigurationKey by its key
      */
     BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key);
 

@@ -293,6 +293,7 @@
         </n:explorer-tree>
     </context>
 
+    <!-- BL-110 Web Scan Tool Wizard -->
     <context type="WebScanTool" component="create-wizard">
         <wz:flow id="WebScanTool" title="blbackoffice.web.scan.tool.title">
             <wz:prepare id="userPasswordChangePrepare">
@@ -322,6 +323,7 @@
         </wz:flow>
     </context>
 
+    <!-- BL-110 Web Scan Tool Wizard Notification-->
     <context component="notification-area" source="webSanToolNotification" merge-by="source">
         <na:notification-area>
             <na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">

@@ -1,12 +1,16 @@
 package com.bl.core.inventory.scan.dao.impl;
 
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -17,6 +21,8 @@ import java.util.*;
  * @author Namrata Lohar
  */
 public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
+
+    private static final Logger LOG = Logger.getLogger(DefaultBlInventoryScanToolDao.class);
 
     @Autowired
     private FlexibleSearchService flexibleSearchService;
@@ -30,6 +36,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("locationId", locationId);
         final List<BlInventoryLocationModel> results = getFlexibleSearchService().<BlInventoryLocationModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_INVENTORY_LOC + locationId);
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
 
@@ -44,15 +51,20 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("barcodeList", barcodes);
         final List<BlSerialProductModel> results = getFlexibleSearchService().<BlSerialProductModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_SERIAL_PROD + barcodes);
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key) {
         final String barcodeList = "SELECT {pk} FROM {BlInventoryScanConfiguration!} WHERE {blScanConfigKey} = ?key";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("key", key);
         final List<BlInventoryScanConfigurationModel> results = getFlexibleSearchService().<BlInventoryScanConfigurationModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + key);
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
 
