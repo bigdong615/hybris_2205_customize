@@ -41,6 +41,11 @@ public class BlControllerConstants
 	public static final String DEFAULT_DAYS = "7";
 
 
+	public static final String DAY_MON_DATE_YEAR_FORMAT = "EE MMM dd yyyy";
+	public static final String DATE_FORMAT_SEPARATED_BY_SLASH = "dd/MM/yyyy";
+	public static final String SUCCESS = "success";
+	public static final String COOKIE_NAME_FOR_DATE = "selectedDate";
+
 	private BlControllerConstants()
 	{
 		//empty

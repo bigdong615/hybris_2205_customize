@@ -84,7 +84,7 @@
 
 		<script src="${commonResourcePathHtml}/js/_autoload.js"></script>
 
-        <%-- custom js file --%>
+		<%-- custom js file --%>
         <c:if test="${cmsPage.uid eq 'cartpage'}">
         <script src="${commonResourcePathHtml}/js/blCustom.js"></script>
         </c:if>
@@ -205,6 +205,23 @@
             format: "MMM D, YYYY",
             resetButton: true,
             buttonText : {"reset":"Reset Dates"},
+            setup: (picker) => {
+      			picker.on('button:apply', (date1, date2) => {
+      			alert(date1.toDateString() +" ----- "+ date2.toDateString());
+      			$.ajax({
+                    url: ACC.config.encodedContextPath + '/datepicker',
+                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                    type: "GET",
+                    success: function (data) {
+                    	if(data=='success')
+                        window.location.reload();
+                    },
+                    error: function (xhr, textStatus, error) {
+                       
+                    }
+                });
+      			});
+      			}
         }); 
          // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
          const mpicker = new Litepicker({ 
@@ -301,6 +318,23 @@
               format: "MMM D, YYYY",
               resetButton: true,
               buttonText : {"reset":"Reset Dates"},
+              setup: (picker) => {
+      			picker.on('button:apply', (date1, date2) => {
+      			alert(date1.toDateString() +" ----- "+ date2.toDateString());
+      			$.ajax({
+                    url: ACC.config.encodedContextPath + '/datepicker',
+                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                    type: "GET",
+                    success: function (data) {
+                    	if(data=='success')
+                        window.location.reload();
+                    },
+                    error: function (xhr, textStatus, error) {
+                       
+                    }
+                });
+      			});
+      			}
           });
           const mpicker = new Litepicker({
               element: document.getElementById('mobile-litepicker'),
@@ -426,6 +460,23 @@
                                                  format: "MMM D, YYYY",
                                                  resetButton: true,
                                                  buttonText : {"reset":"Reset Dates"},
+                                                 setup: (picker) => {
+                                           			picker.on('button:apply', (date1, date2) => {
+                                           			alert(date1.toDateString() +" ----- "+ date2.toDateString());
+                                           			$.ajax({
+                                                         url: ACC.config.encodedContextPath + '/datepicker',
+                                                         data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                                         type: "GET",
+                                                         success: function (data) {
+                                                         	if(data=='success')
+                                                             window.location.reload();
+                                                         },
+                                                         error: function (xhr, textStatus, error) {
+                                                            
+                                                         }
+                                                     });
+                                           			});
+                                           			}
                                              });
 
                                              // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker

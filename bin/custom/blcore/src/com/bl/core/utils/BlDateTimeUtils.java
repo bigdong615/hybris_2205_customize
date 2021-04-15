@@ -1,8 +1,5 @@
 package com.bl.core.utils;
 
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.logging.BlLogger;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -14,12 +11,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -290,6 +290,26 @@ public final class BlDateTimeUtils
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE,
 					inputDateString);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns localDate , formatted into given Format.
+	 *
+	 * @param inputDateString
+	 * @param dateFormat
+	 * @return the Formatted Local Date
+	 */
+	public static LocalDate convertStringDateToLocalDate(final String inputDateString, final String dateFormat)
+	{
+		try
+		{
+			return LocalDate.parse(inputDateString, getFormatter(dateFormat));
+		}
+		catch (final DateTimeParseException e)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, inputDateString);
 		}
 		return null;
 	}
