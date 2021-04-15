@@ -1,6 +1,7 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
@@ -56,7 +57,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
   		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
        final RentalDateDto date = new RentalDateDto();
   		if (null != startDate && null != endDate) {
-				final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d");
+				final DateTimeFormatter formatter = BlDateTimeUtils.getFormatter("MMM d");
 				date.setSelectedFromDate(startDate.format(formatter));
 				date.setSelectedToDate(endDate.format(formatter));
 				date.setNumberOfDays(String.valueOf(ChronoUnit.DAYS.between(startDate, endDate)));

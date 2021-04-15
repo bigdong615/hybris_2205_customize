@@ -148,7 +148,7 @@ public final class BlDateTimeUtils
 	 *
 	 * @return a DateTimeFormatter
 	 */
-	private static DateTimeFormatter getFormatter(final String pattern)
+	public static DateTimeFormatter getFormatter(final String pattern)
 	{
 
 		if (!formatterCache.containsKey(pattern))
