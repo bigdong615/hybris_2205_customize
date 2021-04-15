@@ -167,7 +167,7 @@ public final class BlDateTimeUtils
 	 *
 	 * @return a SimpleDateFormat
 	 */
-	private static SimpleDateFormat getSimpleDateFormatter(final String pattern)
+	public static SimpleDateFormat getSimpleDateFormatter(final String pattern)
 	{
 		return new SimpleDateFormat(pattern);
 	}
