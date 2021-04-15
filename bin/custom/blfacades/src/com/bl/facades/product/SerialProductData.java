@@ -12,7 +12,8 @@ public class SerialProductData implements Comparable<SerialProductData>, Seriali
   private static final long serialVersionUID = 1L;
 
   private double conditionRating;
-  private PriceData serialProductPrice;
+  private PriceData finalSalePrice;
+  private PriceData finalIncentivizedPrice;
   private String serialId;
 
   @Override
@@ -35,14 +36,6 @@ public class SerialProductData implements Comparable<SerialProductData>, Seriali
     return conditionRating;
   }
 
-  public void setSerialProductPrice(final PriceData serialProductPrice) {
-    this.serialProductPrice = serialProductPrice;
-  }
-
-  public PriceData getSerialProductPrice() {
-    return serialProductPrice;
-  }
-
   public void setSerialId(final String serialId) {
     this.serialId = serialId;
   }
@@ -50,5 +43,37 @@ public class SerialProductData implements Comparable<SerialProductData>, Seriali
   public String getSerialId() {
     return serialId;
   }
+
+/**
+ * @return the finalSalePrice
+ */
+public PriceData getFinalSalePrice()
+{
+	return finalSalePrice;
+}
+
+/**
+ * @param finalSalePrice the finalSalePrice to set
+ */
+public void setFinalSalePrice(PriceData finalSalePrice)
+{
+	this.finalSalePrice = finalSalePrice;
+}
+
+/**
+ * @return the finalIncentivizedPrice
+ */
+public PriceData getFinalIncentivizedPrice()
+{
+	return finalIncentivizedPrice;
+}
+
+/**
+ * @param finalIncentivizedPrice the finalIncentivizedPrice to set
+ */
+public void setFinalIncentivizedPrice(PriceData finalIncentivizedPrice)
+{
+	this.finalIncentivizedPrice = finalIncentivizedPrice;
+}
 
 }

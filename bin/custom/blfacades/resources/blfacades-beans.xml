@@ -30,7 +30,9 @@
     <property name="productPageType" type="java.lang.String"/>
     <property name="serialproducts" type="java.util.List"/>
     <property name="productTagValues" type="String"/>
-
+	<property name="serialfinalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
   </bean>
 
 
