@@ -597,6 +597,58 @@
                 });
             </script>
         </c:if>
+
+        <%-- BL-466 added JS for empty cart page --%>
+        <c:if test="${cmsPage.uid eq 'emptyCartPage'}">
+              <script>
+                      // Mobile Menu styles - #my-menu is required for ALL pages
+                      document.addEventListener(
+                          "DOMContentLoaded", () => {
+                              new Mmenu( "#my-menu", {
+                                  extensions: ["fullscreen","position-front"],
+                                  navbars		: [{
+                                      position: "top",
+                                      content : [ "close", "logo" ]
+                                  }],
+                              } );
+                          }
+                      );
+                      // Initialize Mega menu rollover - required for ALL pages
+                      $('.menu-large').hover(
+                          function(){ $('.screen').addClass('show') },
+                          function(){ $('.screen').removeClass('show') }
+                      );
+
+                      // Initialize Featured Slider - required for ANY page with Featured Gear slider
+                      new Splide( '#gear-slider', {
+                          perPage: 3,
+                          breakpoints: {
+                              '991': {
+                                  perPage: 2,
+                              },
+                              '640': {
+                                  perPage: 1,
+                              },
+                          },
+                          rewind : true,
+                          gap: 20,
+                          padding: 10,
+                          keyboard: false,
+                      } ).mount();
+                      // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+                      document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+                          type   : 'loop',
+                          perPage: 1,
+                          drag   : false,
+                          breakpoints: {
+                              '991': {
+                                  pagination: false,
+                              },
+                          },
+                          keyboard: false,
+                      } ).mount());
+                  </script>
+        </c:if>
 	</c:otherwise>
 </c:choose>
 
