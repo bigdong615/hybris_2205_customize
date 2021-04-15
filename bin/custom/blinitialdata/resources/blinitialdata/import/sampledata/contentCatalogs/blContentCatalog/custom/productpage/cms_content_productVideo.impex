@@ -14,6 +14,7 @@ INSERT_UPDATE BlProduct;code[unique=true]             ;$data_sheet              
                      ;Nikon_D7100_Digital_SLR ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
                      ;olympus_ep2_extra_battery ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
                      ;Canon_50mm_f1.2_L ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
+                     ;Canon_5DIII ;/product/Nikon_17-55mm_f2.8_AF-S_ED_DX_doc.pdf; ;
 
 
 INSERT_UPDATE ProductVideo ;uid[unique=true]; videoTitle;videoLink                                ;videoDuration
@@ -30,6 +31,7 @@ INSERT_UPDATE BlProduct;code[unique=true]               ;usedGearVideosLink(uid)
                        ;olympus_ep2_extra_battery ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
                        ;Canon_50mm_f1.2_L ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
                        ;lp-e8             ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
+                       ;Canon_5DIII       ;Canon_EOS_R1,Canon_EOS_R2 ,Canon_EOS_R3,Canon_EOS_R4   ; ;
 
 
 

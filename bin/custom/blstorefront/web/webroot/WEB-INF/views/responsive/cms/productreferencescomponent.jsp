@@ -54,11 +54,11 @@
                                                    <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                                    <h6 class="price"><product:productListerItemPrice product="${productReference.target}"/>
                                                    <c:choose>
-                                                        <c:when test="${datedata.selectedFromDate ne null and datedata.selectedToDate ne null}">
-                                                            <span class="period">${datedata.selectedFromDate} - ${datedata.selectedToDate}</span></h6>
+                                                        <c:when test="${rentalDate.selectedFromDate ne null and rentalDate.selectedToDate ne null}">
+                                                            <span class="period">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span></h6>
                                                         </c:when>
                                                         <c:otherwise>
-                                                             <span class="period">${datedata.numberOfDays}</span></h6>
+                                                             <span class="period">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span></h6>
                                                         </c:otherwise>
                                                    </c:choose>
                                                     <c:choose>

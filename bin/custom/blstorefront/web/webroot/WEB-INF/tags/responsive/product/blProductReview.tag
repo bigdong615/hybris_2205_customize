@@ -18,8 +18,6 @@
                                    <div class="reviewActions">
                                        <a href="#" class="btn btn-outline"><img src="assets/icon-filter-open.svg">&emsp;Write Review</a> <a href="#" class="btn btn-outline">More Reviews</a>
                                    </div>
+
                                </div>
-                           </div>
-                       </div>
-                   </div>
-               </section>
+
