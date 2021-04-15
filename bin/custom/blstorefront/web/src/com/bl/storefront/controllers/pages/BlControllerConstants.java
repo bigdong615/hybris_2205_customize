@@ -33,7 +33,7 @@ public class BlControllerConstants
 	public static final String CARTPAGE_CSS = "cart cart-rental ";
 	public static final String CARTPAGE = "cartpage";
 	public static final String DAYS_RENTAL_STRING = " Days Rental";
-	public static final String DAYS_DATA = "datedata";
+	public static final String DAYS_DATA = "rentalDate";
 
 	private BlControllerConstants()
 	{

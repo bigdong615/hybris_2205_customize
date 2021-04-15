@@ -59,10 +59,10 @@ public class RentalProductPageController extends AbstractBlProductPageController
 				final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d");
 				date.setSelectedFromDate(startDate.format(formatter));
 				date.setSelectedToDate(endDate.format(formatter));
-				date.setNumberOfDays(ChronoUnit.DAYS.between(startDate, endDate)+BlControllerConstants.DAYS_RENTAL_STRING);
+				date.setNumberOfDays(String.valueOf(ChronoUnit.DAYS.between(startDate, endDate)));
 				model.addAttribute(BlControllerConstants.DAYS_DATA, date);
 			} else {
-				date.setNumberOfDays("7 Days Rental");
+				date.setNumberOfDays("7");
 				model.addAttribute(BlControllerConstants.DAYS_DATA, date);
 			} // Temporary code ends here
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
