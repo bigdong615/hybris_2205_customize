@@ -57,13 +57,13 @@ public class RentalProductPageController extends AbstractBlProductPageController
   		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
        final RentalDateDto date = new RentalDateDto();
   		if (null != startDate && null != endDate) {
-				final DateTimeFormatter formatter = BlDateTimeUtils.getFormatter("MMM d");
+				final DateTimeFormatter formatter = BlDateTimeUtils.getFormatter(BlControllerConstants.RECOMMENDATION_DATE_FORMAT);
 				date.setSelectedFromDate(startDate.format(formatter));
 				date.setSelectedToDate(endDate.format(formatter));
 				date.setNumberOfDays(String.valueOf(ChronoUnit.DAYS.between(startDate, endDate)));
 				model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
 			} else {
-				date.setNumberOfDays("7");
+				date.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
 				model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
 			} // Temporary code ends here
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
