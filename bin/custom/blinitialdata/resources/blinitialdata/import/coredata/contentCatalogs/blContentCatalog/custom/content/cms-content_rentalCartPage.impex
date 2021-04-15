@@ -10,7 +10,7 @@ $jarResourceCms=$config-jarResourceCmsValue
 ###  Page Template For Borrow Lenses Rental Cart Page ###
 
 INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true] ; name               ; frontendTemplateName ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true]
-                           ;                         ; RentalCartPageTemplate ; Rental Cart Page Template ; layout/CartPage      ; $jarResourceCms/structure-view/structure_RentalCartPageTemplate.vm                                          ; CategoryPage,ContentPage
+                           ;                         ; RentalCartPageTemplate ; Rental Cart Page Template ; cart/cartPage      ; $jarResourceCms/structure-view/structure_RentalCartPageTemplate.vm                                          ; CategoryPage,ContentPage
 
 
 ###  Define Content SlotNames  ###
