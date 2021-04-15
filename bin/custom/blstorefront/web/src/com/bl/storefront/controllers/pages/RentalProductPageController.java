@@ -53,8 +53,8 @@ public class RentalProductPageController extends AbstractBlProductPageController
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
   //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
-  		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
-  		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
+  		final LocalDate startDate = getSessionService().getAttribute(BlControllerConstants.SELECTED_FROM_DATE);
+  		final LocalDate endDate = getSessionService().getAttribute(BlControllerConstants.SELECTED_TO_DATE);
        final RentalDateDto date = new RentalDateDto();
   		if (null != startDate && null != endDate) {
 				final DateTimeFormatter formatter = BlDateTimeUtils.getFormatter(BlControllerConstants.RECOMMENDATION_DATE_FORMAT);
