@@ -25,6 +25,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.SaveCartFormValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.SaveCartFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -55,6 +56,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -150,7 +152,7 @@ public class CartPageController extends AbstractCartPageController
 		{
 			prepareDataForPage(model);
 
-			return ControllerConstants.Views.Pages.Cart.CartPage;
+			return getViewForPage(model);
 		}
 	}
 
@@ -657,4 +659,26 @@ public class CartPageController extends AbstractCartPageController
 		return REDIRECT_CART_URL;
 	}
 
+	/**
+	 * BL-466 It will return cart/empty cart page based on cart entries.
+	 * @param model
+	 * @throws CMSItemNotFoundException
+	 */
+	@Override
+	protected void createProductList(final Model model) throws CMSItemNotFoundException {
+		final ContentPageModel contentPageModel;
+		final CartData cartData = blCartFacade.getSessionCartWithEntryOrdering(false);
+
+		if (CollectionUtils.isEmpty(cartData.getEntries())) {
+			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.EMPTY_CART_CMS_PAGE_LABEL);
+			model.addAttribute(BlControllerConstants.CART_DATA, cartData);
+			model.addAttribute(BlControllerConstants.PICKUP_CART_ENTRIES, Boolean.FALSE);
+		} else {
+			createProductEntryList(model, cartData);
+			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.CART_CMS_PAGE_LABEL);
+		}
+
+		storeCmsPageInModel(model, contentPageModel);
+		setUpMetaDataForContentPage(model, contentPageModel);
+	}
 }
