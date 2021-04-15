@@ -38,8 +38,8 @@
                                             <th></th>
                                         </tr>
                                     </thead>
-                                  <tbody>
-                                     <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
+                                    <tbody>
+                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
                                          <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
                                             <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
                                             <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
@@ -63,7 +63,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+     </section>
 
         <section id="theUsedProcess">
                <div class="container">
@@ -87,7 +87,7 @@
                        </div>
                    </div>
                </div>
-           </section>
+       </section>
 
            <section id="productExtras">
                    <div class="container">
@@ -100,16 +100,22 @@
                                <div class="collapse show" id="overview">
                                    <p>${ycommerce:sanitizeHTML(product.usedDescription)}</p>
                                    <product:productVideo  productVideos= "${product.usedGearVideosLink}"/>
-                               </div>
+                                </div>
                                <hr>
                                <!--Product specification -->
                                <product:specification />
                                <!-- Product include -->
                                <product:productInclude />
                                <!-- Product notes -->
-                               <product:rentalNotes />
+                               <product:productNotes />
                                <!-- product resource  -->
                                <product:resource />
                                <div id="gear-slider" class="splide mt-4">
-                              </div>
-                             </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+           </section>
+
+
+
