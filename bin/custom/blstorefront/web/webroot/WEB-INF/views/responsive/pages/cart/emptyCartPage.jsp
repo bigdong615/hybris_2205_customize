@@ -11,6 +11,7 @@
 
 <template:page pageTitle="${pageTitle}">
 
+<%-- BL-466 Once empty cart HTML provided then need to render here  --%>
 <section id="cartProcess" class="cart cart-rental">
 <div>
 Continue Shopping </br>
