@@ -36,7 +36,7 @@ public class BlControllerConstants
 	public static final String EMPTY_CART_CMS_PAGE_LABEL = "emptyCart";
 	public static final String CART_DATA = "cartData";
 	public static final String PICKUP_CART_ENTRIES = "hasPickUpCartEntries";
-	public static final String DAYS_DATA = "rentalDate";
+	public static final String RENTAL_DATE = "rentalDate";
 
 	private BlControllerConstants()
 	{

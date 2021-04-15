@@ -60,10 +60,10 @@ public class RentalProductPageController extends AbstractBlProductPageController
 				date.setSelectedFromDate(startDate.format(formatter));
 				date.setSelectedToDate(endDate.format(formatter));
 				date.setNumberOfDays(String.valueOf(ChronoUnit.DAYS.between(startDate, endDate)));
-				model.addAttribute(BlControllerConstants.DAYS_DATA, date);
+				model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
 			} else {
 				date.setNumberOfDays("7");
-				model.addAttribute(BlControllerConstants.DAYS_DATA, date);
+				model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
 			} // Temporary code ends here
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
