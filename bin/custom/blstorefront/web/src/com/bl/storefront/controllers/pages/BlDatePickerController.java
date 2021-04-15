@@ -35,7 +35,7 @@ public class BlDatePickerController extends AbstractPageController
 
 	/**
 	 * It sets the selected date in cookie
-	 * 
+	 *
 	 * @param selectedStartDate
 	 * @param selectedEndDate
 	 * @param request
@@ -50,17 +50,21 @@ public class BlDatePickerController extends AbstractPageController
 	public String setCookieForDate(@RequestParam(value = BlControllerConstants.SELECTED_FROM_DATE, defaultValue = "")
 	final String selectedStartDate, @RequestParam(value = BlControllerConstants.SELECTED_TO_DATE, defaultValue = "")
 	final String selectedEndDate, final HttpServletRequest request, final HttpServletResponse response, final Model model,
-			final RedirectAttributes redirectModel) throws ParseException {
-		final Date startDate = BlDateTimeUtils.convertStringDateToDate(selectedStartDate, BlControllerConstants.DAY_MON_DATE_YEAR_FORMAT);
-		final String startDay = BlDateTimeUtils.convertDateToStringDate(startDate, BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
-		final Date endDate = BlDateTimeUtils.convertStringDateToDate(selectedEndDate, BlControllerConstants.DAY_MON_DATE_YEAR_FORMAT);
-		final String endDay = BlDateTimeUtils.convertDateToStringDate(endDate, BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
-		final String date = startDay + "-" + endDay;
-		if (StringUtils.isNotEmpty(selectedStartDate))
+			final RedirectAttributes redirectModel) throws ParseException
+	{
+		if (StringUtils.isNotEmpty(selectedStartDate) && StringUtils.isNotEmpty(selectedEndDate))
 		{
+			final Date startDate = BlDateTimeUtils.convertStringDateToDate(selectedStartDate,
+					BlControllerConstants.DAY_MON_DATE_YEAR_FORMAT);
+			final String startDay = BlDateTimeUtils.convertDateToStringDate(startDate,
+					BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
+			final Date endDate = BlDateTimeUtils.convertStringDateToDate(selectedEndDate,
+					BlControllerConstants.DAY_MON_DATE_YEAR_FORMAT);
+			final String endDay = BlDateTimeUtils.convertDateToStringDate(endDate,
+					BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
+			final String date = startDay + "-" + endDay;
 			blDateRestoreCookieGenerator.addCookie(response, date);
 		}
 		return BlControllerConstants.SUCCESS;
 	}
-
 }

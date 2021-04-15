@@ -44,16 +44,18 @@ public class BlSelectedDateSetFilter extends OncePerRequestFilter
 			final FilterChain filterChain) throws ServletException, IOException
 	{
 		final Cookie selectedDateCookie = WebUtils.getCookie(request, BlControllerConstants.COOKIE_NAME_FOR_DATE);
-		if(null != selectedDateCookie && null != selectedDateCookie.getValue()) {
+		if (null != selectedDateCookie && null != selectedDateCookie.getValue())
+		{
 			final String date = selectedDateCookie.getValue();
 			final List<String> lSelectedDates = Arrays.asList(date.split(BlControllerConstants.SEPARATOR));
-			if (CollectionUtils.isNotEmpty(lSelectedDates) && lSelectedDates.size() == BlControllerConstants.PAIR_OF_DATES) {
-				final LocalDate selectedFromDate = BlDateTimeUtils
-						.convertStringDateToLocalDate(lSelectedDates.get(0).trim(), BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
-				final LocalDate selectedToDate = BlDateTimeUtils
-						.convertStringDateToLocalDate(lSelectedDates.get(1).trim(), BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
+			if (CollectionUtils.isNotEmpty(lSelectedDates) && lSelectedDates.size() == BlControllerConstants.PAIR_OF_DATES)
+			{
+				final LocalDate selectedFromDate = BlDateTimeUtils.convertStringDateToLocalDate(lSelectedDates.get(0).trim(),
+						BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
+				final LocalDate selectedToDate = BlDateTimeUtils.convertStringDateToLocalDate(lSelectedDates.get(1).trim(),
+						BlControllerConstants.DATE_FORMAT_SEPARATED_BY_SLASH);
 				final LocalDate currentDate = LocalDate.now();
-				if(selectedFromDate.isBefore(currentDate))
+				if (selectedFromDate.isBefore(currentDate))
 				{
 					getSessionService().removeAttribute(BlControllerConstants.SELECTED_FROM_DATE);
 					getSessionService().removeAttribute(BlControllerConstants.SELECTED_TO_DATE);
