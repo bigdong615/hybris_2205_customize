@@ -9,6 +9,7 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
@@ -53,16 +54,16 @@ public class RentalProductPageController extends AbstractBlProductPageController
   //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
   		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
   		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
+       final RentalDateDto date = new RentalDateDto();
   		if (null != startDate && null != endDate) {
-				final RentalDateDto date = new RentalDateDto();
 				final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d");
 				date.setSelectedFromDate(startDate.format(formatter));
 				date.setSelectedToDate(endDate.format(formatter));
-				model.addAttribute("datedata", date);
+				date.setNumberOfDays(ChronoUnit.DAYS.between(startDate, endDate)+BlControllerConstants.DAYS_RENTAL_STRING);
+				model.addAttribute(BlControllerConstants.DAYS_DATA, date);
 			} else {
-				final RentalDateDto date = new RentalDateDto();
 				date.setNumberOfDays("7 Days Rental");
-				model.addAttribute("datedata", date);
+				model.addAttribute(BlControllerConstants.DAYS_DATA, date);
 			} // Temporary code ends here
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
