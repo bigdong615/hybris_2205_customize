@@ -26,8 +26,11 @@
 								<!-- facetValue.query.query.value and searchPageData.freeTextSearch are html output encoded in the backend -->
 									<input type="hidden" name="q" value="${facetValue.query.query.value}"/>
 									<input type="hidden" name="text" value="${searchPageData.freeTextSearch}"/>
-									<input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
-									<label for="${facetData.code}-${facetValue.name}">
+									<c:if test="${pageType == 'PRODUCTSEARCH'}">
+                                                 <input type="hidden" name="blPageType" value="${blPageType}"/>
+                  					</c:if>
+									<input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" id="${facetValue.name}-${facetData.code}" name="${facetValue.name}-${facetData.code}"/>
+									<label for="${facetValue.name}-${facetData.code}">
 										<span class="facet__list__label">
 											<span class="facet__list__mark"></span>
 											<span class="facet__list__text">
@@ -63,8 +66,11 @@
 							<!-- facetValue.query.query.value and searchPageData.freeTextSearch are html output encoded in the backend -->
 								<input type="hidden" name="q" value="${facetValue.query.query.value}"/>
 								<input type="hidden" name="text" value="${searchPageData.freeTextSearch}"/>
-									<input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
-								<label for="${facetData.code}-${facetValue.name}">
+								<c:if test="${pageType == 'PRODUCTSEARCH'}">
+                               <input type="hidden" name="blPageType" value="${blPageType}"/>
+                               </c:if>
+									<input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" id="${facetValue.name}-${facetData.code}" name="${facetValue.name}-${facetData.code}"/>
+								<label for="${facetValue.name}-${facetData.code}">
 									<span class="facet__list__label">
 										<span class="facet__list__mark"></span>
 										<span class="facet__list__text">
