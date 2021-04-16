@@ -17,7 +17,7 @@
 					</ul>
 				</div>
 			</div>
-			<div id="heroSearch">
+			<div id="heroSearch" class="d-none d-md-block">
 				<div class="container">
 					<div class="row justify-content-center">
 						<div class="col-md-10 col-lg-9">
