@@ -22,6 +22,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; NavigationPromoSlot                ;                                                                   ;                           ; logo
                               ; NavigationBarSlot                  ;                                                                   ;                           ; navigation
                               ; NavigationBarMobileSlot            ;                                                                   ;                           ; navigation
+                              ; HomePageFeaturedGearSectionSlot    ;                                                                   ;                           ; wide
                               ; MiniCartSlot                       ;                                                                   ;                           ; minicart
                               ; FooterSlot                         ;                                                                   ;                           ; footer
                               ; FooterSubscriptionSlot             ;                                                                   ;                           ; wide
