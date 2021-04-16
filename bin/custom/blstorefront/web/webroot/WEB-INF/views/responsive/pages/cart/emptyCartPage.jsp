@@ -17,9 +17,9 @@
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-11 col-xl-10">
                     <div id="orderConfirmation" class="text-center">
-                        <h1>Your cart is empty</h1>
+                        <h1><spring:theme code="text.empty.cart"/></h1>
                         <div class="confirmation-actions my-4">
-                            <a href="/blstorefront/bl/en/" class="btn btn-outline mx-3">Continue Shopping</a>
+                            <a href="/blstorefront/bl/en/" class="btn btn-outline mx-3"><spring:theme code="general.continue.shopping"/></a>
                         </div>
                     </div>
                 </div>
