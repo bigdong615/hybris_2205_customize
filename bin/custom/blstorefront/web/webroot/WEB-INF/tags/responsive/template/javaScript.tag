@@ -218,124 +218,99 @@
              resetButton: true,
              buttonText : {"reset":"Reset"},
          });
+         // Added code to remove same name and id on search text box specific to device
+         if ($(window).width() < 480 ) {
+ 			$("input.d-desk").attr("id","");
+ 		    $("input.d-desk").attr("name","");	
+ 		}
+ 		else {
+ 			$("input.d-mob").attr("id","");
+ 			$("input.d-mob").attr("name","");
+ 		}
     </script>  
 	</c:if>
 
 
-	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search' }">
-	  <script>
-        // Mobile Menu styles - #my-menu is required for ALL pages
-        // The second menu #filter-menu is required for ANY page with filtering - it is the mobile filter menu
-        document.addEventListener(
-            "DOMContentLoaded", () => {
-                 new Mmenu( "#my-menu", {
-                    extensions: ["fullscreen","position-front"],
-                    navbars		: [{
-                        position: "top",
-                        content : [ "close", "logo" ]
-                    }],
-                } );
-                new Mmenu( "#filter-menu", {
-                    extensions: ["position-front","fullscreen"],
-                    navbar: {
-                      title: "Filters",  
-                    },
-                    navbars		: [{
-                        position: "top",
-                        content : [ "close", "logo" ],
-                    }],          
-                } ); 
-            }
-        );
-        // Initialize Mega menu rollover - required for ALL pages
-        $('.menu-large').hover(
-            function(){ $('.screen').addClass('show') },
-            function(){ $('.screen').removeClass('show') }
-        );
-        // Initialize the "Sort By" dropdown menu above the product grid
-        $(".dropdown-menu li a").click(function(){
-          $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
-        });
-        // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
-        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
-            type   : 'loop',
-            perPage: 1,
-            drag   : false,
-            breakpoints: {
-                '991': {
-                    pagination: false,
-                },
-            },
-            //,
-        } ).mount());
-
-    </script>
-	</c:if>
-
-	<!-- This js is used for rental search box component-->
-	<c:if test="${blPageType eq 'rentalgear'}">
-	<script type="text/javascript">
+	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search' || cmsPage.uid eq 'searchEmpty'}">
+  	  <script>
+          // Mobile Menu styles - #my-menu is required for ALL pages
+          // The second menu #filter-menu is required for ANY page with filtering - it is the mobile filter menu
+          document.addEventListener(
+              "DOMContentLoaded", () => {
+                   new Mmenu( "#my-menu", {
+                      extensions: ["fullscreen","position-front"],
+                      navbars		: [{
+                          position: "top",
+                          content : [ "close", "logo" ]
+                      }],
+                  } );
+                  new Mmenu( "#filter-menu", {
+                      extensions: ["position-front","fullscreen"],
+                      navbar: {
+                        title: "Filters",
+                      },
+                      navbars		: [{
+                          position: "top",
+                          content : [ "close", "logo" ],
+                      }],
+                  } );
+              }
+          );
+          // Initialize Mega menu rollover - required for ALL pages
           $('.menu-large').hover(
               function(){ $('.screen').addClass('show') },
               function(){ $('.screen').removeClass('show') }
           );
+          // Initialize the "Sort By" dropdown menu above the product grid
           $(".dropdown-menu li a").click(function(){
             $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
           });
-          if ($(window).width() < 400 ) {
-              $("input#litepicker").attr("placeholder","Dates...");
-          }
-          else { $("input#litepicker").attr("placeholder","Select Rental Dates...");}
+          // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
           document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
               type   : 'loop',
               perPage: 1,
-              //drag   : false,
+              drag   : false,
+              breakpoints: {
+                  '991': {
+                      pagination: false,
+                  },
+              },
+              //,
           } ).mount());
-          const picker = new Litepicker({
-              element: document.getElementById('litepicker'),
-              //plugins: ['mobilefriendly'],
-              singleMode: false,
-              numberOfMonths: 2,
-              numberOfColumns: 2,
-              autoApply: false,
-              format: "MMM D, YYYY",
-              resetButton: true,
-              buttonText : {"reset":"Reset Dates"},
-          });
-          const mpicker = new Litepicker({
-              element: document.getElementById('mobile-litepicker'),
-              plugins: ['mobilefriendly'],
-              singleMode: false,
-              numberOfMonths: 1,
-              numberOfColumns: 1,
-              autoApply: false,
-              format: "MMM D",
-              resetButton: true,
-              buttonText : {"reset":"Reset"},
-          });
-      </script>
-	</c:if>
 
-	<!-- This js is used for UsedGear search box component-->
-	<c:if test="${blPageType eq 'usedGear'}">
+      </script>
+  	</c:if>
+
+  	<!-- This js is used for rental search box component-->
+  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear')}">
   	<script type="text/javascript">
-            $('.menu-large').hover(
-                function(){ $('.screen').addClass('show') },
-                function(){ $('.screen').removeClass('show') }
-            );
-            $(".dropdown-menu li a").click(function(){
-              $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
-            });
+
             if ($(window).width() < 400 ) {
                 $("input#litepicker").attr("placeholder","Dates...");
             }
             else { $("input#litepicker").attr("placeholder","Select Rental Dates...");}
-            document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
-                type   : 'loop',
-                perPage: 1,
-                //drag   : false,
-            } ).mount());
-
+            const picker = new Litepicker({
+                element: document.getElementById('litepicker'),
+                //plugins: ['mobilefriendly'],
+                singleMode: false,
+                numberOfMonths: 2,
+                numberOfColumns: 2,
+                autoApply: false,
+                format: "MMM D, YYYY",
+                resetButton: true,
+                buttonText : {"reset":"Reset Dates"},
+            });
+            const mpicker = new Litepicker({
+                element: document.getElementById('mobile-litepicker'),
+                plugins: ['mobilefriendly'],
+                singleMode: false,
+                numberOfMonths: 1,
+                numberOfColumns: 1,
+                autoApply: false,
+                format: "MMM D",
+                resetButton: true,
+                buttonText : {"reset":"Reset"},
+            });
         </script>
   	</c:if>
 
@@ -345,7 +320,13 @@
                                         // Mobile Menu styles - #my-menu is required for ALL pages
                                              document.addEventListener(
                                                  "DOMContentLoaded", () => {
-
+                                              new Mmenu( "#my-menu", {
+                                                                 extensions: ["fullscreen","position-front"],
+                                                                 navbars		: [{
+                                                                     position: "top",
+                                                                     content : [ "close", "logo" ]
+                                                                 }],
+                                                             } );
                                                  }
                                              );
                                              // Initialize Mega menu rollover - required for ALL pages
@@ -463,7 +444,13 @@
              // Mobile Menu styles - #my-menu is required for ALL pages
              document.addEventListener(
                  "DOMContentLoaded", () => {
-
+                    new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],
+                } );
                  }
              );
              // Initialize Mega menu rollover - required for ALL pages

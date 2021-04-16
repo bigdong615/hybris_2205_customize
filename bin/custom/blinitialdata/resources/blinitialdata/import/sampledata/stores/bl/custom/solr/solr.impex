@@ -132,39 +132,39 @@ line.clear();
 
 
 INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];type(code);sortableType(code);currency[default=false];localized[default=false];multiValue[default=false];facet[default=false];facetType(code);facetSort(code);priority;visible;fieldValueProvider;customFacetSortProvider;rangeSets(name);$classAttributeAssignment
-                                 ;blProductType;Format Coverage;string;; ;true; ;true;MultiSelectOr;Alpha;1000;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Format Coverage::::
-                                 ;blProductType;Max Aperture;string;; ;true; ;true;MultiSelectOr;Alpha;900;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Max Aperture::::
-                                 ;blProductType;Sensor Size;string;; ;true; ;true;MultiSelectOr;Alpha;800;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Sensor Size::::
-                                 ;blProductType;Video Resolution;string;; ;true; ;true;MultiSelectOr;Alpha;700;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Video Resolution::::
-                                 ;blProductType;Megapixels;string;; ;true; ;true;MultiSelectOr;Alpha;600;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Megapixels::::
-                                 ;blProductType;Prime/Zoom;string;; ;true; ;true;MultiSelectOr;Alpha;500;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Prime/Zoom::::
-                                 ;blProductType;AF/MF;string;; ;true; ;true;MultiSelectOr;Alpha;400;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::AF/MF::::
-                                 ;blProductType;Media & Storage Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Media & Storage Type::::
-                                 ;blProductType;Accessories Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;ProductionAttributes:::Accessories Type::::
-                                 ;blProductType;Cameras Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Cameras Type::::
-                                 ;blProductType;Lenses Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Lenses Type::::
+                                 ;blProductType;Format Coverage;string;; ;true; ;true;MultiSelectOr;Alpha;2000;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Format Coverage::::
+                                 ;blProductType;Max Aperture;string;; ;true; ;true;MultiSelectOr;Alpha;1500;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Max Aperture::::
+                                 ;blProductType;Sensor Size;string;; ;true; ;true;MultiSelectOr;Alpha;3000;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Sensor Size::::
+                                 ;blProductType;Video Resolution;string;; ;true; ;true;MultiSelectOr;Alpha;1000;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Video Resolution::::
+                                 ;blProductType;Megapixels;string;; ;true; ;true;MultiSelectOr;Alpha;900;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Megapixels::::
+                                 ;blProductType;Prime/Zoom;string;; ;true; ;true;MultiSelectOr;Alpha;800;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Prime/Zoom::::
+                                 ;blProductType;AF/MF;string;; ;true; ;true;MultiSelectOr;Alpha;700;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::AF/MF::::
+                                 ;blProductType;Media & Storage Type;string;; ;true; ;true;MultiSelectOr;Alpha;600;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Media & Storage Type::::
+                                 ;blProductType;Accessories Type;string;; ;true; ;true;MultiSelectOr;Alpha;500;true;commerceClassificationPropertyValueProvider;;;ProductionAttributes:::Accessories Type::::
+                                 ;blProductType;Cameras Type;string;; ;true; ;true;MultiSelectOr;Alpha;4000;true;commerceClassificationPropertyValueProvider;;;CameraAttributes:::Cameras Type::::
+                                 ;blProductType;Lenses Type;string;; ;true; ;true;MultiSelectOr;Alpha;400;true;commerceClassificationPropertyValueProvider;;;LensAttributes:::Lenses Type::::
                                  ;blProductType;Audio Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;AudioAttributes:::Audio Type::::
-                                 ;blProductType;Battery Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;Batteries_PowerAttributes:::Battery Type::::
-                                 ;blProductType;Support Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;ProductionAttributes:::Support Type::::
-                                 ;blProductType;Microphone Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;AudioAttributes:::Microphone Type::::
-                                 ;blProductType;Lighting Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;LightingAttributes:::Lighting Type::::
-                                 ;blProductType;Mount Type;string;; ;true; ;true;MultiSelectOr;Alpha;300;true;commerceClassificationPropertyValueProvider;;;MountAttribute:::Mount Type::::
+                                 ;blProductType;Battery Type;string;; ;true; ;true;MultiSelectOr;Alpha;250;true;commerceClassificationPropertyValueProvider;;;Batteries_PowerAttributes:::Battery Type::::
+                                 ;blProductType;Support Type;string;; ;true; ;true;MultiSelectOr;Alpha;200;true;commerceClassificationPropertyValueProvider;;;ProductionAttributes:::Support Type::::
+                                 ;blProductType;Microphone Type;string;; ;true; ;true;MultiSelectOr;Alpha;150;true;commerceClassificationPropertyValueProvider;;;AudioAttributes:::Microphone Type::::
+                                 ;blProductType;Lighting Type;string;; ;true; ;true;MultiSelectOr;Alpha;100;true;commerceClassificationPropertyValueProvider;;;LightingAttributes:::Lighting Type::::
+                                 ;blProductType;Mount Type;string;; ;true; ;true;MultiSelectOr;Alpha;6000;true;commerceClassificationPropertyValueProvider;;;MountAttribute:::Mount Type::::
 
 INSERT_UPDATE SolrSearchQueryProperty;indexedProperty(name, solrIndexedType(identifier))[unique=true];facet[default=true];facetType(code);priority;facetDisplayNameProvider;facetSortProvider;facetTopValuesProvider;includeInResponse[default=true];searchQueryTemplate(name, indexedType(identifier))[unique=true][default=DEFAULT:$snIndexType]
-                                     ;Format Coverage:$snIndexType				;	;MultiSelectOr	;1000;	;								;;;
-                                     ;Max Aperture:$snIndexType				;	;MultiSelectOr	;900;	;								;;;
-                                     ;Sensor Size:$snIndexType				;	;MultiSelectOr	;800;	;								;;;
-                                     ;Video Resolution:$snIndexType				;	;MultiSelectOr	;700;	;								;;;
-                                     ;Megapixels:$snIndexType				;	;MultiSelectOr	;600;	;								;;;
-                                     ;Prime/Zoom:$snIndexType				;	;MultiSelectOr	;500;	;								;;;
-                                     ;AF/MF:$snIndexType				;	;MultiSelectOr	;400;	;								;;;
-                                     ;Media & Storage Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Accessories Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Cameras Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Lenses Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
+                                     ;Format Coverage:$snIndexType				;	;MultiSelectOr	;2000;	;								;;;
+                                     ;Max Aperture:$snIndexType				;	;MultiSelectOr	;1500;	;								;;;
+                                     ;Sensor Size:$snIndexType				;	;MultiSelectOr	;3000;	;								;;;
+                                     ;Video Resolution:$snIndexType				;	;MultiSelectOr	;1000;	;								;;;
+                                     ;Megapixels:$snIndexType				;	;MultiSelectOr	;900;	;								;;;
+                                     ;Prime/Zoom:$snIndexType				;	;MultiSelectOr	;800;	;								;;;
+                                     ;AF/MF:$snIndexType				;	;MultiSelectOr	;700;	;								;;;
+                                     ;Media & Storage Type:$snIndexType				;	;MultiSelectOr	;600;	;								;;;
+                                     ;Accessories Type:$snIndexType				;	;MultiSelectOr	;500;	;								;;;
+                                     ;Cameras Type:$snIndexType				;	;MultiSelectOr	;4000;	;								;;;
+                                     ;Lenses Type:$snIndexType				;	;MultiSelectOr	;400;	;								;;;
                                      ;Audio Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Battery Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Support Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Microphone Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Lighting Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
-                                     ;Mount Type:$snIndexType				;	;MultiSelectOr	;300;	;								;;;
+                                     ;Battery Type:$snIndexType				;	;MultiSelectOr	;250;	;								;;;
+                                     ;Support Type:$snIndexType				;	;MultiSelectOr	;200;	;								;;;
+                                     ;Microphone Type:$snIndexType				;	;MultiSelectOr	;150;	;								;;;
+                                     ;Lighting Type:$snIndexType				;	;MultiSelectOr	;100;	;								;;;
+                                     ;Mount Type:$snIndexType				;	;MultiSelectOr	;6000;	;								;;;
