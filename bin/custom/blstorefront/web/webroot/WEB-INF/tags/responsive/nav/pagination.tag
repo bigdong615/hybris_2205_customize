@@ -25,14 +25,34 @@
       </c:if>
       <c:choose>
       <c:when test="${pageType == 'PRODUCTSEARCH'}">
+      <c:if test="${hasPreviousPage}">
        <a href="${previousPageUrl}&blPageType=${blPageType}" class="btn-arrow-left disabled"></a>
+       </c:if>
+        <c:if test="${!hasPreviousPage}">
+              <a href="javascript:void(0)" class="btn-arrow-left disabled"></a>
+        </c:if>
       <span class="currentPage">${searchPageData.pagination.currentPage + 1}</span> / <span class="totalPages">${searchPageData.pagination.numberOfPages}</span>
+      <c:if test="${hasNextPage}">
       <a href="${nextPageUrl}&blPageType=${blPageType}" class="btn-arrow-right"></a>
+      </c:if>
+       <c:if test="${!hasNextPage}">
+            <a href="javascript:void(0)" class="btn-arrow-right"></a>
+            </c:if>
       </c:when>
       <c:otherwise>
+      <c:if test="${hasPreviousPage}">
        <a href="${previousPageUrl}" class="btn-arrow-left disabled"></a>
+      </c:if>
+       <c:if test="${!hasPreviousPage}">
+                     <a href="javascript:void(0)" class="btn-arrow-left disabled"></a>
+        </c:if>
             <span class="currentPage">${searchPageData.pagination.currentPage + 1}</span> / <span class="totalPages">${searchPageData.pagination.numberOfPages}</span>
+             <c:if test="${hasNextPage}">
             <a href="${nextPageUrl}" class="btn-arrow-right"></a>
+           </c:if>
+            <c:if test="${!hasNextPage}">
+                       <a href="javascript:void(0)" class="btn-arrow-right"></a>
+            </c:if>
       </c:otherwise>
       </c:choose>
    </div>

@@ -165,6 +165,7 @@
     <group name="bltheme_responsive">
         							
         <css>/_ui/responsive/theme-bltheme/css/blstyle.css</css>
-        						
+        <css>/_ui/responsive/theme-bltheme/css/blcustom.css</css>
+
     </group>
 </groups>

@@ -252,6 +252,9 @@
 
 	<context component="create-wizard" type="ProductVideo"  merge-by="type">
 		<wz:flow id="ProductVideoWizard" title="create.title(ctx.TYPE_CODE)">
+      <wz:prepare id="ProductVideoPrepare">
+        <wz:initialize property="newProductVideo" type="ctx.TYPE_CODE"/>
+      </wz:prepare>
 			<wz:step id="step1" label="essential.label" sublabel="essential.sublabel">
 				<wz:content id="step1.content">
 					<wz:property-list root="newProductVideo">
@@ -271,7 +274,7 @@
 		</wz:flow>
 	</context>
 	
-	<context component="editor-area" merge-by="type" parent="ProductVideo">
+	<context component="editor-area" merge-by="type" type="ProductVideo" >
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="">
 				<editorArea:section name="">
