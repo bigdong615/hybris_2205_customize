@@ -320,7 +320,13 @@
                                         // Mobile Menu styles - #my-menu is required for ALL pages
                                              document.addEventListener(
                                                  "DOMContentLoaded", () => {
-
+                                              new Mmenu( "#my-menu", {
+                                                                 extensions: ["fullscreen","position-front"],
+                                                                 navbars		: [{
+                                                                     position: "top",
+                                                                     content : [ "close", "logo" ]
+                                                                 }],
+                                                             } );
                                                  }
                                              );
                                              // Initialize Mega menu rollover - required for ALL pages
@@ -438,7 +444,13 @@
              // Mobile Menu styles - #my-menu is required for ALL pages
              document.addEventListener(
                  "DOMContentLoaded", () => {
-
+                    new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],
+                } );
                  }
              );
              // Initialize Mega menu rollover - required for ALL pages
