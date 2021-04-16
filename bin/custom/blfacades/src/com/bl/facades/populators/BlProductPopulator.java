@@ -4,8 +4,8 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.product.SerialProductData;
 import com.bl.facades.product.data.ProductVideoData;
+import com.bl.facades.product.data.SerialProductData;
 
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.ImageData;
@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -128,9 +129,62 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
                     serialProductDataList.add(serialProductData);
                 }
         );
-        Collections.sort(serialProductDataList);
+        sortSerialBasedOnConditionRating(serialProductDataList);
         target.setSerialproducts(serialProductDataList);
     }
+    
+    /**
+     * Sorting serial products in Ascending Order based on condition rating.
+     *
+     * @param serialProductDataList the serial product data list
+     * @return the list
+     */
+    private List<SerialProductData> sortSerialBasedOnConditionRating(final List<SerialProductData> serialProductDataList)
+    {
+   	 if (CollectionUtils.isNotEmpty(serialProductDataList))
+       {
+   		 Collections.sort(serialProductDataList, new Comparator<SerialProductData>()
+   		 {
+   			 @Override
+   			 public int compare(final SerialProductData serialProductData1, final SerialProductData serialProductData2)
+   			 {
+   				 return compareSerialProductData(serialProductData1, serialProductData2);
+   			 }
+   		 });
+       }
+       return serialProductDataList;
+   }
+
+   /**
+    * Compare serial product data.
+    *
+    * @param serialProductData1 the serial product data 1
+    * @param serialProductData2 the serial product data 2
+    * @return the int
+    */
+   private int compareSerialProductData(final SerialProductData serialProductData1, final SerialProductData serialProductData2)
+   {
+   	if (serialProductData1 != null )
+   	{
+   		if (serialProductData2 != null )
+   		{
+   			return Double.valueOf(serialProductData1.getConditionRating())
+   					.compareTo(serialProductData2.getConditionRating());
+   		}
+   		else
+   		{
+   			return 1;
+   		}
+   	}
+   	else
+   	{
+   		if (serialProductData2 != null )
+   		{
+   			return -1;
+   		}
+   	}
+   	return 0;
+   }
     
     /**
      * Gets the product price data.

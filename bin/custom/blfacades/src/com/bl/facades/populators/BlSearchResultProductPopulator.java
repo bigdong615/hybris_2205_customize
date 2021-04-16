@@ -138,13 +138,13 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    */
   private void populateSerialProductPrices(final SearchResultValueData source, final ProductData target)
   {
-	  Double minSerialfinalSalePrice = this.<Double> getValue(source, "minSerialfinalSalePrice");
+	  final Double minSerialfinalSalePrice = this.<Double> getValue(source, "minSerialfinalSalePrice");
 	  if(PredicateUtils.notNullPredicate().evaluate(minSerialfinalSalePrice)) 
 	  {
 		  target.setSerialfinalSalePrice(getProductPriceData(BigDecimal.valueOf(minSerialfinalSalePrice)));
 	  }
 	  
-	  Double minSerialIncentivizedPrice = this.<Double> getValue(source, "minSerialIncentivizedPrice");
+	  final Double minSerialIncentivizedPrice = this.<Double> getValue(source, "minSerialIncentivizedPrice");
 	  if(PredicateUtils.notNullPredicate().evaluate(minSerialIncentivizedPrice)) 
 	  {
 		  target.setSerialIncentivizedPrice(getProductPriceData(BigDecimal.valueOf(minSerialIncentivizedPrice)));

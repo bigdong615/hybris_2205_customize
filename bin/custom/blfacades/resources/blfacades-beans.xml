@@ -69,6 +69,14 @@
     <property name="numberOfDays" type="String"/>
   </bean>
 
+<!-- DTO to store Serial Product Data -->
+ <bean class="com.bl.facades.product.data.SerialProductData">
+    <property name="conditionRating" type="Double"/>
+    <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="serialId" type="String"/>
+  </bean>
+  
 </beans>
 
 
