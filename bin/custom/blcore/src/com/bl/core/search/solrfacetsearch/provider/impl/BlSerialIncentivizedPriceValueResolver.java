@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -24,7 +23,7 @@ import com.bl.logging.impl.LogErrorCodeEnum;
 
 
 /**
- * This class is responsible to send calculated value to SOLR Document from Hybris for finalSalePrice attribute of
+ * This class is responsible to send IncentivizedPrice to SOLR Document from Hybris for finalSalePrice attribute of
  * BlSerialProduct
  *
  * @author Ravikumar
@@ -73,10 +72,9 @@ public class BlSerialIncentivizedPriceValueResolver extends AbstractValueResolve
 		}
 		catch (final Exception exception)
 		{
-			final String productCode = StringUtils.isNotBlank(blProductModel.getCode()) ? blProductModel.getCode()
-					: StringUtils.EMPTY;
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.SOLR_INDEXING_ERROR.getCode(), exception,
-					"Failed to resolve value for minSerialIncentivizedPrice attribute for product with code: {}", productCode);
+					"Failed to resolve value for minSerialIncentivizedPrice attribute for product with code: {}",
+					blProductModel.getCode());
 		}
 	}
 
