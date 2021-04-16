@@ -299,6 +299,6 @@ public class SearchPageController extends AbstractSearchPageController
 	{
 		storeContentPageTitleInModel(model, getPageTitleResolver().resolveContentPageTitle(
 				getMessageSource().getMessage("search.meta.title", null, "search.meta.title", getI18nService().getCurrentLocale())
-						+ " " + searchText));
+						+ " " + (searchText.contains(BlControllerConstants.COMMA) ? searchText.replace(BlControllerConstants.COMMA, BlCoreConstants.EMPTY_STRING) : searchText)));
 	}
 }

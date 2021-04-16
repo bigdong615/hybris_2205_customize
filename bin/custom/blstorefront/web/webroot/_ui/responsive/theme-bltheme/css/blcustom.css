@@ -1,0 +1,10 @@
+/**
+Added Media Query for Search Box
+**/
+@media (max-width: 767px) {
+  .input-button-search {
+  visibility: hidden;
+  width: 0px;
+  height: 0px;}
+}
+

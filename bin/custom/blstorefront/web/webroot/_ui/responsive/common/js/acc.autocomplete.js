@@ -111,6 +111,12 @@ ACC.autocomplete = {
 			$search.yautocomplete()
 		}
 
+	/** Added Unique Class for mobile search box**/
+		$search2 = $(".js-site-search-input-mobile");
+    		if($search2.length>0){
+    			$search2.yautocomplete()
+    		}
+
 	},
 
 	bindDisableSearch: function ()
@@ -119,5 +125,11 @@ ACC.autocomplete = {
         	$('#js-site-search-input').val($('#js-site-search-input').val().replace(/^\s+/gm,''));
             $('.js_search_button').prop('disabled', this.value == "" ? true : false);
         })
+
+    /**Added Unique Class for Mobile Search Box**/
+         $('#js-site-search-input-mob').keyup(function(){
+                	$('#js-site-search-input-mob').val($('#js-site-search-input-mob').val().replace(/^\s+/gm,''));
+                    $('.js_search_button').prop('disabled', this.value == "" ? true : false);
+                })
     }
 };
