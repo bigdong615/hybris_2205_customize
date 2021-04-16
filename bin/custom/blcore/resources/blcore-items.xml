@@ -8,7 +8,8 @@
         <collectiontype code="GenderList" elementtype="Gender" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
                         type="set"/>
-      <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
+        <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
+        <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
     </collectiontypes>
 
     <enumtypes>
@@ -31,7 +32,7 @@
             <value code="LITHIUM_METAL"/>
             <value code="NON_LITHIUM"/>
         </enumtype>
-      <enumtype generate="true" code="SerialStatusEnum" autocreate="true" dynamic="true">
+        <enumtype generate="true" code="SerialStatusEnum" autocreate="true" dynamic="true">
             <value code="ACTIVE"/>
             <value code="COMING_FROM_PURCHASE"/>
             <value code="REPAIR"/>
@@ -92,6 +93,28 @@
             <value code="WORK_STATION"/>
         </enumtype>
 
+        <!-- BL-542 -->
+        <enumtype generate="true" code="DeliveryTypeEnum" autocreate="true" dynamic="true">
+            <value code="SF"/>
+            <value code="NYC"/>
+        </enumtype>
+
+        <enumtype generate="false" code="DayOfWeek" autocreate="false">
+            <value code="COURIER"/>
+            <value code="SHIPPED_LOCAL"/>
+        </enumtype>
+
+        <enumtype generate="true" code="CarrierEnum" autocreate="true" dynamic="true">
+            <value code="UPS"/>
+            <value code="FEDEX"/>
+        </enumtype>
+
+        <enumtype generate="true" code="ShippingMethodTypeEnum" autocreate="true" dynamic="true">
+            <value code="PER_WEIGHT_UNIT_TABLE"/>
+            <value code="FLAT_RATE"/>
+        </enumtype>
+        <!-- BL-542 End-->
+
     </enumtypes>
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
@@ -124,16 +147,42 @@
                 <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
             </targetElement>
         </relation>
+
+        <!-- BL-542 -->
+        <relation code="ShippingGroup2ZoneDeliveryRel" autocreate="true" generate="true" localized="false">
+            <sourceElement qualifier="shippingGroup" type="ShippingGroup" cardinality="one">
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+            </sourceElement>
+            <targetElement qualifier="zoneDeliveryMode" type="ZoneDeliveryMode" cardinality="many" ordered="false">
+                <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
+            </targetElement>
+        </relation>
+
+        <relation code="PartnerPickUpStore2PickUpZoneRel" autocreate="true" generate="true" localized="false">
+            <sourceElement qualifier="partnerPickUpStore" type="PartnerPickUpStore" cardinality="one">
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+            </sourceElement>
+            <targetElement qualifier="blPickUpZoneDeliveryMode" type="BlPickUpZoneDeliveryMode" cardinality="many" ordered="false">
+                <modifiers read="true" write="true" search="true" optional="true"/>
+            </targetElement>
+        </relation>
+
+        <relation code="ZoneDeliveryMode2ShippingCostRel" autocreate="true" generate="true" localized="false">
+            <sourceElement qualifier="zoneDeliveryMode" type="ZoneDeliveryMode" cardinality="one">
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+            </sourceElement>
+            <targetElement qualifier="shippingCost" type="ShippingCost" cardinality="many" ordered="false">
+                <modifiers read="true" write="true" search="true" optional="true"/>
+            </targetElement>
+        </relation>
+        <!-- BL-542 End-->
+
     </relations>
 
 
     <itemtypes>
-
         <!-- Add your item definitions here -->
-
-
         <!-- TypeGroups are for structure of this file only -->
-
         <typegroup name="Apparel">
             <itemtype code="ApparelProduct" extends="Product"
                       autocreate="true" generate="true"
@@ -1103,7 +1152,7 @@
             </itemtype>
          </typegroup>
          
-         <typegroup name="Pricing">
+        <typegroup name="Pricing">
            <itemtype code="BlPricingLogic" autocreate="true" generate="true"
              jaloclass="com.bl.core.jalo.BLPricingLogic">
              <description>This table is for calculating the rental product 7 day price</description>
@@ -1181,5 +1230,159 @@
              </attributes>
            </itemtype>
          </typegroup>
+
+        <!-- BL-542 -->
+        <typegroup name="Shipping">
+            <itemtype code="ShippingGroup" extends="GenericItem" autocreate="true" generate="true">
+                <deployment table="shippingGroup" typecode="12209" />
+                <attributes>
+                    <attribute qualifier="code" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="false" unique="true" search="true" optional="false" initial="true" />
+                    </attribute>
+                    <attribute qualifier="name" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="ZoneDeliveryMode" extends="DeliveryMode" autocreate="false" generate="false">
+                <attributes>
+                    <attribute qualifier="deliveryModeType" type="ShippingGroup" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="daysToSkip" type="DaysCollection" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="cutOffTime" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="numberOfDaysToSkip" type="java.lang.Number" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="shippingMethodId" type="java.lang.Number" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="false" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="shippingMethodType" type="ShippingMethodTypeEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="false" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="carrier" type="CarrierEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="false" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlPickUpZoneDeliveryMode" extends="ZoneDeliveryMode" autocreate="true" generate="true">
+                <attributes>
+                    <attribute qualifier="externalStores" type="java.lang.Boolean" autocreate="true">
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="externalStoreUrl" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="userName" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="password" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="internalStoreAddress" type="Address" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="BlRushDeliveryMode" extends="ZoneDeliveryMode" autocreate="true" generate="true">
+                <attributes>
+                    <attribute qualifier="deliveryType" type="DeliveryTypeEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="shippingArea" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="radius" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="PartnerPickUpStore" extends="GenericItem" autocreate="true" generate="true">
+                <deployment table="partnerPickUpStore" typecode="12210" />
+                <attributes>
+                    <attribute qualifier="code" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="false" unique="true" optional="false" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="name" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="ShippingCost" extends="GenericItem" autocreate="true" generate="true">
+                <deployment table="shippingCost" typecode="12211" />
+                <attributes>
+                    <attribute qualifier="shippingRateId" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="false" unique="true" optional="false" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="shippingMethodId" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="name" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="floor" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="ceiling" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="amount" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
+        <typegroup>
+            <itemtype code="AbstractOrder" autocreate="false" generate="false">
+                <description>Extending AbstractOrder type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="totalWeight" type="java.lang.Double">
+                        <description>The address where the order is to be shipped from.</description>
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="dimensionalWeight" type="java.lang.Double">
+                        <description>The address where the order is to be shipped from.</description>
+                        <persistence type="property" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+        <!-- BL-542 End-->
 	</itemtypes>
 </items>
