@@ -321,7 +321,7 @@
           class="com.bl.facades.populators.BlStockPopulator">
         <property name="baseStoreService" ref="baseStoreService"/>
         <property name="blCommerceStockService" ref="blCommerceStockService"/>
-        <property name="sessionService" ref="sessionService"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
     </bean>
 	
 	<alias name="defaultStockConverter" alias="stockConverter"/>

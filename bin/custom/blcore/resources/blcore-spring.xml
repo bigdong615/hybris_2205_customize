@@ -799,5 +799,9 @@
 
 	<bean id="blInventoryScanToolService" name="blInventoryScanToolService"
 		  class="com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService"/>
+		  
+	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
+		<property name="sessionService" ref="sessionService"/>
+	</bean>
 
 </beans>

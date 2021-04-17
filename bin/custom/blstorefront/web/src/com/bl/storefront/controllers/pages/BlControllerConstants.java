@@ -23,7 +23,7 @@ public class BlControllerConstants
 	public static final String HOMEPAGE = "homepage";
 	public static final String COMMA = ",";
 	public static final String DATE_FORMAT = "MMM d, yyyy";
-	public static final String SEPARATOR = "-";
+	public static final String SEPARATOR = "|";
 	public static final int PAIR_OF_DATES = 2;
 	public static final String NUMBER_OF_DAYS = "numberOfDays";
 	public static final String SELECTED_TO_DATE = "selectedToDate";
@@ -42,9 +42,10 @@ public class BlControllerConstants
 
 
 	public static final String DAY_MON_DATE_YEAR_FORMAT = "EE MMM dd yyyy";
-	public static final String DATE_FORMAT_SEPARATED_BY_SLASH = "dd/MM/yyyy";
+	public static final String DATE_FORMAT_PATTERN = "dd-MM-yyyy";
 	public static final String SUCCESS = "success";
-	public static final String COOKIE_NAME_FOR_DATE = "selectedDate";
+	public static final String SELECTED_DATE_MAP = "selectedDateMap";
+	public static final String SELECTED_DATE = "selectedDate";
 
 	private BlControllerConstants()
 	{

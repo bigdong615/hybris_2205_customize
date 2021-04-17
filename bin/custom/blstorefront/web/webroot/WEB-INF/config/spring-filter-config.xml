@@ -241,7 +241,7 @@
 		<property name="httpOnly" value="true"/>
 	</bean>
 	
-	<bean id="blSelectedDateSetFilter" class="com.bl.storefront.filters.BlSelectedDateSetFilter" >
-		<property name="sessionService" ref="sessionService"/>	
+	<bean id="blDatePickerFilter" class="com.bl.storefront.filters.BlDatePickerFilter" >
+		<property name="blDatePickerService" ref="blDatePickerService"/>	
 	</bean>
 </beans>

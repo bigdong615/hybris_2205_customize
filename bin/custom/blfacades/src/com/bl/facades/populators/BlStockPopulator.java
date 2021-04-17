@@ -4,16 +4,17 @@ import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.product.data.StockData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import com.bl.core.data.StockResult;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.data.RentalDateDto;
 
 
 /**
@@ -25,7 +26,7 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 {
 	private BaseStoreService baseStoreService;
 	private BlCommerceStockService blCommerceStockService;
-	private SessionService sessionService;
+	private BlDatePickerService blDatePickerService;
 
 	/**
 	 * It populates the stock status and available quantity
@@ -37,13 +38,15 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 	public void populate(final SOURCE blProductModel, final TARGET stockData)
 	{
 		final BaseStoreModel baseStore = getBaseStoreService().getCurrentBaseStore();
-		final LocalDate startDate = getSessionService().getAttribute("selectedFromDate");
-		final LocalDate endDate = getSessionService().getAttribute("selectedToDate");
-		if (null != startDate && null != endDate) {
+		final RentalDateDto rentalDateDto = blDatePickerService.getDateFromSession();
+		if (null != rentalDateDto)
+		{
+			final String startDate = rentalDateDto.getSelectedFromDate();
+			final String endDate = rentalDateDto.getSelectedToDate();
 			final Date startDay = BlDateTimeUtils
-					.convertStringDateToDate(startDate.toString(), "yyyy-MM-dd");
+					.convertStringDateToDate(startDate, BlFacadesConstants.DATE_FORMAT);
 			final Date endDay = BlDateTimeUtils
-					.convertStringDateToDate(endDate.toString(), "yyyy-MM-dd");
+					.convertStringDateToDate(endDate, BlFacadesConstants.DATE_FORMAT);
 			final StockResult stockResult = getBlCommerceStockService().getStockForEntireDuration(
 					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
 			final StockLevelStatus stockLevelStatus = stockResult.getStockLevelStatus();
@@ -90,19 +93,20 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 	}
 
 	/**
-	 * @return the sessionService
+	 * @return the blDatePickerService
 	 */
-	public SessionService getSessionService()
+	public BlDatePickerService getBlDatePickerService()
 	{
-		return sessionService;
+		return blDatePickerService;
 	}
 
 	/**
-	 * @param sessionService
-	 *           the sessionService to set
+	 * @param blDatePickerService
+	 *           the blDatePickerService to set
 	 */
-	public void setSessionService(final SessionService sessionService)
+	public void setBlDatePickerService(final BlDatePickerService blDatePickerService)
 	{
-		this.sessionService = sessionService;
+		this.blDatePickerService = blDatePickerService;
 	}
+
 }

@@ -203,11 +203,28 @@
             numberOfColumns: 2,
             autoApply: false,
             format: "MMM D, YYYY",
-            resetButton: true,
-            buttonText : {"reset":"Reset Dates"},
+            resetButton: () => {
+				 let btn = document.createElement('button');
+				 btn.innerText = 'Reset Dates';
+				 btn.className = 'reset-button';
+				 btn.addEventListener('click', (evt) => {
+				 evt.preventDefault();
+				 $.ajax({
+                    url: ACC.config.encodedContextPath + '/resetDatepicker',
+                    type: "GET",
+                    success: function (data) {
+                    	if(data=='success')
+                        window.location.reload();
+                    },
+                    error: function (xhr, textStatus, error) {
+                       
+                    }
+                });
+				});
+				return btn;
+				},
             setup: (picker) => {
       			picker.on('button:apply', (date1, date2) => {
-      			alert(date1.toDateString() +" ----- "+ date2.toDateString());
       			$.ajax({
                     url: ACC.config.encodedContextPath + '/datepicker',
                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -302,11 +319,28 @@
               numberOfColumns: 2,
               autoApply: false,
               format: "MMM D, YYYY",
-              resetButton: true,
-              buttonText : {"reset":"Reset Dates"},
+              resetButton: () => {
+					 let btn = document.createElement('button');
+					 btn.innerText = 'Reset Dates';
+					 btn.className = 'reset-button';
+					 btn.addEventListener('click', (evt) => {
+					 evt.preventDefault();
+					 $.ajax({
+                      url: ACC.config.encodedContextPath + '/resetDatepicker',
+                      type: "GET",
+                      success: function (data) {
+                      	if(data=='success')
+                          window.location.reload();
+                      },
+                      error: function (xhr, textStatus, error) {
+                         
+                      }
+                  });
+					});
+					return btn;
+					},
               setup: (picker) => {
       			picker.on('button:apply', (date1, date2) => {
-      			alert(date1.toDateString() +" ----- "+ date2.toDateString());
       			$.ajax({
                     url: ACC.config.encodedContextPath + '/datepicker',
                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -460,11 +494,28 @@
                                                  numberOfColumns: 2,
                                                  autoApply: false,
                                                  format: "MMM D, YYYY",
-                                                 resetButton: true,
-                                                 buttonText : {"reset":"Reset Dates"},
+                                                 resetButton: () => {
+												 let btn = document.createElement('button');
+												 btn.innerText = 'Reset Dates';
+												 btn.className = 'reset-button';
+												 btn.addEventListener('click', (evt) => {
+												 evt.preventDefault();
+												 $.ajax({
+                                                     url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                                     type: "GET",
+                                                     success: function (data) {
+                                                     	if(data=='success')
+                                                         window.location.reload();
+                                                     },
+                                                     error: function (xhr, textStatus, error) {
+                                                        
+                                                     }
+                                                 });
+												});
+												return btn;
+												},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
-                                           			alert(date1.toDateString() +" ----- "+ date2.toDateString());
                                            			$.ajax({
                                                          url: ACC.config.encodedContextPath + '/datepicker',
                                                          data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},

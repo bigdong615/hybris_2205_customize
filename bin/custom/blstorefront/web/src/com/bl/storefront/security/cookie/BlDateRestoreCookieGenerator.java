@@ -1,5 +1,7 @@
 package com.bl.storefront.security.cookie;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+
 /**
  * Cookie generator of selected date
  *
@@ -7,11 +9,9 @@ package com.bl.storefront.security.cookie;
  */
 public class BlDateRestoreCookieGenerator extends EnhancedCookieGenerator
 {
-	private static final String SELECTED_DATE = "selectedDate";
-
 	@Override
 	public String getCookieName()
 	{
-		return SELECTED_DATE;
+		return BlControllerConstants.SELECTED_DATE;
 	}
 }

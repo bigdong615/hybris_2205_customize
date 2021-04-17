@@ -1,16 +1,14 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.datepicker.BlDatePickerService;
+
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
@@ -33,6 +31,8 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
+  @Resource(name = "blDatePickerService")
+  private BlDatePickerService blDatePickerService;
 
   /*
    * This method is used for render rental pdp.
@@ -53,20 +53,14 @@ public class RentalProductPageController extends AbstractBlProductPageController
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
   //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
-  		final LocalDate startDate = getSessionService().getAttribute(BlControllerConstants.SELECTED_FROM_DATE);
-  		final LocalDate endDate = getSessionService().getAttribute(BlControllerConstants.SELECTED_TO_DATE);
-       final RentalDateDto date = new RentalDateDto();
-  		if (null != startDate && null != endDate) {
-				final DateTimeFormatter formatter = BlDateTimeUtils.getFormatter(BlControllerConstants.RECOMMENDATION_DATE_FORMAT);
-				date.setSelectedFromDate(startDate.format(formatter));
-				date.setSelectedToDate(endDate.format(formatter));
-				date.setNumberOfDays(String.valueOf(ChronoUnit.DAYS.between(startDate, endDate)));
-				model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
-			} else {
-				date.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
-				model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
-			} // Temporary code ends here
-    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-    return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
+      RentalDateDto date = blDatePickerService.getDateFromSession();
+      if (null == date)
+      {
+        date = new RentalDateDto();
+        date.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
+      }
+      model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
+      model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+      return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }
 }

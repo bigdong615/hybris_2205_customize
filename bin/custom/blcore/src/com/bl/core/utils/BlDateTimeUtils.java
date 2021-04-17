@@ -150,7 +150,6 @@ public final class BlDateTimeUtils
 	 */
 	public static DateTimeFormatter getFormatter(final String pattern)
 	{
-
 		if (!formatterCache.containsKey(pattern))
 		{
 			formatterCache.put(pattern, DateTimeFormatter.ofPattern(pattern));
@@ -312,5 +311,18 @@ public final class BlDateTimeUtils
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, inputDateString);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns StringDate , formatted into given Format.
+	 *
+	 * @param localDate
+	 * @param dateFormat
+	 * @return the Formatted String Date
+	 */
+	public static String convertLocalDateToString(final LocalDate localDate, final String dateFormat)
+	{
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+		return localDate.format(formatter);
 	}
 }
