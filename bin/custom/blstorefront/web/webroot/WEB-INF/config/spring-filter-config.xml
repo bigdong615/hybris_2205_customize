@@ -75,7 +75,7 @@
 		<!-- filter to restore customer preferred location -->
 		<ref bean="customerLocationRestorationFilter"/>
 		
-		<ref bean="blSelectedDateSetFilter"/>
+		<ref bean="blDatePickerFilter"/>
 
 	</util:list>
 	
