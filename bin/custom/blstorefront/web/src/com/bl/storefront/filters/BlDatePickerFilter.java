@@ -1,6 +1,4 @@
 package com.bl.storefront.filters;
-
-import com.bl.storefront.controllers.pages.BlControllerConstants;
 import java.io.IOException;
 
 import javax.servlet.FilterChain;

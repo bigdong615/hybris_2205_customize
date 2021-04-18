@@ -19,7 +19,6 @@ import org.springframework.web.util.WebUtils;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.BlDatePicker;
 import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.stock.impl.DefaultBlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
