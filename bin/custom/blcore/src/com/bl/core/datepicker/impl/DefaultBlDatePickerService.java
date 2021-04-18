@@ -34,7 +34,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  */
 public class DefaultBlDatePickerService implements BlDatePickerService
 {
-	private static final Logger LOG = Logger.getLogger(DefaultBlCommerceStockService.class);
+	private static final Logger LOG = Logger.getLogger(DefaultBlDatePickerService.class);
 	private SessionService sessionService;
 
 	/**
@@ -157,12 +157,15 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			final RentalDateDto date = new RentalDateDto();
 			final String startDate = rentalDate.get(BlCoreConstants.START_DATE);
 			final String endDate = rentalDate.get(BlCoreConstants.END_DATE);
-			date.setSelectedFromDate(startDate);
-			date.setSelectedToDate(endDate);
-			date.setNumberOfDays(String.valueOf(
-					ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
-							BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
-			return date;
+			if (null != startDate && null != endDate)
+			{
+				date.setSelectedFromDate(startDate);
+				date.setSelectedToDate(endDate);
+				date.setNumberOfDays(String.valueOf(
+						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
+								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
+				return date;
+			}
 		}
 		return null;
 	}
