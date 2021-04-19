@@ -8,3 +8,10 @@ Added Media Query for Search Box
   height: 0px;}
 }
 
+/**
+Added for Empty Search text
+**/
+
+.js-shopping-button-empty {
+padding-left:0px !important;
+}

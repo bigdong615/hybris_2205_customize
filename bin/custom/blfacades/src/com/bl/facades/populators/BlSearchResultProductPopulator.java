@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -90,7 +91,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
 
     populatePrices(source, target);
-
+    // Populates Serial Product Price Data
+    populateSerialProductPrices(source, target);
     // Populate product's classification features
     getProductFeatureListPopulator().populate(getFeaturesList(source), target);
 
@@ -127,9 +129,38 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 		target.setPrice(getProductPriceData(dynamicPriceValue));
     }
   }
-  private PriceData getProductPriceData(final BigDecimal priceValue){
-	return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
-	}
+  
+  /**
+   * Populates serial product prices.
+   *
+   * @param source the source
+   * @param target the target
+   */
+  private void populateSerialProductPrices(final SearchResultValueData source, final ProductData target)
+  {
+	  final Double minSerialfinalSalePrice = this.<Double> getValue(source, "minSerialfinalSalePrice");
+	  if(PredicateUtils.notNullPredicate().evaluate(minSerialfinalSalePrice)) 
+	  {
+		  target.setSerialfinalSalePrice(getProductPriceData(BigDecimal.valueOf(minSerialfinalSalePrice)));
+	  }
+	  
+	  final Double minSerialIncentivizedPrice = this.<Double> getValue(source, "minSerialIncentivizedPrice");
+	  if(PredicateUtils.notNullPredicate().evaluate(minSerialIncentivizedPrice)) 
+	  {
+		  target.setSerialIncentivizedPrice(getProductPriceData(BigDecimal.valueOf(minSerialIncentivizedPrice)));
+	  }
+  }
+  
+  /**
+   * Gets the product price data.
+   *
+   * @param priceValue the price value
+   * @return the product price data
+   */
+  private PriceData getProductPriceData(final BigDecimal priceValue)
+  {
+	  return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
+  }
   
   protected void populateUrl(final SearchResultValueData source, final ProductData target)
   {

@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -21,6 +22,7 @@ import de.hybris.platform.commerceservices.search.facetdata.ProductCategorySearc
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,9 +74,21 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
 
         // BL-268 Added For Faceted PLP & Default Sorting for PLP
-        StringBuilder configParam  = new StringBuilder();
+        final StringBuilder configParam  = new StringBuilder();
         if(StringUtils.isBlank(searchQuery) && category.isRentalCategory()) {
                 searchQuery = getDefaultSort(category, configParam, searchQuery, categoryCode);
+        }
+        else if(StringUtils.isBlank(searchQuery) && category.isFacetedCategory()) {
+                final String categoryParam = Config.getParameter(BlCoreConstants.CATEGORY_MAP);
+                if(StringUtils.isNotBlank(categoryParam)) {
+                    final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
+                        .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+                    if(StringUtils.isNotBlank(categoryCodeMap.get(categoryCode))) {
+                        searchQuery = String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE))
+                            .append(getConfigParameters(BlCoreConstants.FACTED_USED_GEAR_CATEGORY_NAME))
+                            .append(categoryCodeMap.get(categoryCode)));
+                    }
+                }
         }
 
         final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
@@ -88,9 +102,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         //BL-80 Added to get default sorting as newest for Used New Arrivals Category
         if(StringUtils.isBlank(searchQuery)) {
             if (category.getCode().startsWith(BlCoreConstants.NEW) || BlCoreConstants.USED_NEW_ARRIVALS.equalsIgnoreCase(category.getCode())) {
-                searchQuery = getConfigParametrs(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
+                searchQuery = getConfigParameters(BlCoreConstants.DEFAULT_SORT_NEWEST_CODE);
             } else {
-                searchQuery = getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE);
+                searchQuery = getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE);
             }
         }
 
@@ -121,6 +135,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
         model.addAttribute("footerContent",category.getFooterContent());
         model.addAttribute(BlCoreConstants.CLEAR_BRAND,BlCoreConstants.RENTAL_CLEAR_ALL);
+        model.addAttribute(BlCoreConstants.CLEAR_USED_GEAR_CATEGORY,BlCoreConstants.USED_GEAR_CLEAR_ALL);
 
         updatePageTitle(category, model);
         // To check whether the category is Rental Gear
@@ -138,6 +153,9 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         // If its rental gear
         if(category.isRentalCategory() && category.isFacetedCategory()) {
             addClearAllModelAttribute(model);
+        }
+        else if(category.isFacetedCategory()) {
+            addClearAllModelAttributeForUsedGear(model);
         }
 
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
@@ -170,16 +188,24 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
     /**
+     * this method is created for adding clear attribute for used gear category
+     */
+    private void addClearAllModelAttributeForUsedGear( final Model model) {
+        model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY,  BlCoreConstants.USED_GEAR_CLEAR_ALL);
+        model.addAttribute(BlCoreConstants.USED_GEAR_SUPER_CATEGORY, BlCoreConstants.USED_GEAR);
+    }
+
+    /**
      * this method is created for getting default sort from properties
      */
     private String getDefaultSort(final CategoryModel category ,final StringBuilder configParam , String searchQuery ,final String categoryCode) {
         if(CollectionUtils.isEmpty(category.getSupercategories())){
-            searchQuery= String.valueOf(configParam.append(getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE)));
+            searchQuery= String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE)));
         }
         else {
                 if (category.isFacetedCategory()) {
-                    searchQuery = String.valueOf(configParam.append(getConfigParametrs(BlCoreConstants.DEFAULT_SORT_CODE))
-                            .append(getConfigParametrs(BlCoreConstants.FACTED_CATEGORY_NAME))
+                    searchQuery = String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE))
+                            .append(getConfigParameters(BlCoreConstants.FACTED_CATEGORY_NAME))
                             .append(categoryCode));
             }
         }
@@ -187,11 +213,11 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
     /**
-     * this method is created for getting com
+     * this method is created for getting Config parameters from properties file
      * @param configParam property key
      * @return String values
      */
-    private String getConfigParametrs(final String configParam) {
+    private String getConfigParameters(final String configParam) {
         final String value = Config.getParameter(configParam);
         if(StringUtils.isNotBlank(value)) {
             return value;

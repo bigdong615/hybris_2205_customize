@@ -71,7 +71,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationBarMobileSlot       ;                                                                              ;                          ; navigation
 
 
-INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                        ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
+INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid                                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
                                     ;                          ; SiteLogo-productGridPage                  ; SiteLogo                      ;                                                                                  ; SiteLogoSlot                               ; true
                                     ;                          ; HomepageLink-productGridPage              ; HomepageNavLink               ;                                                                                  ; HomepageNavLinkSlot                        ; true
                                     ;                          ; MiniCart-productGridPage                  ; MiniCart                      ;                                                                                  ; MiniCartSlot                               ; true
