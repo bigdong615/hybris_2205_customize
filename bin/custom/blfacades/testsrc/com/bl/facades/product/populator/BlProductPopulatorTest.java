@@ -11,6 +11,7 @@ import com.bl.facades.product.data.SerialProductData;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -51,6 +52,8 @@ public class BlProductPopulatorTest {
   List productVideoList;
   @Mock
   private Converter<MediaModel, ImageData> imageConverter;
+  @Mock
+  private Populator<BlProductModel, ProductData> blProductTagPopulator;
 
   private BlSerialProductModel serialProductModel;
   private ProductVideoModel productVideoModel;
