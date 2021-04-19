@@ -7,7 +7,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="theme" tagdir="/WEB-INF/tags/shared/theme" %>
-
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -58,8 +58,16 @@
 					</c:forEach>
 				</div>
 			</c:if>
-
-			<h6 class="price"><product:blUsedGearProductListerItemPrice product="${product}"/><small>Starting at</small> $8,000 <small><strike>$9,500</strike></small></h6>
+	<h6 class="price"><small><spring:theme code="text.used.product.card.price.starting.at"/></small>
+			<c:choose>
+				<c:when test="${not empty product.serialIncentivizedPrice }">
+					<format:price priceData="${product.serialIncentivizedPrice}" />&nbsp;<small><strike><format:price priceData="${product.serialfinalSalePrice}" /></strike></small>
+				</c:when>
+				<c:otherwise>
+					<format:price priceData="${product.serialfinalSalePrice}" />
+				</c:otherwise>
+			</c:choose>
+	</h6>		
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">
