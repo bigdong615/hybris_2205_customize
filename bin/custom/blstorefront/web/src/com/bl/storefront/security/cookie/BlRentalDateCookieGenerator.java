@@ -7,7 +7,7 @@ import com.bl.storefront.controllers.pages.BlControllerConstants;
  *
  * @author Moumita
  */
-public class BlDateRestoreCookieGenerator extends EnhancedCookieGenerator
+public class BlRentalDateCookieGenerator extends EnhancedCookieGenerator
 {
 	@Override
 	public String getCookieName()

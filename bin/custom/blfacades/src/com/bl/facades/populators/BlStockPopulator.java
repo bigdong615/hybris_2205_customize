@@ -38,7 +38,7 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 	public void populate(final SOURCE blProductModel, final TARGET stockData)
 	{
 		final BaseStoreModel baseStore = getBaseStoreService().getCurrentBaseStore();
-		final RentalDateDto rentalDateDto = blDatePickerService.getDateFromSession();
+		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
 		if (null != rentalDateDto)
 		{
 			final String startDate = rentalDateDto.getSelectedFromDate();

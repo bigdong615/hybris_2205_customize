@@ -1,11 +1,9 @@
 package com.bl.core.datepicker;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.bl.core.data.BlDatePicker;
 import com.bl.facades.product.data.RentalDateDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -17,21 +15,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public interface BlDatePickerService
 {
 	/**
-	 * It gets the cookie of rental date
+	 * It gets the rental date from cookie
 	 *
 	 * @param request the request object
-	 * @return BlDatePicker
+	 * @return RentalDateDto
 	 * @throws JsonProcessingException the exception while processing json
 	 */
-	public BlDatePicker getCookieForDatePicker(final HttpServletRequest request)
+	public RentalDateDto getRentalDatesFromCookie(final HttpServletRequest request)
 			throws JsonProcessingException;
-
-	/**
-	 * It sets the rental date into session or remove it from the session based on condition
-	 *
-	 * @param blDatePicker
-	 */
-	public void setOrRemoveDatePickerInSession(final BlDatePicker blDatePicker);
 
 	/**
 	 * It checks if the selected date is same as the date set into cookie
@@ -46,11 +37,10 @@ public interface BlDatePickerService
 			throws JsonProcessingException;
 
 	/**
-	 * It removes the date from session
+	 * It removes the date picker date from session
 	 *
-	 * @param selectedDateMap the map for the selected date
 	 */
-	public void removeDatePickerFromSession(final String selectedDateMap);
+	public void removeRentalDatesFromSession();
 
 	/**
 	 * It removes the cookie for selected date
@@ -65,5 +55,13 @@ public interface BlDatePickerService
 	 *
 	 * @return RentalDateDto
 	 */
-	public RentalDateDto getDateFromSession();
+	public RentalDateDto getRentalDatesFromSession();
+
+	/**
+	 * It sets the date picker date into session
+	 *
+	 * @param startDate the rental start date
+	 * @param endDate the rental end date
+	 */
+	public void addRentalDatesIntoSession(final String startDate, final String endDate);
 }

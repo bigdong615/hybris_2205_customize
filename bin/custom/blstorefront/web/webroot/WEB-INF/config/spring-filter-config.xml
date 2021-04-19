@@ -234,7 +234,7 @@
 	</bean>
 
 	<!-- BL-546 - Local Storage Implementation of Date -->
-	<bean id="blDateRestoreCookieGenerator" class="com.bl.storefront.security.cookie.BlDateRestoreCookieGenerator" >
+	<bean id="blRentalDateCookieGenerator" class="com.bl.storefront.security.cookie.BlRentalDateCookieGenerator" >
 		<property name="cookieSecure" value="true"/>
 		<property name="cookieMaxAge" value="360000000"/>
 		<property name="useDefaultPath" value="false"/>

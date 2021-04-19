@@ -52,14 +52,14 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, extraOptions);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-  //To show date range on the recommendation section for temporary purpose once local storage is ready this will be replaced.
-      RentalDateDto date = blDatePickerService.getDateFromSession();
-      if (null == date)
+  //To show date range on the recommendation section
+      RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+      if (null == rentalDates)
       {
-        date = new RentalDateDto();
-        date.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
+        rentalDates = new RentalDateDto();
+        rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
       }
-      model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
+      model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
       model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
       return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }

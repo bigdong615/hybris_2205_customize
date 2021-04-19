@@ -148,13 +148,13 @@ public class SearchPageController extends AbstractSearchPageController
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(searchText);
 		setUpMetaData(model, metaKeywords, metaDescription);
 
-		RentalDateDto date = blDatePickerService.getDateFromSession();
-		if (null == date)
+		RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+		if (null == rentalDates)
 		{
-			date = new RentalDateDto();
-			date.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
+			rentalDates = new RentalDateDto();
+			rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
 		}
-		model.addAttribute(BlControllerConstants.RENTAL_DATE, date);
+		model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
 
 		return getViewForPage(model);
 	}

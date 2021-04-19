@@ -67,7 +67,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		final StockResult stockResult = new StockResult();
 		stockResult.setTotalCount(totalUnits);
 		stockResult.setAvailableCount(availability);
-		setStockLevelStatus(stockResult);
+		final StockLevelStatus stockLevelStatus = setStockLevelStatus(stockResult);
+		stockResult.setStockLevelStatus(stockLevelStatus);
 		return stockResult;
 	}
 
@@ -76,7 +77,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 *
 	 * @param stockResult the stockResult object
 	 */
-	private void setStockLevelStatus(final StockResult stockResult) {
+	private StockLevelStatus setStockLevelStatus(final StockResult stockResult) {
 		final Long totalUnits = stockResult.getTotalCount();
 		final Long availability = stockResult.getAvailableCount();
 		StockLevelStatus resultStatus;
@@ -95,7 +96,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		} else {
 			resultStatus = StockLevelStatus.INSTOCK;
 		}
-		stockResult.setStockLevelStatus(resultStatus);
+		return resultStatus;
 	}
 
 	/**

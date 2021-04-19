@@ -1,28 +1,22 @@
 package com.bl.core.datepicker.impl;
 
-import de.hybris.platform.servicelayer.session.SessionService;
-
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.web.util.WebUtils;
-
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.data.BlDatePicker;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import de.hybris.platform.servicelayer.session.SessionService;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.springframework.web.util.WebUtils;
 
 
 /**
@@ -40,7 +34,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BlDatePicker getCookieForDatePicker(final HttpServletRequest request)
+	public RentalDateDto getRentalDatesFromCookie(final HttpServletRequest request)
 			throws JsonProcessingException
 	{
 		final Cookie selectedDateCookie = WebUtils.getCookie(request, BlCoreConstants.COOKIE_NAME_FOR_DATE);
@@ -50,10 +44,10 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			final String[] lSelectedDates = date.split(BlCoreConstants.SEPARATOR);
 			if (lSelectedDates.length == BlCoreConstants.PAIR_OF_DATES)
 			{
-				final BlDatePicker blDatePicker = new BlDatePicker();
-				blDatePicker.setRentalStartDate(lSelectedDates[0]);
-				blDatePicker.setRentalEndDate(lSelectedDates[1]);
-				return blDatePicker;
+				final RentalDateDto rentalDateDto = new RentalDateDto();
+				rentalDateDto.setSelectedFromDate(lSelectedDates[0]);
+				rentalDateDto.setSelectedToDate(lSelectedDates[1]);
+				return rentalDateDto;
 			}
 		}
 		return null;
@@ -63,50 +57,23 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void removeDatePickerFromSession(final String selectedDateMap)
+	public void removeRentalDatesFromSession()
 	{
-		getSessionService().removeAttribute(selectedDateMap);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "date {} removed from session", selectedDateMap);
+		getSessionService().removeAttribute(BlCoreConstants.SELECTED_DATE_MAP);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "date {} removed from session", BlCoreConstants.SELECTED_DATE_MAP);
 	}
 
 	/**
-	 * It sets the date into session
-	 *
-	 * @param selectedFromDate
-	 * @param selectedToDate
-	 * @param startDate
-	 * @param endDate
-	 */
-	private void addDatePickerIntoSession(final String selectedFromDate, final String selectedToDate, final String startDate,
-			final String endDate)
-	{
-		final Map<String, String> datepickerDates = new HashMap<>();
-		datepickerDates.put(selectedFromDate, startDate);
-		datepickerDates.put(selectedToDate, endDate);
-		getSessionService().setAttribute(BlCoreConstants.SELECTED_DATE_MAP, datepickerDates);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "date {} and {} set into session", startDate, endDate);
-	}
-
-	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	@Override
-	public void setOrRemoveDatePickerInSession(final BlDatePicker blDatePicker)
+	public void addRentalDatesIntoSession(final String startDate, final String endDate)
 	{
-		final LocalDate currentDate = LocalDate.now();
-		final String selectedFromDate = blDatePicker.getRentalStartDate();
-		final String selectedToDate = blDatePicker.getRentalEndDate();
-		final LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(selectedFromDate,
-				BlCoreConstants.DATE_FORMAT);
-		if (startDate.isBefore(currentDate))
-		{
-			removeDatePickerFromSession(BlCoreConstants.SELECTED_DATE_MAP);
-		}
-		else
-		{
-			addDatePickerIntoSession(BlCoreConstants.START_DATE, BlCoreConstants.END_DATE, selectedFromDate,
-					selectedToDate);
-		}
+		final Map<String, String> datepickerDates = new HashMap<>();
+		datepickerDates.put(BlCoreConstants.START_DATE, startDate);
+		datepickerDates.put(BlCoreConstants.END_DATE, endDate);
+		getSessionService().setAttribute(BlCoreConstants.SELECTED_DATE_MAP, datepickerDates);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "date from {} to {} set into session", startDate, endDate);
 	}
 
 	/**
@@ -116,13 +83,15 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public boolean checkIfSelectedDateIsSame(final HttpServletRequest request, final String startDate, final String endDate)
 			throws JsonProcessingException
 	{
-		final BlDatePicker blDatePicker = getCookieForDatePicker(request);
-		if (null != blDatePicker)
+		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
+		if (null != rentalDate)
 		{
-			final String startDayFromCookie = blDatePicker.getRentalStartDate();
-			final String endDayFromCookie = blDatePicker.getRentalEndDate();
+			final String startDayFromCookie = rentalDate.get(BlCoreConstants.START_DATE);
+			final String endDayFromCookie = rentalDate.get(BlCoreConstants.END_DATE);
 			if (startDate.equals(startDayFromCookie) && endDate.equals(endDayFromCookie))
 			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Selected dates from {} to {} are same as present in session",
+						startDayFromCookie, endDayFromCookie);
 				return true;
 			}
 		}
@@ -148,7 +117,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	 * {@inheritDoc}
 	 */
 	@Override
-	public RentalDateDto getDateFromSession()
+	public RentalDateDto getRentalDatesFromSession()
 	{
 		final Map<String, String> rentalDate = getSessionService().getAttribute(BlCoreConstants.SELECTED_DATE_MAP);
 		if (null != rentalDate)
