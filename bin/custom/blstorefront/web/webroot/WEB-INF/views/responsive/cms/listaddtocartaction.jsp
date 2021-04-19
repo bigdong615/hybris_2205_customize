@@ -9,7 +9,10 @@
 <%-- Added for rentalgear and usedgear pages --%>
 <c:choose>
         <c:when test="${blPageType eq 'usedGear'}">
-        <cart:blUsedGearAddToCart/>
+        <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
+         <a href="${usedGearUrl}" class="btn btn-primary">
+         <spring:theme code="text.plp.see.pricing"/>
+         </a>
         </c:when>
         <c:otherwise>
           <cart:blRentalGearAddToRental/>
