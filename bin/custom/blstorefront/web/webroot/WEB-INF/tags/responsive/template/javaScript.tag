@@ -254,14 +254,14 @@
          });
          // Added code to remove same name and id on search text box specific to device
          if ($(window).width() < 480 ) {
- 			$("input.d-desk").attr("id","");
- 		    $("input.d-desk").attr("name","");	
+ 		      	$("input.d-desk").attr("id","");
+ 		        $("input.d-desk").attr("name","");
  		}
  		else {
  			$("input.d-mob").attr("id","");
  			$("input.d-mob").attr("name","");
  		}
-    </script>  
+    </script>
 	</c:if>
 
 
@@ -544,7 +544,18 @@
                                                  resetButton: true,
                                                  buttonText : {"reset":"Reset"},
                                              });
-
+                                         // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+                                                 document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+                                                     type   : 'loop',
+                                                     perPage: 1,
+                                                     drag   : false,
+                                                     breakpoints: {
+                                                         '991': {
+                                                             pagination: false,
+                                                         },
+                                                     },
+                                                     keyboard: false,
+                                                 } ).mount());
 
                                          </script>
 
