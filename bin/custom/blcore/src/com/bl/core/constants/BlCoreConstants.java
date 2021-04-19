@@ -98,6 +98,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DEFAULT_ZONE_ID = "UTC";
 
+	public static final String FACTED_USED_CATEGORY_NAME = "facted.used.plp.category.name";
+	public static final String USED_CLEAR_ALL = "/buy/category/usedgear";
+	public static final String USED_SUPER_CATEGORY = "usedsuperCategory";
+	public static final String CLEAR_USED = "usedClear";
+
+
 	private BlCoreConstants()
 	{
 		//empty

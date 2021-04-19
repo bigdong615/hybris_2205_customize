@@ -29,6 +29,12 @@
                              						    <a href="${fn:escapeXml(clearUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
                  </c:forEach>
               </c:when>
+              <c:when test="${pageData.breadcrumbs.size()<2 && usedsuperCategory ne null}">
+                            <c:url var= "clearUrl" value ="${usedClear}"/>
+                              <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
+                                           						    <a href="${fn:escapeXml(clearUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
+                               </c:forEach>
+                            </c:when>
               <c:otherwise>
                <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
                						<c:url value="${breadcrumb.removeQuery.url}" var="removeQueryUrl"/>
