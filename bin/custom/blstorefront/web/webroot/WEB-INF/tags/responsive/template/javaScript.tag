@@ -84,7 +84,7 @@
 
 		<script src="${commonResourcePathHtml}/js/_autoload.js"></script>
 
-        <%-- custom js file --%>
+		<%-- custom js file --%>
         <c:if test="${cmsPage.uid eq 'cartpage'}">
         <script src="${commonResourcePathHtml}/js/blCustom.js"></script>
         </c:if>
@@ -203,8 +203,42 @@
             numberOfColumns: 2,
             autoApply: false,
             format: "MMM D, YYYY",
-            resetButton: true,
-            buttonText : {"reset":"Reset Dates"},
+            resetButton: () => {
+				 let btn = document.createElement('button');
+				 btn.innerText = 'Reset Dates';
+				 btn.className = 'reset-button';
+				 btn.addEventListener('click', (evt) => {
+				 evt.preventDefault();
+				 $.ajax({
+                    url: ACC.config.encodedContextPath + '/resetDatepicker',
+                    type: "GET",
+                    success: function (data) {
+                    	if(data=='success')
+                        window.location.reload();
+                    },
+                    error: function (xhr, textStatus, error) {
+                       
+                    }
+                });
+				});
+				return btn;
+				},
+            setup: (picker) => {
+      			picker.on('button:apply', (date1, date2) => {
+      			$.ajax({
+                    url: ACC.config.encodedContextPath + '/datepicker',
+                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                    type: "GET",
+                    success: function (data) {
+                    	if(data=='success')
+                        window.location.reload();
+                    },
+                    error: function (xhr, textStatus, error) {
+                       
+                    }
+                });
+      			});
+      			}
         }); 
          // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
          const mpicker = new Litepicker({ 
@@ -277,7 +311,62 @@
               },
               //,
           } ).mount());
-
+          const picker = new Litepicker({
+              element: document.getElementById('litepicker'),
+              //plugins: ['mobilefriendly'],
+              singleMode: false,
+              numberOfMonths: 2,
+              numberOfColumns: 2,
+              autoApply: false,
+              format: "MMM D, YYYY",
+              resetButton: () => {
+					 let btn = document.createElement('button');
+					 btn.innerText = 'Reset Dates';
+					 btn.className = 'reset-button';
+					 btn.addEventListener('click', (evt) => {
+					 evt.preventDefault();
+					 $.ajax({
+                      url: ACC.config.encodedContextPath + '/resetDatepicker',
+                      type: "GET",
+                      success: function (data) {
+                      	if(data=='success')
+                          window.location.reload();
+                      },
+                      error: function (xhr, textStatus, error) {
+                         
+                      }
+                  });
+					});
+					return btn;
+					},
+              setup: (picker) => {
+      			picker.on('button:apply', (date1, date2) => {
+      			$.ajax({
+                    url: ACC.config.encodedContextPath + '/datepicker',
+                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                    type: "GET",
+                    success: function (data) {
+                    	if(data=='success')
+                        window.location.reload();
+                    },
+                    error: function (xhr, textStatus, error) {
+                       
+                    }
+                });
+      			});
+      			}
+          });
+          const mpicker = new Litepicker({
+              element: document.getElementById('mobile-litepicker'),
+              plugins: ['mobilefriendly'],
+              singleMode: false,
+              numberOfMonths: 1,
+              numberOfColumns: 1,
+              autoApply: false,
+              format: "MMM D",
+              resetButton: true,
+              buttonText : {"reset":"Reset"},
+          });
       </script>
   	</c:if>
 
@@ -405,8 +494,42 @@
                                                  numberOfColumns: 2,
                                                  autoApply: false,
                                                  format: "MMM D, YYYY",
-                                                 resetButton: true,
-                                                 buttonText : {"reset":"Reset Dates"},
+                                                 resetButton: () => {
+												 let btn = document.createElement('button');
+												 btn.innerText = 'Reset Dates';
+												 btn.className = 'reset-button';
+												 btn.addEventListener('click', (evt) => {
+												 evt.preventDefault();
+												 $.ajax({
+                                                     url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                                     type: "GET",
+                                                     success: function (data) {
+                                                     	if(data=='success')
+                                                         window.location.reload();
+                                                     },
+                                                     error: function (xhr, textStatus, error) {
+                                                        
+                                                     }
+                                                 });
+												});
+												return btn;
+												},
+                                                 setup: (picker) => {
+                                           			picker.on('button:apply', (date1, date2) => {
+                                           			$.ajax({
+                                                         url: ACC.config.encodedContextPath + '/datepicker',
+                                                         data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                                         type: "GET",
+                                                         success: function (data) {
+                                                         	if(data=='success')
+                                                             window.location.reload();
+                                                         },
+                                                         error: function (xhr, textStatus, error) {
+                                                            
+                                                         }
+                                                     });
+                                           			});
+                                           			}
                                              });
 
                                              // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
