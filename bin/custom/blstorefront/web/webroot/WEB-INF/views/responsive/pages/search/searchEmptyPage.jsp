@@ -19,16 +19,19 @@
 	<cms:pageSlot position="SearchBoxBl" var="component">
   				<cms:component component="${component}"/>
   </cms:pageSlot>
-	
+
+	<div class="container">
 	<div class="search-empty">
 		<div class="headline">
 			<spring:theme code="search.no.results" arguments="${searchPageData.freeTextSearch}" var="noSearchResults" htmlEscape="false"/>
 			${ycommerce:sanitizeHTML(noSearchResults)}
 		</div>
-		<a class="btn btn-default  js-shopping-button" href="${fn:escapeXml(homePageUrl)}">
-			<spring:theme code="general.continue.shopping" text="Continue Shopping"/>
-		</a>
 	</div>
+		<a class="btn btn-default js-shopping-button js-shopping-button-empty" href="${fn:escapeXml(homePageUrl)}">
+    			<spring:theme code="general.continue.shopping" text="Continue Shopping"/>
+    		</a>
+	</div>
+
 	
 	<cms:pageSlot position="MiddleContent" var="comp" element="div" class="searchEmptyPageMiddle">
 		<cms:component component="${comp}" element="div" class="yComponentWrapper searchEmptyPageMiddle-component"/>

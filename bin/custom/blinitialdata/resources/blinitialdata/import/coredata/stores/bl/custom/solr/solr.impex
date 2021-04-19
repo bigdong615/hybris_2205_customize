@@ -252,10 +252,6 @@ INSERT_UPDATE SolrIndexedProperty; solrIndexedType(identifier)[unique = true]; n
                                  ; $solrIndexedType                          ; minSerialIncentivizedPrice ; double     ;                    ;                           ;                            ;                             ;                                      ;                                     ; blSerialIncentivizedPriceValueResolver       ;                        ;                                 ;                     ;                           ;               ;                                ;                    ;                                   ;                                               ;                       ;                               
 
 
-INSERT_UPDATE SolrSearchQueryProperty; indexedProperty(name, solrIndexedType(identifier))[unique = true]; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$solrIndexedType]; facet[default = true]; facetType(code); includeInResponse[default = true]; facetDisplayNameProvider         ; facetSortProvider; facetTopValuesProvider
-                                      ; forSale:$solrIndexedType                                           ;                                                                                                      ;                      ;   ;                                  ;  ;
-
-
 # To Remove OOB Sorts
 Remove SolrSort; indexedType(identifier)[unique = true]; code[unique = true];
                ; $solrIndexedType                      ; topRated           ;
