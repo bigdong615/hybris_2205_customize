@@ -43,12 +43,11 @@ public interface BlDatePickerService
 	public void removeRentalDatesFromSession();
 
 	/**
-	 * It removes the cookie for selected date
+	 * It removes the cookie for rental date
 	 *
 	 * @param response the response object
-	 * @param cookieName the name of the cookie
 	 */
-	public void removeCookie(final HttpServletResponse response, final String cookieName);
+	public void removeRentalDateCookie(final HttpServletResponse response);
 
 	/**
 	 * It gets the date from session

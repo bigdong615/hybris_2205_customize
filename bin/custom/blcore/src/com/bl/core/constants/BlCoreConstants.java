@@ -102,6 +102,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SEPARATOR = "\\|";
 	public static final String SELECTED_DATE_MAP = "selectedDateMap";
 	public static final String DATE_FORMAT = "dd-MM-yyyy";
+	public static final String SELECTED_DATE = "selectedDate";
 
 	public static final String FACTED_USED_GEAR_CATEGORY_NAME = "facted.usedgear.plp.category.name";
 	public static final String USED_GEAR_CLEAR_ALL = "/buy/category/usedgear";

@@ -101,13 +101,12 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void removeCookie(final HttpServletResponse response, final String cookieName)
+	public void removeRentalDateCookie(final HttpServletResponse response)
 	{
-		final Cookie cookie = new Cookie(cookieName, "");
+		final Cookie cookie = new Cookie(BlCoreConstants.SELECTED_DATE, BlCoreConstants.EMPTY_STRING);
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Cookie removed for {} ", cookieName);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "rental date cookie removed for {} ", BlCoreConstants.SELECTED_DATE);
 	}
 
 	/**
