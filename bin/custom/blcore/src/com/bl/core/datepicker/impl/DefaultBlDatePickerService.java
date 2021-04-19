@@ -104,12 +104,9 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	@Override
 	public void removeCookie(final HttpServletResponse response, final String cookieName)
 	{
-		final Cookie cookie1 = new Cookie(cookieName, "");
-
-		cookie1.setMaxAge(0);
-
-		response.addCookie(cookie1);
-
+		final Cookie cookie = new Cookie(cookieName, "");
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Cookie removed for {} ", cookieName);
 	}
 
