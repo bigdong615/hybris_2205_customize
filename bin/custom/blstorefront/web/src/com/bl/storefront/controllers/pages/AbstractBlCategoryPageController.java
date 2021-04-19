@@ -74,7 +74,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
 
         // BL-268 Added For Faceted PLP & Default Sorting for PLP
-        StringBuilder configParam  = new StringBuilder();
+        final StringBuilder configParam  = new StringBuilder();
         if(StringUtils.isBlank(searchQuery) && category.isRentalCategory()) {
                 searchQuery = getDefaultSort(category, configParam, searchQuery, categoryCode);
         }
@@ -85,7 +85,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                         .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
                     if(StringUtils.isNotBlank(categoryCodeMap.get(categoryCode))) {
                         searchQuery = String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE))
-                            .append(getConfigParameters(BlCoreConstants.FACTED_USED_CATEGORY_NAME))
+                            .append(getConfigParameters(BlCoreConstants.FACTED_USED_GEAR_CATEGORY_NAME))
                             .append(categoryCodeMap.get(categoryCode)));
                     }
                 }
@@ -135,7 +135,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
         model.addAttribute("footerContent",category.getFooterContent());
         model.addAttribute(BlCoreConstants.CLEAR_BRAND,BlCoreConstants.RENTAL_CLEAR_ALL);
-        model.addAttribute(BlCoreConstants.CLEAR_USED,BlCoreConstants.USED_CLEAR_ALL);
+        model.addAttribute(BlCoreConstants.CLEAR_USED_GEAR_CATEGORY,BlCoreConstants.USED_GEAR_CLEAR_ALL);
 
         updatePageTitle(category, model);
         // To check whether the category is Rental Gear
@@ -191,8 +191,8 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      * this method is created for adding clear attribute for used gear category
      */
     private void addClearAllModelAttributeForUsedGear( final Model model) {
-        model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY,  BlCoreConstants.USED_CLEAR_ALL);
-        model.addAttribute(BlCoreConstants.USED_SUPER_CATEGORY, BlCoreConstants.USED_GEAR);
+        model.addAttribute(BlCoreConstants.CLEAR_ALL_QUERY,  BlCoreConstants.USED_GEAR_CLEAR_ALL);
+        model.addAttribute(BlCoreConstants.USED_GEAR_SUPER_CATEGORY, BlCoreConstants.USED_GEAR);
     }
 
     /**
@@ -213,9 +213,8 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
     /**
-     * this method is created for getting com
+     * this method is created for getting Config parameters from properties file
      * @param configParam property key
-     *
      * @return String values
      */
     private String getConfigParameters(final String configParam) {
