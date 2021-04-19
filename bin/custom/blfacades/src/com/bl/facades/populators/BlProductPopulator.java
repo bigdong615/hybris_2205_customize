@@ -4,22 +4,30 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.product.SerialProductData;
 import com.bl.facades.product.data.ProductVideoData;
+import com.bl.facades.product.data.SerialProductData;
+
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.ImageData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
@@ -33,6 +41,8 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
 
     private ModelService modelService;
     private Populator<BlProductModel, ProductData> blProductTagPopulator;
+    private PriceDataFactory priceDataFactory;
+    private CommonI18NService commonI18NService;
 
     @Override
     public void populate(final BlProductModel source, final ProductData target) {
@@ -56,8 +66,9 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
         target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
-        target.setUsedDescription(source.getUsedDescription());
-        target.setSerialproducts(populatedSerialProduct(CollectionUtils.emptyIfNull(source.getSerialProducts())));
+        target.setUsedDescription(source.getUsedDescription());  
+        //populates list of serial product data assigned to SKU
+        populateSerialProducts(source,target);
         getBlProductTagPopulator().populate(source, target);
     }
 
@@ -95,8 +106,9 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     /*
      * This method is used for populating serial product.
      */
-    private List<SerialProductData> populatedSerialProduct(final Collection<BlSerialProductModel> blSerialProductModels) {
-        final List<SerialProductData> serialProductDataList = new ArrayList<>();
+    private void populateSerialProducts(final BlProductModel source, final ProductData target) {
+   	 final List<SerialProductData> serialProductDataList = new ArrayList<>();
+   	 final List<BlSerialProductModel> blSerialProductModels = new ArrayList<>(CollectionUtils.emptyIfNull(source.getSerialProducts()));
         blSerialProductModels.forEach(serialProductModel -> {
                     SerialProductData serialProductData = new SerialProductData();
             if (serialProductModel.getConditionRatingOverallScore() != null) {
@@ -107,12 +119,82 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
                 serialProductData.setConditionRating(BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
             }
                     serialProductData.setSerialId(serialProductModel.getProductId());
+                    if(PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice())) {
+                  	  serialProductData.setFinalSalePrice(getProductPriceData(serialProductModel.getFinalSalePrice()));
+                    }
+                    if(PredicateUtils.notNullPredicate().evaluate(serialProductModel.getIncentivizedPrice())) {
+                  	  serialProductData.setFinalIncentivizedPrice(getProductPriceData(serialProductModel.getIncentivizedPrice()));
+                  	  target.setHasIncentivizedPrice(Boolean.TRUE);
+                    }
                     serialProductDataList.add(serialProductData);
                 }
         );
-        Collections.sort(serialProductDataList);
-        return serialProductDataList;
+        sortSerialBasedOnConditionRating(serialProductDataList);
+        target.setSerialproducts(serialProductDataList);
     }
+    
+    /**
+     * Sorting serial products in Ascending Order based on condition rating.
+     *
+     * @param serialProductDataList the serial product data list
+     * @return the list
+     */
+    private List<SerialProductData> sortSerialBasedOnConditionRating(final List<SerialProductData> serialProductDataList)
+    {
+   	 if (CollectionUtils.isNotEmpty(serialProductDataList))
+       {
+   		 Collections.sort(serialProductDataList, new Comparator<SerialProductData>()
+   		 {
+   			 @Override
+   			 public int compare(final SerialProductData serialProductData1, final SerialProductData serialProductData2)
+   			 {
+   				 return compareSerialProductData(serialProductData1, serialProductData2);
+   			 }
+   		 });
+       }
+       return serialProductDataList;
+   }
+
+   /**
+    * Compare serial product data.
+    *
+    * @param serialProductData1 the serial product data 1
+    * @param serialProductData2 the serial product data 2
+    * @return the int
+    */
+   private int compareSerialProductData(final SerialProductData serialProductData1, final SerialProductData serialProductData2)
+   {
+   	if (serialProductData1 != null )
+   	{
+   		if (serialProductData2 != null )
+   		{
+   			return Double.valueOf(serialProductData1.getConditionRating())
+   					.compareTo(serialProductData2.getConditionRating());
+   		}
+   		else
+   		{
+   			return 1;
+   		}
+   	}
+   	else
+   	{
+   		if (serialProductData2 != null )
+   		{
+   			return -1;
+   		}
+   	}
+   	return 0;
+   }
+    
+    /**
+     * Gets the product price data.
+     *
+     * @param priceValue the price value
+     * @return the product price data
+     */
+    private PriceData getProductPriceData(final BigDecimal priceValue){
+   		return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
+   		}
 
     public ModelService getModelService() {
         return modelService;
@@ -138,6 +220,38 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     public void setBlProductTagPopulator(Populator<BlProductModel, ProductData> blProductTagPopulator) {
         this.blProductTagPopulator = blProductTagPopulator;
     }
+
+	/**
+	 * @return the priceDataFactory
+	 */
+	public PriceDataFactory getPriceDataFactory()
+	{
+		return priceDataFactory;
+	}
+
+	/**
+	 * @param priceDataFactory the priceDataFactory to set
+	 */
+	public void setPriceDataFactory(PriceDataFactory priceDataFactory)
+	{
+		this.priceDataFactory = priceDataFactory;
+	}
+
+	/**
+	 * @return the commonI18NService
+	 */
+	public CommonI18NService getCommonI18NService()
+	{
+		return commonI18NService;
+	}
+
+	/**
+	 * @param commonI18NService the commonI18NService to set
+	 */
+	public void setCommonI18NService(CommonI18NService commonI18NService)
+	{
+		this.commonI18NService = commonI18NService;
+	}
 
 
 }

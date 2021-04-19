@@ -19,10 +19,11 @@
 		<c:otherwise>
 			<h6>
 		<a href="#filter-menu" class="filter-button"><i
-			class="icon-filter"></i> Filters</a><a class="clear-filters" href="?q=${searchPageData.freeTextSearch}"><spring:theme
+			class="icon-filter"></i> Filters</a><a class="clear-filters" href="?q=${searchPageData.freeTextSearch}&blPageType=${blPageType}"><spring:theme
 					code="text.button.clear.all" /></a></h6>
 		</c:otherwise>
 	</c:choose>
+	</div>
 	 <nav id="filter-menu">
 	 <ul>
 	 <li>
@@ -40,5 +41,5 @@
                 </li>
 	 </ul>
       </nav>
-</div>
+
                

@@ -220,8 +220,8 @@
          });
          // Added code to remove same name and id on search text box specific to device
          if ($(window).width() < 480 ) {
- 			$("input.d-desk").attr("id","");
- 		    $("input.d-desk").attr("name","");
+ 		      	$("input.d-desk").attr("id","");
+ 		        $("input.d-desk").attr("name","");
  		}
  		else {
  			$("input.d-mob").attr("id","");

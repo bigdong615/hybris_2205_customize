@@ -15,7 +15,8 @@ public enum LogErrorCodeEnum implements LogError
 	 INTEGRATION_ERROR("0003", "Integration Error"), 
 	 CRONJOB_ERROR("0004", "CRONJOB ERROR"),
 	 HOT_FOLDER_ERROR("0005", "HotFolder Error"),
-	 DYNAMIC_PRICING_ERROR("0006", "Dynamic Price Calculating Error");
+	 DYNAMIC_PRICING_ERROR("0006", "Dynamic Price Calculating Error"),
+	 SOLR_INDEXING_ERROR("0007", "Solr Property Indexing Error");
 
     private String code;
     private String description;

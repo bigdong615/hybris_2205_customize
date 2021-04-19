@@ -799,5 +799,13 @@
 
 	<bean id="blInventoryScanToolService" name="blInventoryScanToolService"
 		  class="com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService"/>
+		  
+	<!-- SOLR Field value Resolver for minSerialfinalSalePrice solr attribute -->		  
+	<bean id="blSerialFinalSalePriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlSerialFinalSalePriceValueResolver"
+        parent="abstractValueResolver"/>
+        
+    <!-- SOLR Field value Resolver for minSerialIncentivizedPrice solr attribute -->
+    <bean id="blSerialIncentivizedPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlSerialIncentivizedPriceValueResolver"
+        parent="abstractValueResolver"/>
 
 </beans>
