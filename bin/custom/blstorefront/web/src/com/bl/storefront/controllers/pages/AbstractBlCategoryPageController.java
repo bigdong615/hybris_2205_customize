@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
@@ -156,6 +157,12 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
         else if(category.isFacetedCategory()) {
             addClearAllModelAttributeForUsedGear(model);
+        }
+
+        // Added Model attribute for rental Date duration from BlRentalDateUtils class
+        if(category.isRentalCategory()) {
+          model.addAttribute(BlControllerConstants.RENTAL_DATE, BlRentalDateUtils.getRentalsDuration());
+
         }
 
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
