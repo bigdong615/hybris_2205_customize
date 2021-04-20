@@ -3,7 +3,6 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -27,10 +26,6 @@ import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageDat
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +41,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.facades.product.data.RentalDateDto;
 
 
 @Controller
@@ -76,6 +75,9 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "cmsComponentService")
 	private CMSComponentService cmsComponentService;
 
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
+
 	@RequestMapping(method = RequestMethod.GET, params = "!q") // NOSONAR
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
 			@RequestParam(value="blPageType") final String blPageType, @RequestParam(value = "selectedDate", defaultValue = "")
@@ -83,18 +85,6 @@ public class SearchPageController extends AbstractSearchPageController
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
-		//Setting Rental Dates and Number of Days in Session if available - Temprory code, Once local staore code is done need to remove this code 
-		final List<String> lSelectedDates = Arrays.asList(selectedDate.split(BlControllerConstants.SEPARATOR));
-		if (CollectionUtils.isNotEmpty(lSelectedDates) && lSelectedDates.size() == BlControllerConstants.PAIR_OF_DATES) {
-			final LocalDate selectedFromDate = LocalDate.parse(lSelectedDates.get(0).trim(),	DateTimeFormatter.ofPattern(BlControllerConstants.DATE_FORMAT));
-			final LocalDate selectedToDate = LocalDate.parse(lSelectedDates.get(1).trim(), DateTimeFormatter.ofPattern(BlControllerConstants.DATE_FORMAT));
-			final long numberOfDays = ChronoUnit.DAYS.between(selectedFromDate, selectedToDate.plusDays(1));
-			if (numberOfDays >= BlControllerConstants.MIN_RENTAL_DAYS && numberOfDays <= BlControllerConstants.MAX_RENTAL_DAYS) {
-				getSessionService().setAttribute(BlControllerConstants.SELECTED_FROM_DATE, selectedFromDate);
-				getSessionService().setAttribute(BlControllerConstants.SELECTED_TO_DATE, selectedToDate);
-				getSessionService().setAttribute(BlControllerConstants.NUMBER_OF_DAYS, numberOfDays);
-			}
-		} //Temporary code ends here
 
 			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);//NOSONAR
 
@@ -158,6 +148,14 @@ public class SearchPageController extends AbstractSearchPageController
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(searchText);
 		setUpMetaData(model, metaKeywords, metaDescription);
 
+		RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+		if (null == rentalDates)
+		{
+			rentalDates = new RentalDateDto();
+			rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
+		}
+		model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
+
 		return getViewForPage(model);
 	}
 
@@ -205,7 +203,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
-			final ShowMode showMode, final String sortCode, final int pageSize ,String blPageType)
+			final ShowMode showMode, final String sortCode, final int pageSize ,final String blPageType)
 	{
 		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);//NOSONAR
 

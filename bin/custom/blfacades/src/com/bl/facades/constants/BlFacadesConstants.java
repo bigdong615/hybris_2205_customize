@@ -17,6 +17,10 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String DEFAULT_REDIRECT_URL = "/";
   public static final double DEFAULT_CONDITIONAL_RATING = 5;
 
+  public static final String DATE_FORMAT = "dd-MM-yyyy";
+  public static final String START_DATE = "startDate";
+  public static final String END_DATE = "endDate";
+
   private BlFacadesConstants() {
     //empty
   }
