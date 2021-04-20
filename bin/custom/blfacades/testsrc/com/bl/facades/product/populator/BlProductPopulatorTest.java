@@ -69,13 +69,6 @@ public class BlProductPopulatorTest {
   ProductData productData;
 
   @Before
-  public void setUp()
-  {
-    MockitoAnnotations.initMocks(this);
-    populator.setBlProductTagPopulator(blProductTagPopulator);
-  }
-
-  @Before
   public void prepare() {
     MockitoAnnotations.initMocks(this);
     productData = new ProductData();
@@ -97,6 +90,7 @@ public class BlProductPopulatorTest {
     serialProductList.add(serialProductModel1);
     serialProductList.add(serialProductModel2);
     serialProductList.add(serialProductModel3);
+    populator.setBlProductTagPopulator(blProductTagPopulator);
   }
 
   @Test
