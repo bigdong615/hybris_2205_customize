@@ -103,7 +103,7 @@ public class BlDatePickerController extends AbstractPageController
 	public String resetDate(final HttpServletRequest request, final HttpServletResponse response, final Model model,
 			final RedirectAttributes redirectModel) throws ParseException
 	{
-		blDatePickerService.removeRentalDateCookie(response);
+		blRentalDateCookieGenerator.removeCookie(response);
 		blDatePickerService.removeRentalDatesFromSession();
 		return BlControllerConstants.SUCCESS;
 	}

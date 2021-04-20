@@ -237,7 +237,7 @@
 	<bean id="blRentalDateCookieGenerator" class="com.bl.storefront.security.cookie.BlRentalDateCookieGenerator" >
 		<property name="cookieSecure" value="true"/>
 		<property name="cookieMaxAge" value="360000000"/>
-		<property name="useDefaultPath" value="false"/>
+		<property name="useDefaultPath" value="true"/>
 		<property name="httpOnly" value="true"/>
 	</bean>
 	
