@@ -160,6 +160,8 @@ INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=
 INSERT_UPDATE ProductCarouselComponent;$contentCV[unique=true];uid[unique=true]				;name					;title		 ;&componentRef					; products(code, $productCV)
 									  ;						  ;HomePageFeaturedGearComponent;Homepage Featured Gear;Featured Gear;HomePageFeaturedGearComponent ; Canon_1Ds_Mark_II,Nikon_D70,Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon,67mm_CP_Filter,72mm_CP_Filter,Hasselblad_H5D40_Medium_Format_DSLR_Camera,Nikon-D5300-Digital-SLR-Camera,Panasonic_Battery_DMW-BLC12
                                  
+INSERT_UPDATE SearchBoxComponent; $contentCV[unique = true]; uid[unique = true]; name       ; &componentRef
+                                ;                          ; BlSearchBox       ; Search Box ; BlSearchBox
                                  
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; cmsComponents(uid,$contentCV)                                                                                                                                                                                                 
@@ -189,4 +191,7 @@ UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 
                    ;                         ; MobileHeaderBottomInfo                       ; MobileHeaderBottomInfoComponent1,MobileHeaderBottomInfoComponent2,MobileHeaderBottomInfoComponent3                   
 				   ;						 ; HomePageFeaturedGearSectionSlot    ; HomePageFeaturedGearComponent                   
                    ;                         ; MobileMiniCartSlot                 ; MiniCart                   
+                   ;                         ; HomePageBannerSearchBoxSlot        ; BlSearchBox
+                   ;                         ; MobileHomePageBannerSearchBoxSlot  ; BlSearchBox				   
                    
+                                      
