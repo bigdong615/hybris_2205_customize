@@ -92,7 +92,7 @@ public class BlProductPopulatorTest {
   }
 
   @Test
-  public void shouldPopulateProductModel() {
+  public void populateProduct() {
     when(productModel.getCode()).thenReturn(PRODUCT_CODE);
     when(productModel.getDisplayName()).thenReturn(DISPLAY_NAME);
     when(productModel.getRentalIncludes()).thenReturn(RENTAL_INCLUDE);
