@@ -3,7 +3,6 @@ package com.bl.core.datepicker;
 import com.bl.facades.product.data.RentalDateDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -41,13 +40,6 @@ public interface BlDatePickerService
 	 *
 	 */
 	public void removeRentalDatesFromSession();
-
-	/**
-	 * It removes the cookie for rental date
-	 *
-	 * @param response the response object
-	 */
-	public void removeRentalDateCookie(final HttpServletResponse response);
 
 	/**
 	 * It gets the date from session

@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -96,17 +96,6 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void removeRentalDateCookie(final HttpServletResponse response)
-	{
-		final Cookie cookie = new Cookie(BlCoreConstants.SELECTED_DATE, BlCoreConstants.EMPTY_STRING);
-		cookie.setMaxAge(0);
-		response.addCookie(cookie);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "rental date cookie removed for {} ", BlCoreConstants.SELECTED_DATE);
 	}
 
 	/**
