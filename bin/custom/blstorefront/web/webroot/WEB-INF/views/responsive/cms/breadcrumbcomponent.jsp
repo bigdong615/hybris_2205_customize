@@ -5,7 +5,7 @@
 	tagdir="/WEB-INF/tags/responsive/nav/breadcrumb"%>
 
 <c:if test="${fn:length(breadcrumbs) > 0}">
-	<div class="breadcrumb-section">
+	<div class="breadcrumbs my-4 position-relative">
 		<breadcrumb:breadcrumb breadcrumbs="${breadcrumbs}" />
 	</div>
 </c:if>

@@ -84,7 +84,7 @@ public class ReAllocateConsignmentAction extends AbstractProceduralAction<Consig
 		validateParameterNotNullStandardMessage("declinedEntries", declinedEntries);
 		validateIfAnyResult(declinedEntries.getEntries(), "Nothing to Decline");
 
-		final AbstractOrderModel order = declinedEntries.getEntries().stream().findFirst().get().getConsignmentEntry()
+		final AbstractOrderModel order = declinedEntries.getEntries().stream().findFirst().get().getConsignmentEntry() //NOSONAR
 				.getConsignment().getOrder();
 		Boolean isAutoDecline = Boolean.FALSE;
 

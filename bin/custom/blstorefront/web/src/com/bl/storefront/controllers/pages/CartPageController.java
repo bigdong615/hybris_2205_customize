@@ -3,6 +3,9 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -22,6 +25,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.SaveCartFormValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.SaveCartFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -41,8 +45,6 @@ import de.hybris.platform.core.enums.QuoteState;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.util.Config;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -50,19 +52,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StreamUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,7 +73,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 /**
  * Controller for cart page
@@ -124,6 +126,9 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "bruteForceAttackHandler")
 	private BruteForceAttackHandler bruteForceAttackHandler;
 
+	@Resource(name ="cartFacade")
+	private BlCartFacade blCartFacade;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -147,7 +152,7 @@ public class CartPageController extends AbstractCartPageController
 		{
 			prepareDataForPage(model);
 
-			return ControllerConstants.Views.Pages.Cart.CartPage;
+			return getViewForPage(model);
 		}
 	}
 
@@ -632,4 +637,48 @@ public class CartPageController extends AbstractCartPageController
 		return quoteData != null ? String.format(REDIRECT_QUOTE_EDIT_URL, urlEncode(quoteData.getCode())) : REDIRECT_CART_URL;
 	}
 
+	/**
+	 * This method will remove all the cart items from cart page.
+	 *
+	 * @param model              the model
+	 * @param redirectAttributes the redirect attributes
+	 * @return the string
+	 */
+	@GetMapping(value = "/emptyCart")
+	public String emptyCart(final Model model, final RedirectAttributes redirectAttributes) {
+		try {
+			blCartFacade.removeCartEntries();
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
+					"text.page.cart.clear.success");
+
+		} catch (final Exception exception) {
+			BlLogger.logMessage(LOG, Level.ERROR, "Unable to remove cart entries:", exception);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+					"text.page.cart.clear.fail");
+		}
+		return REDIRECT_CART_URL;
+	}
+
+	/**
+	 * BL-466 It will return cart/empty cart page based on cart entries.
+	 * @param model
+	 * @throws CMSItemNotFoundException
+	 */
+	@Override
+	protected void createProductList(final Model model) throws CMSItemNotFoundException {
+		final ContentPageModel contentPageModel;
+		final CartData cartData = blCartFacade.getSessionCartWithEntryOrdering(false);
+
+		if (CollectionUtils.isEmpty(cartData.getEntries())) {
+			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.EMPTY_CART_CMS_PAGE_LABEL);
+			model.addAttribute(BlControllerConstants.CART_DATA, cartData);
+			model.addAttribute(BlControllerConstants.PICKUP_CART_ENTRIES, Boolean.FALSE);
+		} else {
+			createProductEntryList(model, cartData);
+			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.CART_CMS_PAGE_LABEL);
+		}
+
+		storeCmsPageInModel(model, contentPageModel);
+		setUpMetaDataForContentPage(model, contentPageModel);
+	}
 }

@@ -5,6 +5,17 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
+<!-- Mobile device account section -->
+<c:if test="${positionAttribute == 'MobileHeaderLinkForAccountSlot'}">
+<c:url value="#" var="urlLink"/>
+<c:forEach items="${component.navigationNode.entries}"	var="entry">
+		<c:if test="${entry.item.type  eq 'Link'}">
+			<c:url value="${entry.item.url}" var="urlLink"/>
+		</c:if>
+	</c:forEach>
+	<a href="${urlLink}"><i class="icon-myaccount"></i> ${component.name}</a>
+</c:if>
+<c:if test="${positionAttribute == 'MyAccountSlot'}">
 <a class="nav-link dropdown-toggle" href="#" id="accountdropdown"
 	data-bs-toggle="dropdown" aria-expanded="false">${component.name }</a>
 <div class="dropdown-menu dropdown-menu-right"
@@ -26,3 +37,4 @@
 		</sec:authorize>		
 	</ul>
 </div>
+</c:if>

@@ -82,6 +82,7 @@
 							<wz:property qualifier="approvalStatus"/>
 							<wz:property qualifier="productType"/>
 							<wz:property qualifier="procurementCost"/>
+							<wz:property qualifier="retailPrice"/>
 							<wz:property qualifier="procurementSource"/>
 							<wz:property qualifier="mpn"/>
 							<wz:property qualifier="upc"/>
@@ -123,15 +124,15 @@
 						<ea:attribute
 							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 							qualifier="description"/>
-						<ea:attribute qualifier="rentalVideoLinks"/>
+						<ea:attribute qualifier="rentalVideosLink" />
 						<ea:attribute qualifier="summary"/>
-						<ea:attribute qualifier="resourceLink"/>
+						<ea:attribute qualifier="data_sheet"/>
 						<ea:attribute qualifier="rentalIncludes"/>
 						<ea:attribute qualifier="displayNotes"/>
 						<ea:attribute qualifier="purchaseNotes"/>
 						<ea:attribute qualifier="shortDescription"/>
 						<ea:attribute qualifier="usedDescription"/>
-						<ea:attribute qualifier="usedGearVideoLinks"/>
+						<ea:attribute qualifier="usedGearVideosLink" />
 						<ea:attribute qualifier="usedIncludes"/>
 						<ea:attribute qualifier="techEngNotes"/>
 					</ea:panel>
@@ -160,6 +161,7 @@
 				<ea:section name="hmc.section.product.pricesdiscounts">
 					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
 						<ea:attribute qualifier="procurementCost"/>
+						<ea:attribute qualifier="retailPrice"/>
 						<ea:attribute description="hmc.text.product.pg"
 							editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
 							qualifier="europe1Prices">
@@ -467,6 +469,7 @@
 					<ea:attribute qualifier="noDaysInTransit"/>
 					<ea:attribute qualifier="noDaysNotInService"/>
 					<ea:attribute qualifier="lastLocationScanParent"/>
+					<ea:attribute qualifier="firmwareVersion"/>
 					<ea:attribute qualifier="withOrderID"/>
 					<ea:attribute qualifier="assetNumber"/>
 					<ea:attribute qualifier="assetStatus"/>

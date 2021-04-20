@@ -12,9 +12,10 @@ $contentCatalogsCustomCategoryPagePath = /blinitialdata/import/sampledata/conten
 $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/myaccount
 $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/checkout
 $contentCatalogsCustomEmailsPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/emails
-$contentCatalogsProductGridPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/productgidpage
+$contentCatalogsProductGridPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/productgridpage
 $contentCatalogsCustomSearchPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/searchpage
 $contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/navigation
+$contentCatalogsCustomProductPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/productpage
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
 
@@ -44,6 +45,9 @@ $contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentC
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsProductGridPagePath/cms-content_productgridpage_sample.impex"), "utf-8", 0, 0);
 
 #Mention here Product Details Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productpage_sample.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productVideo.impex"), "utf-8", 0, 0);
+
 
 #Mention here MyAccount Page related impexes in sequence
 

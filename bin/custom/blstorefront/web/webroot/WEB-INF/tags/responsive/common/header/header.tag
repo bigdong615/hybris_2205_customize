@@ -19,13 +19,51 @@
 <div class="container">
 <a class="mobileNavToggle d-inline-block d-lg-none" href="#my-menu"><span></span></a>
 <cms:pageSlot position="SiteLogoHeaderSlot" var="logo" limit="1">
-						<cms:component component="${logo}" element="div" class="yComponentWrapper"/>
+						<cms:component component="${logo}"/>
 					</cms:pageSlot>
  <div class="mobile-right d-inline-block d-lg-none">  
             <div class="nav-account"><a href="#">My Account</a></div>
-            <div class="nav-cart"><a href="#">Cart <span class="cart-count">3</span></a></div>
+            <!-- BL-380 : Mini Cart Section for Mobile Device -->
+            <div class="nav-cart">
+	            <cms:pageSlot position="MobileMiniCartSlot" var="component">
+					<cms:component component="${component}"/>
+			    </cms:pageSlot>
+	   		</div>
   </div>	
-  
+  <!-- Mobile Menu -->	
+  <nav id="my-menu">	
+  	<ul>
+  		<!-- BL-377 Mobile Navigation bar -->
+  		 <cms:pageSlot position="NavigationBarMobileSlot" var="component">
+			<cms:component component="${component}" />	
+         </cms:pageSlot>
+         <!-- BL-388 Mobile device - Header - Ship or PickUp section -->
+         <li>
+			<cms:pageSlot position="MobileHeaderLinkForShipOrPickupSlot" var="component" class="">
+				<cms:component component="${component}" />
+			</cms:pageSlot>
+		</li>
+		<!-- BL-385 Mobile device - Header - Support section -->
+		<li>
+			<cms:pageSlot position="MobileHeaderLinkForSupportSlot" var="component" class="">
+				<cms:component component="${component}" />
+		   </cms:pageSlot>
+		</li>
+		
+		<li>
+			<cms:pageSlot position="MobileHeaderLinkForAccountSlot" var="component" class="">
+				<cms:component component="${component}" />
+		   </cms:pageSlot>
+		</li>
+		<li>
+			<span>
+				<cms:pageSlot position="MobileHeaderBottomInfo" var="component" class="">
+				<cms:component component="${component}" element="div" class="mnav-third"/>
+		   </cms:pageSlot>
+			</span>
+		</li>
+  	</ul>
+  </nav>
   <div class="collapse navbar-collapse" id="blnav">
   	<ul class="navbar-nav me-auto mb-2 mb-md-0" role="menu">
 	  	<cms:pageSlot position="NavigationBarSlot" var="component" class="">

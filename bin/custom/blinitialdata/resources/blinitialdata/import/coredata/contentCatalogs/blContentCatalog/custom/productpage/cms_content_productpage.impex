@@ -1,0 +1,56 @@
+#% impex.info("=============================== Importing content from coredata cms_content_productpage.impex =========================");
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+# Language
+$lang=en
+
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]                     ; name                                      ; frontendTemplateName              ; restrictedPageTypes(code) ; active[default=true]
+                           ;                         ; ProductDetailsPageTemplate           ; Product Details Page Template             ; product/productLayout2Page        ; ProductPage
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='ProductDetailsPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation
+                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MyAccountSlot     ;                                                                       ;                           ; navigation
+                              ; HomePageRentingGearIsEasyTitleSlot ;                                                                       ;                           ; wide
+                              ; HomePageRentingGearSectionSlot     ;                                                                       ;                           ; wide
+                              ; BreadcrumbSection                 ;                                                                        ;                           ;wide
+                             ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
+
+
+INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
+                          ;                         ;BreadcrumbSlot                      ;Breadcrumb slot
+
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='ProductDetailsPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; PromoBannerSlot-productDetails               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true
+                                     ;                         ; SiteLogoHeaderSlot-productDetails            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true
+                                     ;                         ; NavigationPromoSlot-productDetails           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true
+                                     ;                         ; NavigationBarSlot-productDetails             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true
+                                     ;                         ; NavigationBarMobileSlot-productDetails       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true
+                                     ;                         ; HeaderLinkForSupportSlot-productDetails      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-productDetails ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MiniCartSlot-productDetails                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true
+                                     ;                         ; FooterSlot-productDetails                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true
+                                     ;                         ; FooterSubscriptionSlot-productDetails        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true
+                                     ;                         ; FooterCopyRightslot-productDetails           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true
+                                     ;                         ; MyAccountSlot-productDetails                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                     ;                         ; HomePageRentingGearIsEasyTitleSlot-productDetails ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true
+                                     ;                         ; HomePageRentingGearSectionSlot-productDetails     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
+                                      ;                        ; BreadcrumbSlot-productDetails                     ; BreadcrumbSection                 ;                                                        ; BreadcrumbSlot                           ; true
+                                    ;                          ; SearchBoxBl-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
+
+
+# Product Details Page
+INSERT_UPDATE ProductPage ; $contentCV[unique=true] ; uid[unique=true] ; name            ; masterTemplate(uid,$contentCV) ; defaultPage ; approvalStatus(code)[default='approved']
+                          ;                         ; productDetails   ; Product Details ; ProductDetailsPageTemplate     ; true        ;

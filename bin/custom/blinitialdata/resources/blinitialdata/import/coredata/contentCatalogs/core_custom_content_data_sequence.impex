@@ -14,12 +14,14 @@ $contentCatalogsCustomEmailsPath = /blinitialdata/import/coredata/contentCatalog
 $contentCatalogsCustomSearchPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/searchpage
 $contentCatalogsCustomProductGridPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/productgridpage
 $contentCatalogsCustomHomepagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/homepage
+$contentCatalogsCustomProductPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/productpage
+
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
 #Mention here homepage related impexes in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/core_data_homepage.impex"), "utf-8", 0, 0);
 
-#Mention here Content page related impexes in sequence 
+#Mention here Content page related impexes in sequence
 
 #Mention here Category Page related impexes in sequence
 
@@ -30,10 +32,13 @@ $contentCatalogsCustomHomepagePath = /blinitialdata/import/coredata/contentCatal
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductGridPagePath/cms_content_productgridpage.impex"), "utf-8", 0, 0);
 
 #Mention here Product Details Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productpage.impex"), "utf-8", 0, 0);
 
 #Mention here MyAccount Page related impexes in sequence
 
 #Mention here Cart Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_rentalCartPage.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_emptyCartPage.impex"), "utf-8", 0, 0);
 
 #Mention here Checkout Page related impexes in sequence
 

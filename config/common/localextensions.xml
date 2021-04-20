@@ -255,8 +255,8 @@
 	<extension name='ruleengineservices' /> -->
 	
 	<extension name='cockpit' />
-    <extension name='profileservices' />
-    <extension name='profiletagaddon' />
+    <!--<extension name='profileservices' />
+    <extension name='profiletagaddon' />-->
 	
 	<!-- Extension Removed because it will be autoload due to dependencies -->
 	<!-- <extension name='addonsupport' /> 
