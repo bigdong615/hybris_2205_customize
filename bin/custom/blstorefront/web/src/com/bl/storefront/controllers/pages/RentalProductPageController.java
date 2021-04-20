@@ -3,6 +3,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -31,8 +33,19 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
+
   @Resource(name = "blDatePickerService")
   private BlDatePickerService blDatePickerService;
+
+  /**
+   * This common method created to get rental duration for rental products from BlRentalDateUtils class
+   */
+
+  @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+  private RentalDateDto getRentalDuration() {
+    final RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+    return BlRentalDateUtils.getRentalsDuration(rentalDates);
+  }
 
   /*
    * This method is used for render rental pdp.
@@ -52,14 +65,6 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, extraOptions);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-  //To show date range on the recommendation section
-      RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
-      if (null == rentalDates)
-      {
-        rentalDates = new RentalDateDto();
-        rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
-      }
-      model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
       model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
       return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
   }

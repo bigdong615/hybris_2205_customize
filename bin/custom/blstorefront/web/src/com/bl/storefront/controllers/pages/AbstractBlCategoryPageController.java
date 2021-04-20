@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
@@ -164,14 +165,11 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             addClearAllModelAttributeForUsedGear(model);
         }
 
-        // Added Model attribute for rental Date duration
+        // Added Model attribute for rental Date duration from BlRentalDateUtils class
         if(category.isRentalCategory()) {
-            RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
-            if (null == rentalDates) {
-                rentalDates = new RentalDateDto();
-                rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
-            }
-            model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
+          final RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+          model.addAttribute(BlControllerConstants.RENTAL_DATE, BlRentalDateUtils.getRentalsDuration(rentalDates));
+
         }
 
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(

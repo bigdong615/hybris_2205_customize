@@ -3,6 +3,8 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.utils.BlRentalDateUtils;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -44,7 +46,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.facades.product.data.RentalDateDto;
 
 
@@ -80,17 +81,12 @@ public class SearchPageController extends AbstractSearchPageController
 	private BlDatePickerService blDatePickerService;
 
 	/**
-	 * Created common method to access rental duration on Search List Page
+	 * This common method created to get rental duration for rental products from BlRentalDateUtils class
 	 */
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
-	private RentalDateDto getRentalsDuration() {
-		RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
-		if (null == rentalDates)
-		{
-			rentalDates = new RentalDateDto();
-			rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
-		}
-		return rentalDates;
+	private RentalDateDto getRentalDuration() {
+		final RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+		return BlRentalDateUtils.getRentalsDuration(rentalDates);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "!q")
@@ -100,7 +96,7 @@ public class SearchPageController extends AbstractSearchPageController
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
 
-			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);//NOSONAR
+			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
 
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
@@ -115,7 +111,7 @@ public class SearchPageController extends AbstractSearchPageController
 			{
 				searchPageData = encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
 			}
-			catch (final ConversionException e) // NOSONAR
+			catch (final ConversionException e)
 			{
 				// nothing to do - the exception is logged in SearchSolrQueryPopulator
 			}
@@ -161,15 +157,6 @@ public class SearchPageController extends AbstractSearchPageController
 						+ " " + getSiteName());
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(searchText);
 		setUpMetaData(model, metaKeywords, metaDescription);
-
-		RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
-		if (null == rentalDates)
-		{
-			rentalDates = new RentalDateDto();
-			rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
-		}
-		model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
-
 		return getViewForPage(model);
 	}
 
@@ -219,7 +206,7 @@ public class SearchPageController extends AbstractSearchPageController
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
 			final ShowMode showMode, final String sortCode, final int pageSize ,final String blPageType)
 	{
-		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);//NOSONAR
+		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);
 
 		final SearchStateData searchState = new SearchStateData();
 		final SearchQueryData searchQueryData = new SearchQueryData();
@@ -232,7 +219,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/results", method = RequestMethod.GET) // NOSONAR
+	@RequestMapping(value = "/results", method = RequestMethod.GET)
 	public SearchResultsData<ProductData> jsonSearchResults(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -247,7 +234,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/facets", method = RequestMethod.GET) // NOSONAR
+	@RequestMapping(value = "/facets", method = RequestMethod.GET)
 	public FacetRefinement<SearchStateData> getFacets(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -270,7 +257,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET) // NOSONAR
+	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
 	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable final String componentUid,
 			@RequestParam("term") final String term) throws CMSItemNotFoundException
 	{
