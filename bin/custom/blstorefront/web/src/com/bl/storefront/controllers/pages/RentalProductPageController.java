@@ -1,8 +1,6 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
@@ -34,17 +32,13 @@ public class RentalProductPageController extends AbstractBlProductPageController
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
 
-  @Resource(name = "blDatePickerService")
-  private BlDatePickerService blDatePickerService;
-
   /**
    * This common method created to get rental duration for rental products from BlRentalDateUtils class
    */
 
   @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
   private RentalDateDto getRentalDuration() {
-    final RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
-    return BlRentalDateUtils.getRentalsDuration(rentalDates);
+    return BlRentalDateUtils.getRentalsDuration();
   }
 
   /*

@@ -38,7 +38,7 @@ public class BlControllerConstants
 	public static final String PICKUP_CART_ENTRIES = "hasPickUpCartEntries";
 	public static final String RENTAL_DATE = "rentalDate";
 	public static final String RECOMMENDATION_DATE_FORMAT = "MMM d";
-	public static final String DEFAULT_DAYS = "7";
+
 
 
 	public static final String DAY_MON_DATE_YEAR_FORMAT = "EE MMM dd yyyy";

@@ -3,8 +3,9 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -27,13 +28,10 @@ import de.hybris.platform.commerceservices.search.facetdata.FacetRefinement;
 import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -44,9 +42,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.facades.product.data.RentalDateDto;
 
 
 @Controller
@@ -77,16 +72,12 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "cmsComponentService")
 	private CMSComponentService cmsComponentService;
 
-	@Resource(name = "blDatePickerService")
-	private BlDatePickerService blDatePickerService;
-
 	/**
 	 * This common method created to get rental duration for rental products from BlRentalDateUtils class
 	 */
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalDuration() {
-		final RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
-		return BlRentalDateUtils.getRentalsDuration(rentalDates);
+		return BlRentalDateUtils.getRentalsDuration();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "!q")
