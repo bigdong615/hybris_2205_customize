@@ -3,7 +3,6 @@ package com.bl.core.datepicker;
 import com.bl.facades.product.data.RentalDateDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 
 /**
