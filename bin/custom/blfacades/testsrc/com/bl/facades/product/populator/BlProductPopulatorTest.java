@@ -46,6 +46,7 @@ public class BlProductPopulatorTest {
   public static Double PRODUCT_RATING1 = 4.2;
   public static String PRODUCT_ID2 = "39508";
   public static Double PRODUCT_RATING2 = 4.1;
+  public static String PRODUCT_ID3 = "39509";
 
   @Mock
   BlProductModel productModel;
@@ -62,6 +63,7 @@ public class BlProductPopulatorTest {
 
   private BlSerialProductModel serialProductModel1;
   private BlSerialProductModel serialProductModel2;
+  private BlSerialProductModel serialProductModel3;
   private ProductVideoModel productVideoModel;
   ProductData productData;
 
@@ -82,8 +84,11 @@ public class BlProductPopulatorTest {
     serialProductModel2 = new BlSerialProductModel();
     serialProductModel2.setProductId(PRODUCT_ID2);
     serialProductModel2.setConditionRatingOverallScore(PRODUCT_RATING2);
+    serialProductModel3 = new BlSerialProductModel();
+    serialProductModel3.setProductId(PRODUCT_ID3);
     serialProductList.add(serialProductModel1);
     serialProductList.add(serialProductModel2);
+    serialProductList.add(serialProductModel3);
   }
 
   @Test
@@ -121,10 +126,13 @@ public class BlProductPopulatorTest {
           BlFacadesConstants.TIME_FORMAT_STRING));
     });
     SerialProductData serialProduct = (SerialProductData)productData.getSerialproducts().get(0);
-    assertEquals(serialProduct.getConditionRating(), PRODUCT_RATING2+5);
-    assertEquals(serialProduct.getSerialId(), PRODUCT_ID2);
+    assertEquals(serialProduct.getConditionRating(), BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
+    assertEquals(serialProduct.getSerialId(), PRODUCT_ID3);
     serialProduct = (SerialProductData)productData.getSerialproducts().get(1);
-    assertEquals(serialProduct.getConditionRating(), PRODUCT_RATING1+5);
+    assertEquals(serialProduct.getConditionRating(), PRODUCT_RATING2+BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
+    assertEquals(serialProduct.getSerialId(), PRODUCT_ID2);
+    serialProduct = (SerialProductData)productData.getSerialproducts().get(2);
+    assertEquals(serialProduct.getConditionRating(), PRODUCT_RATING1+BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
     assertEquals(serialProduct.getSerialId(), PRODUCT_ID1);
   }
 }
