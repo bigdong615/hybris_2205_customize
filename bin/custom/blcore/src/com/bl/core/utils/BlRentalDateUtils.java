@@ -38,14 +38,8 @@ public final class BlRentalDateUtils {
    * Get Method created to get the bean for static entry by using Registry
    */
   public static BlDatePickerService getBlDatePickerService() {
-    {
-      if (blDatePickerService == null)
-      {
-        blDatePickerService = (BlDatePickerService) Registry.getApplicationContext().getBean("blDatePickerService");
-      }
-      return blDatePickerService;
-    }
+    return null == blDatePickerService ? (BlDatePickerService) Registry.getApplicationContext()
+        .getBean("blDatePickerService") : blDatePickerService;
   }
-
 
 }
