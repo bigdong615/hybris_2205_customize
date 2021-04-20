@@ -5,6 +5,8 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.facades.product.data.RentalDateDto;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
@@ -24,6 +26,7 @@ import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
@@ -42,6 +45,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
     private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";
+
+    @Resource(name = "blDatePickerService")
+    private BlDatePickerService blDatePickerService;
 
     @ResponseBody
     @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
@@ -156,6 +162,16 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
         else if(category.isFacetedCategory()) {
             addClearAllModelAttributeForUsedGear(model);
+        }
+
+        // Added Model attribute for rental Date duration
+        if(category.isRentalCategory()) {
+            RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+            if (null == rentalDates) {
+                rentalDates = new RentalDateDto();
+                rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
+            }
+            model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
         }
 
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(

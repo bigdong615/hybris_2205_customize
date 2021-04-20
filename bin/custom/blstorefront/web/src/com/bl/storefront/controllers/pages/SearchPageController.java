@@ -36,6 +36,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -78,10 +79,23 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
 
-	@RequestMapping(method = RequestMethod.GET, params = "!q") // NOSONAR
+	/**
+	 * Created common method to access rental duration on Search List Page
+	 */
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() {
+		RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
+		if (null == rentalDates)
+		{
+			rentalDates = new RentalDateDto();
+			rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
+		}
+		return rentalDates;
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = "!q")
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
-			@RequestParam(value="blPageType") final String blPageType, @RequestParam(value = "selectedDate", defaultValue = "")
-			final String selectedDate,
+			@RequestParam(value="blPageType") final String blPageType,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
