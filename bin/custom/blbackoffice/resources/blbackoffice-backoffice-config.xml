@@ -252,6 +252,9 @@
 
 	<context component="create-wizard" type="ProductVideo"  merge-by="type">
 		<wz:flow id="ProductVideoWizard" title="create.title(ctx.TYPE_CODE)">
+      <wz:prepare id="ProductVideoPrepare">
+        <wz:initialize property="newProductVideo" type="ctx.TYPE_CODE"/>
+      </wz:prepare>
 			<wz:step id="step1" label="essential.label" sublabel="essential.sublabel">
 				<wz:content id="step1.content">
 					<wz:property-list root="newProductVideo">
@@ -271,7 +274,7 @@
 		</wz:flow>
 	</context>
 	
-	<context component="editor-area" merge-by="type" parent="ProductVideo">
+	<context component="editor-area" merge-by="type" type="ProductVideo" >
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="">
 				<editorArea:section name="">
@@ -554,6 +557,24 @@
         </ss:simple-search>
     </context>
     <!--BL-110 End -->
+    
+    <!-- For Stock level -->
+    <context merge-by="type" parent="GenericItem" type="StockLevel"  extends="StockLevel" component="listview">
+	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
+	      <list-view:column qualifier="serialProductCode"/>
+	      <list-view:column qualifier="reservedStatus"/>
+	      <list-view:column qualifier="date"/>
+	    </list-view:list-view>
+  	</context>
+
+  	<context merge-by="type" parent="GenericItem" type="StockLevel" extends="StockLevel" component="advanced-search">
+	    <advanced-search:advanced-search xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch">
+	      <advanced-search:field-list>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="date" selected="true"/>
+	        <advanced-search:field xmlns="http://www.hybris.com/cockpitng/config/advancedsearch" name="serialProductCode" selected="true"/>
+	      </advanced-search:field-list>
+	    </advanced-search:advanced-search>
+  	</context>
 
 </config>
 

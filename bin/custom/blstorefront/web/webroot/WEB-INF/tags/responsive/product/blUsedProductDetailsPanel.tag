@@ -5,6 +5,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib  prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
 
  <div class="screen"></div>
      <cms:pageSlot position="SearchBoxBl" var="component">
@@ -29,27 +30,32 @@
                                <p class="overline" >${fn:toUpperCase(product.manufacturer)}</p>
                                <h1 class="mb-4">${product.displayName}</h1>
                                 <table id="usedProductList">
-                                    <thead>
+                                <c:choose>
+                                	<c:when test="${not empty product.hasIncentivizedPrice and product.hasIncentivizedPrice }">
+                                		<product:blSerialIncentivizedPriceDataPanel/>
+                                	</c:when>
+                                	<c:otherwise>
+                                		<thead>
                                         <tr>
                                             <th><spring:theme code="pdp.serial.table.rating.text"/></th>
-                                            <th class="d-none d-md-table-cell"><spring:theme code="pdp.serial.table.retail.price.text"/></th>
                                             <th><spring:theme code="pdp.serial.table.price.text"/></th>
                                             <th class="d-none d-md-table-cell"><spring:theme code="pdp.serial.table.number.text"/></th>
                                             <th></th>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
-                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
-                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
-                                            <td class="d-none d-md-table-cell"><strike>$1,900</strike></td>
-                                            <td>$1,550</td>
-                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
-                                            <td class="text-end">
-                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
-                                        </tr>
-                                       </c:forEach>
-                                    </tbody>
+                                    	</thead>
+		                                  <tbody>
+		                                     <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
+		                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
+		                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
+		                                            <td><format:price priceData="${serialProduct.finalSalePrice}"/></td>
+		                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
+		                                            <td class="text-end">
+		                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
+		                                        </tr>
+		                                       </c:forEach>
+		                                    </tbody>
+                                	</c:otherwise>
+                                </c:choose>
                                 </table>
                                 <c:if test="${product.serialproducts.size() >3}">
                                 <p class="mt-4"><a href="#" id="showmore"><spring:theme code="pdp.show.more.button.text"/></a>

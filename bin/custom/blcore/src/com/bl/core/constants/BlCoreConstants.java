@@ -97,6 +97,18 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int DECIMAL_PRECISION = 2;
 
 	public static final String DEFAULT_ZONE_ID = "UTC";
+	public static final String COOKIE_NAME_FOR_DATE = "selectedDate";
+	public static final int PAIR_OF_DATES = 2;
+	public static final String SEPARATOR = "\\|";
+	public static final String SELECTED_DATE_MAP = "selectedDateMap";
+	public static final String DATE_FORMAT = "dd-MM-yyyy";
+	public static final String SELECTED_DATE = "selectedDate";
+
+	public static final String FACTED_USED_GEAR_CATEGORY_NAME = "facted.usedgear.plp.category.name";
+	public static final String USED_GEAR_CLEAR_ALL = "/buy/category/usedgear";
+	public static final String USED_GEAR_SUPER_CATEGORY = "usedsuperCategory";
+	public static final String CLEAR_USED_GEAR_CATEGORY = "usedClear";
+
 
 	private BlCoreConstants()
 	{

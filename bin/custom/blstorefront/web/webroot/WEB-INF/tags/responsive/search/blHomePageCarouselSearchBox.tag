@@ -23,7 +23,7 @@
             </c:set>
 			<c:if test="${positionAttribute == 'HomePageBannerSearchBoxSlot'}">
 				<input type="text" id="js-site-search-input"
-					class="form-control js-site-search-input"
+					class="form-control js-site-search-input d-desk"
 					placeholder="<spring:theme code="text.hero.banner.searchbox.placeholder" />"
 					name="text" value="" maxlength="100"
 					data-options="${fn:escapeXml(optionsJson)}">
@@ -32,9 +32,9 @@
 					placeholder="<spring:theme code="text.hero.banner.searchbox.datepicker.placeholder" />">
 			</c:if>
 			<c:if test="${positionAttribute == 'MobileHomePageBannerSearchBoxSlot'}">
-				<input type="text" id="js-site-search-input"
-					class="d-inline-block form-control js-site-search-input"
-					placeholder="<spring:theme code="text.hero.banner.searchbox.placeholder" />"
+				<input type="text" id="js-site-search-input-mob"
+					class="d-inline-block form-control js-site-search-input-mobile d-mob"
+					placeholder="<spring:theme code="text.rental.search.placeholder" />"
 					name="text" value="" maxlength="100"
 					data-options="${fn:escapeXml(optionsJson)}">
 
@@ -45,7 +45,7 @@
 			<input type = "hidden" value="rentalGear" name="blPageType"/>
 		</ycommerce:testId>
 
-		<div class="input-group-append d-none d-md-block">
+		<div class="input-group-append d-md-block input-button-search">
 			<button class="btn btn-search btn-link js_search_button"
 				type="submit">
 				<spring:theme code="text.footer.subscription.button.search" />

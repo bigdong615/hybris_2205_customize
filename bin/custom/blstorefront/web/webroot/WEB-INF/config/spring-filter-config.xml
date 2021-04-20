@@ -74,6 +74,8 @@
 
 		<!-- filter to restore customer preferred location -->
 		<ref bean="customerLocationRestorationFilter"/>
+		
+		<ref bean="blDatePickerFilter"/>
 
 	</util:list>
 	
@@ -229,5 +231,17 @@
 
 	<bean id="importCSVMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="#{configurationService.configuration.getProperty('import.csv.max.upload.size.bytes')}" />
+	</bean>
+
+	<!-- BL-546 - Local Storage Implementation of Date -->
+	<bean id="blRentalDateCookieGenerator" class="com.bl.storefront.security.cookie.BlRentalDateCookieGenerator" >
+		<property name="cookieSecure" value="true"/>
+		<property name="cookieMaxAge" value="360000000"/>
+		<property name="useDefaultPath" value="true"/>
+		<property name="httpOnly" value="true"/>
+	</bean>
+	
+	<bean id="blDatePickerFilter" class="com.bl.storefront.filters.BlDatePickerFilter" >
+		<property name="blDatePickerService" ref="blDatePickerService"/>	
 	</bean>
 </beans>

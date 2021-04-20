@@ -269,6 +269,8 @@
 		<property name="imageConverter" ref="imageConverter"/>
 		<property name="modelService" ref="modelService"/>
 	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
 	</bean>
 
 	<!-- BL-166:This bean is override to configure bl related populator-->
@@ -321,7 +323,7 @@
           class="com.bl.facades.populators.BlStockPopulator">
         <property name="baseStoreService" ref="baseStoreService"/>
         <property name="blCommerceStockService" ref="blCommerceStockService"/>
-        <property name="sessionService" ref="sessionService"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
     </bean>
 	
 	<alias name="defaultStockConverter" alias="stockConverter"/>

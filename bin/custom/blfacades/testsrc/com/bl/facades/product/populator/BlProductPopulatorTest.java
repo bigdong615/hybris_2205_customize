@@ -7,7 +7,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.populators.BlProductPopulator;
-import com.bl.facades.product.SerialProductData;
+import com.bl.facades.product.data.SerialProductData;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
