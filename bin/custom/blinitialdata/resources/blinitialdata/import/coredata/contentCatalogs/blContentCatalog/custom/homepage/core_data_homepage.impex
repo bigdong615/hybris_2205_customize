@@ -58,6 +58,8 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
                               ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
                               ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart                                                                                    
+                              ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox            
+                              ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox            							  
                               
 INSERT_UPDATE ComponentTypeGroup ; code[unique=true] 
                                  ; logo              
@@ -122,6 +124,7 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; MobileHeaderLinkForAccountSlot           ; Mobile Header Link For Account Slot;
                           ;                         ; MobileHeaderBottomInfo             ; Mobile Header Bottom Info              ;           
                           ;                         ; MobileMiniCartSlot                 ; Mobile Mini Cart Slot                                                   
+                          ;                         ; MobileHomePageBannerSearchBoxSlot  ; Mobile HomePage Banner Search Box Slot;
                           
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
@@ -159,6 +162,7 @@ INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]   
                                  ;                         ; HomePageRentingGearIsEasyTitleSlot-LandingPage ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true 
                                  ;                         ; HomePageCategoriesTitleSlot-LandingPage        ; HomePageCategoriesTitleSlot        ;                                                       ; HomePageCategoriesTitleSlot              ; true 
                                  ;                         ; HomePageTheyBorrowFromUsTitleSlot-LandingPage  ; HomePageTheyBorrowFromUsTitleSlot  ;                                                       ; HomePageTheyBorrowFromUsTitleSlot        ; true 
+								 ;                         ; MobileHomePageBannerSearchBoxSlot-LandingPage  ; MobileHomePageBannerSearchBoxSlot  ;                                                       ; MobileHomePageBannerSearchBoxSlot              
                                  
 ###  Create Content Page (HomePage)  ###
 # Site-wide Homepage             
