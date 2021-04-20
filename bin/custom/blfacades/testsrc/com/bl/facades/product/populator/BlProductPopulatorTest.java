@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.verify;
 
 @UnitTest
 public class BlProductPopulatorTest {
@@ -66,6 +67,13 @@ public class BlProductPopulatorTest {
   private BlSerialProductModel serialProductModel3;
   private ProductVideoModel productVideoModel;
   ProductData productData;
+
+  @Before
+  public void setUp()
+  {
+    MockitoAnnotations.initMocks(this);
+    populator.setBlProductTagPopulator(blProductTagPopulator);
+  }
 
   @Before
   public void prepare() {
@@ -134,5 +142,6 @@ public class BlProductPopulatorTest {
     serialProduct = (SerialProductData)productData.getSerialproducts().get(2);
     assertEquals(serialProduct.getConditionRating(), PRODUCT_RATING1+BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
     assertEquals(serialProduct.getSerialId(), PRODUCT_ID1);
+    verify(blProductTagPopulator).populate(productModel, productData);
   }
 }
