@@ -25,8 +25,7 @@ $('.update').on("change", function (e){
        				if(initialCartQuantity != newCartQuantity)
        				{
        					ACC.track.trackUpdateCart(productCode, initialCartQuantity, newCartQuantity);
-                  console.log(productCode, initialCartQuantity, newCartQuantity);
-       					form.submit();
+                form.submit();
        				}
        });
 
