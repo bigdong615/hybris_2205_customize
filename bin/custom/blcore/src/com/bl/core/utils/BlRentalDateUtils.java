@@ -32,7 +32,16 @@ public final class BlRentalDateUtils {
     }
     return rentalDates;
   }
-
+  
+  /**
+	 * Gets the formatted rental dates.
+	 *
+	 * @return the formatted rental dates
+	 */
+	public static RentalDateDto getFormattedRentalDates()
+	{
+		return getBlDatePickerService().getFormattedRentalDatesFromSession();
+	}
 
   /**
    * Get Method created to get the bean for static entry by using Registry
