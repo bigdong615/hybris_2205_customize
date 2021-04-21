@@ -42,15 +42,14 @@ public final class BlRentalDateUtils {
 	 */
 	private static RentalDateDto formatRentalDates(final RentalDateDto rentalDates)
 	{
-		final RentalDateDto formattedRentalDates = new RentalDateDto();
-		formattedRentalDates.setSelectedFromDate(
+		rentalDates.setSelectedFromDate(
 				StringUtils.isNotBlank(rentalDates.getSelectedFromDate()) ? getFormattedDate(rentalDates.getSelectedFromDate())
 						: null);
-		formattedRentalDates.setSelectedToDate(
+		rentalDates.setSelectedToDate(
 				StringUtils.isNotBlank(rentalDates.getSelectedToDate()) ? getFormattedDate(rentalDates.getSelectedToDate()) : null);
-		formattedRentalDates.setNumberOfDays(
+		rentalDates.setNumberOfDays(
 				StringUtils.isNotBlank(rentalDates.getNumberOfDays()) ? rentalDates.getNumberOfDays() : BlCoreConstants.DEFAULT_DAYS);
-		return formattedRentalDates;
+		return rentalDates;
 	}
 
 	/**
