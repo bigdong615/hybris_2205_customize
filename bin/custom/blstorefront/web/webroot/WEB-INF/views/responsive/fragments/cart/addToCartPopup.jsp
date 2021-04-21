@@ -6,6 +6,10 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
 
+<c:set var="entryNumberHtml" value="${fn:escapeXml(entry.entryNumber)}"/>
+<c:set var="productCodeHtml" value="${fn:escapeXml(entry.product.code)}"/>
+<c:set var="quantityHtml" value="${fn:escapeXml(entry.quantity)}"/>
+
 {"quickOrderErrorData": [
 <c:forEach items="${quickOrderErrorData}" var="quickOrderEntry" varStatus="status">
 	<c:set var="productCode" value="${fn:escapeXml(quickOrderEntry.productData.code)}" />
@@ -24,35 +28,32 @@
 	<spring:theme code="text.addToCart" var="addToCartText"/>
 	<c:url value="/cart" var="cartUrl"/>
 	<ycommerce:testId code="addToCartPopup">
-	<!-- BL-456 add to cart Modal -->
-      <div class="modal fade show" style="display: block; padding-right: 17px;" id="addToCart" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-          <div class="modal-content">
+	<!-- BL-454 add to cart Modal -->
+   <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Added to Cart <i class="cart-check"></i></h5>
+              <h5 class="modal-title"><spring:theme code="text.addtocart.popup"/> <i class="cart-check"></i></h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div class="row">
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b><span class="gray80">Rental Dates</span></div>
+                  <div class="col-md-7 mt-4"><b>${product.name}</b><span class="gray80"><spring:theme code="pdp.rental.dates.label.text"/></span></div>
                   <div class="col-md-3 mt-4 text-md-end">
                       <b>${product.price.formattedValue}$XX</b>
-                      Qty
-                      <select class="mt-3">
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
-                          <option>6</option>
-                          <option>7</option>
-                          <option>8</option>
+                      <spring:theme code="text.quantity"/>
+                      <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
+                      <input type="hidden" name="productCode" value="${entry.product.code}" />
+                      <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
+                      <input type="hidden" name="quantity" value="${entry.quantity}" />
+                      <select path="quantity" name="productQuantity" id="popupQuantity" class="mt-3 js-update-quantity">
+                         <c:forEach var="item" begin="1" end="10">
+                             <option value="${item}" ${item == quantity ? 'selected="selected"' : ''}>${item}</option>
+                         </c:forEach>
                       </select>
                   </div>
               </div>
               <hr>
-              <!-- Additional Gear Slider -->
+              <!-- BL-455 TODO Additional Gear Slider -->
               <h5 class="d-none d-md-block">Dont forget</h5>
               <div class="row d-none d-md-flex mt-4">
                   <div class="col-md-4">
@@ -91,14 +92,12 @@
               </div>
             </div>
             <div class="modal-footer">
-                <a href="#" class="btn btn-outline js-mini-cart-close-button"><spring:theme code="text.popup.button.continue"/></a>
+                <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>
                 <a href="/blstorefront/bl/en/cart" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>
             </div>
-          </div>
-        </div>
-      </div>
+   </div>
 
-	</ycommerce:testId>
+  </ycommerce:testId>
 	</spring:htmlEscape>
 </spring:escapeBody>"
 }
