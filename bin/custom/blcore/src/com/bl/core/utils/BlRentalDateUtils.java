@@ -5,6 +5,10 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.core.Registry;
 
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This Utils class created to get rental duration for renal products
  * @author Manikandan
@@ -25,6 +29,15 @@ public final class BlRentalDateUtils {
    */
   public static RentalDateDto getRentalsDuration() {
     RentalDateDto rentalDates = getBlDatePickerService().getRentalDatesFromSession();
+    if (Objects.nonNull(rentalDates) && StringUtils.isNotBlank(rentalDates.getSelectedFromDate())
+				&& StringUtils.isNotBlank(rentalDates.getSelectedToDate()))
+		{
+   	 rentalDates.setSelectedFromDate(getFormattedDate(rentalDates.getSelectedFromDate()));
+   	 rentalDates.setSelectedToDate(getFormattedDate(rentalDates.getSelectedToDate()));
+   	 rentalDates.setNumberOfDays(rentalDates.getNumberOfDays());
+			return rentalDates;
+		}
+    
     if (null == rentalDates)
     {
       rentalDates = new RentalDateDto();
@@ -33,14 +46,10 @@ public final class BlRentalDateUtils {
     return rentalDates;
   }
   
-  /**
-	 * Gets the formatted rental dates.
-	 *
-	 * @return the formatted rental dates
-	 */
-	public static RentalDateDto getFormattedRentalDates()
+  private static String getFormattedDate(final String rentalDatesFromSession)
 	{
-		return getBlDatePickerService().getFormattedRentalDatesFromSession();
+		return BlDateTimeUtils.convertDateToStringDate(BlDateTimeUtils.getDate(rentalDatesFromSession, BlCoreConstants.DATE_FORMAT),
+				BlCoreConstants.RENTAL_DATE_FORMAT);
 	}
 
   /**

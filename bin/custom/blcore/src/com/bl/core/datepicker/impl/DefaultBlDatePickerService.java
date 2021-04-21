@@ -3,7 +3,6 @@ package com.bl.core.datepicker.impl;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +10,6 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -126,40 +124,6 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 		return null;
 	}
 	
-	/**
-	 * Gets the formatted rental dates from session.
-	 *
-	 * @return the formatted rental dates from session
-	 */
-	@Override
-	public RentalDateDto getFormattedRentalDatesFromSession()
-	{
-		final RentalDateDto rentalDatesFromSession = BlRentalDateUtils.getRentalsDuration();
-		if (Objects.nonNull(rentalDatesFromSession) && StringUtils.isNotBlank(rentalDatesFromSession.getSelectedFromDate())
-				&& StringUtils.isNotBlank(rentalDatesFromSession.getSelectedToDate()))
-		{
-			final RentalDateDto formattedRentalDates = new RentalDateDto();
-			formattedRentalDates.setSelectedFromDate(getFormattedDate(rentalDatesFromSession.getSelectedFromDate()));
-			formattedRentalDates.setSelectedToDate(getFormattedDate(rentalDatesFromSession.getSelectedToDate()));
-			formattedRentalDates.setNumberOfDays(rentalDatesFromSession.getNumberOfDays());
-			return formattedRentalDates;
-		}
-		return rentalDatesFromSession;
-	}
-
-	/**
-	 * Gets the formatted date.
-	 *
-	 * @param rentalDatesFromSession
-	 *           the rental dates from session
-	 * @return the formatted date
-	 */
-	private String getFormattedDate(final String rentalDatesFromSession)
-	{
-		return BlDateTimeUtils.convertDateToStringDate(BlDateTimeUtils.getDate(rentalDatesFromSession, BlCoreConstants.DATE_FORMAT),
-				BlCoreConstants.RENTAL_DATE_FORMAT);
-	}
-
 	/**
 	 * @return the sessionService
 	 */

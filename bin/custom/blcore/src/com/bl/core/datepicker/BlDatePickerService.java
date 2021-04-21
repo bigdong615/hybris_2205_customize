@@ -56,10 +56,4 @@ public interface BlDatePickerService
 	 */
 	public void addRentalDatesIntoSession(final String startDate, final String endDate);
 	
-	/**
-	 * Gets the formatted rental dates from session.
-	 *
-	 * @return the formatted rental dates from session
-	 */
-	public RentalDateDto getFormattedRentalDatesFromSession();
 }
