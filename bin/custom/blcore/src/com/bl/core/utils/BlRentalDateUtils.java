@@ -46,6 +46,12 @@ public final class BlRentalDateUtils {
     return rentalDates;
   }
   
+  /**
+   * Gets the formatted date.
+   *
+   * @param rentalDatesFromSession the rental dates from session
+   * @return the formatted date
+   */
   private static String getFormattedDate(final String rentalDatesFromSession)
 	{
 		return BlDateTimeUtils.convertDateToStringDate(BlDateTimeUtils.getDate(rentalDatesFromSession, BlCoreConstants.DATE_FORMAT),
