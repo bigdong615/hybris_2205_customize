@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.verify;
 
 @UnitTest
 public class BlProductPopulatorTest {
@@ -89,6 +90,7 @@ public class BlProductPopulatorTest {
     serialProductList.add(serialProductModel1);
     serialProductList.add(serialProductModel2);
     serialProductList.add(serialProductModel3);
+    populator.setBlProductTagPopulator(blProductTagPopulator);
   }
 
   @Test
@@ -134,5 +136,6 @@ public class BlProductPopulatorTest {
     serialProduct = (SerialProductData)productData.getSerialproducts().get(2);
     assertEquals(serialProduct.getConditionRating(), PRODUCT_RATING1+BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
     assertEquals(serialProduct.getSerialId(), PRODUCT_ID1);
+    verify(blProductTagPopulator).populate(productModel, productData);
   }
 }
