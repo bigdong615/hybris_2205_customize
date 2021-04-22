@@ -66,7 +66,9 @@
                                                           <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
                                                                 <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
                                                           </c:when>
-
+                                                          <c:when test="${productReference.target.isUpcoming}">
+                                                               <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
+                                                          </c:when>
                                                            <c:otherwise>
                                                                 <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                                                     <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
