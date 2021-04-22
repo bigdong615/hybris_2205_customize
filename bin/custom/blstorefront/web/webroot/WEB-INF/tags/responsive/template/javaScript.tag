@@ -86,7 +86,7 @@
 
 		<%-- custom js file --%>
         <c:if test="${cmsPage.uid eq 'cartpage'}">
-        <script src="${commonResourcePathHtml}/js/blCustom.js"></script>
+        <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
         </c:if>
 
 		<%-- Cms Action JavaScript files --%>
