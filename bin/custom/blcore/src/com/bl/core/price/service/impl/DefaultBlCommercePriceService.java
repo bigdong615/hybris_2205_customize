@@ -97,7 +97,7 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	}
 
 	/**
-	 * Gets the rental days.
+	 * Get rental days from the session.
 	 *
 	 * @return the rental days
 	 */
