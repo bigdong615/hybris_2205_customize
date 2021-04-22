@@ -7,24 +7,55 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-<c:url value="${entry.product.url}" var="productUrl"/>
+<c:url value="/rent/product/${entry.product.code}" var="productUrl"/>
+<c:url value="/cart/update" var="cartUpdateFormAction" />
 
 <div class="cartProduct">
      <div class="row">
+         <div>
+              <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
+              		modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
+              	<input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
+              	<input type="hidden" name="productCode" value="${entry.product.code}" />
+              	<input type="hidden" name="initialQuantity" value="${entry.quantity}" />
+              	<input type="hidden" name="quantity" value=0 />
+                <button type="button"
+              	  class="shopping-cart__item-remove button button--plain-text"
+              	  id="removeEntry_${entry.entryNumber}">
+              	  X
+              	</button>
+              </form:form>
+         </div>
          <div class="col-md-2 text-center">
           <a href="${fn:escapeXml(productUrl)}"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
          </div>
          <div class="col-md-7 mt-3"><b>${entry.product.name}</b></div>
          <div class="col-md-3 mt-3 text-md-end">
-             <b>$XX ${entry.product.price.formattedValue}</b>
-              <spring:theme code="text.rental.cart.qty" />
-             <select class="mt-3">
+             <b><format:price priceData="${entry.totalPrice}" displayFreeForZero="true" /></span></b>
+             <c:url value="/cart/update" var="cartUpdateFormAction"/>
+           <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
+                                            modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
+                 <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
+                 <input type="hidden" name="productCode" value="${entry.product.code}" />
+                 <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
+                 <input type="hidden" name="quantity" value="${entry.quantity}" />
+                <spring:theme code="text.rental.cart.qty" />
+             <select class="mt-3 select js-select js-component-init update" id="shopping-cart-qty_${entry.entryNumber}" name="shopping-cart-qty">
                <c:forEach var="item" begin="1" end="10">
-                   <option value="${item}" ${item == entry.quantity ? 'selected="selected"' : ''}>${item}</option>
+                    <c:choose>
+                        <c:when test="${entry.quantity == item}">
+                            <option value="${item}" selected="selected">${item}</option>
+                        </c:when>
+                           <c:otherwise>
+                              <option value="${item}">${item}</option>
+                           </c:otherwise>
+                    </c:choose>
                </c:forEach>
              </select>
+           </form:form>
          </div>
      </div>
 

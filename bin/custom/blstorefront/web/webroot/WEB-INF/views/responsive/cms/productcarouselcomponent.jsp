@@ -6,8 +6,10 @@
 <%@ taglib prefix="component" tagdir="/WEB-INF/tags/shared/component" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<c:url value="/cart/add" var="addToCartUrl"/>
 
 <c:choose>
 	<c:when test="${not empty productData}">
@@ -56,7 +58,14 @@
                                 	</c:when>
                                 	<c:otherwise>
                                 	<!-- TO-DO : Need to add Add to rental button -->
-                                		<a href="#" class="btn btn-primary">Add to Rental</a>
+                                	<form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                       <input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
+                                       <input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
+                                       <input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
+                                       <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
+                                		   <button id="addToCartButton" type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart">
+                                       <spring:theme code="text.add.to.rental" />
+                                  </form>
                                 	</c:otherwise>
                                 </c:choose>
 							</div>

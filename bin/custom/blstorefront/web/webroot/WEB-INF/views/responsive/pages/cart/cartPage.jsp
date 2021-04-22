@@ -6,6 +6,7 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:set value="cart/emptyCart" var="emptyCart" />
@@ -55,7 +56,7 @@
                                       <tbody>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
-                                              <td class="text-end">$XX.XX</td>
+                                              <td class="text-end"><format:price priceData="${cartData.totalPrice}"/></td>
                                           </tr>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.cart.damage.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
@@ -71,7 +72,7 @@
                                           </tr>
                                           <tr class="total">
                                               <td><spring:theme code="basket.page.total"/></td>
-                                              <td class="text-end">$XX.XX</td>
+                                              <td class="text-end"><format:price priceData="${cartData.totalPriceWithTax}"/></td>
                                           </tr>
                                       </tbody>
                                   </table>

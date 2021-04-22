@@ -9,6 +9,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<c:url value="/cart/add" var="addToCartUrl"/>
 
 <c:choose>
 	<c:when test="${not empty productReferences and component.maximumNumberProducts > 0}">
@@ -65,11 +66,15 @@
                                                           <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
                                                                 <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
                                                           </c:when>
-                                                          <c:when test="${productReference.target.isUpcoming}">
-                                                                <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
-                                                          </c:when>
+
                                                            <c:otherwise>
-                                                                <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" /></a>
+                                                                <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                                                    <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
+                                                                    <input type="hidden" name="productCodePost" id="productCodePost" value="${productReference.target.code}">
+                                                                    <button id="addToCartButton" type="submit" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn" data-bs-toggle="modal" data-bs-target="#addToCart">
+                                                                      <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
+                                                                    </button>
+                                                                </form>
                                                             </c:otherwise>
                                                     </c:choose>
                                             </div>

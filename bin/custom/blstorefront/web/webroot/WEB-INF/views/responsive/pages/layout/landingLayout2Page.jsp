@@ -118,7 +118,10 @@
 			<!-- BL-52 : HomePage Featured Gear section -->
 			<div id="featured" class="row justify-content-center">
 				<div class="col-lg-11 col-xl-9">
-					<cms:pageSlot position="HomePageFeaturedGearSectionSlot" var="feature">
+				  <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+          </div>
+          <cms:pageSlot position="HomePageFeaturedGearSectionSlot" var="feature">
 						<cms:component component="${feature}" />
 					</cms:pageSlot>
 				</div>
