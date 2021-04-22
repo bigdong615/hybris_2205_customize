@@ -9,6 +9,7 @@
         <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
                         type="set"/>
       <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
+      <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -990,6 +991,24 @@
               </index>
             </indexes>
           </itemtype>
+          
+          <itemtype code="BlInventoryCreationCronJob" extends="CronJob">
+          		<description>This type represents a cron job that creates Inventory.</description>
+				<deployment table="BlInvCreationJob" typecode="12209" />
+				<attributes>
+					<attribute qualifier="startDate" type="java.util.Date">
+						<persistence type="property" />
+					</attribute>
+					<attribute qualifier="endDate" type="java.util.Date">
+						<persistence type="property" />
+					</attribute>
+					<attribute type="SkuProductList" qualifier="skuProductList">
+                		<persistence type="property"/>
+                		<modifiers read="true" write="true" search="true" optional="true"/>
+                		<description>This is for sku product</description>
+              		</attribute>
+				</attributes>
+			</itemtype>
 
           <!--BL-166: This item is created to store product related video information-->
           <itemtype code="ProductVideo" autocreate="true" generate="true"

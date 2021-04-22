@@ -10,7 +10,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -324,5 +326,22 @@ public final class BlDateTimeUtils
 	{
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 		return localDate.format(formatter);
+	}
+
+	/**
+	 * To get the formatted date
+	 * @param day the date
+	 * @param hours the hours
+	 * @param minutes the minutes
+	 * @param seconds the seconds
+	 * @return Calendar
+	 */
+	public static Calendar getFormattedDate(final Date day, final int hours, final int minutes, final int seconds) {
+		final Calendar startDate = new GregorianCalendar();
+		startDate.setTime(day);
+		startDate.set(Calendar.HOUR_OF_DAY, hours);
+		startDate.set(Calendar.MINUTE, minutes);
+		startDate.set(Calendar.SECOND, seconds);
+		return startDate;
 	}
 }

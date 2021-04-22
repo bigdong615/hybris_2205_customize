@@ -1,5 +1,6 @@
 package com.bl.core.stock.impl;
 
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -41,6 +42,11 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			" as sse} WHERE {sse:CODE} = (?active)}}) " +
 			AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
 
+	private static final String SERIAL_STOCK_LEVEL_FOR_DATE_QUERY = "SELECT {" + StockLevelModel.PK + "} from {"
+			+ StockLevelModel._TYPECODE + "} WHERE {" + StockLevelModel.PRODUCTCODE + "} = ?productCode " +
+			AND + StockLevelModel.DATE + "} BETWEEN ?startDate AND ?endDate " +
+			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode";
+
 
 	/**
 	 * {@inheritDoc}
@@ -60,11 +66,11 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVEL_FOR_DATE_QUERY);
 			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 
-			final Calendar startDate = getFormattedDate(startDay, BlCoreConstants.START_HOURS, BlCoreConstants.START_MINUTES, 
+			final Calendar startDate = BlDateTimeUtils.getFormattedDate(startDay, BlCoreConstants.START_HOURS, BlCoreConstants.START_MINUTES,
 					BlCoreConstants.START_SECONDS);
 			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
 
-			final Calendar endDate = getFormattedDate(endDay, BlCoreConstants.END_HOURS, BlCoreConstants.END_MINUTES,
+			final Calendar endDate = BlDateTimeUtils.getFormattedDate(endDay, BlCoreConstants.END_HOURS, BlCoreConstants.END_MINUTES,
 					BlCoreConstants.END_SECONDS);
 			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
 
@@ -83,20 +89,33 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	}
 
 	/**
-	 * To get the formatted date
-	 * @param day the date
-	 * @param hours the hours
-	 * @param minutes the minutes
-	 * @param seconds the seconds
-	 * @return Calendar
+	 * {@inheritDoc}
 	 */
-	private Calendar getFormattedDate(final Date day, final int hours, final int minutes, final int seconds) {
-		final Calendar startDate = new GregorianCalendar();
-		startDate.setTime(day);
-		startDate.set(Calendar.HOUR_OF_DAY, hours);
-		startDate.set(Calendar.MINUTE, minutes);
-		startDate.set(Calendar.SECOND, seconds);
-		return startDate;
+	@Override
+	public StockLevelModel findSerialStockLevelForDate(final String serialProductCode,
+			final String productCode, final Date date)
+	{
+			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_STOCK_LEVEL_FOR_DATE_QUERY);
+			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
+			fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
+
+			final Calendar startDate = BlDateTimeUtils.getFormattedDate(date, BlCoreConstants.START_HOURS, BlCoreConstants.START_MINUTES,
+					BlCoreConstants.START_SECONDS);
+			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
+
+			final Calendar endDate = BlDateTimeUtils.getFormattedDate(date, BlCoreConstants.END_HOURS, BlCoreConstants.END_MINUTES,
+					BlCoreConstants.END_SECONDS);
+			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
+
+			final SearchResult result = getFlexibleSearchService().search(fQuery);
+			final List<StockLevelModel> stockLevels = result.getResult();
+			if (CollectionUtils.isEmpty(stockLevels))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and date between : {} and {}",
+						productCode, startDate, endDate);
+				return null;
+			}
+			return stockLevels.get(0);
 	}
 
 }

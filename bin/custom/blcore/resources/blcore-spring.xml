@@ -811,4 +811,18 @@
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
 	</bean>
+	
+	<bean id="blInventoryCreationJob" class="com.bl.core.cronjob.BlInventoryCreationJob" parent="abstractJobPerformable">
+		<property name="blInventoryManageService" ref="blInventoryManageService"/>
+	</bean>
+	
+	<bean id="blInventoryManageService" class="com.bl.core.stock.impl.DefaultBlInventoryManageService">
+		<property name="modelService" ref="modelService"/>
+		<property name="blProductDao" ref="blProductDao"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+	
+	<bean id="blProductDao" class="com.bl.core.product.dao.impl.DefaultBlProductDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
 </beans>
