@@ -7,7 +7,6 @@
    <extension abstractclassprefix="Generated" classprefix="BlStorefront" name="blstorefront" usemaven="false"> 
     
 	   <requires-extension name="selectivecartsplitlistaddon"/>
-	   <requires-extension name="profiletagaddon"/>                
 	   <requires-extension name="personalizationaddon"/>
 	   <requires-extension name="smarteditaddon"/>
 	   <requires-extension name="promotionenginesamplesaddon"/>

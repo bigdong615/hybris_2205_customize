@@ -114,6 +114,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String DISCONTINUED = "discontinued";
 	public static final String APPROVED = "approved";
 
+	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 
 	private BlCoreConstants()
 	{
