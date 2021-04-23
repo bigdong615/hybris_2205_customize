@@ -111,6 +111,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DEFAULT_DAYS = "7";
 
+	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 
 	private BlCoreConstants()
 	{

@@ -10,6 +10,7 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -116,13 +117,13 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 				date.setSelectedToDate(endDate);
 				date.setNumberOfDays(String.valueOf(
 						ChronoUnit.DAYS.between(BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlCoreConstants.DATE_FORMAT),
-								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT))));
+								BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlCoreConstants.DATE_FORMAT).plusDays(1))));
 				return date;
 			}
 		}
 		return null;
 	}
-
+	
 	/**
 	 * @return the sessionService
 	 */
