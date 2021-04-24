@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<!--
+	ATTENTION: This is just an example file. You have to edit it according to your needs.
+-->
+
+<items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xsi:noNamespaceSchemaLocation="items.xsd">
+
+	<enumtypes>
+		<enumtype code="BlTaxTypeEnum" autocreate="true" dynamic="true">
+			<description>This enum is used to store different types of Tax Type</description>
+			<value code="SalesOrder" />
+			<value code="SalesInvoice" />
+		</enumtype>
+	</enumtypes>
+
+	<itemtypes>
+		<typegroup name="Cart">
+		<itemtype code="AbstractOrder" autocreate="false" generate="false">
+		<description>Extending AbstractOrder type with additional attributes
+		</description>
+			<attributes>
+				<attribute qualifier="avalaraTaxCalculated" type="java.lang.Boolean">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>Boolean.FALSE</defaultvalue>
+				</attribute>
+				<attribute qualifier="taxType" type="BlTaxTypeEnum">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>em().getEnumerationValue("BlTaxTypeEnum","SalesOrder")</defaultvalue>
+				</attribute>
+				<attribute qualifier="taxCommitted" type="java.lang.Boolean">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>Boolean.FALSE</defaultvalue>
+				</attribute>
+			</attributes>
+		</itemtype>
+		</typegroup>
+	</itemtypes>
+
+</items>

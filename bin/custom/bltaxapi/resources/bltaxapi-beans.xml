@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<!--
+	ATTENTION: This is just an example file. You have to edit it according to your needs.
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+
+	<!--
+		Example Data POJO
+	
+	<bean class="com.bl.tax.data.AbstractPojo" abstract="true">
+		<property name="id" type="String"/>
+		<property name="flag" type="boolean"/>
+	</bean>
+
+	<bean class="com.bl.tax.data.MyPojo" extends="com.bl.tax.data.AbstractPojo">
+		<property name="message" type="String"/>
+	</bean>
+
+	<bean class="com.bl.tax.data.AnnotatedPojo">
+
+		<import type="javax.xml.bind.annotation.XmlRootElement"/>
+		<import type="javax.xml.bind.annotation.XmlElements"/>
+		<import type="javax.xml.bind.annotation.XmlElement"/>
+
+		<annotations>@XmlRootElement</annotations>
+		
+		<property name="someText" type="String">
+
+			<annotations scope="getter">
+			@XmlElements(value = {
+					@XmlElement(name="map",
+						type=ValueAsMap.class),
+					@XmlElement(name="string",
+						type=ValueAsString.class)
+			})
+			</annotations>
+
+		</property>
+
+	</bean>
+
+    <bean  class="de.hybris.platform.catalog.data.Equals1">
+    	<property name="a1" type="boolean" equals="true"/>
+    	<property name="a2" type="int" equals="true"/>
+    	<property name="a3" type="String" equals="true"/>
+    	<property name="a4" type="de.hybris.platform.catalog.data.AbstractValue" equals="true"/>
+    	<property name="not4Equals" type="java.lang.Double"/>
+    </bean>
+
+    <bean class="de.hybris.platform.catalog.data.Equals2" extends="de.hybris.platform.catalog.data.Equals1" superEquals="true">
+    	<property name="a5" type="java.lang.Integer" equals="true"/>
+    	<property name="a6" type="java.util.List" equals="true"/>
+    	<property name="not4Equals" type="java.lang.Double"/>
+    </bean>
+
+	-->
+
+	<bean class="com.bl.tax.data.TaxRequestData">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+	<property name="code" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("code")</annotations>
+	</property>
+		<property name="type" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("type")</annotations>
+		</property>
+		<property name="date" type="java.util.Date" equals="true">
+			<annotations>@JsonProperty("date")</annotations>
+		</property>
+		<property name="customerCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customerCode")</annotations>
+		</property>
+		<property name="salesPersonCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("salesPersonCode")</annotations>
+		</property>
+		<property name="originCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("originCode")</annotations>
+		</property>
+		<property name="destinationCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("destinationCode")</annotations>
+		</property>
+		<property name="lines" type="java.util.List&lt;com.bl.tax.TaxLine>" equals="true">
+			<annotations>@JsonProperty("destinationCode")</annotations>
+		</property>
+		<property name="exemptionNo" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("destinationCode")</annotations>
+		</property>
+	</bean>
+
+	<bean class="com.bl.tax.data.TaxResponseData">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="id" type="java.lang.Long" equals="true">
+			<annotations>@JsonProperty("id")</annotations>
+		</property>
+		<property name="code" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("code")</annotations>
+		</property>
+		<property name="companyId" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("companyId")</annotations>
+		</property>
+		<property name="date" type="java.util.Date" equals="true">
+			<annotations>@JsonProperty("date")</annotations>
+		</property>
+		<property name="paymentDate" type="java.util.Date" equals="true">
+			<annotations>@JsonProperty("paymentDate")</annotations>
+		</property>
+		<property name="type" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("type")</annotations>
+		</property>
+		<property name="currencyCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("currencyCode")</annotations>
+		</property>
+		<property name="exchangeRateCurrencyCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("exchangeRateCurrencyCode")</annotations>
+		</property>
+		<property name="taxableAmount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("taxableAmount")</annotations>
+		</property>
+		<property name="taxCalculated" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("taxCalculated")</annotations>
+		</property>
+
+	</bean>
+
+
+
+	<bean class="com.bl.tax.TaxLine">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+	<property name="number" type="java.lang.String" equals="true">
+		<annotations>@JsonProperty("number")</annotations>
+	</property>
+		<property name="quantity" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("quantity")</annotations>
+		</property>
+		<property name="amount" type="java.lang.Double" equals="true">
+			<annotations>@JsonProperty("amount")</annotations>
+		</property>
+		<property name="addresses" type="com.bl.tax.Addresses" equals="true">
+			<annotations>@JsonProperty("addresses")</annotations>
+		</property>
+		<property name="taxCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("taxCode")</annotations>
+		</property>
+		<property name="exemptionCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("exemptionCode")</annotations>
+		</property>
+		<property name="description" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("description")</annotations>
+		</property>
+		<property name="itemCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("itemCode")</annotations>
+		</property>
+
+	</bean>
+
+
+	<bean class="com.bl.tax.ShipFrom">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="line1" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("line1")</annotations>
+		</property>
+		<property name="city" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("city")</annotations>
+		</property>
+		<property name="region" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("region")</annotations>
+		</property>
+		<property name="country" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("country")</annotations>
+		</property>
+		<property name="postalCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("postalCode")</annotations>
+		</property>
+	</bean>
+
+	<bean class="com.bl.tax.ShipTo">
+		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="line1" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("line1")</annotations>
+		</property>
+		<property name="city" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("city")</annotations>
+		</property>
+		<property name="region" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("region")</annotations>
+		</property>
+		<property name="country" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("country")</annotations>
+		</property>
+		<property name="postalCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("postalCode")</annotations>
+		</property>
+	</bean>
+
+	<bean class="com.bl.tax.Addresses">
+	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
+	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
+	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="shipFrom" type="com.bl.tax.ShipFrom" equals="true">
+			<annotations>@JsonProperty("ShipFrom")</annotations>
+		</property>
+		<property name="shipTo" type="com.bl.tax.ShipTo" equals="true">
+			<annotations>@JsonProperty("ShipTo")</annotations>
+		</property>
+	</bean>
+</beans>

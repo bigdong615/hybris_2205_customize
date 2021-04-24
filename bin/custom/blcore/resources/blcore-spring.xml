@@ -811,4 +811,14 @@
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
 	</bean>
+
+
+	<!--Avalara Tax-->
+
+
+	<alias name="defaultBlExternalTaxesService" alias="externalTaxesService"/>
+	<bean id="defaultBlExternalTaxesService"
+		class="com.bl.core.services.tax.DefaultBlExternalTaxesService" parent="defaultExternalTaxesService" />
+
+
 </beans>
