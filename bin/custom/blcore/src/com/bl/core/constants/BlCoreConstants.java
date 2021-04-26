@@ -113,6 +113,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 
+	public static final String LENSES ="lenses";
+	public static final String CAMERAS ="cameras";
+	public static final String PRODUCTION ="production";
+	public static final String BL_IMAGE = "blimage";
+
+
 	private BlCoreConstants()
 	{
 		//empty
