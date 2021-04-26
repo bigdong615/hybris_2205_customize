@@ -96,6 +96,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 					.filter(cartEntry -> cartEntryNumber.equals(cartEntry.getEntryNumber())).findFirst().orElse(null);
 			checkAndSetFlagForSelectedDamageWavier(cartEntryModel, damageWavierType);
 			cartModel.setCalculated(Boolean.FALSE);
+			getModelService().save(cartEntryModel);
+			getModelService().save(cartModel);
 			final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
 			getCommerceCartCalculationStrategy().recalculateCart(parameter);
 		}
@@ -127,26 +129,34 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		switch (damageWavierType)
 		{
 			case BlCoreConstants.GEAR_GAURD_PRO_FULL:
-				cartEntryModel.setGearGaurdProFullWaiverSelected(Boolean.TRUE);
-				cartEntryModel.setGearGaurdWaiverSelected(Boolean.FALSE);
-				cartEntryModel.setNoDamageWaiverSelected(Boolean.FALSE);
-				cartEntryModel.setCalculated(Boolean.FALSE);
+				setFlags(cartEntryModel, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
 				break;
 			case BlCoreConstants.GEAR_GAURD:
-				cartEntryModel.setGearGaurdProFullWaiverSelected(Boolean.FALSE);
-				cartEntryModel.setGearGaurdWaiverSelected(Boolean.TRUE);
-				cartEntryModel.setNoDamageWaiverSelected(Boolean.FALSE);
-				cartEntryModel.setCalculated(Boolean.FALSE);
+				setFlags(cartEntryModel, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
 				break;
 			case BlCoreConstants.NO_GEAR_GAURD:
-				cartEntryModel.setGearGaurdProFullWaiverSelected(Boolean.FALSE);
-				cartEntryModel.setGearGaurdWaiverSelected(Boolean.FALSE);
-				cartEntryModel.setNoDamageWaiverSelected(Boolean.TRUE);
-				cartEntryModel.setCalculated(Boolean.FALSE);
+				setFlags(cartEntryModel, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE);
 				break;
 			default:
 				break;
 		}
+	}
+
+	/**
+	 * Sets the flags for Damage Wavier.
+	 *
+	 * @param cartEntryModel the cart entry model
+	 * @param gearGaurdProFullWaiverSelected the gear gaurd pro full waiver selected
+	 * @param gearGaurdWaiverSelected the gear gaurd waiver selected
+	 * @param noGearGaurdWaiverSelected the no gear gaurd waiver selected
+	 */
+	private void setFlags(final AbstractOrderEntryModel cartEntryModel, final Boolean gearGaurdProFullWaiverSelected,
+			final Boolean gearGaurdWaiverSelected, final Boolean noGearGaurdWaiverSelected)
+	{
+		cartEntryModel.setGearGaurdProFullWaiverSelected(gearGaurdProFullWaiverSelected);
+		cartEntryModel.setGearGaurdWaiverSelected(gearGaurdWaiverSelected);
+		cartEntryModel.setNoDamageWaiverSelected(noGearGaurdWaiverSelected);
+		cartEntryModel.setCalculated(Boolean.FALSE);
 	}
 
   public CommerceCartService getCommerceCartService() {
@@ -168,7 +178,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	/**
 	 * @param commerceCartCalculationStrategy the commerceCartCalculationStrategy to set
 	 */
-	public void setCommerceCartCalculationStrategy(CommerceCartCalculationStrategy commerceCartCalculationStrategy)
+	public void setCommerceCartCalculationStrategy(final CommerceCartCalculationStrategy commerceCartCalculationStrategy)
 	{
 		this.commerceCartCalculationStrategy = commerceCartCalculationStrategy;
 	}
