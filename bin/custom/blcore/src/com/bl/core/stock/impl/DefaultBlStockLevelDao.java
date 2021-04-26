@@ -63,13 +63,8 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			//Filters warehouse list to remove null's and duplicate elements.
 			final Set<WarehouseModel> warehouses = new HashSet<>(warehouseModels);
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVEL_FOR_DATE_QUERY);
-			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 
-			final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(startDay);
-			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
-
-			final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(endDay);
-			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
+			addQueryParameter(productCode, startDay, endDay, fQuery);
 
 			fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
 			fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouses);
@@ -78,7 +73,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			if (CollectionUtils.isEmpty(stockLevels))
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and date between : {} and {}",
-						productCode, startDate, endDate);
+						productCode, startDay, endDay);
 				return Collections.emptyList();
 			}
 			return stockLevels;
@@ -90,27 +85,41 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	 */
 	@Override
 	public StockLevelModel findSerialStockLevelForDate(final String serialProductCode,
-			final String productCode, final Date date)
+			final String productCode, final Date startDay, final Date endDay)
 	{
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_STOCK_LEVEL_FOR_DATE_QUERY);
-			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 			fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
 
-		final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(date);
-			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
-
-		final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(date);
-			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
+			addQueryParameter(productCode, startDay, endDay, fQuery);
 
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
 			final List<StockLevelModel> stockLevels = result.getResult();
 			if (CollectionUtils.isEmpty(stockLevels))
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and date between : {} and {}",
-						productCode, startDate, endDate);
+						productCode, startDay, endDay);
 				return null;
 			}
 			return stockLevels.get(0);
+	}
+
+	/**
+	 * It adds the parameters value into query
+	 * @param productCode
+	 * @param startDay
+	 * @param endDay
+	 * @param fQuery
+	 */
+	private void addQueryParameter(final String productCode, final Date startDay, final Date endDay,
+			final FlexibleSearchQuery fQuery)
+	{
+		fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
+
+		final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(startDay);
+		fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
+
+		final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(endDay);
+		fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
 	}
 
 }

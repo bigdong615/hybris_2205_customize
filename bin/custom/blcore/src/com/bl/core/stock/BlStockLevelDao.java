@@ -30,8 +30,10 @@ public interface BlStockLevelDao
 	 * 
 	 * @param serialProductCode
 	 * @param productCode
-	 * @param date
+	 * @param startDate the rental start date
+	 * @param endDate the rental end date
 	 * @return
 	 */
-	public StockLevelModel findSerialStockLevelForDate(final String serialProductCode, final String productCode, final Date date);
+	public StockLevelModel findSerialStockLevelForDate(final String serialProductCode, final String productCode, final Date startDate,
+			final Date endDate);
 }

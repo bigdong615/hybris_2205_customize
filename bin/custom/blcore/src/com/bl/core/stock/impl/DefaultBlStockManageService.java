@@ -9,7 +9,6 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
-import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.Calendar;
@@ -81,10 +80,19 @@ public class DefaultBlStockManageService implements BlStockManageService
 	public void createStockLevelForADayForAllSkus() {
 		final Collection<BlProductModel> skuProducts = getProductDao().getAllActiveSkuProducts();
 		final Date currentDate = new Date();
+		getAllAssociatedActiveSerials(skuProducts, getNextYearsSameDay(currentDate));
+	}
+
+	/**
+	 * It gets the date which is after a year
+	 * @param currentDate
+	 * @return the date
+	 */
+	private Date getNextYearsSameDay(final Date currentDate) {
 		final Calendar calendar = Calendar.getInstance();
 		calendar.setTime(currentDate);
 		calendar.add(Calendar.YEAR, 1);
-		getAllAssociatedActiveSerials(skuProducts, calendar.getTime());
+		return calendar.getTime();
 	}
 
 	/**
@@ -119,20 +127,20 @@ public class DefaultBlStockManageService implements BlStockManageService
 	 *
 	 * @param serial
 	 * @param skuCode
-	 * @param stockForTheDate
+	 * @param date
 	 */
 	private void findAndCreateStockLevelForSerial(final BlSerialProductModel serial, final String skuCode,
-			final Date stockForTheDate)
+			final Date date)
 	{
 		final StockLevelModel stockLevelModel = getBlStockLevelDao().findSerialStockLevelForDate(serial.getCode(), skuCode,
-				stockForTheDate);
+				date, date);
 		if (Objects.nonNull(stockLevelModel))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock already exist for product {}", serial.getCode());
 		}
 		else
 		{
-			createStockLevelForSerial(serial, skuCode, stockForTheDate);
+			createStockLevelForSerial(serial, skuCode, date);
 		}
 
 	}
