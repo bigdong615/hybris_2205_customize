@@ -34,13 +34,19 @@
                              </c:if>
                               </c:forEach>
                                 <h1 class="mb-4">${product.displayName}</h1>
-                                <c:if test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
-                                  	<span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
-                                </c:if>
-                                <c:if test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
-                                		<span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.outOfStock" arguments="${product.stock.stockLevel}"/></span>
-                                </c:if>
-
+                                    <c:choose>
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+                                        <span class="badge badge-limited-stock"><spring:theme code="text.product.tile.flag.only.left" arguments="${product.stock.stockLevel}"/></span>
+                                      </c:when>
+                                      <c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                      	<span class="badge badge-out-of-stock"><spring:theme code="text.product.tile.flag.outOfStock" arguments="${product.stock.stockLevel}"/></span>
+                                      </c:when>
+                                      <c:otherwise>
+                                         <c:if test ="${product.productTagValues ne null}">
+                                           <span class="badge badge-new">${product.productTagValues}</span>
+                                         </c:if>
+                                      </c:otherwise>
+                                    </c:choose>
                                 <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
@@ -59,10 +65,13 @@
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                   <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span>
                                 </div>
-                                <form id="addToCartForm" class="add_to_cart_form" action="${addToCartUrl}" method="post">
-                                  <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
-                                  <input type="hidden" name="productCodePost" value="${product.code}">
-                                  <c:choose>
+                                <c:choose >
+                                <c:when test="${product.isUpcoming eq 'true'}">
+                                <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5" data-bs-toggle="modal"
+                                 data-bs-target="#notifyMeModal"><spring:theme code="text.notify.me" /></a>
+                                </c:when>
+                                <c:otherwise>
+                                   <c:choose>
                                   		<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
                                   				<button id="addToCartButton" type="submit"
                                   					  class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn"
@@ -70,14 +79,30 @@
                                   				  <spring:theme code="basket.add.to.rental.cart.button.text" />
                                   				</button>
                                   		</c:when>
-                                  		<c:otherwise>
+                                  		<c:when test="${product.isDiscontinued eq 'true' }">
+                                          <button id="addToCartButton" type="submit"
+                                                   class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn"
+                                                   aria-disabled="true" disabled="disabled">
+                                                 <spring:theme code="basket.add.to.rental.cart.button.text" />
+                                      		</button>
+                                  		</c:when>
+                                      <c:otherwise>
+                                        <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                           <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                                        </div>
+                                        <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                           <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
+                                           <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
                                   		  	<button id="addToCartButton" type="submit"
-                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn">
+                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn" data-bs-toggle="modal" data-bs-target="#addToCart">
                                   					<spring:theme code="basket.add.to.rental.cart.button.text" />
                                   				</button>
+                                  		  </form>
                                   		</c:otherwise>
                                   </c:choose>
-                           			</form>
+
+                           		</c:otherwise>
+                            </c:choose>
                               </div>
                         </div>
                     </div>

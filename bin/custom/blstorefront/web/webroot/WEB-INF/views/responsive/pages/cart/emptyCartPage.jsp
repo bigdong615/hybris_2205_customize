@@ -8,7 +8,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
+<c:url var="homepageUrl" value="/" />
 <template:page pageTitle="${pageTitle}">
 
 <div class="screen"></div>
@@ -19,7 +19,7 @@
                     <div id="orderConfirmation" class="text-center">
                         <h1><spring:theme code="text.empty.cart"/></h1>
                         <div class="confirmation-actions my-4">
-                            <a href="/blstorefront/bl/en/" class="btn btn-outline mx-3"><spring:theme code="general.continue.shopping"/></a>
+                            <a href="${homepageUrl}" class="btn btn-outline mx-3"><spring:theme code="general.continue.shopping"/></a>
                         </div>
                     </div>
                 </div>

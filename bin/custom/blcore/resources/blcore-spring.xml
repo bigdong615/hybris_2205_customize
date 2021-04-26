@@ -789,8 +789,8 @@
 	<!-- BL-483 Extended OOTB Commerce Price Service to get Dynamic Pricing for Rental Products on the basis of seleted Rental Days -->
 	<alias alias="commercePriceService" name="defaultBlCommercePriceService"/>
     <bean id="defaultBlCommercePriceService" class="com.bl.core.price.service.impl.DefaultBlCommercePriceService" parent="defaultCommercePriceService">
-        <property name="sessionService" ref="sessionService"/>
         <property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
     </bean>
 
 	<!--BL-110 Inventory Scan Tool-->

@@ -109,6 +109,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String USED_GEAR_SUPER_CATEGORY = "usedsuperCategory";
 	public static final String CLEAR_USED_GEAR_CATEGORY = "usedClear";
 
+	public static final String DEFAULT_DAYS = "7";
+
+	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 
 	private BlCoreConstants()
 	{

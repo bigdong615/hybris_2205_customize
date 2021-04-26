@@ -3,6 +3,9 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -25,26 +28,20 @@ import de.hybris.platform.commerceservices.search.facetdata.FacetRefinement;
 import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.facades.product.data.RentalDateDto;
 
 
 @Controller
@@ -75,18 +72,22 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "cmsComponentService")
 	private CMSComponentService cmsComponentService;
 
-	@Resource(name = "blDatePickerService")
-	private BlDatePickerService blDatePickerService;
+	/**
+	 * This common method created to get rental duration for rental products from BlRentalDateUtils class
+	 */
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalDuration() {
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
-	@RequestMapping(method = RequestMethod.GET, params = "!q") // NOSONAR
+	@RequestMapping(method = RequestMethod.GET, params = "!q")
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
-			@RequestParam(value="blPageType") final String blPageType, @RequestParam(value = "selectedDate", defaultValue = "")
-			final String selectedDate,
+			@RequestParam(value="blPageType") final String blPageType,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
 		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
 
-			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);//NOSONAR
+			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
 
 			final SearchStateData searchState = new SearchStateData();
 			final SearchQueryData searchQueryData = new SearchQueryData();
@@ -101,7 +102,7 @@ public class SearchPageController extends AbstractSearchPageController
 			{
 				searchPageData = encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
 			}
-			catch (final ConversionException e) // NOSONAR
+			catch (final ConversionException e)
 			{
 				// nothing to do - the exception is logged in SearchSolrQueryPopulator
 			}
@@ -147,15 +148,6 @@ public class SearchPageController extends AbstractSearchPageController
 						+ " " + getSiteName());
 		final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(searchText);
 		setUpMetaData(model, metaKeywords, metaDescription);
-
-		RentalDateDto rentalDates = blDatePickerService.getRentalDatesFromSession();
-		if (null == rentalDates)
-		{
-			rentalDates = new RentalDateDto();
-			rentalDates.setNumberOfDays(BlControllerConstants.DEFAULT_DAYS);
-		}
-		model.addAttribute(BlControllerConstants.RENTAL_DATE, rentalDates);
-
 		return getViewForPage(model);
 	}
 
@@ -205,7 +197,7 @@ public class SearchPageController extends AbstractSearchPageController
 	protected ProductSearchPageData<SearchStateData, ProductData> performSearch(final String searchQuery, final int page,
 			final ShowMode showMode, final String sortCode, final int pageSize ,final String blPageType)
 	{
-		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);//NOSONAR
+		final PageableData pageableData = createPageableData(page, pageSize, sortCode, showMode);
 
 		final SearchStateData searchState = new SearchStateData();
 		final SearchQueryData searchQueryData = new SearchQueryData();
@@ -218,7 +210,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/results", method = RequestMethod.GET) // NOSONAR
+	@RequestMapping(value = "/results", method = RequestMethod.GET)
 	public SearchResultsData<ProductData> jsonSearchResults(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -233,7 +225,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/facets", method = RequestMethod.GET) // NOSONAR
+	@RequestMapping(value = "/facets", method = RequestMethod.GET)
 	public FacetRefinement<SearchStateData> getFacets(@RequestParam("q") final String searchQuery,
 			@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -256,7 +248,7 @@ public class SearchPageController extends AbstractSearchPageController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET) // NOSONAR
+	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
 	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable final String componentUid,
 			@RequestParam("term") final String term) throws CMSItemNotFoundException
 	{

@@ -108,7 +108,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
      */
     private void populateSerialProducts(final BlProductModel source, final ProductData target) {
    	 final List<SerialProductData> serialProductDataList = new ArrayList<>();
-   	 final List<BlSerialProductModel> blSerialProductModels = new ArrayList<>(CollectionUtils.emptyIfNull(source.getSerialProducts()));
+   	 final List<BlSerialProductModel> blSerialProductModels = (List<BlSerialProductModel>) CollectionUtils.emptyIfNull(source.getSerialProducts());
         blSerialProductModels.forEach(serialProductModel -> {
                     SerialProductData serialProductData = new SerialProductData();
             if (serialProductModel.getConditionRatingOverallScore() != null) {
@@ -143,50 +143,13 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     {
    	 if (CollectionUtils.isNotEmpty(serialProductDataList))
        {
-   		 Collections.sort(serialProductDataList, new Comparator<SerialProductData>()
-   		 {
-   			 @Override
-   			 public int compare(final SerialProductData serialProductData1, final SerialProductData serialProductData2)
-   			 {
-   				 return compareSerialProductData(serialProductData1, serialProductData2);
-   			 }
-   		 });
+         Comparator<SerialProductData> serialProductDataComparator=Comparator.comparing(SerialProductData::getConditionRating);
+         Collections.sort(serialProductDataList, serialProductDataComparator);
        }
        return serialProductDataList;
    }
 
-   /**
-    * Compare serial product data.
-    *
-    * @param serialProductData1 the serial product data 1
-    * @param serialProductData2 the serial product data 2
-    * @return the int
-    */
-   private int compareSerialProductData(final SerialProductData serialProductData1, final SerialProductData serialProductData2)
-   {
-   	if (serialProductData1 != null )
-   	{
-   		if (serialProductData2 != null )
-   		{
-   			return Double.valueOf(serialProductData1.getConditionRating())
-   					.compareTo(serialProductData2.getConditionRating());
-   		}
-   		else
-   		{
-   			return 1;
-   		}
-   	}
-   	else
-   	{
-   		if (serialProductData2 != null )
-   		{
-   			return -1;
-   		}
-   	}
-   	return 0;
-   }
-    
-    /**
+  /**
      * Gets the product price data.
      *
      * @param priceValue the price value
