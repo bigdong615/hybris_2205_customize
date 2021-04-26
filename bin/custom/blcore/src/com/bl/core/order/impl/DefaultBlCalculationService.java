@@ -45,7 +45,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 {
 	private static final Logger LOG = Logger.getLogger(DefaultBlCalculationService.class);
 	private BlCommercePriceService commercePriceService;
-	private GenericDao<BlDamageWaiverPricingModel> blDamageWavierGenericDao;
+	private GenericDao<BlDamageWaiverPricingModel> blDamageWaiverGenericDao;
 	private OrderRequiresCalculationStrategy defaultOrderRequiresCalculationStrategy;
 	private CommonI18NService defaultCommonI18NService;
 
@@ -70,7 +70,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
 		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
 		entry.setDiscountValues(entryDiscounts);
-		setDamageWavierPrices(entry, product);
+		setDamageWaiverPrices(entry, product);
 	}
 
 	/**
@@ -92,10 +92,14 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		{
 			recalculateOrderEntryIfNeeded(e, forceRecalculate);
 			subtotal += e.getTotalPrice().doubleValue();
-			totalDamageWaiverCost += getDamageWavierPriceFromEntry(e);
+			totalDamageWaiverCost += getDamageWaiverPriceFromEntry(e);
 		}
-		order.setTotalDamageWaiverCost(Double.valueOf(totalDamageWaiverCost));
-		order.setTotalPrice(Double.valueOf(subtotal + totalDamageWaiverCost));
+		final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
+		order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", finaltotalDamageWaiverCost);
+		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
+		order.setTotalPrice(totalPriceWithDamageWaiverCost);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
 	}
 
 	/**
@@ -120,10 +124,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			final int digits = curr.getDigits().intValue();
 			// subtotal
 			final double subtotal = order.getSubtotal().doubleValue();
-			//totalDamageWavierCost
+			//totalDamageWaiverCost
 			final double totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 					? order.getTotalDamageWaiverCost().doubleValue()
 					: 0.0d;
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", totalDamageWaiverCost);
 			// discounts
 			final double totalDiscounts = calculateDiscountValues(order, recalculate);
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
@@ -133,11 +138,13 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts;
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
 			order.setTotalPrice(Double.valueOf(totalRounded));
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
 			// taxes
 			final double totalTaxes = calculateTotalTaxValues(order, recalculate, digits,
 					getTaxCorrectionFactor(taxValueMap, subtotal, total, order), taxValueMap);
 			final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(totalTaxes, digits);
 			order.setTotalTax(Double.valueOf(totalRoundedTaxes));
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
 			saveOrder(order);
 		}
@@ -145,24 +152,24 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 	/**
-	 * Gets the damage wavier price from entry.
+	 * Gets the damage Waiver price from entry.
 	 *
 	 * @param cartEntry
 	 *           the cart entry
-	 * @return the damage wavier price from entry
+	 * @return the damage Waiver price from entry
 	 */
-	private double getDamageWavierPriceFromEntry(final AbstractOrderEntryModel cartEntry)
+	private double getDamageWaiverPriceFromEntry(final AbstractOrderEntryModel cartEntry)
 	{
 		final ProductModel product = cartEntry.getProduct();
 		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
-			if (BooleanUtils.isTrue(cartEntry.getGearGaurdWaiverSelected()))
+			if (BooleanUtils.isTrue(cartEntry.getGearGuardWaiverSelected()))
 			{
-				return cartEntry.getGearGaurdWaiverPrice().doubleValue() * cartEntry.getQuantity().doubleValue();
+				return cartEntry.getGearGuardWaiverPrice().doubleValue() * cartEntry.getQuantity().doubleValue();
 			}
-			if (BooleanUtils.isTrue(cartEntry.getGearGaurdProFullWaiverSelected()))
+			if (BooleanUtils.isTrue(cartEntry.getGearGuardProFullWaiverSelected()))
 			{
-				return cartEntry.getGearGaurdProFullWaiverPrice().doubleValue() * cartEntry.getQuantity().doubleValue();
+				return cartEntry.getGearGuardProFullWaiverPrice().doubleValue() * cartEntry.getQuantity().doubleValue();
 			}
 			return 0.0d;
 		}
@@ -231,7 +238,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 	/**
-	 * Sets the damage wavier prices. Calculating on the basis of the type of SKU and percentage.
+	 * Sets the damage Waiver prices. Calculating on the basis of the type of SKU and percentage.
 	 *
 	 * @param cartEntry
 	 *           the cart entry
@@ -240,38 +247,88 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 * @throws CalculationException
 	 *            the calculation exception
 	 */
-	private void setDamageWavierPrices(final AbstractOrderEntryModel cartEntry, final ProductModel product)
+	private void setDamageWaiverPrices(final AbstractOrderEntryModel cartEntry, final ProductModel product)
 			throws CalculationException
 	{
 		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
-			final List<BlDamageWaiverPricingModel> lDamageWavierPricing = getBlDamageWavierGenericDao().find();
-			final String gearType = BooleanUtils.toBoolean(((BlProductModel) product).getIsVideo()) ? BlCoreConstants.VIDEO
-					: BlCoreConstants.PHOTO;
-			if (CollectionUtils.isEmpty(lDamageWavierPricing))
+			final List<BlDamageWaiverPricingModel> lDamageWaiverPricing = getBlDamageWaiverGenericDao().find();
+			if (CollectionUtils.isEmpty(lDamageWaiverPricing))
 			{
 				throw new CalculationException("No Damage Waiver Pricing Percentage found");
 			}
-			final BlDamageWaiverPricingModel damageWaiverPricing = getDamageWaiverPricingModel(lDamageWavierPricing, gearType);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Damage Wavier Type - {} and Price Percent - {}", gearType,
-					damageWaiverPricing.getWaiverPercentage().doubleValue());
-			final Double gearGaurdWavierPrice = calculateDamageWaiverPrice(
-					BigDecimal.valueOf(cartEntry.getBasePrice().doubleValue()), damageWaiverPricing);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Wavier Price - {}", gearGaurdWavierPrice.doubleValue());
-			cartEntry.setGearGaurdWaiverPrice(gearGaurdWavierPrice);
-			cartEntry.setGearGaurdWaiverSelected(getDamageWaiverFlag(cartEntry.getGearGaurdWaiverSelected(), Boolean.TRUE));
+			final Double gearGaurdWaiverPrice = setGearGuardDamageWaiverPrice(cartEntry, product, lDamageWaiverPricing);
 
-			final BlDamageWaiverPricingModel damageWaiverProPricing = getDamageWaiverPricingModel(lDamageWavierPricing,
-					BlCoreConstants.GEAR_GAURD_PRO);
-			final double gearGaurdWavierProPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(gearGaurdWavierPrice),
-					damageWaiverProPricing);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Wavier Pro Price - {}", gearGaurdWavierProPrice);
-			cartEntry.setGearGaurdProFullWaiverPrice(gearGaurdWavierProPrice);
-			cartEntry.setGearGaurdProFullWaiverSelected(
-					getDamageWaiverFlag(cartEntry.getGearGaurdProFullWaiverSelected(), Boolean.FALSE));
+			setGearGuardProFullDamageWaiverPrice(cartEntry, lDamageWaiverPricing, gearGaurdWaiverPrice);
 
-			cartEntry.setNoDamageWaiverSelected(getDamageWaiverFlag(cartEntry.getNoDamageWaiverSelected(), Boolean.FALSE));
+			setNoDamageWaiverPrice(cartEntry);
 		}
+	}
+
+	/**
+	 * Sets the no damage waiver price.
+	 *
+	 * @param cartEntry
+	 *           the new no damage waiver price
+	 */
+	private void setNoDamageWaiverPrice(final AbstractOrderEntryModel cartEntry)
+	{
+		cartEntry.setNoDamageWaiverSelected(getDamageWaiverFlag(cartEntry.getNoDamageWaiverSelected(), Boolean.FALSE));
+	}
+
+	/**
+	 * Sets the gear guard pro full waiver price.
+	 *
+	 * @param cartEntry
+	 *           the cart entry
+	 * @param lDamageWaiverPricing
+	 *           the l damage Waiver pricing
+	 * @param gearGaurdWaiverPrice
+	 *           the gear gaurd Waiver price
+	 * @throws CalculationException
+	 *            the calculation exception
+	 */
+	private void setGearGuardProFullDamageWaiverPrice(final AbstractOrderEntryModel cartEntry,
+			final List<BlDamageWaiverPricingModel> lDamageWaiverPricing, final Double gearGaurdWaiverPrice)
+			throws CalculationException
+	{
+		final BlDamageWaiverPricingModel damageWaiverProPricing = getDamageWaiverPricingModel(lDamageWaiverPricing,
+				BlCoreConstants.GEAR_GUARD_PRO);
+		final double gearGaurdWaiverProPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(gearGaurdWaiverPrice),
+				damageWaiverProPricing);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Waiver Pro Price - {}", gearGaurdWaiverProPrice);
+		cartEntry.setGearGuardProFullWaiverPrice(gearGaurdWaiverProPrice);
+		cartEntry
+				.setGearGuardProFullWaiverSelected(getDamageWaiverFlag(cartEntry.getGearGuardProFullWaiverSelected(), Boolean.FALSE));
+	}
+
+	/**
+	 * Sets the gear guard damage waiver price.
+	 *
+	 * @param cartEntry
+	 *           the cart entry
+	 * @param product
+	 *           the product
+	 * @param lDamageWaiverPricing
+	 *           the l damage Waiver pricing
+	 * @return the double
+	 * @throws CalculationException
+	 *            the calculation exception
+	 */
+	private Double setGearGuardDamageWaiverPrice(final AbstractOrderEntryModel cartEntry, final ProductModel product,
+			final List<BlDamageWaiverPricingModel> lDamageWaiverPricing) throws CalculationException
+	{
+		final String gearType = BooleanUtils.toBoolean(((BlProductModel) product).getIsVideo()) ? BlCoreConstants.VIDEO
+				: BlCoreConstants.PHOTO;
+		final BlDamageWaiverPricingModel damageWaiverPricing = getDamageWaiverPricingModel(lDamageWaiverPricing, gearType);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Damage Waiver Type - {} and Price Percent - {}", gearType,
+				damageWaiverPricing.getWaiverPercentage().doubleValue());
+		final Double gearGaurdWaiverPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(cartEntry.getBasePrice().doubleValue()),
+				damageWaiverPricing);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Waiver Price - {}", gearGaurdWaiverPrice.doubleValue());
+		cartEntry.setGearGuardWaiverPrice(gearGaurdWaiverPrice);
+		cartEntry.setGearGuardWaiverSelected(getDamageWaiverFlag(cartEntry.getGearGuardWaiverSelected(), Boolean.TRUE));
+		return gearGaurdWaiverPrice;
 	}
 
 	/**
@@ -289,21 +346,21 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 	/**
-	 * Gets the damage waiver pricing model based on the sku type.
+	 * Gets the damage waiver pricing model based on the gear type.
 	 *
-	 * @param lDamageWavierPricing
-	 *           the list of damage wavier pricing
+	 * @param lDamageWaiverPricing
+	 *           the list of damage waiver pricing
 	 * @param gearType
 	 *           the gear type
 	 * @return the damage waiver pricing model
 	 * @throws CalculationException
 	 *            the calculation exception
 	 */
-	private BlDamageWaiverPricingModel getDamageWaiverPricingModel(final List<BlDamageWaiverPricingModel> lDamageWavierPricing,
+	private BlDamageWaiverPricingModel getDamageWaiverPricingModel(final List<BlDamageWaiverPricingModel> lDamageWaiverPricing,
 			final String gearType) throws CalculationException
 	{
-		final BlDamageWaiverPricingModel damageWaiverPricingModel = lDamageWavierPricing.stream()
-				.filter(damageWavierPricing -> gearType.equals(damageWavierPricing.getDamageWaiverGearType().getCode())).findFirst()
+		final BlDamageWaiverPricingModel damageWaiverPricingModel = lDamageWaiverPricing.stream()
+				.filter(damageWaiverPricing -> gearType.equals(damageWaiverPricing.getDamageWaiverGearType().getCode())).findFirst()
 				.orElse(null);
 		if (Objects.nonNull(damageWaiverPricingModel))
 		{
@@ -325,18 +382,13 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 *            the calculation exception
 	 */
 	private Double calculateDamageWaiverPrice(final BigDecimal price, final BlDamageWaiverPricingModel damageWaiverPricingModel)
-			throws CalculationException
 	{
-		if (Objects.nonNull(damageWaiverPricingModel) && Objects.nonNull(price))
-		{
-			final BigDecimal wavierPricingPercent = BigDecimal.valueOf(damageWaiverPricingModel.getWaiverPercentage().doubleValue())
-					.divide(BigDecimal.valueOf(100)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+		final BigDecimal WaiverPricingPercent = BigDecimal.valueOf(damageWaiverPricingModel.getWaiverPercentage().doubleValue())
+				.divide(BigDecimal.valueOf(100)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
 
-			final BigDecimal gearGaurdWavierPrice = price.multiply(wavierPricingPercent).setScale(BlCoreConstants.DECIMAL_PRECISION,
-					BlCoreConstants.ROUNDING_MODE);
-			return gearGaurdWavierPrice.doubleValue();
-		}
-		throw new CalculationException("Error while calculating Damage Waiver Price");
+		final BigDecimal gearGaurdWaiverPrice = price.multiply(WaiverPricingPercent).setScale(BlCoreConstants.DECIMAL_PRECISION,
+				BlCoreConstants.ROUNDING_MODE);
+		return gearGaurdWaiverPrice.doubleValue();
 	}
 
 	/**
@@ -373,20 +425,20 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 	/**
-	 * @return the blDamageWavierGenericDao
+	 * @return the blDamageWaiverGenericDao
 	 */
-	public GenericDao<BlDamageWaiverPricingModel> getBlDamageWavierGenericDao()
+	public GenericDao<BlDamageWaiverPricingModel> getBlDamageWaiverGenericDao()
 	{
-		return blDamageWavierGenericDao;
+		return blDamageWaiverGenericDao;
 	}
 
 	/**
-	 * @param blDamageWavierGenericDao
-	 *           the blDamageWavierGenericDao to set
+	 * @param blDamageWaiverGenericDao
+	 *           the blDamageWaiverGenericDao to set
 	 */
-	public void setBlDamageWavierGenericDao(final GenericDao<BlDamageWaiverPricingModel> blDamageWavierGenericDao)
+	public void setBlDamageWaiverGenericDao(final GenericDao<BlDamageWaiverPricingModel> blDamageWaiverGenericDao)
 	{
-		this.blDamageWavierGenericDao = blDamageWavierGenericDao;
+		this.blDamageWaiverGenericDao = blDamageWaiverGenericDao;
 	}
 
 	/**

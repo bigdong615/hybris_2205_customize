@@ -25,10 +25,10 @@ public interface BlCartService extends CartService {
   void recalculateCartIfRequired();
   
   /**
-   * Update cart entry with the selected damage wavier type.
+   * Update cart entry with the selected damage Waiver type.
    *
    * @param entryNumber the entry number
-   * @param damageWavierType the damage wavier type
+   * @param damageWaiverType the damage Waiver type
    */
-  void updateCartEntryDamageWavier(final long entryNumber, final String damageWavierType);
+  void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
 }

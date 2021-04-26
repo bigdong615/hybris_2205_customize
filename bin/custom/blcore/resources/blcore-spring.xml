@@ -813,18 +813,18 @@
 		<property name="sessionService" ref="sessionService"/>
 	</bean>
 	
-	<!-- Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage wavier prices -->
+	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
 	<bean id="defaultBlCalculationService" class="com.bl.core.order.impl.DefaultBlCalculationService" parent="defaultCalculationService">
 		<property name="commercePriceService" ref="commercePriceService"/>
-		<property name="blDamageWavierGenericDao" ref="blDamageWavierGenericDao"/>
+		<property name="blDamageWaiverGenericDao" ref="blDamageWaiverGenericDao"/>
 		<property name="defaultOrderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
 		<property name="defaultCommonI18NService" ref="commonI18NService"/>
 	</bean>
 	
-	<!-- Generic dao to get the full list of Damage Wavier Percantage defined for damage wavier types -->
-	<alias name="defaultBlDamageWavierGenericDao" alias="blDamageWavierGenericDao"/>
-	<bean name="defaultBlDamageWavierGenericDao"
+	<!-- BL-462 : Generic dao to get the full list of Damage Waiver Percantage defined for damage Waiver types -->
+	<alias name="defaultBlDamageWaiverGenericDao" alias="blDamageWaiverGenericDao"/>
+	<bean name="defaultBlDamageWaiverGenericDao"
 		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
 		<constructor-arg value="BlDamageWaiverPricing"/>
 	</bean>

@@ -44,9 +44,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
    * {@inheritDoc}
    */
   @Override
-  public void updateCartEntryDamageWavier(final long entryNumber, final String damageWavierType)
+  public void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType)
   {
-	  getBlCartService().updateCartEntryDamageWavier(entryNumber, damageWavierType);
+	  getBlCartService().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
   }
 
   /**

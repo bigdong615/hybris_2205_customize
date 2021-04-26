@@ -11,7 +11,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:set value="cart/emptyCart" var="emptyCart" />
-<c:url value="/cart/updateDamageWavier" var="cartUpdateDamageWavierFormAction" />
+<c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 
 <template:page pageTitle="${pageTitle}">
 
@@ -40,10 +40,10 @@
                               <c:forEach items="${cartData.entries}" var="entry">
                                  <cart:rentalCartItem entry="${entry}" cartData="${cartData}" />
                               </c:forEach>
-                              <!-- Form to update the cart total on the selection of damage wavier from the dropdown -->
-								<form:form id="updateDamageWavierForm" action="${cartUpdateDamageWavierFormAction}" method="post" >
+                              <!-- Form to update the cart total on the selection of damage Waiver from the dropdown -->
+								<form:form id="updateDamageWaiverForm" action="${cartUpdateDamageWaiverFormAction}" method="post" >
 					                 <input type="hidden" name="entryNumber" value="" />
-					                 <input type="hidden" name="damageWavierType" value="" />   
+					                 <input type="hidden" name="damageWaiverType" value="" />   
            						</form:form>
                               <div class="cart-actions">
                                   <a href="/blstorefront/bl/en/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>

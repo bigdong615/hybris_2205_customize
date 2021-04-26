@@ -86,7 +86,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	   * {@inheritDoc}
 	   */
 	@Override
-	public void updateCartEntryDamageWavier(final long entryNumber, final String damageWavierType)
+	public void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType)
 	{
 		final CartModel cartModel = getSessionCart();
 		final Integer cartEntryNumber = Integer.valueOf((int) entryNumber);
@@ -94,7 +94,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		{
 			final AbstractOrderEntryModel cartEntryModel = cartModel.getEntries().stream()
 					.filter(cartEntry -> cartEntryNumber.equals(cartEntry.getEntryNumber())).findFirst().orElse(null);
-			checkAndSetFlagForSelectedDamageWavier(cartEntryModel, damageWavierType);
+			checkAndSetFlagForSelectedDamageWaiver(cartEntryModel, damageWaiverType);
 			cartModel.setCalculated(Boolean.FALSE);
 			getModelService().save(cartEntryModel);
 			getModelService().save(cartModel);
@@ -118,23 +118,23 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	}
 
 	/**
-	 * Check and set flag for selected damage wavier.
+	 * Check and set flag for selected damage Waiver.
 	 *
 	 * @param cartEntryModel the cart entry model
-	 * @param damageWavierType the damage wavier type
+	 * @param damageWaiverType the damage Waiver type
 	 */
-	private void checkAndSetFlagForSelectedDamageWavier(final AbstractOrderEntryModel cartEntryModel,
-			final String damageWavierType)
+	private void checkAndSetFlagForSelectedDamageWaiver(final AbstractOrderEntryModel cartEntryModel,
+			final String damageWaiverType)
 	{
-		switch (damageWavierType)
+		switch (damageWaiverType)
 		{
-			case BlCoreConstants.GEAR_GAURD_PRO_FULL:
+			case BlCoreConstants.GEAR_GUARD_PRO_FULL:
 				setFlags(cartEntryModel, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
 				break;
-			case BlCoreConstants.GEAR_GAURD:
+			case BlCoreConstants.GEAR_GUARD:
 				setFlags(cartEntryModel, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
 				break;
-			case BlCoreConstants.NO_GEAR_GAURD:
+			case BlCoreConstants.NO_GEAR_GUARD:
 				setFlags(cartEntryModel, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE);
 				break;
 			default:
@@ -143,19 +143,19 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	}
 
 	/**
-	 * Sets the flags for Damage Wavier.
+	 * Sets the flags for Damage Waiver.
 	 *
 	 * @param cartEntryModel the cart entry model
 	 * @param gearGaurdProFullWaiverSelected the gear gaurd pro full waiver selected
 	 * @param gearGaurdWaiverSelected the gear gaurd waiver selected
 	 * @param noGearGaurdWaiverSelected the no gear gaurd waiver selected
 	 */
-	private void setFlags(final AbstractOrderEntryModel cartEntryModel, final Boolean gearGaurdProFullWaiverSelected,
-			final Boolean gearGaurdWaiverSelected, final Boolean noGearGaurdWaiverSelected)
+	private void setFlags(final AbstractOrderEntryModel cartEntryModel, final Boolean gearGuardProFullWaiverSelected,
+			final Boolean gearGuardWaiverSelected, final Boolean noGearGuardWaiverSelected)
 	{
-		cartEntryModel.setGearGaurdProFullWaiverSelected(gearGaurdProFullWaiverSelected);
-		cartEntryModel.setGearGaurdWaiverSelected(gearGaurdWaiverSelected);
-		cartEntryModel.setNoDamageWaiverSelected(noGearGaurdWaiverSelected);
+		cartEntryModel.setGearGuardProFullWaiverSelected(gearGuardProFullWaiverSelected);
+		cartEntryModel.setGearGuardWaiverSelected(gearGuardWaiverSelected);
+		cartEntryModel.setNoDamageWaiverSelected(noGearGuardWaiverSelected);
 		cartEntryModel.setCalculated(Boolean.FALSE);
 	}
 

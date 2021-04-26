@@ -46,13 +46,13 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	form.submit();
        });
 
-// Script to apply the selected damage wavier from the dropdown on the cart page       
- $('ul.damage-wavier-update').on('click','li',function(e){
+// Script to apply the selected damage Waiver from the dropdown on the cart page       
+ $('ul.damage-Waiver-update').on('click','li',function(e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
- 	var damageWavierType = $(this).find("a").data('id');
- 	var damageWavierUpdateForm = $('#updateDamageWavierForm');
- 	damageWavierUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
- 	damageWavierUpdateForm.find('input[name=damageWavierType]:hidden').val(damageWavierType);
- 	damageWavierUpdateForm.submit();
+ 	var damageWaiverType = $(this).find("a").data('id');
+ 	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
+ 	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
+ 	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
+ 	damageWaiverUpdateForm.submit();
  });

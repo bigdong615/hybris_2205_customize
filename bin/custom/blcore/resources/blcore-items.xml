@@ -95,7 +95,7 @@
         <enumtype generate="true" code="RentalGearType" autocreate="true" dynamic="true">
             <value code="VIDEO"/>
             <value code="PHOTO"/>
-            <value code="GEAR_GAURD_PRO"/>
+            <value code="GEAR_GUARD_PRO"/>
         </enumtype>
 
     </enumtypes>
@@ -1213,22 +1213,22 @@
          	<itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
          		<description>Extending the AbstractOrderEntry with additional attributes.</description>
          		<attributes>
-         			<attribute qualifier="gearGaurdWaiverPrice" type="java.lang.Double">
+         			<attribute qualifier="gearGuardWaiverPrice" type="java.lang.Double">
 	         			<persistence type="property"/>
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Gear Guard Value Waiver Price for Rental Gear</description>         				
          			</attribute>
-         			<attribute qualifier="gearGaurdProFullWaiverPrice" type="java.lang.Double">
+         			<attribute qualifier="gearGuardProFullWaiverPrice" type="java.lang.Double">
 	         			<persistence type="property"/>
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Gear Guard Pro Full Value Waiver Price for Rental Gear</description>         				
          			</attribute>
-         			<attribute qualifier="gearGaurdWaiverSelected" type="java.lang.Boolean">
+         			<attribute qualifier="gearGuardWaiverSelected" type="java.lang.Boolean">
 	         			<persistence type="property"/>
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if Gear Guard Value Waiver is selected for Rental Gear</description>         				
          			</attribute>
-         			<attribute qualifier="gearGaurdProFullWaiverSelected" type="java.lang.Boolean">
+         			<attribute qualifier="gearGuardProFullWaiverSelected" type="java.lang.Boolean">
 	         			<persistence type="property"/>
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if Gear Guard Pro Full Value Waiver is selected for Rental Gear</description>         				

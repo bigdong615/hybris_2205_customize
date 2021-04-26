@@ -686,31 +686,31 @@ public class CartPageController extends AbstractCartPageController
 	}
 	
 	/**
-	 * Update cart entry with the selected damage wavier on cart page.
+	 * Update cart entry with the selected damage Waiver on cart page.
 	 *
 	 * @param entryNumber the entry number
-	 * @param damageWavierType the damage wavier type
+	 * @param damageWaiverType the damage Waiver type
 	 * @param model the model
 	 * @param request the request
 	 * @param redirectModel the redirect model
 	 * @return the string
 	 * @throws CMSItemNotFoundException the CMS item not found exception
 	 */
-	@PostMapping(path="/updateDamageWavier")
-	public String updateCartEntryDamageWavier(@RequestParam("entryNumber") final long entryNumber, 
-			@RequestParam("damageWavierType") final String damageWavierType, final Model model,
+	@PostMapping(path="/updateDamageWaiver")
+	public String updateCartEntryDamageWaiver(@RequestParam("entryNumber") final long entryNumber, 
+			@RequestParam("damageWaiverType") final String damageWaiverType, final Model model,
 			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
 		try
 		{	
-			getBlCartFacade().updateCartEntryDamageWavier(entryNumber, damageWavierType);
+			getBlCartFacade().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
 			return getCartPageRedirectUrl();
 		}
 		catch (final Exception exception)
 		{
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(), exception,
-					"Error while updating Damage Wavier with the entry number : {}", entryNumber);
-			GlobalMessages.addErrorMessage(model, "text.page.cart.update.damage.wavier.fail");
+					"Error while updating Damage Waiver with the entry number : {}", entryNumber);
+			GlobalMessages.addErrorMessage(model, "text.page.cart.update.damage.waiver.fail");
 		}
 		return prepareCartUrl(model);
 	}

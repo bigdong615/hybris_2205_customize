@@ -8,22 +8,26 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.calculation.BlPricingService;
+import com.bl.logging.BlLogger;
 
 
 /**
- * The Class BlSerialProductPrepareInterceptor.
+ * The Class BlSerialProductPrepareInterceptor used to intercept the model and modify the attributes before saving the data.
+ * 
+ * @author Ritika
  */
 public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlSerialProductModel>
 {
-	/** The Constant DIVIDE_BY_HUNDRED. */
-	private static final int DIVIDE_BY_HUNDRED = 100;
-
 	/** The bl pricing service. */
 	private BlPricingService blPricingService;
+	
+	private static final Logger LOG = Logger.getLogger(BlSerialProductPrepareInterceptor.class);
 
 	/**
 	 * On prepare.
@@ -38,7 +42,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	@Override
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
+		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
+		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
 		calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
 	}
 
@@ -55,7 +61,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		if (BooleanUtils.isTrue(blSerialProduct.getForSale()) && hasForSaleBaseAndConditionalRating(blSerialProduct)
 				&& isForSalePriceCalculationRequired(blSerialProduct, ctx))
 		{
-			blSerialProduct.setFinalSalePrice(getBlPricingService().calculateSerialForSalePrice(
+			blSerialProduct.setFinalSalePrice(getBlPricingService().calculateFinalSalePriceForSerial(
 					blSerialProduct.getForSaleBasePrice(), blSerialProduct.getConditionRatingOverallScore()));
 		}
 	}
@@ -110,9 +116,13 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 			if (finalSalePrice.compareTo(BigDecimal.ZERO) > 0 && forSaleDiscount > 0
 					&& isIncentivizedCalculationRequired(blSerialProduct, ctx))
 			{
-				blSerialProduct.setIncentivizedPrice(finalSalePrice.subtract(
-						finalSalePrice.multiply(BigDecimal.valueOf(forSaleDiscount)).divide(BigDecimal.valueOf(DIVIDE_BY_HUNDRED))
-								.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE)));
+				final BigDecimal calculatedIncentivizedPrice = finalSalePrice.subtract(
+						finalSalePrice.multiply(BigDecimal.valueOf(forSaleDiscount)).divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
+								.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, 
+						"Calculated Incentivized Price is {} for Serial Product {} with For Sale Discount {} and For Sale Final Price {}",
+						calculatedIncentivizedPrice, blSerialProduct.getProductId(), forSaleDiscount.intValue(), finalSalePrice.doubleValue());
+				blSerialProduct.setIncentivizedPrice(calculatedIncentivizedPrice);
 			}
 		}
 	}

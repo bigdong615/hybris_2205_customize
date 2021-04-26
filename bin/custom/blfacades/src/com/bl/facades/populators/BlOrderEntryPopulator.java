@@ -23,23 +23,23 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	public void populate(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
 		super.populate(source, target);
-		populateDamageWavierValues(source, target);
+		populateDamageWaiverValues(source, target);
 	}
 
 	/**
-	 * Populate damage wavier attribute values.
+	 * Populate damage Waiver attribute values.
 	 *
 	 * @param source
 	 *           the source
 	 * @param target
 	 *           the target
 	 */
-	private void populateDamageWavierValues(final AbstractOrderEntryModel source, final OrderEntryData target)
+	private void populateDamageWaiverValues(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
-		target.setGearGaurdWaiverPrice(createPrice(source, source.getGearGaurdWaiverPrice()));
-		target.setGearGaurdProFullWaiverPrice(createPrice(source, source.getGearGaurdProFullWaiverPrice()));
+		target.setGearGuardWaiverPrice(createPrice(source, source.getGearGuardWaiverPrice()));
+		target.setGearGuardProFullWaiverPrice(createPrice(source, source.getGearGuardProFullWaiverPrice()));
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
-		target.setGearGaurdWaiverSelected(BooleanUtils.toBoolean(source.getGearGaurdWaiverSelected()));
-		target.setGearGaurdProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGaurdProFullWaiverSelected()));
+		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
+		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
 	}
 }

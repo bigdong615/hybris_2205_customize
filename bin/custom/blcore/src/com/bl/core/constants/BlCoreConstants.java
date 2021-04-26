@@ -115,13 +115,19 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String VIDEO = "VIDEO";
 	public static final String PHOTO = "PHOTO";
-	public static final String GEAR_GAURD_PRO = "GEAR_GAURD_PRO";
-	public static final String GEAR_GAURD_PRO_FULL = "geargaurdpro";
-	public static final String GEAR_GAURD = "geargaurd";
-	public static final String NO_GEAR_GAURD = "nogeargaurd";
+	public static final String GEAR_GUARD_PRO = "GEAR_GUARD_PRO";
+	public static final String GEAR_GUARD_PRO_FULL = "gearguardpro";
+	public static final String GEAR_GUARD = "gearguard";
+	public static final String NO_GEAR_GUARD = "nogearguard";
 
 	public static final int ONE_RENTAL_DAY = 1;
 	public static final int THREE_RENTAL_DAYS = 3;
+
+	public static final int DIVIDE_BY_HUNDRED = 100;
+
+	public static final int CONDITION_RATING_FOUR = 4;
+	public static final int CONDITION_RATING_THREE = 3;
+	public static final int CONDITION_RATING_TWO = 2;
 
 	private BlCoreConstants()
 	{
