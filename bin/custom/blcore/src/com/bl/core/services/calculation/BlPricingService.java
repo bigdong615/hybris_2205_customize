@@ -39,5 +39,5 @@ public interface BlPricingService {
    * @param conditionRatingOverallScore
    * @return
    */
-  BigDecimal calculateSerialForSalePrice(final BigDecimal forSaleBasePrice,final Double conditionRatingOverallScore);
+  BigDecimal calculateFinalSalePriceForSerial(final BigDecimal forSaleBasePrice,final Double conditionRatingOverallScore);
 }

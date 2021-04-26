@@ -335,4 +335,13 @@
             </list>
         </property>
     </bean>
+    
+    <!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
+    <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
+    <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
+    
+    <!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
+    <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
+    <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
+    
 </beans>

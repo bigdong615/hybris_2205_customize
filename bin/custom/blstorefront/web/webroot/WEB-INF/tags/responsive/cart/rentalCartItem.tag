@@ -64,13 +64,30 @@
          <div class="col-md-10 offset-md-2">
              <p class="body14 mb-1"><spring:theme code="text.cart.damage.waiver"/><a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></p>
              <div class="dropdown">
-               <a class="btn btn-block btn-outline dropdown-toggle text-start gearguard-plus" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
-                 GearGuard Plus <span class="float-end">$XX</span>
+             <c:choose>
+             	<c:when test="${entry.gearGuardProFullWaiverSelected }">
+             		<a class="btn btn-block btn-outline dropdown-toggle text-start gearguard-plus" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
+                 <spring:theme code="text.damage.waiver.option.gear.plus"/> <span class="float-end"><format:price priceData="${entry.gearGuardProFullWaiverPrice}"/></span>
                </a>
-               <ul class="dropdown-menu" aria-labelledby="coverageOptions1">
-                 <li><a class="dropdown-item gearguard-plus" href="#"><spring:theme code="text.damage.waiver.option.gear.plus"/> <span class="float-end">$XX</span></a></li>
-                 <li><a class="dropdown-item gearguard" href="#"><spring:theme code="text.damage.waiver.option.gear"/> <span class="float-end">$XX</span></a></li>
-                 <li><a class="dropdown-item no-gearguard" href="#"><spring:theme code="text.damage.waiver"/></a></li>
+             	</c:when>
+             	<c:when test="${entry.gearGuardWaiverSelected }">
+             		<a class="btn btn-block btn-outline dropdown-toggle text-start gearguard" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
+                 <spring:theme code="text.damage.waiver.option.gear"/> <span class="float-end"><format:price priceData="${entry.gearGuardWaiverPrice}"/></span>
+               </a>
+             	</c:when>
+             	<c:otherwise>
+             		<a class="btn btn-block btn-outline dropdown-toggle text-start no-gearguard" href="#" role="button" id="coverageOptions1" data-bs-toggle="dropdown" aria-expanded="false">
+                 <spring:theme code="text.damage.waiver"/>
+                 </a>
+             	</c:otherwise>
+             </c:choose>
+               
+               <ul class="dropdown-menu damage-wavier damage-Waiver-update" aria-labelledby="coverageOptions1">
+                 <li><a class="dropdown-item gearguard-plus" href="#" data-entry="${entry.entryNumber}" data-id="gearguardpro">
+                 <spring:theme code="text.damage.waiver.option.gear.plus"/> <span class="float-end"><format:price priceData="${entry.gearGuardProFullWaiverPrice}"/></span></a></li>
+                 <li><a class="dropdown-item gearguard" href="#" data-entry="${entry.entryNumber}" data-id="gearguard">
+                 <spring:theme code="text.damage.waiver.option.gear"/> <span class="float-end"><format:price priceData="${entry.gearGuardWaiverPrice}"/></span></a></li>
+                 <li><a class="dropdown-item no-gearguard" href="#" data-entry="${entry.entryNumber}" data-id="nogearguard"><spring:theme code="text.damage.waiver"/></a></li>
                </ul>
              </div>
          </div>

@@ -163,5 +163,11 @@ INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLan
 INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blAutomatedStockCreationCronJob ;blAutomatedStockCreationJob ; ;true;;
 
+ 
+INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
+                                    ; VIDEO                                   ; 28               
+                                    ; PHOTO                                   ; 26               
+                                    ; GEAR_GUARD_PRO                          ; 155              
+
 
 
