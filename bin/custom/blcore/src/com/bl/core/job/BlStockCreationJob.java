@@ -60,7 +60,7 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		}
 		else
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "AccommodationInventoryJob is not performed...");
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlStockCreationJob is not performed...");
 		}
 	}
 
