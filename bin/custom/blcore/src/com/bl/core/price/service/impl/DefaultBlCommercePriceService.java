@@ -53,9 +53,10 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 				final PriceInformation defaultPriceInformation = prices.get(0);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {} for product {}",
 						defaultPriceInformation.getPriceValue().getValue(), product.getCode());
-				final Long rentalDays = getRentalDays();
-				return Objects.nonNull(rentalDays) && isRentalDaysEligible(rentalDays) ? getBlProductDynamicPriceStrategy()
-						.getDynamicPriceInformationForProduct((BlProductModel) product, defaultPriceInformation, rentalDays)
+				final Long rentalDays = getRentalDaysFromSession();
+				return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
+						? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+								defaultPriceInformation, rentalDays)
 						: defaultPriceInformation;
 			}
 			return null;
@@ -76,24 +77,10 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct, final Double priceValue)
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {}", priceValue);
-		final Long rentalDays = getRentalDays();
-		return Objects.nonNull(rentalDays) && isRentalDaysEligible(rentalDays)
+		final Long rentalDays = getRentalDaysFromSession();
+		return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
 				? getBlProductDynamicPriceStrategy().getDynamicPriceDataForProduct(isConstrainedProduct, priceValue, rentalDays)
 				: BigDecimal.valueOf(priceValue);
-	}
-
-	/**
-	 * Checks if the rental days is eligible for Dynamic pricing.
-	 *
-	 * @param rentalDays
-	 *           the rental days
-	 * @return true, if is rental days eligible
-	 */
-	private boolean isRentalDaysEligible(final Long rentalDays)
-	{
-		return rentalDays.longValue() >= BlCoreConstants.MINIMUM_RENTAL_DAYS
-				&& rentalDays.longValue() <= BlCoreConstants.MAXIMUM_RENTAL_DAYS
-				&& rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY;
 	}
 
 	/**
@@ -101,14 +88,27 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	 *
 	 * @return the rental days
 	 */
-	private Long getRentalDays()
+	private Long getRentalDaysFromSession()
 	{
 		final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
 		return Objects.nonNull(rentalDatesFromSession) && StringUtils.isNotBlank(rentalDatesFromSession.getNumberOfDays())
-				? Long.valueOf(rentalDatesFromSession.getNumberOfDays())
+				? getRentalDays(Long.valueOf(rentalDatesFromSession.getNumberOfDays()))
 				: null;
 	}
 
+	/**
+	 * Gets the rental days.
+	 *
+	 * @param rentalDaysFromSession
+	 *           the rental days from session
+	 * @return the rental days
+	 */
+	private Long getRentalDays(final Long rentalDaysFromSession)
+	{
+		return rentalDaysFromSession >= BlCoreConstants.ONE_RENTAL_DAY && rentalDaysFromSession <= BlCoreConstants.THREE_RENTAL_DAYS
+				? Long.valueOf(BlCoreConstants.THREE_RENTAL_DAYS)
+				: rentalDaysFromSession;
+	}
 
 	/**
 	 * @return the blProductDynamicPriceStrategy

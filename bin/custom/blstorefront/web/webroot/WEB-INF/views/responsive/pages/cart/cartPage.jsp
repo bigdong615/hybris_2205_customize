@@ -7,9 +7,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:set value="cart/emptyCart" var="emptyCart" />
+<c:url value="/cart/updateDamageWavier" var="cartUpdateDamageWavierFormAction" />
 
 <template:page pageTitle="${pageTitle}">
 
@@ -38,7 +40,11 @@
                               <c:forEach items="${cartData.entries}" var="entry">
                                  <cart:rentalCartItem entry="${entry}" cartData="${cartData}" />
                               </c:forEach>
-
+                              <!-- Form to update the cart total on the selection of damage wavier from the dropdown -->
+								<form:form id="updateDamageWavierForm" action="${cartUpdateDamageWavierFormAction}" method="post" >
+					                 <input type="hidden" name="entryNumber" value="" />
+					                 <input type="hidden" name="damageWavierType" value="" />   
+           						</form:form>
                               <div class="cart-actions">
                                   <a href="/blstorefront/bl/en/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                   <a href="#" class="btn btn-sm btn-primary float-end"><spring:theme code="general.continue.button" /></a>
@@ -56,11 +62,11 @@
                                       <tbody>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
-                                              <td class="text-end"><format:price priceData="${cartData.totalPrice}"/></td>
+                                              <td class="text-end"><format:price priceData="${cartData.subTotal}"/></td>
                                           </tr>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.cart.damage.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
-                                              <td class="text-end">$XX.XX</td>
+                                              <td class="text-end"><format:price priceData="${cartData.totalDamageWaiverCost}"/></td>
                                           </tr>
                                           <tr>
                                               <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.shipping"/></td>

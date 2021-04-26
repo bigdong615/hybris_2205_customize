@@ -711,6 +711,7 @@
 	<alias name="defaultBlCartService" alias="cartService" />
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
 		<property name="commerceCartService" ref="commerceCartService" />
+		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
 	</bean>
 
 	<!--Added for upcoming products-->
@@ -810,5 +811,21 @@
 
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
+	</bean>
+	
+	<!-- Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage wavier prices -->
+	<alias name="defaultBlCalculationService" alias="calculationService"/>
+	<bean id="defaultBlCalculationService" class="com.bl.core.order.impl.DefaultBlCalculationService" parent="defaultCalculationService">
+		<property name="commercePriceService" ref="commercePriceService"/>
+		<property name="blDamageWavierGenericDao" ref="blDamageWavierGenericDao"/>
+		<property name="orderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+	</bean>
+	
+	<!-- Generic dao to get the full list of Damage Wavier Percantage defined for damage wavier types -->
+	<alias name="defaultBlDamageWavierGenericDao" alias="blDamageWavierGenericDao"/>
+	<bean name="defaultBlDamageWavierGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="BlDamageWaiverPricing"/>
 	</bean>
 </beans>
