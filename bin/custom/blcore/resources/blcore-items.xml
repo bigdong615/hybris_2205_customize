@@ -992,9 +992,9 @@
             </indexes>
           </itemtype>
           
-          <itemtype code="BlInventoryCreationCronJob" extends="CronJob">
+          <itemtype code="BlStockCreationCronJob" extends="CronJob">
           		<description>This type represents a cron job that creates Inventory.</description>
-				<deployment table="BlInvCreationJob" typecode="12209" />
+				<deployment table="BlStockCreationJob" typecode="12212" />
 				<attributes>
 					<attribute qualifier="startDate" type="java.util.Date">
 						<persistence type="property" />

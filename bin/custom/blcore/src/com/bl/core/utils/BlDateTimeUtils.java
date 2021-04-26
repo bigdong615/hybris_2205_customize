@@ -331,17 +331,29 @@ public final class BlDateTimeUtils
 	/**
 	 * To get the formatted date
 	 * @param day the date
-	 * @param hours the hours
-	 * @param minutes the minutes
-	 * @param seconds the seconds
 	 * @return Calendar
 	 */
-	public static Calendar getFormattedDate(final Date day, final int hours, final int minutes, final int seconds) {
+	public static Calendar getFormattedStartDay(final Date day) {
 		final Calendar startDate = new GregorianCalendar();
 		startDate.setTime(day);
-		startDate.set(Calendar.HOUR_OF_DAY, hours);
-		startDate.set(Calendar.MINUTE, minutes);
-		startDate.set(Calendar.SECOND, seconds);
+		startDate.set(Calendar.HOUR_OF_DAY, BlCoreConstants.START_HOURS);
+		startDate.set(Calendar.MINUTE, BlCoreConstants.START_MINUTES);
+		startDate.set(Calendar.SECOND, BlCoreConstants.START_SECONDS);
 		return startDate;
 	}
+
+	/**
+	 * To get the formatted date
+	 * @param day the date
+	 * @return Calendar
+	 */
+	public static Calendar getFormattedEndDay(final Date day) {
+		final Calendar startDate = new GregorianCalendar();
+		startDate.setTime(day);
+		startDate.set(Calendar.HOUR_OF_DAY, BlCoreConstants.END_HOURS);
+		startDate.set(Calendar.MINUTE, BlCoreConstants.END_MINUTES);
+		startDate.set(Calendar.SECOND, BlCoreConstants.END_SECONDS);
+		return startDate;
+	}
+
 }

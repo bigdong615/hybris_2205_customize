@@ -8,29 +8,23 @@ import com.bl.core.model.BlProductModel;
 
 /**
  * It is used to create the stock level
- * 
+ *
  * @author Moumita
  *
  */
-public interface BlInventoryManageService
+public interface BlStockManageService
 {
-	/**
-	 * It creates the stock level for all active skus for the date
-	 *
-	 * @param date
-	 *           the stock will be created for the date
-	 */
-	public void createStockLevelForAllSkus(final Date date);
-
 	/**
 	 * It creates the stock level for the given skus in cron job
 	 *
 	 * @param skus
 	 *           the sku products
-	 * @param date
-	 *           the stock will be created for the date
+	 * @param startDate
+	 *           the stock will be created from this date
+	 * @param endDate
+	 *           the stock will be created till this date
 	 */
-	public void createStockLevelForGivenSkus(final List<BlProductModel> skus, final Date date);
+	public void createStockLevelForSkus(final List<BlProductModel> skus, final Date startDate, final Date endDate);
 
 	/**
 	 * It creates the stock level for all active skus for a day which is after one year

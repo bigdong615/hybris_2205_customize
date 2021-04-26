@@ -115,6 +115,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String APPROVED = "approved";
 
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
+	public static final String PRODUCT_CATALOG = "catalog";
+	public static final String VERSION = "version";
+	public static final String STAGED = "Staged";
+	public static final String CATALOG_VALUE = "blProductCatalog";
 
 	private BlCoreConstants()
 	{

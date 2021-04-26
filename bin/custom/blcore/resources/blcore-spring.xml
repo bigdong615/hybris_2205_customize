@@ -812,17 +812,22 @@
 		<property name="sessionService" ref="sessionService"/>
 	</bean>
 	
-	<bean id="blInventoryCreationJob" class="com.bl.core.cronjob.BlInventoryCreationJob" parent="abstractJobPerformable">
-		<property name="blInventoryManageService" ref="blInventoryManageService"/>
+	<!-- BL-553 - Stock creation -->
+	<bean id="blStockCreationJob" class="com.bl.core.job.BlStockCreationJob" parent="abstractJobPerformable">
+		<property name="blStockManageService" ref="blStockManageService"/>
 	</bean>
 	
-	<bean id="blInventoryManageService" class="com.bl.core.stock.impl.DefaultBlInventoryManageService">
+	<bean id="blAutomatedStockCreationJob" class="com.bl.core.job.BlAutomatedStockCreationJob" parent="abstractJobPerformable">
+		<property name="blStockManageService" ref="blStockManageService"/>
+	</bean>
+	
+	<bean id="blStockManageService" class="com.bl.core.stock.impl.DefaultBlStockManageService">
 		<property name="modelService" ref="modelService"/>
-		<property name="blProductDao" ref="blProductDao"/>
+		<property name="productDao" ref="productDao"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 	
-	<bean id="blProductDao" class="com.bl.core.product.dao.impl.DefaultBlProductDao">
-		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	<alias alias="productDao" name="defaultBlProductDao"/>
+	<bean id="defaultBlProductDao" class="com.bl.core.product.dao.impl.DefaultBlProductDao" parent="defaultProductDao">
 	</bean>
 </beans>

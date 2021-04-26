@@ -1,7 +1,5 @@
 package com.bl.core.stock.impl;
 
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -12,7 +10,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +21,8 @@ import org.apache.log4j.Logger;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -66,12 +65,10 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVEL_FOR_DATE_QUERY);
 			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 
-			final Calendar startDate = BlDateTimeUtils.getFormattedDate(startDay, BlCoreConstants.START_HOURS, BlCoreConstants.START_MINUTES,
-					BlCoreConstants.START_SECONDS);
+			final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(startDay);
 			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
 
-			final Calendar endDate = BlDateTimeUtils.getFormattedDate(endDay, BlCoreConstants.END_HOURS, BlCoreConstants.END_MINUTES,
-					BlCoreConstants.END_SECONDS);
+			final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(endDay);
 			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
 
 			fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
@@ -99,12 +96,10 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODE, productCode);
 			fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
 
-			final Calendar startDate = BlDateTimeUtils.getFormattedDate(date, BlCoreConstants.START_HOURS, BlCoreConstants.START_MINUTES,
-					BlCoreConstants.START_SECONDS);
+		final Calendar startDate = BlDateTimeUtils.getFormattedStartDay(date);
 			fQuery.addQueryParameter(BlCoreConstants.START_DATE, startDate.getTime());
 
-			final Calendar endDate = BlDateTimeUtils.getFormattedDate(date, BlCoreConstants.END_HOURS, BlCoreConstants.END_MINUTES,
-					BlCoreConstants.END_SECONDS);
+		final Calendar endDate = BlDateTimeUtils.getFormattedEndDay(date);
 			fQuery.addQueryParameter(BlCoreConstants.END_DATE, endDate.getTime());
 
 			final SearchResult result = getFlexibleSearchService().search(fQuery);
