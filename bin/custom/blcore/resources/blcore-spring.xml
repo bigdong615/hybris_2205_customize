@@ -818,8 +818,8 @@
 	<bean id="defaultBlCalculationService" class="com.bl.core.order.impl.DefaultBlCalculationService" parent="defaultCalculationService">
 		<property name="commercePriceService" ref="commercePriceService"/>
 		<property name="blDamageWavierGenericDao" ref="blDamageWavierGenericDao"/>
-		<property name="orderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="defaultOrderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
+		<property name="defaultCommonI18NService" ref="commonI18NService"/>
 	</bean>
 	
 	<!-- Generic dao to get the full list of Damage Wavier Percantage defined for damage wavier types -->
