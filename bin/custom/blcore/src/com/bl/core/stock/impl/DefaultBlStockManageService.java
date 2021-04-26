@@ -15,7 +15,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -132,9 +131,9 @@ public class DefaultBlStockManageService implements BlStockManageService
 	private void findAndCreateStockLevelForSerial(final BlSerialProductModel serial, final String skuCode,
 			final Date date)
 	{
-		final StockLevelModel stockLevelModel = getBlStockLevelDao().findSerialStockLevelForDate(serial.getCode(), skuCode,
-				date, date);
-		if (Objects.nonNull(stockLevelModel))
+		final Collection<StockLevelModel> stockLevelModel = getBlStockLevelDao().findSerialStockLevelForDate(serial.getCode(),
+				skuCode, date, date);
+		if (CollectionUtils.isEmpty(stockLevelModel))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock already exist for product {}", serial.getCode());
 		}

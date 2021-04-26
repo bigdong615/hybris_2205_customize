@@ -84,7 +84,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	 * {@inheritDoc}
 	 */
 	@Override
-	public StockLevelModel findSerialStockLevelForDate(final String serialProductCode,
+	public Collection<StockLevelModel> findSerialStockLevelForDate(final String serialProductCode,
 			final String productCode, final Date startDay, final Date endDay)
 	{
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_STOCK_LEVEL_FOR_DATE_QUERY);
@@ -98,9 +98,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and date between : {} and {}",
 						productCode, startDay, endDay);
-				return null;
+				return Collections.emptyList();
 			}
-			return stockLevels.get(0);
+			return stockLevels;
 	}
 
 	/**
