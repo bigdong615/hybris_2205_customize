@@ -17,7 +17,6 @@ import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +40,9 @@ public class DefaultBlPricingService implements BlPricingService {
   private EnumerationService enumerationService;
   private UnitService unitService;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public PriceRowModel createOrUpdateSevenDayPrice(final BlProductModel blProductModel,
       final Double retailPrice, final boolean isNew) {
@@ -155,7 +157,9 @@ public class DefaultBlPricingService implements BlPricingService {
     return priceRowModel;
   }
 
-
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public PriceRowModel getPriceRowByDuration(final String duration,
       final BlProductModel blProductModel) {
@@ -170,14 +174,16 @@ public class DefaultBlPricingService implements BlPricingService {
     return CollectionUtils.isNotEmpty(resultSet) ? resultSet.get(0) : null;
   }
 
-
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public BigDecimal calculateSerialForSalePrice(final BigDecimal forSaleBasePrice,
+  public BigDecimal calculateFinalSalePriceForSerial(final BigDecimal forSaleBasePrice,
       final Double conditionRatingOverallScore) {
     final int pricePercentage = getPricePercentageByRating(conditionRatingOverallScore);
-    return (forSaleBasePrice.setScale(2, RoundingMode.DOWN)
-        .multiply(new BigDecimal(pricePercentage))).divide(new BigDecimal(100))
-        .setScale(2, RoundingMode.DOWN);
+    return (forSaleBasePrice.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE)
+        .multiply(new BigDecimal(pricePercentage))).divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
+        .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
   }
 
   /**
@@ -188,16 +194,19 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private int getPricePercentageByRating(final Double conditionRatingOverallScore) {
     int pricePercent = 0;
-    if (conditionRatingOverallScore > 4) {
+    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_FOUR) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovefour.price.percentage"));
-    } else if (conditionRatingOverallScore > 3 && conditionRatingOverallScore <= 4) {
+    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_THREE 
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_FOUR) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovethree.price.percentage"));
-    } else if (conditionRatingOverallScore >= 2 && conditionRatingOverallScore <= 3) {
+    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_TWO 
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_THREE) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowthree.price.percentage"));
-    } else if (conditionRatingOverallScore < 2 && conditionRatingOverallScore > 0) {
+    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_TWO 
+   		 && conditionRatingOverallScore > 0) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
     }

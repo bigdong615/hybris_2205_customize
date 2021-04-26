@@ -153,5 +153,11 @@ INSERT_UPDATE BlConstrainedPricingRatio ;duration(code)[unique=true];pricingRati
                                         ;28;4.00
                                         ;90;12.86
 
+ 
+INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
+                                    ; VIDEO                                   ; 28               
+                                    ; PHOTO                                   ; 26               
+                                    ; GEAR_GUARD_PRO                          ; 155              
+
 
 

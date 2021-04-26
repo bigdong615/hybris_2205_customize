@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
@@ -68,6 +69,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -138,6 +140,7 @@ public class CartPageController extends AbstractCartPageController
 	@RequestMapping(method = RequestMethod.GET)
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
+		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
 		return prepareCartUrl(model);
 	}
 
@@ -647,7 +650,7 @@ public class CartPageController extends AbstractCartPageController
 	@GetMapping(value = "/emptyCart")
 	public String emptyCart(final Model model, final RedirectAttributes redirectAttributes) {
 		try {
-			blCartFacade.removeCartEntries();
+			getBlCartFacade().removeCartEntries();
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
 					"text.page.cart.clear.success");
 
@@ -667,7 +670,7 @@ public class CartPageController extends AbstractCartPageController
 	@Override
 	protected void createProductList(final Model model) throws CMSItemNotFoundException {
 		final ContentPageModel contentPageModel;
-		final CartData cartData = blCartFacade.getSessionCartWithEntryOrdering(false);
+		final CartData cartData = getBlCartFacade().getSessionCartWithEntryOrdering(false);
 
 		if (CollectionUtils.isEmpty(cartData.getEntries())) {
 			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.EMPTY_CART_CMS_PAGE_LABEL);
@@ -680,5 +683,51 @@ public class CartPageController extends AbstractCartPageController
 
 		storeCmsPageInModel(model, contentPageModel);
 		setUpMetaDataForContentPage(model, contentPageModel);
+	}
+	
+	/**
+	 * Update cart entry with the selected damage Waiver on cart page.
+	 *
+	 * @param entryNumber the entry number
+	 * @param damageWaiverType the damage Waiver type
+	 * @param model the model
+	 * @param request the request
+	 * @param redirectModel the redirect model
+	 * @return the string
+	 * @throws CMSItemNotFoundException the CMS item not found exception
+	 */
+	@PostMapping(path="/updateDamageWaiver")
+	public String updateCartEntryDamageWaiver(@RequestParam("entryNumber") final long entryNumber, 
+			@RequestParam("damageWaiverType") final String damageWaiverType, final Model model,
+			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+	{
+		try
+		{	
+			getBlCartFacade().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
+			return getCartPageRedirectUrl();
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(), exception,
+					"Error while updating Damage Waiver with the entry number : {}", entryNumber);
+			GlobalMessages.addErrorMessage(model, "text.page.cart.update.damage.waiver.fail");
+		}
+		return prepareCartUrl(model);
+	}
+
+	/**
+	 * @return the blCartFacade
+	 */
+	public BlCartFacade getBlCartFacade()
+	{
+		return blCartFacade;
+	}
+
+	/**
+	 * @param blCartFacade the blCartFacade to set
+	 */
+	public void setBlCartFacade(BlCartFacade blCartFacade)
+	{
+		this.blCartFacade = blCartFacade;
 	}
 }
