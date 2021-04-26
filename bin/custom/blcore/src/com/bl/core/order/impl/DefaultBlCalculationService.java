@@ -257,9 +257,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			{
 				throw new CalculationException("No Damage Waiver Pricing Percentage found");
 			}
-			final Double gearGaurdWaiverPrice = setGearGuardDamageWaiverPrice(cartEntry, product, lDamageWaiverPricing);
+			final Double gearGuardWaiverPrice = setGearGuardDamageWaiverPrice(cartEntry, product, lDamageWaiverPricing);
 
-			setGearGuardProFullDamageWaiverPrice(cartEntry, lDamageWaiverPricing, gearGaurdWaiverPrice);
+			setGearGuardProFullDamageWaiverPrice(cartEntry, lDamageWaiverPricing, gearGuardWaiverPrice);
 
 			setNoDamageWaiverPrice(cartEntry);
 		}
@@ -283,21 +283,21 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 *           the cart entry
 	 * @param lDamageWaiverPricing
 	 *           the l damage Waiver pricing
-	 * @param gearGaurdWaiverPrice
-	 *           the gear gaurd Waiver price
+	 * @param gearGuardWaiverPrice
+	 *           the gear Guard Waiver price
 	 * @throws CalculationException
 	 *            the calculation exception
 	 */
 	private void setGearGuardProFullDamageWaiverPrice(final AbstractOrderEntryModel cartEntry,
-			final List<BlDamageWaiverPricingModel> lDamageWaiverPricing, final Double gearGaurdWaiverPrice)
+			final List<BlDamageWaiverPricingModel> lDamageWaiverPricing, final Double gearGuardWaiverPrice)
 			throws CalculationException
 	{
 		final BlDamageWaiverPricingModel damageWaiverProPricing = getDamageWaiverPricingModel(lDamageWaiverPricing,
 				BlCoreConstants.GEAR_GUARD_PRO);
-		final double gearGaurdWaiverProPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(gearGaurdWaiverPrice),
+		final double gearGuardWaiverProPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(gearGuardWaiverPrice),
 				damageWaiverProPricing);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Waiver Pro Price - {}", gearGaurdWaiverProPrice);
-		cartEntry.setGearGuardProFullWaiverPrice(gearGaurdWaiverProPrice);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Guard Waiver Pro Price - {}", gearGuardWaiverProPrice);
+		cartEntry.setGearGuardProFullWaiverPrice(gearGuardWaiverProPrice);
 		cartEntry
 				.setGearGuardProFullWaiverSelected(getDamageWaiverFlag(cartEntry.getGearGuardProFullWaiverSelected(), Boolean.FALSE));
 	}
@@ -323,12 +323,12 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final BlDamageWaiverPricingModel damageWaiverPricing = getDamageWaiverPricingModel(lDamageWaiverPricing, gearType);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Damage Waiver Type - {} and Price Percent - {}", gearType,
 				damageWaiverPricing.getWaiverPercentage().doubleValue());
-		final Double gearGaurdWaiverPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(cartEntry.getBasePrice().doubleValue()),
+		final Double gearGuardWaiverPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(cartEntry.getBasePrice().doubleValue()),
 				damageWaiverPricing);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Waiver Price - {}", gearGaurdWaiverPrice.doubleValue());
-		cartEntry.setGearGuardWaiverPrice(gearGaurdWaiverPrice);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Guard Waiver Price - {}", gearGuardWaiverPrice.doubleValue());
+		cartEntry.setGearGuardWaiverPrice(gearGuardWaiverPrice);
 		cartEntry.setGearGuardWaiverSelected(getDamageWaiverFlag(cartEntry.getGearGuardWaiverSelected(), Boolean.TRUE));
-		return gearGaurdWaiverPrice;
+		return gearGuardWaiverPrice;
 	}
 
 	/**
@@ -386,9 +386,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final BigDecimal WaiverPricingPercent = BigDecimal.valueOf(damageWaiverPricingModel.getWaiverPercentage().doubleValue())
 				.divide(BigDecimal.valueOf(100)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
 
-		final BigDecimal gearGaurdWaiverPrice = price.multiply(WaiverPricingPercent).setScale(BlCoreConstants.DECIMAL_PRECISION,
+		final BigDecimal gearGuardWaiverPrice = price.multiply(WaiverPricingPercent).setScale(BlCoreConstants.DECIMAL_PRECISION,
 				BlCoreConstants.ROUNDING_MODE);
-		return gearGaurdWaiverPrice.doubleValue();
+		return gearGuardWaiverPrice.doubleValue();
 	}
 
 	/**

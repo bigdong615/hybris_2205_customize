@@ -146,9 +146,9 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	 * Sets the flags for Damage Waiver.
 	 *
 	 * @param cartEntryModel the cart entry model
-	 * @param gearGaurdProFullWaiverSelected the gear gaurd pro full waiver selected
-	 * @param gearGaurdWaiverSelected the gear gaurd waiver selected
-	 * @param noGearGaurdWaiverSelected the no gear gaurd waiver selected
+	 * @param gearGuardProFullWaiverSelected the gear Guard pro full waiver selected
+	 * @param gearGuardWaiverSelected the gear Guard waiver selected
+	 * @param noGearGuardWaiverSelected the no gear Guard waiver selected
 	 */
 	private void setFlags(final AbstractOrderEntryModel cartEntryModel, final Boolean gearGuardProFullWaiverSelected,
 			final Boolean gearGuardWaiverSelected, final Boolean noGearGuardWaiverSelected)
