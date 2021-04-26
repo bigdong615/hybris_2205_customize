@@ -23,6 +23,8 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlDamageWaiverPricingModel;
@@ -30,6 +32,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.BlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -40,6 +43,7 @@ import com.bl.core.price.service.BlCommercePriceService;
  */
 public class DefaultBlCalculationService extends DefaultCalculationService implements BlCalculationService
 {
+	private static final Logger LOG = Logger.getLogger(DefaultBlCalculationService.class);
 	private BlCommercePriceService commercePriceService;
 	private GenericDao<BlDamageWaiverPricingModel> blDamageWavierGenericDao;
 	private OrderRequiresCalculationStrategy defaultOrderRequiresCalculationStrategy;
@@ -199,11 +203,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				return createNewPriceValue(order.getCurrency().getIsocode(), blSerialProductModel.getFinalSalePrice().doubleValue(),
 						BooleanUtils.toBoolean(order.getNet()));
 			}
-			final String msg = "No Price defined for Serial Product with Serial Id : ".concat(blSerialProductModel.getProductId());
-			throw new CalculationException(msg);
+			throw new CalculationException(
+					"No Price defined for Serial Product with Serial Id : ".concat(blSerialProductModel.getProductId()));
 		}
-		final String msg = "No Price defined for Product : ".concat(product.getCode());
-		throw new CalculationException(msg);
+		throw new CalculationException("Product Type is not a type of SKU or Serial Product");
 	}
 
 	/**
@@ -250,8 +253,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				throw new CalculationException("No Damage Waiver Pricing Percentage found");
 			}
 			final BlDamageWaiverPricingModel damageWaiverPricing = getDamageWaiverPricingModel(lDamageWavierPricing, gearType);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Damage Wavier Type - {} and Price Percent - {}", gearType,
+					damageWaiverPricing.getWaiverPercentage().doubleValue());
 			final Double gearGaurdWavierPrice = calculateDamageWaiverPrice(
 					BigDecimal.valueOf(cartEntry.getBasePrice().doubleValue()), damageWaiverPricing);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Wavier Price - {}", gearGaurdWavierPrice.doubleValue());
 			cartEntry.setGearGaurdWaiverPrice(gearGaurdWavierPrice);
 			cartEntry.setGearGaurdWaiverSelected(getDamageWaiverFlag(cartEntry.getGearGaurdWaiverSelected(), Boolean.TRUE));
 
@@ -259,6 +265,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 					BlCoreConstants.GEAR_GAURD_PRO);
 			final double gearGaurdWavierProPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(gearGaurdWavierPrice),
 					damageWaiverProPricing);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Gaurd Wavier Pro Price - {}", gearGaurdWavierProPrice);
 			cartEntry.setGearGaurdProFullWaiverPrice(gearGaurdWavierProPrice);
 			cartEntry.setGearGaurdProFullWaiverSelected(
 					getDamageWaiverFlag(cartEntry.getGearGaurdProFullWaiverSelected(), Boolean.FALSE));
