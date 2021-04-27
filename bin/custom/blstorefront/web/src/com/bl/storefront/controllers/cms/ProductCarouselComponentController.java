@@ -86,7 +86,7 @@ public class ProductCarouselComponentController extends AbstractAcceleratorCMSCo
 			searchState.setQuery(searchQueryData);
 
 			final PageableData pageableData = new PageableData();
-			pageableData.setPageSize(100); // Limit to 100 matching results
+			pageableData.setPageSize(BlControllerConstants.PAGE_SIZE); // Limit to 100 matching results
 
 			return productSearchFacade.categorySearch(categoryCode, searchState, pageableData).getResults();
 		}
