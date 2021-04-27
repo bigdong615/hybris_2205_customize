@@ -41,7 +41,7 @@ public class BlAutomatedStockCreationJob extends AbstractJobPerformable<CronJobM
 		catch(final Exception ex)
 		{
 			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlAutomatedStockCreationJob and "
-					+ "the error is {} ", ex);
+					+ "the error is {} ", ex.getMessage(), ex);
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);

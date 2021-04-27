@@ -4,6 +4,7 @@ import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
+import de.hybris.platform.servicelayer.exceptions.BusinessException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,10 +42,15 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		{
 			createStockLevels(blStockCreationCronJob);
 		}
+		catch (final BusinessException ex)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, ex.getMessage(), ex);
+			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
+		}
 		catch(final Exception ex)
 		{
 			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlStockCreationJob and "
-					+ "the error is {} ", ex);
+					+ "the error is {} ", ex.getMessage(), ex);
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		resetTheParameters(blStockCreationCronJob);
@@ -57,17 +63,17 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 	 * @param blStockCreationCronJob
 	 * @throws Exception
 	 */
-	private void createStockLevels(final BlStockCreationCronJobModel blStockCreationCronJob) throws Exception
+	private void createStockLevels(final BlStockCreationCronJobModel blStockCreationCronJob) throws BusinessException
 	{
 		final Date startDate = blStockCreationCronJob.getStartDate();
 		final Date endDate = blStockCreationCronJob.getEndDate();
-		if (null != startDate && null != endDate)
+		if (null != startDate && null != endDate && startDate.before(endDate))
 		{
 			getBlStockService().createStockLevelForSkuProductsByDate(blStockCreationCronJob.getSkuProductList(), startDate, endDate);
 		}
 		else
 		{
-			throw new Exception("Start and end date can not be null");
+			throw new BusinessException("Start and end date can not be null Or Start date should be before end date");
 		}
 	}
 
