@@ -26,8 +26,8 @@ public interface BlStockLevelDao
 			final Date startDate, final Date endDate);
 
 	/**
-	 * It finds the stock for the given sku and serial
-	 * 
+	 * It finds the stock for the given sku and serial from start date to end date
+	 *
 	 * @param serialProductCode
 	 * @param productCode
 	 * @param startDate the rental start date

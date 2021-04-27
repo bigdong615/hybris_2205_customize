@@ -22,11 +22,4 @@ public interface BlProductDao extends ProductDao
 	 * @return Collection<BlProductModel> the list of sku products
 	 */
 	public Collection<BlProductModel> getAllActiveSkuProducts();
-
-	/**
-	 * It fetches all the active serial products associated with the sku products in system
-	 *
-	 * @return Collection<BlSerialProductModel> the list of serial products
-	 */
-	public Collection<BlSerialProductModel> getAssociatedActiveSerials(final Collection<BlProductModel> skuProducts);
 }

@@ -32,8 +32,17 @@ public class BlAutomatedStockCreationJob extends AbstractJobPerformable<CronJobM
 	@Override
 	public PerformResult perform(final CronJobModel cronJob)
 	{
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlStockCreationJob...");
-		getBlStockManageService().createStockLevelForADayForAllSkus();
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlAutomatedStockCreationJob...");
+		try
+		{
+			getBlStockManageService().createOneDayStockLevelForAllSkuProducts();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "BlAutomatedStockCreationJob finished successfully");
+		}
+		catch(final Exception ex)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlAutomatedStockCreationJob and "
+					+ "the error is {} ", ex);
+		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
 	}
 

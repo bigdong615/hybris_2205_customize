@@ -71,20 +71,4 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
 		}
 		return skuProducts;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collection<BlSerialProductModel> getAssociatedActiveSerials(final Collection<BlProductModel> skuProducts) {
-		Collection<BlSerialProductModel> skus = new ArrayList<>();
-		skuProducts.forEach(sku -> {
-			final List<BlSerialProductModel> serialProducts = sku.getSerialProducts().stream()
-					.filter(serialProduct -> serialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE))
-					.collect(Collectors.toList());
-			skus.addAll(serialProducts);
-		});
-	return skus;
-	}
-
 }

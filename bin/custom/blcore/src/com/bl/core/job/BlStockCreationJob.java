@@ -17,7 +17,7 @@ import com.bl.logging.BlLogger;
 
 
 /**
- * This cron job will create the stock based on the given inputs
+ * This cron job will create the stock based on start date, end date and skuProductList
  *
  * @author Moumita
  */
@@ -37,31 +37,32 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 	public PerformResult perform(final BlStockCreationCronJobModel blStockCreationCronJob)
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlStockCreationJob...");
-		createStockLevels(blStockCreationCronJob);
-		blStockCreationCronJob.setStartDate(null);
-		blStockCreationCronJob.setEndDate(null);
-		blStockCreationCronJob.setSkuProductList(new ArrayList<>());
-		this.modelService.save(blStockCreationCronJob);
+		try
+		{
+			final Date startDate = blStockCreationCronJob.getStartDate();
+			final Date endDate = blStockCreationCronJob.getEndDate();
+			getBlStockManageService().createStockLevelForSkuProductsByDate(blStockCreationCronJob.getSkuProductList(),
+					startDate, endDate);
+		}
+		catch(final Exception ex)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlStockCreationJob and "
+					+ "the error is {} ", ex);
+		}
+		resetTheParameters(blStockCreationCronJob);
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
 	}
 
 	/**
-	 * It creates the stock level as per the given parameters in the cron job
+	 * It resets the parameters once the cron job is successfully run
 	 *
 	 * @param blStockCreationCronJob
 	 */
-	private void createStockLevels(final BlStockCreationCronJobModel blStockCreationCronJob)
-	{
-		final Date startDate = blStockCreationCronJob.getStartDate();
-		final Date endDate = blStockCreationCronJob.getEndDate();
-		if (null != startDate && null != endDate)
-		{
-			getBlStockManageService().createStockLevelForSkus(blStockCreationCronJob.getSkuProductList(), startDate, endDate);
-		}
-		else
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "BlStockCreationJob is not performed...");
-		}
+	private void resetTheParameters(BlStockCreationCronJobModel blStockCreationCronJob) {
+		blStockCreationCronJob.setStartDate(null);
+		blStockCreationCronJob.setEndDate(null);
+		blStockCreationCronJob.setSkuProductList(new ArrayList<>());
+		this.modelService.save(blStockCreationCronJob);
 	}
 
 	/**
