@@ -13,7 +13,7 @@
 	<spring:theme code="text.addToCart" var="addToCartText"/>
 	<c:url value="/cart" var="cartUrl"/>
 	<ycommerce:testId code="addToCartPopup">
-	<!-- BL-454 add to cart Modal -->
+
    <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Wait!</h5>
@@ -34,6 +34,3 @@
 	</spring:htmlEscape>
 </spring:escapeBody>"
 }
-
-
-
