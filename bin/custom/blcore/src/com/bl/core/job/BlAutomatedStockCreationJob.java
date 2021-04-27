@@ -9,7 +9,7 @@ import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.bl.core.stock.BlStockManageService;
+import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 
 
@@ -22,7 +22,7 @@ public class BlAutomatedStockCreationJob extends AbstractJobPerformable<CronJobM
 {
 	private static final Logger LOG = Logger.getLogger(BlAutomatedStockCreationJob.class);
 
-	private BlStockManageService blStockManageService;
+	private BlStockService blStockService;
 
 	/**
 	 * It performs to create the stock for a a day
@@ -35,32 +35,33 @@ public class BlAutomatedStockCreationJob extends AbstractJobPerformable<CronJobM
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlAutomatedStockCreationJob...");
 		try
 		{
-			getBlStockManageService().createOneDayStockLevelForAllSkuProducts();
+			getBlStockService().createOneDayStockLevelForAllSkuProducts();
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "BlAutomatedStockCreationJob finished successfully");
 		}
 		catch(final Exception ex)
 		{
 			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlAutomatedStockCreationJob and "
 					+ "the error is {} ", ex);
+			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
 	}
 
 	/**
-	 * @return the blStockManageService
+	 * @return the blStockService
 	 */
-	public BlStockManageService getBlStockManageService()
+	public BlStockService getBlStockService()
 	{
-		return blStockManageService;
+		return blStockService;
 	}
 
 	/**
-	 * @param blStockManageService
-	 *           the blStockManageService to set
+	 * @param blStockService
+	 *           the blStockService to set
 	 */
-	public void setBlStockManageService(final BlStockManageService blStockManageService)
+	public void setBlStockService(final BlStockService blStockService)
 	{
-		this.blStockManageService = blStockManageService;
+		this.blStockService = blStockService;
 	}
 
 }

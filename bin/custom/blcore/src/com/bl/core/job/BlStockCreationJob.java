@@ -12,12 +12,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.model.BlStockCreationCronJobModel;
-import com.bl.core.stock.BlStockManageService;
+import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 
 
 /**
- * This cron job will create the stock based on start date, end date and skuProductList
+ * This cron job will create the stocks based on start date, end date and skuProductList
  *
  * @author Moumita
  */
@@ -25,7 +25,7 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 {
 	private static final Logger LOG = Logger.getLogger(BlStockCreationJob.class);
 
-	private BlStockManageService blStockManageService;
+	private BlStockService blStockService;
 
 	/**
 	 * It creates the stock level
@@ -39,18 +39,36 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlStockCreationJob...");
 		try
 		{
-			final Date startDate = blStockCreationCronJob.getStartDate();
-			final Date endDate = blStockCreationCronJob.getEndDate();
-			getBlStockManageService().createStockLevelForSkuProductsByDate(blStockCreationCronJob.getSkuProductList(),
-					startDate, endDate);
+			createStockLevels(blStockCreationCronJob);
 		}
 		catch(final Exception ex)
 		{
 			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlStockCreationJob and "
 					+ "the error is {} ", ex);
+			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		resetTheParameters(blStockCreationCronJob);
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
+	}
+
+	/**
+	 * It creates the stocks based on start date, end date and skuProductList
+	 *
+	 * @param blStockCreationCronJob
+	 * @throws Exception
+	 */
+	private void createStockLevels(final BlStockCreationCronJobModel blStockCreationCronJob) throws Exception
+	{
+		final Date startDate = blStockCreationCronJob.getStartDate();
+		final Date endDate = blStockCreationCronJob.getEndDate();
+		if (null != startDate && null != endDate)
+		{
+			getBlStockService().createStockLevelForSkuProductsByDate(blStockCreationCronJob.getSkuProductList(), startDate, endDate);
+		}
+		else
+		{
+			throw new Exception("Start and end date can not be null");
+		}
 	}
 
 	/**
@@ -58,7 +76,7 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 	 *
 	 * @param blStockCreationCronJob
 	 */
-	private void resetTheParameters(BlStockCreationCronJobModel blStockCreationCronJob) {
+	private void resetTheParameters(final BlStockCreationCronJobModel blStockCreationCronJob) {
 		blStockCreationCronJob.setStartDate(null);
 		blStockCreationCronJob.setEndDate(null);
 		blStockCreationCronJob.setSkuProductList(new ArrayList<>());
@@ -66,21 +84,20 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 	}
 
 	/**
-	 * @return the blStockManageService
+	 * @return the blStockService
 	 */
-	public BlStockManageService getBlStockManageService()
+	public BlStockService getBlStockService()
 	{
-		return blStockManageService;
+		return blStockService;
 	}
 
 	/**
-	 * @param blStockManageService
-	 *           the blStockManageService to set
+	 * @param blStockService
+	 *           the blStockService to set
 	 */
-	public void setBlStockManageService(final BlStockManageService blStockManageService)
+	public void setBlStockService(final BlStockService blStockService)
 	{
-		this.blStockManageService = blStockManageService;
+		this.blStockService = blStockService;
 	}
-
 
 }

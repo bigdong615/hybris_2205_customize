@@ -1,27 +1,29 @@
 package com.bl.core.stock.impl;
 
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.product.dao.BlProductDao;
-import com.bl.core.stock.BlStockLevelDao;
-import com.bl.core.stock.BlStockManageService;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.dao.BlProductDao;
+import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.stock.BlStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.logging.BlLogger;
 
 
 /**
@@ -29,9 +31,9 @@ import org.apache.log4j.Logger;
  *
  * @author Moumita
  */
-public class DefaultBlStockManageService implements BlStockManageService
+public class DefaultBlStockService implements BlStockService
 {
-	private static final Logger LOG = Logger.getLogger(DefaultBlStockManageService.class);
+	private static final Logger LOG = Logger.getLogger(DefaultBlStockService.class);
 	private ModelService modelService;
 	private BlProductDao productDao;
 	private BlStockLevelDao blStockLevelDao;
@@ -84,21 +86,6 @@ public class DefaultBlStockManageService implements BlStockManageService
 	}
 
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Collection<BlSerialProductModel> getAssociatedActiveSerials(final Collection<BlProductModel> skuProducts) {
-		final Collection<BlSerialProductModel> serialProductList = new ArrayList<>();
-		skuProducts.forEach(sku -> {
-			final List<BlSerialProductModel> serialProducts = sku.getSerialProducts().stream()
-					.filter(serialProduct -> serialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE))
-					.collect(Collectors.toList());
-			serialProductList.addAll(serialProducts);
-		});
-		return serialProductList;
-	}
-
-	/**
 	 * It gets the date which is after a year
 	 * @return the date
 	 */
@@ -117,10 +104,14 @@ public class DefaultBlStockManageService implements BlStockManageService
 	 */
 	private void createStockLevelForSerialProductsForTheDate(final Collection<BlProductModel> skuProducts, final Date date)
 	{
-		final Collection<BlSerialProductModel> serialProducts = getAssociatedActiveSerials(skuProducts);
+		skuProducts.forEach(sku -> {
+			final List<BlSerialProductModel> serialProducts = sku.getSerialProducts().stream()
+					.filter(serialProduct -> serialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE))
+					.collect(Collectors.toList());
 			serialProducts.forEach(serial -> {
 				findAndCreateStockLevelForSerial(serial, date);
 			});
+		});
 	}
 
 	/**
@@ -131,9 +122,13 @@ public class DefaultBlStockManageService implements BlStockManageService
 	 */
 	private void getAllAssociatedActiveSerials(final Collection<BlProductModel> skuProducts, final Date date)
 	{
-		final Collection<BlSerialProductModel> serialProducts = getAssociatedActiveSerials(skuProducts);
-		serialProducts.forEach(serial -> {
-			createStockLevelForSerial(serial, serial.getBlProduct().getCode(), date);
+		skuProducts.forEach(sku -> {
+			final List<BlSerialProductModel> serialProducts = sku.getSerialProducts().stream()
+					.filter(serialProduct -> serialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE))
+					.collect(Collectors.toList());
+			serialProducts.forEach(serial -> {
+				createStockLevelForSerial(serial, serial.getBlProduct().getCode(), date);
+			});
 		});
 	}
 

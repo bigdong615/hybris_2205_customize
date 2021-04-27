@@ -1004,12 +1004,12 @@
             <attributes>
               <attribute qualifier="startDate" type="java.util.Date">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false"/>
+                <modifiers read="true" write="true" optional="true"/>
                 <description>The stock will be created from this start date.</description>
               </attribute>
               <attribute qualifier="endDate" type="java.util.Date">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false"/>
+                <modifiers read="true" write="true" optional="true"/>
                 <description>The stock will be created to this end date.</description>
               </attribute>
               <attribute type="SkuProductList" qualifier="skuProductList">

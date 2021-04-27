@@ -831,14 +831,14 @@
 	
 	<!-- BL-553 - Stock creation -->
 	<bean id="blStockCreationJob" class="com.bl.core.job.BlStockCreationJob" parent="abstractJobPerformable">
-		<property name="blStockManageService" ref="blStockManageService"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
 	<bean id="blAutomatedStockCreationJob" class="com.bl.core.job.BlAutomatedStockCreationJob" parent="abstractJobPerformable">
-		<property name="blStockManageService" ref="blStockManageService"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 	
-	<bean id="blStockManageService" class="com.bl.core.stock.impl.DefaultBlStockManageService">
+	<bean id="blStockService" class="com.bl.core.stock.impl.DefaultBlStockService">
 		<property name="modelService" ref="modelService"/>
 		<property name="productDao" ref="productDao"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
