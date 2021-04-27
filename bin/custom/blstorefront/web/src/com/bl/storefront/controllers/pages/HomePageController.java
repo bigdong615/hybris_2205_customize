@@ -12,10 +12,15 @@ import de.hybris.platform.cms2.model.pages.ContentPageModel;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
 
 
 /**
@@ -28,8 +33,14 @@ public class HomePageController extends AbstractPageController
 	private static final String LOGOUT = "logout";
 	private static final String ACCOUNT_CONFIRMATION_SIGNOUT_TITLE = "account.confirmation.signout.title";
 	private static final String ACCOUNT_CONFIRMATION_CLOSE_TITLE = "account.confirmation.close.title";
+	
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() 
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false") final boolean closeAcc,
 			@RequestParam(value = LOGOUT, defaultValue = "false") final boolean logout, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
