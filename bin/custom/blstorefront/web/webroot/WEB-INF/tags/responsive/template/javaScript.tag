@@ -225,18 +225,29 @@
 				},
             setup: (picker) => {
       			picker.on('button:apply', (date1, date2) => {
-      			$.ajax({
-                    url: ACC.config.encodedContextPath + '/datepicker',
-                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                    type: "GET",
-                    success: function (data) {
-                    	if(data=='success')
-                        window.location.reload();
-                    },
-                    error: function (xhr, textStatus, error) {
-                       
-                    }
-                });
+      				var searchText = document.getElementById('js-site-search-input').value;
+      				var rentalGear = 'rentalGear';
+      				var sUrl = ACC.config.contextPath;
+      				$.ajax({
+  	                    url: ACC.config.encodedContextPath + '/datepicker',
+  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+  	                    type: "GET",
+  	                    success: function (data) {
+  	                    	if(searchText == '' && data=='success')
+  	                    		{
+  	                    		window.location.reload();
+  	                    		}
+  	                    	else
+  	                    		{
+  	                    		
+  	                    			document.location.href=sUrl+"/search/?text="+searchText+"&blPageType="+rentalGear;
+  	                    		}
+  	                        
+  	                    },
+  	                    error: function (xhr, textStatus, error) {
+  	                       
+  	                    }
+  	                });    			
       			});
       			}
         }); 
@@ -386,18 +397,30 @@
   					},
                 setup: (picker) => {
         			picker.on('button:apply', (date1, date2) => {
-        			$.ajax({
-                      url: ACC.config.encodedContextPath + '/datepicker',
-                      data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                      type: "GET",
-                      success: function (data) {
-                      	if(data=='success')
-                          window.location.reload();
-                      },
-                      error: function (xhr, textStatus, error) {
-                         
-                      }
-                  });
+        				var searchText = document.getElementById('js-site-search-input').value;
+          				var rentalGear = 'rentalGear';
+          				var sUrl = ACC.config.contextPath;
+          				$.ajax({
+      	                    url: ACC.config.encodedContextPath + '/datepicker',
+      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+      	                    type: "GET",
+      	                    success: function (data) {
+      	                    	if(searchText == '' && data=='success')
+      	                    		{
+      	                    		window.location.reload();
+      	                    		}
+      	                    	else
+      	                    		{
+      	                    		
+      	                    			document.location.href=sUrl+"/search/?text="+searchText+"&blPageType="+rentalGear;
+      	                    		}
+      	                        
+      	                    },
+      	                    error: function (xhr, textStatus, error) {
+      	                       
+      	                    }
+      	                }); 
+        			
         			});
         			}
             });
@@ -562,18 +585,30 @@
 												},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
-                                           			$.ajax({
-                                                         url: ACC.config.encodedContextPath + '/datepicker',
-                                                         data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                                                         type: "GET",
-                                                         success: function (data) {
-                                                         	if(data=='success')
-                                                             window.location.reload();
-                                                         },
-                                                         error: function (xhr, textStatus, error) {
-                                                            
-                                                         }
-                                                     });
+                                           				var searchText = document.getElementById('js-site-search-input').value;
+                                          				var rentalGear = 'rentalGear';
+                                          				var sUrl = ACC.config.contextPath;
+                                          				$.ajax({
+                                      	                    url: ACC.config.encodedContextPath + '/datepicker',
+                                      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                      	                    type: "GET",
+                                      	                    success: function (data) {
+                                      	                    	if(searchText == '' && data=='success')
+                                      	                    		{
+                                      	                    		window.location.reload();
+                                      	                    		}
+                                      	                    	else
+                                      	                    		{
+                                      	                    		
+                                      	                    			document.location.href=sUrl+"/search/?text="+searchText+"&blPageType="+rentalGear;
+                                      	                    		}
+                                      	                        
+                                      	                    },
+                                      	                    error: function (xhr, textStatus, error) {
+                                      	                       
+                                      	                    }
+                                      	                }); 
+                                           			
                                            			});
                                            			}
                                              });
@@ -803,18 +838,29 @@
         				},
                     setup: (picker) => {
               			picker.on('button:apply', (date1, date2) => {
-              			$.ajax({
-                            url: ACC.config.encodedContextPath + '/datepicker',
-                            data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                            type: "GET",
-                            success: function (data) {
-                            	if(data=='success')
-                                window.location.reload();
-                            },
-                            error: function (xhr, textStatus, error) {
-                               
-                            }
-                        });
+              				var searchText = document.getElementById('js-site-search-input').value;
+              				var rentalGear = 'rentalGear';
+              				var sUrl = ACC.config.contextPath;
+              				$.ajax({
+          	                    url: ACC.config.encodedContextPath + '/datepicker',
+          	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+          	                    type: "GET",
+          	                    success: function (data) {
+          	                    	if(searchText == '' && data=='success')
+          	                    		{
+          	                    		window.location.reload();
+          	                    		}
+          	                    	else
+          	                    		{
+          	                    		
+          	                    			document.location.href=sUrl+"/search/?text="+searchText+"&blPageType="+rentalGear;
+          	                    		}
+          	                        
+          	                    },
+          	                    error: function (xhr, textStatus, error) {
+          	                       
+          	                    }
+          	                }); 
               			});
               			}
                 });
