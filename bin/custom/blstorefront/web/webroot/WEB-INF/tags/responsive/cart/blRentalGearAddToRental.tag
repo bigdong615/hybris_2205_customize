@@ -3,8 +3,15 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ attribute name="productData" required="false" type="de.hybris.platform.commercefacades.product.data.ProductData" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+
+<c:set var="product" value="${product }"/>
+
+<c:if test="${empty product and not empty productData}">
+	<c:set var="product" value="${productData }"/>
+</c:if>
 
 <c:if test="${not product.multidimensional }">
     <c:url value="/cart/add" var="addToCartUrl"/>
@@ -12,42 +19,30 @@
 		<spring:param name="configuratorType" value="${configuratorType}" />
 	</spring:url>
      <c:choose>
-				<c:when test="${product.isUpcoming eq true}">
-					<button type="submit" class="btn btn-outline btn-disabled dis"
-						aria-disabled="true" disabled="disabled">
+     			<c:when test="${product.isUpcoming eq true}">
+					<button type="submit" class="btn btn-primary dis" aria-disabled="false">
 						<spring:theme code="text.notify.me" />
 					</button>
 				</c:when>
-				<c:when test="${product.isDiscontinued}">
+				<c:when test="${product.isDiscontinued or product.stock.stockLevelStatus.code eq 'outOfStock'}">
 					<button type="submit" class="btn btn-outline btn-disabled"
 						aria-disabled="true" disabled="disabled">
 						<spring:theme code="text.add.to.rental" />
 					</button>
 				</c:when>
 				<c:otherwise>
-				<c:choose>
-					<c:when
-						test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
-						<button type="submit" class="btn btn-outline btn-disabled"
-							aria-disabled="true" disabled="disabled">
-							<spring:theme code="text.add.to.rental" />
-						</button>
-					</c:when>
-					<c:otherwise>
-            <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-               <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-            </div>
+					<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+               			<div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+            		</div>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
-                <input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
-                <input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
-                <input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
+                		<input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
+                		<input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
+                		<input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
 						    <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart">
 							    <spring:theme code="text.add.to.rental" />
 						    </button>
 						</form:form>
-					</c:otherwise>
-				</c:choose>
-			</c:otherwise>
+				</c:otherwise>
 		</c:choose>
 
      <form:form id="configureForm${fn:escapeXml(product.code)}" action="${configureProductUrl}" method="get" class="configure_form">
