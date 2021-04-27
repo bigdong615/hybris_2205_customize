@@ -89,6 +89,7 @@
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
   <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
   	<property name="totalDamageWaiverCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+    <property name="isRentalCart" type="java.lang.Boolean"/>
   </bean>
 
 </beans>

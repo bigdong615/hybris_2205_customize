@@ -164,6 +164,7 @@ public interface ControllerConstants
 			interface Cart // NOSONAR
 			{
 				String AddToCartPopup = "fragments/cart/addToCartPopup"; // NOSONAR
+				String AddToCartWarningPopup = "fragments/cart/addtocartwarningpopup"; // NOSONAR
 				String MiniCartPanel = "fragments/cart/miniCartPanel"; // NOSONAR
 				String MiniCartErrorPanel = "fragments/cart/miniCartErrorPanel"; // NOSONAR
 				String CartPopup = "fragments/cart/cartPopup"; // NOSONAR

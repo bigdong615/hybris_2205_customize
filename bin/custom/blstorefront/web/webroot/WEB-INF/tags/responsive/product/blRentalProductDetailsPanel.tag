@@ -91,10 +91,8 @@
                                            <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
                                         </div>
                                         <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
-                                           <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
-                                           <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
-                                  		  	<button id="addToCartButton" type="submit"
-                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn" data-bs-toggle="modal" data-bs-target="#addToCart">
+                                          <button type="button"
+                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
                                   					<spring:theme code="basket.add.to.rental.cart.button.text" />
                                   				</button>
                                   		  </form>

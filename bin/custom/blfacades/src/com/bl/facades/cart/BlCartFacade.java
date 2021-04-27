@@ -1,6 +1,8 @@
 package com.bl.facades.cart;
 
 import de.hybris.platform.commercefacades.order.CartFacade;
+import de.hybris.platform.commercefacades.order.data.CartModificationData;
+import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
 /**
  * It is responsible for getting all necessary information for cart.
@@ -32,4 +34,22 @@ public interface BlCartFacade extends CartFacade {
    * @param damageWaiverType the damage Waiver type
    */
   void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
+
+  /**
+   * This method is used to add product to cart.
+   * @param productCode
+   * @param quantity
+   * @param serialCode
+   * @return CartModificationData
+   * @throws CommerceCartModificationException
+   */
+  CartModificationData addToCart(final String productCode,final long quantity,final String serialCode) throws CommerceCartModificationException;
+
+  /**
+   * Prevent add to cart when user try to add rental product in used gear cart and vice-versa.
+   * @param productCode
+   * @param serialCode
+   * @return
+   */
+  boolean isRentalAndUsedProduct(final String productCode, final String serialCode);
 }

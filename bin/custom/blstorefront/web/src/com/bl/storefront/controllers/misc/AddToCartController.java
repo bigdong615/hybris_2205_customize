@@ -3,6 +3,9 @@
  */
 package com.bl.storefront.controllers.misc;
 
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
+import com.bl.facades.cart.BlCartFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ProductWrapperData;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartForm;
@@ -68,13 +71,24 @@ public class AddToCartController extends AbstractController
 	@Resource(name = "groupCartModificationListPopulator")
 	private GroupCartModificationListPopulator groupCartModificationListPopulator;
 
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
+
 	@RequestMapping(value = "/cart/add", method = RequestMethod.POST, produces = "application/json")
-	public String addToCart(@RequestParam("productCodePost") final String code, final Model model,
+	public String addToCart(@RequestParam("productCodePost") final String code, @RequestParam("serialProductCodePost") final String serialCode, final Model model,
 			@Valid final AddToCartForm form, final BindingResult bindingErrors)
 	{
+		validateParameterNotNull(code, "Product code must not be null");
+		validateParameterNotNull(serialCode, "Serial code must not be null");
+
 		if (bindingErrors.hasErrors())
 		{
 			return getViewWithBindingErrorMessages(model, bindingErrors);
+		}
+
+    if(blCartFacade.isRentalAndUsedProduct(code,serialCode)){
+			LOG.debug("Rental and Used gear products are not allowed together");
+			return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
 		}
 
 		final long qty = form.getQty();
@@ -88,7 +102,8 @@ public class AddToCartController extends AbstractController
 		{
 			try
 			{
-				final CartModificationData cartModification = cartFacade.addToCart(code, qty);
+
+				final CartModificationData cartModification = blCartFacade.addToCart(code, qty,serialCode);
 				model.addAttribute(QUANTITY_ATTR, Long.valueOf(cartModification.getQuantityAdded()));
 				model.addAttribute("entry", cartModification.getEntry());
 				model.addAttribute("cartCode", cartModification.getCartCode());

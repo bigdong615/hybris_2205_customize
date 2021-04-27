@@ -56,3 +56,27 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
  	damageWaiverUpdateForm.submit();
  });
+
+ //BL-454 add to cart
+ $('.js-add-to-cart').on("click",function(e) {
+                       e.preventDefault();
+                        var productCode = $(this).attr('data-product-code');
+                        var serialCode = $(this).attr('data-serial');
+                        if(serialCode == '' || serialCode == undefined){
+                        serialCode = "serialCodeNotPresent";
+                        }
+                        $.ajax({
+                                   url: ACC.config.encodedContextPath + "/cart/add",
+                                   type: 'POST',
+                                   data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                   success: function (response) {
+                                      $('#addToCartModalDialog').html(response.addToCartLayer);
+                                   },
+                                   error: function (jqXHR, textStatus, errorThrown) {
+                                         $('.modal-backdrop').addClass('remove-popup-background');
+                                         // log the error to the console
+                                         console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                                   }
+                        });
+
+            });

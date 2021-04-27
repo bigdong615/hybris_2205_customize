@@ -1249,6 +1249,12 @@
 						<description>Total cost of selected Damage Waiver</description>
 						<persistence type="property"/>
 					</attribute>
+          <attribute qualifier="isRentalCart" type="java.lang.Boolean">
+            <persistence type="property" />
+            <modifiers optional="true" read="true" write="true" />
+            <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+            <description>flag to identify cart type rental or used gear</description>
+          </attribute>
 				</attributes>
 			</itemtype>
 		</typegroup>

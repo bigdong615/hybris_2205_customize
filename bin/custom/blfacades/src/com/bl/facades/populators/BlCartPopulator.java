@@ -22,6 +22,8 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	{
 		super.populate(source, target);
 		target.setTotalDamageWaiverCost(createPrice(source, source.getTotalDamageWaiverCost()));
+		target.setIsRentalCart(source.getIsRentalCart());
+		
 	}
 
 }
