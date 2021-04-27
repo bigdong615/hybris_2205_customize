@@ -82,7 +82,7 @@ public class DefaultBlStockService implements BlStockService
 	@Override
 	public void createOneDayStockLevelForAllSkuProducts() {
 		final Collection<BlProductModel> skuProducts = getProductDao().getAllActiveSkuProducts();
-		getAllAssociatedActiveSerials(skuProducts, getNextYearsSameDay());
+		createStockLevelForAllActiveSerialProducts(skuProducts, getNextYearsSameDay());
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class DefaultBlStockService implements BlStockService
 	 * @param skuProducts
 	 * @param date
 	 */
-	private void getAllAssociatedActiveSerials(final Collection<BlProductModel> skuProducts, final Date date)
+	private void createStockLevelForAllActiveSerialProducts(final Collection<BlProductModel> skuProducts, final Date date)
 	{
 		skuProducts.forEach(sku -> {
 			final List<BlSerialProductModel> serialProducts = sku.getSerialProducts().stream()
