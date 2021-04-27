@@ -46,20 +46,23 @@
                                         </tr>
                                     	</thead>
 		                                  <tbody>
-		                                    <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
-		                                     <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
+		                                    <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                           <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                                        </div>
+                                        <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+		                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
 		                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
 		                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
 		                                            <td><format:price priceData="${serialProduct.finalSalePrice}"/></td>
 		                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
 		                                            <td class="text-end">
-		                                             <button id="addToCartButton" type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart"
-                                                		   data-serial="${serialProduct.serialId}" data-product-code="${product.code}" data-serial="${serialProduct.serialId}">
+		                                             <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart"
+                                                		  data-product-code="${product.code}" data-serial="${serialProduct.serialId}">
                                                  <spring:theme code="basket.add.to.basket"/>
                                                  </button></td>
 		                                        </tr>
-		                                       </c:forEach>
-		                                      </form>
+		                                      </c:forEach>
+		                                    </form>
 		                                    </tbody>
                                 	</c:otherwise>
                                 </c:choose>
