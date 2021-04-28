@@ -49,8 +49,8 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		}
 		catch(final Exception ex)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while performing BlStockCreationJob and "
-					+ "the error is {} ", ex.getMessage(), ex);
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, ex.getMessage(), ex,
+					"Error occurred while performing BlStockCreationJob");
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		resetTheParameters(blStockCreationCronJob);
