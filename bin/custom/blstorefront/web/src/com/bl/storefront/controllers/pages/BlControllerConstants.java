@@ -46,6 +46,8 @@ public class BlControllerConstants
 	public static final String SUCCESS = "success";
 	public static final String SELECTED_DATE_MAP = "selectedDateMap";
 	public static final String SELECTED_DATE = "selectedDate";
+	
+	public static final int PAGE_SIZE = 100;
 
 	private BlControllerConstants()
 	{

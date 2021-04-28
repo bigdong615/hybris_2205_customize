@@ -4,6 +4,8 @@ import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryP
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.BooleanUtils;
 
 
@@ -36,8 +38,12 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	 */
 	private void populateDamageWaiverValues(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
-		target.setGearGuardWaiverPrice(createPrice(source, source.getGearGuardWaiverPrice()));
-		target.setGearGuardProFullWaiverPrice(createPrice(source, source.getGearGuardProFullWaiverPrice()));
+		final Double gearGuardWaiverPrice = source.getGearGuardWaiverPrice();
+		target.setGearGuardWaiverPrice(
+				createPrice(source, Objects.nonNull(gearGuardWaiverPrice) ? gearGuardWaiverPrice : Double.valueOf(0.0d)));
+		final Double gearGuardProFullWaiverPrice = source.getGearGuardProFullWaiverPrice();
+		target.setGearGuardProFullWaiverPrice(createPrice(source,
+				Objects.nonNull(gearGuardProFullWaiverPrice) ? gearGuardProFullWaiverPrice : Double.valueOf(0.0d)));
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));

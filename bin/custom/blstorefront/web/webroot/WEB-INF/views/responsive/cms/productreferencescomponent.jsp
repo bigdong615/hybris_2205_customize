@@ -25,7 +25,7 @@
                                             						arguments="${productReference.target.stock.stockLevel}" /></span>
                                             			</c:when>
                                             			<c:when test="${productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
-                                            				<span class="badge badge-limited-stock"><spring:theme
+                                            				<span class="badge badge-out-of-stock"><spring:theme
                                             						code="text.product.tile.flag.outOfStock"
                                             						arguments="${productReference.target.stock.stockLevel}" /></span>
                                             			</c:when>
