@@ -48,6 +48,6 @@ public interface BlStockLevelDao
 	 *           the sku product code
 	 * @return list of stock levels
 	 */
-	public Collection<StockLevelModel> findUsedGearSerialStockLevel(final String serialProductCode,
+	public Collection<StockLevelModel> findStockLevelForUsedGearSerial(final String serialProductCode,
 			final String productCode);
 }

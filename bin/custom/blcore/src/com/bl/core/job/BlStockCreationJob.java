@@ -7,7 +7,6 @@ import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -41,11 +40,12 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlStockCreationJob...");
 		try
 		{
-			createStockLevels(blStockCreationCronJob);
+			getBlStockService().createStockLevelForSkuProductsByDate(blStockCreationCronJob.getSkuProductList(),
+					blStockCreationCronJob.getStartDate(), blStockCreationCronJob.getEndDate());
 		}
 		catch (final BusinessException ex)
 		{
-			BlLogger.logMessage(LOG, Level.ERROR, ex.getMessage(), ex);
+			BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex);
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
 		catch(final Exception ex)
@@ -54,28 +54,8 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 					"Error occurred while performing BlStockCreationJob");
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
-		resetTheParameters(blStockCreationCronJob);
+		resetParameters(blStockCreationCronJob);
 		return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
-	}
-
-	/**
-	 * It creates the stocks based on start date, end date and skuProductList
-	 *
-	 * @param blStockCreationCronJob
-	 * @throws Exception
-	 */
-	private void createStockLevels(final BlStockCreationCronJobModel blStockCreationCronJob) throws BusinessException
-	{
-		final Date startDate = blStockCreationCronJob.getStartDate();
-		final Date endDate = blStockCreationCronJob.getEndDate();
-		if (null != startDate && null != endDate && startDate.before(endDate))
-		{
-			getBlStockService().createStockLevelForSkuProductsByDate(blStockCreationCronJob.getSkuProductList(), startDate, endDate);
-		}
-		else
-		{
-			throw new BusinessException("Start and end date can not be null Or Start date should be before end date");
-		}
 	}
 
 	/**
@@ -83,7 +63,8 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 	 *
 	 * @param blStockCreationCronJob
 	 */
-	private void resetTheParameters(final BlStockCreationCronJobModel blStockCreationCronJob) {
+	private void resetParameters(final BlStockCreationCronJobModel blStockCreationCronJob)
+	{
 		blStockCreationCronJob.setStartDate(null);
 		blStockCreationCronJob.setEndDate(null);
 		blStockCreationCronJob.setSkuProductList(new ArrayList<>());

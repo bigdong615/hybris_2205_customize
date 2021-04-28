@@ -2,6 +2,7 @@ package com.bl.core.stock.impl;
 
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.servicelayer.exceptions.BusinessException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -44,24 +46,33 @@ public class DefaultBlStockService implements BlStockService
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @throws BusinessException
 	 */
 	@Override
 	public void createStockLevelForSkuProductsByDate(final List<BlProductModel> skus, Date startDate, Date endDate)
+			throws BusinessException
 	{
-		startDate = (BlDateTimeUtils.getFormattedStartDay(startDate)).getTime();
-		endDate = (BlDateTimeUtils.getFormattedStartDay(endDate)).getTime();
-		endDate = DateUtils.addDays(endDate, 1);
-		final Date lastFutureDate = BlDateTimeUtils.getFormattedStartDay(DateUtils.addDays(new Date(), 365))
-				.getTime();
-		if (lastFutureDate.after(startDate) && lastFutureDate.after(endDate))
-		{
-			final Collection<BlProductModel> skuProducts = getSkuProducts(skus);
-			createStockLevelForSerialProductsForTheDate(skuProducts, startDate, endDate);
+		if (null != startDate && null != endDate && startDate.before(endDate)) {
+			startDate = (BlDateTimeUtils.getFormattedStartDay(startDate)).getTime();
+			endDate = (BlDateTimeUtils.getFormattedStartDay(endDate)).getTime();
+			endDate = DateUtils.addDays(endDate, 1);
+			final Date lastFutureDate = BlDateTimeUtils
+					.getFormattedStartDay(DateUtils.addDays(new Date(), 365))
+					.getTime();
+			if (lastFutureDate.after(startDate) && lastFutureDate.after(endDate)) {
+				final Collection<BlProductModel> skuProducts = getSkuProducts(skus);
+				createStockLevelForSerialProductsForGivenDates(skuProducts, startDate, endDate);
+			} else {
+				BlLogger.logFormatMessageInfo(LOG, Level.WARN,
+						"Stock can only be created till 365 days from today"
+								+ " and the selected duration from start date {} and end date {} is beyond 365 days",
+						startDate, endDate);
+			}
 		}
 		else
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock can only be created till 365 days from today"
-							+ " and the selected duration from start date {} and end date {} is beyond 365 days", startDate, endDate);
+			throw new BusinessException("Start and end date can not be null Or Start date should be before end date");
 		}
 	}
 
@@ -107,30 +118,43 @@ public class DefaultBlStockService implements BlStockService
 	 * @param skuProducts
 	 * @param fromDate
 	 * @param toDate
-	 * @param toDate
 	 */
-	private void createStockLevelForSerialProductsForTheDate(final Collection<BlProductModel> skuProducts, final Date fromDate,
+	private void createStockLevelForSerialProductsForGivenDates(final Collection<BlProductModel> skuProducts, final Date fromDate,
 			final Date toDate)
 	{
-		skuProducts.forEach(sku -> {
-			final List<BlSerialProductModel> serialProducts = sku.getSerialProducts().stream()
-					.filter(serialProduct -> serialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE))
-					.collect(Collectors.toList());
-			final LocalDate formattedStartDate = fromDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			final LocalDate formattedEndDate = toDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			serialProducts.forEach(serial -> {
-				if (Boolean.FALSE.equals(serial.getForRent()))
-				{
-					findAndCreateStockLevelForUsedGearSerial(serial);
-				}
-				else
-				{
-					Stream.iterate(formattedStartDate, date -> date.plusDays(1))
-							.limit(ChronoUnit.DAYS.between(formattedStartDate, formattedEndDate))
-							.forEach(date -> findAndCreateStockLevelForSerial(serial, date));
-				}
-			});
-		});
+		final LocalDate formattedStartDate = fromDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		final LocalDate formattedEndDate = toDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		for (final BlProductModel skuProduct : skuProducts)
+		{
+			for (final BlSerialProductModel serial : skuProduct.getSerialProducts())
+			{
+				createStockForActiveSerials(formattedStartDate, formattedEndDate, serial);
+			}
+		}
+	}
+
+	/**
+	 * It creates the stocks for the active serials
+	 *
+	 * @param formattedStartDate
+	 * @param formattedEndDate
+	 * @param serial
+	 */
+	private void createStockForActiveSerials(final LocalDate formattedStartDate, final LocalDate formattedEndDate,
+			BlSerialProductModel serial) {
+		if ((SerialStatusEnum.ACTIVE).equals(serial.getSerialStatus()) && null != serial.getWarehouseLocation())
+		{
+			if (Boolean.FALSE.equals(serial.getForRent()))
+			{
+				findAndCreateStockLevelForUsedGearSerial(serial);
+			}
+			else
+			{
+				Stream.iterate(formattedStartDate, date -> date.plusDays(1))
+						.limit(ChronoUnit.DAYS.between(formattedStartDate, formattedEndDate))
+						.forEach(date -> findAndCreateStockLevelForSerial(serial, date));
+			}
+		}
 	}
 
 	/**
@@ -141,21 +165,17 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void createStockLevelForAllActiveSerialProducts(final Collection<BlProductModel> skuProducts, final Date date)
 	{
-		skuProducts.forEach(sku -> {
-			final List<BlSerialProductModel> serialProducts = sku.getSerialProducts().stream()
-					.filter(serialProduct -> serialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE))
-					.collect(Collectors.toList());
-			serialProducts.forEach(serial -> {
-				if (Boolean.FALSE.equals(serial.getForRent()))
+		for (final BlProductModel skuProduct : skuProducts)
+		{
+			for (final BlSerialProductModel serial : skuProduct.getSerialProducts())
+			{
+				if ((SerialStatusEnum.ACTIVE).equals(serial.getSerialStatus()) && null != serial.getWarehouseLocation())
 				{
-					createStockLevelForSerial(serial, null);
+					final Date stockDate = Boolean.FALSE.equals(serial.getForRent()) ? null : date;
+					createStockLevelForSerial(serial, stockDate);
 				}
-				else
-				{
-					createStockLevelForSerial(serial, date);
-				}
-			});
-		});
+			}
+		}
 	}
 
 	/**
@@ -169,14 +189,15 @@ public class DefaultBlStockService implements BlStockService
 		final Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		final Collection<StockLevelModel> stockLevelModel = getBlStockLevelDao().findSerialStockLevelForDate(serial.getCode(),
 				serial.getBlProduct().getCode(), date, date);
-		if (CollectionUtils.isNotEmpty(stockLevelModel))
+		if (CollectionUtils.isEmpty(stockLevelModel))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock already exist for product {} for the date {}",
-					serial.getCode(), date);
+			createStockLevelForSerial(serial, date);
 		}
 		else
 		{
-			createStockLevelForSerial(serial, date);
+			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock already exist for serial product {} for the date {}",
+					serial.getCode(),
+					date);
 		}
 
 	}
@@ -188,15 +209,15 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void findAndCreateStockLevelForUsedGearSerial(final BlSerialProductModel serial)
 	{
-		final Collection<StockLevelModel> stockLevelModel = getBlStockLevelDao().findUsedGearSerialStockLevel(serial.getCode(),
+		final Collection<StockLevelModel> stockLevelModel = getBlStockLevelDao().findStockLevelForUsedGearSerial(serial.getCode(),
 				serial.getBlProduct().getCode());
-		if (CollectionUtils.isNotEmpty(stockLevelModel))
+		if (CollectionUtils.isEmpty(stockLevelModel))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock already exist for product {}", serial.getCode());
+			createStockLevelForSerial(serial, null);
 		}
 		else
 		{
-			createStockLevelForSerial(serial, null);
+			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock already exist for serial product {}", serial.getCode());
 		}
 
 	}
@@ -210,33 +231,22 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void createStockLevelForSerial(final BlSerialProductModel serial, final Date date)
 	{
-		if(null != serial.getWarehouseLocation()) {
-			final StockLevelModel stockLevel = getModelService().create(StockLevelModel.class);
-			if(null == date)
-			{
-				stockLevel.setDate(null);
-			}
-			else
-			{
-				final Calendar calendar = BlDateTimeUtils
-						.getFormattedStartDay(date);
-				stockLevel.setDate(calendar.getTime());
-			}
-			stockLevel.setProductCode(serial.getBlProduct().getCode());
-			stockLevel.setWarehouse(serial.getWarehouseLocation());
-			stockLevel.setAvailable(0);
-			stockLevel.setSerialProductCode(serial.getCode());
-			stockLevel.setSerialStatus(serial.getSerialStatus());
-			try
-			{
-				getModelService().save(stockLevel);
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock created for product {} for the date {}", serial, date);
-			}
-			catch (final ModelSavingException ex)
-			{
-				BlLogger.logFormattedMessage(LOG, Level.ERROR, "Stock not created for the product {} and " + "the error is {} ",
-						serial.getCode(), ex.getMessage(), ex);
-			}
+		final StockLevelModel stockLevel = getModelService().create(StockLevelModel.class);
+		stockLevel.setDate(date == null ? null : BlDateTimeUtils.getFormattedStartDay(date).getTime());
+		stockLevel.setProductCode(serial.getBlProduct().getCode());
+		stockLevel.setWarehouse(serial.getWarehouseLocation());
+		stockLevel.setAvailable(0);
+		stockLevel.setSerialProductCode(serial.getCode());
+		stockLevel.setSerialStatus(serial.getSerialStatus());
+		try
+		{
+			getModelService().save(stockLevel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock created for serial product {} for the date {}", serial, date);
+		}
+		catch (final ModelSavingException ex)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Stock not created for the serial product {}", serial.getCode());
 		}
 	}
 

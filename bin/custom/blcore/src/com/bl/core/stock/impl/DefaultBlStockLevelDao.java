@@ -1,5 +1,6 @@
 package com.bl.core.stock.impl;
 
+import de.hybris.platform.core.model.ItemModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -38,19 +39,19 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	private static final String WHERE = "} WHERE {";
 	private static final String PRODUCT_CODE_PARAM = "} = ?productCode ";
 
-	private static final String STOCK_LEVEL_FOR_DATE_QUERY = SELECT + StockLevelModel.PK + FROM
+	private static final String STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.PRODUCTCODE + PRODUCT_CODE_PARAM +
 			AND + StockLevelModel.DATE + "} BETWEEN ?startDate AND ?endDate " +
 			AND + StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE +
 			" as sse} WHERE {sse:CODE} = (?active)}}) " +
 			AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses)";
 
-	private static final String SERIAL_STOCK_LEVEL_FOR_DATE_QUERY = SELECT + StockLevelModel.PK + FROM
+	private static final String SERIAL_STOCK_LEVEL_FOR_DATE_QUERY = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.PRODUCTCODE + PRODUCT_CODE_PARAM +
 			AND + StockLevelModel.DATE + "} BETWEEN ?startDate AND ?endDate " +
 			AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode";
 
-	private static final String USED_GEAR_SERIAL_STOCK_LEVEL = SELECT + StockLevelModel.PK + FROM
+	private static final String USED_GEAR_SERIAL_STOCK_LEVEL = SELECT + ItemModel.PK + FROM
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.PRODUCTCODE + PRODUCT_CODE_PARAM + AND
 			+ StockLevelModel.SERIALPRODUCTCODE
 			+ "} = ?serialProductCode";
@@ -105,8 +106,9 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		final List<StockLevelModel> stockLevels = result.getResult();
 		if (CollectionUtils.isEmpty(stockLevels))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and date between : {} and {}",
-					productCode, startDay, endDay);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for product : {} and serial product {} with date between : {} and {}", productCode,
+					serialProductCode, startDay, endDay);
 			return Collections.emptyList();
 		}
 		return stockLevels;
@@ -134,7 +136,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<StockLevelModel> findUsedGearSerialStockLevel(final String serialProductCode,
+	public Collection<StockLevelModel> findStockLevelForUsedGearSerial(final String serialProductCode,
 			final String productCode)
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_SERIAL_STOCK_LEVEL);
@@ -145,7 +147,8 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		final List<StockLevelModel> stockLevels = result.getResult();
 		if (CollectionUtils.isEmpty(stockLevels))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {}", productCode);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for product : {} and serial product code {} ",
+					productCode, serialProductCode);
 			return Collections.emptyList();
 		}
 		return stockLevels;
