@@ -35,13 +35,10 @@ INSERT_UPDATE Vendor ; code[unique=true] ; name
                      ; default           ; Default Vendor 
                      
 # Warehouse          
-INSERT_UPDATE Warehouse ; code[unique=true] ; name              ; vendor(code)[default=default] ; default[default=true] 
-                        ; default           ; Default Warehouse ;                               
-                        ; warehouse_s       ; Warehouse South   ;                               
-                        ; warehouse_e       ; Warehouse East    ;                               
-                        ; warehouse_w       ; Warehouse West    ;                               
-                        ; warehouse_n       ; Warehouse North   ;                               
-                        
+INSERT_UPDATE Warehouse ; code[unique=true] ; name ; vendor(code)[default=default] ; default[default=true] 
+                        ; warehouse_ca      ; CA   ;                               
+                        ; warehouse_ma      ; MA   ;                               
+                                                 
 # Disable preview for email pages
 UPDATE CMSPageType ; code[unique=true] ; previewDisabled 
                    ; EmailPage         ; true            
