@@ -218,7 +218,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
             final List<IndexedTypeSortField> fields = new ArrayList<>();
             IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
             indexedTypeSortField.setFieldName(BlCoreConstants.FOR_SALE.equalsIgnoreCase(key) ? BlCoreConstants.MIN_SERIAL_PRICE : BlCoreConstants.PRICE_VALUE);
-            indexedTypeSortField.setAscending(BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName) ? true : false);
+            indexedTypeSortField.setAscending(BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName) ? true : false); //NOSONAR
             fields.add(indexedTypeSortField);
             indexedTypeSorts.setFields(fields);
           }
