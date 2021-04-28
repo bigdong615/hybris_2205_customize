@@ -46,7 +46,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	form.submit();
        });
 
-// Script to apply the selected damage Waiver from the dropdown on the cart page       
+// Script to apply the selected damage Waiver from the dropdown on the cart page
  $('ul.damage-Waiver-update').on('click','li',function(e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
@@ -71,6 +71,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
+                                      updateQuantity();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -79,4 +80,29 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    }
                         });
 
-            });
+ });
+
+ // BL-454 update quantity from rental add to cart popup.
+ function updateQuantity() {
+    $('.js-update-quantity').on("change", function (e){
+        			  var newCartQuantity = $(this).find(":selected").val();
+        				e.preventDefault();
+        				var entryNumber = $(this).attr('id').split("_");
+        				var form = $('#updateCartForm' + entryNumber[1]);
+        				var productCode = form.find('input[name=productCode]').val();
+        				var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+        				var entryNumber = form.find('input[name=entryNumber]').val();
+        				form.find('input[name=quantity]').val(newCartQuantity);
+                $.ajax({
+                          url: ACC.config.encodedContextPath + "/cart/updateQuantity",
+                          type: 'POST',
+                          data: form.serialize(),
+                          success: function (response) {
+                             console.log("Quantity updated");
+                          },
+                          error: function (jqXHR, textStatus, errorThrown) {
+                            console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                          }
+                });
+    });
+ }
