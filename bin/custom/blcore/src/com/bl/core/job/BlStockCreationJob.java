@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import com.bl.core.model.BlStockCreationCronJobModel;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 
 
 /**
@@ -49,7 +50,7 @@ public class BlStockCreationJob extends AbstractJobPerformable<BlStockCreationCr
 		}
 		catch(final Exception ex)
 		{
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, ex.getMessage(), ex,
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex,
 					"Error occurred while performing BlStockCreationJob");
 			return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
 		}
