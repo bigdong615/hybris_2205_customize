@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-public class AbstractBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPONSE> {
+public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPONSE> {
 
 
   /** The FsxRestTemplate. */

@@ -19,6 +19,7 @@
       <extension name='blpatches' />
       <extension name='blstorefront' />
       <extension name='bllogging' />
+      <extension name='bltaxapi' />
 
 	
 	<!-- Extension to enable Accelerator Services -->

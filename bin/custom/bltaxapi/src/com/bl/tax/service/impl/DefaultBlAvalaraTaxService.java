@@ -6,7 +6,7 @@ import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 
-public class DefaultBlAvalaraTaxService extends AbstractBlTaxService<AbstractOrderModel, ExternalTaxDocument, TaxRequestData, TaxResponseData>
+public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrderModel, ExternalTaxDocument, TaxRequestData, TaxResponseData>
     implements BlTaxService<AbstractOrderModel, ExternalTaxDocument> {
 
   @Override

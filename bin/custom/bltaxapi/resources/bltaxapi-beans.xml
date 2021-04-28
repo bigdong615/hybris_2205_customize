@@ -87,8 +87,29 @@
 		<property name="lines" type="java.util.List&lt;com.bl.tax.TaxLine>" equals="true">
 			<annotations>@JsonProperty("destinationCode")</annotations>
 		</property>
+		<property name="isTaxExempt" type="java.lang.Boolean" equals="true">
+			<annotations>@JsonProperty("isTaxExempt")</annotations>
+		</property>
+		<property name="taxExemptNumber" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("taxExemptNumber")</annotations>
+		</property>
+		<property name="taxExemptState" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("taxExemptState")</annotations>
+		</property>
+		<property name="taxExemptExpiry" type="java.util.Date" equals="true">
+			<annotations>@JsonProperty("taxExemptExpiry")</annotations>
+		</property>
+		<property name="customerUsageType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("customerUsageType")</annotations>
+		</property>
+		<property name="purchaseOrderNo" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("purchaseOrderNo")</annotations>
+		</property>
 		<property name="exemptionNo" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("destinationCode")</annotations>
+			<annotations>@JsonProperty("exemptionNo")</annotations>
+		</property>
+		<property name="companyCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("companyCode")</annotations>
 		</property>
 	</bean>
 
@@ -159,49 +180,58 @@
 		<property name="itemCode" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("itemCode")</annotations>
 		</property>
+		<property name="completedOrderCount" type="java.lang.Integer" equals="true">
+			<annotations>@JsonProperty("completedOrderCount")</annotations>
+		</property>
 
 	</bean>
 
 
-	<bean class="com.bl.tax.ShipFrom">
-	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
-	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
-	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
-		<property name="line1" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("line1")</annotations>
-		</property>
-		<property name="city" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("city")</annotations>
-		</property>
-		<property name="region" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("region")</annotations>
-		</property>
-		<property name="country" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("country")</annotations>
-		</property>
-		<property name="postalCode" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("postalCode")</annotations>
-		</property>
-	</bean>
-
-	<bean class="com.bl.tax.ShipTo">
+	<bean class="com.bl.tax.AddressData">
 		<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 		<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
 		<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
+		<property name="firstName" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("firstName")</annotations>
+		</property>
+		<property name="lastName" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("lastName")</annotations>
+		</property>
 		<property name="line1" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("line1")</annotations>
+		</property>
+		<property name="line2" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("line1")</annotations>
 		</property>
 		<property name="city" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("city")</annotations>
 		</property>
-		<property name="region" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("region")</annotations>
+		<property name="state" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("state")</annotations>
+		</property>
+		<property name="postalCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("postalCode")</annotations>
 		</property>
 		<property name="country" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("country")</annotations>
 		</property>
-		<property name="postalCode" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("postalCode")</annotations>
+		<property name="region" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("region")</annotations>
+		</property>
+		<property name="phone" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("phone")</annotations>
+		</property>
+		<property name="email" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("email")</annotations>
+		</property>
+		<property name="isDefault" type="java.lang.Boolean" equals="true">
+			<annotations>@JsonProperty("isDefault")</annotations>
+		</property>
+		<property name="addressType" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("addressType")</annotations>
+		</property>
+		<property name="addressCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("addressCode")</annotations>
 		</property>
 	</bean>
 
@@ -209,10 +239,10 @@
 	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
 	<annotations>@JsonInclude(JsonInclude.Include.NON_NULL)</annotations>
-		<property name="shipFrom" type="com.bl.tax.ShipFrom" equals="true">
+		<property name="shipFrom" type="com.bl.tax.AddressData" equals="true">
 			<annotations>@JsonProperty("ShipFrom")</annotations>
 		</property>
-		<property name="shipTo" type="com.bl.tax.ShipTo" equals="true">
+		<property name="shipTo" type="com.bl.tax.AddressData" equals="true">
 			<annotations>@JsonProperty("ShipTo")</annotations>
 		</property>
 	</bean>

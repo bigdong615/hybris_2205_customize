@@ -33,10 +33,20 @@
 					<persistence type="property" />
 					<defaultvalue>em().getEnumerationValue("BlTaxTypeEnum","SalesOrder")</defaultvalue>
 				</attribute>
-				<attribute qualifier="taxCommitted" type="java.lang.Boolean">
+				<attribute qualifier="isTaxExempt" type="java.lang.Boolean">
 					<modifiers read="true" write="true" optional="true" />
 					<persistence type="property" />
 					<defaultvalue>Boolean.FALSE</defaultvalue>
+				</attribute>
+				<attribute qualifier="taxExemptNumber" type="java.lang.String">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>Determines the customer taxExemptNumber</defaultvalue>
+				</attribute>
+				<attribute qualifier="taxExemptExpiry" type="java.util.Date">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>Determines the customer taxExempt Expiry date</defaultvalue>
 				</attribute>
 			</attributes>
 		</itemtype>

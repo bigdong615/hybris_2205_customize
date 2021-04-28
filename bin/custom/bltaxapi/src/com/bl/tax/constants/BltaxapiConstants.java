@@ -21,7 +21,7 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 
 	public static final String BL_TAX_REST_CLIENT_LOGGING_ENABLED = "Bl.tax.rest.client.logging.enabled";
 
-	public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public static final String DATE_FORMAT = "yyyy-MM-dd";
 	public static final String SALESORDER = "SalesOrder";
 	public static final String SALESINVOICE = "SalesInvoice";
 	public static final String CA = "CA";
@@ -29,5 +29,8 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String CAD = "CAD";
 	public static final String RENTAL_TAX_CODE = "PRO60298";
 	public static final String SALES_TAX_CODE = "PH403706";
+	public static final String ORIGIN  = "Origin";
+	public static final String DESTINATION = "Dest";
+	public static final String COMPANY_CODE = "BL-TEST";
 
 }
