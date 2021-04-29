@@ -87,6 +87,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
             parameter.setProduct(blSerialProductModel);
             parameter.setUnit(blSerialProductModel.getUnit());
             parameter.setCreateNewEntry(false);
+            break;
           }
         }
       } else {
@@ -148,6 +149,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
       for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
         if (blSerialProduct.getProductId().equals(serialCode)) {
           blSerialProductModel = blSerialProduct;
+          break;
         }
       }
     }
