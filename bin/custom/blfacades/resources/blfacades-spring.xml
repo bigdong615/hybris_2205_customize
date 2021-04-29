@@ -343,5 +343,11 @@
     <!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
     <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
     <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
-    
+
+	  <!--This populater used for populating email data -->
+	  <alias name="defaultBlAddressPopulator" alias="addressPopulator"/>
+	  <bean id="defaultBlAddressPopulator"
+		  class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator">
+	  </bean>
+
 </beans>
