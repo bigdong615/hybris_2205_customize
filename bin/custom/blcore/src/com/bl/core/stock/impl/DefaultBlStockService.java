@@ -9,7 +9,6 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -97,19 +96,7 @@ public class DefaultBlStockService implements BlStockService
 	@Override
 	public void createOneDayStockLevelForAllSkuProducts() {
 		final Collection<BlProductModel> skuProducts = getProductDao().getAllActiveSkuProducts();
-		createStockLevelForAllActiveSerialProducts(skuProducts, getNextYearsSameDay());
-	}
-
-	/**
-	 * It gets the date which is after a year
-	 * @return the date
-	 */
-	private Date getNextYearsSameDay() {
-		final Date currentDate = new Date();
-		final Calendar calendar = Calendar.getInstance();
-		calendar.setTime(currentDate);
-		calendar.add(Calendar.YEAR, 1);
-		return calendar.getTime();
+		createStockLevelForAllActiveSerialProducts(skuProducts, BlDateTimeUtils.getNextYearsSameDay());
 	}
 
 	/**
@@ -141,7 +128,7 @@ public class DefaultBlStockService implements BlStockService
 	 * @param serial
 	 */
 	private void createStockForActiveSerials(final LocalDate formattedStartDate, final LocalDate formattedEndDate,
-			BlSerialProductModel serial) {
+			final BlSerialProductModel serial) {
 		if ((SerialStatusEnum.ACTIVE).equals(serial.getSerialStatus()) && null != serial.getWarehouseLocation())
 		{
 			if (Boolean.FALSE.equals(serial.getForRent()))

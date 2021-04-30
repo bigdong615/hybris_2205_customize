@@ -56,6 +56,10 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel.SERIALPRODUCTCODE
 			+ "} = ?serialProductCode";
 
+	private static final String USED_GEAR_SERIAL_ASSIGNED_TO_RENTAL_ORDER_QUERY = SELECT + ItemModel.PK + FROM
+			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.PRODUCTCODE + PRODUCT_CODE_PARAM + AND + StockLevelModel.DATE
+			+ "} BETWEEN ?startDate AND ?endDate " + AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND
+			+ StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus";
 
 	/**
 	 * {@inheritDoc}
@@ -152,6 +156,31 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			return Collections.emptyList();
 		}
 		return stockLevels;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode,
+			final Date startDay, final Date endDay)
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_SERIAL_ASSIGNED_TO_RENTAL_ORDER_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
+		fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.TRUE);
+
+		addQueryParameter(productCode, startDay, endDay, fQuery);
+
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for product : {} and serial product {} with date between : {} and {}", productCode,
+					serialProductCode, startDay, endDay);
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
 	}
 
 }

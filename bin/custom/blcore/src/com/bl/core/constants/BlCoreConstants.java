@@ -77,6 +77,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String START_DATE = "startDate";
 	public static final String END_DATE = "endDate";
 	public static final String WAREHOUSES = "warehouses";
+	public static final String RESERVED_STATUS = "reservedStatus";
 	public static final int END_HOURS = 23;
 	public static final int END_MINUTES = 59;
 	public static final int END_SECONDS = 59;

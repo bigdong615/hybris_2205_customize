@@ -50,4 +50,22 @@ public interface BlStockLevelDao
 	 */
 	public Collection<StockLevelModel> findStockLevelForUsedGearSerial(final String serialProductCode,
 			final String productCode);
+
+	/**
+	 * It checks whether the serial product is not assigned to any rental orders
+	 *
+	 * @param serialProductCode
+	 *           the serial product code
+	 * @param productCode
+	 *           the sku product code
+	 * @param startDate
+	 *           the start date
+	 * @param endDate
+	 *           the end date
+	 * @param productCode
+	 *           the sku product code
+	 * @return boolean
+	 */
+	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode,
+			final Date startDate, final Date endDate);
 }

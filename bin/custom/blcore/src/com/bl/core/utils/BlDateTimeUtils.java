@@ -356,4 +356,19 @@ public final class BlDateTimeUtils
 		return startDate;
 	}
 
+	/**
+	 * It gets the date which is after a year
+	 * 
+	 * @return the date
+	 */
+	public static Date getNextYearsSameDay()
+	{
+		final Date currentDate = new Date();
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTime(currentDate);
+		calendar.add(Calendar.YEAR, 1);
+		return calendar.getTime();
+	}
+
+
 }
