@@ -62,13 +62,17 @@ $('.shopping-cart__item-remove').on("click", function (e){
                        e.preventDefault();
                         var productCode = $(this).attr('data-product-code');
                         var serialCode = $(this).attr('data-serial');
+                        var recognise = $(this).attr('data-popup');
                         if(serialCode == '' || serialCode == undefined){
                         serialCode = "serialCodeNotPresent";
+                        }
+                        if(recognise == '' || recognise == undefined){
+                        recognise = "notClickedFromModal";
                         }
                         $.ajax({
                                    url: ACC.config.encodedContextPath + "/cart/add",
                                    type: 'POST',
-                                   data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                   data: {productCodePost: productCode,serialProductCodePost:serialCode, popUpRecognisePost:recognise},
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       updateQuantity();
@@ -106,3 +110,4 @@ $('.shopping-cart__item-remove').on("click", function (e){
                 });
     });
  }
+
