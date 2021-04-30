@@ -22,7 +22,6 @@ INSERT_UPDATE ViewOrderAction;$contentCV[unique=true];uid[unique=true];url;name;
 
 # ContentSlot
 INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef);;;
-# ;;SideContent-address-book;Side Content Slot for Account Address Book;true;;;;
                          ;;BodyContent-address-book;Body Content Slot for Account Address Book;true;AccountAddressBookComponent;;;
                          ;;BodyContent-add-edit-address;Body Content Slot for Add Edit Address;true;AccountAddEditAddressComponent;;;
                          ;;BodyContent-orders;Body Content Slot for My Account Order History;true;AccountOrderHistoryComponent;;;

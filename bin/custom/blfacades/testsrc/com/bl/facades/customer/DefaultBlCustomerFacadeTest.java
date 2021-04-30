@@ -63,13 +63,9 @@ public void prepare(){
     assertEquals(EMAIL,newCustomer.getOriginalUid());
   }
 
-  @Test
+  @Test(expected =DuplicateUidException.class )
   public void shouldValidateDublicateUid() throws DuplicateUidException {
     BDDMockito.doThrow(new DuplicateUidException("Email has already present")).when(customerAccountService).register(newCustomer,PASSWORD);
-    try {
       customerFacade.register(registerData);
-    }catch (DuplicateUidException duplicateUidException){
-      duplicateUidException.printStackTrace();
-    }
   }
 }

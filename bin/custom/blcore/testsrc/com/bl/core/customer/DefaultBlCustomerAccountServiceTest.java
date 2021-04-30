@@ -1,5 +1,8 @@
 package com.bl.core.customer;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.bl.core.services.customer.impl.DefaultBlCustomerAccountService;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.user.data.RegisterData;
@@ -46,6 +49,8 @@ public class DefaultBlCustomerAccountServiceTest {
   @Test
   public void shouldRegisterCustomer() throws DuplicateUidException {
     customerAccountService.register(newCustomer,PASSWORD);
+    verify(modelService).save(newCustomer);
+    verify(modelService, times(1)).save(newCustomer);
   }
 
 }
