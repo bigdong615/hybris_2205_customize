@@ -29,8 +29,11 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String CAD = "CAD";
 	public static final String RENTAL_TAX_CODE = "PRO60298";
 	public static final String SALES_TAX_CODE = "PH403706";
+	public static final String SHIPPING_SALES_TAX_CODE = "FR020100";
+	public static final String DISCOUNT_TAX_CODE = "OD010000";
 	public static final String ORIGIN  = "Origin";
 	public static final String DESTINATION = "Dest";
 	public static final String COMPANY_CODE = "BL-TEST";
+	public static final String DEFAULT_TAXCODE = "DEFAULT_TAXCODE";
 
 }

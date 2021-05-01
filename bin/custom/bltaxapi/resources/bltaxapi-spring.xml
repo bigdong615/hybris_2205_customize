@@ -102,9 +102,12 @@
 
   <bean id="blTaxServiceRequestPopulator" class="com.bl.tax.populators.BlTaxServiceRequestPopulator">
     <property name="productService" ref="productService"/>
+    <property name="blDatePickerService" ref="blDatePickerService"/>
   </bean>
 
-  <bean id="blTaxServiceResponsePopulator" class="com.bl.tax.populators.BlTaxServiceResponsePopulator"/>
+  <bean id="blTaxServiceResponsePopulator" class="com.bl.tax.populators.BlTaxServiceResponsePopulator">
+    <property name="defaultBlTaxValueConversionService" ref="defaultBlTaxValueConversionService"/>
+  </bean>
 
 
   <alias name="blCalculateExternalTaxesStratergy" alias="calculateExternalTaxesStrategy" />
@@ -119,5 +122,8 @@
   <alias name="blDetermineExternalTaxStrategy" alias="decideExternalTaxesStrategy" />
   <bean id="blDetermineExternalTaxStrategy" class="com.bl.tax.stratergy.BlDetermineExternalTaxStrategy">
   </bean>
+
+  <bean id="defaultBlTaxValueConversionService" class="com.bl.tax.service.impl.DefaultBlTaxValueConversionService"/>
+
 
 </beans>

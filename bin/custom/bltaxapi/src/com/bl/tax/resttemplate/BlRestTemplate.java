@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,6 +33,9 @@ public class BlRestTemplate {
     {
       final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
       interceptors.add(new BlLoggingInterceptor());
+      List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+      converters.add(new MappingJackson2HttpMessageConverter());
+      restTemplate.setMessageConverters(converters);
       restTemplate.getInterceptors().addAll(interceptors);
     }
     return restTemplate;

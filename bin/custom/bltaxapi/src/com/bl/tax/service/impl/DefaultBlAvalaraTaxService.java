@@ -1,12 +1,12 @@
 package com.bl.tax.service.impl;
 
-import com.bl.tax.data.TaxRequestData;
-import com.bl.tax.data.TaxResponseData;
+import com.bl.tax.TaxRequestData;
+import com.bl.tax.TaxResponse;
 import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 
-public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrderModel, ExternalTaxDocument, TaxRequestData, TaxResponseData>
+public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrderModel, ExternalTaxDocument, TaxRequestData, TaxResponse>
     implements BlTaxService<AbstractOrderModel, ExternalTaxDocument> {
 
   @Override
@@ -14,15 +14,14 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
   {
     final TaxRequestData request = new TaxRequestData();
     getRequestPopulator().populate(orderModel, request);
-    final TaxResponseData lResponse ;
-    boolean allowed = false;
-    if(allowed) {
-      lResponse = super.process(createHttpEntity(request), TaxResponseData.class);
+    final TaxResponse lResponse ;
+      lResponse = super.process(createHttpEntity(request), TaxResponse.class);
       final ExternalTaxDocument lExternalTaxDoc = new ExternalTaxDocument();
-      getResponsePopulator().populate(lResponse, lExternalTaxDoc);
+      if(null != lResponse) {
+        getResponsePopulator().populate(lResponse, lExternalTaxDoc);
+      }
+      orderModel.setTotalAvalaraTaxCalculated(lExternalTaxDoc.getAllTaxes().get(0).get(0).getValue());
       return lExternalTaxDoc;
-    }
-    return null;
   }
 
 }

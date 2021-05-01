@@ -1,54 +1,79 @@
 package com.bl.tax.populators;
 
-import com.bl.core.model.BlProductModel;
-import com.bl.tax.AddressData;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
+import com.bl.tax.AddressesData;
 import com.bl.tax.TaxLine;
+import com.bl.tax.TaxRequestData;
 import com.bl.tax.constants.BltaxapiConstants;
-import com.bl.tax.data.TaxRequestData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderModel, TaxRequestData> {
 
   private ProductService productService;
+  private BlDatePickerService blDatePickerService;
 
   @Override
-  public void populate(AbstractOrderModel abstractOrder, TaxRequestData taxRequest)
-      throws ConversionException {
+  public void populate(final AbstractOrderModel abstractOrder, final TaxRequestData taxRequest)
+      throws ConversionException{
     taxRequest.setCompanyCode(BltaxapiConstants.COMPANY_CODE);
     taxRequest.setCode(abstractOrder.getCode());
     taxRequest.setType(BltaxapiConstants.SALESORDER); // As of now using by default SalesOrder
     setOrderDateToRequest(abstractOrder , taxRequest);
-    taxRequest.setCustomerCode("Ecommerce"); //customer code
+    taxRequest.setCustomerCode("bltestuser"); //customer code
     taxRequest.setSalesPersonCode(null); // sales person code optional
     taxRequest.setOriginCode(BltaxapiConstants.ORIGIN);
     taxRequest.setDestinationCode(BltaxapiConstants.DESTINATION);
-    setTaxCommittedToRequest(abstractOrder, taxRequest);
-    taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
+    try {
+      setTaxCommittedToRequest(abstractOrder, taxRequest);
+    } catch (ParseException e)
+    {
+      //BlLogger.logMessage("");
+    }
+    taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
+    final List<String> taxCode = new ArrayList<>();
+    if(null != abstractOrder.getDeliveryMode()) {
+      if ("pickup".equalsIgnoreCase(abstractOrder.getDeliveryMode().getCode())) {
+        taxCode.add(abstractOrder.getEntries().stream().findAny().get().getProduct() instanceof BlSerialProductModel ?
+            BltaxapiConstants.SHIPPING_SALES_TAX_CODE :BltaxapiConstants.RENTAL_TAX_CODE);
+      }
+    }
+    if(CollectionUtils.isNotEmpty(abstractOrder.getAppliedCouponCodes())) {
+      taxCode.add(BltaxapiConstants.DISCOUNT_TAX_CODE);
+    }
+    taxRequest.setTaxCode(taxCode);
+    taxRequest.setLines(createdTaxLineForRequest(abstractOrder, taxRequest.getIsTaxExempt()));
+    taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
 
   }
 
-  private List<TaxLine> createdTaxLineForRequest(final AbstractOrderModel abstractOrder) {
+  private List<TaxLine> createdTaxLineForRequest(final AbstractOrderModel abstractOrder , final boolean value) {
 
-    List<TaxLine> taxLines = new ArrayList<>();
+    final List<TaxLine> taxLines = new ArrayList<>();
     for (final AbstractOrderEntryModel entry : abstractOrder.getEntries())
     {
       final TaxLine taxLine = new TaxLine();
       taxLine.setQuantity(entry.getQuantity().intValue());
       taxLine.setNumber(entry.getEntryNumber().toString());
       taxLine.setItemCode(entry.getProduct().getCode());
-      taxLine.setAmount(entry.getTotalPrice());
+      taxLine.setAmount(value ? 0d : entry.getTotalPrice());
       taxLine.setDescription(entry.getInfo());
-      taxLine.setAddresses(createAddressesForOrderTax(entry.getOrder()));
       taxLine.setTaxCode(setProductTaxCode(entry));
       taxLine.setCompletedOrderCount(2);
       taxLines.add(taxLine);
@@ -62,15 +87,15 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     final AddressModel deliveryAddressForOrder = abstractOrder.getDeliveryAddress();
     if (deliveryAddressForOrder != null)
     {
-      final AddressData shipTo = new AddressData();
+      final AddressesData shipTo = new AddressesData();
       shipTo.setFirstName(deliveryAddressForOrder.getFirstname());
       shipTo.setLastName(deliveryAddressForOrder.getLastname());
       shipTo.setLine1(deliveryAddressForOrder.getLine1());
       shipTo.setLine2(deliveryAddressForOrder.getLine2());
       shipTo.setCity(deliveryAddressForOrder.getTown());
       shipTo.setState(deliveryAddressForOrder.getDistrict());
-      shipTo.setRegion(deliveryAddressForOrder.getCountry() != null ? deliveryAddressForOrder.getCountry().getIsocode() : null);
-      shipTo.setCountry(deliveryAddressForOrder.getCountry() != null ? deliveryAddressForOrder.getCountry().getIsocode() : null);
+      shipTo.setRegion(null != deliveryAddressForOrder.getRegion()? deliveryAddressForOrder.getRegion().getIsocode() : null);
+      shipTo.setCountry(null != deliveryAddressForOrder.getCountry()? deliveryAddressForOrder.getCountry().getIsocode() : null);
       shipTo.setPostalCode(deliveryAddressForOrder.getPostalcode());
       shipTo.setPhone(deliveryAddressForOrder.getPhone1());
       shipTo.setEmail(deliveryAddressForOrder.getEmail());
@@ -78,7 +103,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shipTo.setAddressType("");
       addresses.setShipTo(shipTo);
     }
-       final AddressData shipFrom = new AddressData();
+       final AddressesData shipFrom = new AddressesData();
        shipFrom.setLine1("1664 Industrial Rd");
        shipFrom.setCity("San Carlos");
        shipFrom.setRegion("CA");
@@ -89,28 +114,49 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   }
 
 
-  private String setProductTaxCode(final AbstractOrderEntryModel entry) {
-    final BlProductModel productModel = (BlProductModel) getProductService().getProductForCode(entry.getProduct().getCode());
-    return productModel.getForSale() ? BltaxapiConstants.SALES_TAX_CODE: BltaxapiConstants.RENTAL_TAX_CODE;
-  }
+  private String setProductTaxCode(final AbstractOrderEntryModel entry) { // Have another way to check eg : isRentalCart
+      return entry.getProduct() instanceof BlSerialProductModel ? BltaxapiConstants.SALES_TAX_CODE
+          : BltaxapiConstants.RENTAL_TAX_CODE;
+    }
 
   private void setOrderDateToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) {
-      SimpleDateFormat simpleDateFormat = new SimpleDateFormat(BltaxapiConstants.DATE_FORMAT);
-    try {
-      String strDate = simpleDateFormat.format(abstractOrder.getDate());
-      taxRequest.setDate(simpleDateFormat.parse(strDate));
-    }
-    catch (Exception e) {
-   //
-    }
+   taxRequest.setDate(DateFormatUtils.format(abstractOrder.getDate(), BltaxapiConstants.DATE_FORMAT));
   }
 
-  private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) {
+
+
+  private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest)
+      throws ParseException {
         /// Needs to modify condition once able to get date for rental and expiry date
-        taxRequest.setIsTaxExempt(abstractOrder.getIsTaxExempt());
-        taxRequest.setTaxExemptExpiry(BooleanUtils.isTrue(abstractOrder.getIsTaxExempt()) ? abstractOrder.getExpirationTime() : null);
-        taxRequest.setTaxExemptNumber("DummyNumber");
+        final boolean isTaxExempt = abstractOrder.getUser().getIsTaxExempt();
+        if(isTaxExempt) {
+          taxRequest.setTaxExemptState(abstractOrder.getDeliveryAddress().getDistrict());
+          final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+          final String endDate = rentalDateDto.getSelectedToDate();
+          final Date endDay = new SimpleDateFormat(BltaxapiConstants.DATE_FORMAT).parse(endDate);
+          if (null != abstractOrder.getUser().getTaxExemptExpiry() && endDay
+                .before(abstractOrder.getUser().getTaxExemptExpiry())) {
+              taxRequest.setTaxExemptExpiry(abstractOrder.getUser().getTaxExemptExpiry());
+              taxRequest.setTaxExemptNumber("ExcemptNumber123");
+              taxRequest.setIsTaxExempt(isTaxExempt);
+          }
+          else {
+            taxRequest.setIsTaxExempt(false);
+          }
+        }
+        else {
+          taxRequest.setIsTaxExempt(false);
+        }
   }
+
+  public BlDatePickerService getBlDatePickerService() {
+    return blDatePickerService;
+  }
+
+  public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
+    this.blDatePickerService = blDatePickerService;
+  }
+
 
   public ProductService getProductService(){
     return productService;
