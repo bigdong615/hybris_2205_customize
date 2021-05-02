@@ -1,0 +1,45 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata cms-content_rentalDeliveryOrPickUpPage.impex =========================");
+
+$contentCatalog = blContentCatalog
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
+$jarResourceCms = $config-jarResourceCmsValue
+
+###  Page Template For Borrow Lenses Rental Cart Page ###
+INSERT_UPDATE PageTemplate; $contentCV[unique = true]; uid[unique = true]               ; name                                  ; frontendTemplateName            ; velocityTemplate[translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]; restrictedPageTypes(code); active[default = true]
+                          ;                          ; DeliveryOrPickUpCartPageTemplate ; Delivery Or Pickup Cart Page Template ; checkout/multi/deliveryOrPickup ; $jarResourceCms/structure-view/structure_RentalDeliveryOrPickUpCartPageTemplate.vm                     ; CategoryPage,ContentPage
+
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $contentCV)[unique = true][default = 'DeliveryOrPickUpCartPageTemplate']; validComponentTypes(code); compTypeGroup(code)
+                             ; PromoBannerSlot          ;                                                                                       ;                          ; wide
+                             ; SiteLogoHeaderSlot       ;                                                                                       ;                          ; logo
+                             ; HeaderLinkForSupportSlot ;                                                                                       ;                          ; headerlink
+                             ; MiniCartSlot             ;                                                                                       ;                          ; minicart
+                             ; FooterSlot               ;                                                                                       ;                          ; footer
+                             ; FooterSubscriptionSlot   ;                                                                                       ;                          ; wide
+                             ; FooterCopyRightslot      ;                                                                                       ;                          ; wide
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                ; position[unique = true]  ; pageTemplate(uid, $contentCV)[unique = true][default = 'DeliveryOrPickUpCartPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
+                                    ;                          ; PromoBannerSlot-DeliveryOrPickupCartpage          ; PromoBannerSlot          ;                                                                                           ; PromoBannerSlot                            ; true
+                                    ;                          ; SiteLogoHeaderSlot-DeliveryOrPickupCartpage       ; SiteLogoHeaderSlot       ;                                                                                           ; SiteLogoHeaderSlot                         ; true
+                                    ;                          ; HeaderLinkForSupportSlot-DeliveryOrPickupCartpage ; HeaderLinkForSupportSlot ;                                                                                           ; HeaderLinkForSupportSlot                   ; true
+                                    ;                          ; MiniCartSlot-DeliveryOrPickupCartpage             ; MiniCartSlot             ;                                                                                           ; MiniCartSlot                               ; true
+                                    ;                          ; FooterSlot-DeliveryOrPickupCartpage               ; FooterSlot               ;                                                                                           ; FooterSlot                                 ; true
+                                    ;                          ; FooterSubscriptionSlot-DeliveryOrPickupCartpage   ; FooterSubscriptionSlot   ;                                                                                           ; FooterSubscriptionSlot                     ; true
+                                    ;                          ; FooterCopyRightslot-DeliveryOrPickupCartpage      ; FooterCopyRightslot      ;                                                                                           ; FooterCopyRightslot                        ; true
+
+
+###  Create Content Page  ###
+INSERT_UPDATE ContentPage; $contentCV[unique = true]; uid[unique = true]       ; name                         ; masterTemplate(uid, $contentCV)  ; label            ; title ; defaultPage[default = 'true']; approvalStatus(code)[default = 'approved']; homepage[default = 'false']
+                         ;                          ; DeliveryOrPickupCartpage ; Delivery Or PickUp Cart Page ; DeliveryOrPickUpCartPageTemplate ; deliveryOrPickup ; Checkout
+
+
+
+
+
+
+

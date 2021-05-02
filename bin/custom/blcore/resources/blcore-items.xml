@@ -106,11 +106,6 @@
             <value code="NYC"/>
         </enumtype>
 
-        <enumtype generate="false" code="DayOfWeek" autocreate="false">
-            <value code="COURIER"/>
-            <value code="SHIPPED_LOCAL"/>
-        </enumtype>
-
         <enumtype generate="true" code="CarrierEnum" autocreate="true" dynamic="true">
             <value code="UPS"/>
             <value code="FEDEX"/>
@@ -119,6 +114,11 @@
         <enumtype generate="true" code="ShippingMethodTypeEnum" autocreate="true" dynamic="true">
             <value code="PER_WEIGHT_UNIT_TABLE"/>
             <value code="FLAT_RATE"/>
+        </enumtype>
+
+        <enumtype generate="true" code="AddressTypeEnum" autocreate="true" dynamic="true">
+            <value code="BUSINESS"/>
+            <value code="RESIDENTIAL"/>
         </enumtype>
         <!-- BL-542 End-->
 
@@ -167,7 +167,7 @@
 
         <relation code="PartnerPickUpStore2PickUpZoneRel" autocreate="true" generate="true" localized="false">
             <sourceElement qualifier="partnerPickUpStore" type="PartnerPickUpStore" cardinality="one">
-                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                <modifiers read="true" write="true" unique="true" search="true" initial="true"/>
             </sourceElement>
             <targetElement qualifier="blPickUpZoneDeliveryMode" type="BlPickUpZoneDeliveryMode" cardinality="many" ordered="false">
                 <modifiers read="true" write="true" search="true" optional="true"/>
@@ -1330,12 +1330,18 @@
                 </attributes>
             </itemtype>
 
+            <itemtype code="ZoneDeliveryModeValue" extends="GenericItem" autocreate="false" generate="false" >
+                <attributes>
+                    <attribute qualifier="fixedAmount" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
             <itemtype code="ZoneDeliveryMode" extends="DeliveryMode" autocreate="false" generate="false">
                 <attributes>
-                    <attribute qualifier="deliveryModeType" type="ShippingGroup" autocreate="true">
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
-                    </attribute>
                     <attribute qualifier="daysToSkip" type="DaysCollection" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
@@ -1357,6 +1363,10 @@
                         <modifiers read="true" write="false" search="true" initial="true" />
                     </attribute>
                     <attribute qualifier="carrier" type="CarrierEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="false" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="warehouse" type="Warehouse" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="false" search="true" initial="true" />
                     </attribute>
@@ -1417,6 +1427,11 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="warehousePickUp" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -1466,6 +1481,39 @@
                     <attribute qualifier="totalDamageWaiverCost" type="java.lang.Double">
                         <description>Total cost of selected Damage Waiver</description>
                         <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="pickUpByMe" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.TRUE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="firstName" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="lastName" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="email" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="phone" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
+        <typegroup>
+            <itemtype code="Address" autocreate="false" generate="false">
+                <description>Extending Address type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="addressType" type="AddressTypeEnum">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                 </attributes>
             </itemtype>

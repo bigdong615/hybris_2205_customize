@@ -89,6 +89,10 @@
         <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
         </c:if>
 
+        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+            <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>
+        </c:if>
+
 		<%-- Cms Action JavaScript files --%>
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
@@ -917,6 +921,125 @@
                           keyboard: false,
                       } ).mount());
                   </script>
+        </c:if>
+
+        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+            <script>
+                //Replace button text
+                $(".dropdown-menu li button").click(function(){
+                  $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+                  $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+                });
+                // Mobile Menu styles - #my-menu is required for ALL pages
+                document.addEventListener(
+                    "DOMContentLoaded", () => {
+                        new Mmenu( "#my-menu", {
+                            extensions: ["fullscreen","position-front"],
+                            navbars		: [{
+                                position: "top",
+                                content : [ "close", "logo" ]
+                            }],
+                        } );
+                    }
+                );
+                // Initialize Mega menu rollover - required for ALL pages
+                $('.menu-large').hover(
+                    function(){ $('.screen').addClass('show') },
+                    function(){ $('.screen').removeClass('show') }
+                );
+                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                const picker = new Litepicker({
+                    element: document.getElementById('litepicker'),
+                    plugins: ['mobilefriendly'],
+                    singleMode: false,
+                    numberOfMonths: 2,
+                    numberOfColumns: 2,
+                    autoApply: false,
+                    format: "MMM D, YYYY",
+                    resetButton: () => {
+                         let btn = document.createElement('button');
+                         btn.innerText = 'Reset Dates';
+                         btn.className = 'reset-button';
+                         btn.addEventListener('click', (evt) => {
+                         evt.preventDefault();
+                         $.ajax({
+                            url: ACC.config.encodedContextPath + '/resetDatepicker',
+                            type: "GET",
+                            success: function (data) {
+                                if(data=='success')
+                                window.location.reload();
+                            },
+                            error: function (xhr, textStatus, error) {
+
+                            }
+                        });
+                        });
+                        return btn;
+                        },
+                    setup: (picker) => {
+                        picker.on('button:apply', (date1, date2) => {
+                        $.ajax({
+                            url: ACC.config.encodedContextPath + '/datepicker',
+                            data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                            type: "GET",
+                            success: function (data) {
+                                if(data=='success')
+                                window.location.reload();
+                            },
+                            error: function (xhr, textStatus, error) {
+
+                            }
+                        });
+                        });
+                        }
+                });
+                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                const summarypicker = new Litepicker({
+                    element: document.getElementById('summary-litepicker'),
+                    plugins: ['mobilefriendly'],
+                    singleMode: false,
+                    numberOfMonths: 2,
+                    numberOfColumns: 2,
+                    autoApply: false,
+                    format: "MMM D, YYYY",
+                    resetButton: () => {
+                         let btn = document.createElement('button');
+                         btn.innerText = 'Reset Dates';
+                         btn.className = 'reset-button';
+                         btn.addEventListener('click', (evt) => {
+                         evt.preventDefault();
+                             $.ajax({
+                                url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                type: "GET",
+                                success: function (data) {
+                                    if(data=='success')
+                                    window.location.reload();
+                                },
+                                error: function (xhr, textStatus, error) {
+
+                                }
+                            });
+                        });
+                        return btn;
+                    },
+                    setup: (picker) => {
+                        picker.on('button:apply', (date1, date2) => {
+                            $.ajax({
+                                url: ACC.config.encodedContextPath + '/datepicker',
+                                data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                type: "GET",
+                                success: function (data) {
+                                    if(data=='success')
+                                    window.location.reload();
+                                },
+                                error: function (xhr, textStatus, error) {
+
+                                }
+                            });
+                        });
+                    }
+                });
+            </script>
         </c:if>
 	</c:otherwise>
 </c:choose>

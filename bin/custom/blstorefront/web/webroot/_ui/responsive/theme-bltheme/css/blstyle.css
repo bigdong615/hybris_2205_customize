@@ -491,7 +491,7 @@ input[type=checkbox] + label:before{ border-radius:0px; }
 #usedProductList a:not(.btn) { color: #3d3c3c; }
 .hide-product-row { display: none; }
 
-footer { padding: 60px 0 30px; background-color: #3d3c3c; margin-top: 30px; }
+footer { padding: 60px 0 30px; background-color: #3d3c3c; /*margin-top: 30px;*/ }
 footer ul { padding-left: 0; }
 footer ul li { padding: 6px 0; }
 footer b { display: block; }
