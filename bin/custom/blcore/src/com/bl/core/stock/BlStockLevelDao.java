@@ -66,6 +66,6 @@ public interface BlStockLevelDao
 	 *           the sku product code
 	 * @return boolean
 	 */
-	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode,
+	public boolean isUsedGearSerialNotAssignedToAnyRentalOrders(final String serialProductCode, final String productCode,
 			final Date startDate, final Date endDate);
 }

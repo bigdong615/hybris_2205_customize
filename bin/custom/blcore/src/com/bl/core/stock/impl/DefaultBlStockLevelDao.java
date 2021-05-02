@@ -162,7 +162,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode,
+	public boolean isUsedGearSerialNotAssignedToAnyRentalOrders(final String serialProductCode, final String productCode,
 			final Date startDay, final Date endDay)
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(USED_GEAR_SERIAL_ASSIGNED_TO_RENTAL_ORDER_QUERY);
@@ -176,7 +176,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		if (CollectionUtils.isEmpty(stockLevels))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"No Stock Levels found for product : {} and serial product {} with date between : {} and {}", productCode,
+					"The used gear serial product : {} is not assigned to any rental orders with " + "date between : {} and {}",
 					serialProductCode, startDay, endDay);
 			return Boolean.TRUE;
 		}
