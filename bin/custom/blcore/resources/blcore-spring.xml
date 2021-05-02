@@ -828,4 +828,23 @@
 		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
 		<constructor-arg value="BlDamageWaiverPricing"/>
 	</bean>
+	
+	<!-- BL-553 - Stock creation -->
+	<bean id="blStockCreationJob" class="com.bl.core.job.BlStockCreationJob" parent="abstractJobPerformable">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
+	<bean id="blAutomatedStockCreationJob" class="com.bl.core.job.BlAutomatedStockCreationJob" parent="abstractJobPerformable">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
+	<bean id="blStockService" class="com.bl.core.stock.impl.DefaultBlStockService">
+		<property name="modelService" ref="modelService"/>
+		<property name="productDao" ref="productDao"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+	
+	<alias alias="productDao" name="defaultBlProductDao"/>
+	<bean id="defaultBlProductDao" class="com.bl.core.product.dao.impl.DefaultBlProductDao" parent="defaultProductDao">
+	</bean>
 </beans>

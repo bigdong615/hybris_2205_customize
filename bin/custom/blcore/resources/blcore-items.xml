@@ -9,6 +9,7 @@
         <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
                         type="set"/>
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
+        <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
     </collectiontypes>
 
@@ -1044,6 +1045,28 @@
                 <key attribute="date"/>
               </index>
             </indexes>
+          </itemtype>
+
+          <itemtype code="BlStockCreationCronJob" extends="CronJob">
+            <description>This type represents a cron job that creates Stock.</description>
+            <deployment table="BlStockCreationJob" typecode="12212"/>
+            <attributes>
+              <attribute qualifier="startDate" type="java.util.Date">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>The stock will be created from this start date.</description>
+              </attribute>
+              <attribute qualifier="endDate" type="java.util.Date">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>The stock will be created to this end date.</description>
+              </attribute>
+              <attribute type="SkuProductList" qualifier="skuProductList">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" search="true" optional="true"/>
+                <description>It contains the list of products of which the stock needs to be created</description>
+              </attribute>
+            </attributes>
           </itemtype>
 
           <!--BL-166: This item is created to store product related video information-->

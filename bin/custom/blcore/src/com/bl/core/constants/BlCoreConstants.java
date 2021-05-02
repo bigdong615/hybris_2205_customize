@@ -73,6 +73,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	//Inventory Availability
 	public static final String ACTIVE = "active";
 	public static final String PRODUCT_CODE = "productCode";
+	public static final String SERIAL_PRODUCT_CODE = "serialProductCode";
 	public static final String START_DATE = "startDate";
 	public static final String END_DATE = "endDate";
 	public static final String WAREHOUSES = "warehouses";
@@ -110,8 +111,14 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CLEAR_USED_GEAR_CATEGORY = "usedClear";
 
 	public static final String DEFAULT_DAYS = "7";
+	public static final String DISCONTINUED = "discontinued";
+	public static final String APPROVED = "approved";
 
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
+	public static final String PRODUCT_CATALOG = "catalog";
+	public static final String VERSION = "version";
+	public static final String STAGED = "Staged";
+	public static final String CATALOG_VALUE = "blProductCatalog";
 
 	public static final String VIDEO = "VIDEO";
 	public static final String PHOTO = "PHOTO";
