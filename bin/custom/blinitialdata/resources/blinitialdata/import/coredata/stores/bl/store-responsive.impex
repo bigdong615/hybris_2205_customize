@@ -38,3 +38,7 @@ INSERT_UPDATE BaseStore2DeliveryModeRel ; source(uid)[unique=true] ; target(code
                                         ; bl                       ; pickup                    
                                         ; bl                       ; free-standard-shipping    
                                         
+INSERT_UPDATE BaseStore2WarehouseRel;source(uid)[unique=true];target(code)[unique=true]
+;$storeUid;warehouse_ca
+;$storeUid;warehouse_ma
+ 
