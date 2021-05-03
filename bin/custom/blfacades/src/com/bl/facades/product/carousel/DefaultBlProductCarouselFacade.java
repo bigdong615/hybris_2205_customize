@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
+import com.bl.logging.BlLogger;
+
 
 /**
  * This class is used to get all the list of products data assigned in the component. Products such as Active,
@@ -22,6 +27,8 @@ import java.util.List;
  */
 public class DefaultBlProductCarouselFacade extends DefaultProductCarouselFacade
 {
+	private static final Logger LOG = Logger.getLogger(DefaultBlProductCarouselFacade.class);
+
 	/**
 	 * Fetches list of products for a given product carousel component when not in preview (i.e., no cmsTicketId in
 	 * present in the session).
@@ -37,14 +44,21 @@ public class DefaultBlProductCarouselFacade extends DefaultProductCarouselFacade
 
 		for (final ProductModel productModel : component.getProducts())
 		{
-			products.add(getProductFacade().getProductForCodeAndOptions(productModel.getCode(), getProductOptionsForCarousel()));
+			final ProductData productDataForCodeAndOptions = getProductFacade().getProductForCodeAndOptions(productModel.getCode(),
+					getProductOptionsForCarousel());
+			products.add(productDataForCodeAndOptions);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Product Code : {} and Price : {}",
+					productDataForCodeAndOptions.getCode(), productDataForCodeAndOptions.getPrice().getFormattedValue());
 		}
 
 		for (final CategoryModel categoryModel : component.getCategories())
 		{
 			for (final ProductModel productModel : categoryModel.getProducts())
 			{
-				products.add(getProductFacade().getProductForCodeAndOptions(productModel.getCode(), getProductOptionsForCarousel()));
+				final ProductData productForCodeAndOptions = getProductFacade().getProductForCodeAndOptions(productModel.getCode(), getProductOptionsForCarousel());
+				products.add(productForCodeAndOptions);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Product Code : {} and Price : {}",
+						productForCodeAndOptions.getCode(), productForCodeAndOptions.getPrice().getFormattedValue());
 			}
 		}
 

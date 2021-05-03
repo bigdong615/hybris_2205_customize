@@ -9,6 +9,7 @@
         <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
                         type="set"/>
       <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
+      <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -90,6 +91,12 @@
             <value code="PART_OF_SHELF"/>
             <value code="UNKNOWN"/>
             <value code="WORK_STATION"/>
+        </enumtype>
+        
+        <enumtype generate="true" code="RentalGearType" autocreate="true" dynamic="true">
+            <value code="VIDEO"/>
+            <value code="PHOTO"/>
+            <value code="GEAR_GUARD_PRO"/>
         </enumtype>
 
     </enumtypes>
@@ -991,6 +998,28 @@
             </indexes>
           </itemtype>
 
+          <itemtype code="BlStockCreationCronJob" extends="CronJob">
+            <description>This type represents a cron job that creates Stock.</description>
+            <deployment table="BlStockCreationJob" typecode="12212"/>
+            <attributes>
+              <attribute qualifier="startDate" type="java.util.Date">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>The stock will be created from this start date.</description>
+              </attribute>
+              <attribute qualifier="endDate" type="java.util.Date">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>The stock will be created to this end date.</description>
+              </attribute>
+              <attribute type="SkuProductList" qualifier="skuProductList">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" search="true" optional="true"/>
+                <description>It contains the list of products of which the stock needs to be created</description>
+              </attribute>
+            </attributes>
+          </itemtype>
+
           <!--BL-166: This item is created to store product related video information-->
           <itemtype code="ProductVideo" autocreate="true" generate="true"
             jaloclass="com.bl.core.jalo.ProductVideo">
@@ -1185,6 +1214,66 @@
                </attribute>
              </attributes>
            </itemtype>
+           <itemtype code="BlDamageWaiverPricing" autocreate="true" generate="true"
+             jaloclass="com.bl.core.jalo.BlDamageWaiverPricing">
+             <description>This table is for calculating the Damage Waiver prices based on the SKU type</description>
+             <deployment table="blDamageWaiverPricing" typecode="12213" />
+             <attributes>
+               <attribute qualifier="damageWaiverGearType" type="RentalGearType">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>Damage Waiver Gear Type</description>
+               </attribute>
+               <attribute qualifier="waiverPercentage" type="java.lang.Double">
+                 <persistence type="property"/>
+                 <modifiers read="true" write="true" optional="false"/>
+                 <description>Damage Waiver Price Percent</description>
+               </attribute>
+             </attributes>
+           </itemtype>
          </typegroup>
+         <typegroup name="Cart">
+         	<itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
+         		<description>Extending the AbstractOrderEntry with additional attributes.</description>
+         		<attributes>
+         			<attribute qualifier="gearGuardWaiverPrice" type="java.lang.Double">
+	         			<persistence type="property"/>
+	                 	<modifiers read="true" write="true" optional="true"/>
+	                 	<description>Gear Guard Value Waiver Price for Rental Gear</description>         				
+         			</attribute>
+         			<attribute qualifier="gearGuardProFullWaiverPrice" type="java.lang.Double">
+	         			<persistence type="property"/>
+	                 	<modifiers read="true" write="true" optional="true"/>
+	                 	<description>Gear Guard Pro Full Value Waiver Price for Rental Gear</description>         				
+         			</attribute>
+         			<attribute qualifier="gearGuardWaiverSelected" type="java.lang.Boolean">
+	         			<persistence type="property"/>
+	                 	<modifiers read="true" write="true" optional="true"/>
+	                 	<description>Flag to set if Gear Guard Value Waiver is selected for Rental Gear</description>         				
+         			</attribute>
+         			<attribute qualifier="gearGuardProFullWaiverSelected" type="java.lang.Boolean">
+	         			<persistence type="property"/>
+	                 	<modifiers read="true" write="true" optional="true"/>
+	                 	<description>Flag to set if Gear Guard Pro Full Value Waiver is selected for Rental Gear</description>         				
+         			</attribute>
+         			<attribute qualifier="noDamageWaiverSelected" type="java.lang.Boolean">
+	         			<persistence type="property"/>
+	                 	<modifiers read="true" write="true" optional="true"/>
+	                 	<description>Flag to set if No Damage Waiver is selected for Rental Gear</description>         				
+         			</attribute>
+         		</attributes>
+         	</itemtype>
+         </typegroup>
+         <typegroup name="Order">
+			<itemtype code="AbstractOrder" autocreate="false" generate="false">
+				<description>Extending AbstractOrder type with additional attributes.</description>
+				<attributes>
+					<attribute qualifier="totalDamageWaiverCost" type="java.lang.Double">
+						<description>Total cost of selected Damage Waiver</description>
+						<persistence type="property"/>
+					</attribute>
+				</attributes>
+			</itemtype>
+		</typegroup>
 	</itemtypes>
 </items>

@@ -711,6 +711,7 @@
 	<alias name="defaultBlCartService" alias="cartService" />
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
 		<property name="commerceCartService" ref="commerceCartService" />
+		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
 	</bean>
 
 	<!--Added for upcoming products-->
@@ -821,4 +822,39 @@
 		class="com.bl.core.services.tax.DefaultBlExternalTaxesService" parent="defaultExternalTaxesService" />
 
 
+
+	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
+	<alias name="defaultBlCalculationService" alias="calculationService"/>
+	<bean id="defaultBlCalculationService" class="com.bl.core.order.impl.DefaultBlCalculationService" parent="defaultCalculationService">
+		<property name="commercePriceService" ref="commercePriceService"/>
+		<property name="blDamageWaiverGenericDao" ref="blDamageWaiverGenericDao"/>
+		<property name="defaultOrderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
+		<property name="defaultCommonI18NService" ref="commonI18NService"/>
+	</bean>
+	
+	<!-- BL-462 : Generic dao to get the full list of Damage Waiver Percantage defined for damage Waiver types -->
+	<alias name="defaultBlDamageWaiverGenericDao" alias="blDamageWaiverGenericDao"/>
+	<bean name="defaultBlDamageWaiverGenericDao"
+		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
+		<constructor-arg value="BlDamageWaiverPricing"/>
+	</bean>
+	
+	<!-- BL-553 - Stock creation -->
+	<bean id="blStockCreationJob" class="com.bl.core.job.BlStockCreationJob" parent="abstractJobPerformable">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
+	<bean id="blAutomatedStockCreationJob" class="com.bl.core.job.BlAutomatedStockCreationJob" parent="abstractJobPerformable">
+		<property name="blStockService" ref="blStockService"/>
+	</bean>
+	
+	<bean id="blStockService" class="com.bl.core.stock.impl.DefaultBlStockService">
+		<property name="modelService" ref="modelService"/>
+		<property name="productDao" ref="productDao"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+	
+	<alias alias="productDao" name="defaultBlProductDao"/>
+	<bean id="defaultBlProductDao" class="com.bl.core.product.dao.impl.DefaultBlProductDao" parent="defaultProductDao">
+	</bean>
 </beans>

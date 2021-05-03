@@ -2,6 +2,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.cart.BlCartFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +38,9 @@ public class BlDatePickerController extends AbstractPageController
 
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
+	
+	@Resource(name ="cartFacade")
+	private BlCartFacade blCartFacade;
 
 	/**
 	 * It sets the selected date in cookie
@@ -76,6 +80,8 @@ public class BlDatePickerController extends AbstractPageController
 					datePickerCookieValue.append(BlControllerConstants.SEPARATOR);
 					datePickerCookieValue.append(endDay);
 					blRentalDateCookieGenerator.addCookie(response, datePickerCookieValue.toString());
+					// Resetting cart and cart entries calculation flag to false, so that it recalculates once the rental dates is changed
+					getBlCartFacade().resetCartCalculationFlag(); 
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Cookie added for {} for the duration of {} and {} ",
 							BlControllerConstants.SELECTED_DATE, startDay, endDay);
 				}
@@ -105,6 +111,24 @@ public class BlDatePickerController extends AbstractPageController
 	{
 		blRentalDateCookieGenerator.removeCookie(response);
 		blDatePickerService.removeRentalDatesFromSession();
+		// Resetting cart and cart entries calculation flag to false, so that it recalculates once the rental dates is reset
+		getBlCartFacade().resetCartCalculationFlag(); 
 		return BlControllerConstants.SUCCESS;
+	}
+
+	/**
+	 * @return the blCartFacade
+	 */
+	public BlCartFacade getBlCartFacade()
+	{
+		return blCartFacade;
+	}
+
+	/**
+	 * @param blCartFacade the blCartFacade to set
+	 */
+	public void setBlCartFacade(BlCartFacade blCartFacade)
+	{
+		this.blCartFacade = blCartFacade;
 	}
 }

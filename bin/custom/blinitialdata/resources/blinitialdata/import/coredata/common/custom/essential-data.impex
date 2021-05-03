@@ -35,13 +35,10 @@ INSERT_UPDATE Vendor ; code[unique=true] ; name
                      ; default           ; Default Vendor 
                      
 # Warehouse          
-INSERT_UPDATE Warehouse ; code[unique=true] ; name              ; vendor(code)[default=default] ; default[default=true] 
-                        ; default           ; Default Warehouse ;                               
-                        ; warehouse_s       ; Warehouse South   ;                               
-                        ; warehouse_e       ; Warehouse East    ;                               
-                        ; warehouse_w       ; Warehouse West    ;                               
-                        ; warehouse_n       ; Warehouse North   ;                               
-                        
+INSERT_UPDATE Warehouse ; code[unique=true] ; name ; vendor(code)[default=default] ; default[default=false] 
+                        ; warehouse_ca      ; CA   ;                               
+                        ; warehouse_ma      ; MA   ;                               
+                                                 
 # Disable preview for email pages
 UPDATE CMSPageType ; code[unique=true] ; previewDisabled 
                    ; EmailPage         ; true            
@@ -152,6 +149,22 @@ INSERT_UPDATE BlConstrainedPricingRatio ;duration(code)[unique=true];pricingRati
                                         ;21;2.90
                                         ;28;4.00
                                         ;90;12.86
+                                        
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
+;blStockCreationJob;blStockCreationJob
+;blAutomatedStockCreationJob;blAutomatedStockCreationJob
+
+INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
+;blStockCreationCronJob ;blStockCreationJob ; ;true;;
+
+INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
+;blAutomatedStockCreationCronJob ;blAutomatedStockCreationJob ; ;true;;
+
+ 
+INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
+                                    ; VIDEO                                   ; 28               
+                                    ; PHOTO                                   ; 26               
+                                    ; GEAR_GUARD_PRO                          ; 155              
 
 
 

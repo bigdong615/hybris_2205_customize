@@ -21,12 +21,52 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
     getBlCartService().clearCartEntries();
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void resetCartCalculationFlag()
+  {
+	  getBlCartService().resetCartCalculationFlag();
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void recalculateCartIfRequired()
+  {
+	  getBlCartService().recalculateCartIfRequired();
+  }
 
-  public BlCartService getBlCartService() {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType)
+  {
+	  getBlCartService().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
+  }
+
+  /**
+   * Gets the bl cart service.
+   *
+   * @return the bl cart service
+   */
+  public BlCartService getBlCartService() 
+  {
     return blCartService;
   }
 
-  public void setBlCartService(BlCartService blCartService) {
+  /**
+   * Sets the bl cart service.
+   *
+   * @param blCartService the new bl cart service
+   */
+  public void setBlCartService(final BlCartService blCartService) 
+  {
     this.blCartService = blCartService;
   }
+
 }
