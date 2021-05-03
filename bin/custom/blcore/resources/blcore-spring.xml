@@ -812,7 +812,7 @@
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
 	</bean>
-	
+
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
 	<bean id="defaultBlCalculationService" class="com.bl.core.order.impl.DefaultBlCalculationService" parent="defaultCalculationService">
@@ -828,7 +828,7 @@
 		class="de.hybris.platform.servicelayer.internal.dao.DefaultGenericDao">
 		<constructor-arg value="BlDamageWaiverPricing"/>
 	</bean>
-	
+
 	<!-- BL-553 - Stock creation -->
 	<bean id="blStockCreationJob" class="com.bl.core.job.BlStockCreationJob" parent="abstractJobPerformable">
 		<property name="blStockService" ref="blStockService"/>
@@ -847,4 +847,13 @@
 	<alias alias="productDao" name="defaultBlProductDao"/>
 	<bean id="defaultBlProductDao" class="com.bl.core.product.dao.impl.DefaultBlProductDao" parent="defaultProductDao">
 	</bean>
+
+	<!--Shipping-->
+	<alias alias="zoneDeliveryModeDao" name="blDeliveryModeDao"/>
+	<bean id="blDeliveryModeDao" class="com.bl.core.shipping.dao.impl.DefaultBlDeliveryModeDao"/>
+
+	<alias alias="zoneDeliveryModeService" name="blDeliveryModeService"/>
+	<bean id="blDeliveryModeService" class="com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService"
+		  parent="defaultZoneDeliveryModeService"/>
+
 </beans>
