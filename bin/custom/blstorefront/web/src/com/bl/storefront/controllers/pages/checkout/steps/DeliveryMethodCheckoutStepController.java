@@ -62,12 +62,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		model.addAttribute("cartData", cartData);
 		model.addAttribute("shippingGroup", getBlCheckoutFacade().getAllShippingGroups());
-		model.addAttribute("deliveryAddresses", getDeliveryAddresses(cartData.getDeliveryAddress()));
+		model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
 		model.addAttribute("partnerPickUpLocation", getBlCheckoutFacade().getAllPartnerPickUpStore());
 		model.addAttribute("addressForm", new BlAddressForm());
 		model.addAttribute("blPickUpByForm", new BlPickUpByForm());
 		model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso("US"));
-		model.addAttribute("addressTypes", enumerationService.getEnumerationValues(AddressTypeEnum.class));
 		this.prepareDataForPage(model);
 		final ContentPageModel deliveryOrPickUpPage = getContentPageForLabelOrId(DeliveryOrPickupPage);
 		storeCmsPageInModel(model, deliveryOrPickUpPage);
@@ -113,16 +112,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 	 *           - the id of the delivery mode.
 	 * @return - a URL to the page to load.
 	 */
-	@GetMapping(value = "/saveDeliveryMethod")
+	@PostMapping(value = "/saveDeliveryMethod")
 	@RequireHardLogIn
-	@ResponseBody
 	public String saveDeliveryMethodOnCart(@RequestParam("delivery_method") final String selectedDeliveryMethod)
 	{
 		if (StringUtils.isNotEmpty(selectedDeliveryMethod))
 		{
 			getBlCheckoutFacade().setDeliveryMethod(selectedDeliveryMethod);
 		}
-		return "SUCCESS";
+		return getCheckoutStep().nextStep();
 	}
 
 	@GetMapping(value = "/choosePartner")
@@ -132,9 +130,6 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 	public Collection<BlPartnerPickUpStoreData> getAllPartnerPickUpStore() {
 		return getBlCheckoutFacade().getAllPartnerPickUpStore();
 	}
-
-
-
 
 	@GetMapping(value = "/choose")
 	@RequireHardLogIn

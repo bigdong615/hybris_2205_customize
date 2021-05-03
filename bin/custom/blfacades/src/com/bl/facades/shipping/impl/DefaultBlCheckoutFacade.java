@@ -64,7 +64,11 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
                                                                             final String pinCode) {
         final CartModel cartModel = getCart();
         if (cartModel != null && shippingGroup != null) {
-            return getDeliveryModeData(shippingGroup, partnerZone, pinCode, getRentalStartDate(), getRentalEndDate());
+            if(getRentalStartDate() != null && getRentalEndDate() != null) {
+                return getDeliveryModeData(shippingGroup, partnerZone, pinCode, getRentalStartDate(), getRentalEndDate());
+            } else {
+                return Collections.emptyList();
+            }
         }
         return Collections.emptyList();
     }
@@ -244,6 +248,30 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
         }
     }
 
+    @Override
+    public boolean setDeliveryModeIfAvailable()
+    {
+        final CartModel cartModel = getCart();
+        if (cartModel != null)
+        {
+            // validate delivery mode if already exists
+            //getCommerceCheckoutService().validateDeliveryMode(createCommerceCheckoutParameter(cartModel, true));
+
+            if (cartModel.getDeliveryMode() == null)
+            {
+                return false;
+                /*
+                final List<? extends DeliveryModeData> availableDeliveryModes = getSupportedDeliveryModes();
+                if (!availableDeliveryModes.isEmpty())
+                {
+                    return setDeliveryMode(availableDeliveryModes.get(0).getCode());
+                }*/
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -280,7 +308,8 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
      * @return rental start date
      */
     public String getRentalStartDate() {
-        return getBlDatePickerService().getRentalDatesFromSession().getSelectedFromDate();
+        return getBlDatePickerService().getRentalDatesFromSession() != null ? getBlDatePickerService().getRentalDatesFromSession()
+                .getSelectedFromDate() : null;
     }
 
     /**
@@ -289,7 +318,8 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
      * @return rental end date
      */
     public String getRentalEndDate() {
-        return getBlDatePickerService().getRentalDatesFromSession().getSelectedToDate();
+        return getBlDatePickerService().getRentalDatesFromSession() != null ? getBlDatePickerService().getRentalDatesFromSession()
+                .getSelectedToDate() : null;
     }
 
     public BlDeliveryModeService getBlZoneDeliveryModeService() {

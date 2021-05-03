@@ -7,6 +7,7 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.storefront.controllers.pages.checkout.BlAddressCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
+import com.bl.storefront.util.BlAddressDataUtil;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -47,8 +48,8 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 	private static final String DELIVERY_ADDRESS = "delivery-address";
 	private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
 
-	@Resource(name = "addressDataUtil")
-	private AddressDataUtil addressDataUtil;
+	@Resource(name = "blAddressDataUtil")
+	private BlAddressDataUtil addressDataUtil;
 
 	@Resource(name = "defaultBlCheckoutFacade")
 	private BlCheckoutFacade blCheckoutFacade;
@@ -121,6 +122,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 
 	@PostMapping(value = "/add")
 	@RequireHardLogIn
+	@ResponseBody
 	public String add(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
 					  final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{

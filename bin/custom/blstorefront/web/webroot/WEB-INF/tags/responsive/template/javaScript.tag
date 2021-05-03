@@ -967,7 +967,7 @@
                             type: "GET",
                             success: function (data) {
                                 if(data=='success')
-                                window.location.reload();
+                                window.location.href = ACC.config.encodedContextPath + '/cart';
                             },
                             error: function (xhr, textStatus, error) {
 
@@ -984,7 +984,7 @@
                             type: "GET",
                             success: function (data) {
                                 if(data=='success')
-                                window.location.reload();
+                                window.location.href = ACC.config.encodedContextPath + '/cart';
                             },
                             error: function (xhr, textStatus, error) {
 
@@ -1013,7 +1013,7 @@
                                 type: "GET",
                                 success: function (data) {
                                     if(data=='success')
-                                    window.location.reload();
+                                    window.location.href = ACC.config.encodedContextPath + '/cart';
                                 },
                                 error: function (xhr, textStatus, error) {
 
@@ -1030,7 +1030,7 @@
                                 type: "GET",
                                 success: function (data) {
                                     if(data=='success')
-                                    window.location.reload();
+                                    window.location.href = ACC.config.encodedContextPath + '/cart';
                                 },
                                 error: function (xhr, textStatus, error) {
 

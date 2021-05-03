@@ -104,18 +104,22 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
         final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST),
                 rentalStart);
-        if (result > BlInventoryScanLoggingConstants.TWO) {
-            return available ? getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
-                    null) : getShipToHomeDeliveryModesNotLike(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
-                    null);
-        } else if (result > BlInventoryScanLoggingConstants.ONE) {
-            return available ? getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
-                    pstCutOffTime) : getShipToHomeDeliveryModesNotLike(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
-                    pstCutOffTime);
-        } else {
-            return Collections.emptyList();
+        if(available) {
+            if (result >= BlInventoryScanLoggingConstants.TWO) {
+                return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+                        null);
+            } else if (result == BlInventoryScanLoggingConstants.ONE) {
+                final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST);
+                if(currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
+                    return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                            null);
+                } else {
+                    return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                            pstCutOffTime);
+                }
+            }
         }
-
+        return Collections.emptyList();
     }
 
     /**
@@ -145,7 +149,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
         final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST),
                 rentalStart);
-        if (result > BlInventoryScanLoggingConstants.TWO) {
+        if (result >= BlInventoryScanLoggingConstants.TWO) {
             return available ? getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, null)
                     : getPartnerZoneUPSStoreDeliveryModesNotLike(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, null);
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
@@ -162,12 +166,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     @Override
     public Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithRentalDatesForUPSStore(final String rentalStart,
                                                                                                              final String rentalEnd) {
-        Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getPartnerPickUpDeliveryModesWithRentalDates(
+        return getPartnerPickUpDeliveryModesWithRentalDates(
                 rentalStart, rentalEnd).stream().filter(this::checkDaysToSkipForDeliveryMode).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
-            return blPickUpZoneDeliveryModeModels;
-        }
-        return Collections.emptyList();
     }
 
     /**
@@ -273,14 +273,20 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 } else {
                     calculatedValueMap = getCalculatedWeightForDelivery(null, cart);
                 }
-                final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
-                        calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
-                                BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getCode());
-                if(shippingCostModel != null) {
-                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping calculated amount: {} ", shippingCostModel.getAmount());
-                    return shippingCostModel.getAmount();
+                try {
+                    final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
+                            calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
+                                    BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getCode());
+                    if(shippingCostModel != null) {
+                        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping calculated amount: {} ",
+                                shippingCostModel.getAmount());
+                        return shippingCostModel.getAmount();
+                    }
+                } catch(Exception e) {
+                    BlLogger.logMessage(LOG, Level.ERROR,"Exception while calculating delivery cost");
                 }
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"ShippingCostModel is null, Shipping amount: {} ", BlInventoryScanLoggingConstants.ZERO);
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"ShippingCostModel is null, Shipping amount: {} ",
+                        BlInventoryScanLoggingConstants.ZERO);
                 return BlInventoryScanLoggingConstants.ZERO;
             } else {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping fixed amount: {} ", valueModel.getValue());
@@ -302,35 +308,38 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         int maxLength = BlInventoryScanLoggingConstants.ZERO;
         int maxHeight = BlInventoryScanLoggingConstants.ZERO;
         int sumWidth = BlInventoryScanLoggingConstants.ZERO;
-        if(null != order) {
-            for(AbstractOrderEntryModel entry : order.getEntries()) {
-                final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                if(blSerialProduct != null) {
-                    totalWeight = getBigDecimal(totalWeight, blSerialProduct);
-                    sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
-                    maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
-                    maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
+        try {
+            if(null != order) {
+                for(AbstractOrderEntryModel entry : order.getEntries()) {
+                    final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
+                    if(blSerialProduct != null) {
+                        totalWeight = getBigDecimal(totalWeight, blSerialProduct);
+                        sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
+                        maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
+                    }
+                }
+            } else {
+                for(AbstractOrderEntryModel entry : cart.getEntries()) {
+                    final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
+                    if(blSerialProduct != null) {
+                        totalWeight = getBigDecimal(totalWeight, blSerialProduct);
+                        sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
+                        maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
+                        maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
+                    }
                 }
             }
-        } else {
-            for(AbstractOrderEntryModel entry : cart.getEntries()) {
-                final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                if(blSerialProduct != null) {
-                    totalWeight = getBigDecimal(totalWeight, blSerialProduct);
-                    sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
-                    maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
-                    maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
-                }
-            }
+            final double dimensionalWeight = (maxHeight * sumWidth * maxLength) /
+                    Config.getInt(BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR_KEY, BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR);
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Total weight: {} ", totalWeight.doubleValue());
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Dimensional weight: {} ", dimensionalWeight);
+
+            valueMap.put(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT, totalWeight.doubleValue());
+            valueMap.put(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT, dimensionalWeight);
+        } catch(Exception e) {
+            BlLogger.logMessage(LOG, Level.ERROR,"Exception while calculating delivery cost");
         }
-        final double dimensionalWeight = (maxHeight * sumWidth * maxLength) /
-                Config.getInt(BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR_KEY, BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR);
-
-        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Total weight: {} ", totalWeight.doubleValue());
-        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Dimensional weight: {} ", dimensionalWeight);
-
-        valueMap.put(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT, totalWeight.doubleValue());
-        valueMap.put(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT, dimensionalWeight);
         return valueMap;
     }
 
@@ -382,7 +391,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * @return boolean for current delivery mode to disable or not
      */
     public boolean checkDaysToSkipForDeliveryMode(final DeliveryModeModel deliveryMode) {
-        DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST);
+        final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST);
         if(deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
             final BlPickUpZoneDeliveryModeModel zoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) deliveryMode;
             return getResultForDayToSkip(currentDayOfWeek, zoneDeliveryModeModel);
@@ -407,7 +416,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private boolean getResultForDayToSkip(final DayOfWeek currentDayOfWeek, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
         final Collection<de.hybris.platform.cronjob.enums.DayOfWeek> dayOfWeeks = zoneDeliveryModeModel.getDaysToSkip();
         for(de.hybris.platform.cronjob.enums.DayOfWeek day : dayOfWeeks) {
-            if(day.toString().equals(currentDayOfWeek)) {
+            if(day.getCode().equals(currentDayOfWeek.toString())) {
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Current day is present in days to skip: {} ", currentDayOfWeek);
                 return false;
             }

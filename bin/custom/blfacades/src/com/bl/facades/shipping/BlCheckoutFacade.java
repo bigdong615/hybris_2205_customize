@@ -108,4 +108,10 @@ public interface BlCheckoutFacade {
      * @return success or error
      */
     String removeDeliveryDetails();
+
+    /**
+     * method will set delivery mode for payment flow
+     * @return
+     */
+    boolean setDeliveryModeIfAvailable();
 }

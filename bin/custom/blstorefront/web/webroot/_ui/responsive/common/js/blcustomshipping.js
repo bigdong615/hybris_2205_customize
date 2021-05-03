@@ -81,7 +81,7 @@ function shipToHomeShippingMethods() {
         type: "GET",
         dataType: 'json',
         success: function (data) {
-            if(data != null) {
+            if(data != null && data != '') {
                 let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="btn btn-block btn-outline text-start my-4">';
                 let numberSelected = 0;
                 for (let i = 0; i < data.length; i++) {
@@ -93,6 +93,8 @@ function shipToHomeShippingMethods() {
                 }
                 shippingModes += '</select>';
                 $('#shipToHomeShippingMethods').html(shippingModes);
+            } else {
+                showErrorNotification('Rental Dates not eligible for the selected shipping option!!');
             }
         },
         error: function (data) {
@@ -114,50 +116,48 @@ function shippingMethodContinue() {
 
 function shipToHomeShippingContinue(shippingMethod) {
     var savedAddress = null;
-    var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="select-box"]').val();
+    var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
     if($('#ship-it-shippingAddressFormDiv').css('display') == "none") {
         savedAddress = $('select[id="ship-it-savedAddresses"]').val();
         (async() => {
-          await saveSelectedAddress(savedAddress);
+          await saveSelectedAddress(savedAddress, deliveryMode);
         })();
     } else {
-        var firstName = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]').val();
-        var lastName = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').val();
-        var line1 = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').val();
-        var line2 = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]').val();
-        var townCity = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.townCity"]').val();
-        var postcode = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.postcode"]').val();
-        var regionIso = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.countryIso"]').val();
-        var addressType = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.addressType"]').val();
-        var email = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]').val();
-        var phone = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]').val();
-        if(validateField(firstName) && validateField(lastName) && validateField(line1) && validateField(townCity) && validateField(postcode)
-                && validateField(regionIso) && validateEmail(email) && validatePhone(phone)) {
+        var firstName = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
+        var lastName = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
+        var line1 = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]');
+        var line2 = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]');
+        var townCity = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.townCity"]');
+        var postcode = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.postcode"]');
+        var regionIso = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('select[id="address.countryIso"]');
+        var email = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
+        var phone = $('#ship-it-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
+        if(validateField(firstName.val(), firstName) && validateField(lastName.val(), lastName) && validateField(line1.val(), line1) &&
+            validateField(townCity.val(), townCity) && validateField(postcode.val(), postcode) && validateField(regionIso.val(), regionIso)
+            && validateEmail(email.val(), email) && validatePhone(phone.val(), phone)) {
             let addressForm = {
-                addressType : addressType,
-                firstName : firstName,
-                lastName : lastName,
-                line1 : line1,
-                line2 : line2,
-                townCity : townCity,
-                regionIso : regionIso,
+                firstName : firstName.val(),
+                lastName : lastName.val(),
+                line1 : line1.val(),
+                line2 : line2.val(),
+                townCity : townCity.val(),
+                regionIso : regionIso.val(),
                 countryIso : 'US',
-                postcode : postcode,
-                saveInAddressBook : true,
-                phone : phone,
-                email : email
+                postcode : postcode.val(),
+                saveInAddressBook : $('#ship-it-shippingAddressForm').find('input[id="save-address"]').prop("checked"),
+                phone : phone.val(),
+                email : email.val()
             };
             (async() => {
-              await addNewAddress(addressForm);
+                await addNewAddress(addressForm, deliveryMode);
             })();
         } else {
             showErrorNotification("Please enter mandatory fields values!!");
         }
     }
-    saveDeliveryMode(deliveryMode);
 }
 
-async function saveSelectedAddress(selectedAddress) {
+async function saveSelectedAddress(selectedAddress, deliveryMode) {
     $.ajax({
         url: ACC.config.encodedContextPath + '/checkout/multi/delivery-address/select',
         data: {
@@ -166,8 +166,8 @@ async function saveSelectedAddress(selectedAddress) {
         type: "GET",
         async: false,
         success: function (data) {
-            if(data != null) {
-                console.log(data);
+            if(data == 'SUCCESS') {
+                saveDeliveryMode(deliveryMode);
             }
         },
         error: function (data) {
@@ -176,7 +176,7 @@ async function saveSelectedAddress(selectedAddress) {
     });
 }
 
-async function addNewAddress(addressForm) {
+async function addNewAddress(addressForm, deliveryMode) {
     $.ajax({
         url: ACC.config.encodedContextPath + '/checkout/multi/delivery-address/add',
         data: JSON.stringify(addressForm),
@@ -187,7 +187,7 @@ async function addNewAddress(addressForm) {
         cache : false,
         success: function (data) {
             if(data != null) {
-                console.log(data);
+                saveDeliveryMode(deliveryMode);
             }
         },
         error: function (data) {
@@ -202,13 +202,11 @@ async function saveDeliveryMode(deliveryMode) {
         data: {
             delivery_method: deliveryMode
         },
-        type: "GET",
+        type: "POST",
         async: false,
         success: function (data) {
-            if(data != null) {
-                console.log(data);
-                window.location.reload();
-            }
+            window.location.reload();
+            //TODO: Handle for payment method for checkout
         },
         error: function (data) {
             console.log('error');
@@ -333,28 +331,30 @@ function showPickUpByMeClick() {
     $("#ship-it-pickup-person").hide()
 }
 
-function validateAddress(addressType) {
-    return addressType != null ? addressType : "RESIDENTIAL";
-}
-
-function validateField(attribute) {
+function validateField(attribute, fieldName) {
     if(attribute && attribute.trim() != '' && attribute.length < 255) {
+        fieldName.removeClass('formControlErrorClass');
         return true;
     }
+    fieldName.addClass('formControlErrorClass');
     return false;
 }
 
-function validateEmail(email) {
+function validateEmail(email, fieldName) {
     if(email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+        fieldName.removeClass('formControlErrorClass');
         return true;
     }
-    return true;
+    fieldName.addClass('formControlErrorClass');
+    return false;
 }
 
-function validatePhone(phone) {
+function validatePhone(phone, fieldName) {
     if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
+        fieldName.removeClass('formControlErrorClass');
         return true;
     }
+    fieldName.addClass('formControlErrorClass');
     return false;
 }
 

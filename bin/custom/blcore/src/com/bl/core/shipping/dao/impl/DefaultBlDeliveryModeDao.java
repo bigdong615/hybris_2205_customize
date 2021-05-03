@@ -95,7 +95,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     }
 
     @Override
-    public PartnerPickUpStoreModel getPartnerPickUpStoreFromPartnerZone(String partnerZone) {
+    public PartnerPickUpStoreModel getPartnerPickUpStoreFromPartnerZone(final String partnerZone) {
         final String barcodeList = "select distinct{pickStore.pk} from {PartnerPickUpStore as pickStore}, " +
                 "{BlPickUpZoneDeliveryMode as pick} where {pick.partnerPickUpStore} = {pickStore.pk} and {pick.active} = 1 " +
                 "and {pickStore.code} = ?partnerZone";
