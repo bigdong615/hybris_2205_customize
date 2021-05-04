@@ -198,11 +198,11 @@ async function addNewAddress(addressForm, deliveryMode) {
 
 async function saveDeliveryMode(deliveryMode) {
     $.ajax({
-        url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryMethod',
+        url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/select',
         data: {
             delivery_method: deliveryMode
         },
-        type: "POST",
+        type: "GET",
         async: false,
         success: function (data) {
             window.location.reload();

@@ -62,11 +62,11 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	private static final Logger LOGGER = Logger.getLogger(PaymentMethodCheckoutStepController.class);
 
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
+
 	@Resource(name = "addressDataUtil")
 	private AddressDataUtil addressDataUtil;
-
-	@Resource(name = "defaultBlCheckoutFacade")
-	private BlCheckoutFacade blCheckoutFacade;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -136,7 +136,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
-		blCheckoutFacade.setDeliveryModeIfAvailable();
+		getCheckoutFacade().setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
 
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
@@ -414,6 +414,15 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		CYBERSOURCE_SOP_CARD_TYPES.put("amex", "003");
 		CYBERSOURCE_SOP_CARD_TYPES.put("diners", "005");
 		CYBERSOURCE_SOP_CARD_TYPES.put("maestro", "024");
+	}
+
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
+	}
+
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
 	}
 
 }

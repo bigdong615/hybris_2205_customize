@@ -12,11 +12,12 @@ import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
+import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
-import de.hybris.platform.commercefacades.order.impl.DefaultCheckoutFacade;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
@@ -34,7 +35,7 @@ import java.util.*;
  *
  * @auther Namrata Lohar
  */
-public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements BlCheckoutFacade {
+public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade implements BlCheckoutFacade {
 
     private static final Logger LOG = Logger.getLogger(DefaultBlCheckoutFacade.class);
 
@@ -123,7 +124,7 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
                 final ZoneDeliveryModeData zoneDeliveryModeData = getZoneDeliveryModeConverter().convert(zoneDeliveryModeModel);
                 if(null != zoneDeliveryModeData) {
                     zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(null, getCart(), zoneDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), zoneDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(zoneDeliveryModeData);
                 }
@@ -156,7 +157,7 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
                 final BlPickUpZoneDeliveryModeData zoneDeliveryModeData = getBlPickUpZoneDeliveryModeConverter().convert(blPickUpZoneDeliveryModeModel);
                 if(null != zoneDeliveryModeData) {
                     zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(null, getCart(), blPickUpZoneDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), blPickUpZoneDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(zoneDeliveryModeData);
                 }
@@ -179,7 +180,7 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
                 final BlPickUpZoneDeliveryModeData zoneDeliveryModeData = getBlPickUpZoneDeliveryModeConverter().convert(blPickUpZoneDeliveryModeModel);
                 if(null != zoneDeliveryModeData) {
                     zoneDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(null, getCart(), blPickUpZoneDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), blPickUpZoneDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(zoneDeliveryModeData);
                 }
@@ -203,7 +204,7 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
                 final BlRushDeliveryModeData blRushDeliveryModeData = getBlRushDeliveryModeConverter().convert(blRushDeliveryModeModel);
                 if(null != blRushDeliveryModeData) {
                     blRushDeliveryModeData.setDeliveryCost(getPriceDataFactory().create(PriceDataType.BUY, BigDecimal.valueOf(
-                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel(null, getCart(), blRushDeliveryModeModel)),
+                            getBlZoneDeliveryModeService().getAmountForAppropriateZoneModel((AbstractOrderModel) getCart(), blRushDeliveryModeModel)),
                             getCart().getCurrency().getIsocode()));
                     resultDeliveryData.add(blRushDeliveryModeData);
                 }
@@ -216,7 +217,7 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
      * {@inheritDoc}
      */
     @Override
-    public boolean setDeliveryMethod(final String deliveryMethod) {
+    public boolean setDeliveryMode(final String deliveryMethod) {
         final CartModel cartModel = getCart();
         if (cartModel != null)
         {
@@ -239,10 +240,11 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
         final CartModel cartModel = getCart();
         if (cartModel != null)
         {
-            cartModel.setFirstName(blPickUpByForm.getFirstName());
-            cartModel.setLastName(blPickUpByForm.getLastName());
-            cartModel.setEmail(blPickUpByForm.getEmail());
-            cartModel.setPhone(blPickUpByForm.getEmail());
+            cartModel.setPickUpByMe(Boolean.FALSE);
+            cartModel.setPickUpPersonFirstName(blPickUpByForm.getFirstName());
+            cartModel.setPickUpPersonLastName(blPickUpByForm.getLastName());
+            cartModel.setPickUpPersonEmail(blPickUpByForm.getEmail());
+            cartModel.setPickUpPersonPhone(blPickUpByForm.getEmail());
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
         }
@@ -283,10 +285,11 @@ public class DefaultBlCheckoutFacade extends DefaultCheckoutFacade implements Bl
             cartModel.setDeliveryAddress(null);
             cartModel.setDeliveryCost(null);
             cartModel.setDeliveryMode(null);
-            cartModel.setFirstName(null);
-            cartModel.setLastName(null);
-            cartModel.setEmail(null);
-            cartModel.setPhone(null);
+            cartModel.setPickUpByMe(Boolean.TRUE);
+            cartModel.setPickUpPersonFirstName(null);
+            cartModel.setPickUpPersonLastName(null);
+            cartModel.setPickUpPersonEmail(null);
+            cartModel.setPickUpPersonPhone(null);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
             return "SUCCESS";
