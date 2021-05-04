@@ -174,7 +174,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode)
 	{
 		final Date currentDate = new Date();
-		return getBlStockLevelDao().isUsedGearSerialNotAssignedToAnyRentalOrders(serialProductCode, productCode, currentDate,
+		return getBlStockLevelDao().isUsedGearSerialNotAssignedToAnyRentalOrders(serialProductCode,
+				currentDate,
 				BlDateTimeUtils.getNextYearsSameDay());
 	}
 

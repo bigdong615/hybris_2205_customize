@@ -2,7 +2,9 @@ package com.bl.core.stock.impl;
 
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
+import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.model.ModelService;
 
@@ -12,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,6 +103,150 @@ public class DefaultBlStockService implements BlStockService
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void createStockRecordsForNewSerialProducts(final BlSerialProductModel blSerialProduct)
+	{
+		final LocalDate currentDate = LocalDate.now();
+		final LocalDate formattedEndDate = BlDateTimeUtils.getNextYearsSameDay().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(blSerialProduct);
+		if (CollectionUtils.isEmpty(stockLevels) && (SerialStatusEnum.ACTIVE).equals(blSerialProduct.getSerialStatus())
+				&& null != blSerialProduct.getWarehouseLocation())
+		{
+				Stream.iterate(currentDate, date -> date.plusDays(1)).limit(ChronoUnit.DAYS.between(currentDate, formattedEndDate))
+						.forEach(date -> createStockLevelForSerial(blSerialProduct,
+								Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())));
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void findAndDeleteStockRecords(final BlSerialProductModel blSerialProduct)
+	{
+		final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(blSerialProduct);
+		if (CollectionUtils.isNotEmpty(stockLevels))
+		{
+			try {
+				getModelService().removeAll(stockLevels);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock records removed for serial product {} "
+								+ "to end date", blSerialProduct.getCode());
+				createStockLevelForSerial(blSerialProduct, null);
+			} catch(ModelRemovalException ex) {
+				BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+						"Exception occurred while deleting the stock records for the serial product {} ",
+						blSerialProduct.getCode());
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void findAndUpdateStockRecords(final BlSerialProductModel blSerialProduct, final boolean reservedStatus)
+	{
+		if (Boolean.FALSE.equals(blSerialProduct.getForRent())) {
+			final StockLevelModel stockLevel = getBlStockLevelDao().findStockLevelForUsedGearSerial(blSerialProduct.getCode());
+			stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
+			saveStockRecord(stockLevel, reservedStatus);
+		} else {
+			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
+					blSerialProduct);
+			stockLevels.forEach(stockLevel -> {
+				stockLevel.setSerialStatus(blSerialProduct.getSerialStatus());
+				saveStockRecord(stockLevel, reservedStatus);
+			});
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void findAndUpdateStockRecordsForParticularDuration(final BlSerialProductModel blSerialProduct,
+			final boolean reservedStatus, final Date startDate, final Date endDate)
+	{
+		final Collection<StockLevelModel> stockLevels = getBlStockLevelDao().findSerialStockLevelForDate(blSerialProduct.getCode(),
+				startDate, endDate);
+		stockLevels.forEach(stockLevel -> saveStockRecord(stockLevel, reservedStatus));
+	}
+
+	/**
+	 * It saves the stock record after updates
+	 * @param stockLevel
+	 * @param reservedStatus
+	 */
+	private void saveStockRecord(final StockLevelModel stockLevel, final boolean reservedStatus)
+	{
+		stockLevel.setReservedStatus(reservedStatus);
+		try {
+			getModelService().save(stockLevel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock {} updated for serial product {} for the date {} ",
+					stockLevel.getPk(), stockLevel.getSerialProductCode(), stockLevel.getDate());
+		}
+		catch(ModelSavingException ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Exception occurred while saving the stock record {} of the serial product {} for the date {} ",
+					stockLevel.getPk(), stockLevel.getSerialProductCode(), stockLevel.getDate());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void findAndUpdateWarehouseInStockRecords(final BlSerialProductModel blSerialProduct)
+	{
+		if (Boolean.FALSE.equals(blSerialProduct.getForRent())) {
+			final StockLevelModel stockLevel = getBlStockLevelDao().findStockLevelForUsedGearSerial(blSerialProduct.getCode());
+			upDateWarehouseAndSaveStockRecord(stockLevel, blSerialProduct.getWarehouseLocation());
+		} else {
+			final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(
+					blSerialProduct);
+			stockLevels.forEach(stockLevel ->
+				upDateWarehouseAndSaveStockRecord(stockLevel, blSerialProduct.getWarehouseLocation())
+			);
+		}
+	}
+
+	/**
+	 * It fetches the stock records from current date to last future date
+	 * @param blSerialProduct the serial product
+	 * @return Collection<StockLevelModel>
+	 */
+	private Collection<StockLevelModel> getStockLevelModelsBasedOnDates(
+			BlSerialProductModel blSerialProduct) {
+		final Date currentDate = Date
+				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+		final Date futureDate = BlDateTimeUtils.getNextYearsSameDay();
+		return getBlStockLevelDao()
+				.findSerialStockLevelForDate(blSerialProduct.getCode(),
+						currentDate, futureDate);
+	}
+
+	/**
+	 * It updates the warehouse in stock records and save it
+	 * @param stockLevel
+	 * @param warehouseLocation
+	 */
+	private void upDateWarehouseAndSaveStockRecord(final StockLevelModel stockLevel, final WarehouseModel warehouseLocation) {
+		stockLevel.setWarehouse(warehouseLocation);
+		try {
+			getModelService().save(stockLevel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Warehouse {} updated for stock record {} of serial product {} ",
+					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
+		}
+		catch(ModelSavingException ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
+					"Exception occurred while updating the warehouse {} in stock record {} after update for the serial product {} ",
+					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
+		}
+	}
+
+	/**
 	 * It gets the active serials associated to the sku and creates stock for the serials
 	 *
 	 * @param skuProducts
@@ -175,7 +322,7 @@ public class DefaultBlStockService implements BlStockService
 	{
 		final Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		final Collection<StockLevelModel> stockLevelModel = getBlStockLevelDao().findSerialStockLevelForDate(serial.getCode(),
-				serial.getBlProduct().getCode(), date, date);
+				date, date);
 		if (CollectionUtils.isEmpty(stockLevelModel))
 		{
 			createStockLevelForSerial(serial, date);
@@ -196,9 +343,8 @@ public class DefaultBlStockService implements BlStockService
 	 */
 	private void findAndCreateStockLevelForUsedGearSerial(final BlSerialProductModel serial)
 	{
-		final Collection<StockLevelModel> stockLevelModel = getBlStockLevelDao().findStockLevelForUsedGearSerial(serial.getCode(),
-				serial.getBlProduct().getCode());
-		if (CollectionUtils.isEmpty(stockLevelModel))
+		final StockLevelModel stockLevelModel = getBlStockLevelDao().findStockLevelForUsedGearSerial(serial.getCode());
+		if (Objects.isNull(stockLevelModel))
 		{
 			createStockLevelForSerial(serial, null);
 		}
