@@ -97,16 +97,21 @@
     <property name="servicePathUrl" value="${bl.avalara.tax.service.url}"/>
     <property name="requestPopulator" ref="blTaxServiceRequestPopulator"/>
     <property name="responsePopulator" ref="blTaxServiceResponsePopulator"/>
+    <property name="blLineItemTaxPopulator" ref="blLineItemTaxPopulator"/>
   </bean>
 
 
   <bean id="blTaxServiceRequestPopulator" class="com.bl.tax.populators.BlTaxServiceRequestPopulator">
     <property name="productService" ref="productService"/>
     <property name="blDatePickerService" ref="blDatePickerService"/>
+    <property name="defaultWarehouseService" ref="warehouseService"/>
   </bean>
 
   <bean id="blTaxServiceResponsePopulator" class="com.bl.tax.populators.BlTaxServiceResponsePopulator">
     <property name="defaultBlTaxValueConversionService" ref="defaultBlTaxValueConversionService"/>
+  </bean>
+
+  <bean id="blLineItemTaxPopulator" class="com.bl.tax.populators.BlLineItemTaxPopulator">
   </bean>
 
 

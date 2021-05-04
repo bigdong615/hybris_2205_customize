@@ -349,9 +349,6 @@
 		<property name="lines" type="java.util.List&lt;com.bl.tax.TaxLine>" equals="true">
 			<annotations>@JsonProperty("lines")</annotations>
 		</property>
-		<property name="taxCode" type="java.util.List&lt;java.lang.String>" equals="true">
-			<annotations>@JsonProperty("taxCode")</annotations>
-		</property>
 		<property name="taxDate" type="java.util.Date" equals="true">
 			<annotations>@JsonProperty("taxDate")</annotations>
 		</property>
@@ -376,7 +373,7 @@
 		<property name="customerUsageType" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("customerUsageType")</annotations>
 		</property>
-		<property name="isTaxExempt" type="java.lang.Boolean" equals="true">
+		<property name="commit" type="java.lang.Boolean" equals="true">
 			<annotations>@JsonProperty("isTaxExempt")</annotations>
 		</property>
 	</bean>
@@ -444,7 +441,7 @@
 	<bean class="com.bl.tax.TaxLine">
 	<import type="com.fasterxml.jackson.annotation.JsonProperty"/>
 	<import type="com.fasterxml.jackson.annotation.JsonInclude"/>
-		<property name="number" type="java.lang.String" equals="true">
+		<property name="number" type="java.lang.Integer" equals="true">
 			<annotations>@JsonProperty("number")</annotations>
 		</property>
 		<property name="quantity" type="java.lang.Integer" equals="true">
@@ -453,7 +450,6 @@
 		<property name="amount" type="java.lang.Double" equals="true">
 			<annotations>@JsonProperty("amount")</annotations>
 		</property>
-
 		<property name="taxCode" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("taxCode")</annotations>
 		</property>
@@ -521,6 +517,7 @@
 		<property name="summary" type="java.util.List&lt;com.bl.tax.SummaryResponse>" equals="true">
 			<annotations>@JsonProperty("summary")</annotations>
 		</property>
+
 	</bean>
 
 
@@ -577,6 +574,9 @@
 		</property>
 		<property name="details" type="java.util.List&lt;com.bl.tax.DetailResponse>" equals="true">
 			<annotations>@JsonProperty("details")</annotations>
+		</property>
+		<property name="itemCode" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("itemCode")</annotations>
 		</property>
 	</bean>
 

@@ -1,7 +1,9 @@
 package com.bl.tax.service.impl;
 
+import com.bl.tax.TaxResponse;
 import com.bl.tax.resttemplate.BlRestTemplate;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +23,10 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
 
   /** The response popualtor. */
   private Populator<SERVICERESPONSE, RESPONSE> responsePopulator;
+
+
+
+  private Populator<TaxResponse, AbstractOrderModel> blLineItemTaxPopulator;
 
   /** The service path url. */
   private String servicePathUrl;
@@ -109,6 +115,15 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
   public void setResponsePopulator(
       Populator<SERVICERESPONSE, RESPONSE> responsePopulator) {
     this.responsePopulator = responsePopulator;
+  }
+
+  public Populator<TaxResponse, AbstractOrderModel> getBlLineItemTaxPopulator() {
+    return blLineItemTaxPopulator;
+  }
+
+  public void setBlLineItemTaxPopulator(
+      Populator<TaxResponse, AbstractOrderModel> blLineItemTaxPopulator) {
+    this.blLineItemTaxPopulator = blLineItemTaxPopulator;
   }
 
 }
