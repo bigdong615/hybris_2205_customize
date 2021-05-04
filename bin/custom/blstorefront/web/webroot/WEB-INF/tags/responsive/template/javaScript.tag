@@ -112,22 +112,22 @@
     		<script src="${commonResourcePathHtml}/js/mburger.js"></script>
 
 		<script>
-$(document).ready(function(){
-	 if('${rentalDate.selectedFromDate}' != '' && '${rentalDate.selectedToDate}' != '')
-	 {
-		 $("#litepicker").val('');
-		 $("#litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
-		 $("#mobile-litepicker").val('');
-		 $("#mobile-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
-		 $("#product-litepicker").val('');
-		 $("#product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
-		 $("#mobile-product-litepicker").val('');
-		 $("#mobile-product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
-		 $("#summary-litepicker").val('');
-		 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
-	 }
-});
-</script>
+			$(document).ready(function(){
+				 if('${rentalDate.selectedFromDate}' != '' && '${rentalDate.selectedToDate}' != '')
+				 {
+					 $("#litepicker").val('');
+					 $("#litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-litepicker").val('');
+					 $("#mobile-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#product-litepicker").val('');
+					 $("#product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-product-litepicker").val('');
+					 $("#mobile-product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#summary-litepicker").val('');
+					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+				 }
+			});
+		</script>
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>
         document.addEventListener(
