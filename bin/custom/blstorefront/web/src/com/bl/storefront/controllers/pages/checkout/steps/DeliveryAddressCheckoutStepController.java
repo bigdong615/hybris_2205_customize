@@ -17,7 +17,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
-import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
@@ -51,8 +50,8 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 	@Resource(name = "blAddressDataUtil")
 	private BlAddressDataUtil addressDataUtil;
 
-	@Resource(name = "defaultBlCheckoutFacade")
-	private BlCheckoutFacade blCheckoutFacade;
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
 
 	/**
 	 * This method gets called when the "Use this Address" button is clicked. It sets the selected delivery address on
@@ -106,7 +105,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 	public String savePickUpByFormOnCart(@RequestBody final BlPickUpByForm blPickUpByForm, final BindingResult bindingResult,
 										 final Model model, final RedirectAttributes redirectModel) {
 		if (blPickUpByForm != null) {
-			getBlCheckoutFacade().savePickUpInfoOnCart(blPickUpByForm);
+			getCheckoutFacade().savePickUpInfoOnCart(blPickUpByForm);
 			return "SUCCESS";
 		}
 		return "ERROR";
@@ -117,7 +116,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 	@Override
 	@ResponseBody
 	public String removeDeliveryDetailsFromCart() {
-		return getBlCheckoutFacade().removeDeliveryDetails();
+		return getCheckoutFacade().removeDeliveryDetails();
 	}
 
 	@PostMapping(value = "/add")
@@ -414,12 +413,12 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
 	}
 
-	public BlCheckoutFacade getBlCheckoutFacade() {
-		return blCheckoutFacade;
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
 	}
 
-	public void setBlCheckoutFacade(BlCheckoutFacade blCheckoutFacade) {
-		this.blCheckoutFacade = blCheckoutFacade;
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
 	}
-
 }

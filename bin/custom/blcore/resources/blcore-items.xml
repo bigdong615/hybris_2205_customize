@@ -120,6 +120,12 @@
             <value code="BUSINESS"/>
             <value code="RESIDENTIAL"/>
         </enumtype>
+
+        <enumtype generate="true" code="ShippingTypeEnum" autocreate="true" dynamic="true">
+            <value code="FAST"/>
+            <value code="FASTER"/>
+            <value code="FASTEST"/>
+        </enumtype>
         <!-- BL-542 End-->
 
     </enumtypes>
@@ -1327,6 +1333,10 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="shippingType" type="ShippingTypeEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -1356,19 +1366,24 @@
                     </attribute>
                     <attribute qualifier="shippingMethodId" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="false" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                     <attribute qualifier="shippingMethodType" type="ShippingMethodTypeEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="false" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                     <attribute qualifier="carrier" type="CarrierEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="false" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                     <attribute qualifier="warehouse" type="Warehouse" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="false" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="businessTypeDelivery" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -1487,19 +1502,19 @@
                         <modifiers read="true" write="true" search="true" optional="false" />
                         <defaultvalue>Boolean.TRUE</defaultvalue>
                     </attribute>
-                    <attribute qualifier="firstName" type="java.lang.String" autocreate="true">
+                    <attribute qualifier="pickUpPersonFirstName" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                    <attribute qualifier="lastName" type="java.lang.String" autocreate="true">
+                    <attribute qualifier="pickUpPersonLastName" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                    <attribute qualifier="email" type="java.lang.String" autocreate="true">
+                    <attribute qualifier="pickUpPersonEmail" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                    <attribute qualifier="phone" type="java.lang.String" autocreate="true">
+                    <attribute qualifier="pickUpPersonPhone" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
@@ -1513,6 +1528,18 @@
                 <attributes>
                     <attribute qualifier="addressType" type="AddressTypeEnum">
                         <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
+        <typegroup name="BaseStore">
+            <itemtype code="BaseStore" autocreate="false" generate="false">
+                <description>Extending BaseStore type with additional attributes.</description>
+                <attributes>
+                    <attribute type="java.lang.Integer" qualifier="dimensionalFactor">
+                        <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                 </attributes>
