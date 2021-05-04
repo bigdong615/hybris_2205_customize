@@ -29,12 +29,12 @@ public class DefaultDeliveryMethodCheckoutStepValidator extends AbstractCheckout
 			return ValidationResults.REDIRECT_TO_PICKUP_LOCATION;
 		}
 
-		if (getCheckoutFlowFacade().hasNoDeliveryAddress())
+		/*if (getCheckoutFlowFacade().hasNoDeliveryAddress())
 		{
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
 					"checkout.multi.deliveryAddress.notprovided");
 			return ValidationResults.REDIRECT_TO_DELIVERY_ADDRESS;
-		}
+		}*/
 
 		return ValidationResults.SUCCESS;
 	}
