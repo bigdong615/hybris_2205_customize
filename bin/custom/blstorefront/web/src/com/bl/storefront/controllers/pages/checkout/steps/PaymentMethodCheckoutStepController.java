@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 
+import com.bl.facades.shipping.BlCheckoutFacade;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -63,6 +64,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@Resource(name = "addressDataUtil")
 	private AddressDataUtil addressDataUtil;
+
+	@Resource(name = "defaultBlCheckoutFacade")
+	private BlCheckoutFacade blCheckoutFacade;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -132,7 +136,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
-		getCheckoutFacade().setDeliveryModeIfAvailable();
+		blCheckoutFacade.setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
 
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.

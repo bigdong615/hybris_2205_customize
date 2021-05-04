@@ -335,7 +335,7 @@
             </list>
         </property>
     </bean>
-    
+
     <!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
     <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
     <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
@@ -343,5 +343,111 @@
     <!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
     <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
     <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
-    
+
+	<!--Shipping-->
+	<!--BlShippingGroupDataPopulatorConverter-->
+	<alias name="defaultBlShippingGroupDataPopulator" alias="blShippingGroupPopulator"/>
+	<bean id="defaultBlShippingGroupDataPopulator" class="com.bl.facades.populators.BlShippingGroupPopulator"/>
+
+	<alias name="defaultBlShippingGroupDataConverter" alias="blShippingGroupConverter"/>
+	<bean id="defaultBlShippingGroupDataConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlShippingGroupData" />
+		<property name="populators">
+			<list>
+				<ref bean="blShippingGroupPopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<!--BlPartnerPickUpStorePopulatorConverter-->
+	<alias name="defaultBlPartnerPickUpStorePopulator" alias="blPartnerPickUpStorePopulator"/>
+	<bean id="defaultBlPartnerPickUpStorePopulator" class="com.bl.facades.populators.BlPartnerPickUpStorePopulator"/>
+
+	<alias name="defaultBlPartnerPickUpStoreConverter" alias="blPartnerPickUpStoreConverter"/>
+	<bean id="defaultBlPartnerPickUpStoreConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlPartnerPickUpStoreData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPartnerPickUpStorePopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- BlZoneDeliveryModePopulatorConverter-->
+	<alias name="defaultBlZoneDeliveryModePopulator" alias="zoneDeliveryModePopulator"/>
+	<bean id="defaultBlZoneDeliveryModePopulator" class="com.bl.facades.populators.BlZoneDeliveryModePopulator"/>
+
+	<alias name="defaultBlZoneDeliveryModeConverter" alias="blZoneDeliveryModeConverter"/>
+	<bean id="defaultBlZoneDeliveryModeConverter" parent="defaultZoneDeliveryModeConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData"/>
+		<property name="populators">
+			<list>
+				<ref bean="defaultBlZoneDeliveryModePopulator"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="zoneDeliveryModeConverter"/>
+		<property name="add" ref="defaultBlZoneDeliveryModePopulator"/>
+	</bean>
+
+	<!--BlPickUpZoneDeliveryModePopulatorConverter-->
+	<alias name="defaultBlPickUpZoneDeliveryModePopulator" alias="defaultBlZoneDeliveryModePopulator"/>
+	<bean id="defaultBlPickUpZoneDeliveryModePopulator" class="com.bl.facades.populators.BlPickUpZoneDeliveryModePopulator"/>
+
+	<alias name="defaultBlPickUpZoneDeliveryModeConverter" alias="blPickUpZoneDeliveryModeConverter"/>
+	<bean id="defaultBlPickUpZoneDeliveryModeConverter" parent="defaultBlZoneDeliveryModeConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData" />
+		<property name="populators">
+			<list>
+				<ref bean="defaultBlPickUpZoneDeliveryModePopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="zoneDeliveryModeConverter"/>
+		<property name="add" ref="defaultBlPickUpZoneDeliveryModePopulator"/>
+	</bean>
+
+	<!--BlRushDeliveryModePopulatorConverter-->
+	<alias name="defaultBlRushDeliveryModePopulator" alias="defaultBlZoneDeliveryModePopulator"/>
+	<bean id="defaultBlRushDeliveryModePopulator" class="com.bl.facades.populators.BlRushDeliveryModePopulator"/>
+
+	<alias name="defaultBlRushDeliveryModeConverter" alias="blRushDeliveryModeConverter"/>
+	<bean id="defaultBlRushDeliveryModeConverter" parent="defaultBlZoneDeliveryModeConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlRushDeliveryModeData" />
+		<property name="populators">
+			<list>
+				<ref bean="defaultBlRushDeliveryModePopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="zoneDeliveryModeConverter"/>
+		<property name="add" ref="defaultBlRushDeliveryModePopulator"/>
+	</bean>
+
+	<!--Cart Calculation Strategy for calculating delivery cost-->
+	<alias name="defaultBlCheckoutFacade" alias="checkoutFacade"/>
+	<bean id="defaultBlCheckoutFacade" class="com.bl.facades.shipping.impl.DefaultBlCheckoutFacade" parent="defaultCheckoutFacade">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blZoneDeliveryModeConverter" ref="blZoneDeliveryModeConverter"/>
+		<property name="blPickUpZoneDeliveryModeConverter" ref="blPickUpZoneDeliveryModeConverter"/>
+		<property name="blRushDeliveryModeConverter" ref="blRushDeliveryModeConverter"/>
+		<property name="blShippingGroupConverter" ref="blShippingGroupConverter"/>
+		<property name="blPartnerPickUpStoreConverter" ref="blPartnerPickUpStoreConverter"/>
+	</bean>
+
+	<alias name="defaultBlFindDeliveryCostStrategy" alias="findDeliveryCostStrategy"/>
+	<bean id="defaultBlFindDeliveryCostStrategy"
+		  class="com.bl.facades.strategy.DefaultBlFindDeliveryCostStrategy"
+		  parent="defaultFindDeliveryCostStrategy"/>
+
+	<alias name="defaultBlAddressPopulator" alias="addressPopulator"/>
+	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
+	<!-- ENd Shipping-->
+
 </beans>
