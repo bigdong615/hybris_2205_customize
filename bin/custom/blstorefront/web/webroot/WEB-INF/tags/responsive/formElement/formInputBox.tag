@@ -1,6 +1,6 @@
 <%@ tag body-content="empty" trimDirectiveWhitespaces="true"%>
 <%@ attribute name="idKey" required="true" type="java.lang.String"%>
-<%@ attribute name="labelKey" required="true" type="java.lang.String"%>
+<%@ attribute name="labelKey" required="false" type="java.lang.String"%>
 <%@ attribute name="path" required="true" type="java.lang.String"%>
 <%@ attribute name="mandatory" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="labelCSS" required="false" type="java.lang.String"%>

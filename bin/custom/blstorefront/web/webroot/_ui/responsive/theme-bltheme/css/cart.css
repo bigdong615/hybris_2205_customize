@@ -4,7 +4,15 @@ v0.01
 Designed by Veneer Studio
 ©2021
 **/
-
+.formControlErrorClass { border:  2px solid red; }
+.btn-check:focus+.btn, .btn:focus {
+    outline: 0;
+    box-shadow: none;
+    outline: none;
+}
+.btn-checkbox { padding: 0; width: 20px; height: 20px; border: 0; background: transparent; }
+#pickup-person .btn-checkbox { font-size: 16px; text-transform: none; width: auto; }
+.dropdown button { }
 .cart h1 { font-size: 34px; line-height: 40px; }
 #cartProcess, #confirmationWindow { background-color: white; border-top: 1px solid #D4D3D3; border-bottom: 1px solid #D4D3D3; padding-bottom: 50px; margin-top: 10px; }
 #cartSteps { padding: 30px 0 60px; }

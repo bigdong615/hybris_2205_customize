@@ -32,3 +32,12 @@ $productInventoryLocationPath = /blinitialdata/import/sampledata/productCatalogs
 
 #Mention here InventoryLocation related custom impex in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/blproduct-Inventory-location.impex"), "utf-8", 0, 0);
+
+#Mention here Shipping related custom impex in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/shipping-group.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/partner-pickup-store.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/zone-delivery-mode.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/pick-up-zone-delivery-mode.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/rush-delivery-mode.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productInventoryLocationPath/shipping-cost.impex"), "utf-8", 0, 0);
+

@@ -89,7 +89,54 @@
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
   <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
   	<property name="totalDamageWaiverCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+      <property name="pickUpByMe" type="java.lang.Boolean"/>
+      <property name="pickUpPersonFirstName" type="java.lang.String"/>
+      <property name="pickUpPersonLastName" type="java.lang.String"/>
+      <property name="pickUpPersonEmail" type="java.lang.String"/>
+      <property name="pickUpPersonPhone" type="java.lang.String"/>
   </bean>
+
+    <!-- Shipping -->
+    <bean class="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="daysToSkip" type="java.util.Collection&lt;String>"/>
+        <property name="cutOffTime" type="String"/>
+        <property name="numberOfDaysToSkip" type="String"/>
+        <property name="shippingMethodId" type="String"/>
+        <property name="shippingMethodType" type="String"/>
+        <property name="carrier" type="String"/>
+        <property name="warehouse" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
+        <property name="code" type="String"/>
+        <property name="name" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlPartnerPickUpStoreData">
+        <property name="code" type="String"/>
+        <property name="name" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData"
+          extends="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="externalStores" type="Boolean"/>
+        <property name="externalStoreUrl" type="String"/>
+        <property name="userName" type="String"/>
+        <property name="password" type="String"/>
+        <property name="internalStoreAddress" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlRushDeliveryModeData"
+          extends="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="deliveryType" type="String"/>
+        <property name="shippingArea" type="String"/>
+        <property name="radius" type="String"/>
+    </bean>
+
+    <bean class="de.hybris.platform.commercefacades.user.data.AddressData">
+        <property name="addressType" type="String"/>
+    </bean>
+    <!-- Shipping End-->
 
 </beans>
 
