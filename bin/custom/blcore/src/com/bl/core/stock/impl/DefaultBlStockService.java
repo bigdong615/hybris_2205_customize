@@ -111,8 +111,7 @@ public class DefaultBlStockService implements BlStockService
 		final LocalDate currentDate = LocalDate.now();
 		final LocalDate formattedEndDate = BlDateTimeUtils.getNextYearsSameDay().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(blSerialProduct);
-		if (CollectionUtils.isEmpty(stockLevels) && (SerialStatusEnum.ACTIVE).equals(blSerialProduct.getSerialStatus())
-				&& null != blSerialProduct.getWarehouseLocation())
+		if (CollectionUtils.isEmpty(stockLevels))
 		{
 				Stream.iterate(currentDate, date -> date.plusDays(1)).limit(ChronoUnit.DAYS.between(currentDate, formattedEndDate))
 						.forEach(date -> createStockLevelForSerial(blSerialProduct,

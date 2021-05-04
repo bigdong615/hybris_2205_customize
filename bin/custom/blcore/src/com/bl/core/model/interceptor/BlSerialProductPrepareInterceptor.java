@@ -1,6 +1,7 @@
 package com.bl.core.model.interceptor;
 
 import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.stock.BlStockService;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
@@ -65,7 +66,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void updateWarehouseInStockRecordsOnWHLocUpdate(BlSerialProductModel blSerialProduct, InterceptorContext ctx) {
 		try {
-			if (ctx.isModified(blSerialProduct, BlSerialProductModel.WAREHOUSELOCATION) &&
+			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.WAREHOUSELOCATION);
+			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.WAREHOUSELOCATION) &&
 					blSerialProduct.getWarehouseLocation() != null &&
 					blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE)) {
 					getBlStockService().findAndUpdateWarehouseInStockRecords(blSerialProduct);
@@ -88,7 +90,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void updateStockRecordsOnForRentFlagUpdate(BlSerialProductModel blSerialProduct, InterceptorContext ctx) {
 		try {
-			if (ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) &&
+			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.FORRENT);
+			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) &&
 			blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE) && Boolean.TRUE.equals(blSerialProduct
 						.getForSale()) && Boolean.FALSE.equals(blSerialProduct.getForRent())) {
 					getBlStockService().findAndDeleteStockRecords(blSerialProduct);
@@ -111,10 +114,11 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private void updateStockRecordsOnSerialStatusUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
 		try {
-			if (ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)) {
+			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.SERIALSTATUS);
+			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)) {
 				if (blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE)) {
-					updateStockRecordsAsAvailable(blSerialProduct);
-				} else if(getInitialValue(blSerialProduct).equals(SerialStatusEnum.ACTIVE)){
+					updateStockRecordsAsAvailable(blSerialProduct, initialValue);
+				} else if(initialValue.equals(SerialStatusEnum.ACTIVE)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
 				}
 			}
@@ -130,9 +134,11 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 *
 	 * @param blSerialProduct
 	 *           the bl serial product
+	 * @param initialValue
 	 */
-	private void updateStockRecordsAsAvailable(BlSerialProductModel blSerialProduct) {
-			if(getInitialValue(blSerialProduct).equals(SerialStatusEnum.COMING_FROM_PURCHASE)) {
+	private void updateStockRecordsAsAvailable(final BlSerialProductModel blSerialProduct, final Object initialValue) {
+			if(initialValue.equals(SerialStatusEnum.COMING_FROM_PURCHASE) &&
+					null != blSerialProduct.getWarehouseLocation()) {
 				getBlStockService().createStockRecordsForNewSerialProducts(blSerialProduct);
 			} else {
 				getBlStockService()
@@ -146,11 +152,11 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 * @param blSerialProduct
 	 *           the bl serial product
 	 */
-	private Object getInitialValue(final BlSerialProductModel blSerialProduct) {
+	private Object getInitialValue(final BlSerialProductModel blSerialProduct, final String status) {
 		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) blSerialProduct
 				.getItemModelContext();
-		return itemModelCtx
-				.getOriginalValue(BlSerialProductModel.SERIALSTATUS);
+		return itemModelCtx.isLoaded(status) ? itemModelCtx
+				.getOriginalValue(status) : itemModelCtx.loadOriginalValue(status);
 	}
 
 	/**
