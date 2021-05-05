@@ -1,7 +1,6 @@
 package com.bl.tax.service.impl;
 
 import com.bl.tax.TaxResponse;
-import com.bl.tax.constants.BltaxapiConstants;
 import com.bl.tax.resttemplate.BlRestTemplate;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -45,11 +44,11 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
    */
   protected HttpEntity<SERVICEREQUEST> createHttpEntity(final SERVICEREQUEST pRequest)
   {
-    return new HttpEntity<>(pRequest, addHeadersToServiceRequest());
+    return new HttpEntity<SERVICEREQUEST>(pRequest, addHeadersToServiceRequest());
   }
 
   /**
-   * this method created for authentication and contentType
+   * this method created for authentication
    */
   protected HttpHeaders addHeadersToServiceRequest()
   {
@@ -59,15 +58,12 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
     return headers;
   }
 
-  /**
-   * this method created for authentication
-   */
   protected String createAuthorization()
   {
-    final String plainCreds = userName.concat(BltaxapiConstants.CONCAT).concat(password);
+    final String plainCreds = userName.concat(":").concat(password);
     final byte[] plainCredsBytes = plainCreds.getBytes();
     final byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-    return BltaxapiConstants.BASIC + new String(base64CredsBytes);
+    return "Basic " + new String(base64CredsBytes);
   }
 
 

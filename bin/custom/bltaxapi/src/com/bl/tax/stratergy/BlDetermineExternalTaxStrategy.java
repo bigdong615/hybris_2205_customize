@@ -19,13 +19,12 @@ public class BlDetermineExternalTaxStrategy implements DecideExternalTaxesStrate
    * This method added to check whether to calculate tax or not
    */
   @Override
-  public boolean shouldCalculateExternalTaxes(AbstractOrderModel abstractOrder) {
-    if (abstractOrder == null)
-    {
-      BlLogger.logMessage(LOG , Level.ERROR , "Order is null. Cannot apply external tax to it." , new IllegalStateException());
+  public boolean shouldCalculateExternalTaxes(final AbstractOrderModel abstractOrder) {
+    if(null != abstractOrder) {
+      return null != abstractOrder.getDeliveryMode() && null != abstractOrder.getDeliveryAddress()
+          && Config.getBoolean("bl.calculate.externaltax", true);
     }
-
-    return abstractOrder.getDeliveryMode() != null
-        && abstractOrder.getDeliveryAddress() != null && Config.getBoolean("bl.calculate.externaltax", true);
+    BlLogger.logMessage(LOG , Level.INFO , "abstractOrder should not be null" ,new IllegalStateException());
+    return false;
   }
 }

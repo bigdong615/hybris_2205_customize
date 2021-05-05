@@ -10,14 +10,21 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
+/**
+ * @author Manikandan
+ * This class created for process of avalara tax and external tax
+ */
 public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlExternalTaxesService.class);
 
+  /**
+   * This method created to process the avalara tax
+   */
   @Override
   public boolean calculateExternalTaxes(final AbstractOrderModel abstractOrder)
   {
-    BlLogger.logMessage(LOG, Level.INFO,"===DefaultBlExternalTaxesService==");
+    BlLogger.logMessage(LOG, Level.INFO,"====== DefaultBlExternalTaxesService ======");
 
     if (getDecideExternalTaxesStrategy().shouldCalculateExternalTaxes(abstractOrder))
     {
@@ -37,7 +44,6 @@ public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
         }
         else
         {
-          // the external tax calculation failed
           getSessionService().removeAttribute(RecalculateExternalTaxesStrategy.SESSION_ATTIR_ORDER_RECALCULATION_HASH);
           clearSessionTaxDocument();
           clearTaxValues(abstractOrder);

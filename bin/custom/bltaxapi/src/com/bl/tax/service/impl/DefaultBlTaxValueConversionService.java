@@ -27,7 +27,7 @@ public class DefaultBlTaxValueConversionService implements BlTaxValueConversionS
    */
   @Override
   public List<TaxValue> getShippingTaxes(final List<TaxLineResponse> taxLines,
-     final String currencyCode, final  boolean shippingIncluded) {
+     final String currencyCode, final boolean shippingIncluded) {
 
     List<TaxValue> shippingTaxes = null;
 

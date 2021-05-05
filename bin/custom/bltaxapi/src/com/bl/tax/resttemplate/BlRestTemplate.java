@@ -19,7 +19,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * This class custom class created for adding logging interceptor , MappingJackson2HttpMessageConverter and
+ * This class created for custom restTemplate add some custom code
  * @author Manikandan
  */
 public class BlRestTemplate {
@@ -30,7 +30,8 @@ public class BlRestTemplate {
   }
 
   /**
-   * this method created to add MappingJackson2HttpMessageConverter and ClientHttpRequestInterceptor
+   * This method created to adding  for adding ClientHttpRequestInterceptor , SimpleClientHttpRequestFactory and Logging interceptors
+   * @return
    */
   protected RestTemplate getRestTemplate()
   {
@@ -38,9 +39,9 @@ public class BlRestTemplate {
         new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
     if (Config.getBoolean(BltaxapiConstants.BL_TAX_REST_CLIENT_LOGGING_ENABLED, true))
     {
-      final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+      final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
       interceptors.add(new BlLoggingInterceptor());
-      List<HttpMessageConverter<?>> converters = new ArrayList<>();
+      List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
       converters.add(new MappingJackson2HttpMessageConverter());
       restTemplate.setMessageConverters(converters);
       restTemplate.getInterceptors().addAll(interceptors);
