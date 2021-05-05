@@ -5,9 +5,9 @@ import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
 import com.bl.storefront.forms.BlPickUpByForm;
+import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
-import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 
 import java.util.Collection;
 
@@ -16,7 +16,7 @@ import java.util.Collection;
  *
  * @auther Namrata Lohar
  */
-public interface BlCheckoutFacade {
+public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 
     /**
      * This method will fetch all the shipping groups from service
@@ -80,14 +80,6 @@ public interface BlCheckoutFacade {
     Collection<BlRushDeliveryModeData> getBlRushDeliveryModes(final String pinCode, final String deliveryMode, final String pstCutOffTime);
 
     /**
-     * This method with set delivery method on cart
-     *
-     * @param deliveryMethod selected delivery method
-     * @return boolean true/false
-     */
-    boolean setDeliveryMethod(final String deliveryMethod);
-
-    /**
      * This methodwill check pinCode validity for UPS stores
      *
      * @param pinCode
@@ -108,10 +100,4 @@ public interface BlCheckoutFacade {
      * @return success or error
      */
     String removeDeliveryDetails();
-
-    /**
-     * method will set delivery mode for payment flow
-     * @return
-     */
-    boolean setDeliveryModeIfAvailable();
 }

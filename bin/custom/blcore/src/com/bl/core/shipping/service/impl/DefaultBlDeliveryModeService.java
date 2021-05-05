@@ -245,13 +245,13 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public double getShippingCostAmount(final AbstractOrderModel order, final DeliveryModeModel deliveryMode) {
         if(deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
             final BlPickUpZoneDeliveryModeModel zoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) deliveryMode;
-            return getAmountForAppropriateZoneModel(order, null, zoneDeliveryModeModel);
+            return getAmountForAppropriateZoneModel(order, zoneDeliveryModeModel);
         } else if(deliveryMode instanceof BlRushDeliveryModeModel) {
             final BlRushDeliveryModeModel zoneDeliveryModeModel = (BlRushDeliveryModeModel) deliveryMode;
-            return getAmountForAppropriateZoneModel(order, null, zoneDeliveryModeModel);
+            return getAmountForAppropriateZoneModel(order, zoneDeliveryModeModel);
         } else if (deliveryMode instanceof ZoneDeliveryModeModel) {
             final ZoneDeliveryModeModel zoneDeliveryModeModel = (ZoneDeliveryModeModel) deliveryMode;
-            return getAmountForAppropriateZoneModel(order, null, zoneDeliveryModeModel);
+            return getAmountForAppropriateZoneModel(order, zoneDeliveryModeModel);
         }
         return BlInventoryScanLoggingConstants.ZERO;
     }
@@ -261,19 +261,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * @return
      */
     @Override
-    public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final CartModel cart,
-                                                   final ZoneDeliveryModeModel zoneDeliveryModeModel) {
+    public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
         for(ZoneDeliveryModeValueModel valueModel : zoneDeliveryModeModel.getValues()) {
             if(!valueModel.isFixedAmount()) {
                 final Map<String, Double> calculatedValueMap;
-                if(order != null) {
-                    calculatedValueMap = getCalculatedWeightForDelivery(order, null);
-                    order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
-                    order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
-                } else {
-                    calculatedValueMap = getCalculatedWeightForDelivery(null, cart);
-                }
                 try {
+                    calculatedValueMap = getCalculatedWeightForDelivery(order);
+                    if(!(order instanceof CartModel)) {
+                        order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
+                        order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
+                    }
                     final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
                             calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
                                     BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getCode());
@@ -302,34 +299,30 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * @param order model
      * @return Map of total weight and dimensional weight for order entries
      */
-    protected Map<String, Double> getCalculatedWeightForDelivery(final AbstractOrderModel order, final CartModel cart) {
+    protected Map<String, Double> getCalculatedWeightForDelivery(final AbstractOrderModel order) {
         final Map<String, Double> valueMap = new HashMap<>();
+        Collection<AbstractOrderEntryModel> abstractOrderEntryModels = new ArrayList<>();
         BigDecimal totalWeight = new BigDecimal(BlInventoryScanLoggingConstants.ZERO);
         int maxLength = BlInventoryScanLoggingConstants.ZERO;
         int maxHeight = BlInventoryScanLoggingConstants.ZERO;
         int sumWidth = BlInventoryScanLoggingConstants.ZERO;
         try {
-            if(null != order) {
-                for(AbstractOrderEntryModel entry : order.getEntries()) {
-                    final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                    if(blSerialProduct != null) {
-                        totalWeight = getBigDecimal(totalWeight, blSerialProduct);
-                        sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
-                        maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
-                        maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
-                    }
-                }
+            if(order instanceof CartModel) {
+                final CartModel cart = (CartModel) order;
+                abstractOrderEntryModels = cart.getEntries();
             } else {
-                for(AbstractOrderEntryModel entry : cart.getEntries()) {
-                    final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                    if(blSerialProduct != null) {
-                        totalWeight = getBigDecimal(totalWeight, blSerialProduct);
-                        sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
-                        maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
-                        maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
-                    }
+                abstractOrderEntryModels = order.getEntries();
+            }
+            for(AbstractOrderEntryModel entry : abstractOrderEntryModels) {
+                final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
+                if(blSerialProduct != null) {
+                    totalWeight = getBigDecimal(totalWeight, blSerialProduct);
+                    sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
+                    maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
+                    maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
                 }
             }
+
             final double dimensionalWeight = (maxHeight * sumWidth * maxLength) /
                     Config.getInt(BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR_KEY, BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR);
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Total weight: {} ", totalWeight.doubleValue());

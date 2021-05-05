@@ -3,25 +3,17 @@
  */
 package com.bl.storefront.controllers.pages.checkout.steps;
 
-import com.bl.constants.BlDeliveryModeLoggingConstants;
-import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
-import com.bl.facades.shipping.data.BlShippingGroupData;
-import com.bl.facades.shipping.impl.DefaultBlCheckoutFacade;
-import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.order.data.CartData;
@@ -32,12 +24,10 @@ import de.hybris.platform.enumeration.EnumerationService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
 import java.util.Collection;
 
 
@@ -48,8 +38,17 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 	private static final String DELIVERY_METHOD = "delivery-method";
 	private static final String DeliveryOrPickupPage = "deliveryOrPickup";
 
-	@Resource(name = "defaultBlCheckoutFacade")
-	private BlCheckoutFacade blCheckoutFacade;
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
+
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
+	}
+
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
+	}
 
 	@Resource(name="enumerationService")
 	private EnumerationService enumerationService;
@@ -61,9 +60,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 	public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		model.addAttribute("cartData", cartData);
-		model.addAttribute("shippingGroup", getBlCheckoutFacade().getAllShippingGroups());
+		model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
 		model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
-		model.addAttribute("partnerPickUpLocation", getBlCheckoutFacade().getAllPartnerPickUpStore());
+		model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
 		model.addAttribute("addressForm", new BlAddressForm());
 		model.addAttribute("blPickUpByForm", new BlPickUpByForm());
 		model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso("US"));
@@ -88,7 +87,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 																			@RequestParam(value = "pinCode", defaultValue = "")
 																			final String pinCode) {
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
-		final Collection<? extends DeliveryModeData> deliveryModes = getBlCheckoutFacade().getSupportedDeliveryModes(
+		final Collection<? extends DeliveryModeData> deliveryModes = getCheckoutFacade().getSupportedDeliveryModes(
 				shippingGroup, pinCode, partnerZone);
 		model.addAttribute("cartData", cartData);
 		model.addAttribute("deliveryMethods", deliveryModes);
@@ -101,26 +100,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 	@ResponseBody
 	public boolean checkValidityOfZipCode(final Model model, final RedirectAttributes redirectAttributes,
 										 @RequestParam(value = "pinCode", defaultValue = "") final String pinCode) {
-		return getBlCheckoutFacade().checkPartnerPickCodeValidity(pinCode);
-	}
-
-	/**
-	 * This method gets called when the "Use Selected Delivery Method" button is clicked. It sets the selected delivery
-	 * mode on the checkout facade and reloads the page highlighting the selected delivery Mode.
-	 *
-	 * @param selectedDeliveryMethod
-	 *           - the id of the delivery mode.
-	 * @return - a URL to the page to load.
-	 */
-	@PostMapping(value = "/saveDeliveryMethod")
-	@RequireHardLogIn
-	public String saveDeliveryMethodOnCart(@RequestParam("delivery_method") final String selectedDeliveryMethod)
-	{
-		if (StringUtils.isNotEmpty(selectedDeliveryMethod))
-		{
-			getBlCheckoutFacade().setDeliveryMethod(selectedDeliveryMethod);
-		}
-		return getCheckoutStep().nextStep();
+		return getCheckoutFacade().checkPartnerPickCodeValidity(pinCode);
 	}
 
 	@GetMapping(value = "/choosePartner")
@@ -128,7 +108,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 	@Override
 	@PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
 	public Collection<BlPartnerPickUpStoreData> getAllPartnerPickUpStore() {
-		return getBlCheckoutFacade().getAllPartnerPickUpStore();
+		return getCheckoutFacade().getAllPartnerPickUpStore();
 	}
 
 	@GetMapping(value = "/choose")
@@ -197,11 +177,4 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 		return getCheckoutStep(DELIVERY_METHOD);
 	}
 
-	public BlCheckoutFacade getBlCheckoutFacade() {
-		return blCheckoutFacade;
-	}
-
-	public void setBlCheckoutFacade(BlCheckoutFacade blCheckoutFacade) {
-		this.blCheckoutFacade = blCheckoutFacade;
-	}
 }
