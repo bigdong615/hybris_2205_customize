@@ -264,7 +264,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
         for(ZoneDeliveryModeValueModel valueModel : zoneDeliveryModeModel.getValues()) {
             if(!valueModel.isFixedAmount()) {
-                final Map<String, Double> calculatedValueMap;
+                final Map<String, Double> calculatedValueMap;   
                 try {
                     calculatedValueMap = getCalculatedWeightForDelivery(order);
                     final Double shippingCostModel = getShippingAmount(order, zoneDeliveryModeModel, calculatedValueMap);
