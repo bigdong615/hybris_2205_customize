@@ -449,5 +449,11 @@
 	<alias name="defaultBlAddressPopulator" alias="addressPopulator"/>
 	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
 	<!-- ENd Shipping-->
+	
+	<!-- BL-542 : Adding cart populator in the converter list. -->
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="extendedCartConverter"/>
+		<property name="add" ref="cartPopulator"/>
+	</bean>
 
 </beans>
