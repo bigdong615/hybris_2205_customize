@@ -44,7 +44,7 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
    */
   protected HttpEntity<SERVICEREQUEST> createHttpEntity(final SERVICEREQUEST pRequest)
   {
-    return new HttpEntity<SERVICEREQUEST>(pRequest, addHeadersToServiceRequest());
+    return new HttpEntity<SERVICEREQUEST>(pRequest, addHeadersToServiceRequest());  // NOSONAR
   }
 
   /**

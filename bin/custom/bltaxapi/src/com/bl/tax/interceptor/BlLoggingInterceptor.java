@@ -4,6 +4,7 @@ import com.bl.logging.BlLogger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpRequest;
@@ -47,7 +48,7 @@ public class BlLoggingInterceptor implements ClientHttpRequestInterceptor {
     BlLogger.logMessage(LOG,Level.INFO,"URI : {}" + request.getURI());
     BlLogger.logMessage(LOG,Level.INFO,"Method : {}" + request.getMethod());
     BlLogger.logMessage(LOG,Level.INFO,"URI : {}"+request.getURI());
-    BlLogger.logMessage(LOG,Level.INFO,"Request Body : {}",new String(body, "UTF-8"));
+    BlLogger.logMessage(LOG,Level.INFO,"Request Body : {}",new String(body, StandardCharsets.UTF_8));
     BlLogger.logMessage(LOG, Level.INFO,"==========================Tax Request End================================================");
   }
 
@@ -58,9 +59,9 @@ public class BlLoggingInterceptor implements ClientHttpRequestInterceptor {
   private void traceResponse(final ClientHttpResponse response) throws IOException
   {
     final StringBuilder inputStringBuilder = new StringBuilder();
-    final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), "UTF-8"));
+    final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), StandardCharsets.UTF_8));
 
-    try {
+    try { //NOSONAR
       String line = bufferedReader.readLine();
       while (line != null)
       {

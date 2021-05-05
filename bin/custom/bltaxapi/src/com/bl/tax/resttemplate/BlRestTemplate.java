@@ -39,9 +39,9 @@ public class BlRestTemplate {
         new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
     if (Config.getBoolean(BltaxapiConstants.BL_TAX_REST_CLIENT_LOGGING_ENABLED, true))
     {
-      final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+      final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>(); // NOSONAR
       interceptors.add(new BlLoggingInterceptor());
-      List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+      List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>(); // NOSONAR
       converters.add(new MappingJackson2HttpMessageConverter());
       restTemplate.setMessageConverters(converters);
       restTemplate.getInterceptors().addAll(interceptors);
