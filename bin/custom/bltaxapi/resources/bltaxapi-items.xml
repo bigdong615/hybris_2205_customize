@@ -9,13 +9,7 @@
 <items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 			xsi:noNamespaceSchemaLocation="items.xsd">
 
-	<enumtypes>
-		<enumtype code="BlTaxTypeEnum" autocreate="true" dynamic="true">
-			<description>This enum is used to store different types of Tax Type</description>
-			<value code="SalesOrder" />
-			<value code="SalesInvoice" />
-		</enumtype>
-	</enumtypes>
+	<!-- Added additional attribute for Avalara Tax-->
 
 	<itemtypes>
 		<typegroup name="Cart">
@@ -27,11 +21,6 @@
 					<modifiers read="true" write="true" optional="true" />
 					<persistence type="property" />
 					<defaultvalue>Boolean.FALSE</defaultvalue>
-				</attribute>
-				<attribute qualifier="taxType" type="BlTaxTypeEnum">
-					<modifiers read="true" write="true" optional="true" />
-					<persistence type="property" />
-					<defaultvalue>em().getEnumerationValue("BlTaxTypeEnum","SalesOrder")</defaultvalue>
 				</attribute>
 				<attribute  qualifier="totalAvalaraTaxCalculated" type="java.lang.Double">
 					<persistence type="property">
@@ -61,6 +50,8 @@
 		</typegroup>
 
 
+		<!-- Added additional attribute on user level for avalara tax -->
+
 		<typegroup name="User">
 		<itemtype code="User" autocreate="false" generate="false">
 			<attributes>
@@ -79,9 +70,17 @@
 				<persistence type="property" />
 				<defaultvalue>Determines the customer taxExempt Expiry date</defaultvalue>
 			</attribute>
+				<attribute qualifier="taxExemptState" type="java.lang.String">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>Determines the customer taxExemptState</defaultvalue>
+				</attribute>
 			</attributes>
 		</itemtype>
 		</typegroup>
+
+
+		<!--Added Addiional attribute on warehouse for adding wareouse address for avalara tax-->
 
 		<typegroup name="Warehouse">
 		<itemtype code="Warehouse" autocreate="false" generate="false">
@@ -95,7 +94,6 @@
 			</attributes>
 		</itemtype>
 		</typegroup>
-
 	</itemtypes>
 
 </items>

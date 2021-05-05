@@ -4,6 +4,10 @@ import com.bl.tax.TaxLineResponse;
 import de.hybris.platform.util.TaxValue;
 import java.util.List;
 
+/**
+ * This class created for tax conversion
+ * @author Manikandan
+ */
 public interface BlTaxValueConversionService {
 
   List<TaxValue> getLineTaxValues(final TaxLineResponse taxLine, final String currencyCode);

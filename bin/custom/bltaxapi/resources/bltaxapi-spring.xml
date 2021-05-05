@@ -10,67 +10,6 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<!--
-	The hybris platform provides one single Spring application context for beans located at the jalo layer.
-	Each extension can add beans to this context by specifying them at this configuration file.
-	 
-	You can use and/or redefine beans defined at configuration files of other extensions as well as
-	adding new one.
-		
-	If you want to locate this file at a different location or want to use several files for better,
-	structuring, please use the '<yourextension>.application-context' property at your project.properties file.
-	There you can specify a comma separated list of files where first is tried to find a file per classpath and
-	then per file system.
-
-	
-	If you want to configure beans for your web module please have a look at
-	your web/webroot/WEB-INF/<extname>-web-spring.xml.
-	-->
-	
-	<!--  Example how to override a manager -->
-	<!--
-	<bean id="core.productManager"   class="com.bl.tax.jalo.BltaxapiProductManager" 	init-method="init"	destroy-method="destroy" />
-	-->
-	
-	
- 	<!--  Example how to configure the class to use for jalo session creation -->
-	<!--
-	<bean id="jalosession"   class="de.hybris.platform.jalo.JaloSessionFactory">
-		<property name="targetClassName" value="com.bl.tax.jalo.BltaxapiJaloSession"/>
-	</bean>
-	-->
-
-	
-	<!--  Example how to override an item  -->
-	<!-- 
-	<bean id="de.hybris.platform.jalo.product.Product" class="com.bl.tax.jalo.BltaxapiProduct" scope="prototype" />		
- 	-->
-
-	<!--  
-	 Example how to register and use an AOP aspect 
-     Also see http://static.springframework.org/spring/docs/2.5.x/reference/aop.html	
-     -->
-	
-	<!-- 
-	<bean id="bltaxapiProfBean" class="com.bl.tax.aop.BltaxapiProfilingAspect"/>
-	<aop:config proxy-target-class="true">
-  		<aop:aspect id="bltaxapiProfAspect" ref="bltaxapiProfBean" >
-    	  <aop:pointcut id="profiledMethods" 
-	      	expression="execution(* getModificationTime(..))" />  	            
-	   		<aop:around pointcut-ref="profiledMethods" method="profile" />
-  		</aop:aspect>
-	</aop:config>
-	 -->
-
-	
-	<!-- some other examples of a pointcut that matches everything:
-
-    	  <aop:pointcut id="profiledMethods" 
-	      	expression="bean(de.hybris.platform.jalo.user.Customer) &amp;&amp; 
-	      	            !execution(* getPK(..))" />  	            
-	       <aop:pointcut id="profiledMethods" expression="execution(* *(..))" />	
-	  -->
-	
     <bean id="bltaxapiSystemSetup" class="com.bl.tax.setup.BltaxapiSystemSetup">
         <!-- constructor arg injection example -->
         <constructor-arg ref="bltaxapiService"/>
@@ -83,38 +22,41 @@
         <property name="flexibleSearchService" ref="flexibleSearchService"/>
     </bean>
 
-
+  <!--Added for custom RestTemplate for adding Logging for request and response -->
   <bean id="blRestTemplate" class="com.bl.tax.resttemplate.BlRestTemplate"/>
 
-  <bean id="abstractBlTaxService" class="com.bl.tax.service.impl.AbstractBlTaxService" abstract="true">
+  <!--Added for Avalara Tax request headers-->
+  <bean id="defaultBlTaxService" class="com.bl.tax.service.impl.DefaultBlTaxService" abstract="true">
     <property name="blRestTemplate" ref="blRestTemplate"/>
     <property name="userName" value="${bl.security.http.basic.auth.username}"/>
     <property name="password" value="${bl.security.http.basic.auth.password}"/>
   </bean>
 
-
-  <bean id="defaultBlAvalaraTaxService" class="com.bl.tax.service.impl.DefaultBlAvalaraTaxService" parent="abstractBlTaxService">
+  <!--Added for Avalara Request and Response -->
+  <bean id="defaultBlAvalaraTaxService" class="com.bl.tax.service.impl.DefaultBlAvalaraTaxService" parent="defaultBlTaxService">
     <property name="servicePathUrl" value="${bl.avalara.tax.service.url}"/>
     <property name="requestPopulator" ref="blTaxServiceRequestPopulator"/>
     <property name="responsePopulator" ref="blTaxServiceResponsePopulator"/>
     <property name="blAvalaraTaxPopulator" ref="blAvalaraTaxPopulator"/>
   </bean>
 
-
+  <!--Added for creating request for avalar tax -->
   <bean id="blTaxServiceRequestPopulator" class="com.bl.tax.populators.BlTaxServiceRequestPopulator">
     <property name="productService" ref="productService"/>
     <property name="blDatePickerService" ref="blDatePickerService"/>
     <property name="defaultWarehouseService" ref="warehouseService"/>
   </bean>
 
+  <!--Added for creating response for avalar tax -->
   <bean id="blTaxServiceResponsePopulator" class="com.bl.tax.populators.BlTaxServiceResponsePopulator">
     <property name="defaultBlTaxValueConversionService" ref="defaultBlTaxValueConversionService"/>
   </bean>
 
+  <!--Added for calculating line item and order tax from response -->
   <bean id="blAvalaraTaxPopulator" class="com.bl.tax.populators.BlAvalaraTaxPopulator">
   </bean>
 
-
+  <!--Added for caluclation strategy for avalara tax -->
   <alias name="blCalculateExternalTaxesStratergy" alias="calculateExternalTaxesStrategy" />
   <bean id="blCalculateExternalTaxesStratergy"
     class="com.bl.tax.stratergy.BlCalculateExternalTaxesStratergy" scope="tenant">
@@ -122,14 +64,15 @@
     <property name="modelService" ref="modelService"/>
   </bean>
 
-
+  <!--Override OOB startegy to use custom condition for calculating tax -->
   <alias name="blDetermineExternalTaxStrategy" alias="decideExternalTaxesStrategy" />
   <bean id="blDetermineExternalTaxStrategy" class="com.bl.tax.stratergy.BlDetermineExternalTaxStrategy">
   </bean>
 
+  <!-- Calculate shipping and line item  tax -->
   <bean id="defaultBlTaxValueConversionService" class="com.bl.tax.service.impl.DefaultBlTaxValueConversionService"/>
 
-
+  <!-- To Populate Taxes on order summary on shiiping page-->
   <bean id="blOrderTaxPopulator" class="com.bl.tax.populators.BlOrderTaxPopulator"
   parent="defaultCartPopulator"/>
 

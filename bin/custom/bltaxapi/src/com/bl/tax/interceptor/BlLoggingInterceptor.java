@@ -11,11 +11,23 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
+/**
+ * This interceptor class created for logging request and response for avalara tax
+ * @author Manikandan
+ */
 public class BlLoggingInterceptor implements ClientHttpRequestInterceptor {
 
   private static final Logger LOG = Logger.getLogger(BlLoggingInterceptor.class);
 
-
+  /**
+   * {@inheritDoc}
+   * this method created for logging logging request and response
+   * @param request  request
+   * @param body  request body
+   * @param execution ClientHttpRequestExecution
+   * @return ClientHttpResponse
+   * @throws IOException exception for I/O
+   */
   @Override
   public ClientHttpResponse intercept(final HttpRequest request, final byte[] body, final ClientHttpRequestExecution execution)
       throws IOException
@@ -26,6 +38,9 @@ public class BlLoggingInterceptor implements ClientHttpRequestInterceptor {
     return response;
   }
 
+  /**
+   * this method logs the avalara request
+   */
   private void traceRequest(final HttpRequest request, final byte[] body) throws IOException
   {
     BlLogger.logMessage(LOG, Level.INFO,"===========================Tax Request Begin================================================");
@@ -37,6 +52,9 @@ public class BlLoggingInterceptor implements ClientHttpRequestInterceptor {
   }
 
 
+  /**
+   * this method logs the avalara response
+   */
   private void traceResponse(final ClientHttpResponse response) throws IOException
   {
     final StringBuilder inputStringBuilder = new StringBuilder();

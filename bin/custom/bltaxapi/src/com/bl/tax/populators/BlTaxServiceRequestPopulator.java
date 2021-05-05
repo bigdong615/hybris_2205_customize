@@ -3,6 +3,7 @@ package com.bl.tax.populators;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
 import com.bl.tax.AddressesData;
 import com.bl.tax.TaxLine;
@@ -26,39 +27,52 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
+/**
+ * This populator created for preparing avalara tax request
+ * @author Manikandan
+ */
 public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderModel, TaxRequestData> {
+
+  private static final Logger LOG = Logger.getLogger(BlTaxServiceRequestPopulator.class);
 
   private ProductService productService;
   private BlDatePickerService blDatePickerService;
   private DefaultWarehouseService defaultWarehouseService;
 
+  /*
+   * this method created to prepare taxrequest from abstractOrderModel
+   */
   @Override
   public void populate(final AbstractOrderModel abstractOrder, final TaxRequestData taxRequest)
       throws ConversionException{
     taxRequest.setCompanyCode(BltaxapiConstants.COMPANY_CODE);
     taxRequest.setCode(abstractOrder.getCode());
-    taxRequest.setType(BltaxapiConstants.SALESORDER); // As of now using by default SalesOrder
+    taxRequest.setType(BltaxapiConstants.SALESORDER);
     setOrderDateToRequest(abstractOrder , taxRequest);
-    taxRequest.setCustomerCode("bltestuser"); //customer code
-    taxRequest.setSalesPersonCode(null); // sales person code optional
+    taxRequest.setCustomerCode(abstractOrder.getUser().getUid());
+    taxRequest.setSalesPersonCode(null);
     taxRequest.setOriginCode(BltaxapiConstants.ORIGIN);
     taxRequest.setDestinationCode(BltaxapiConstants.DESTINATION);
     try {
       setTaxCommittedToRequest(abstractOrder, taxRequest);
-    } catch (ParseException e)
-    {
-    e.printStackTrace();
+    } catch (ParseException e) {
+      BlLogger.logMessage(LOG , Level.ERROR , "Error while setting request for tax commit " , e);
     }
     taxRequest.setAddresses(createAddressesForOrderTax(abstractOrder));
     taxRequest.setLines(createdTaxLineForRequest(abstractOrder));
     setShippingAndDiscountLineForRequest(taxRequest , abstractOrder);
     taxRequest.setCurrencyCode(abstractOrder.getCurrency().getIsocode());
-
   }
 
+  /**
+   * this method created to preparing line item request
+   * @param abstractOrder abstractOrder
+   * @return  List<TaxLine>
+   */
   private List<TaxLine> createdTaxLineForRequest(final AbstractOrderModel abstractOrder) {
-
     final List<TaxLine> taxLines = new ArrayList<>();
     for (final AbstractOrderEntryModel entry : abstractOrder.getEntries())
     {
@@ -77,10 +91,14 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       taxLine.setTaxCode(setProductTaxCode(entry));
       taxLines.add(taxLine);
     }
-
     return taxLines;
   }
 
+  /**
+   * this method created to prepare address for avalara request
+   * @param abstractOrder abstractOrder
+   * @return Addresses
+   */
   private Addresses createAddressesForOrderTax(final AbstractOrderModel abstractOrder)
   {
     final Addresses addresses = new Addresses();
@@ -99,8 +117,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shipTo.setPostalCode(deliveryAddressForOrder.getPostalcode());
       shipTo.setPhone(deliveryAddressForOrder.getPhone1());
       shipTo.setEmail(deliveryAddressForOrder.getEmail());
-      shipTo.setIsDefault(true);
-      shipTo.setAddressType("");
+      shipTo.setAddressType(BltaxapiConstants.EMPTY_STRING);
       addresses.setShipTo(shipTo);
     }
       final AddressesData shipFrom = new AddressesData();
@@ -117,33 +134,37 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
            addresses.setShipFrom(shipFrom);
          }
        }
-
        return addresses;
   }
 
+  /**
+   * To set product tax code as per product type
+   */
 
-  private String setProductTaxCode(final AbstractOrderEntryModel entry) { // Have another way to check eg : isRentalCart
+  private String setProductTaxCode(final AbstractOrderEntryModel entry) {
       return entry.getProduct() instanceof BlSerialProductModel ? BltaxapiConstants.SALES_TAX_CODE
           : BltaxapiConstants.RENTAL_TAX_CODE;
     }
 
+  /**
+   * To set orderDate to request
+   */
   private void setOrderDateToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) {
    taxRequest.setDate(DateFormatUtils.format(abstractOrder.getDate(), BltaxapiConstants.DATE_FORMAT));
   }
 
 
-
-  private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest)
-      throws ParseException {
-        /// Needs to modify condition once able to get date for rental and expiry date
+  /**
+   * Validate and set tax excemption details to request
+   */
+  private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) throws ParseException {
         final boolean isTaxExempt = abstractOrder.getUser().getIsTaxExempt();
         if(isTaxExempt) {
-          taxRequest.setTaxExemptState(abstractOrder.getDeliveryAddress().getDistrict());
-          final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-          final String endDate = rentalDateDto.getSelectedToDate();
-          final Date endDay = new SimpleDateFormat(BltaxapiConstants.DATE_FORMAT).parse(endDate);
-          if (null != abstractOrder.getUser().getTaxExemptExpiry() && endDay
-                .before(abstractOrder.getUser().getTaxExemptExpiry())) {
+          final String addressState = abstractOrder.getDeliveryAddress().getDistrict();
+            taxRequest.setTaxExemptState(addressState.equalsIgnoreCase(abstractOrder.getUser().getTaxExemptState()) ? addressState : null);
+          Date endDay = getDateForRequest(abstractOrder);
+          if (null != abstractOrder.getUser().getTaxExemptExpiry() && null != endDay && endDay
+                .before(abstractOrder.getUser().getTaxExemptExpiry()) && null != taxRequest.getTaxExemptState()) {
               taxRequest.setTaxExemptExpiry(abstractOrder.getUser().getTaxExemptExpiry());
               taxRequest.setExemptionNo(StringUtils.isNotBlank(abstractOrder.getUser().getTaxExemptNumber()) ? abstractOrder.getUser().getTaxExemptNumber() : null);
               taxRequest.setCommit(isTaxExempt);
@@ -157,28 +178,41 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
         }
   }
 
+  private Date getDateForRequest(final AbstractOrderModel abstractOrder) throws ParseException {
+    final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+    if(null != rentalDateDto.getSelectedToDate()) {
+      return new SimpleDateFormat(BltaxapiConstants.DATE_FORMAT).parse(rentalDateDto.getSelectedToDate());
+    }
+    if(null == rentalDateDto.getSelectedToDate() && abstractOrder.getEntries().stream().anyMatch(abstractOrderEntryModel ->
+        abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel)) {
+      return abstractOrder.getDate();
+    }
+    return new Date();
+  }
 
+  /**
+   * this method created to prepare shipping and discount tax for orders
+   */
   private void setShippingAndDiscountLineForRequest(final TaxRequestData taxRequest , final AbstractOrderModel abstractOrder) {
     final List<TaxLine> taxLines = taxRequest.getLines();
-    final TaxLine taxLine =  new TaxLine();
-    final TaxLine taxLine1 =  new TaxLine();
+    final TaxLine shippingTaxLine =  new TaxLine();
+    final TaxLine discountTaxLine =  new TaxLine();
     if(abstractOrder.getDeliveryMode() instanceof ZoneDeliveryModeModel) {
-      taxLine.setQuantity(1);
-      taxLine.setNumber(taxRequest.getLines().get(taxRequest.getLines().size()-1).getNumber() + 1);
-      taxLine.setItemCode("shipping");
-      taxLine.setAmount(abstractOrder.getDeliveryCost());
-      taxLine.setTaxCode(abstractOrder.getEntries().stream().findAny().get().getProduct() instanceof BlSerialProductModel
+      shippingTaxLine.setQuantity(BltaxapiConstants.QTY);
+      shippingTaxLine.setNumber(taxRequest.getLines().get(taxRequest.getLines().size() -1).getNumber() + 1);
+      shippingTaxLine.setItemCode(BltaxapiConstants.SHIPPING);
+      shippingTaxLine.setAmount(abstractOrder.getDeliveryCost());
+      shippingTaxLine.setTaxCode(abstractOrder.getEntries().stream().findAny().get().getProduct() instanceof BlSerialProductModel
           ? BltaxapiConstants.SHIPPING_SALES_TAX_CODE : BltaxapiConstants.RENTAL_TAX_CODE);
-      taxLines.add(taxLine);
+      taxLines.add(shippingTaxLine);
     }
-    boolean allowed = false;
-    if(CollectionUtils.isNotEmpty(abstractOrder.getAppliedCouponCodes()) || allowed)
+    if(CollectionUtils.isNotEmpty(abstractOrder.getAppliedCouponCodes()))
     {
-      taxLine1.setQuantity(1);
-      taxLine1.setNumber(null != taxLine.getNumber() ? taxLine.getNumber() + 1 : 1);
-      taxLine1.setAmount(-10.00);
-      taxLine1.setTaxCode(BltaxapiConstants.DISCOUNT_TAX_CODE);
-      taxLines.add(taxLine1);
+      discountTaxLine.setQuantity(BltaxapiConstants.QTY);
+      discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
+      discountTaxLine.setAmount(-10.00);
+      discountTaxLine.setTaxCode(BltaxapiConstants.DISCOUNT_TAX_CODE);
+      taxLines.add(discountTaxLine);
     }
   }
 

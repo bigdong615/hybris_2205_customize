@@ -24,9 +24,7 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String DATE_FORMAT = "yyyy-MM-dd";
 	public static final String SALESORDER = "SalesOrder";
 	public static final String SALESINVOICE = "SalesInvoice";
-	public static final String CA = "CA";
 	public static final String USD = "USD";
-	public static final String CAD = "CAD";
 	public static final String RENTAL_TAX_CODE = "PRO60298";
 	public static final String SALES_TAX_CODE = "PH403706";
 	public static final String SHIPPING_SALES_TAX_CODE = "FR020100";
@@ -34,6 +32,11 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String ORIGIN  = "Origin";
 	public static final String DESTINATION = "Dest";
 	public static final String COMPANY_CODE = "BL-TEST";
-	public static final String DEFAULT_TAXCODE = "DEFAULT_TAXCODE";
+	public static final String EMPTY_STRING = "";
+	public static final String SHIPPING = "shipping";
+	public static final int QTY  = 1;
+	public static final String CONCAT  = ":";
+	public static final String BASIC  = "Basic";
+	public static final String ISO_CODE = "tax.calcualtion.country.isocode";
 
 }

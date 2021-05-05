@@ -1,54 +1,56 @@
 package com.bl.tax.service.impl;
 
 import com.bl.tax.TaxResponse;
+import com.bl.tax.constants.BltaxapiConstants;
 import com.bl.tax.resttemplate.BlRestTemplate;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import java.net.URISyntaxException;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 
+/**
+ * This class created for excute request
+ * @author Manikandan
+ */
 public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPONSE> {
 
 
-  /** The FsxRestTemplate. */
   private BlRestTemplate blRestTemplate;
-
-
-
-  /** The request populator. */
- private Populator<REQUEST, SERVICEREQUEST> requestPopulator;
-
-  /** The response popualtor. */
+  private Populator<REQUEST, SERVICEREQUEST> requestPopulator;
   private Populator<SERVICERESPONSE, RESPONSE> responsePopulator;
-
-
-
   private Populator<TaxResponse, AbstractOrderModel> blAvalaraTaxPopulator;
 
-  /** The service path url. */
   private String servicePathUrl;
-
-  /** The user name. */
   private String userName;
-
-  /** The password. */
   private String password;
 
-  protected SERVICERESPONSE process(final HttpEntity<?> requestEntity, final Class responseClazz) throws Exception
-  {
+  /**
+   * this method created for request for avalara
+   */
+
+  protected SERVICERESPONSE process(final HttpEntity<?> requestEntity, final Class responseClazz)
+      throws RestClientException, URISyntaxException {
     final ResponseEntity<SERVICERESPONSE> responeEntity = getBlRestTemplate().executeRequest(getServicePathUrl(),
         requestEntity, responseClazz);
     return responeEntity.getBody();
   }
 
+  /**
+   * this method created for HttpEntity
+   */
   protected HttpEntity<SERVICEREQUEST> createHttpEntity(final SERVICEREQUEST pRequest)
   {
-    return new HttpEntity<SERVICEREQUEST>(pRequest, addHeadersToServiceRequest());
+    return new HttpEntity<>(pRequest, addHeadersToServiceRequest());
   }
 
+  /**
+   * this method created for authentication and contentType
+   */
   protected HttpHeaders addHeadersToServiceRequest()
   {
     final HttpHeaders headers = new HttpHeaders();
@@ -57,12 +59,15 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
     return headers;
   }
 
+  /**
+   * this method created for authentication
+   */
   protected String createAuthorization()
   {
-    final String plainCreds = userName.concat(":").concat(password);
+    final String plainCreds = userName.concat(BltaxapiConstants.CONCAT).concat(password);
     final byte[] plainCredsBytes = plainCreds.getBytes();
     final byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-    return "Basic " + new String(base64CredsBytes);
+    return BltaxapiConstants.BASIC + new String(base64CredsBytes);
   }
 
 

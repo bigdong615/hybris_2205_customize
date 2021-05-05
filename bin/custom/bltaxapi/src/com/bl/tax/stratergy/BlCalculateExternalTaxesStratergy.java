@@ -1,6 +1,7 @@
 package com.bl.tax.stratergy;
 
 import com.bl.logging.BlLogger;
+import com.bl.tax.constants.BltaxapiConstants;
 import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.commerceservices.externaltax.CalculateExternalTaxesStrategy;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -15,12 +16,21 @@ import java.util.Set;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * This class created for process the avalara tax
+ * @author Manikandan
+ */
 public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxesStrategy {
 
   private static final Logger LOG = Logger.getLogger(BlCalculateExternalTaxesStratergy.class);
   private BlTaxService<AbstractOrderModel, ExternalTaxDocument> defaultBlAvalaraTaxService;
   private ModelService modelService;
 
+  /**
+   * this method created to process the avalara request
+   * @param abstractOrder order to calculcate the taxes for
+   * @return ExternalTaxDocument
+   */
   @Override
   public ExternalTaxDocument calculateExternalTaxes(final AbstractOrderModel abstractOrder)
   {
@@ -29,11 +39,8 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
     ExternalTaxDocument taxResponse = null;
     try
     {
-      // Do TAX Calculation for allowed countries only
-      // get allowed Iso-codes from properties file
-      final Set<String> resolveCountry =
-          org.springframework.util.StringUtils.commaDelimitedListToSet(Config.getParameter("tax.calcualtion.country.isocode"));
-      if (resolveCountry.contains(abstractOrder.getDeliveryAddress().getCountry().getIsocode()))
+      final String resolveCountry = Config.getParameter(BltaxapiConstants.ISO_CODE);
+      if (abstractOrder.getDeliveryAddress().getCountry().getIsocode().equalsIgnoreCase(resolveCountry))
       {
         taxResponse = getDefaultBlAvalaraTaxService().process(abstractOrder);
         abstractOrder.setAvalaraTaxCalculated(Boolean.TRUE);
@@ -60,6 +67,10 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
     return taxResponse;
   }
 
+  /**
+   * To Created External tax if response is null
+   */
+
   private ExternalTaxDocument createDefaultExternalTaxDocument(final AbstractOrderModel abstractOrder)
   {
     final ExternalTaxDocument lExternalTaxDoc = new ExternalTaxDocument();
@@ -72,14 +83,13 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
     return lExternalTaxDoc;
   }
 
+
   private List<TaxValue> getZeroTaxValue(final String isocode)
   {
     final List<TaxValue> taxValues = new ArrayList<>();
     taxValues.add(new TaxValue("DEFAULT_TAXCODE", 0.0, true, 0.0, isocode));
     return taxValues;
   }
-
-
 
   public BlTaxService<AbstractOrderModel, ExternalTaxDocument> getDefaultBlAvalaraTaxService() {
     return defaultBlAvalaraTaxService;

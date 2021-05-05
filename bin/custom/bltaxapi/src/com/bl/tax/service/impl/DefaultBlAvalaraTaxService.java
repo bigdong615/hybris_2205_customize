@@ -6,9 +6,16 @@ import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
 
+/**
+ * This class created to prepare request and response for avalara
+ * @author Manikandan
+ */
 public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrderModel, ExternalTaxDocument, TaxRequestData, TaxResponse>
     implements BlTaxService<AbstractOrderModel, ExternalTaxDocument> {
 
+  /**
+   * this method created for processing request and response
+   */
   @Override
   public ExternalTaxDocument process(final AbstractOrderModel orderModel) throws Exception
   {
@@ -23,6 +30,5 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
       }
       return lExternalTaxDoc;
   }
-
 
 }

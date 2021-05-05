@@ -18,6 +18,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * This class custom class created for adding logging interceptor , MappingJackson2HttpMessageConverter and
+ * @author Manikandan
+ */
 public class BlRestTemplate {
   public <SERVICERESPONSE> ResponseEntity<SERVICERESPONSE> executeRequest(final String urlPath,
       final HttpEntity<?> requestEntity, final Class<SERVICERESPONSE> responseEntity)
@@ -25,15 +29,18 @@ public class BlRestTemplate {
     return getRestTemplate().exchange(new URI(urlPath), HttpMethod.POST, requestEntity, responseEntity);
   }
 
+  /**
+   * this method created to add MappingJackson2HttpMessageConverter and ClientHttpRequestInterceptor
+   */
   protected RestTemplate getRestTemplate()
   {
     final RestTemplate restTemplate = new RestTemplate(
         new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
     if (Config.getBoolean(BltaxapiConstants.BL_TAX_REST_CLIENT_LOGGING_ENABLED, true))
     {
-      final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+      final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
       interceptors.add(new BlLoggingInterceptor());
-      List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+      List<HttpMessageConverter<?>> converters = new ArrayList<>();
       converters.add(new MappingJackson2HttpMessageConverter());
       restTemplate.setMessageConverters(converters);
       restTemplate.getInterceptors().addAll(interceptors);
