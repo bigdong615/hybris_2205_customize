@@ -109,8 +109,8 @@
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
-    		<script src="${commonResourcePathHtml}/js/mburger.js"></script>
-
+    	<script src="${commonResourcePathHtml}/js/mburger.js"></script>
+    		
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>
         document.addEventListener(
@@ -978,21 +978,13 @@
                         },
                     setup: (picker) => {
                         picker.on('button:apply', (date1, date2) => {
-                        $.ajax({
-                            url: ACC.config.encodedContextPath + '/datepicker',
-                            data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                            type: "GET",
-                            success: function (data) {
-                                if(data=='success')
-                                window.location.href = ACC.config.encodedContextPath + '/cart';
-                            },
-                            error: function (xhr, textStatus, error) {
-
-                            }
-                        });
+                        	$("#rentalStartDate").val(date1.toDateString());
+                        	$("#rentalEndDate").val(date2.toDateString());
+                        	$('#editWarning').modal('show');
                         });
                         }
                 });
+                
                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
                 const summarypicker = new Litepicker({
                     element: document.getElementById('summary-litepicker'),
@@ -1024,21 +1016,50 @@
                     },
                     setup: (picker) => {
                         picker.on('button:apply', (date1, date2) => {
-                            $.ajax({
-                                url: ACC.config.encodedContextPath + '/datepicker',
-                                data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                                type: "GET",
-                                success: function (data) {
-                                    if(data=='success')
-                                    window.location.href = ACC.config.encodedContextPath + '/cart';
-                                },
-                                error: function (xhr, textStatus, error) {
-
-                                }
-                            });
+                        	$("#rentalStartDate").val(date1.toDateString());
+                        	$("#rentalEndDate").val(date2.toDateString());
+                        	$('#editWarning').modal('show');
                         });
                     }
                 });
+                
+                $(document).ready(function() {
+                    $("#shippingChangeRentalDate").click(function(e) {
+                    	e.preventDefault();
+                    	var rentalStartDate = $("#rentalStartDate").val();
+                    	var rentalEndDate = $("#rentalEndDate").val();
+                    	$.ajax({
+                        url: ACC.config.encodedContextPath + '/datepicker',
+                        data: {selectedFromDate: rentalStartDate, selectedToDate: rentalEndDate},
+                        type: "GET",
+                        success: function (data) {
+                            if(data=='success')
+                            window.location.href = ACC.config.encodedContextPath + '/cart';
+                        },
+                        error: function (xhr, textStatus, error) {
+
+                        }
+                    }); 
+                    });
+                    
+                    $("#shippingCloseModal").click(function(e) {
+                    	resetDateValues(e);
+                    });
+                    
+                    $("#shippingCloseIconModal").click(function(e) {
+                    	resetDateValues(e);
+                    });
+                }); 
+                
+                function resetDateValues(e)
+                {
+                	e.preventDefault();
+                	$("#litepicker").val('');
+                	$("#summary-litepicker").val('');
+                	$("#rentalStartDate").val("");
+                	$("#rentalEndDate").val("");
+                	$('#editWarning').modal('hide');
+                }
             </script>
         </c:if>
 	</c:otherwise>
