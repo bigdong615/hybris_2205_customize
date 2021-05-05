@@ -26,7 +26,7 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
 
 
 
-  private Populator<TaxResponse, AbstractOrderModel> blLineItemTaxPopulator;
+  private Populator<TaxResponse, AbstractOrderModel> blAvalaraTaxPopulator;
 
   /** The service path url. */
   private String servicePathUrl;
@@ -117,13 +117,13 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
     this.responsePopulator = responsePopulator;
   }
 
-  public Populator<TaxResponse, AbstractOrderModel> getBlLineItemTaxPopulator() {
-    return blLineItemTaxPopulator;
+  public Populator<TaxResponse, AbstractOrderModel> getBlAvalaraTaxPopulator() {
+    return blAvalaraTaxPopulator;
   }
 
-  public void setBlLineItemTaxPopulator(
-      Populator<TaxResponse, AbstractOrderModel> blLineItemTaxPopulator) {
-    this.blLineItemTaxPopulator = blLineItemTaxPopulator;
+  public void setBlAvalaraTaxPopulator(
+      Populator<TaxResponse, AbstractOrderModel> blAvalaraTaxPopulator) {
+    this.blAvalaraTaxPopulator = blAvalaraTaxPopulator;
   }
 
 }

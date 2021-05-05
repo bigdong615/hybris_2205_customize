@@ -19,13 +19,10 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
       final ExternalTaxDocument lExternalTaxDoc = new ExternalTaxDocument();
       if(null != lResponse) {
         getResponsePopulator().populate(lResponse, lExternalTaxDoc);
-        orderModel.setTotalAvalaraTaxCalculated(setTotalTaxToOrder(lResponse));
-          getBlLineItemTaxPopulator().populate(lResponse , orderModel);
+        getBlAvalaraTaxPopulator().populate(lResponse , orderModel);
       }
       return lExternalTaxDoc;
   }
 
-  private Double setTotalTaxToOrder(final TaxResponse lResponse) {
-   return lResponse.getTotalTax() > 0.0 ? lResponse.getTotalTax() : 0.0;
-  }
+
 }

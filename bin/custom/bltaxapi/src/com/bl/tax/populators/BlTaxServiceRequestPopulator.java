@@ -12,6 +12,7 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderModel, TaxRequestData> {
@@ -143,7 +145,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           if (null != abstractOrder.getUser().getTaxExemptExpiry() && endDay
                 .before(abstractOrder.getUser().getTaxExemptExpiry())) {
               taxRequest.setTaxExemptExpiry(abstractOrder.getUser().getTaxExemptExpiry());
-              taxRequest.setTaxExemptNumber("ExcemptNumber123");
+              taxRequest.setExemptionNo(StringUtils.isNotBlank(abstractOrder.getUser().getTaxExemptNumber()) ? abstractOrder.getUser().getTaxExemptNumber() : null);
               taxRequest.setCommit(isTaxExempt);
           }
           else {
@@ -160,8 +162,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     final List<TaxLine> taxLines = taxRequest.getLines();
     final TaxLine taxLine =  new TaxLine();
     final TaxLine taxLine1 =  new TaxLine();
-    final TaxLine taxLine2 =  new TaxLine();
-    if("pickup".equalsIgnoreCase(abstractOrder.getDeliveryMode().getCode())) {
+    if(abstractOrder.getDeliveryMode() instanceof ZoneDeliveryModeModel) {
       taxLine.setQuantity(1);
       taxLine.setNumber(taxRequest.getLines().get(taxRequest.getLines().size()-1).getNumber() + 1);
       taxLine.setItemCode("shipping");

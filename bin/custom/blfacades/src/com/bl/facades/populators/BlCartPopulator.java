@@ -26,6 +26,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setLastName(source.getLastName());
 		target.setEmail(source.getEmail());
 		target.setPhone(source.getPhone());
+		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalAvalaraTaxCalculated()));
 	}
 
 }

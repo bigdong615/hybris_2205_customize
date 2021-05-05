@@ -340,8 +340,8 @@
 		<property name="purchaseOrderNo" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("purchaseOrderNo")</annotations>
 		</property>
-		<property name="taxExemptNumber" type="java.lang.String" equals="true">
-			<annotations>@JsonProperty("taxExemptNumber")</annotations>
+		<property name="exemptionNo" type="java.lang.String" equals="true">
+			<annotations>@JsonProperty("exemptionNo")</annotations>
 		</property>
 		<property name="addresses" type="com.bl.tax.Addresses" equals="true">
 			<annotations>@JsonProperty("addresses")</annotations>
@@ -374,7 +374,7 @@
 			<annotations>@JsonProperty("customerUsageType")</annotations>
 		</property>
 		<property name="commit" type="java.lang.Boolean" equals="true">
-			<annotations>@JsonProperty("isTaxExempt")</annotations>
+			<annotations>@JsonProperty("commit")</annotations>
 		</property>
 	</bean>
 
@@ -688,6 +688,11 @@
 		<property name="exemption" type="java.lang.String" equals="true">
 			<annotations>@JsonProperty("exemption")</annotations>
 		</property>
+	</bean>
+
+	<bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
+		<property name="taxAvalaraCalculated" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+
 	</bean>
 
 </beans>

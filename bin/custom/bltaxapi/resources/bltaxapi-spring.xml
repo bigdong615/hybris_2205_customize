@@ -97,7 +97,7 @@
     <property name="servicePathUrl" value="${bl.avalara.tax.service.url}"/>
     <property name="requestPopulator" ref="blTaxServiceRequestPopulator"/>
     <property name="responsePopulator" ref="blTaxServiceResponsePopulator"/>
-    <property name="blLineItemTaxPopulator" ref="blLineItemTaxPopulator"/>
+    <property name="blAvalaraTaxPopulator" ref="blAvalaraTaxPopulator"/>
   </bean>
 
 
@@ -111,7 +111,7 @@
     <property name="defaultBlTaxValueConversionService" ref="defaultBlTaxValueConversionService"/>
   </bean>
 
-  <bean id="blLineItemTaxPopulator" class="com.bl.tax.populators.BlLineItemTaxPopulator">
+  <bean id="blAvalaraTaxPopulator" class="com.bl.tax.populators.BlAvalaraTaxPopulator">
   </bean>
 
 
@@ -120,7 +120,6 @@
     class="com.bl.tax.stratergy.BlCalculateExternalTaxesStratergy" scope="tenant">
     <property name="defaultBlAvalaraTaxService" ref="defaultBlAvalaraTaxService"/>
     <property name="modelService" ref="modelService"/>
-
   </bean>
 
 
@@ -130,5 +129,13 @@
 
   <bean id="defaultBlTaxValueConversionService" class="com.bl.tax.service.impl.DefaultBlTaxValueConversionService"/>
 
+
+  <bean id="blOrderTaxPopulator" class="com.bl.tax.populators.BlOrderTaxPopulator"
+  parent="defaultCartPopulator"/>
+
+  <bean parent="modifyPopulatorList">
+    <property name="list" ref="extendedCartConverter"/>
+    <property name="add" ref="blOrderTaxPopulator"/>
+  </bean>
 
 </beans>

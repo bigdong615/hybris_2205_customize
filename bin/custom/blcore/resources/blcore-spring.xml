@@ -826,6 +826,7 @@
 		<property name="blDamageWaiverGenericDao" ref="blDamageWaiverGenericDao"/>
 		<property name="defaultOrderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
 		<property name="defaultCommonI18NService" ref="commonI18NService"/>
+		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
 	</bean>
 	
 	<!-- BL-462 : Generic dao to get the full list of Damage Waiver Percantage defined for damage Waiver types -->

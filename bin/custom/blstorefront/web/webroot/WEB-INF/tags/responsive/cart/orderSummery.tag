@@ -38,7 +38,7 @@
               </tr>
               <tr>
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
-                  <td class="text-end">$XX</td>
+                  <td class="text-end"><format:price priceData="${cartData.taxAvalaraCalculated}"/></td>
               </tr>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>

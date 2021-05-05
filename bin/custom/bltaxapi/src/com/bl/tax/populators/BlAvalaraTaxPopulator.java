@@ -4,7 +4,7 @@ import com.bl.tax.TaxResponse;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 
-public class BlLineItemTaxPopulator implements Populator<TaxResponse, AbstractOrderModel> {
+public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrderModel> {
 
   @Override
   public void populate(final TaxResponse taxResponse, final AbstractOrderModel abstractOrderModel) {
@@ -17,7 +17,18 @@ public class BlLineItemTaxPopulator implements Populator<TaxResponse, AbstractOr
          }
         }
       }
+    final Double prevAvalaraTax = abstractOrderModel.getTotalAvalaraTaxCalculated();
+      if(null != prevAvalaraTax && prevAvalaraTax >0.0) {
+        abstractOrderModel.setTotalPrice(abstractOrderModel.getTotalPrice() - prevAvalaraTax);
+      }
+     final Double totaltax = setTotalTaxToOrder(taxResponse);
+      abstractOrderModel.setTotalAvalaraTaxCalculated(totaltax);
+     final Double totalPrice = abstractOrderModel.getTotalPrice();
+      abstractOrderModel.setTotalPrice(Double.valueOf(totalPrice + totaltax));
     }
+  private Double setTotalTaxToOrder(final TaxResponse taxResponse) {
+    return taxResponse.getTotalTax() > 0.0 ? taxResponse.getTotalTax() : 0.0;
+  }
 
   }
 

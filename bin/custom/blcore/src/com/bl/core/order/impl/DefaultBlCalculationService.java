@@ -1,5 +1,6 @@
 package com.bl.core.order.impl;
 
+import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -48,6 +49,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private GenericDao<BlDamageWaiverPricingModel> blDamageWaiverGenericDao;
 	private OrderRequiresCalculationStrategy defaultOrderRequiresCalculationStrategy;
 	private CommonI18NService defaultCommonI18NService;
+	private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
 
 	/**
 	 * Reset all values of entry before calculation.
@@ -100,6 +102,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
+		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 
 	/**
@@ -147,6 +150,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
 			saveOrder(order);
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 		}
 
 	}
@@ -474,6 +478,16 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	public void setDefaultCommonI18NService(final CommonI18NService defaultCommonI18NService)
 	{
 		this.defaultCommonI18NService = defaultCommonI18NService;
+	}
+
+
+	public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService() {
+		return defaultBlExternalTaxesService;
+	}
+
+	public void setDefaultBlExternalTaxesService(
+			DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
+		this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
 	}
 
 }

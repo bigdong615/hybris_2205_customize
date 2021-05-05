@@ -13,8 +13,7 @@ public class BlDetermineExternalTaxStrategy implements DecideExternalTaxesStrate
       throw new IllegalStateException("Order is null. Cannot apply external tax to it.");
     }
 
-    return Boolean.TRUE.equals(abstractOrder.getNet()) && abstractOrder.getDeliveryMode() != null
-        && abstractOrder.getDeliveryAddress() != null && Config
-        .getBoolean("bl.calculate.externaltax", true);
+    return abstractOrder.getDeliveryMode() != null
+        && abstractOrder.getDeliveryAddress() != null && Config.getBoolean("bl.calculate.externaltax", true);
   }
 }
