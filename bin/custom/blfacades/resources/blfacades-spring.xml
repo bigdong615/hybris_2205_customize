@@ -431,8 +431,8 @@
 	</bean>
 
 	<!--Cart Calculation Strategy for calculating delivery cost-->
-	<alias name="defaultBlCheckoutFacade" alias="checkoutFacade"/>
-	<bean id="defaultBlCheckoutFacade" class="com.bl.facades.shipping.impl.DefaultBlCheckoutFacade" parent="defaultCheckoutFacade">
+	<alias name="checkoutFacade" alias="checkoutFacade"/>
+	<bean id="checkoutFacade" class="com.bl.facades.shipping.impl.DefaultBlCheckoutFacade" parent="defaultCheckoutFacade">
 		<property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="blZoneDeliveryModeConverter" ref="blZoneDeliveryModeConverter"/>
 		<property name="blPickUpZoneDeliveryModeConverter" ref="blPickUpZoneDeliveryModeConverter"/>

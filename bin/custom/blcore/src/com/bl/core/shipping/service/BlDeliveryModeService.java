@@ -164,9 +164,7 @@ public interface BlDeliveryModeService {
      *
      * @param order order
      * @param zoneDeliveryModeModel delivery mode
-     * @param cart cart entries
      * @return double value of amount
      */
-    double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final CartModel cart,
-                                            final ZoneDeliveryModeModel zoneDeliveryModeModel);
+    double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel);
 }
