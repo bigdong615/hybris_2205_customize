@@ -2,6 +2,8 @@ package com.bl.core.services.cart;
 
 import de.hybris.platform.order.CartService;
 
+import java.util.Date;
+
 /**
  * It provides cart related functionality.
  *
@@ -31,4 +33,12 @@ public interface BlCartService extends CartService {
    * @param damageWaiverType the damage Waiver type
    */
   void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
+  
+  /**
+   * Sets the rental dates on cart.
+   *
+   * @param rentalStartDate the rental start date
+   * @param rentalEndDate the rental end date
+   */
+  void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate);
 }

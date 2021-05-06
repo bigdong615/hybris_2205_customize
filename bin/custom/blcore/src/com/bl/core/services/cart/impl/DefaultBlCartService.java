@@ -10,6 +10,10 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
+
+import java.util.Date;
+import java.util.Objects;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
@@ -100,6 +104,26 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 			getModelService().save(cartModel);
 			final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
 			getCommerceCartCalculationStrategy().recalculateCart(parameter);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setRentalDatesOnCart(Date rentalStartDate, Date rentalEndDate)
+	{
+		final CartModel cartModel = getSessionCart();
+		cartModel.setRentalStartDate(rentalStartDate);
+		cartModel.setRentalEndDate(rentalEndDate);
+		try 
+		{			
+			getModelService().save(cartModel);
+		}
+		catch(Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, "", exception, 
+					"Error while saving rental dates on cart - {}", cartModel.getCode());
 		}
 	}
 
