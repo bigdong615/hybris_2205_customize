@@ -12,7 +12,6 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 
 import java.util.Date;
-import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
