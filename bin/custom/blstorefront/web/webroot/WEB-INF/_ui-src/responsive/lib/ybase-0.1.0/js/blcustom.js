@@ -76,6 +76,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       updateQuantity();
+                                      addToCartFromModal();
+                                      addId();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -83,7 +85,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
                                    }
                         });
-
  });
 
  // BL-454 update quantity from rental add to cart popup.
@@ -111,3 +112,49 @@ $('.shopping-cart__item-remove').on("click", function (e){
     });
  }
 
+function addId(){
+let seemore = document.querySelectorAll(".SeeMore2");
+   for(var i=0;i<seemore.length;i++){
+          seemore[i].id ="abc-"+i;
+          alert("for loop is running")
+           }
+}
+
+let seemore = document.querySelectorAll(".SeeMore2");
+for(var i=0;i<seemore.length;i++){
+seemore[i].id ="abc-"+i;
+}
+
+  //BL-454 add to cart
+   function addToCartFromModal(){
+  $('.js-add-to-cart1').on('click',function(e) {
+                        e.preventDefault();
+                         let z= this.getAttribute("id");
+                            var index = $( ".js-add-to-cart1" ).index( this );
+                            document.getElementById(z).innerHTML= "Added";
+
+                         var productCode = $(this).attr('data-product-code');
+                         var serialCode = $(this).attr('data-serial');
+                         var recognise = $(this).attr('data-popup');
+                         if(serialCode == '' || serialCode == undefined){
+                        serialCode = "serialCodeNotPresent";
+                        }
+                         if(recognise == '' || recognise == undefined){
+                         recognise = "notClickedFromModal";
+                         }
+                         $.ajax({
+                                    url: ACC.config.encodedContextPath + "/cart/add",
+                                    type: 'POST',
+                                    data: {productCodePost: productCode, popUpRecognisePost:recognise,serialProductCodePost:serialCode},
+                                    success: function (response) {
+                                    alert("product added to cart");
+                                      //addToCartToAdded();
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                          $('.modal-backdrop').addClass('remove-popup-background');
+                                          // log the error to the console
+                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                                    }
+                         });
+
+  });

@@ -11,6 +11,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractContr
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartOrderForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToEntryGroupForm;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.commercefacades.order.CartFacade;
 import de.hybris.platform.commercefacades.order.converters.populator.GroupCartModificationListPopulator;
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
@@ -19,7 +20,9 @@ import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
+import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -62,6 +65,8 @@ public class AddToCartController extends AbstractController
 
 	private static final Logger LOG = Logger.getLogger(AddToCartController.class);
 
+	protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY , ProductOption.STOCK);
+
 	@Resource(name = "cartFacade")
 	private CartFacade cartFacade;
 
@@ -74,12 +79,17 @@ public class AddToCartController extends AbstractController
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
 
+	@Resource(name = "enumerationService")
+	private EnumerationService enumerationService;
+
 	@RequestMapping(value = "/cart/add", method = RequestMethod.POST, produces = "application/json")
-	public String addToCart(@RequestParam("productCodePost") final String code, @RequestParam("serialProductCodePost") final String serialCode, final Model model,
+	public String addToCart(@RequestParam("productCodePost") final String code, @RequestParam("serialProductCodePost") final String serialCode,
+			@RequestParam("popUpRecognisePost") final String recognise, final Model model,
 			@Valid final AddToCartForm form, final BindingResult bindingErrors)
 	{
 		validateParameterNotNull(code, "Product code must not be null");
 		validateParameterNotNull(serialCode, "Serial code must not be null");
+		validateParameterNotNull(recognise, "recognise data must not be null");
 
 		if (bindingErrors.hasErrors())
 		{
@@ -135,7 +145,13 @@ public class AddToCartController extends AbstractController
 		}
 
 		model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC)));
+		final List<ProductReferenceData> productReferences = productFacade
+				.getProductReferencesForCode(code, getEnumerationService().getEnumerationValues(
+						ProductReferenceTypeEnum._TYPECODE),
+						PRODUCT_OPTIONS, 50);
 
+		model.addAttribute("productReferences", productReferences);
+		model.addAttribute("dataChange", recognise);
 		return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 	}
 
@@ -345,5 +361,13 @@ public class AddToCartController extends AbstractController
 	protected boolean isValidQuantity(final OrderEntryData cartEntry)
 	{
 		return cartEntry.getQuantity() != null && cartEntry.getQuantity().longValue() >= 1L;
+	}
+
+	public EnumerationService getEnumerationService() {
+		return enumerationService;
+	}
+
+	public void setEnumerationService(EnumerationService enumerationService) {
+		this.enumerationService = enumerationService;
 	}
 }
