@@ -1,13 +1,10 @@
 package com.bl.core.model.interceptor;
 
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.jalo.BlSerialProduct;
-import com.bl.core.stock.BlStockService;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
-
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -16,8 +13,11 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.calculation.BlPricingService;
+import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
 
 
@@ -64,7 +64,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 * @param ctx
 	 *           the ctx
 	 */
-	private void updateWarehouseInStockRecordsOnWHLocUpdate(BlSerialProductModel blSerialProduct, InterceptorContext ctx) {
+	private void updateWarehouseInStockRecordsOnWHLocUpdate(final BlSerialProductModel blSerialProduct,
+			final InterceptorContext ctx)
+	{
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.WAREHOUSELOCATION);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.WAREHOUSELOCATION) &&
@@ -72,7 +74,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE)) {
 					getBlStockService().findAndUpdateWarehouseInStockRecords(blSerialProduct);
 			}
-		} catch(Exception ex) {
+		} catch(final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while updating the warehouse {} in the stock record for serial product {} ",
 					blSerialProduct.getWarehouseLocation(), blSerialProduct.getCode());
@@ -88,15 +90,15 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 * @param ctx
 	 *           the ctx
 	 */
-	private void updateStockRecordsOnForRentFlagUpdate(BlSerialProductModel blSerialProduct, InterceptorContext ctx) {
+	private void updateStockRecordsOnForRentFlagUpdate(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) {
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.FORRENT);
-			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) &&
+			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) && //NOSONAR
 			blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE) && Boolean.TRUE.equals(blSerialProduct
 						.getForSale()) && Boolean.FALSE.equals(blSerialProduct.getForRent())) {
 					getBlStockService().findAndDeleteStockRecords(blSerialProduct);
 				}
-		} catch(Exception ex) {
+		} catch(final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while updating the stock records on 'For Rent' flag change event of serial product {} ",
 					blSerialProduct.getCode());
@@ -122,7 +124,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
 				}
 			}
-		} catch(Exception ex) {
+		} catch(final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while updating the stock records on serial status change event of serial product {} ",
 					blSerialProduct.getCode());
@@ -280,7 +282,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		return blStockService;
 	}
 
-	public void setBlStockManageService(BlStockService blStockService) {
+	public void setBlStockManageService(final BlStockService blStockService) {
 		this.blStockService = blStockService;
 		}
 }

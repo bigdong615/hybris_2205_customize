@@ -1,10 +1,12 @@
 package com.bl.core.stock;
 
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.servicelayer.exceptions.BusinessException;
+
 import java.util.Date;
 import java.util.List;
+
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 
 
 /**
@@ -39,13 +41,15 @@ public interface BlStockService
 	 * all the future dates
 	 * @param blSerialProduct the serial product
 	 */
-	public void createStockRecordsForNewSerialProducts(BlSerialProductModel blSerialProduct);
+	public void createStockRecordsForNewSerialProducts(final BlSerialProductModel blSerialProduct);
 
 	/**
-	 * It finds the stock level from present date to all the future dates from current date and deletes all
-	 * @param blSerialProduct the serial product
+	 * It finds the stock level from present date to all the future dates and deletes all
+	 *
+	 * @param blSerialProduct
+	 *           the serial product
 	 */
-	public void findAndDeleteStockRecords(BlSerialProductModel blSerialProduct);
+	public void findAndDeleteStockRecords(final BlSerialProductModel blSerialProduct);
 
 	/**
 	 * It finds the stock level from present date to all the future dates and
@@ -53,7 +57,7 @@ public interface BlStockService
 	 * @param blSerialProduct the serial product
 	 * @param reservedStatus the status of of the serial product
 	 */
-	public void findAndUpdateStockRecords(BlSerialProductModel blSerialProduct, final boolean reservedStatus);
+	public void findAndUpdateStockRecords(final BlSerialProductModel blSerialProduct, final boolean reservedStatus);
 
 	/**
 	 * It finds the stock level based on given start and end date and updates the reserved status attribute
@@ -62,8 +66,8 @@ public interface BlStockService
 	 * @param startDate the rental start date
 	 * @param endDate the rental end date
 	 */
-	public void findAndUpdateStockRecordsForParticularDuration(BlSerialProductModel blSerialProduct, final boolean reservedStatus,
-			final Date startDate, final Date endDate);
+	public void findAndUpdateStockRecordsForParticularDuration(final BlSerialProductModel blSerialProduct,
+			final boolean reservedStatus, final Date startDate, final Date endDate);
 
 	/**
 	 * It updates the warehouse in the stock records from present date to all the future dates

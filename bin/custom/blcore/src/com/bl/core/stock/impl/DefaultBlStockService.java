@@ -110,12 +110,18 @@ public class DefaultBlStockService implements BlStockService
 	{
 		final LocalDate currentDate = LocalDate.now();
 		final LocalDate formattedEndDate = BlDateTimeUtils.getNextYearsSameDay().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		//This check is added for safer side. If user changing the statuses from one status to another.
+		//So, to avoid creating stocks this check is added.
 		final Collection<StockLevelModel> stockLevels = getStockLevelModelsBasedOnDates(blSerialProduct);
 		if (CollectionUtils.isEmpty(stockLevels))
 		{
 				Stream.iterate(currentDate, date -> date.plusDays(1)).limit(ChronoUnit.DAYS.between(currentDate, formattedEndDate))
 						.forEach(date -> createStockLevelForSerial(blSerialProduct,
 								Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())));
+		}
+		else
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Stock already exist for serial product {} ", blSerialProduct.getCode());
 		}
 	}
 
@@ -132,8 +138,13 @@ public class DefaultBlStockService implements BlStockService
 				getModelService().removeAll(stockLevels);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock records removed for serial product {} "
 								+ "to end date", blSerialProduct.getCode());
-				createStockLevelForSerial(blSerialProduct, null);
-			} catch(ModelRemovalException ex) {
+				if (null != blSerialProduct.getWarehouseLocation())
+				{
+					//creating stock level for a particular serial because serial is no more a rental product now
+					//and it becomes the used gear product.
+					createStockLevelForSerial(blSerialProduct, null);
+				}
+			} catch(final ModelRemovalException ex) {
 				BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 						"Exception occurred while deleting the stock records for the serial product {} ",
 						blSerialProduct.getCode());
@@ -186,7 +197,7 @@ public class DefaultBlStockService implements BlStockService
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock {} updated for serial product {} for the date {} ",
 					stockLevel.getPk(), stockLevel.getSerialProductCode(), stockLevel.getDate());
 		}
-		catch(ModelSavingException ex) {
+		catch(final ModelSavingException ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while saving the stock record {} of the serial product {} for the date {} ",
 					stockLevel.getPk(), stockLevel.getSerialProductCode(), stockLevel.getDate());
@@ -217,7 +228,7 @@ public class DefaultBlStockService implements BlStockService
 	 * @return Collection<StockLevelModel>
 	 */
 	private Collection<StockLevelModel> getStockLevelModelsBasedOnDates(
-			BlSerialProductModel blSerialProduct) {
+			final BlSerialProductModel blSerialProduct) {
 		final Date currentDate = Date
 				.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
 		final Date futureDate = BlDateTimeUtils.getNextYearsSameDay();
@@ -238,7 +249,7 @@ public class DefaultBlStockService implements BlStockService
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Warehouse {} updated for stock record {} of serial product {} ",
 					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
 		}
-		catch(ModelSavingException ex) {
+		catch(final ModelSavingException ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, BlCoreConstants.EMPTY_STRING, ex,
 					"Exception occurred while updating the warehouse {} in stock record {} after update for the serial product {} ",
 					warehouseLocation.getCode(), stockLevel.getPk(), stockLevel.getSerialProductCode());
