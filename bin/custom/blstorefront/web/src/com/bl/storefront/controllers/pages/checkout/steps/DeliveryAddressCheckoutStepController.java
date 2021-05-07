@@ -3,6 +3,11 @@
  */
 package com.bl.storefront.controllers.pages.checkout.steps;
 
+import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.storefront.controllers.pages.checkout.BlAddressCheckoutStepController;
+import com.bl.storefront.forms.BlAddressForm;
+import com.bl.storefront.forms.BlPickUpByForm;
+import com.bl.storefront.util.BlAddressDataUtil;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -12,7 +17,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
-import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
@@ -32,41 +36,94 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
 @RequestMapping(value = "/checkout/multi/delivery-address")
-public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepController
+public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepController implements BlAddressCheckoutStepController
 {
 	private static final String DELIVERY_ADDRESS = "delivery-address";
 	private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
 
-	@Resource(name = "addressDataUtil")
-	private AddressDataUtil addressDataUtil;
+	@Resource(name = "blAddressDataUtil")
+	private BlAddressDataUtil addressDataUtil;
 
-	@Override
-	@RequestMapping(value = "/add", method = RequestMethod.GET)
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
+
+	/**
+	 * This method gets called when the "Use this Address" button is clicked. It sets the selected delivery address on
+	 * the checkout facade - if it has changed, and reloads the page highlighting the selected delivery address.
+	 *
+	 * @param selectedAddressCode
+	 *           - the id of the delivery address.
+	 *
+	 * @return - a URL to the page to load.
+	 */
+	@GetMapping(value = "/select")
 	@RequireHardLogIn
-	@PreValidateQuoteCheckoutStep
-	@PreValidateCheckoutStep(checkoutStep = DELIVERY_ADDRESS)
-	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+	@ResponseBody
+	public String doSelectDeliveryAddress(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+										  final RedirectAttributes redirectAttributes)
 	{
-		getCheckoutFacade().setDeliveryAddressIfAvailable();
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
-
-		populateCommonModelAttributes(model, cartData, new AddressForm());
-
-		return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+		final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
+		if (getCheckoutStep().checkIfValidationErrors(validationResults))
+		{
+			return getCheckoutStep().onValidation(validationResults);
+		}
+		if (StringUtils.isNotBlank(selectedAddressCode))
+		{
+			final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
+			final boolean hasSelectedAddressData = selectedAddressData != null;
+			if (hasSelectedAddressData)
+			{
+				setDeliveryAddress(selectedAddressData);
+			}
+		}
+		return "SUCCESS";
 	}
 
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	protected void setDeliveryAddress(final AddressData selectedAddressData)
+	{
+		final AddressData cartCheckoutDeliveryAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
+		if (isAddressIdChanged(cartCheckoutDeliveryAddress, selectedAddressData))
+		{
+			getCheckoutFacade().setDeliveryAddress(selectedAddressData);
+			if (cartCheckoutDeliveryAddress != null && !cartCheckoutDeliveryAddress.isVisibleInAddressBook())
+			{ // temporary address should be removed
+				getUserFacade().removeAddress(cartCheckoutDeliveryAddress);
+			}
+		}
+	}
+
+	@PostMapping(value = "/addPickUpDetails")
 	@RequireHardLogIn
-	public String add(final AddressForm addressForm, final BindingResult bindingResult, final Model model,
-			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
+	@Override
+	@ResponseBody
+	public String savePickUpByFormOnCart(@RequestBody final BlPickUpByForm blPickUpByForm, final BindingResult bindingResult,
+										 final Model model, final RedirectAttributes redirectModel) {
+		if (blPickUpByForm != null) {
+			getCheckoutFacade().savePickUpInfoOnCart(blPickUpByForm);
+			return "SUCCESS";
+		}
+		return "ERROR";
+	}
+
+	@PostMapping(value = "/removeDeliveryDetails")
+	@RequireHardLogIn
+	@Override
+	@ResponseBody
+	public String removeDeliveryDetailsFromCart() {
+		return getCheckoutFacade().removeDeliveryDetails();
+	}
+
+	@PostMapping(value = "/add")
+	@RequireHardLogIn
+	@ResponseBody
+	public String add(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
+					  final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 
@@ -76,7 +133,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		if (bindingResult.hasErrors())
 		{
 			GlobalMessages.addErrorMessage(model, "address.error.formentry.invalid");
-			return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+			return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
 		}
 
 		final AddressData newAddress = addressDataUtil.convertToAddressData(addressForm);
@@ -92,7 +149,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 
 		if (addressRequiresReview)
 		{
-			return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+			return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
 		}
 
 		getUserFacade().addAddress(newAddress);
@@ -128,7 +185,22 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		}
 	}
 
-	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	@Override
+	@GetMapping(value = "/add")
+	@RequireHardLogIn
+	@PreValidateQuoteCheckoutStep
+	@PreValidateCheckoutStep(checkoutStep = DELIVERY_ADDRESS)
+	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+	{
+		getCheckoutFacade().setDeliveryAddressIfAvailable();
+		final CartData cartData = getCheckoutFacade().getCheckoutCart();
+
+		populateCommonModelAttributes(model, cartData, new AddressForm());
+
+		return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+	}
+
+	@GetMapping(value = "/edit")
 	@RequireHardLogIn
 	public String editAddressForm(@RequestParam("editAddressCode") final String editAddressCode, final Model model,
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
@@ -163,7 +235,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
 	}
 
-	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	@PostMapping(value = "/edit")
 	@RequireHardLogIn
 	public String edit(final AddressForm addressForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
@@ -228,8 +300,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		}
 	}
 
-	@RequestMapping(value = "/remove", method =
-	{ RequestMethod.GET, RequestMethod.POST }) //NOSONAR
+	@RequestMapping(value = "/remove", method = { RequestMethod.GET, RequestMethod.POST }) //NOSONAR
 	@RequireHardLogIn
 	public String removeAddress(@RequestParam("addressCode") final String addressCode, final RedirectAttributes redirectModel,
 			final Model model) throws CMSItemNotFoundException
@@ -250,7 +321,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		return getCheckoutStep().currentStep();
 	}
 
-	@RequestMapping(value = "/select", method = RequestMethod.POST)
+	@PostMapping(value = "/select")
 	@RequireHardLogIn
 	public String doSelectSuggestedAddress(final AddressForm addressForm, final RedirectAttributes redirectModel)
 	{
@@ -292,52 +363,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		return getCheckoutStep().nextStep();
 	}
 
-
-	/**
-	 * This method gets called when the "Use this Address" button is clicked. It sets the selected delivery address on
-	 * the checkout facade - if it has changed, and reloads the page highlighting the selected delivery address.
-	 *
-	 * @param selectedAddressCode
-	 *           - the id of the delivery address.
-	 *
-	 * @return - a URL to the page to load.
-	 */
-	@RequestMapping(value = "/select", method = RequestMethod.GET)
-	@RequireHardLogIn
-	public String doSelectDeliveryAddress(@RequestParam("selectedAddressCode") final String selectedAddressCode,
-			final RedirectAttributes redirectAttributes)
-	{
-		final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
-		if (getCheckoutStep().checkIfValidationErrors(validationResults))
-		{
-			return getCheckoutStep().onValidation(validationResults);
-		}
-		if (StringUtils.isNotBlank(selectedAddressCode))
-		{
-			final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
-			final boolean hasSelectedAddressData = selectedAddressData != null;
-			if (hasSelectedAddressData)
-			{
-				setDeliveryAddress(selectedAddressData);
-			}
-		}
-		return getCheckoutStep().nextStep();
-	}
-
-	protected void setDeliveryAddress(final AddressData selectedAddressData)
-	{
-		final AddressData cartCheckoutDeliveryAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
-		if (isAddressIdChanged(cartCheckoutDeliveryAddress, selectedAddressData))
-		{
-			getCheckoutFacade().setDeliveryAddress(selectedAddressData);
-			if (cartCheckoutDeliveryAddress != null && !cartCheckoutDeliveryAddress.isVisibleInAddressBook())
-			{ // temporary address should be removed
-				getUserFacade().removeAddress(cartCheckoutDeliveryAddress);
-			}
-		}
-	}
-
-	@RequestMapping(value = "/back", method = RequestMethod.GET)
+	@GetMapping(value = "/back")
 	@RequireHardLogIn
 	@Override
 	public String back(final RedirectAttributes redirectAttributes)
@@ -345,7 +371,7 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		return getCheckoutStep().previousStep();
 	}
 
-	@RequestMapping(value = "/next", method = RequestMethod.GET)
+	@GetMapping(value = "/next")
 	@RequireHardLogIn
 	@Override
 	public String next(final RedirectAttributes redirectAttributes)
@@ -387,4 +413,12 @@ public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepC
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
 	}
 
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
+	}
+
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
+	}
 }

@@ -2,16 +2,45 @@
 <!--
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="beans.xsd">
 
-	<bean class="de.hybris.platform.commercefacades.product.data.ProductData">
-		<property name="genders" type="java.util.List&lt;com.bl.facades.product.data.GenderData>"/>
-	</bean>
+
+  <bean class="de.hybris.platform.commercefacades.product.data.ProductData">
+    <property name="genders" type="java.util.List&lt;com.bl.facades.product.data.GenderData>"/>
+    <!--BL-166:These attribute created for populating bl related specific product attribute.-->
+    <property name="displayName" type="java.lang.String"/>
+    <property name="rentalVideosLink"
+      type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
+    <property name="usedGearVideosLink"
+      type="java.util.List&lt;com.bl.facades.product.data.ProductVideoData>"/>
+    <property name="forSale" type="java.lang.Boolean"/>
+    <property name="forRent" type="java.lang.Boolean"/>
+    <property name="shortDescription" type="java.lang.String"/>
+    <property name="rentalNote" type="java.lang.String"/>
+    <property name="rentalIncludes" type="java.lang.String"/>
+    <property name="usedIncludes" type="java.lang.String"/>
+    <property name="usedDescription" type="java.lang.String"/>
+    <property name="purchaseNotes" type="java.lang.String"/>
+    <property name="dataSheet"
+      type="java.util.Collection&lt;de.hybris.platform.commercefacades.product.data.ImageData>"/>
+    <property name="isDiscontinued" type="Boolean"/>
+    <property name="isNew" type="Boolean"/>
+    <property name="isUpcoming" type="Boolean"/>
+    <property name="productPageType" type="java.lang.String"/>
+    <property name="serialproducts" type="java.util.List"/>
+    <property name="productTagValues" type="String"/>
+	<property name="serialfinalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
+  </bean>
+
 
 	<bean class="com.bl.facades.product.data.GenderData">
 		<property name="code" type="String"/>
 		<property name="name" type="String"/>
 	</bean>
+
 
 	<bean class="com.bl.facades.giftcard.data.BLGiftCardData">
 		<property name="code" type="String"/>
@@ -34,4 +63,105 @@
 		<property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
 	</bean>
 
+
+	<!--BL-80 Added new entry in SearchQueryData-->
+	<bean class="de.hybris.platform.commercefacades.search.data.SearchQueryData">
+		<property name="blPage" type="String"/>
+	</bean>
+
+	<bean class="de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryData">
+		<property name="blPage" type="String"/>
+	</bean>
+
+  <!--BL-166: This DTO contain product video related information-->
+  <bean class="com.bl.facades.product.data.ProductVideoData">
+    <property name="videoName" type="String"/>
+    <property name="videoUrl" type="String"/>
+    <property name="videoDuration" type="String"/>
+  </bean>
+  <!--BL-166 : Add accelerator facades specific product options -->
+  <enum class="de.hybris.platform.commercefacades.product.ProductOption">
+    <value>REQUIRED_DATA</value>
+  </enum>
+
+  <!--BL-174 : This DTO contains date related information(for temporary purpose once local storage code is ready
+                this will be removed) -->
+  <bean class="com.bl.facades.product.data.RentalDateDto">
+    <property name="selectedFromDate" type="String"/>
+    <property name="selectedToDate" type="String"/>
+    <property name="numberOfDays" type="String"/>
+  </bean>
+
+<!-- DTO to store Serial Product Data -->
+ <bean class="com.bl.facades.product.data.SerialProductData">
+    <property name="conditionRating" type="Double"/>
+    <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="serialId" type="String"/>
+  </bean>
+  
+  <!-- Adding custom attributes in existing DTO of OrderEntryData -->
+  <bean class="de.hybris.platform.commercefacades.order.data.OrderEntryData">
+  	<property name="gearGuardWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="gearGuardProFullWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="gearGuardWaiverSelected" type="java.lang.Boolean"/>
+	<property name="gearGuardProFullWaiverSelected" type="java.lang.Boolean"/>
+	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
+  </bean>
+  
+  <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
+  <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
+  	<property name="totalDamageWaiverCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+      <property name="pickUpByMe" type="java.lang.Boolean"/>
+      <property name="pickUpPersonFirstName" type="java.lang.String"/>
+      <property name="pickUpPersonLastName" type="java.lang.String"/>
+      <property name="pickUpPersonEmail" type="java.lang.String"/>
+      <property name="pickUpPersonPhone" type="java.lang.String"/>
+  </bean>
+
+    <!-- Shipping -->
+    <bean class="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="daysToSkip" type="java.util.Collection&lt;String>"/>
+        <property name="cutOffTime" type="String"/>
+        <property name="numberOfDaysToSkip" type="String"/>
+        <property name="shippingMethodId" type="String"/>
+        <property name="shippingMethodType" type="String"/>
+        <property name="carrier" type="String"/>
+        <property name="warehouse" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
+        <property name="code" type="String"/>
+        <property name="name" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlPartnerPickUpStoreData">
+        <property name="code" type="String"/>
+        <property name="name" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData"
+          extends="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="externalStores" type="Boolean"/>
+        <property name="externalStoreUrl" type="String"/>
+        <property name="userName" type="String"/>
+        <property name="password" type="String"/>
+        <property name="internalStoreAddress" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlRushDeliveryModeData"
+          extends="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="deliveryType" type="String"/>
+        <property name="shippingArea" type="String"/>
+        <property name="radius" type="String"/>
+    </bean>
+
+    <bean class="de.hybris.platform.commercefacades.user.data.AddressData">
+        <property name="addressType" type="String"/>
+    </bean>
+    <!-- Shipping End-->
+
+
 </beans>
+
+

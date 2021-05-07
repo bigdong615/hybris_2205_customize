@@ -14,12 +14,10 @@ public enum LogErrorCodeEnum implements LogError
     ORDER_INVALID("0002", "Order invalid"), 
 	 INTEGRATION_ERROR("0003", "Integration Error"), 
 	 CRONJOB_ERROR("0004", "CRONJOB ERROR"),
-	 HOT_FOLDER_ERROR("0005", "HotFolder Error");
-    //ADDRESS_FALL_BACK_ERROR("0073", "Address Fallback Not Found."),
-    //SALES_ORDER_EXPORT_ERROR("0075","Error has occurred in sales order export"),
-    //PRODUCT_IMPORT_ERROR("0003","Error has occurred in product import process");
-    //TODO LOGGING -  further enums to be defined here...
-
+	 HOT_FOLDER_ERROR("0005", "HotFolder Error"),
+	 DYNAMIC_PRICING_ERROR("0006", "Dynamic Price Calculating Error"),
+	 SOLR_INDEXING_ERROR("0007", "Solr Property Indexing Error"),
+	 CART_INTERNAL_ERROR("0008", "Error while updating the cart");
 
     private String code;
     private String description;

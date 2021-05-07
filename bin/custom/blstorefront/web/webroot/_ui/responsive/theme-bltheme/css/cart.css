@@ -1,0 +1,103 @@
+/**
+Borrow Lenses CSS - CART
+v0.01
+Designed by Veneer Studio
+©2021
+**/
+.formControlErrorClass { border:  2px solid red; }
+.btn-check:focus+.btn, .btn:focus {
+    outline: 0;
+    box-shadow: none;
+    outline: none;
+}
+.btn-checkbox { padding: 0; width: 20px; height: 20px; border: 0; background: transparent; }
+#pickup-person .btn-checkbox { font-size: 16px; text-transform: none; width: auto; }
+.dropdown button { }
+.cart h1 { font-size: 34px; line-height: 40px; }
+#cartProcess, #confirmationWindow { background-color: white; border-top: 1px solid #D4D3D3; border-bottom: 1px solid #D4D3D3; padding-bottom: 50px; margin-top: 10px; }
+#cartSteps { padding: 30px 0 60px; }
+#cartSteps i.number { position: relative; background-color: #c4c4c4; }
+#cartSteps .active i.number { background-color: #52bfc0; }
+.complete .icon-check { display: inline-block; background: url(../assets/icon-check.svg) center no-repeat; background-size: 14px;  width: 14px; height: 12px; margin-right: 8px; opacity: .5;}
+.step1, .step2, .step3, .step4 { margin: 0 15px; font-weight: 700; color: #c4c4c4; }
+.step1 { margin-left: 0; }
+.step1.active, .step2.active, .step3.active, .step4.active { color: #52bfc0; }
+.cart input[type=text], .cart select.form-control { padding: 10px; margin-top: 6px; margin-bottom: 6px; }
+.cart .select-wrapper { position: relative; display: block; }
+.cart .select-wrapper:after { content:''; display: block; position: absolute; right: 20px; top: 50%; border: none; width: 6px; height: 4px; background: url(../assets/nav-arrow.svg) center no-repeat; margin-top: -2px; margin-left: .5em; }
+.cart-actions { display: block; overflow: auto; }
+
+#order .btn-outline:hover { background-color: white; }
+#order p a { color: #52bfc0; } /* target with litecal */
+#order img { max-width: 100%; }
+#order .row b { display: block; }
+#order .dropdown .dropdown-menu { width: 100%; }
+#order .dropdown .dropdown-menu li { border-bottom: 1px solid #d4d3d3; }
+#order .dropdown .dropdown-menu li:last-child { border-bottom: none; }
+#order .dropdown a, #order #productOptions .dropdown-menu a { padding: 15px 35px 15px 50px; letter-spacing: normal; font-size: 1rem; text-transform: none; }
+#order #productOptions .dropdown a, #order #productOptions .dropdown-menu a { padding-left: 8px; line-height: 35px; }
+#order #productOptions .dropdown a img, #order #productOptions .dropdown-menu a img { margin-right: 8px; height: 35px; width: auto; }
+#order .dropdown-toggle:after { position: absolute; top: 50%; right: 20px; margin-top: -2px;  }
+#order .dropdown a.gearguard-plus, .damage-waiver .gearguard-plus { background: url(../assets/gear-guard-plus.png) 6px center no-repeat; background-size: 35px; }
+#order .dropdown a.gearguard, .damage-waiver .gearguard { background: url(../assets/gear-guard.png) 6px center no-repeat; background-size: 30px; }
+#order .dropdown a.no-gearguard, .damage-waiver .no-gearguard { background: url(../assets/gear-guard-none.png) 6px center no-repeat; background-size: 30px; }
+.cartProduct, .shipProduct, .paymentOption, .reviewCart { padding-bottom: 40px; margin-bottom: 40px; border-bottom: 1px solid #d4d3d3; }
+.shipProduct .overline { font-size: 12px; }
+.order-actions { text-align: right; }
+.order-actions a { display: inline-block; margin-left: 15px; }
+.order-actions i { display: block; width: 24px; height: 24px; }
+.order-actions a.disabled { opacity: .3; cursor: default; }
+
+.sticky-md-top { align-self: flex-start; top: 30px; }
+#orderSummary { box-shadow: 0 3px 14px rgba(0,0,0,.5); -webkit-box-shadow: 0 3px 14px rgba(0,0,0,.5); }
+#orderSummary p { margin-bottom: 0; }
+#orderSummary p a { color: #52bfc0; } /* target with litecal */
+#orderSummary .total { font-weight: 700; }
+.cart footer { margin-top: 0; }
+#orderSummary .input-group, #order .input-group { padding: 0; border-radius: 0; }
+#orderSummary .input-group input[type=text], #order .input-group input[type=text] { margin: 0; }
+#orderSummary .input-group .btn, #order .input-group .btn{ padding-top: 11px; padding-bottom: 12px; }
+#orderSummary .input-group input:first-child, #order .input-group input:first-child { width: 1%; border: 1px solid #ced4da; border-radius: .25rem; margin-right: 10px; }
+#orderSummary i.icon-support, #order i.icon-support { display: inline-block; width: 12px; height: 12px; background-size: 12px; opacity: .6; }
+#costSummary .discount { color: #52bfc0; }
+
+.reviewCart .overline { font-size: 12px; }
+.edit-cart { font-weight: normal; font-size: 16px; line-height: 30px; }
+.rental-arrow { margin-top: 44%; opacity: .5; }
+
+/* form fields */
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat; }
+input.success { padding-right: 30px; border-color: #52bfc0!important; color: #52bfc0!important; background: url(../assets/icon-check-teal.svg) right 8px center no-repeat; }
+#order .shipProduct .dropdown a, #order .paymentOption .dropdown a { padding: 10px 35px 10px 10px; }
+#order .paymentOption .dropdown > a { margin: 6px 0; }
+input[type=radio] + label:before { height: 20px; width: 20px; }
+.cvv-holder { position: relative; }
+.cvv-tooltip { position: absolute; right: 10px; top: 11px; background: white; border: none; opacity: .6; }
+.cvv-tooltip img { width: 16px; }
+.paymentOption hr { margin: 30px 0; }
+
+/* cart lightpicker */
+.cart-picker { border: none; color: #52bfc0; display: inline; width: auto; }
+.cart-picker::placeholder { color: #52bfc0; text-decoration: underline; cursor: pointer; }
+.cart-picker:active, .cart-picker:focus { outline: none; box-shadow: none; color: #52bfc0; }
+
+/* order confirmation */
+#confirmationWindow { padding: 100px 0 40px; }
+#confirmationWindow h1 { font-size: 34px; }
+
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+
+}
+
+@media screen and (max-width: 767px) {
+    .step1, .step2, .step3, .step4 { display: block; margin: 20px 0; }
+    #cartSteps { padding: 30px 0; }
+    #order img { max-width: 200px; }
+    #confirmationWindow { padding: 60px 0; }
+    #confirmationWindow h1 { font-size: 28px;}
+    .order-actions.text-center a { margin: 0 10px; }
+}

@@ -10,8 +10,10 @@
         <requires-extension name="acceleratorcms"/>
         <!--<BL-xyz changes related to giftCard Start>-->
         <requires-extension name="bllogging"/>
+
         <requires-extension name="commercefacades"/>
         <!--<BL-xyz changes related to giftCard End>-->
+
 
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		

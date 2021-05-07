@@ -14,15 +14,18 @@
 	<spring:param name="componentUid"  value="${component.uid}"/>
 </spring:url>
 <c:url value="/cart" var="cartUrl"/>
+<c:if test="${positionAttribute == 'MiniCartSlot'}">
+<c:set var="nonMobileClass" value="nav-link"/>
+</c:if>
 
 	<a href="${fn:escapeXml(cartUrl)}"
-		class="nav-link bak_mini-cart-link bak_js-mini-cart-link"
+		class="${nonMobileClass } bak_mini-cart-link bak_js-mini-cart-link"
 		data-mini-cart-url="${fn:escapeXml(rolloverPopupUrl)}"
 		data-mini-cart-refresh-url="${fn:escapeXml(refreshMiniCartUrl)}"
 		data-mini-cart-name="<spring:theme code="text.cart"/>"
 		data-mini-cart-empty-name="<spring:theme code="popup.cart.empty"/>"
-		data-mini-cart-items-text="<spring:theme code="basket.items"/>">
-		<span class="cart-count">${component.shownProductCount }</span>
+		data-mini-cart-items-text="<spring:theme code="basket.items"/>"><c:if test="${positionAttribute == 'MobileMiniCartSlot'}">Cart</c:if>
+		<span class="cart-count">${totalItems}</span>
 		<!-- <div class="mini-cart-icon">
 			<span class="glyphicon glyphicon-shopping-cart "></span>
 		</div> -->

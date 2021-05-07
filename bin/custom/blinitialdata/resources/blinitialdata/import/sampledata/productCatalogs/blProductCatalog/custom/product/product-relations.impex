@@ -1,0 +1,20 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Related Products into BL Store
+#% impex.info("=============================== Importing content from BLInitialData product-relations.impex =========================");
+
+# Macros / Replacement Parameter definitions
+$productCatalog=blProductCatalog
+$productCatalogName=Bl Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$supercategories=supercategories(code, $catalogVersion)
+$baseProduct=baseProduct(code,$catalogVersion)
+$approved=approvalstatus(code)[default='approved']
+
+# Insert Product References
+INSERT_UPDATE ProductReference;source(code,$catalogVersion)[unique=true];target(code,$catalogVersion)[unique=true];referenceType(code);active;preselected
+                              ;Canon_50mm_f1.2_L;72mm_CP_Filter;SIMILAR;true;false
+                              ;Canon_EF_135mm_f2.0L_USM;Canon_50mm_f1.2_L;SIMILAR;true;false
+                              ;Canon_EF_135mm_f2.0L_USM;72mm_CP_Filter;SIMILAR;true;false
+                              ;Canon_5DIII;Canon_50mm_f1.2_L;SIMILAR;true;false

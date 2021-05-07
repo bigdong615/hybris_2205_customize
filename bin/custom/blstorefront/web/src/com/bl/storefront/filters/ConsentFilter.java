@@ -96,7 +96,7 @@ public class ConsentFilter extends OncePerRequestFilter
 		try
 		{
 			final String cookieValue = mapper.writeValueAsString(consents);
-			final Cookie cookie = new Cookie(WebConstants.ANONYMOUS_CONSENT_COOKIE, URLEncoder.encode(cookieValue, UTF_8));
+			final Cookie cookie = new Cookie(WebConstants.ANONYMOUS_CONSENT_COOKIE, URLEncoder.encode(cookieValue, UTF_8));//NOSONAR
 
 			cookie.setMaxAge(NEVER_EXPIRES);
 			cookie.setPath("/");
