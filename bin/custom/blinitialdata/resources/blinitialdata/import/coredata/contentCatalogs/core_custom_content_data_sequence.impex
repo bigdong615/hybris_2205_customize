@@ -2,11 +2,11 @@
 #% impex.enableExternalImpExSyntaxParsing(true)
 #% impex.enableExternalDataCodeExecution(true)
  
-#% impex.info("=============================== Importing content from BLInitialData core_custom_content_data_sequence ========================="); 
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_custom_content_data_sequence =========================");
 
 #mention custom paths here
 $contentCatalogsCustomPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom
-$contentCatalogsCustomContentPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/content
+$contentCatalogsCustomCartPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/cart
 $contentCatalogsCustomCategoryPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/category
 $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/myaccount
 $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/checkout
@@ -15,30 +15,43 @@ $contentCatalogsCustomSearchPagePath = /blinitialdata/import/coredata/contentCat
 $contentCatalogsCustomProductGridPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/productgridpage
 $contentCatalogsCustomHomepagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/homepage
 $contentCatalogsCustomProductPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/productpage
-
+$contentCatalogsCustomCatalogPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/catalog
+$contentCatalogsCustomShippingPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/shipping
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
-#Mention here homepage related impexes in sequence
+
+# Content Catalog Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCatalogPath/catalog.impex"), "utf-8", 0, 0);
+
+# Content Catalog Localization Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCatalogPath/catalog_en.impex"), "utf-8", 0, 0);
+
+# Homepage Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/core_data_homepage.impex"), "utf-8", 0, 0);
 
 #Mention here Content page related impexes in sequence
 
 #Mention here Category Page related impexes in sequence
 
-#Mention here Search Grid Page related impexes in sequence
+# Search Grid Page Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomSearchPagePath/cms_content_searchpage.impex"), "utf-8", 0, 0);
 
-#Mention here Product Grid Page related impexes in sequence
+# Product Grid Page Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductGridPagePath/cms_content_productgridpage.impex"), "utf-8", 0, 0);
 
-#Mention here Product Details Page related impexes in sequence
+# Product Details Page Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productpage.impex"), "utf-8", 0, 0);
 
 #Mention here MyAccount Page related impexes in sequence
 
-#Mention here Cart Page related impexes in sequence
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_rentalCartPage.impex"), "utf-8", 0, 0);
-#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomContentPagePath/cms-content_emptyCartPage.impex"), "utf-8", 0, 0);
+# Rental Cart Page Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCartPagePath/cms-content_rentalCartPage.impex"), "utf-8", 0, 0);
+
+# Empty Cart Page Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCartPagePath/cms-content_emptyCartPage.impex"), "utf-8", 0, 0);
+
+# Rental Delivery or Pick Up Page Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomShippingPagePath/cms-content_rentalDeliveryOrPickUpPage.impex"), "utf-8", 0, 0);
 
 #Mention here Checkout Page related impexes in sequence
 

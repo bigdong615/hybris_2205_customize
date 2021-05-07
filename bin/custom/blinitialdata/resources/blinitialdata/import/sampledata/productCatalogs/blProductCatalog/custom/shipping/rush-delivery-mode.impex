@@ -1,4 +1,4 @@
-#% impex.info("=============================== Importing content from BLInitialData rush-delivery-mode.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs rush-delivery-mode.impex =========================");
 
 # Currencies
 $usCurrency=USD

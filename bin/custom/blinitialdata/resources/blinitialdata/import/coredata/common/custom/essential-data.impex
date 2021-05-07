@@ -16,6 +16,7 @@
 # * MediaFormats
 # * Tax & Tax Groups
 # * Jobs
+#% impex.info("=============================== Importing content from BLInitialData coredata/common essential-data.impex =========================");
  
 # Languages
 INSERT_UPDATE Language ; isocode[unique=true] ; fallbackLanguages(isocode) ; active[default=true] 

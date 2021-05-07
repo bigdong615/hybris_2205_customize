@@ -1,4 +1,4 @@
-#% impex.info("=============================== Importing content from BLInitialData partner-pickup-store.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs partner-pickup-store.impex =========================");
 
 
 INSERT_UPDATE PartnerPickUpStore; code[unique = 'true']      ; name                        ;
