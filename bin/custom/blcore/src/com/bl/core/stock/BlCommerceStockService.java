@@ -67,4 +67,17 @@ public interface BlCommerceStockService
 	 */
 	public Long getAvailableCount(final String productCode, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate);
+
+	/**
+	 * It checks whether the serial product is not assigned to any rental orders
+	 *
+	 * @param serialProductCode
+	 *           the serial product code
+	 * @param productCode
+	 *           the sku product code
+	 * @param productCode
+	 *           the sku product code
+	 * @return boolean
+	 */
+	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode);
 }
