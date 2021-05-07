@@ -237,10 +237,11 @@
 		</property>
 	</bean>
 
-	<!--BL-XYZ Adding this changes for Gift Card implementation Start-->
+	 <!--BL-XYZ Adding this changes for Gift Card implementation Start-->
+	 <!--
 	<alias name="defaultBlCartPopulator" alias="blCartPopulator" />
 	<bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BLCartPopulator" parent="cartPopulator">
-	</bean>
+	</bean> -->
 
 	<alias name="defaultBlOrderPopulator" alias="blOrderPopulator" />
 	<bean id="defaultBlOrderPopulator" class="com.bl.facades.populators.BLOrderPopulator" parent="orderPopulator">
@@ -254,7 +255,7 @@
 				<ref bean="pickupOrderEntryGroupPopulator"/>
 				<ref bean="deliveryOrderEntryGroupPopulator"/>
 				<ref bean="orderAppliedVouchersPopulator"/>
-				<ref bean="blCartPopulator"/>
+				<!-- <ref bean="blCartPopulator"/> -->
 			</list>
 		</property>
 	</bean>
