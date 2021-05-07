@@ -4,10 +4,10 @@
 #
 # Import the Solr configuration for the store
 #
- 
-#% impex.info("=============================== Importing content from BLInitialData coredata solr.impex ========================="); 
- 
- 
+
+#% impex.info("=============================== Importing content from BLInitialData coredata/stores solr.impex =========================");
+
+
 $productCatalog = blProductCatalog
 $catalogVersions = catalogVersions(catalog(id), version); 
 $serverConfigName = blSolrServerConfig
