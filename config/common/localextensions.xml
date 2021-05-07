@@ -1,410 +1,410 @@
 <hybrisconfig xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../bin/platform/resources/schemas/extensions.xsd'>
   <extensions>
-    <path dir='${HYBRIS_BIN_DIR}' autoload='false' />
-    <!-- BL custom extensions autoload -->
+    <path dir='${HYBRIS_BIN_DIR}' autoload='false' />	
+	<!-- BL custom extensions autoload -->
     <!-- <path dir="${HYBRIS_BIN_DIR}/custom" autoload="true" /> -->
-
+    
     <!-- BL custom extensions -->
-    <extension name='blassistedservicestorefront' />
-    <extension name='blbackoffice' />
-    <extension name='blpcmbackoffice' />
-    <extension name='blconfigurablebundleaddon' />
-    <extension name='blcore' />
-    <extension name='blcustomerticketingaddon' />
-    <extension name='blfacades' />
-    <extension name='blinitialdata' />
-    <extension name='blordermanagement' />
-    <extension name='blordermanagementaddon' />
-    <extension name='blorderselfserviceaddon' />
-    <extension name='blpatches' />
-    <extension name='blstorefront' />
-    <extension name='bllogging' />
+      <extension name='blassistedservicestorefront' />
+      <extension name='blbackoffice' />
+      <extension name='blpcmbackoffice' />
+      <extension name='blconfigurablebundleaddon' />
+      <extension name='blcore' />
+      <extension name='blcustomerticketingaddon' />
+      <extension name='blfacades' />
+      <extension name='blinitialdata' />
+      <extension name='blordermanagement' />
+      <extension name='blordermanagementaddon' />
+      <extension name='blorderselfserviceaddon' />
+      <extension name='blpatches' />
+      <extension name='blstorefront' />
+      <extension name='bllogging' />
 
-
-    <!-- Extension to enable Accelerator Services -->
-    <extension name='acceleratorbackoffice' />
+	
+	<!-- Extension to enable Accelerator Services -->
+	<extension name='acceleratorbackoffice' />
     <extension name='acceleratorservices' />
     <extension name='acceleratorstorefrontcommons' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='acceleratorcms' />
-      <extension name='acceleratorfacades' /> -->
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='acceleratorcms' />
+    <extension name='acceleratorfacades' /> -->
     <!-- UnComment the extensions below to enable OCC feature -->
-    <!-- <extension name='acceleratorocc' /> -->
-
-    <!-- Extension to enable Adaptive search -->
+	<!-- <extension name='acceleratorocc' /> -->
+	
+	<!-- Extension to enable Adaptive search -->
     <extension name='adaptivesearchbackoffice' />
     <extension name='adaptivesearchsamplesaddon' />
     <extension name='adaptivesearchsolr' />
     <extension name='adaptivesearchwebservices' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='adaptivesearch' />
-    <extension name='adaptivesearchfacades' /> -->
-
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='apiregistrybackoffice' />
-      <extension name='apiregistryservices' /> -->
-
-    <!-- Extension to enable ASM -->
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='adaptivesearch' />
+	<extension name='adaptivesearchfacades' /> -->
+	
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='apiregistrybackoffice' />
+    <extension name='apiregistryservices' /> -->
+	
+	<!-- Extension to enable ASM -->    
     <extension name='assistedservicepromotionaddon' />
-    <!--<extension name='customerinterestsaddon' />-->
-    <extension name='assistedservicewebservices' />
-    <!--<extension name='customerinterestsservices' />-->
+	<extension name='customerinterestsaddon' />
+    <extension name='assistedservicewebservices' />	   
+	<extension name='customerinterestsservices' />
     <extension name='customersupportbackoffice' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='assistedservicefacades' />
-    <extension name='customerinterestsfacades' />
-    <extension name='assistedservicepromotionfacades' />
-    <extension name='assistedserviceservices' /> -->
-    <!-- UnComment the extensions below to enable Customer Intrest feature and YProfile feature to ASM -->
-    <!-- <extension name='assistedservicecustomerinterestsaddon' />
-      <extension name='assistedservicecustomerinterestsfacades' />
-    <extension name='assistedserviceyprofileaddon' />
-      <extension name='assistedserviceyprofilefacades' /> -->
-    <!-- UnComment the extensions below to enable OCC feature -->
-    <!-- <extension name='customerinterestsocc' /> -->
-
-    <!-- Extension to enable WishList -->
-    <extension name='wishlist' />
-
-    <!-- Extension to enable Backoffice Product Content Management -->
-    <extension name='pcmbackoffice' />
-    <extension name='pcmbackofficesamplesaddon' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='backoffice' />
-    <extension name='auditreportservices' />
-    <extension name='classificationgroupsservices' /> -->
-
-    <!-- Extension to enable Commerce Services -->
-    <extension name='commerceservicesbackoffice' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='assistedservicefacades' />
+	<extension name='customerinterestsfacades' />
+	<extension name='assistedservicepromotionfacades' />
+	<extension name='assistedserviceservices' /> -->
+	<!-- UnComment the extensions below to enable Customer Intrest feature and YProfile feature to ASM -->
+	<!-- <extension name='assistedservicecustomerinterestsaddon' />
+    <extension name='assistedservicecustomerinterestsfacades' />
+	<extension name='assistedserviceyprofileaddon' />
+    <extension name='assistedserviceyprofilefacades' /> -->
+	<!-- UnComment the extensions below to enable OCC feature -->
+	<!-- <extension name='customerinterestsocc' /> -->
+	
+	<!-- Extension to enable WishList -->
+	<extension name='wishlist' />
+	
+	<!-- Extension to enable Backoffice Product Content Management -->
+	<extension name='pcmbackoffice' />
+	<extension name='pcmbackofficesamplesaddon' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='backoffice' />
+	<extension name='auditreportservices' />
+	<extension name='classificationgroupsservices' /> -->
+	
+	<!-- Extension to enable Commerce Services -->
+	<extension name='commerceservicesbackoffice' />
     <extension name='commercewebservices' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='commercefacades' />
-      <extension name='commerceservices' />
-      <extension name='commercewebservicescommons' />
-      <extension name='commercewebservicestests' />
-    <extension name='basecommerce' />
-      <extension name='basecommercebackoffice' />
-    <extension name='customerreview' />
-    <extension name='payment' />
-    <extension name='promotions' />
-    <extension name='promotionsbackoffice' />
-    <extension name='voucher' />
-    <extension name='voucherbackoffice' /> -->
-
-    <!-- Extension to enable SmartEdit -->
-    <extension name='cmssmartedit' />
-    <extension name='cmsbackoffice' />
-    <extension name='cmssmarteditwebservices' />
-    <extension name='cmswebservices' />
-    <extension name='permissionswebservices' />
-    <extension name='previewwebservices' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='commercefacades' />
+    <extension name='commerceservices' />
+    <extension name='commercewebservicescommons' />
+    <extension name='commercewebservicestests' /> 
+	<extension name='basecommerce' />
+    <extension name='basecommercebackoffice' /> 
+	<extension name='customerreview' /> 
+	<extension name='payment' />
+	<extension name='promotions' />
+	<extension name='promotionsbackoffice' />
+	<extension name='voucher' />
+	<extension name='voucherbackoffice' /> -->
+	
+	<!-- Extension to enable SmartEdit -->
+	<extension name='cmssmartedit' />
+	<extension name='cmsbackoffice' />
+	<extension name='cmssmarteditwebservices' />
+	<extension name='cmswebservices' />
+	<extension name='permissionswebservices' />
+	<extension name='previewwebservices' /> 
     <extension name='smartedit' />
     <extension name='smarteditaddon' />
     <extension name='smarteditwebservices' />
-    <extension name='npmancillary' />
-    <extension name='personalizationsmartedit' />
-
-    <!-- Extension to enable personalization services for SmartEdit and others -->
-    <extension name='personalizationcmsbackoffice' />
-    <extension name='personalizationcmsweb' />
-    <extension name='personalizationsampledataaddon' />
-    <extension name='personalizationservices' />
-    <extension name='personalizationservicesbackoffice' />
+	<extension name='npmancillary' />
+	<extension name='personalizationsmartedit' />
+	
+	<!-- Extension to enable personalization services for SmartEdit and others -->
+	<extension name='personalizationcmsbackoffice' />
+    <extension name='personalizationcmsweb' />	
+	<extension name='personalizationsampledataaddon' />
+	<extension name='personalizationservices' />
+    <extension name='personalizationservicesbackoffice' />    
     <extension name='personalizationwebservices' />
     <extension name='previewpersonalizationweb' />
-    <extension name='personalizationaddon' />
+	<extension name='personalizationaddon' />
     <extension name='personalizationintegration' />
-    <extension name='personalizationintegrationbackoffice' />
+    <extension name='personalizationintegrationbackoffice' />	
     <extension name='personalizationpromotionsbackoffice' />
     <extension name='personalizationpromotionssampledataaddon' />
     <extension name='personalizationpromotionssmartedit' />
     <extension name='personalizationpromotionsweb' />
-    <extension name='personalizationsearchbackoffice' />
+	<extension name='personalizationsearchbackoffice' />
     <extension name='personalizationsearchsamplesaddon' />
     <extension name='personalizationsearchsmartedit' />
     <extension name='personalizationsearchweb' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='personalizationcms' />
-      <extension name='personalizationfacades' />
-    <extension name='personalizationpromotions' />
-    <extension name='personalizationsearch' /> -->
-    <!-- UnComment the extensions below to enable Personlilazions for YProfiles -->
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='personalizationcms' />
+    <extension name='personalizationfacades' />
+	<extension name='personalizationpromotions' />
+	<extension name='personalizationsearch' /> -->
+	<!-- UnComment the extensions below to enable Personlilazions for YProfiles -->
     <!-- <extension name='personalizationyprofile' />
 	<extension name='personalizationyprofilesampledataaddon' /> -->
-
-    <!-- Extension to enable MediaConversions -->
-    <extension name='mediaconversion' />
-    <extension name='mediaconversionbackoffice' />
-
-    <!-- Extension to enable the core of the WCMS Module for SmartEdit -->
-    <extension name='cms2' />
-    <extension name='cms2lib' />
+    
+	<!-- Extension to enable MediaConversions -->
+	<extension name='mediaconversion' />
+	<extension name='mediaconversionbackoffice' />
+    
+	<!-- Extension to enable the core of the WCMS Module for SmartEdit -->
+	<extension name='cms2' />
+    <extension name='cms2lib' />    
     <extension name='cmscockpit' />
     <extension name='cmsfacades' />
-    <!-- UnComment the extensions below to enable OCC feature -->
+	<!-- UnComment the extensions below to enable OCC feature -->
     <!-- <extension name='cmsocc' /> -->
-
-    <!-- Extension to enable Text Field Configurator Template Module on Products using the Backoffice Administration Cockpit -->
-    <extension name='textfieldconfiguratortemplateaddon' />
+	
+	<!-- Extension to enable Text Field Configurator Template Module on Products using the Backoffice Administration Cockpit -->
+	<extension name='textfieldconfiguratortemplateaddon' />
     <extension name='textfieldconfiguratortemplatebackoffice' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!--<extension name='textfieldconfiguratortemplatefacades' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+    <!--<extension name='textfieldconfiguratortemplatefacades' />    
     <extension name='textfieldconfiguratortemplateservices' /> -->
-    <!-- UnComment the extensions below to enable OCC feature -->
-    <!-- <extension name='textfieldconfiguratortemplateocc' />
-    <extension name='textfieldconfiguratortemplateocctests' /> -->
-
-    <!-- Extension to enable SOLR -->
-    <extension name='solrserver' />
-    <extension name='solrfacetsearch' />
+	<!-- UnComment the extensions below to enable OCC feature -->
+	<!-- <extension name='textfieldconfiguratortemplateocc' /> 
+	<extension name='textfieldconfiguratortemplateocctests' /> -->
+	
+	<!-- Extension to enable SOLR -->
+	<extension name='solrserver' />
+	<extension name='solrfacetsearch' />
     <extension name='solrfacetsearchbackoffice' />
-    <extension name='backofficesolrsearch' />
-    <extension name='platformbackoffice' />
-
-    <!-- Extension to enable New Search Feature in Backoffice -->
-    <extension name='searchbackoffice' />
+	<extension name='backofficesolrsearch' />
+	<extension name='platformbackoffice' />
+	
+	<!-- Extension to enable New Search Feature in Backoffice -->
+	<extension name='searchbackoffice' /> 
     <extension name='searchprovidercssearchbackoffice' />
     <extension name='searchprovidercssearchservices' />
     <extension name='searchservices' />
-
-    <!-- Extension to enable customers to receive back-in-stock notifications for their interested products -->
-    <extension name='stocknotificationaddon' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
+    
+	<!-- Extension to enable customers to receive back-in-stock notifications for their interested products -->
+	<extension name='stocknotificationaddon' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
     <!-- <extension name='stocknotificationfacades' />
     <extension name='stocknotificationservices' /> -->
-
-    <!-- Extension to enable to support Groovy Programming Language -->
-    <extension name='groovynature' />
-
-    <!-- Extension to enable Configurable Bundle -->
-    <extension name='configurablebundlebackoffice' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
+	
+	<!-- Extension to enable to support Groovy Programming Language -->
+	<extension name='groovynature' />
+	
+	<!-- Extension to enable Configurable Bundle -->
+	<extension name='configurablebundlebackoffice' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
     <!-- <extension name='configurablebundlefacades' />
     <extension name='configurablebundleservices' /> -->
-    <!-- UnComment the extensions below to enable OCC feature -->
-    <!-- <extension name='configurablebundleocc' />
-      <extension name='configurablebundleocctests' /> -->
-
-    <!-- Extension to enable Consignment Tracking -->
-    <!-- The consignmenttrackingaddon AddOn enables customers to track the consignment logistic status of their orders in the storefront. -->
-    <extension name='consignmenttrackingaddon' />
+	<!-- UnComment the extensions below to enable OCC feature -->
+	<!-- <extension name='configurablebundleocc' />
+    <extension name='configurablebundleocctests' /> -->
+    
+	<!-- Extension to enable Consignment Tracking -->
+	<!-- The consignmenttrackingaddon AddOn enables customers to track the consignment logistic status of their orders in the storefront. -->
+	<extension name='consignmenttrackingaddon' />
     <extension name='consignmenttrackingbackoffice' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- Extension Removed because it will be autoload due to dependencies -->
     <!--<extension name='consignmenttrackingfacades' />
 	<extension name='consignmenttrackingservices' /> -->
-    <!-- UnComment the extensions below to enable OCC feature -->
+	<!-- UnComment the extensions below to enable OCC feature -->
     <!-- <extension name='consignmenttrackingmock' />
     <extension name='consignmenttrackingocc' /> -->
-
-    <!-- Extension to enable CS Ticket -->
+	
+	<!-- Extension to enable CS Ticket -->	
     <extension name='ticketsystem' />
     <extension name='ticketsystembackoffice' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='customerticketingfacades' /> -->
-
-    <!-- Extension to enable Coupon Related Services -->
-    <extension name='couponbackoffice' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='customerticketingfacades' /> -->
+	
+	<!-- Extension to enable Coupon Related Services -->	
+	<extension name='couponbackoffice' />
     <extension name='couponfacades' />
     <extension name='couponservices' />
-    <extension name='couponwebservices' />
+    <extension name='couponwebservices' />	
     <extension name='customercouponaddon' />
     <extension name='customercouponbackoffice' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- Extension Removed because it will be autoload due to dependencies -->
     <!-- <extension name='customercouponfacades' />
 	<extension name='customercouponservices' /> -->
-    <!-- UnComment the extensions below to enable OCC feature -->
+	<!-- UnComment the extensions below to enable OCC feature -->
     <!-- <extension name='customercouponocc' />
     <extension name='customercouponsamplesaddon' /> -->
-
-    <!-- Extension to enable Notificaion Services -->
-    <extension name='notificationaddon' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
+    
+	<!-- Extension to enable Notificaion Services -->	
+	<extension name='notificationaddon' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
     <!-- <extension name='notificationfacades' />
 	<extension name='notificationservices' /> -->
-    <!-- UnComment the extensions below to enable OCC feature -->
+	<!-- UnComment the extensions below to enable OCC feature -->
     <!-- <extension name='notificationocc' /> -->
-
-    <!-- Extension to enable Patches -->
+    
+	<!-- Extension to enable Patches -->
     <extension name='patches' />
-    <extension name='patchesbackoffice' />
-
-    <!-- Extension to enable Order Management for B2C -->
-    <extension name='ordermanagementwebservices' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='ordermanagementfacades' /> -->
-
-    <!-- Extension to enable Warehouses -->
-    <extension name='warehousing' />
+	<extension name='patchesbackoffice' />
+	
+	<!-- Extension to enable Order Management for B2C -->
+	<extension name='ordermanagementwebservices' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='ordermanagementfacades' /> -->
+	
+	<!-- Extension to enable Warehouses -->
+	<extension name='warehousing' />
     <extension name='warehousingbackoffice' />
     <extension name='warehousingfacades' />
     <extension name='warehousingwebservices' />
-
-    <!-- Extension to enable Promotions -->
-    <extension name='promotionenginebackoffice' />
+    
+	<!-- Extension to enable Promotions -->
+	<extension name='promotionenginebackoffice' />
     <extension name='promotionenginesamplesaddon' />
     <extension name='promotionengineservices' />
     <extension name='droolsruleengineservices' />
-    <extension name='rulebuilderbackoffice' />
+	<extension name='rulebuilderbackoffice' />
     <extension name='ruledefinitions' />
-    <extension name='ruleenginebackoffice' />
-    <extension name='permissionsfacades' />
+	<extension name='ruleenginebackoffice' />
+	<extension name='permissionsfacades' />
     <extension name='webservicescommons' />
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='ordercalculation' />
-    <extension name='ruleengine' />
-    <extension name='ruleengineservices' /> -->
-
-    <extension name='cockpit' />
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='ordercalculation' />
+	<extension name='ruleengine' />
+	<extension name='ruleengineservices' /> -->
+	
+	<extension name='cockpit' />
     <!--<extension name='profileservices' />
     <extension name='profiletagaddon' />-->
-
-    <!-- Extension Removed because it will be autoload due to dependencies -->
-    <!-- <extension name='addonsupport' />
-    <extension name='embeddedserver' />
-    <extension name='springintegrationlibs' />
-    <extension name='tomcatembeddedserver' /> -->
-
-    <!-- UnComment the extensions below to enable AdminApi -->
-    <!-- The adminapi extension allows you to have an highly extensible extension that you can use to expose admin-related functionalities through a REST API. -->
-    <!-- <extension name='adminapi' /> -->
-
-    <!-- YaaS and its services have been discontinued, so this feature can no longer be used. -->
-    <!-- <extension name='yaasyprofileconnect' /> -->
-
-    <!-- UnComment the extensions below to enable Account Summary feature for B2B Functionality -->
-    <!-- <extension name='accountsummaryaddon' />
-    <extension name='commerceorgaddon' />
-      <extension name='commerceorgsamplesaddon' /> -->
-
-    <!-- UnComment the extensions below to enable Saved Order feature for B2B Functionality -->
-    <!-- <extension name='savedorderforms' />
-      <extension name='savedorderformsocc' /> -->
-
-    <!-- Extension not required OOTB storefront for electronicsstore -->
-    <!--<extension name='electronicsstore' />-->
-
-    <!-- UnComment the extensions below to enable reCaptcha Functionality -->
-    <!-- <extension name='captchaaddon' /> -->
-
-    <!-- UnComment the extensions below to create sample data for the electronics storefront to demonstrate the multi-country features in the Accelerator web application -->
-    <!-- <extension name='multicountrysampledataaddon' /> -->
-
-    <!-- UnComment the extensions below to enable Subscription Bundles provides functionality
-    and tests which rely upon having both Configurable Bundles and Subscriptions modules in order to function. -->
-    <!--<extension name='subscriptionbundlebackoffice' />
-      <extension name='subscriptionbundlefacades' />
-      <extension name='subscriptionbundleservices' />
-      <extension name='subscriptionbackoffice' />
-      <extension name='subscriptionfacades' />
-      <extension name='subscriptionservices' />-->
-
-    <!-- UnComment the extensions below to enable Timed Access Promotion Engine module it enables the UI for displaying the Flash Buy button -->
-    <!-- <extension name='timedaccesspromotionengineaddon' />
-      <extension name='timedaccesspromotionenginebackoffice' />
-      <extension name='timedaccesspromotionenginefacades' />
-      <extension name='timedaccesspromotionengineocc' />
-      <extension name='timedaccesspromotionenginesamplesaddon' />
-      <extension name='timedaccesspromotionengineservices' /> -->
-
-    <!-- UnComment the extensions below to enable Selective Cart Feature -->
-    <!-- The Selective Cart module allows customers to select what items in the cart for checking out,
-    while leaving other items remain in the cart for future considerations,
-    thus improving shopping experience and increasing conversion rate. -->
-    <!--<extension name='selectivecartfacades' />
-     <extension name='selectivecartservices' />
-     <extension name='selectivecartsplitlistaddon' /> -->
-
-    <!-- UnComment the extensions below to enable YForms Feature-->
-    <!-- <extension name='ywebservices' />
-      <extension name='orbeonweb' />
-      <extension name='xyformsbackoffice' />
-      <extension name='xyformsweb' />
-      <extension name='xyformsfacades' />
-      <extension name='xyformssamples' />
-      <extension name='xyformsservices' />
-      <extension name='xyformsstorefrontcommons' /> -->
-
-    <!-- UnComment the extensions below to enable Kyma runtime which allows you to use microservices to customize the standard functions of SAP Commerce Cloud without compromising on upgradability.-->
-    <!-- <extension name='kymaintegrationbackoffice' />
-      <extension name='kymaintegrationservices' /> -->
-
-    <!-- UnComment the extensions below to enable Merchandising Feature-->
-    <!-- <extension name='merchandisingaddon' />
-      <extension name='merchandisingcmswebservices' />
-      <extension name='merchandisingservices' />
-      <extension name='merchandisingservicesbackoffice' />
-      <extension name='merchandisingsmartedit' />
-      <extension name='merchandisingstorefrontsampledataaddon' /> -->
-
-    <!-- <extension name='yocc' />
-      <extension name='yocctests' /> -->
-
-    <!-- UnComment the extensions below to enable SAP Product Configuration Feature-->
-    <!-- It provides actions for SAP Product Configuration that are specific to a B2B scenario. -->
-    <!-- <extension name='sapproductconfigb2baddon' />
-      <extension name='sapproductconfigb2bservices' />
-      <extension name='sapproductconfigfacades' />
-    <extension name='sapproductconfigocc' />
-      <extension name='sapproductconfigrules' />
-      <extension name='sapproductconfigrulesbackoffice' />
-    <extension name='sapproductconfigruntimeinterface' />
-      <extension name='sapproductconfigruntimemock' />
-      <extension name='sapproductconfigservices' />
-      <extension name='ysapproductconfigaddon' /> -->
-
-    <!-- UnComment the extensions below to enable DataHub Feature-->
-    <!-- <extension name='datahubadapter' />
-      <extension name='datahubclient' />
-      <extension name='dataimportcommons' /> -->
-
-    <!-- UnComment the extensions below to enable The entitlementbackoffice extension enhances the backoffice extensions to support operations on entitlements.-->
-    <!-- <extension name='entitlementbackoffice' />
-      <extension name='entitlementfacades' />
-      <extension name='entitlementservices' /> -->
-
-    <!-- UnComment the extensions below to enable Event Tracking Feature-->
-    <!-- <extension name='eventtrackingmodel' />
-      <extension name='eventtrackingpublisher' />
-      <extension name='eventtrackingservices' />
-      <extension name='eventtrackingwsaddon' /> -->
-
-    <!-- UnComment the extensions below to enable Integration Feature -->
-    <!-- The integrationbackoffice extension allows you to create and edit Integration Objects at runtime, as well as monitor the incoming requests. -->
-    <!-- <extension name='integrationbackoffice' />
-      <extension name='integrationbackofficetest' />
-      <extension name='integrationmonitoringbackoffice' />
-      <extension name='integrationservices' /> -->
-
-    <!-- UnComment the extensions below to enable odata Feature -->
-    <!-- The odata2services extension persists inbound posts, facilitates outbound posts, and encapsulates the services used to generate an EDMX schema from an Integration Object item. The EDMX schema can be used with SAP Cloud Platform Integration, for example.	 -->
-    <!-- <extension name='odata2services' />
-      <extension name='odata2webservices' />
-      <extension name='odata2webservicesfeaturetests' /> -->
-
-    <!-- UnComment the extensions below to enable Inbound and Outbound Services -->
-    <!-- <extension name='inboundservices' />
-      <extension name='outboundservices' />
-      <extension name='outboundsync' />
-      <extension name='outboundsyncbackoffice' /> -->
-
-
-    <!-- <extension name='webhookbackoffice' />
-      <extension name='webhookservices' /> -->
-
-    <!-- UnComment the extensions below to enable Message Center Services -->
-    <!-- <extension name='messagecentercsfacades' />
-      <extension name='messagecentercsocc' />
-      <extension name='messagecentercsservices' /> -->
-
-    <!-- UnComment the extensions below to enable b2b order management -->
-    <!-- <extension name='b2bordermanagementfacades' />
-      <extension name='b2bordermanagementwebservices' /> -->
-
-
-    <!-- <extension name='deltadetection' />
-      <extension name='yempty' />
-      <extension name='yvoid' />
-    <extension name='yaddon' /> -->
-
+	
+	<!-- Extension Removed because it will be autoload due to dependencies -->
+	<!-- <extension name='addonsupport' /> 
+	<extension name='embeddedserver' />
+	<extension name='springintegrationlibs' />
+	<extension name='tomcatembeddedserver' /> -->
+	
+	<!-- UnComment the extensions below to enable AdminApi -->
+	<!-- The adminapi extension allows you to have an highly extensible extension that you can use to expose admin-related functionalities through a REST API. -->
+	<!-- <extension name='adminapi' /> -->
+	
+	<!-- YaaS and its services have been discontinued, so this feature can no longer be used. -->
+	<!-- <extension name='yaasyprofileconnect' /> -->
+	
+	<!-- UnComment the extensions below to enable Account Summary feature for B2B Functionality -->
+	<!-- <extension name='accountsummaryaddon' />
+	<extension name='commerceorgaddon' />
+    <extension name='commerceorgsamplesaddon' /> -->
+	
+	<!-- UnComment the extensions below to enable Saved Order feature for B2B Functionality -->
+	<!-- <extension name='savedorderforms' />
+    <extension name='savedorderformsocc' /> -->
+	
+	<!-- Extension not required OOTB storefront for electronicsstore -->
+	<extension name='electronicsstore' />
+	
+	<!-- UnComment the extensions below to enable reCaptcha Functionality -->
+	<!-- <extension name='captchaaddon' /> -->
+    
+	<!-- UnComment the extensions below to create sample data for the electronics storefront to demonstrate the multi-country features in the Accelerator web application -->
+	<!-- <extension name='multicountrysampledataaddon' /> -->
+	
+	<!-- UnComment the extensions below to enable Subscription Bundles provides functionality 
+	and tests which rely upon having both Configurable Bundles and Subscriptions modules in order to function. -->
+	<extension name='subscriptionbundlebackoffice' />
+    <extension name='subscriptionbundlefacades' />
+    <extension name='subscriptionbundleservices' />
+    <extension name='subscriptionbackoffice' />
+    <extension name='subscriptionfacades' />
+    <extension name='subscriptionservices' />
+	
+	<!-- UnComment the extensions below to enable Timed Access Promotion Engine module it enables the UI for displaying the Flash Buy button -->
+	<!-- <extension name='timedaccesspromotionengineaddon' />
+    <extension name='timedaccesspromotionenginebackoffice' />
+    <extension name='timedaccesspromotionenginefacades' />
+    <extension name='timedaccesspromotionengineocc' />
+    <extension name='timedaccesspromotionenginesamplesaddon' />
+    <extension name='timedaccesspromotionengineservices' /> -->
+	
+	<!-- UnComment the extensions below to enable Selective Cart Feature -->
+	<!-- The Selective Cart module allows customers to select what items in the cart for checking out, 
+	while leaving other items remain in the cart for future considerations, 
+	thus improving shopping experience and increasing conversion rate. -->
+	 <extension name='selectivecartfacades' />
+    <extension name='selectivecartservices' />
+    <extension name='selectivecartsplitlistaddon' /> 
+	
+	<!-- UnComment the extensions below to enable YForms Feature-->
+	<!-- <extension name='ywebservices' />
+    <extension name='orbeonweb' />
+    <extension name='xyformsbackoffice' />
+    <extension name='xyformsweb' />
+    <extension name='xyformsfacades' />
+    <extension name='xyformssamples' />
+    <extension name='xyformsservices' />
+    <extension name='xyformsstorefrontcommons' /> -->
+	
+	<!-- UnComment the extensions below to enable Kyma runtime which allows you to use microservices to customize the standard functions of SAP Commerce Cloud without compromising on upgradability.-->
+	<!-- <extension name='kymaintegrationbackoffice' />
+    <extension name='kymaintegrationservices' /> -->
+	
+	<!-- UnComment the extensions below to enable Merchandising Feature-->
+	<!-- <extension name='merchandisingaddon' />
+    <extension name='merchandisingcmswebservices' />
+    <extension name='merchandisingservices' />
+    <extension name='merchandisingservicesbackoffice' />
+    <extension name='merchandisingsmartedit' />
+    <extension name='merchandisingstorefrontsampledataaddon' /> -->
+	
+	<!-- <extension name='yocc' />
+    <extension name='yocctests' /> -->
+	
+	<!-- UnComment the extensions below to enable SAP Product Configuration Feature-->
+	<!-- It provides actions for SAP Product Configuration that are specific to a B2B scenario. -->
+	<!-- <extension name='sapproductconfigb2baddon' />
+    <extension name='sapproductconfigb2bservices' />
+    <extension name='sapproductconfigfacades' />
+	<extension name='sapproductconfigocc' />
+    <extension name='sapproductconfigrules' />
+    <extension name='sapproductconfigrulesbackoffice' />
+	<extension name='sapproductconfigruntimeinterface' />
+    <extension name='sapproductconfigruntimemock' />
+    <extension name='sapproductconfigservices' />
+    <extension name='ysapproductconfigaddon' /> -->
+	
+	<!-- UnComment the extensions below to enable DataHub Feature-->
+	<!-- <extension name='datahubadapter' />
+    <extension name='datahubclient' />
+    <extension name='dataimportcommons' /> -->
+	
+	<!-- UnComment the extensions below to enable The entitlementbackoffice extension enhances the backoffice extensions to support operations on entitlements.-->
+	<!-- <extension name='entitlementbackoffice' />
+    <extension name='entitlementfacades' />
+    <extension name='entitlementservices' /> -->
+	
+	<!-- UnComment the extensions below to enable Event Tracking Feature-->
+	<!-- <extension name='eventtrackingmodel' />
+    <extension name='eventtrackingpublisher' />
+    <extension name='eventtrackingservices' />
+    <extension name='eventtrackingwsaddon' /> -->
+	
+	<!-- UnComment the extensions below to enable Integration Feature -->
+	<!-- The integrationbackoffice extension allows you to create and edit Integration Objects at runtime, as well as monitor the incoming requests. -->
+	<!-- <extension name='integrationbackoffice' />
+    <extension name='integrationbackofficetest' />
+    <extension name='integrationmonitoringbackoffice' />
+    <extension name='integrationservices' /> -->
+	
+	<!-- UnComment the extensions below to enable odata Feature -->
+	<!-- The odata2services extension persists inbound posts, facilitates outbound posts, and encapsulates the services used to generate an EDMX schema from an Integration Object item. The EDMX schema can be used with SAP Cloud Platform Integration, for example.	 -->
+	<!-- <extension name='odata2services' />
+    <extension name='odata2webservices' />
+    <extension name='odata2webservicesfeaturetests' /> -->
+	
+	<!-- UnComment the extensions below to enable Inbound and Outbound Services -->
+	<!-- <extension name='inboundservices' />
+    <extension name='outboundservices' />
+    <extension name='outboundsync' />
+    <extension name='outboundsyncbackoffice' /> -->
+	
+	
+	<!-- <extension name='webhookbackoffice' />
+    <extension name='webhookservices' /> -->
+	
+	<!-- UnComment the extensions below to enable Message Center Services -->
+	<!-- <extension name='messagecentercsfacades' />
+    <extension name='messagecentercsocc' />
+    <extension name='messagecentercsservices' /> -->
+	
+	<!-- UnComment the extensions below to enable b2b order management -->
+	<!-- <extension name='b2bordermanagementfacades' />
+    <extension name='b2bordermanagementwebservices' /> -->
+	
+	
+	<!-- <extension name='deltadetection' />
+    <extension name='yempty' />
+    <extension name='yvoid' />
+	<extension name='yaddon' /> -->
+	
   </extensions>
 </hybrisconfig>
