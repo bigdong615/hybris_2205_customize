@@ -1,0 +1,16 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+#
+# Import the CMS Site configuration for the store
+#
+# Language
+
+#% impex.info("=============================== Importing content from BLInitialData coredata/stores site_en.impex =========================");
+
+
+$lang=en
+ 
+# Create CMS Site
+UPDATE CMSSite ; uid[unique=true] ; name[lang=$lang] ; locale[lang=$lang] 
+               ; bl               ; "Borrow Lenses"  
