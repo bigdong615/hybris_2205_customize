@@ -3,7 +3,6 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 
 -->
-<extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         	
    
     
@@ -15,75 +14,7 @@
     
     
     
-    <extension abstractclassprefix="Generated" classprefix="BlStorefront" name="blstorefront" usemaven="false">
-                                                                                 
-    
-	   
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        <requires-extension name="selectivecartsplitlistaddon"/>
-        <requires-extension name="profiletagaddon"/>
-                
-        <requires-extension name="personalizationaddon"/>
-                        
-        
-        <requires-extension name="smarteditaddon"/>
-                                
-        
-        
-        <requires-extension name="promotionenginesamplesaddon"/>
-                                        
-        
-        
-        
-        <requires-extension name="blordermanagementaddon"/>
-                                                
-        
-        
-        
-        
-        <requires-extension name="blorderselfserviceaddon"/>
-                                                        
-        
-        
-        
-        
-        
-        <requires-extension name="blcustomerticketingaddon"/>
-                                                                
-        
-        
-        
-        
-        
-        
-        <requires-extension name="blconfigurablebundleaddon"/>
-                                                                        
-        
-        
-        
-        
-        
-        
-        
-        <requires-extension name="blassistedservicestorefront"/>
-                                                                                
-        
-        
-        
-        
-        
-        
-        
-        
-                                                                        	   
+                                                           	   
         
         
         

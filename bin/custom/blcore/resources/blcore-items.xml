@@ -187,7 +187,7 @@
                            cardinality="one" />
         </relation>
 
-    </relations>
+    
 
         <!--BlInventoryLocationToInventoryLocationScanHistory-->
         <relation code="BlInventoryLocation2InventoryLocationScanHistoryRelation" autocreate="true" generate="true" localized="false">
@@ -198,7 +198,7 @@
                 <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
             </targetElement>
         </relation>
-
+	
 
         <!-- BL-542 -->
         <relation code="ShippingGroup2ZoneDeliveryRel" autocreate="true" generate="true" localized="false">
@@ -229,7 +229,7 @@
         </relation>
         <!-- BL-542 End-->
 
-   
+    </relations>
 
 
     <itemtypes>
@@ -1186,8 +1186,7 @@
                 </attributes>
             </itemtype>
 
-            <!--<BL-xyz changes related to giftCard End>-->
-        </typegroup>
+            
 
          
          	<itemtype code="StockLevel" autocreate="false" generate="false">
@@ -1381,7 +1380,7 @@
                     </attribute>
                 </attributes>
             </itemtype>
-         
+         </typegroup>
          
         <typegroup name="Pricing">
            <itemtype code="BlPricingLogic" autocreate="true" generate="true"
@@ -1530,7 +1529,7 @@
                     </attribute>
                 </attributes>
             </itemtype>
->>>>>>> develop
+
 
             <itemtype code="ZoneDeliveryModeValue" extends="GenericItem" autocreate="false" generate="false" >
                 <attributes>
