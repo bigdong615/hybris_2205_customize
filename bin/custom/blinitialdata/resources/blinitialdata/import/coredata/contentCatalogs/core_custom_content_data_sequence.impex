@@ -26,12 +26,6 @@ $contentCatalogsCustomShippingPagePath = /blinitialdata/import/coredata/contentC
 # Content Catalog Localization Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCatalogPath/catalog_en.impex"), "utf-8", 0, 0);
 
-# cms Content Impex
-##% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPath/cms-content.impex"), "utf-8", 0, 0);
-
-# cms Content Localization Impex
-##% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomPath/cms-content_en.impex"), "utf-8", 0, 0);
-
 # Homepage Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/core_data_homepage.impex"), "utf-8", 0, 0);
 
