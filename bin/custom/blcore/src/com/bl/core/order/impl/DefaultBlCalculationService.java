@@ -123,6 +123,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
@@ -138,7 +139,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 			// set total
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
-					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts;
+					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalAvalaraTaxCalculated();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
 			order.setTotalPrice(Double.valueOf(totalRounded));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
@@ -150,7 +151,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
 			saveOrder(order);
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 		}
 
 	}

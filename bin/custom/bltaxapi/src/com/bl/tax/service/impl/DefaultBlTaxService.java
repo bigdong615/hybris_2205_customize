@@ -1,5 +1,6 @@
 package com.bl.tax.service.impl;
 
+import com.bl.tax.ResponseData;
 import com.bl.tax.TaxResponse;
 import com.bl.tax.resttemplate.BlRestTemplate;
 import de.hybris.platform.converters.Populator;
@@ -23,6 +24,7 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
   private Populator<REQUEST, SERVICEREQUEST> requestPopulator;
   private Populator<SERVICERESPONSE, RESPONSE> responsePopulator;
   private Populator<TaxResponse, AbstractOrderModel> blAvalaraTaxPopulator;
+  private Populator<ResponseEntity<SERVICERESPONSE> ,ResponseData> blResponseDetailsAndLoggingPopulator;
 
   private String servicePathUrl;
   private String userName;
@@ -32,11 +34,13 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
    * this method created for request for avalara
    */
 
-  protected SERVICERESPONSE process(final HttpEntity<?> requestEntity, final Class responseClazz)
+  protected ResponseData process(final HttpEntity<?> requestEntity, final Class responseClazz)
       throws RestClientException, URISyntaxException {
     final ResponseEntity<SERVICERESPONSE> responeEntity = getBlRestTemplate().executeRequest(getServicePathUrl(),
         requestEntity, responseClazz);
-    return responeEntity.getBody();
+    ResponseData responseData = new ResponseData();
+    getBlResponseDetailsAndLoggingPopulator().populate(responeEntity , responseData);
+    return responseData;
   }
 
   /**
@@ -126,5 +130,16 @@ public class DefaultBlTaxService<REQUEST, RESPONSE, SERVICEREQUEST, SERVICERESPO
       Populator<TaxResponse, AbstractOrderModel> blAvalaraTaxPopulator) {
     this.blAvalaraTaxPopulator = blAvalaraTaxPopulator;
   }
+
+
+  public Populator<ResponseEntity<SERVICERESPONSE>, ResponseData> getBlResponseDetailsAndLoggingPopulator() {
+    return blResponseDetailsAndLoggingPopulator;
+  }
+
+  public void setBlResponseDetailsAndLoggingPopulator(
+      Populator<ResponseEntity<SERVICERESPONSE>, ResponseData> blResponseDetailsAndLoggingPopulator) {
+    this.blResponseDetailsAndLoggingPopulator = blResponseDetailsAndLoggingPopulator;
+  }
+
 
 }

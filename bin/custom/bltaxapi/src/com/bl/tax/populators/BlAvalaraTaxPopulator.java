@@ -1,6 +1,7 @@
 package com.bl.tax.populators;
 
 import com.bl.tax.TaxResponse;
+import com.bl.tax.service.impl.BlAvalaraTaxCalculationService;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 
@@ -9,6 +10,9 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
  * @author Manikandan
  */
 public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrderModel> {
+
+  private BlAvalaraTaxCalculationService blAvalaraTaxCalculationService;
+
 
   /**
    * this method created for setting line item tax and order level tax to abstractOrderModel
@@ -27,20 +31,19 @@ public class BlAvalaraTaxPopulator implements Populator<TaxResponse, AbstractOrd
          }
         }
       }
-    final Double prevAvalaraTax = abstractOrderModel.getTotalAvalaraTaxCalculated();
-      if(null != prevAvalaraTax && prevAvalaraTax > 0.0) {
-        abstractOrderModel.setTotalPrice(abstractOrderModel.getTotalPrice() - prevAvalaraTax);
-      }
-
-     final Double totaltax = setTotalTaxToOrder(taxResponse);
-      abstractOrderModel.setTotalAvalaraTaxCalculated(totaltax);
-     final Double totalPrice = abstractOrderModel.getTotalPrice();
-      abstractOrderModel.setTotalPrice(Double.valueOf(totalPrice + totaltax));
+    getBlAvalaraTaxCalculationService().calculateTaxWithOrderTotal(abstractOrderModel , taxResponse);
     }
 
-  private Double setTotalTaxToOrder(final TaxResponse taxResponse) {
-    return taxResponse.getTotalTax() > 0.0 ? taxResponse.getTotalTax() : 0.0;
+
+  public BlAvalaraTaxCalculationService getBlAvalaraTaxCalculationService() {
+    return blAvalaraTaxCalculationService;
   }
 
+  public void setBlAvalaraTaxCalculationService(
+      BlAvalaraTaxCalculationService blAvalaraTaxCalculationService) {
+    this.blAvalaraTaxCalculationService = blAvalaraTaxCalculationService;
   }
+
+
+}
 

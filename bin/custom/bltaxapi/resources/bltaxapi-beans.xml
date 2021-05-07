@@ -401,4 +401,10 @@
 		<property name="taxAvalaraCalculated" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	</bean>
 
+	<bean class="com.bl.tax.ResponseData">
+		<property name="statusCode" type="java.lang.String"/>
+		<property name="statusMessage" type="java.lang.String"/>
+		<property name="results" type="com.bl.tax.TaxResponse"/>
+	</bean>
+
 </beans>

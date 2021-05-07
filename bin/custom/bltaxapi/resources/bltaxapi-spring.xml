@@ -30,6 +30,7 @@
     <property name="blRestTemplate" ref="blRestTemplate"/>
     <property name="userName" value="${bl.security.http.basic.auth.username}"/>
     <property name="password" value="${bl.security.http.basic.auth.password}"/>
+    <property name="blResponseDetailsAndLoggingPopulator" ref="blResponseDetailsAndLoggingPopulator"/>
   </bean>
 
   <!--Added for Avalara Request and Response -->
@@ -38,6 +39,7 @@
     <property name="requestPopulator" ref="blTaxServiceRequestPopulator"/>
     <property name="responsePopulator" ref="blTaxServiceResponsePopulator"/>
     <property name="blAvalaraTaxPopulator" ref="blAvalaraTaxPopulator"/>
+
   </bean>
 
   <!--Added for creating request for avalar tax -->
@@ -54,6 +56,7 @@
 
   <!--Added for calculating line item and order tax from response -->
   <bean id="blAvalaraTaxPopulator" class="com.bl.tax.populators.BlAvalaraTaxPopulator">
+    <property name="blAvalaraTaxCalculationService" ref="blAvalaraTaxCalculationService"/>
   </bean>
 
   <!--Added for caluclation strategy for avalara tax -->
@@ -80,5 +83,10 @@
     <property name="list" ref="extendedCartConverter"/>
     <property name="add" ref="blOrderTaxPopulator"/>
   </bean>
+
+
+  <bean id="blResponseDetailsAndLoggingPopulator" class="com.bl.tax.populators.BlResponseDetailsAndLoggingPopulator"/>
+
+  <bean id="blAvalaraTaxCalculationService" class="com.bl.tax.service.impl.BlAvalaraTaxCalculationService"/>
 
 </beans>

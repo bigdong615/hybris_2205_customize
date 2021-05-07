@@ -44,6 +44,7 @@ public class BlCalculateExternalTaxesStratergy implements CalculateExternalTaxes
         taxResponse = getDefaultBlAvalaraTaxService().process(abstractOrder);
         abstractOrder.setAvalaraTaxCalculated(Boolean.TRUE);
         getModelService().save(abstractOrder);
+        getModelService().refresh(abstractOrder);
       }
     }
     catch (final Exception e)

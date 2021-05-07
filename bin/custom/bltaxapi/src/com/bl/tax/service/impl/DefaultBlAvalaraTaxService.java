@@ -1,5 +1,6 @@
 package com.bl.tax.service.impl;
 
+import com.bl.tax.ResponseData;
 import com.bl.tax.TaxRequestData;
 import com.bl.tax.TaxResponse;
 import com.bl.tax.service.BlTaxService;
@@ -21,12 +22,12 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
   {
     final TaxRequestData request = new TaxRequestData();
     getRequestPopulator().populate(orderModel, request);
-    final TaxResponse lResponse ;
-      lResponse = super.process(createHttpEntity(request), TaxResponse.class);
+    final ResponseData responseData;
+    responseData = super.process(createHttpEntity(request), TaxResponse.class);
       final ExternalTaxDocument lExternalTaxDoc = new ExternalTaxDocument();
-      if(null != lResponse) {
-        getResponsePopulator().populate(lResponse, lExternalTaxDoc);
-        getBlAvalaraTaxPopulator().populate(lResponse , orderModel);
+      if(null != responseData.getResults() && "201".equalsIgnoreCase(responseData.getStatusCode())) {
+        getResponsePopulator().populate(responseData.getResults(), lExternalTaxDoc);
+        getBlAvalaraTaxPopulator().populate(responseData.getResults() , orderModel);
       }
       return lExternalTaxDoc;
   }

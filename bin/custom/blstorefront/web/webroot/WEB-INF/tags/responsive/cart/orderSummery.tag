@@ -42,7 +42,7 @@
               </tr>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
-                  <td class="text-end"><format:price priceData="${cartData.totalPriceWithTax}"/></td>
+                  <td class="text-end"><format:price priceData="${cartData.totalPrice}"/></td>
               </tr>
           </tbody>
       </table>
