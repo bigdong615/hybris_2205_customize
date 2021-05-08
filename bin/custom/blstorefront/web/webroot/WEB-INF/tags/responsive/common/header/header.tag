@@ -96,3 +96,35 @@
 					
 </div>
 </nav>
+
+<!-- modal for sign in -->
+   <div class="modal fade signinbox" id="signIn" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+   <div class="modal-dialog modal-dialog-centered modal-sm">
+   </div>
+  </div>
+    <!-- modal for sign up -->
+    <div class="modal fade signinbox" id="signUp" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+     <div class="modal-dialog modal-dialog-centered modal-sm">
+     </div>
+    </div>
+
+    <!-- modal for forgot password -->
+        <div class="modal fade signinbox" id="forgotPass" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-center"><img class="logo" src="${themeResourcePath}/assets/bl-logo@2x.png"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <h5>Forgot Password</h5>
+                  <p class="body14">Enter your email for us to send a lost password reminder.</p>
+                  <form>
+                    <input type="text" class="form-control mb-3" placeholder="Your Email">
+                    <button type="submit" class="btn btn-block btn-primary mt-4">Send Password</button>
+                    <p class="body14 text-center mb-0 mt-4"><a href="#">Sign In</a></p>
+                  </form>
+              </div>
+            </div>
+          </div>
+        </div>
