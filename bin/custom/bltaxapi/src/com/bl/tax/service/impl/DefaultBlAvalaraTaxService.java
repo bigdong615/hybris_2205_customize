@@ -6,6 +6,8 @@ import com.bl.tax.TaxResponse;
 import com.bl.tax.service.BlTaxService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.externaltax.ExternalTaxDocument;
+import java.net.URISyntaxException;
+import org.springframework.web.client.RestClientException;
 
 /**
  * This class created to prepare request and response for avalara
@@ -18,8 +20,8 @@ public class DefaultBlAvalaraTaxService extends DefaultBlTaxService<AbstractOrde
    * this method created for processing request and response
    */
   @Override
-  public ExternalTaxDocument process(final AbstractOrderModel orderModel) throws Exception
-  {
+  public ExternalTaxDocument process(final AbstractOrderModel orderModel)
+      throws RestClientException, URISyntaxException {
     final TaxRequestData request = new TaxRequestData();
     getRequestPopulator().populate(orderModel, request);
     final ResponseData responseData;

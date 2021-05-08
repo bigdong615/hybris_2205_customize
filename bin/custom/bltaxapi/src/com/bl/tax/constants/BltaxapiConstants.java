@@ -35,8 +35,6 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 	public static final String EMPTY_STRING = "";
 	public static final String SHIPPING = "shipping";
 	public static final int QTY  = 1;
-	public static final String CONCAT  = ":";
-	public static final String BASIC  = "Basic";
 	public static final String ISO_CODE = "tax.calcualtion.country.isocode";
 
 }

@@ -36,7 +36,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	}
 
 	/**
-	 * This method overriden to calculate the totalPrice with tax
+	 * This method overridden to calculate the totalPrice with tax
 	 */
 	@Override
   protected Double calcTotalWithTax(final AbstractOrderModel source)

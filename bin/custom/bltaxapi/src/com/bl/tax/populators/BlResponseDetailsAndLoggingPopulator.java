@@ -9,12 +9,21 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * This class is created to populate the response
+ * @author Manikandan
+ */
 public class BlResponseDetailsAndLoggingPopulator<SERVICERESPONSE>  implements
     Populator<ResponseEntity<SERVICERESPONSE>, ResponseData> {
 
   private static final Logger LOG = Logger.getLogger(BlResponseDetailsAndLoggingPopulator.class);
 
-
+  /**
+   * this method created to populate response to ResponseData
+   * @param source the source object
+   * @param target the target to fill
+   * @throws ConversionException
+   */
   @Override
   public void populate(ResponseEntity<SERVICERESPONSE> source, ResponseData target) throws ConversionException
   {
@@ -24,6 +33,9 @@ public class BlResponseDetailsAndLoggingPopulator<SERVICERESPONSE>  implements
     logResonseStatus(source);
   }
 
+  /**
+   * this method created  to log the status code
+   */
   private void logResonseStatus(ResponseEntity<SERVICERESPONSE> source) {
     BlLogger.logMessage(LOG , Level.INFO , source.getStatusCode().getReasonPhrase());
   }
