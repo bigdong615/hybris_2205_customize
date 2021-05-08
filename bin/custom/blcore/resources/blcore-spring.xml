@@ -757,7 +757,7 @@
 	</bean>
 
 	<alias name="blSerialProductPrepareInterceptor" alias="blSerialProductPrepareInterceptor"/>
-	<bean id="blSerialProductPrepareInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
+	<bean id="blSerialProductPrepareInterceptor" class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blStockService" ref="blStockService"/>
 	</bean>

@@ -139,13 +139,15 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 * @param initialValue
 	 */
 	private void updateStockRecordsAsAvailable(final BlSerialProductModel blSerialProduct, final Object initialValue) {
-			if(initialValue.equals(SerialStatusEnum.COMING_FROM_PURCHASE) &&
-					null != blSerialProduct.getWarehouseLocation()) {
-				getBlStockService().createStockRecordsForNewSerialProducts(blSerialProduct);
-			} else {
-				getBlStockService()
-						.findAndUpdateStockRecords(blSerialProduct, false);
-			}
+		if (initialValue.equals(SerialStatusEnum.COMING_FROM_PURCHASE) && null != blSerialProduct.getWarehouseLocation()
+				&& Boolean.TRUE.equals(blSerialProduct.getForRent()))
+		{
+			getBlStockService().createStockRecordsForNewSerialProducts(blSerialProduct);
+		}
+		else
+		{
+			getBlStockService().findAndUpdateStockRecords(blSerialProduct, false);
+		}
 	}
 
 	/**
@@ -278,11 +280,21 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		this.blPricingService = blPricingService;
 	}
 
-	public BlStockService getBlStockService() {
+	/**
+	 * @return the blStockService
+	 */
+	public BlStockService getBlStockService()
+	{
 		return blStockService;
 	}
 
-	public void setBlStockManageService(final BlStockService blStockService) {
+	/**
+	 * @param blStockService
+	 *           the blStockService to set
+	 */
+	public void setBlStockService(final BlStockService blStockService)
+	{
 		this.blStockService = blStockService;
-		}
+	}
+
 }
