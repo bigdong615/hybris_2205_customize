@@ -162,7 +162,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
         if(isTaxExempt) {
           final String addressState = abstractOrder.getDeliveryAddress().getDistrict();
             taxRequest.setTaxExemptState(addressState.equalsIgnoreCase(abstractOrder.getUser().getTaxExemptState()) ? addressState : null);
-          Date endDay = getDateForRequest(abstractOrder);
+          final Date endDay = getDateForRequest(abstractOrder);
           if (null != abstractOrder.getUser().getTaxExemptExpiry() && null != endDay && endDay
                 .before(abstractOrder.getUser().getTaxExemptExpiry()) && null != taxRequest.getTaxExemptState()) {
               taxRequest.setTaxExemptExpiry(abstractOrder.getUser().getTaxExemptExpiry());
@@ -180,14 +180,17 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
 
   private Date getDateForRequest(final AbstractOrderModel abstractOrder) throws ParseException {
     final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-    if(null != rentalDateDto.getSelectedToDate()) {
-      return new SimpleDateFormat(BltaxapiConstants.DATE_FORMAT).parse(rentalDateDto.getSelectedToDate());
-    }
-    if(null == rentalDateDto.getSelectedToDate() && abstractOrder.getEntries().stream().anyMatch(abstractOrderEntryModel ->
-        abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel)) {
+
+    if (null != rentalDateDto && null != rentalDateDto.getSelectedToDate()) {
+        return new SimpleDateFormat(BltaxapiConstants.DATE_FORMAT).parse(rentalDateDto.getSelectedToDate());
+      }
+
+    if (abstractOrder.getEntries().stream()
+        .anyMatch(abstractOrderEntryModel ->
+            abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel)) {
       return abstractOrder.getDate();
     }
-    return new Date();
+    return abstractOrder.getDate();
   }
 
   /**
