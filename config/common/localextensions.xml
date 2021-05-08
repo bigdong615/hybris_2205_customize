@@ -20,6 +20,7 @@
       <extension name='blstorefront' />
       <extension name='bllogging' />
       <extension name='bltaxapi' />
+    <extension name='blintegration'/>
 
 	
 	<!-- Extension to enable Accelerator Services -->
@@ -406,6 +407,7 @@
     <extension name='yempty' />
     <extension name='yvoid' />
 	<extension name='yaddon' /> -->
+
 	
   </extensions>
 </hybrisconfig>

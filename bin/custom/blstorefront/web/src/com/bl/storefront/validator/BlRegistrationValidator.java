@@ -48,13 +48,13 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isNotEmpty(pwd) && StringUtils.isNotEmpty(checkPwd) && !StringUtils.equals(pwd, checkPwd))
         {
-            errors.rejectValue("checkPwd", BlControllerConstants.VALIDATE_CHECKPWD_EQUALS);
+            errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.VALIDATE_CHECKPWD_EQUALS);
         }
         else
         {
             if (StringUtils.isEmpty(checkPwd))
             {
-                errors.rejectValue("checkPwd", BlControllerConstants.REGISTER_CHECKPWD_INVALID);
+                errors.rejectValue(BlControllerConstants.CONFIRM_PASSWORD_STRING, BlControllerConstants.REGISTER_CHECKPWD_INVALID);
             }
         }
     }
@@ -63,11 +63,11 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isEmpty(pwd))
         {
-            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);//NOSONAR
+            errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PWD_INVALID);
         }
         else if (StringUtils.length(pwd) < BlControllerConstants.PASSWORD_MIN_LENGTH || StringUtils.length(pwd) >BlControllerConstants.PASSWORD_MAX_LENGTH)
         {
-            errors.rejectValue("pwd", BlControllerConstants.REGISTER_PWD_INVALID);//NOSONAR
+            errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PWD_INVALID);
         }
     }
 
@@ -75,11 +75,11 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isEmpty(email))
         {
-            errors.rejectValue("email", BlControllerConstants.REGISTER_EMAIL_INVALID);
+            errors.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.REGISTER_EMAIL_INVALID);
         }
         else if (StringUtils.length(email) > BlControllerConstants.EMAIL_MAX_LENGTH || !validateEmailAddress(email))
         {
-            errors.rejectValue("email", BlControllerConstants.REGISTER_EMAIL_INVALID);
+            errors.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.REGISTER_EMAIL_INVALID);
         }
     }
 

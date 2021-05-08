@@ -77,6 +77,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String START_DATE = "startDate";
 	public static final String END_DATE = "endDate";
 	public static final String WAREHOUSES = "warehouses";
+	public static final String RESERVED_STATUS = "reservedStatus";
 	public static final int END_HOURS = 23;
 	public static final int END_MINUTES = 59;
 	public static final int END_SECONDS = 59;
@@ -135,6 +136,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_FOUR = 4;
 	public static final int CONDITION_RATING_THREE = 3;
 	public static final int CONDITION_RATING_TWO = 2;
+	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
+	public static final String FAILURE_STRING = "Failure";
 
 	private BlCoreConstants()
 	{

@@ -759,6 +759,7 @@
 	<alias name="blSerialProductPrepareInterceptor" alias="blSerialProductPrepareInterceptor"/>
 	<bean id="blSerialProductPrepareInterceptor"	class="com.bl.core.model.interceptor.BlSerialProductPrepareInterceptor">
 		<property name="blPricingService" ref="blPricingService"/>
+		<property name="blStockService" ref="blStockService"/>
 	</bean>
 
 	<bean id="blSerialProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
