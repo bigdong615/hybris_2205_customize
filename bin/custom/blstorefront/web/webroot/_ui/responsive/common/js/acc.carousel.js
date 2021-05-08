@@ -45,7 +45,7 @@ ACC.carousel = {
 	
 	bindJCarousel: function ()
 	{
-		$(".js-modal").colorbox({
+		$(".modal").colorbox({
 			onComplete: function ()
 			{
 				ACC.common.refreshScreenReaderBuffer();
