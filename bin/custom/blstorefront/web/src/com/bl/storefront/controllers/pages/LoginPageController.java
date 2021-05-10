@@ -135,7 +135,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 		}
 		loginForm.setJ_username(username);
 		beforeRenderModal(loginError,referer,request,response,model);
-		return ControllerConstants.Views.Fragments.Login.LoginRequestPopup;
+		return ControllerConstants.Views.Fragments.Login.LoginPopup;
 	}
 
 	/**
