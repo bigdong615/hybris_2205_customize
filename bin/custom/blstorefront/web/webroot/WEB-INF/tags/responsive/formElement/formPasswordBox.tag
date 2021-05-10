@@ -16,6 +16,6 @@
 <template:errorSpanField path="${path}" errorPath="${errorPath}">
 	<ycommerce:testId code="LoginPage_Item_${idKey}">
 		<spring:theme code="${placeholder}" var="placeHolderMessage" htmlEscape="false"/>
-		<form:password cssClass="${fn:escapeXml(inputCSS)}" id="${idKey}" path="${path}" autocomplete="off" placeholder="${placeHolderMessage}"/>
+		<form:password cssClass="${fn:escapeXml(inputCSS)}" id="${idKey}" path="${path}" placeholder="${placeHolderMessage}" autocomplete="off" />
 	</ycommerce:testId>
 </template:errorSpanField>
