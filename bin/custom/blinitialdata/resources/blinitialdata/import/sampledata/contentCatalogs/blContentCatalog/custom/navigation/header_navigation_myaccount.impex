@@ -1,5 +1,5 @@
  
-#% impex.info("=============================== Importing content from sampledata header_navigaton_myaccount.impex ========================="); 
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs header_navigaton_myaccount.impex =========================");
 $contentCatalog=blContentCatalog
  
 $productCatalog=blProductCatalog
@@ -20,7 +20,7 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]     
                                ;                         ; AccountBookmarksLink         ; Account Bookmarks Link           ; "#" ; AccountBookmarksLink         ; Bookmark            ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountSavedCartsLink        ; Account Saved Carts Link         ; "#" ; AccountSavedCartsLink        ; Saved Carts         ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountOrderHistoryLink      ; Account Order History Link       ; "#" ; AccountOrderHistoryLink      ; Order History       ;                            ;                                    ;  ;  ;  
-                               ;                         ; AccountAddressesLink         ; Account Addresses Link           ; "#" ; AccountAddressesLink         ; Addresses           ;                            ;                                    ;  ;  ;  
+                               ;                         ; AccountAddressesLink         ; Account Addresses Link           ; /my-account/address-book ; AccountAddressesLink         ; Addresses           ;                            ;                                    ;  ;  ;
                                ;                         ; AccountCreditCardsLink       ; Account Credit Cards Link        ; "#" ; AccountCreditCardsLink       ; Credit Cards        ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountVerificaionImagesLink ; Account Verification Images Link ; "#" ; AccountVerificaionImagesLink ; Verification Images ;                            ;                                    ;  ;  ;  
                                ;                         ; AccountUserAccountsLink      ; Account User Accounts Link       ; "#" ; AccountUserAccountsLink      ; Accounts            ;                            ;                                    ;  ;  ;  

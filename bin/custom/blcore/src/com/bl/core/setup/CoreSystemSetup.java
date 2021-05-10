@@ -37,7 +37,7 @@ public class CoreSystemSetup extends AbstractSystemSetup
 	{
 		importImpexFile(context, "/blcore/import/common/essential-data.impex");
 		importImpexFile(context, "/blcore/import/common/countries.impex");
-		importImpexFile(context, "/blcore/import/common/delivery-modes.impex");
+		//importImpexFile(context, "/blcore/import/common/delivery-modes.impex");
 
 		importImpexFile(context, "/blcore/import/common/themes.impex");
 		importImpexFile(context, "/blcore/import/common/user-groups.impex");

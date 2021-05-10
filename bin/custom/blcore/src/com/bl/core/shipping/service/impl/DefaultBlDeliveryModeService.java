@@ -4,7 +4,12 @@ import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.DeliveryTypeEnum;
-import com.bl.core.model.*;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
+import com.bl.core.model.PartnerPickUpStoreModel;
+import com.bl.core.model.ShippingCostModel;
+import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -17,15 +22,18 @@ import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeValueModel;
 import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
 import de.hybris.platform.util.Config;
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * {javadoc}
@@ -329,13 +337,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 }
             }
 
-            final double dimensionalWeight = (maxHeight * sumWidth * maxLength) /
+            final int dimensionalWeight = (maxHeight * sumWidth * maxLength) /
                     Config.getInt(BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR_KEY, BlDeliveryModeLoggingConstants.DIMENSIONAL_FACTOR);
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Total weight: {} ", totalWeight.doubleValue());
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Dimensional weight: {} ", dimensionalWeight);
 
             valueMap.put(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT, totalWeight.doubleValue());
-            valueMap.put(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT, dimensionalWeight);
+            valueMap.put(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT,
+                (double) dimensionalWeight);
         } catch(Exception e) {
             BlLogger.logMessage(LOG, Level.ERROR,"Exception while calculating delivery cost");
         }
@@ -428,7 +437,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public boolean checkSFOrNYCPinCodeValidity(final String pinCode, final String deliveryType) {
-        if (deliveryType.equals(DeliveryTypeEnum.SF.toString())) {
+        if (deliveryType.equals(DeliveryTypeEnum.SF.toString())) { //NOSONAR
             //check pinCode in ~50miles
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day delivery pinCode validity");
         } else {

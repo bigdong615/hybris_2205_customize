@@ -29,10 +29,11 @@
 		</sec:authorize>
 		<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 		<c:forEach items="${component.navigationNode.entries}" var="entry">
-			<li><a class="dropdown-item" href="${entry.item.url }">${entry.item.linkName }</a></li>
+		  <c:url var="acountNavURL" value="${entry.item.url }"/>
+			<li><a class="dropdown-item" href="${acountNavURL}">${entry.item.linkName }</a></li>
 		</c:forEach>		
 		<li class="divider"></li>
-		<c:url value="/signout" var="signoutUrl" />
+		<c:url value="/logout" var="signoutUrl" />
 		<li><a class="dropdown-item" href="${signoutUrl}"><spring:theme code="text.header.account.sign.out" /></a></li>
 		</sec:authorize>		
 	</ul>
