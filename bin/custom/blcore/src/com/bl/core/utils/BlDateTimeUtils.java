@@ -1,28 +1,33 @@
 package com.bl.core.utils;
 
-import com.bl.constants.BlDeliveryModeLoggingConstants;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.logging.BlLogger;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.logging.BlLogger;
 
 /**
  * This class is used to convert the date format
@@ -444,4 +449,19 @@ public final class BlDateTimeUtils
 	public static DayOfWeek getDayOfWeek(final String timeZone) {
 			return LocalDate.parse(getCurrentDateUsingCalendar(timeZone), getFormatter("MM-dd-yyyy")).getDayOfWeek();
 	}
+
+	/**
+	 * It gets the date which is after a year
+	 *
+	 * @return the date
+	 */
+	public static Date getNextYearsSameDay()
+	{
+		final Date currentDate = new Date();
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTime(currentDate);
+		calendar.add(Calendar.YEAR, 1);
+		return calendar.getTime();
+	}
+
 }

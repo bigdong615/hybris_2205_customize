@@ -1,0 +1,15 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+#
+# Import the BaseStore
+#
+# Language
+#% impex.info("=============================== Importing content from BLInitialData coredata/stores store_en.impex =========================");
+
+
+$lang=en
+ 
+# Create Base Store
+UPDATE BaseStore ; uid[unique=true] ; name[lang=$lang] 
+                 ; bl               ; "Borrow Lenses"  

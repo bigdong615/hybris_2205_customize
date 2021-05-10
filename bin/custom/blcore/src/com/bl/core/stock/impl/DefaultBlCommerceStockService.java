@@ -24,6 +24,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 
 
@@ -164,6 +165,18 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		{
 			makeZeroAvailability(availability, totalUnits);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode)
+	{
+		final Date currentDate = new Date();
+		return getBlStockLevelDao().isUsedGearSerialNotAssignedToAnyRentalOrders(serialProductCode,
+				currentDate,
+				BlDateTimeUtils.getNextYearsSameDay());
 	}
 
 	/**

@@ -191,6 +191,11 @@ public interface ControllerConstants
 				String ForgotPasswordValidationMessage = "fragments/password/forgotPasswordValidationMessage"; // NOSONAR
 			}
 
+			interface Login{
+				String LoginRequestPopup="fragments/login/loginRequestPopup";
+				String CreateAccountPopup="fragments/login/createAccountPopup";
+		}
+
 			interface Product // NOSONAR
 			{
 				String FutureStockPopup = "fragments/product/futureStockPopup"; // NOSONAR

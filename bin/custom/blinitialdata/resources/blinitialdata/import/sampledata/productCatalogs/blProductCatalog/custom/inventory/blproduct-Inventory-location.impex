@@ -1,4 +1,4 @@
-#% impex.info("=============================== Importing content from BLInitialData blproduct-inventory-location.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs blproduct-inventory-location.impex =========================");
 
 
 INSERT_UPDATE BLInventoryLocation[disable.interceptor.beans='blInventoryLocationPrepareInterceptor'];inventoryLocationID[unique='true'];code[unique='true'];name;inventoryType(code);parentInventoryLocation(inventoryLocationID);lastModifiedTime[dateformat=dd-MM-yyyy HH:mm]
@@ -2590,7 +2590,7 @@ INSERT_UPDATE BLInventoryLocation[disable.interceptor.beans='blInventoryLocation
                                                                                                     ;2606;   CAM030 S04;          CAM030 S04;                          MOBILE_SHELF;       ;            2-11-2021 17:51;
                                                                                                     ;2608;   BIN CART 500;        BIN CART 500;                        BIN;                9232;        2-11-2021 17:51;
                                                                                                     ;2609;   BIN CART 501;        BIN CART 501;                        BIN;                2579;        2-11-2021 17:51;
-                                                                                                    ;2610;   BIN CART 502;        BIN CART 502;                        BIN;                5088;        2-11-2021 17:51;
+                                                                                                    #;2610;   BIN CART 502;        BIN CART 502;                        BIN;                5088;        2-11-2021 17:51;
                                                                                                     ;2611;   BIN CART 503;        BIN CART 503;                        BIN;                2566;        2-11-2021 17:51;
                                                                                                     ;2612;   BIN CART 504;        BIN CART 504;                        BIN;                6832;        2-11-2021 17:51;
                                                                                                     ;2613;   BIN CART 505;        BIN CART 505;                        BIN;                2560;        2-11-2021 17:51;
@@ -2603,7 +2603,7 @@ INSERT_UPDATE BLInventoryLocation[disable.interceptor.beans='blInventoryLocation
                                                                                                     ;2620;   BIN CART 512;        BIN CART 512;                        BIN;                6716;        2-11-2021 17:51;
                                                                                                     ;2621;   BIN CART 513;        BIN CART 513;                        BIN;                ;            2-11-2021 17:51;
                                                                                                     ;2622;   BIN CART 514;        BIN CART 514;                        BIN;                2192;        2-11-2021 17:51;
-                                                                                                    ;2623;   BIN CART 515;        BIN CART 515;                        BIN;                5088;        2-11-2021 17:51;
+                                                                                                    #;2623;   BIN CART 515;        BIN CART 515;                        BIN;                5088;        2-11-2021 17:51;
                                                                                                     ;2624;   BIN CART 516;        BIN CART 516;                        BIN;                ;            2-11-2021 17:51;
                                                                                                     ;2625;   BIN CART 517;        BIN CART 517;                        BIN;                2120;        2-11-2021 17:51;
                                                                                                     ;2626;   MAW RCVG005;         MA Receiving 005;                    WORK_STATION;       ;            2-11-2021 17:51;
