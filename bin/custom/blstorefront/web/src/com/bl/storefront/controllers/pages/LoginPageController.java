@@ -126,7 +126,6 @@ public class LoginPageController extends AbstractBlLoginPageController
 			final HttpServletRequest request, final HttpServletResponse response, final HttpSession session)
 			throws CMSItemNotFoundException
 	{
-		LOGGER.debug("LoginPageController : doLogin1() : Entering");
 		final LoginForm loginForm = new LoginForm();
 		model.addAttribute(loginForm);
 		final String username = (String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME);
@@ -136,7 +135,6 @@ public class LoginPageController extends AbstractBlLoginPageController
 		}
 		loginForm.setJ_username(username);
 		beforeRenderModal(loginError,referer,request,response,model);
-		LOGGER.debug("LoginPageController : doLogin1() : Exiting");
 		return ControllerConstants.Views.Fragments.Login.LoginRequestPopup;
 	}
 
@@ -149,7 +147,6 @@ public class LoginPageController extends AbstractBlLoginPageController
 			final HttpServletRequest request, final HttpServletResponse response, final HttpSession session)
 			throws CMSItemNotFoundException
 	{
-		LOGGER.debug("LoginPageController : doRegistrationRequest() : Entering");
 		model.addAttribute(new RegisterForm());
 		final String username = (String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME);
 		if (username != null)
@@ -157,15 +154,13 @@ public class LoginPageController extends AbstractBlLoginPageController
 			session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
 		}
 		beforeRenderModal(loginError,referer,request,response,model);
-		LOGGER.debug("LoginPageController : doRegistrationRequest() : Exiting");
-		return "fragments/login/createAccountPopup";
+		return ControllerConstants.Views.Fragments.Login.CreateAccountPopup;
 	}
 
 	/**
 	 * This method is responsible for showing error message.
 	 */
 	private void beforeRenderModal(final boolean loginError,final String referer,final HttpServletRequest request, final HttpServletResponse response,final Model model){
-		LOGGER.debug("LoginPageController : beforeRenderModal() : Entering");
 		if (!loginError)
 		{
 			storeReferer(referer, request, response);
@@ -177,7 +172,6 @@ public class LoginPageController extends AbstractBlLoginPageController
 			model.addAttribute("loginError", Boolean.valueOf(loginError));
 			GlobalMessages.addErrorMessage(model, "login.error.account.not.found.title");
 		}
-		LOGGER.debug("LoginPageController : beforeRenderModal() : Exiting");
 	}
 
 }
