@@ -58,9 +58,9 @@ public class LoginPageController extends AbstractBlLoginPageController
 		{
 			return httpSessionRequestCache.getRequest(request, response).getRedirectUrl();
 		}
-		String redirectUrl=request.getHeader("Referer");
+		return request.getHeader("Referer");
 		// TODO :Only redirect to referer once start working on html integration : BL-30 // NOSONAR
-		return redirectUrl.contains("/login")? "/":redirectUrl;
+	//	return redirectUrl.contains("/login")? "/":redirectUrl;
 	}
 
 	@Override

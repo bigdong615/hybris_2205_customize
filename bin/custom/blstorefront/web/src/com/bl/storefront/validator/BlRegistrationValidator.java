@@ -75,7 +75,7 @@ public class BlRegistrationValidator implements Validator{
     {
         if (StringUtils.isEmpty(email))
         {
-            errors.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.REGISTER_EMAIL_INVALID);
+            errors.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.REGISTER_EMAIL_EMPTY);
         }
         else if (StringUtils.length(email) > BlControllerConstants.EMAIL_MAX_LENGTH || !validateEmailAddress(email))
         {

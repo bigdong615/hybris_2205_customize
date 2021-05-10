@@ -13,7 +13,7 @@
           <div class="modal-body">
               <h5><spring:theme code="register.submit" /></h5>
           <c:url value="/login/register" var="registerActionUrl" />
-          <form:form method="post" modelAttribute="registerForm" action="${registerActionUrl}">
+          <form:form method="post" modelAttribute="registerForm" action="${registerActionUrl}" id="signUppopup-validation">
                <formElement:formInputBox idKey="register.email" path="email"
                  inputCSS="form-control mb-3"  placeholder="register.email"/>
                 <formElement:formPasswordBox idKey="password"  path="pwd"
@@ -21,8 +21,9 @@
                 <formElement:formPasswordBox idKey="register.checkPwd"
                  path="checkPwd" inputCSS="form-control mb-2"  placeholder="register.checkPwd" />
                   <ycommerce:testId code="register_Register_button">
-                  			<button type="submit" class="btn btn-block btn-primary mt-4">
+                  			<button type="submit" class="btn btn-block btn-primary mt-4 js-signUp-popup-validation" value="${registerActionUrl}">
                     				<spring:theme code="register.submit" />
+
                    			</button>
                  	</ycommerce:testId>
               <p class="body14 text-center mb-0 mt-4"><a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"

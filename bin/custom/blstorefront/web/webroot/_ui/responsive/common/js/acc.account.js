@@ -29,6 +29,28 @@ ACC.account = {
     })
   	});
 
+   /**
+     Added for BL-31 to make validation for registration
+   **/
+  	$(document).on("click",".js-signUp-popup-validation",function(e){
+  	e.preventDefault();
+  	var formValues= $('#signUppopup-validation').serialize();
+  	var targetUrl = $(this).val();
+   	  $.ajax({
+      		type : "POST",
+      		data : formValues,
+      		url : targetUrl,
+      		success : function(response) {
+             $('#signUp').html(response);
+      		},
+          		error : function(e) {
+               // do nothing
+          		}
+          	});
+
+    		});
+
+
 
 	}
 	};

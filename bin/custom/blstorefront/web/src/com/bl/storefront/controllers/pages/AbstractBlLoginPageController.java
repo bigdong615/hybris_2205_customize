@@ -2,6 +2,7 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractLoginPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.LoginForm;
@@ -42,7 +43,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             model.addAttribute(form);
             model.addAttribute(new LoginForm());
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
-            return handleRegistrationError(model);
+            return ControllerConstants.Views.Fragments.Login.CreateAccountPopup;
         }
         final RegisterData data = new RegisterData();
         data.setLogin(form.getEmail());
@@ -62,7 +63,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             model.addAttribute(new LoginForm());
             bindingResult.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.DUBLICATE_UID_ERROR);
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
-            return handleRegistrationError(model);
+            return ControllerConstants.Views.Fragments.Login.CreateAccountPopup;
         }
 
         return REDIRECT_PREFIX + getSuccessRedirect(request, response);
