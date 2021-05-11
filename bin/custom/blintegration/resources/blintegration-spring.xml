@@ -123,4 +123,16 @@
   <bean id="defaultUPSIntegrationService"
     class="com.bl.integration.services.impl.DefaultUPSIntegrationService"/>
   <!-- UPS Locator end -->
+
+  <!-- UPS Address validator start -->
+  <alias name="defaultUPSAddressValidatorService" alias="upsAddressValidatorService"/>
+  <bean id="defaultUPSAddressValidatorService"
+    class="com.bl.integration.services.impl.DefaultBlUPSAddressValidatorService"/>
+
+  <bean id="blUPSAddressRequestPopulator"
+    class="com.bl.integration.populators.BlUPSAddressRequestPopulator"/>
+  <bean id="blUPSAddressResponsePopulator"
+    class="com.bl.integration.populators.BlUPSAddressResponsePopulator"/>
+  <!-- UPS Address validator end -->
+
 </beans>

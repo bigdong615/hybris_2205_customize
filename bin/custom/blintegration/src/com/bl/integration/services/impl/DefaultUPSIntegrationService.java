@@ -26,8 +26,9 @@ public class DefaultUPSIntegrationService implements UPSIntegrationService {
 
   @Override
   public void  populateAccessRequest(StringWriter strWriter) throws JAXBException {
-    ObjectFactory accessRequestObjectFactory = new ObjectFactory();
-    AccessRequest accessRequest = accessRequestObjectFactory.createAccessRequest();
+    /*ObjectFactory accessRequestObjectFactory = new ObjectFactory();
+    AccessRequest accessRequest = accessRequestObjectFactory.createAccessRequest();*/
+    AccessRequest accessRequest = new AccessRequest();
     accessRequest.setAccessLicenseNumber(licenseNumber);
     accessRequest.setUserId(uid);
     accessRequest.setPassword(password);
