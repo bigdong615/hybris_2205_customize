@@ -205,8 +205,10 @@ async function saveDeliveryMode(deliveryMode) {
         type: "GET",
         async: false,
         success: function (data) {
-            window.location.reload();
+           // window.location.reload();
             //TODO: Handle for payment method for checkout
+            var url = ACC.config.encodedContextPath + '/checkout/multi/payment-method/add'
+            window.location = url;
         },
         error: function (data) {
             console.log('error');
