@@ -16,6 +16,7 @@ ACC.account = {
        }
   })
 	});
+
   /*This function is responsible for providing form object for the sign up popup*/
 	$(document).on("click",".js-signUp-popup",function(e){
   	e.preventDefault();

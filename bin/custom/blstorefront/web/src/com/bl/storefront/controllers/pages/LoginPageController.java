@@ -161,12 +161,12 @@ public class LoginPageController extends AbstractBlLoginPageController
 	 * This method is responsible for showing error message.
 	 */
 	private void addModelAttributes(final boolean loginError,final String referer,final HttpServletRequest request, final HttpServletResponse response,final Model model){
-		if (!loginError)
+		if (loginError)
 		{
-			storeReferer(referer, request, response);
-		}else {
 			model.addAttribute("loginError", Boolean.valueOf(loginError));
 			GlobalMessages.addErrorMessage(model, "login.error.account.not.found.title");
+		}else {
+			storeReferer(referer, request, response);
 		}
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
 	}
