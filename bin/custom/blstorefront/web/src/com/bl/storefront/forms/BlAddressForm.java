@@ -1,11 +1,13 @@
 package com.bl.storefront.forms;
 
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
-
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-
+/*
+ * This form is created to contain email data.
+ *  @author  Vijay Vishwakarma
+ */
 public class BlAddressForm extends AddressForm {
+
 
     private String addressType;
     private String email;
@@ -26,4 +28,5 @@ public class BlAddressForm extends AddressForm {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }

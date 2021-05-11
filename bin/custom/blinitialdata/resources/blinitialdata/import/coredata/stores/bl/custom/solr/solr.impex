@@ -4,10 +4,10 @@
 #
 # Import the Solr configuration for the store
 #
- 
-#% impex.info("=============================== Importing content from BLInitialData coredata solr.impex ========================="); 
- 
- 
+
+#% impex.info("=============================== Importing content from BLInitialData coredata/stores solr.impex =========================");
+
+
 $productCatalog = blProductCatalog
 $catalogVersions = catalogVersions(catalog(id), version); 
 $serverConfigName = blSolrServerConfig
@@ -115,7 +115,7 @@ REMOVE SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ; name[u
                            
 # Other facet properties   
 INSERT_UPDATE SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ; name[unique = true] ; type(code) ; sortableType(code) ; currency[default = false] ; localized[default = false] ; multiValue[default = false] ; facet[default = true] ; facetType(code) ; facetSort(code) ; priority ; visible ; useForSpellchecking[default = false] ; useForAutocomplete[default = false] ; fieldValueProvider             ; facetDisplayNameProvider                          ; customFacetSortProvider       ; topValuesProvider        ; rangeSets(name)                                   
-                                  ; $solrIndexedType                           ; price               ; double     ;                    ; true                      ;                            ;                             ;                       ; MultiSelectOr   ; Alpha           ; 4000     ; true    ;                                      ;                                     ; productPriceValueProvider      ;                                                   ;                               ; defaultTopValuesProvider ; electronicsPriceRangeUSD,electronicsPriceRangeJPY 
+                                  ; $solrIndexedType                           ; price               ; double     ;                    ; true                      ;                            ;                             ;                       ; MultiSelectOr   ; Alpha           ; 4000     ; true    ;                                      ;                                     ; productPriceValueProvider      ;                                                   ;                               ; defaultTopValuesProvider ;
                                   ; $solrIndexedType                           ; allPromotions       ; string     ;                    ;                           ;                            ; true                        ;                       ; MultiSelectOr   ; Alpha           ; 0        ; false   ;                                      ;                                     ; promotionCodeValueProvider     ; promotionFacetDisplayNameProvider                 ;                               ;                          
                                   ; $solrIndexedType                           ; availableInStores   ; string     ;                    ;                           ;                            ; true                        ;                       ; MultiSelectOr   ; Custom          ; 10000    ; true    ;                                      ;                                     ; productStoreStockValueProvider ; electronicsPointOfServiceFacetDisplayNameProvider ; distanceAttributeSortProvider 
                                   

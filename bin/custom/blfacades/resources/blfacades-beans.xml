@@ -41,29 +41,6 @@
 		<property name="name" type="String"/>
 	</bean>
 
-
-	<bean class="com.bl.facades.giftcard.data.BLGiftCardData">
-		<property name="code" type="String"/>
-		<property name="amount" type="java.lang.Double"/>
-		<property name="redeemamount" type="java.lang.Double"/>
-		<property name="balanceamount" type="java.lang.Double"/>
-		<property name="reedemDate" type="java.util.Date" />
-		<property name="cartId" type="String" />
-		<property name="url" type="String" />
-		<property name="currency" type="de.hybris.platform.commercefacades.storesession.data.CurrencyData" />
-		<property name="amountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
-		<property name="balanceamountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
-		<property name="indicator" type="String" />
-	</bean>
-
-	<bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
-		<property name="giftCode" type="String"/>
-		<property name="grandTotal" type="PriceData"/>
-		<property name="giftCardDiscount" type="PriceData"/>
-		<property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
-	</bean>
-
-
 	<!--BL-80 Added new entry in SearchQueryData-->
 	<bean class="de.hybris.platform.commercefacades.search.data.SearchQueryData">
 		<property name="blPage" type="String"/>
@@ -161,6 +138,53 @@
     </bean>
     <!-- Shipping End-->
 
+  <!-- UPS Locator start -->
+  <bean class="com.bl.facades.locator.data.UPSLocatorRequestData">
+    <property name="zipcode" type="String"/>
+    <property name="countryCode" type="String"/>
+  </bean>
+
+  <bean class="com.bl.facades.locator.data.UpsStoreData">
+    <property name="locationId" type="String"/>
+    <property name="latestGroundDropOffTime" type="java.util.List&lt;String>"/>
+    <property name="consigneeName" type="String"/>
+    <property name="addressLine" type="String"/>
+    <property name="countryCode" type="String"/>
+    <property name="politicalDivision1" type="String"/>
+    <property name="politicalDivision2" type="String"/>
+    <property name="postcodePrimaryLow" type="String"/>
+    <property name="postcodeExtendedLow" type="String"/>
+  </bean>
+
+  <bean class="com.bl.facades.locator.data.UpsLocatorResposeData">
+    <property name="statusCode" type="String"/>
+    <property name="statusMessage" type="String"/>
+    <property name="errorDescription" type="String"/>
+    <property name="result" type="java.util.List&lt;UpsStoreData>"/>
+  </bean>
+  <!-- UPS Locator end -->
+
+  <!--Gift Card-->
+  <bean class="com.bl.facades.giftcard.data.BLGiftCardData">
+    <property name="code" type="String"/>
+    <property name="amount" type="java.lang.Double"/>
+    <property name="redeemamount" type="java.lang.Double"/>
+    <property name="balanceamount" type="java.lang.Double"/>
+    <property name="reedemDate" type="java.util.Date" />
+    <property name="cartId" type="String" />
+    <property name="url" type="String" />
+    <property name="currency" type="de.hybris.platform.commercefacades.storesession.data.CurrencyData" />
+    <property name="amountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
+    <property name="balanceamountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
+    <property name="indicator" type="String" />
+  </bean>
+
+  <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
+    <property name="giftCode" type="String"/>
+    <property name="grandTotal" type="PriceData"/>
+    <property name="giftCardDiscount" type="PriceData"/>
+    <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
+  </bean>
 
 </beans>
 

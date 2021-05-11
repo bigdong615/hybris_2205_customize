@@ -184,6 +184,7 @@
 
 	<bean id="genderData" class="com.bl.facades.product.data.GenderData" scope="prototype"/>
 
+
 	<!--BL-30 : This is created to override register method to perform bl specific registration. -->
 	<alias name="defaultBlCustomerFacade" alias="customerFacade"/>
 	<bean id="defaultBlCustomerFacade" class="com.bl.facades.customer.impl.DefaultBlCustomerFacade"
@@ -228,37 +229,6 @@
 		</property>
 	</bean>
 
-	<!--Added for BL-75-->
-	<bean class="de.hybris.platform.cmsfacades.types.service.impl.DefaultComponentTypeAttributeStructure" p:typecode="Category" p:qualifier="footerContent">
-		<property name="populators">
-			<set>
-				<ref bean="richTextComponentTypeAttributePopulator" />
-			</set>
-		</property>
-	</bean>
-
-	 <!--BL-XYZ Adding this changes for Gift Card implementation Start-->
-	 <!--
-	<alias name="defaultBlCartPopulator" alias="blCartPopulator" />
-	<bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BLCartPopulator" parent="cartPopulator">
-	</bean> -->
-
-	<alias name="defaultBlOrderPopulator" alias="blOrderPopulator" />
-	<bean id="defaultBlOrderPopulator" class="com.bl.facades.populators.BLOrderPopulator" parent="orderPopulator">
-	</bean>
-
-	<bean id="defaultCartConverter" parent="abstractPopulatingConverter">
-		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CartData"/>
-		<property name="populators">
-			<list>
-				<ref bean="cartPopulator"/>
-				<ref bean="pickupOrderEntryGroupPopulator"/>
-				<ref bean="deliveryOrderEntryGroupPopulator"/>
-				<ref bean="orderAppliedVouchersPopulator"/>
-				<!-- <ref bean="blCartPopulator"/> -->
-			</list>
-		</property>
-	</bean>
 
 	<alias name="blSearchResultVariantOptionsProductPopulator" alias="blCommerceSearchResultProductPopulator"/>
 	<bean id="blSearchResultVariantOptionsProductPopulator"
@@ -269,23 +239,14 @@
 		<property name="baseSiteService" ref="baseSiteService"/>
 	</bean>
 
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="orderConverter"/>
-		<property name="add" ref="blOrderPopulator"/>
+	<!--Added for BL-75-->
+	<bean class="de.hybris.platform.cmsfacades.types.service.impl.DefaultComponentTypeAttributeStructure" p:typecode="Category" p:qualifier="footerContent">
+		<property name="populators">
+			<set>
+				<ref bean="richTextComponentTypeAttributePopulator" />
+			</set>
+		</property>
 	</bean>
-
-	<bean id="giftCardEmailContext"
-		  class="com.bl.facades.process.email.context.GiftCardEmailContext"
-		  parent="abstractEmailContext" scope="prototype">
-	</bean>
-
-
-	<alias name="defaultBlGiftCardFacade" alias="blGiftCardFacade"/>
-	<bean id="defaultBlGiftCardFacade" class="com.bl.facades.giftcard.impl.DefaultBlGiftCardFacade">
-
-	</bean>
-
-	<!--BL-XYZ Adding this changes for Gift Card implementation End-->
 
 
 
@@ -489,5 +450,36 @@
 	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
 	<!-- ENd Shipping-->
 
+  <!--Gift Card-->
+  <alias name="defaultBlOrderPopulator" alias="blOrderPopulator" />
+  <bean id="defaultBlOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="orderPopulator">
+  </bean>
+
+	<bean id="defaultCartConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CartData"/>
+		<property name="populators">
+			<list>
+				<ref bean="cartPopulator"/>
+				<ref bean="pickupOrderEntryGroupPopulator"/>
+				<ref bean="deliveryOrderEntryGroupPopulator"/>
+				<ref bean="orderAppliedVouchersPopulator"/>
+				<!-- <ref bean="blCartPopulator"/> -->
+			</list>
+		</property>
+	</bean>
+
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="orderConverter"/>
+		<property name="add" ref="blOrderPopulator"/>
+	</bean>
+
+	<bean id="giftCardEmailContext"
+		class="com.bl.facades.process.email.context.GiftCardEmailContext"
+		parent="abstractEmailContext" scope="prototype">
+	</bean>
+
+
+	<alias name="defaultBlGiftCardFacade" alias="blGiftCardFacade"/>
+	<bean id="defaultBlGiftCardFacade" class="com.bl.facades.giftcard.impl.DefaultBlGiftCardFacade"/>
 
 </beans>

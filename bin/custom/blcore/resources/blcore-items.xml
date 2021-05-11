@@ -52,6 +52,7 @@
             <value code="STOLEN_NOT_PAID"/>
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
+            <value code="ARCHIVED"/>
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -830,11 +831,17 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>Determines the product is Staff Pick</description>
                    </attribute>
-
                    <attribute qualifier="retailPrice" type="java.lang.Double">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="false"/>
                      <description>Price, What the item currently sells for</description>
+                   </attribute>
+                   <attribute qualifier="bufferedInventoryPercentage" autocreate="true"
+                     type="java.lang.Double">
+                     <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
+                     <description>It defines the buffered inventory percentage</description>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <persistence type="property"/>
                    </attribute>
                  </attributes>
              </itemtype>
@@ -862,11 +869,11 @@
                          <modifiers read="true" write="true" optional="false"/>
                          <description>Starting base price for the sku for used gear sales of all serials</description>
                      </attribute>
-                     <attribute qualifier="isArchived" type="java.lang.Boolean">
+                     <attribute qualifier="isBufferedInventory" type="java.lang.Boolean">
                        <persistence type="property" />
-                       <modifiers read="true" write="true" search="true" optional="false"/>
+                       <modifiers read="true" write="true" search="true" optional="true"/>
                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-                       <description>Determines the serial is archived or not</description>
+                       <description>Determines the serial is part of buffered inventory or not</description>
                      </attribute>
                    <attribute qualifier="finalSalePrice" type="java.math.BigDecimal">
                          <persistence type="property"/>

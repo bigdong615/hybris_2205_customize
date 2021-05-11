@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------
 # ImpEx for Importing Suppliers
 # English Localisation
-#% impex.info("=============================== Importing content from BLInitialData suppliers_en.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs suppliers_en.impex =========================");
 
 # Macros / Replacement Parameter definitions
 
