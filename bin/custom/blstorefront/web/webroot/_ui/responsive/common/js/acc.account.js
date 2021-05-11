@@ -30,47 +30,52 @@ ACC.account = {
   	});
 
    /**
-     Added for BL-31 to make validation for registration
-   **/
-  	$(document).on("click",".js-signUp-popup-validation",function(e){
-  	e.preventDefault();
-  	var formValues= $('#signUppopup-validation').serialize();
-  	var targetUrl = $(this).val();
-  		$('#signUp').html("");
-   	  $.ajax({
-      		type : "POST",
-      		data : formValues,
-      		url : targetUrl,
-      		success : function(response) {
-             $('#signUp').html(response);
-      		},
-          		error : function(e) {
+        Added for BL-31 to make validation for registration
+      **/
+   $(document).on("click", ".js-signUp-popup-validation", function(e) {
+       e.preventDefault();
+       var formValues = $('#signUppopup-validation').serialize();
+       var targetUrl = $(this).val();
+       $('#signUp').html("");
+       $.ajax({
+           type: "POST",
+           data: formValues,
+           url: targetUrl,
+           success: function(response) {
+               $('#signUp').html(response);
+               if ($('#errorMessages_id-signup').data("value") === undefined || $('#errorMessages_id-signup').data("value") === null) {
+                   location.reload();
+               }
+           },
+           error: function(e) {
                // do nothing
-          		}
-          	});
+           }
+       });
 
-    		});
-
-
-    		$(document).on("click",".js-login-popup-validation",function(e){
-          	e.preventDefault();
-          	var formValues= $('#login-popup-validation').serialize();
-          	var targetUrl = $(this).val();
-           	  $.ajax({
-              		type : "POST",
-              		data : formValues,
-              		url : targetUrl,
-              		success : function(response) {
-                     $('#signIn').html(response);
-              		},
-                  		error : function(e) {
-                       // do nothing
-                  		}
-                  	});
-
-            		});
+   });
 
 
+   $(document).on("click", ".js-login-popup-validation", function(e) {
+       e.preventDefault();
+       var formValues = $('#login-popup-validation').serialize();
+       var targetUrl = $(this).val();
+       $.ajax({
+           type: "POST",
+           data: formValues,
+           url: targetUrl,
+           success: function(response) {
+               $('#signIn').html(response);
+               if ($('#errorMessages_id').data("value") === undefined || $('#errorMessages_id').data("value") === null) {
+                   location.reload();
+               }
+           },
+           error: function(e) {
+               // do nothing
+           }
+       });
+
+
+   });
 
 	}
 	};

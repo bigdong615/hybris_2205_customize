@@ -25,7 +25,15 @@
                     				<spring:theme code="register.submit" />
 
                    			</button>
+
                  	</ycommerce:testId>
+                 	<c:if test="${not empty accErrorMsgs}">
+                                 			<c:forEach items="${accErrorMsgs}" var="msg">
+                                 					<spring:theme code="${msg.code}" arguments="${msg.attributes}" htmlEscape="false" var="errorMessages"/>
+                                       	<input type="hidden" name="errorMessages_id" id="errorMessages_id-signup" data-value="${ycommerce:sanitizeHTML(errorMessages)}"/>
+                                 			</c:forEach>
+                   </c:if>
+
               <p class="body14 text-center mb-0 mt-4"><a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
               data-bs-toggle="modal" data-bs-dismiss="modal"><spring:theme code="login.login" /></a>&nbsp; <spring:theme code="login.suggestion.text"/></p>
            </form:form>

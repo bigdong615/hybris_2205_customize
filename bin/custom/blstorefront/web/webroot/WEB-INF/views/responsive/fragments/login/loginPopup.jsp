@@ -32,6 +32,7 @@
                			<c:forEach items="${accErrorMsgs}" var="msg">
                					<spring:theme code="${msg.code}" arguments="${msg.attributes}" htmlEscape="false" var="errorMessages"/>
                					${ycommerce:sanitizeHTML(errorMessages)}
+               	<input type="hidden" name="errorMessages_id" id="errorMessages_id" data-value="${ycommerce:sanitizeHTML(errorMessages)}"/>
                			</c:forEach>
                		</c:if>
                <p class="body14 text-center mb-0 mt-4"><a class="js-signUp-popup" data-link="<c:url value='/login/register'/>"
