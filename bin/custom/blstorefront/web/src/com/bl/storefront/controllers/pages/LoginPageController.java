@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.GuestForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.LoginForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
@@ -18,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +39,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/login")
 public class LoginPageController extends AbstractBlLoginPageController
 {
-	private static final Logger LOGGER = Logger.getLogger(LoginPageController.class);
 	private HttpSessionRequestCache httpSessionRequestCache;
 
 	@Resource(name = "blRegisterFormValidator")
@@ -59,8 +58,6 @@ public class LoginPageController extends AbstractBlLoginPageController
 			return httpSessionRequestCache.getRequest(request, response).getRedirectUrl();
 		}
 		return request.getHeader("Referer");
-		// TODO :Only redirect to referer once start working on html integration : BL-30 // NOSONAR
-	//	return redirectUrl.contains("/login")? "/":redirectUrl;
 	}
 
 	@Override
@@ -86,7 +83,24 @@ public class LoginPageController extends AbstractBlLoginPageController
 		{
 			storeReferer(referer, request, response);
 		}
-		return getDefaultLoginPage(loginError, session, model);
+		final LoginForm loginForm = new LoginForm();
+		model.addAttribute(loginForm);
+		model.addAttribute(new RegisterForm());
+		model.addAttribute(new GuestForm());
+
+		final String username = (String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME);
+		if (username != null)
+		{
+			session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
+		}
+
+		loginForm.setJ_username(username);
+		if (loginError)
+		{
+			model.addAttribute("loginError", Boolean.valueOf(loginError));
+			GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
+		}
+		return ControllerConstants.Views.Fragments.Login.LoginPopup;
 	}
 
 	protected void storeReferer(final String referer, final HttpServletRequest request, final HttpServletResponse response)

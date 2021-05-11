@@ -54,6 +54,8 @@ public class BlControllerConstants
   public static final String REFERER= "Referer";
   public static final String HOME_PAGE_URL = "/";
 
+	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
+
 	private BlControllerConstants()
 	{
 		//empty

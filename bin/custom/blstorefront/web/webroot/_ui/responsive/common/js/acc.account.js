@@ -36,6 +36,7 @@ ACC.account = {
   	e.preventDefault();
   	var formValues= $('#signUppopup-validation').serialize();
   	var targetUrl = $(this).val();
+  		$('#signUp').html("");
    	  $.ajax({
       		type : "POST",
       		data : formValues,
@@ -49,6 +50,25 @@ ACC.account = {
           	});
 
     		});
+
+
+    		$(document).on("click",".js-login-popup-validation",function(e){
+          	e.preventDefault();
+          	var formValues= $('#login-popup-validation').serialize();
+          	var targetUrl = $(this).val();
+           	  $.ajax({
+              		type : "POST",
+              		data : formValues,
+              		url : targetUrl,
+              		success : function(response) {
+                     $('#signIn').html(response);
+              		},
+                  		error : function(e) {
+                       // do nothing
+                  		}
+                  	});
+
+            		});
 
 
 
