@@ -134,7 +134,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 			session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
 		}
 		loginForm.setJ_username(username);
-		beforeRenderModal(loginError,referer,request,response,model);
+		addModelAttributes(loginError,referer,request,response,model);
 		return ControllerConstants.Views.Fragments.Login.LoginPopup;
 	}
 
@@ -153,25 +153,22 @@ public class LoginPageController extends AbstractBlLoginPageController
 		{
 			session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
 		}
-		beforeRenderModal(loginError,referer,request,response,model);
+		addModelAttributes(loginError,referer,request,response,model);
 		return ControllerConstants.Views.Fragments.Login.CreateAccountPopup;
 	}
 
 	/**
 	 * This method is responsible for showing error message.
 	 */
-	private void beforeRenderModal(final boolean loginError,final String referer,final HttpServletRequest request, final HttpServletResponse response,final Model model){
+	private void addModelAttributes(final boolean loginError,final String referer,final HttpServletRequest request, final HttpServletResponse response,final Model model){
 		if (!loginError)
 		{
 			storeReferer(referer, request, response);
-		}
-		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
-		addRegistrationConsentDataToModel(model);
-		if (loginError)
-		{
+		}else {
 			model.addAttribute("loginError", Boolean.valueOf(loginError));
 			GlobalMessages.addErrorMessage(model, "login.error.account.not.found.title");
 		}
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
 	}
 
 }

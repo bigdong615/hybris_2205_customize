@@ -5,7 +5,7 @@ ACC.account = {
 	],
 
 	accountLink: function(){
-
+  /* This function is responsible for providing form object for the login popup*/
   $(document).on("click",".js-login-popup",function(e){
 	e.preventDefault();
 	$('#signIn').html("");
@@ -16,7 +16,7 @@ ACC.account = {
        }
   })
 	});
-
+  /*This function is responsible for providing form object for the sign up popup*/
 	$(document).on("click",".js-signUp-popup",function(e){
   	e.preventDefault();
   	$('#signUp').html("");
@@ -25,10 +25,7 @@ ACC.account = {
          success: function(result){
          $('#signUp').html(result);
          }
-
     })
   	});
-
-
 	}
 	};
