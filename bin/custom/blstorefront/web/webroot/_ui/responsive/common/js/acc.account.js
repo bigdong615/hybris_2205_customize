@@ -36,7 +36,6 @@ ACC.account = {
            e.preventDefault();
            var formValues = $('#signUppopup-validation').serialize();
            var targetUrl = $(this).val();
-           $('#signUp').html("");
            $.ajax({
                type: "POST",
                data: formValues,
