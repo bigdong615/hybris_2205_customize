@@ -67,14 +67,14 @@ public class DefaultBlUPSAddressValidatorService implements BlUPSAddressValidato
       String xmlRequest = createRequest(addressData);
 
       HttpEntity<?> entity = new HttpEntity<>(xmlRequest, new HttpHeaders());
-      BlLogger.logMessage(LOGGER, Level.INFO,
+      BlLogger.logMessage(LOGGER, Level.DEBUG,
           "UPS address validator URL :" + upsEndPointUrl + "\nUPS address Request" + xmlRequest);
       // Calling UPS API.
       ResponseEntity<String> response = apiRegistryRestTemplate
           .exchange(upsEndPointUrl, HttpMethod.POST, entity, String.class);
       if (response != null) { // NOSONAR
         results = response.getBody();
-        BlLogger.logMessage(LOGGER, Level.INFO,
+        BlLogger.logMessage(LOGGER, Level.DEBUG,
             "Response from UPS address validator\n" +
                 "Response Status :" + response.getStatusCode() + "    Response code:" + response
                 .getStatusCodeValue() + "  Response Data :" + results);
