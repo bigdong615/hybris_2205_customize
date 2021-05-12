@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.GuestForm;
@@ -11,13 +12,10 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.RegisterForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.stereotype.Controller;
@@ -137,19 +135,19 @@ public class LoginPageController extends AbstractBlLoginPageController
 	 */
 	@GetMapping(value = "/loginpopup")
 	public String loginPopup(@RequestHeader(value = "referer", required = false) final String referer,
-			@RequestParam(value = "error", defaultValue = "false") final boolean loginError, final Model model,
-			final HttpServletRequest request, final HttpServletResponse response, final HttpSession session)
-			throws CMSItemNotFoundException
-	{
+			@RequestParam(value = "error", defaultValue = "false") final boolean loginError,
+			final Model model,
+			final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session)
+			throws CMSItemNotFoundException {
 		final LoginForm loginForm = new LoginForm();
 		model.addAttribute(loginForm);
 		final String username = (String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME);
-		if (username != null)
-		{
+		if (username != null) {
 			session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
 		}
 		loginForm.setJ_username(username);
-		beforeRenderModal(loginError,referer,request,response,model);
+		addModelAttributes(loginError, referer, request, response, model);
 		return ControllerConstants.Views.Fragments.Login.LoginPopup;
 	}
 
@@ -157,36 +155,35 @@ public class LoginPageController extends AbstractBlLoginPageController
 	 * This method is responsible for render registration popup.
 	 */
 	@GetMapping(value = "/register")
-	public String doRegistrationRequest(@RequestHeader(value = "referer", required = false) final String referer,
-			@RequestParam(value = "error", defaultValue = "false") final boolean loginError, final Model model,
-			final HttpServletRequest request, final HttpServletResponse response, final HttpSession session)
-			throws CMSItemNotFoundException
-	{
+	public String doRegistrationRequest(
+			@RequestHeader(value = "referer", required = false) final String referer,
+			@RequestParam(value = "error", defaultValue = "false") final boolean loginError,
+			final Model model,
+			final HttpServletRequest request, final HttpServletResponse response,
+			final HttpSession session)
+			throws CMSItemNotFoundException {
 		model.addAttribute(new RegisterForm());
 		final String username = (String) session.getAttribute(SPRING_SECURITY_LAST_USERNAME);
-		if (username != null)
-		{
+		if (username != null) {
 			session.removeAttribute(SPRING_SECURITY_LAST_USERNAME);
 		}
-		beforeRenderModal(loginError,referer,request,response,model);
+		addModelAttributes(loginError, referer, request, response, model);
 		return ControllerConstants.Views.Fragments.Login.CreateAccountPopup;
 	}
 
 	/**
 	 * This method is responsible for showing error message.
 	 */
-	private void beforeRenderModal(final boolean loginError,final String referer,final HttpServletRequest request, final HttpServletResponse response,final Model model){
-		if (!loginError)
-		{
-			storeReferer(referer, request, response);
-		}
-		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
-		addRegistrationConsentDataToModel(model);
-		if (loginError)
-		{
+	private void addModelAttributes(final boolean loginError, final String referer,
+			final HttpServletRequest request, final HttpServletResponse response, final Model model) {
+		if (loginError) {
 			model.addAttribute("loginError", Boolean.valueOf(loginError));
 			GlobalMessages.addErrorMessage(model, "login.error.account.not.found.title");
+		} else {
+			storeReferer(referer, request, response);
 		}
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+				ThirdPartyConstants.SeoRobots.INDEX_NOFOLLOW);
 	}
 
 }

@@ -18,7 +18,7 @@ public enum LogErrorCodeEnum implements LogError
 	 DYNAMIC_PRICING_ERROR("0006", "Dynamic Price Calculating Error"),
 	 SOLR_INDEXING_ERROR("0007", "Solr Property Indexing Error"),
 	 CART_INTERNAL_ERROR("0008", "Error while updating the cart"),
-   UPS_LOCATOR_INTEGRATION_ERROR("0009","Error occure whiling calling UPS locator intergration service.");
+   UPS_INTEGRATION_ERROR("0009","Error occure whiling calling UPS intergration service.");
 
     private String code;
     private String description;
