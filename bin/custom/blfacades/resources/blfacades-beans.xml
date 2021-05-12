@@ -172,6 +172,18 @@
     <property name="result"
       type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.AddressData>"/>
   </bean>
+  
+      <!-- FedEx Same day Delivery -->
+    <bean class="com.bl.facades.fexEx.data.SameDayCityResData">
+	    <property name="serviceApplicable" type="Boolean"/>
+	    <property name="errorCode" type="java.lang.Integer"/>
+	    <property name="errorResponse" type="String"/>
+  	</bean>
+  	
+  	 <bean class="com.bl.facades.fexEx.data.SameDayCityReqData">
+	    <property name="warehouseZipCode" type="String"/>
+	    <property name="deliveryAddressZipCode" type="String"/>
+  	</bean>
 
 </beans>
 
