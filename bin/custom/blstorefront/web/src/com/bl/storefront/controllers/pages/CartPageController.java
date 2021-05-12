@@ -724,6 +724,44 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	/**
+	 * Update product quantity based on the quantity selected from rental add to cart popup.
+	 *
+	 * @param entryNumber
+	 * @param model
+	 * @param form
+	 * @param bindingResult
+	 * @param request
+	 * @return
+	 * @throws CMSItemNotFoundException
+	 */
+	@PostMapping(value = "/updateQuantity")
+	@ResponseBody
+	public void updateQuantity(@RequestParam("entryNumber") final long entryNumber, final Model model,
+			@Valid final UpdateQuantityForm form, final BindingResult bindingResult,
+			final HttpServletRequest request) throws CommerceCartModificationException {
+		if (bindingResult.hasErrors()) {
+			for (final ObjectError error : bindingResult.getAllErrors()) {
+				if ("typeMismatch".equals(error.getCode())) {
+					LOG.debug(Config.getParameter("basket.error.quantity.invalid"));
+				} else {
+					LOG.debug(error.getDefaultMessage());
+				}
+			}
+		} else if (getCartFacade().hasEntries()) {
+			try {
+				getCartFacade().updateCartEntry(entryNumber,
+						form.getQuantity().longValue());
+
+				LOG.debug("Product quantity: " + form.getQuantity() + " updated successfully for cart entry: "+ entryNumber);
+
+			} catch (final CommerceCartModificationException exception) {
+				LOG.warn("Couldn't update product with the entry number: " + entryNumber + ".", exception);
+			}
+		}
+	}
+
+
+	/**
 	 * @return the blCartFacade
 	 */
 	public BlCartFacade getBlCartFacade()

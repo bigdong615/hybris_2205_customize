@@ -85,9 +85,8 @@
 		<script src="${commonResourcePathHtml}/js/_autoload.js"></script>
 
 		<%-- custom js file --%>
-        <c:if test="${cmsPage.uid eq 'cartpage'}">
         <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
-        </c:if>
+
 
         <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
             <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>

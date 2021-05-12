@@ -94,6 +94,7 @@
       <property name="pickUpPersonLastName" type="java.lang.String"/>
       <property name="pickUpPersonEmail" type="java.lang.String"/>
       <property name="pickUpPersonPhone" type="java.lang.String"/>
+      <property name="isRentalCart" type="java.lang.Boolean"/>
   </bean>
 
     <!-- Shipping -->
