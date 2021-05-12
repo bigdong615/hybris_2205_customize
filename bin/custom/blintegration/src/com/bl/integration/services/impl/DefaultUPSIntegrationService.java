@@ -15,20 +15,19 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class DefaultUPSIntegrationService implements UPSIntegrationService {
 
-  @Value("${blintegration.locator.license.number}")
+  @Value("${blintegration.ups.license.number}")
   private String licenseNumber;
 
-  @Value("${blintegration.locator.license.uid}")
+  @Value("${blintegration.ups.license.uid}")
   private String uid;
 
-  @Value("${blintegration.locator.license.password}")
+  @Value("${blintegration.ups.license.password}")
   private String password;
 
   @Override
   public void  populateAccessRequest(StringWriter strWriter) throws JAXBException {
-    /*ObjectFactory accessRequestObjectFactory = new ObjectFactory();
-    AccessRequest accessRequest = accessRequestObjectFactory.createAccessRequest();*/
-    AccessRequest accessRequest = new AccessRequest();
+    ObjectFactory accessRequestObjectFactory = new ObjectFactory();
+    AccessRequest accessRequest = accessRequestObjectFactory.createAccessRequest();
     accessRequest.setAccessLicenseNumber(licenseNumber);
     accessRequest.setUserId(uid);
     accessRequest.setPassword(password);
