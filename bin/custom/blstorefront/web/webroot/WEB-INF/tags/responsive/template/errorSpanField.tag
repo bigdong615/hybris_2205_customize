@@ -12,7 +12,9 @@
 			<div class="form-group has-error">
 				<jsp:doBody />
 				<div class="help-block">
+				<div class="notification notification-error">
 					<form:errors path="${not empty errorPath ? '' : path}" />
+				</div>
 				</div>
 			</div>
 		</c:when>

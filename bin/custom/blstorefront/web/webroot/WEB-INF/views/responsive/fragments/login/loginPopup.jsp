@@ -31,7 +31,7 @@
                <c:if test="${not empty accErrorMsgs}">
                			<c:forEach items="${accErrorMsgs}" var="msg">
                					<spring:theme code="${msg.code}" arguments="${msg.attributes}" htmlEscape="false" var="errorMessages"/>
-               					${ycommerce:sanitizeHTML(errorMessages)}
+               					<div class ="notification notification-error">${ycommerce:sanitizeHTML(errorMessages)} </div>
                	<input type="hidden" name="errorMessages_id" id="errorMessages_id" data-value="${ycommerce:sanitizeHTML(errorMessages)}"/>
                			</c:forEach>
                		</c:if>
