@@ -1,4 +1,4 @@
-#% impex.info("=============================== Importing content from BLInitialData sampledata solr.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/stores solr.impex =========================");
 
 
 $classSystemVersion = systemVersion(catalog(id[default='blClassification']), version[default='1.0'])
