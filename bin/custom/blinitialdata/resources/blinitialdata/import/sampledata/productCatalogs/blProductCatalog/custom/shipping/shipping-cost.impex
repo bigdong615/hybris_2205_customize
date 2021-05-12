@@ -1,4 +1,4 @@
-#% impex.info("=============================== Importing content from BLInitialData shipping-cost.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs shipping-cost.impex =========================");
 
 
 INSERT_UPDATE ShippingCost; shippingRateId[unique = 'true']; zoneDeliveryMode(code[unique = 'true']); shippingMethodId; name                           ; floor; ceiling; amount

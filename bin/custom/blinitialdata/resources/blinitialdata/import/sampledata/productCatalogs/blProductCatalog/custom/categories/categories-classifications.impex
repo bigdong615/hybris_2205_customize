@@ -2,7 +2,7 @@
 # Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 # -----------------------------------------------------------------------
 # ImpEx for Importing Category Classifications
-#% impex.info("=============================== Importing content from BLInitialData categories-classifications.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs categories-classifications.impex =========================");
 
 # Macros / Replacement Parameter definitions
 $productCatalog=blProductCatalog

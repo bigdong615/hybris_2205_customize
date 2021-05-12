@@ -3,7 +3,9 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -135,6 +137,12 @@ public class CartPageController extends AbstractCartPageController
 	public boolean isCheckoutStrategyVisible()
 	{
 		return getSiteConfigService().getBoolean(SHOW_CHECKOUT_STRATEGY_OPTIONS, false);
+	}
+	
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() 
+	{
+		return BlRentalDateUtils.getRentalsDuration();
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

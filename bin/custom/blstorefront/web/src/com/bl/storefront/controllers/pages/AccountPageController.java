@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -58,6 +59,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -75,6 +77,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,7 +95,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/my-account")
 public class AccountPageController extends AbstractSearchPageController
 {
-	private static final String TEXT_ACCOUNT_ADDRESS_BOOK = "text.account.addressBook";
 	private static final String BREADCRUMBS_ATTR = "breadcrumbs";
 	private static final String IS_DEFAULT_ADDRESS_ATTR = "isDefaultAddress";
 	private static final String COUNTRY_DATA_ATTR = "countryData";
@@ -146,6 +148,9 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String ORDER_DETAIL_CMS_PAGE = "order";
 	private static final String CONSENT_MANAGEMENT_CMS_PAGE = "consents";
 	private static final String CLOSE_ACCOUNT_CMS_PAGE = "close-account";
+	private static final String BOOKMARKS_CMS_PAGE = "bookmarks";
+	private static final String VERIFICATION_IMAGES_CMS_PAGE = "verificationImages";
+	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
@@ -305,8 +310,8 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam(value = "sort", required = false) final String sortCode, final Model model) throws CMSItemNotFoundException
 	{
 		// Handle paged search results
-		final PageableData pageableData = createPageableData(page, 5, sortCode, showMode);
-		final SearchPageData<OrderHistoryData> searchPageData = orderFacade.getPagedOrderHistoryForStatuses(pageableData);
+		final PageableData pageableData = createPageableData(page, 5, sortCode, showMode); // NOSONAR
+		final SearchPageData<OrderHistoryData> searchPageData = orderFacade.getPagedOrderHistoryForStatuses(pageableData);  // NOSONAR
 		populateModel(model, searchPageData, showMode);
 		final ContentPageModel orderHistoryPage = getContentPageForLabelOrId(ORDER_HISTORY_CMS_PAGE);
 		storeCmsPageInModel(model, orderHistoryPage);
@@ -443,7 +448,7 @@ public class AccountPageController extends AbstractSearchPageController
 						"text.account.profile.confirmationUpdated", null);
 
 				// Replace the spring security authentication with the new UID
-				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();
+				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
 				final Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
 				final UsernamePasswordAuthenticationToken newAuthentication = new UsernamePasswordAuthenticationToken(newUid, null,
 						oldAuthentication.getAuthorities());
@@ -617,7 +622,6 @@ public class AccountPageController extends AbstractSearchPageController
 		final ContentPageModel addressBookPage = getContentPageForLabelOrId(ADDRESS_BOOK_CMS_PAGE);
 		storeCmsPageInModel(model, addressBookPage);
 		setUpMetaDataForContentPage(model, addressBookPage);
-		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs(TEXT_ACCOUNT_ADDRESS_BOOK));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
 	}
@@ -627,41 +631,34 @@ public class AccountPageController extends AbstractSearchPageController
 	public String addAddress(final Model model) throws CMSItemNotFoundException
 	{
 		model.addAttribute(COUNTRY_DATA_ATTR, checkoutFacade.getCountries(CountryType.SHIPPING));
-		model.addAttribute(TITLE_DATA_ATTR, userFacade.getTitles());
-		final AddressForm addressForm = getPreparedAddressForm();
+		populateModelRegionAndCountry(model, Locale.US.getCountry());
+		final BlAddressForm addressForm = getPreparedAddressForm();
 		model.addAttribute(ADDRESS_FORM_ATTR, addressForm);
 		model.addAttribute(ADDRESS_BOOK_EMPTY_ATTR, Boolean.valueOf(CollectionUtils.isEmpty(userFacade.getAddressBook())));
 		model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.FALSE);
 		final ContentPageModel addEditAddressPage = getContentPageForLabelOrId(ADD_EDIT_ADDRESS_CMS_PAGE);
 		storeCmsPageInModel(model, addEditAddressPage);
 		setUpMetaDataForContentPage(model, addEditAddressPage);
-
-		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
-		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_ADDRESS_BOOK_URL,
-				getMessageSource().getMessage(TEXT_ACCOUNT_ADDRESS_BOOK, null, getI18nService().getCurrentLocale()), null));
-		breadcrumbs.add(new Breadcrumb("#",
-				getMessageSource().getMessage("text.account.addressBook.addEditAddress", null, getI18nService().getCurrentLocale()),
-				null));
-		model.addAttribute(BREADCRUMBS_ATTR, breadcrumbs);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
 	}
 
-	protected AddressForm getPreparedAddressForm()
+	protected BlAddressForm getPreparedAddressForm()
 	{
 		final CustomerData currentCustomerData = customerFacade.getCurrentCustomer();
-		final AddressForm addressForm = new AddressForm();
+		final BlAddressForm addressForm = new BlAddressForm();
 		addressForm.setFirstName(currentCustomerData.getFirstName());
 		addressForm.setLastName(currentCustomerData.getLastName());
-		addressForm.setTitleCode(currentCustomerData.getTitleCode());
+		addressForm.setCountryIso(Locale.US.getCountry());
 		return addressForm;
 	}
 
 	@RequestMapping(value = "/add-address", method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String addAddress(final AddressForm addressForm, final BindingResult bindingResult, final Model model,
+	public String addAddress(final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
+		addressForm.setCountryIso(Locale.US.getCountry());
 		getAddressValidator().validate(addressForm, bindingResult);
 		if (bindingResult.hasErrors())
 		{
@@ -674,7 +671,7 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-
+		newAddress.setEmail(addressForm.getEmail());
 		if (CollectionUtils.isEmpty(userFacade.getAddressBook()))
 		{
 			newAddress.setDefaultAddress(true);
@@ -710,13 +707,13 @@ public class AccountPageController extends AbstractSearchPageController
 		return REDIRECT_TO_EDIT_ADDRESS_PAGE + newAddress.getId();
 	}
 
-	protected void setUpAddressFormAfterError(final AddressForm addressForm, final Model model)
+	protected void setUpAddressFormAfterError(final BlAddressForm addressForm, final Model model)
 	{
 		model.addAttribute(COUNTRY_DATA_ATTR, checkoutFacade.getCountries(CountryType.SHIPPING));
-		model.addAttribute(TITLE_DATA_ATTR, userFacade.getTitles());
 		model.addAttribute(ADDRESS_BOOK_EMPTY_ATTR, Boolean.valueOf(CollectionUtils.isEmpty(userFacade.getAddressBook())));
 		model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.valueOf(userFacade.isDefaultAddress(addressForm.getAddressId())));
-		if (addressForm.getCountryIso() != null)
+		model.addAttribute(ADDRESS_FORM_ATTR, addressForm);
+		if (addressForm.getCountryIso() != null) //NOSONAR
 		{
 			populateModelRegionAndCountry(model, addressForm.getCountryIso());
 		}
@@ -727,9 +724,8 @@ public class AccountPageController extends AbstractSearchPageController
 	public String editAddress(@PathVariable("addressCode") final String addressCode, final Model model)
 			throws CMSItemNotFoundException
 	{
-		final AddressForm addressForm = new AddressForm();
+		final BlAddressForm addressForm = new BlAddressForm();
 		model.addAttribute(COUNTRY_DATA_ATTR, checkoutFacade.getCountries(CountryType.SHIPPING));
-		model.addAttribute(TITLE_DATA_ATTR, userFacade.getTitles());
 		model.addAttribute(ADDRESS_FORM_ATTR, addressForm);
 		final List<AddressData> addressBook = userFacade.getAddressBook();
 		model.addAttribute(ADDRESS_BOOK_EMPTY_ATTR, Boolean.valueOf(CollectionUtils.isEmpty(addressBook)));
@@ -743,7 +739,7 @@ public class AccountPageController extends AbstractSearchPageController
 				model.addAttribute(COUNTRY_ATTR, addressData.getCountry().getIsocode());
 				model.addAttribute(ADDRESS_DATA_ATTR, addressData);
 				addressDataUtil.convert(addressData, addressForm);
-
+				addressForm.setEmail(addressData.getEmail());
 				if (userFacade.isDefaultAddress(addressData.getId()))
 				{
 					addressForm.setDefaultAddress(Boolean.TRUE);
@@ -760,14 +756,6 @@ public class AccountPageController extends AbstractSearchPageController
 		final ContentPageModel addEditAddressPage = getContentPageForLabelOrId(ADD_EDIT_ADDRESS_CMS_PAGE);
 		storeCmsPageInModel(model, addEditAddressPage);
 		setUpMetaDataForContentPage(model, addEditAddressPage);
-
-		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
-		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_ADDRESS_BOOK_URL,
-				getMessageSource().getMessage(TEXT_ACCOUNT_ADDRESS_BOOK, null, getI18nService().getCurrentLocale()), null));
-		breadcrumbs.add(new Breadcrumb("#",
-				getMessageSource().getMessage("text.account.addressBook.addEditAddress", null, getI18nService().getCurrentLocale()),
-				null));
-		model.addAttribute(BREADCRUMBS_ATTR, breadcrumbs);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		model.addAttribute("edit", Boolean.TRUE);
 		return getViewForPage(model);
@@ -775,9 +763,10 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@RequestMapping(value = "/edit-address/" + ADDRESS_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String editAddress(final AddressForm addressForm, final BindingResult bindingResult, final Model model,
+	public String editAddress(final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
+		addressForm.setCountryIso(Locale.US.getCountry());
 		getAddressValidator().validate(addressForm, bindingResult);
 		final ContentPageModel addEditAddressPage = getContentPageForLabelOrId(ADD_EDIT_ADDRESS_CMS_PAGE);
 		if (bindingResult.hasErrors())
@@ -792,7 +781,7 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-
+       newAddress.setEmail(addressForm.getEmail());
 		if (Boolean.TRUE.equals(addressForm.getDefaultAddress()) || userFacade.getAddressBook().size() <= 1)
 		{
 			newAddress.setDefaultAddress(true);
@@ -908,9 +897,9 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequestMapping(value = "/remove-payment-method", method = RequestMethod.POST)
 	@RequireHardLogIn
 	public String removePaymentMethod(@RequestParam(value = "paymentInfoId") final String paymentMethodId,
-			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException  // NOSONAR
 	{
-		userFacade.unlinkCCPaymentInfo(paymentMethodId);
+		userFacade.unlinkCCPaymentInfo(paymentMethodId);  // NOSONAR
 		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
 				"text.account.profile.paymentCart.removed");
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
@@ -959,7 +948,7 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequestMapping(value = "/consents/withdraw/{consentCode}", method = RequestMethod.POST)
 	@RequireHardLogIn
 	public String withdrawConsent(@PathVariable final String consentCode, final RedirectAttributes redirectModel)
-			throws CMSItemNotFoundException
+			throws CMSItemNotFoundException  // NOSONAR
 	{
 		try
 		{
@@ -997,9 +986,40 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequestMapping(value = "/close-account", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	@RequireHardLogIn
-	public void closeAccount(final HttpServletRequest request) throws CMSItemNotFoundException, ServletException
+	public void closeAccount(final HttpServletRequest request) throws CMSItemNotFoundException, ServletException  // NOSONAR
 	{
 		customerFacade.closeAccount();
 		request.logout();
 	}
+
+	@GetMapping(value = "/bookmarks")
+	@RequireHardLogIn
+	public String bookmarksPage(final Model model) throws CMSItemNotFoundException{
+		final ContentPageModel bookmarksPage = getContentPageForLabelOrId(BOOKMARKS_CMS_PAGE);
+		storeCmsPageInModel(model, bookmarksPage);
+		setUpMetaDataForContentPage(model, bookmarksPage);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		return getViewForPage(model);
+	}
+
+	@GetMapping(value = "/verificationImages")
+	@RequireHardLogIn
+	public String getVarificationImagesDetails(final Model model) throws CMSItemNotFoundException{
+		final ContentPageModel varificationImagesPage = getContentPageForLabelOrId(VERIFICATION_IMAGES_CMS_PAGE);
+		storeCmsPageInModel(model, varificationImagesPage);
+		setUpMetaDataForContentPage(model, varificationImagesPage);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		return getViewForPage(model);
+	}
+
+	@GetMapping(value = "/creditCarts")
+	@RequireHardLogIn
+	public String getCreditCartsDetails(final Model model) throws CMSItemNotFoundException{
+		final ContentPageModel savedCartPage = getContentPageForLabelOrId(CREDIT_CARTS_CMS_PAGE);
+		storeCmsPageInModel(model, savedCartPage);
+		setUpMetaDataForContentPage(model, savedCartPage);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		return getViewForPage(model);
+	}
+
 }

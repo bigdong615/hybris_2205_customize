@@ -449,5 +449,4 @@
 	<alias name="defaultBlAddressPopulator" alias="addressPopulator"/>
 	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
 	<!-- ENd Shipping-->
-
 </beans>

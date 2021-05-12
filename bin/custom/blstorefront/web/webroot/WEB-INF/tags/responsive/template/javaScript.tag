@@ -110,7 +110,24 @@
 		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
     	<script src="${commonResourcePathHtml}/js/mburger.js"></script>
-    		
+
+		<script>
+			$(document).ready(function(){
+				 if('${rentalDate.selectedFromDate}' != '' && '${rentalDate.selectedToDate}' != '')
+				 {
+					 $("#litepicker").val('');
+					 $("#litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-litepicker").val('');
+					 $("#mobile-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#product-litepicker").val('');
+					 $("#product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-product-litepicker").val('');
+					 $("#mobile-product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#summary-litepicker").val('');
+					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+				 }
+			});
+		</script>
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>
         document.addEventListener(
@@ -229,18 +246,25 @@
 				},
             setup: (picker) => {
       			picker.on('button:apply', (date1, date2) => {
-      			$.ajax({
-                    url: ACC.config.encodedContextPath + '/datepicker',
-                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                    type: "GET",
-                    success: function (data) {
-                    	if(data=='success')
-                        window.location.reload();
-                    },
-                    error: function (xhr, textStatus, error) {
-                       
-                    }
-                });
+      				var searchText = document.getElementById('js-site-search-input').value;
+      				var rentalGear = 'rentalGear';
+      				var contextPath = ACC.config.contextPath;
+      				$.ajax({
+  	                    url: ACC.config.encodedContextPath + '/datepicker',
+  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+  	                    type: "GET",
+  	                    success: function (data) {
+  	                    	if(searchText == '' && data=='success') {
+  	                    		window.location.reload();
+  	                    	}
+  	                    	else{               		
+  	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+  	                    	}
+  	                    },
+  	                    error: function (xhr, textStatus, error) {
+  	                       
+  	                    }
+  	                });    			
       			});
       			}
         }); 
@@ -275,14 +299,21 @@
  				},
              setup: (picker) => {
        			picker.on('button:apply', (date1, date2) => {
-       			$.ajax({
-                     url: ACC.config.encodedContextPath + '/datepicker',
-                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                     type: "GET",
-                     success: function (data) {
-                     	if(data=='success')
-                         window.location.reload();
-                     },
+       				var searchText = document.getElementById('js-site-search-input-mob').value;
+      				var rentalGear = 'rentalGear';
+      				var contextPath = ACC.config.contextPath;
+      				$.ajax({
+  	                    url: ACC.config.encodedContextPath + '/datepicker',
+  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+  	                    type: "GET",
+  	                    success: function (data) {
+  	                    	if(searchText == '' && data=='success'){
+  	                    		window.location.reload();
+  	                    	}
+  	                    	else{
+  	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+  	                    	}  	                        
+  	                    },
                      error: function (xhr, textStatus, error) {
                         
                      }
@@ -390,18 +421,26 @@
   					},
                 setup: (picker) => {
         			picker.on('button:apply', (date1, date2) => {
-        			$.ajax({
-                      url: ACC.config.encodedContextPath + '/datepicker',
-                      data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                      type: "GET",
-                      success: function (data) {
-                      	if(data=='success')
-                          window.location.reload();
-                      },
-                      error: function (xhr, textStatus, error) {
-                         
-                      }
-                  });
+        				var searchText = document.getElementById('js-site-search-input').value;
+          				var rentalGear = 'rentalGear';
+          				var contextPath = ACC.config.contextPath;
+          				$.ajax({
+      	                    url: ACC.config.encodedContextPath + '/datepicker',
+      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+      	                    type: "GET",
+      	                    success: function (data) {
+      	                    	if(searchText == '' && data=='success'){
+      	                    		window.location.reload();
+      	                    	}
+      	                    	else{
+      	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+      	                    	}
+      	                    },
+      	                    error: function (xhr, textStatus, error) {
+      	                       
+      	                    }
+      	                }); 
+        			
         			});
         			}
             });
@@ -435,14 +474,21 @@
     				},
                 setup: (picker) => {
           			picker.on('button:apply', (date1, date2) => {
-          			$.ajax({
-                        url: ACC.config.encodedContextPath + '/datepicker',
-                        data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                        type: "GET",
-                        success: function (data) {
-                        	if(data=='success')
-                            window.location.reload();
-                        },
+          				var searchText = document.getElementById('js-site-search-input-mob').value;
+          				var rentalGear = 'rentalGear';
+          				var contextPath = ACC.config.contextPath;
+          				$.ajax({
+      	                    url: ACC.config.encodedContextPath + '/datepicker',
+      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+      	                    type: "GET",
+      	                    success: function (data) {
+      	                    	if(searchText == '' && data=='success'){
+      	                    		window.location.reload();
+      	                    	}
+      	                    	else{
+      	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+      	                    	}
+      	                    },
                         error: function (xhr, textStatus, error) {
                            
                         }
@@ -566,18 +612,18 @@
 												},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
-                                           			$.ajax({
-                                                         url: ACC.config.encodedContextPath + '/datepicker',
-                                                         data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                                                         type: "GET",
-                                                         success: function (data) {
-                                                         	if(data=='success')
-                                                             window.location.reload();
-                                                         },
-                                                         error: function (xhr, textStatus, error) {
-                                                            
-                                                         }
-                                                     });
+                                          				$.ajax({
+                                      	                    url: ACC.config.encodedContextPath + '/datepicker',
+                                      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                      	                    type: "GET",
+                                      	                    success: function (data) {
+                                      	                    	window.location.reload();
+                                      	                    },
+                                      	                    error: function (xhr, textStatus, error) {
+                                      	                       
+                                      	                    }
+                                      	                }); 
+                                           			
                                            			});
                                            			}
                                              });
@@ -807,18 +853,17 @@
         				},
                     setup: (picker) => {
               			picker.on('button:apply', (date1, date2) => {
-              			$.ajax({
-                            url: ACC.config.encodedContextPath + '/datepicker',
-                            data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                            type: "GET",
-                            success: function (data) {
-                            	if(data=='success')
-                                window.location.reload();
-                            },
-                            error: function (xhr, textStatus, error) {
-                               
-                            }
-                        });
+              				$.ajax({
+          	                    url: ACC.config.encodedContextPath + '/datepicker',
+          	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+          	                    type: "GET",
+          	                    success: function (data) {
+          	                    	window.location.reload();          	                        
+          	                    },
+          	                    error: function (xhr, textStatus, error) {
+          	                       
+          	                    }
+          	                }); 
               			});
               			}
                 });
