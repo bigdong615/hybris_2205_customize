@@ -533,6 +533,10 @@ footer .social a:hover { opacity: .7; }
 #signIn .modal-title { width: 100%; }
 #signIn .modal-title img { max-width: 84px; height: auto; }
 #signIn a { color: #52bfc0; }
+
+.signinbox .modal-title { width: 100%; }
+.signinbox .modal-title img { max-width: 84px; height: auto; }
+.signinbox a { color: #52bfc0; }
 /* Damage Waiver */
 #damageWaivers img { width: 50px; height: auto; }
 
