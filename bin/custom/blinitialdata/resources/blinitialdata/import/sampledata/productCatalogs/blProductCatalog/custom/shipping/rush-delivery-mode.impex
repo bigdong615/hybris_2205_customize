@@ -1,0 +1,27 @@
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs rush-delivery-mode.impex =========================");
+
+# Currencies
+$usCurrency=USD
+
+INSERT_UPDATE Zone ; code[unique=true] ; countries(isocode)                                                                                                                              
+                   ; usa               ; US                                                                                                                                   
+
+INSERT_UPDATE BlRushDeliveryMode; code[unique = 'true']          ; shippingMethodId	; name                                      ; carrier(code); shippingMethodType(code); numberOfDaysToSkip; daysToSkip(code); cutOffTime ; shippingGroup(code)   	; deliveryType(code); active[default='true'] ; net[default='false']
+                                ; RUSH_SAN_CARLOS_9_To_12        ; 41               ; 09:00 AM - 12:00 PM PST_Order by 07:20 AM ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 07:20      ; SAME_DAY_DELIVERY     	; SF                ;                        ;
+                                ; RUSH_SAN_CARLOS_12_To_3        ; 42               ; 12:00 PM - 03:00 PM PST_Order by 10:20 AM ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 10:20      ; SAME_DAY_DELIVERY     	; SF                ;                        ;
+                                ; RUSH_SAN_CARLOS_3_To_6         ; 43               ; 03:00 PM - 06:00 PM PST_Order by 01:20 PM ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 13:20      ; SAME_DAY_DELIVERY     	; SF                ;                        ;
+                                ; RUSH_SAN_CARLOS_4_30_To_7_30   ; 44               ; 04:30 PM - 07:30 PM PST_Order by 02:50 PM ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 14:50      ; SAME_DAY_DELIVERY     	; SF                ;                        ;
+                                ; RUSH_NYC_NEXT_DAY_9_To_12      ; 45               ; 09:00 AM - 12:00 PM EST_Order by          ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 13:00      ; NEXT_DAY_RUSH_DELIVERY	; NYC               ;                        ;
+                                ; RUSH_NYC_NEXT_DAY_12_To_3      ; 46               ; 12:00 PM - 03:00 PM EST_Order by          ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 13:00      ; NEXT_DAY_RUSH_DELIVERY	; NYC               ;                        ;
+                                ; RUSH_NYC_NEXT_DAY_3_To_6       ; 47               ; 03:00 PM - 06:00 PM EST_Order by          ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 13:00      ; NEXT_DAY_RUSH_DELIVERY	; NYC               ;						;
+                                ; RUSH_NYC_NEXT_DAY_4_30_To_7_30 ; 48               ; 04:30 PM - 07:30 PM EST_Order by          ; FEDEX        ; FLAT_RATE               ; 0                 ; SATURDAY,SUNDAY ; 13:00      ; NEXT_DAY_RUSH_DELIVERY	; NYC               ;						;
+								
+INSERT_UPDATE ZoneDeliveryModeValue ; deliveryMode(code)[unique=true] ; zone(code)[default='usa'][unique=true] ; currency(isocode)[unique=true] ; value  ; minimum[unique=true]  ; fixedAmount[default='false']
+									; RUSH_SAN_CARLOS_9_To_12         ;										   ; $usCurrency 					; 49	 ; 0					 ; true						
+                                    ; RUSH_SAN_CARLOS_12_To_3         ;                                        ; $usCurrency                    ; 49     ; 0					 ; true
+                                    ; RUSH_SAN_CARLOS_3_To_6          ;                                        ; $usCurrency                    ; 49     ; 0					 ; true
+                                    ; RUSH_SAN_CARLOS_4_30_To_7_30    ;                                        ; $usCurrency                    ; 49     ; 0					 ; true
+                                    ; RUSH_NYC_NEXT_DAY_9_To_12       ;                                        ; $usCurrency                    ; 99     ; 0					 ; true
+                                    ; RUSH_NYC_NEXT_DAY_12_To_3       ;                                        ; $usCurrency                    ; 99     ; 0					 ; true
+                                    ; RUSH_NYC_NEXT_DAY_3_To_6        ;                                        ; $usCurrency                    ; 99     ; 0					 ; true
+                                    ; RUSH_NYC_NEXT_DAY_4_30_To_7_30  ;                                        ; $usCurrency                    ; 99     ; 0					 ; true

@@ -73,9 +73,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	//Inventory Availability
 	public static final String ACTIVE = "active";
 	public static final String PRODUCT_CODE = "productCode";
+	public static final String SERIAL_PRODUCT_CODE = "serialProductCode";
 	public static final String START_DATE = "startDate";
 	public static final String END_DATE = "endDate";
 	public static final String WAREHOUSES = "warehouses";
+	public static final String RESERVED_STATUS = "reservedStatus";
 	public static final int END_HOURS = 23;
 	public static final int END_MINUTES = 59;
 	public static final int END_SECONDS = 59;
@@ -110,8 +112,37 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CLEAR_USED_GEAR_CATEGORY = "usedClear";
 
 	public static final String DEFAULT_DAYS = "7";
+	public static final String DISCONTINUED = "discontinued";
+	public static final String APPROVED = "approved";
 
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
+	public static final String PRODUCT_CATALOG = "catalog";
+	public static final String VERSION = "version";
+	public static final String STAGED = "Staged";
+	public static final String CATALOG_VALUE = "blProductCatalog";
+
+	public static final String VIDEO = "VIDEO";
+	public static final String PHOTO = "PHOTO";
+	public static final String GEAR_GUARD_PRO = "GEAR_GUARD_PRO";
+	public static final String GEAR_GUARD_PRO_FULL = "gearguardpro";
+	public static final String GEAR_GUARD = "gearguard";
+	public static final String NO_GEAR_GUARD = "nogearguard";
+
+	public static final int ONE_RENTAL_DAY = 1;
+	public static final int THREE_RENTAL_DAYS = 3;
+
+	public static final int DIVIDE_BY_HUNDRED = 100;
+
+	public static final int CONDITION_RATING_FOUR = 4;
+	public static final int CONDITION_RATING_THREE = 3;
+	public static final int CONDITION_RATING_TWO = 2;
+	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
+	public static final String FAILURE_STRING = "Failure";
+	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
+	public static final String RESIDENTIAL_ADDRESS_TYPE_CODE = "2";
+	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
+
+
 
 	public static final String LENSES ="lenses";
 	public static final String CAMERAS ="cameras";

@@ -1,0 +1,16 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+#
+# Import the Content Catalog
+#
+# Language
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs catalog_en.impex =========================");
+
+
+$lang=en
+ 
+# Create Content Catalog
+UPDATE ContentCatalog ; id[unique=true]  ; name[lang=$lang]     
+                      ; blContentCatalog ; "Bl Content Catalog" 
+                      

@@ -1,0 +1,18 @@
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs sample_data_accountpage_en.impex =========================");
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+
+# Language
+$lang=en
+
+# Content Pages
+UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; title[lang=$lang]
+                   ;                         ; add-edit-address             ; "Add/Edit Address"
+                   ;                         ; address-book                 ; "Address Book"
+                   ;                         ; orders                       ; "Order History"
+                   ;                         ; updatePassword               ; "Update Forgotten Password"
+                   ;                         ;saved-carts                   ;"Saved Carts"
+                   ;                         ;bookmarks                     ; "Bookmarks"
+                   ;                         ;verificationImages            ; "Verification Images"
+                   ;                         ; creditCarts                  ; "Credit Carts"

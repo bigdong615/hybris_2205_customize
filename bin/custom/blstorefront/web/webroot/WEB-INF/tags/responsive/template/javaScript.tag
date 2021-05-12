@@ -48,6 +48,7 @@
 		<script src="${commonResourcePathHtml}/js/acc.colorbox.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.common.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.forgottenpassword.js"></script>
+		<script src="${commonResourcePathHtml}/js/acc.account.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.global.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.hopdebug.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.imagegallery.js"></script>
@@ -89,6 +90,10 @@
         <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
         </c:if>
 
+        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+            <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>
+        </c:if>
+
 		<%-- Cms Action JavaScript files --%>
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
@@ -107,6 +112,23 @@
 		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
     		<script src="${commonResourcePathHtml}/js/mburger.js"></script>
 
+		<script>
+			$(document).ready(function(){
+				 if('${rentalDate.selectedFromDate}' != '' && '${rentalDate.selectedToDate}' != '')
+				 {
+					 $("#litepicker").val('');
+					 $("#litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-litepicker").val('');
+					 $("#mobile-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#product-litepicker").val('');
+					 $("#product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-product-litepicker").val('');
+					 $("#mobile-product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#summary-litepicker").val('');
+					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+				 }
+			});
+		</script>
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>
         document.addEventListener(
@@ -225,18 +247,25 @@
 				},
             setup: (picker) => {
       			picker.on('button:apply', (date1, date2) => {
-      			$.ajax({
-                    url: ACC.config.encodedContextPath + '/datepicker',
-                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                    type: "GET",
-                    success: function (data) {
-                    	if(data=='success')
-                        window.location.reload();
-                    },
-                    error: function (xhr, textStatus, error) {
-                       
-                    }
-                });
+      				var searchText = document.getElementById('js-site-search-input').value;
+      				var rentalGear = 'rentalGear';
+      				var contextPath = ACC.config.contextPath;
+      				$.ajax({
+  	                    url: ACC.config.encodedContextPath + '/datepicker',
+  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+  	                    type: "GET",
+  	                    success: function (data) {
+  	                    	if(searchText == '' && data=='success') {
+  	                    		window.location.reload();
+  	                    	}
+  	                    	else{               		
+  	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+  	                    	}
+  	                    },
+  	                    error: function (xhr, textStatus, error) {
+  	                       
+  	                    }
+  	                });    			
       			});
       			}
         }); 
@@ -271,14 +300,21 @@
  				},
              setup: (picker) => {
        			picker.on('button:apply', (date1, date2) => {
-       			$.ajax({
-                     url: ACC.config.encodedContextPath + '/datepicker',
-                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                     type: "GET",
-                     success: function (data) {
-                     	if(data=='success')
-                         window.location.reload();
-                     },
+       				var searchText = document.getElementById('js-site-search-input-mob').value;
+      				var rentalGear = 'rentalGear';
+      				var contextPath = ACC.config.contextPath;
+      				$.ajax({
+  	                    url: ACC.config.encodedContextPath + '/datepicker',
+  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+  	                    type: "GET",
+  	                    success: function (data) {
+  	                    	if(searchText == '' && data=='success'){
+  	                    		window.location.reload();
+  	                    	}
+  	                    	else{
+  	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+  	                    	}  	                        
+  	                    },
                      error: function (xhr, textStatus, error) {
                         
                      }
@@ -386,18 +422,26 @@
   					},
                 setup: (picker) => {
         			picker.on('button:apply', (date1, date2) => {
-        			$.ajax({
-                      url: ACC.config.encodedContextPath + '/datepicker',
-                      data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                      type: "GET",
-                      success: function (data) {
-                      	if(data=='success')
-                          window.location.reload();
-                      },
-                      error: function (xhr, textStatus, error) {
-                         
-                      }
-                  });
+        				var searchText = document.getElementById('js-site-search-input').value;
+          				var rentalGear = 'rentalGear';
+          				var contextPath = ACC.config.contextPath;
+          				$.ajax({
+      	                    url: ACC.config.encodedContextPath + '/datepicker',
+      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+      	                    type: "GET",
+      	                    success: function (data) {
+      	                    	if(searchText == '' && data=='success'){
+      	                    		window.location.reload();
+      	                    	}
+      	                    	else{
+      	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+      	                    	}
+      	                    },
+      	                    error: function (xhr, textStatus, error) {
+      	                       
+      	                    }
+      	                }); 
+        			
         			});
         			}
             });
@@ -431,14 +475,21 @@
     				},
                 setup: (picker) => {
           			picker.on('button:apply', (date1, date2) => {
-          			$.ajax({
-                        url: ACC.config.encodedContextPath + '/datepicker',
-                        data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                        type: "GET",
-                        success: function (data) {
-                        	if(data=='success')
-                            window.location.reload();
-                        },
+          				var searchText = document.getElementById('js-site-search-input-mob').value;
+          				var rentalGear = 'rentalGear';
+          				var contextPath = ACC.config.contextPath;
+          				$.ajax({
+      	                    url: ACC.config.encodedContextPath + '/datepicker',
+      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+      	                    type: "GET",
+      	                    success: function (data) {
+      	                    	if(searchText == '' && data=='success'){
+      	                    		window.location.reload();
+      	                    	}
+      	                    	else{
+      	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+      	                    	}
+      	                    },
                         error: function (xhr, textStatus, error) {
                            
                         }
@@ -562,18 +613,18 @@
 												},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
-                                           			$.ajax({
-                                                         url: ACC.config.encodedContextPath + '/datepicker',
-                                                         data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                                                         type: "GET",
-                                                         success: function (data) {
-                                                         	if(data=='success')
-                                                             window.location.reload();
-                                                         },
-                                                         error: function (xhr, textStatus, error) {
-                                                            
-                                                         }
-                                                     });
+                                          				$.ajax({
+                                      	                    url: ACC.config.encodedContextPath + '/datepicker',
+                                      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                      	                    type: "GET",
+                                      	                    success: function (data) {
+                                      	                    	window.location.reload();
+                                      	                    },
+                                      	                    error: function (xhr, textStatus, error) {
+                                      	                       
+                                      	                    }
+                                      	                }); 
+                                           			
                                            			});
                                            			}
                                              });
@@ -780,9 +831,42 @@
                     numberOfMonths: 2,
                     numberOfColumns: 2,
                     autoApply: false,
-                    format: "MMM D",
-                    resetButton: true,
-                    buttonText : {"reset":"Reset Dates"},
+                    format: "MMM D, YYYY",
+                    resetButton: () => {
+        				 let btn = document.createElement('button');
+        				 btn.innerText = 'Reset Dates';
+        				 btn.className = 'reset-button';
+        				 btn.addEventListener('click', (evt) => {
+        				 evt.preventDefault();
+        				 $.ajax({
+                            url: ACC.config.encodedContextPath + '/resetDatepicker',
+                            type: "GET",
+                            success: function (data) {
+                            	if(data=='success')
+                                window.location.reload();
+                            },
+                            error: function (xhr, textStatus, error) {
+                               
+                            }
+                        });
+        				});
+        				return btn;
+        				},
+                    setup: (picker) => {
+              			picker.on('button:apply', (date1, date2) => {
+              				$.ajax({
+          	                    url: ACC.config.encodedContextPath + '/datepicker',
+          	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+          	                    type: "GET",
+          	                    success: function (data) {
+          	                    	window.location.reload();          	                        
+          	                    },
+          	                    error: function (xhr, textStatus, error) {
+          	                       
+          	                    }
+          	                }); 
+              			});
+              			}
                 });
                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
                 const summarypicker = new Litepicker({
@@ -792,9 +876,43 @@
                     numberOfMonths: 2,
                     numberOfColumns: 2,
                     autoApply: false,
-                    format: "MMM D",
-                    resetButton: true,
-                    buttonText : {"reset":"Reset Dates"},
+                    format: "MMM D, YYYY",
+                    resetButton: () => {
+        				 let btn = document.createElement('button');
+        				 btn.innerText = 'Reset Dates';
+        				 btn.className = 'reset-button';
+        				 btn.addEventListener('click', (evt) => {
+        				 evt.preventDefault();
+        				 $.ajax({
+                            url: ACC.config.encodedContextPath + '/resetDatepicker',
+                            type: "GET",
+                            success: function (data) {
+                            	if(data=='success')
+                                window.location.reload();
+                            },
+                            error: function (xhr, textStatus, error) {
+                               
+                            }
+                        });
+        				});
+        				return btn;
+        				},
+                    setup: (picker) => {
+              			picker.on('button:apply', (date1, date2) => {
+              			$.ajax({
+                            url: ACC.config.encodedContextPath + '/datepicker',
+                            data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                            type: "GET",
+                            success: function (data) {
+                            	if(data=='success')
+                                window.location.reload();
+                            },
+                            error: function (xhr, textStatus, error) {
+                               
+                            }
+                        });
+              			});
+              			}
                 });
             </script>
         </c:if>
@@ -849,6 +967,125 @@
                           keyboard: false,
                       } ).mount());
                   </script>
+        </c:if>
+
+        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+            <script>
+                //Replace button text
+                $(".dropdown-menu li button").click(function(){
+                  $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+                  $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+                });
+                // Mobile Menu styles - #my-menu is required for ALL pages
+                document.addEventListener(
+                    "DOMContentLoaded", () => {
+                        new Mmenu( "#my-menu", {
+                            extensions: ["fullscreen","position-front"],
+                            navbars		: [{
+                                position: "top",
+                                content : [ "close", "logo" ]
+                            }],
+                        } );
+                    }
+                );
+                // Initialize Mega menu rollover - required for ALL pages
+                $('.menu-large').hover(
+                    function(){ $('.screen').addClass('show') },
+                    function(){ $('.screen').removeClass('show') }
+                );
+                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                const picker = new Litepicker({
+                    element: document.getElementById('litepicker'),
+                    plugins: ['mobilefriendly'],
+                    singleMode: false,
+                    numberOfMonths: 2,
+                    numberOfColumns: 2,
+                    autoApply: false,
+                    format: "MMM D, YYYY",
+                    resetButton: () => {
+                         let btn = document.createElement('button');
+                         btn.innerText = 'Reset Dates';
+                         btn.className = 'reset-button';
+                         btn.addEventListener('click', (evt) => {
+                         evt.preventDefault();
+                         $.ajax({
+                            url: ACC.config.encodedContextPath + '/resetDatepicker',
+                            type: "GET",
+                            success: function (data) {
+                                if(data=='success')
+                                window.location.href = ACC.config.encodedContextPath + '/cart';
+                            },
+                            error: function (xhr, textStatus, error) {
+
+                            }
+                        });
+                        });
+                        return btn;
+                        },
+                    setup: (picker) => {
+                        picker.on('button:apply', (date1, date2) => {
+                        $.ajax({
+                            url: ACC.config.encodedContextPath + '/datepicker',
+                            data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                            type: "GET",
+                            success: function (data) {
+                                if(data=='success')
+                                window.location.href = ACC.config.encodedContextPath + '/cart';
+                            },
+                            error: function (xhr, textStatus, error) {
+
+                            }
+                        });
+                        });
+                        }
+                });
+                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                const summarypicker = new Litepicker({
+                    element: document.getElementById('summary-litepicker'),
+                    plugins: ['mobilefriendly'],
+                    singleMode: false,
+                    numberOfMonths: 2,
+                    numberOfColumns: 2,
+                    autoApply: false,
+                    format: "MMM D, YYYY",
+                    resetButton: () => {
+                         let btn = document.createElement('button');
+                         btn.innerText = 'Reset Dates';
+                         btn.className = 'reset-button';
+                         btn.addEventListener('click', (evt) => {
+                         evt.preventDefault();
+                             $.ajax({
+                                url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                type: "GET",
+                                success: function (data) {
+                                    if(data=='success')
+                                    window.location.href = ACC.config.encodedContextPath + '/cart';
+                                },
+                                error: function (xhr, textStatus, error) {
+
+                                }
+                            });
+                        });
+                        return btn;
+                    },
+                    setup: (picker) => {
+                        picker.on('button:apply', (date1, date2) => {
+                            $.ajax({
+                                url: ACC.config.encodedContextPath + '/datepicker',
+                                data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                type: "GET",
+                                success: function (data) {
+                                    if(data=='success')
+                                    window.location.href = ACC.config.encodedContextPath + '/cart';
+                                },
+                                error: function (xhr, textStatus, error) {
+
+                                }
+                            });
+                        });
+                    }
+                });
+            </script>
         </c:if>
 	</c:otherwise>
 </c:choose>

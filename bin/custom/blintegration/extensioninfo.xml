@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+--><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+           
+    
+    <extension abstractclassprefix="Generated" classprefix="Blintegration" managername="BlintegrationManager" managersuperclass="de.hybris.platform.jalo.extension.Extension" name="blintegration" usemaven="false">
+                               
+      
+        
+        <requires-extension name="commercewebservicescommons"/>
+        <requires-extension name="bllogging"/>
+        <requires-extension name="blcore"/>
+        <requires-extension name="blfacades"/>
+       
+      
+        
+        <coremodule generated="true" manager="com.bl.integration.jalo.BlintegrationManager" packageroot="com.bl.integration"/>
+                      
+        
+        <webmodule jspcompile="false" webroot="/blintegration"/>
+                					
+		
+        
+        	
+
+   
+    
+    </extension>
+              
+
+
+</extensioninfo>

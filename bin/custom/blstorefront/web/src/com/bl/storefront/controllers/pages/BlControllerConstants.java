@@ -38,7 +38,7 @@ public class BlControllerConstants
 	public static final String PICKUP_CART_ENTRIES = "hasPickUpCartEntries";
 	public static final String RENTAL_DATE = "rentalDate";
 	public static final String RECOMMENDATION_DATE_FORMAT = "MMM d";
-
+	public static final String DEFAULT_DAYS = "7";
 
 
 	public static final String DAY_MON_DATE_YEAR_FORMAT = "EE MMM dd yyyy";
@@ -46,6 +46,13 @@ public class BlControllerConstants
 	public static final String SUCCESS = "success";
 	public static final String SELECTED_DATE_MAP = "selectedDateMap";
 	public static final String SELECTED_DATE = "selectedDate";
+	
+	public static final int PAGE_SIZE = 100;
+	public static final String REGISTER_EMAIL_EMPTY = "register.email.empty";
+	public static final String PASSWORD_STRING = "pwd";
+  public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
+  public static final String REFERER= "Referer";
+  public static final String HOME_PAGE_URL = "/";
 
 	private BlControllerConstants()
 	{
