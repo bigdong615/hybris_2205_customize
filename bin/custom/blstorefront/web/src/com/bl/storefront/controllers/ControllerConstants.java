@@ -192,7 +192,7 @@ public interface ControllerConstants
 			}
 
 			interface Login{
-				String LoginRequestPopup="fragments/login/loginRequestPopup";
+				String LoginPopup="fragments/login/loginPopup";
 				String CreateAccountPopup="fragments/login/createAccountPopup";
 		}
 

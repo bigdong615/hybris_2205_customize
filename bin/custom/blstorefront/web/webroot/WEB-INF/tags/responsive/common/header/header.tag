@@ -117,12 +117,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                  <h5>Forgot Password</h5>
-                  <p class="body14">Enter your email for us to send a lost password reminder.</p>
+                  <h5><spring:theme code="forgottenPwd.header"/></h5>
+                  <p class="body14"><spring:theme code="forgottenPwd.description"/></p>
                   <form>
-                    <input type="text" class="form-control mb-3" placeholder="Your Email">
-                    <button type="submit" class="btn btn-block btn-primary mt-4">Send Password</button>
-                    <p class="body14 text-center mb-0 mt-4"><a href="#">Sign In</a></p>
+                    <input type="text" class="form-control mb-3" placeholder="register.email">
+                    <button type="submit" class="btn btn-block btn-primary mt-4"><spring:theme code="forgottenPwd.title"/></button>
+                    <p class="body14 text-center mb-0 mt-4"><a href="#"><spring:theme code="login.login"/></a></p>
                   </form>
               </div>
             </div>
