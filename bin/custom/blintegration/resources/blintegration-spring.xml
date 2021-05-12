@@ -134,5 +134,10 @@
   <bean id="blUPSAddressResponsePopulator"
     class="com.bl.integration.populators.BlUPSAddressResponsePopulator"/>
   <!-- UPS Address validator end -->
+  
+   <!-- FedEx Sameday City validator start -->
+  <alias name="defaultFedExSameDayServiceImpl" alias="fedExSameDayServiceImpl"/>
+  <bean id="defaultFedExSameDayServiceImpl"
+    class="com.bl.integration.services.impl.DefaultFedExSameDayServiceImpl"/>
 
 </beans>
