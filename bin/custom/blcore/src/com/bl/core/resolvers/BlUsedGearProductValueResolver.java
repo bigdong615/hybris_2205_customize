@@ -6,6 +6,7 @@ import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderEx
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
+import org.apache.commons.lang.BooleanUtils;
 
 /**
  * @author Manikandan
@@ -21,6 +22,7 @@ public class BlUsedGearProductValueResolver extends
    * @param indexedProperty indexedProperty for solr
    * @param blProductModel blProductModel
    * @param valueResolverContext valueResolverContext
+   * @throws FieldValueProviderException throws exception
    */
   @Override
   protected void addFieldValues(final InputDocument inputDocument, final IndexerBatchContext indexerBatchContext,
@@ -28,7 +30,7 @@ public class BlUsedGearProductValueResolver extends
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
     inputDocument.addField(indexedProperty ,blProductModel.getSerialProducts().stream().anyMatch(
-        BlProductModel::getForSale) && blProductModel.getForSale() ? Boolean.TRUE : Boolean.FALSE);
+        BlProductModel::getForSale) && BooleanUtils.isTrue(blProductModel.getForSale()) ? Boolean.TRUE : Boolean.FALSE);
   }
 
 }

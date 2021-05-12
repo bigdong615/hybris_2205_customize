@@ -18,16 +18,29 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * This Value Provider Created for Indexing Image to solr
+ * @author Manikandan
+ */
 public class BlImageValueResolver extends
     AbstractValueResolver<BlProductModel, Object, Object> {
   private String mediaFormat;
   private MediaService mediaService;
   private DefaultBlMediaContainerService defaultBlMediaContainerService;
 
+  /**
+   * This method created for adding field values to solr for images indexed property
+   * @param inputDocument  inputDocument adds field values to solr
+   * @param indexerBatchContext indexerBatchContext
+   * @param indexedProperty indexedProperty to be index
+   * @param blProductModel blProductModel
+   * @param valueResolverContext valueResolverContext
+   * @throws FieldValueProviderException throws exception
+   */
   @Override
-  protected void addFieldValues(InputDocument inputDocument,
-      IndexerBatchContext indexerBatchContext, IndexedProperty indexedProperty,
-      BlProductModel blProductModel, ValueResolverContext<Object, Object> valueResolverContext)
+  protected void addFieldValues(final InputDocument inputDocument,
+      final IndexerBatchContext indexerBatchContext, final IndexedProperty indexedProperty,
+      final BlProductModel blProductModel, final ValueResolverContext<Object, Object> valueResolverContext)
       throws FieldValueProviderException {
     final MediaFormatModel mediaFormatModel = getMediaService().getFormat(getMediaFormat());
     if (null != mediaFormatModel)
@@ -42,7 +55,12 @@ public class BlImageValueResolver extends
   }
 
 
-
+  /**
+   * This method created for finding media list
+   * @param productModel productmodel
+   * @param mediaFormatModel mediaFormatModel
+   * @return List<MediaModel>
+   */
   private List<MediaModel> findMediaList(final BlProductModel productModel, final MediaFormatModel mediaFormatModel) {
     final List<MediaContainerModel> galleryImages = productModel.getGalleryImages();
     if (CollectionUtils.isNotEmpty(galleryImages))
@@ -52,6 +70,12 @@ public class BlImageValueResolver extends
     return Collections.emptyList();
   }
 
+  /**
+   * This method created to get Media list from Data Base for solr
+   * @param galleryImages galleryImages
+   * @param mediaFormatModel mediaFormatModel
+   * @return List<MediaModel>
+   */
   private List<MediaModel> getMediaList(final List<MediaContainerModel> galleryImages ,final MediaFormatModel mediaFormatModel) {
     for (final MediaContainerModel container : galleryImages)
     {
@@ -63,6 +87,12 @@ public class BlImageValueResolver extends
     return Collections.emptyList();
   }
 
+  /**
+   * This method created to append the list of medias
+   * @param indexedProperty indexedProperty
+   * @param mediaModelList mediaModelList
+   * @return String
+   */
   private String createFieldValuesForList(final IndexedProperty indexedProperty,
       final List<MediaModel> mediaModelList)
   {

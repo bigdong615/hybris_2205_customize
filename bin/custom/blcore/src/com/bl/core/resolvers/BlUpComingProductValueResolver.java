@@ -7,6 +7,7 @@ import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 
 /**
  * @author Manikandan
@@ -31,7 +32,7 @@ public class BlUpComingProductValueResolver extends
       final IndexedProperty indexedProperty, final BlProductModel blProductModel,
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
-    inputDocument.addField(indexedProperty,blProductModel.getForRent()
+    inputDocument.addField(indexedProperty, BooleanUtils.isTrue(blProductModel.getForRent())
         && CollectionUtils.isEmpty(blProductModel.getSerialProducts()) ? Boolean.TRUE :Boolean.FALSE);
   }
 

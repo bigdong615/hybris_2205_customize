@@ -14,16 +14,29 @@ import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
 import java.util.Collection;
 import org.apache.commons.collections4.CollectionUtils;
 
+/**
+ * This Value Provider created for Category Facet
+ * @author Manikandan
+ */
 public class BlCategoryCodeValueResolver extends
     AbstractValueResolver<BlProductModel, Object, Object> {
 
   private CategorySource categorySource;
   private ModelService modelService;
 
+  /**
+   * this method created to index values for solr for category facet
+   * @param inputDocument inputDocument
+   * @param indexerBatchContext indexerBatchContext
+   * @param indexedProperty ndexedProperty for solr
+   * @param blProductModel blProductModel
+   * @param valueResolverContext valueResolverContext
+   * @throws FieldValueProviderException throws exception
+   */
 
   @Override
-  protected void addFieldValues(InputDocument inputDocument, IndexerBatchContext indexerBatchContext, IndexedProperty indexedProperty,
-      BlProductModel blProductModel, ValueResolverContext<Object, Object> valueResolverContext)
+  protected void addFieldValues(final InputDocument inputDocument, final IndexerBatchContext indexerBatchContext, final IndexedProperty indexedProperty,
+      final BlProductModel blProductModel, final ValueResolverContext<Object, Object> valueResolverContext)
       throws FieldValueProviderException {
     final IndexConfig indexConfig = new IndexConfig();
     final Collection<CategoryModel> categories = getCategorySource().getCategoriesForConfigAndProperty(indexConfig,

@@ -15,6 +15,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * This ValueProvider created to index Global Facet values to solr
+ * @author Manikandan
+ */
 public class BlGlobalFacetValueResolver extends
     AbstractValueResolver<BlProductModel, Object, Object> {
 
@@ -24,12 +28,21 @@ public class BlGlobalFacetValueResolver extends
   private ModelService modelService;
 
 
+  /**
+   *
+   * @param inputDocument inputDocument adds field values to solr
+   * @param indexerBatchContext indexerBatchContext
+   * @param indexedProperty indexedProperty to be index
+   * @param blProductModel blProductModel
+   * @param valueResolverContext valueResolverContext
+   * @throws FieldValueProviderException throws exception
+   */
   @Override
-  protected void addFieldValues(InputDocument inputDocument,
-      IndexerBatchContext indexerBatchContext, IndexedProperty indexedProperty,
-      BlProductModel blProductModel, ValueResolverContext<Object, Object> valueResolverContext)
+  protected void addFieldValues(final InputDocument inputDocument,
+      final IndexerBatchContext indexerBatchContext, final IndexedProperty indexedProperty,
+     final BlProductModel blProductModel, final ValueResolverContext<Object, Object> valueResolverContext)
       throws FieldValueProviderException {
-     final  IndexConfig indexConfig = new IndexConfig();
+     final IndexConfig indexConfig = new IndexConfig();
     final Collection<CategoryModel> categories = getCategorySource()
         .getCategoriesForConfigAndProperty(indexConfig,
             indexedProperty, blProductModel);
@@ -46,7 +59,6 @@ public class BlGlobalFacetValueResolver extends
   private Object createFieldValue(final CategoryModel category)
   {
      return getPropertyValue(category);
-
   }
 
 
