@@ -6,6 +6,7 @@ import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
@@ -40,7 +41,16 @@ public class UsedProductPageController extends AbstractBlProductPageController {
     productData.setProductPageType(BlControllerConstants.USED_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, false);
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
-    return productDetail(encodedProductCode, extraOptions, productData, model, request, response);
+    
+    final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
+				ProductOption.URL, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
+				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
+				ProductOption.VARIANT_FULL, ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA,
+				ProductOption.REQUIRED_SERIAL_DATA) );
+
+		options.addAll(extraOptions);
+		
+    return productDetail(encodedProductCode, options, productData, model, request, response);
   }
 }
 
