@@ -48,7 +48,7 @@ public class BlImageValueResolver extends
       // To get the list of media model to be index to solr
       final List<MediaModel> mediaModelList = findMediaList(blProductModel,mediaFormatModel);
       if (CollectionUtils.isNotEmpty(mediaModelList)) {
-        inputDocument.addField(indexedProperty,createFieldValuesForList(indexedProperty,mediaModelList));
+        inputDocument.addField(indexedProperty,createFieldValuesForList(mediaModelList));
       }
     }
 
@@ -89,12 +89,10 @@ public class BlImageValueResolver extends
 
   /**
    * This method created to append the list of medias
-   * @param indexedProperty indexedProperty
    * @param mediaModelList mediaModelList
    * @return String
    */
-  private String createFieldValuesForList(final IndexedProperty indexedProperty,
-      final List<MediaModel> mediaModelList)
+  private String createFieldValuesForList(final List<MediaModel> mediaModelList)
   {
     String mediaString;
     // Used to split the images in a form of string
