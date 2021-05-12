@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.security;
 
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.security.BruteForceAttackCounter;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 		// Store the j_username in the session
 		request.getSession().setAttribute("SPRING_SECURITY_LAST_USERNAME", request.getParameter("j_username"));
 
+		super.setDefaultFailureUrl(request.getHeader(BlControllerConstants.REFERER));
 		super.onAuthenticationFailure(request, response, exception);
 	}
 
@@ -45,4 +47,6 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 	{
 		this.bruteForceAttackCounter = bruteForceAttackCounter;
 	}
+
+
 }

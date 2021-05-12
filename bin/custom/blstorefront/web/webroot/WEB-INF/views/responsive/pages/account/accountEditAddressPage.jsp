@@ -19,10 +19,7 @@
 <div class="back-link border">
     <div class="row">
         <div class="container-lg col-md-6">
-            <button type="button" class="addressBackBtn" data-back-to-addresses="${fn:escapeXml(addressBookUrl)}">
-                <span class="glyphicon glyphicon-chevron-left"></span>
-            </button>
-            <span class="label">${headline}</span>
+           <span class="label">${headline}</span>
         </div>
     </div>
 </div>

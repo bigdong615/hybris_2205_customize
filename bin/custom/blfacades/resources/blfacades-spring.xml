@@ -455,5 +455,5 @@
 		<property name="list" ref="extendedCartConverter"/>
 		<property name="add" ref="cartPopulator"/>
 	</bean>
-
+	
 </beans>

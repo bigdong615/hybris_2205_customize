@@ -35,7 +35,7 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
     * This method override due to ignore concat of first name and lastName
      */
     @Override
-    protected void setCommonPropertiesForRegister(final RegisterData registerData, final CustomerModel customerModel)
+    public void setCommonPropertiesForRegister(final RegisterData registerData, final CustomerModel customerModel)
     {
         customerModel.setName(BlFacadesConstants.CUSTOMER);
         setUidForRegister(registerData, customerModel);

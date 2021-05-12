@@ -70,8 +70,8 @@
 	<!-- Default security config -->
 	<security:http request-matcher-ref="excludeUrlRequestMatcher">
 		<security:anonymous username="anonymous" granted-authority="ROLE_ANONYMOUS" />
-		<security:access-denied-handler error-page="/login"/>
-		<security:session-management session-authentication-strategy-ref="fixation" invalid-session-url="/login" />
+		<security:access-denied-handler error-page="/"/>
+		<security:session-management session-authentication-strategy-ref="fixation" invalid-session-url="/" />
 		<security:csrf token-repository-ref="csrfTokenRepository" request-matcher-ref="csrfProtectionMatcher" />
 		<security:custom-filter before="CSRF_FILTER" ref="logoutFilter" />
 
@@ -188,7 +188,8 @@
 	<alias name="defaultLoginAuthenticationSuccessHandler" alias="loginAuthenticationSuccessHandler"/>
 	<bean id="defaultLoginAuthenticationSuccessHandler" class="de.hybris.platform.acceleratorstorefrontcommons.security.StorefrontAuthenticationSuccessHandler" >
 		<property name="customerFacade" ref="customerFacade" />
-		<property name="defaultTargetUrl" value="#{'responsive' == '${commerceservices.default.desktop.ui.experience}' ? '/' : '/my-account'}"/>
+		<property name="defaultTargetUrl" value="/"/>
+		<property name="targetUrlParameter" value="targetUrlParameter"/>
 		<property name="useReferer" value="true"/>
 		<property name="requestCache" ref="httpSessionRequestCache" />
 		<property name="uiExperienceService" ref="uiExperienceService"/>
@@ -264,13 +265,13 @@
 	<util:list id="logoutRestrictedPages" value-type="java.lang.String">
 		<value>/my-account</value>
 		<value>/checkout</value>
-		<value>/quote</value>
+		<value>/</value>
 	</util:list>
 
 
 	<alias name="defaultLogoutSuccessHandler" alias="logoutSuccessHandler"/>
 	<bean id="defaultLogoutSuccessHandler" class="de.hybris.platform.acceleratorstorefrontcommons.security.StorefrontLogoutSuccessHandler" >
-		<property name="defaultTargetUrl" value="/?logout=true"/>
+		<property name="defaultTargetUrl" value="/"/>
 		<property name="guidCookieStrategy" ref="guidCookieStrategy"/>
 		<property name="useReferer" value="true"/>
 		<property name="restrictedPages" ref="logoutRestrictedPages"/>
@@ -300,7 +301,7 @@
 		<constructor-arg name="key" value="blstorefront" />
 		<constructor-arg name="userDetailsService" ref="originalUidUserDetailsService" />
 		<property name="cookieName" value="blstorefrontRememberMe" />
-		<property name="alwaysRemember" value="true" />
+		<property name="alwaysRemember" value="false" />
 		<property name="userService" ref="userService"/>
 		<property name="useSecureCookie" value="true"/>
 		<property name="customerFacade" ref="customerFacade"/>
