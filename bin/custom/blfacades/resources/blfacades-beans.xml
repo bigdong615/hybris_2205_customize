@@ -164,6 +164,15 @@
   </bean>
   <!-- UPS Locator end -->
 
+  <!-- UPS Address Validator response data -->
+  <bean class="com.bl.facades.ups.address.data.AVSResposeData">
+    <property name="statusCode" type="String"/>
+    <property name="statusMessage" type="String"/>
+    <property name="errorDescription" type="String"/>
+    <property name="result"
+      type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.AddressData>"/>
+  </bean>
+
 </beans>
 
 
