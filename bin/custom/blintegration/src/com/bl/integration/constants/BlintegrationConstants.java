@@ -34,6 +34,10 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String HOST = "blintegration.host";
 	public static final String HOST_DEFAULT = "hostname";
 
+	public static final String PICKUP_ZIP_CODE = "pickUpZipCode";
+	public static final String DROPOFF_ZIP_CODE = "dropOffZipCode";
+	public static final String X_API_KEY = "X-Api-Key";
+	
 	private BlintegrationConstants()
 	{
 		//empty to avoid instantiating this constant class
