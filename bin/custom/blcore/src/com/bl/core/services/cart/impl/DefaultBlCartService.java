@@ -15,6 +15,7 @@ import java.util.Date;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -110,19 +111,22 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setRentalDatesOnCart(Date rentalStartDate, Date rentalEndDate)
+	public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate)
 	{
 		final CartModel cartModel = getSessionCart();
+		final String cartCode = cartModel.getCode();
+		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} on Cart: {}", rentalStartDate, cartCode);
 		cartModel.setRentalStartDate(rentalStartDate);
+		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental End Date: {} on Cart: {}", rentalEndDate, cartCode);
 		cartModel.setRentalEndDate(rentalEndDate);
 		try 
 		{			
 			getModelService().save(cartModel);
 		}
-		catch(Exception exception)
+		catch(final Exception exception)
 		{
-			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, "", exception, 
-					"Error while saving rental dates on cart - {}", cartModel.getCode());
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, 
+					"Error while saving rental dates on cart - {}", cartCode);
 		}
 	}
 
