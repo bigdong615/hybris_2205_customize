@@ -272,21 +272,11 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
         for(ZoneDeliveryModeValueModel valueModel : zoneDeliveryModeModel.getValues()) {
             if(!valueModel.isFixedAmount()) {
-                final Map<String, Double> calculatedValueMap;
+                final Map<String, Double> calculatedValueMap;   
                 try {
                     calculatedValueMap = getCalculatedWeightForDelivery(order);
-                    if(!(order instanceof CartModel)) {
-                        order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
-                        order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
-                    }
-                    final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
-                            calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
-                                    BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getCode());
-                    if(shippingCostModel != null) {
-                        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping calculated amount: {} ",
-                                shippingCostModel.getAmount());
-                        return shippingCostModel.getAmount();
-                    }
+                    final Double shippingCostModel = getShippingAmount(order, zoneDeliveryModeModel, calculatedValueMap);
+                    return shippingCostModel != null ? shippingCostModel : BlInventoryScanLoggingConstants.ZERO;
                 } catch(Exception e) {
                     BlLogger.logMessage(LOG, Level.ERROR,"Exception while calculating delivery cost");
                 }
@@ -299,6 +289,22 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
         }
         return BlInventoryScanLoggingConstants.ZERO;
+    }
+
+    private Double getShippingAmount(AbstractOrderModel order, ZoneDeliveryModeModel zoneDeliveryModeModel, Map<String, Double> calculatedValueMap) {
+        if(!(order instanceof CartModel)) {
+            order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
+            order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
+        }
+        final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
+                calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
+                        BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getCode());
+        if(shippingCostModel != null) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping calculated amount: {} ",
+                    shippingCostModel.getAmount());
+            return shippingCostModel.getAmount();
+        }
+        return null;
     }
 
     /**
@@ -433,9 +439,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public boolean checkSFOrNYCPinCodeValidity(final String pinCode, final String deliveryType) {
         if (deliveryType.equals(DeliveryTypeEnum.SF.toString())) { //NOSONAR
             //check pinCode in ~50miles
-
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day delivery pinCode validity");
         } else {
             //check pinCode in ~25miles
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking next day delivery pinCode validity");
         }
         return true;
     }
