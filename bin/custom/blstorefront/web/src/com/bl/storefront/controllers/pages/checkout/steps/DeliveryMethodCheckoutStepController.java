@@ -30,7 +30,6 @@ import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
-import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
