@@ -3,6 +3,10 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
@@ -45,14 +49,19 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.site.BaseSiteService;
+import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
@@ -132,6 +141,18 @@ public class CartPageController extends AbstractCartPageController
 
 	@Resource(name ="cartFacade")
 	private BlCartFacade blCartFacade;
+
+  @Resource(name = "blDatePickerService")
+  private BlDatePickerService blDatePickerService;
+
+  @Resource(name = "blCommerceStockService")
+  private BlCommerceStockService blCommerceStockService;
+
+  @Resource(name = "baseStoreService")
+  private BaseStoreService baseStoreService;
+
+  @Resource(name = "cartService")
+  private BlCartService blCartService;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -760,8 +781,48 @@ public class CartPageController extends AbstractCartPageController
 		}
 	}
 
+  /**
+   * Check if date range not selected and stock is not available for any product which are present
+   * on current cart, then don't redirect to next(2nd) step.
+   *
+   * @param model
+   * @return success or failure
+   */
+  @GetMapping(value = "/checkDateAndStock")
+  @ResponseBody
+  public String checkDateRangeAndStock(final Model model) {
+    final long stockNotAvailable = 0L;
+    final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+    final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore()
+        .getWarehouses();
+    final CartModel cartModel = blCartService.getSessionCart();
+    if (rentalDateDto == null) {
 
-	/**
+      return BlControllerConstants.FAILURE_RESULT;
+    } else {
+      final Date startDay = BlDateTimeUtils
+          .convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
+              BlControllerConstants.DATE_FORMAT_PATTERN);
+      final Date endDay = BlDateTimeUtils
+          .convertStringDateToDate(rentalDateDto.getSelectedToDate(),
+              BlControllerConstants.DATE_FORMAT_PATTERN);
+      final List<AbstractOrderEntryModel> abstractOrderEntryModelList = cartModel.getEntries();
+      for (final AbstractOrderEntryModel abstractOrderEntryModel : abstractOrderEntryModelList) {
+
+        final long stockLevel = blCommerceStockService
+            .getAvailableCount(abstractOrderEntryModel.getProduct().getCode(), warehouseModelList,
+                startDay, endDay);
+        if (stockLevel == stockNotAvailable) {
+          return BlControllerConstants.FAILURE_RESULT;
+        }
+
+      }
+    }
+    return BlControllerConstants.SUCCESS;
+  }
+
+
+  /**
 	 * @return the blCartFacade
 	 */
 	public BlCartFacade getBlCartFacade()

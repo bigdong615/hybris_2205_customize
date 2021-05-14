@@ -16,10 +16,14 @@ import de.hybris.platform.storelocator.model.PointOfServiceModel;
 public class DefaultBlCommerceAddToCartStrategy extends
     DefaultCommerceAddToCartStrategy {
 
+  private static final long DEFAULT_STOCK_QUANTITY = 1L;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  protected CommerceCartModification doAddToCart(final CommerceCartParameter parameter) throws CommerceCartModificationException
-  {
+  protected CommerceCartModification doAddToCart(final CommerceCartParameter parameter)
+      throws CommerceCartModificationException {
     CommerceCartModification modification;
 
     final CartModel cartModel = parameter.getCart();
@@ -30,8 +34,7 @@ public class DefaultBlCommerceAddToCartStrategy extends
     this.beforeAddToCart(parameter);
     validateAddToCart(parameter);
 
-    if (isProductForCode(parameter).booleanValue())
-    {
+    if (isProductForCode(parameter).booleanValue()) {
       // So now work out what the maximum allowed to be added is (note that this may be negative!)
       final long actualAllowedQuantityChange = getAllowedQuantityChange(cartModel, productModel,
           quantityToAdd, deliveryPointOfService);
@@ -39,29 +42,27 @@ public class DefaultBlCommerceAddToCartStrategy extends
       final long cartLevel = checkCartLevel(productModel, cartModel, deliveryPointOfService);
       final long cartLevelAfterQuantityChange = actualAllowedQuantityChange + cartLevel;
 
-      if (actualAllowedQuantityChange > 0)
-      {
+      if (actualAllowedQuantityChange > 0) {
         // We are allowed to add items to the cart
         final CartEntryModel entryModel = addCartEntry(parameter, actualAllowedQuantityChange);
         getModelService().save(entryModel);
 
-        final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange, maxOrderQuantity,
+        final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange,
+            maxOrderQuantity,
             quantityToAdd, cartLevelAfterQuantityChange);
 
-        modification = createAddToCartResp(parameter, statusCode, entryModel, actualAllowedQuantityChange);
-      }
-      else
-      {
+        modification = createAddToCartResp(parameter, statusCode, entryModel,
+            actualAllowedQuantityChange);
+      } else {
         // Not allowed to add any quantity, or maybe even asked to reduce the quantity
         // Do nothing!
-        final String status = getStatusCodeForNotAllowedQuantityChange(maxOrderQuantity, maxOrderQuantity);
+        final String status = getStatusCodeForNotAllowedQuantityChange(maxOrderQuantity,
+            maxOrderQuantity);
 
         modification = createAddToCartResp(parameter, status, createEmptyCartEntry(parameter), 0);
 
       }
-    }
-    else
-    {
+    } else {
       modification = createAddToCartResp(parameter, CommerceCartModificationStatus.UNAVAILABLE,
           createEmptyCartEntry(parameter), 0);
     }
@@ -70,22 +71,25 @@ public class DefaultBlCommerceAddToCartStrategy extends
   }
 
   /**
-   * Not checking availability for rental add to cart. Availability will be checked on cart page.
+   * Not checking product stock  for add to cart. Availability will be checked while redirecting to
+   * cart page.
+   *
    * @param cartModel
    * @param productModel
    * @param quantityToAdd
    * @param deliveryPointOfService
-   * @return
+   * @return stock quantity
    */
-  private long getAllowedQuantityChange(final CartModel cartModel,final ProductModel productModel,
+  private long getAllowedQuantityChange(final CartModel cartModel, final ProductModel productModel,
       final long quantityToAdd, final PointOfServiceModel deliveryPointOfService) {
 
+    //based on used gear add to cart below commented code need to update/remove.
     /*if(productModel instanceof BlSerialProductModel) {
       return getAllowedCartAdjustmentForProduct(cartModel, productModel, quantityToAdd,
           deliveryPointOfService);
     }*/
 
-    return 1L;
+    return DEFAULT_STOCK_QUANTITY;
   }
 
 }

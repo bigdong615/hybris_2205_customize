@@ -105,10 +105,12 @@
          </div>
      </div>--%>
 
-     <%--<div class="productNotifications row">
+     <div class="productNotifications row">
          <div class="col-12">
-             <div class="notification notification-warning">This is a product warning.</div>
-             <div class="notification notification-error">This item is no longer available for your selected date range. Change your dates or select a comparable item.</div>
+             <%--<div class="notification notification-warning">This is a product warning.</div>--%>
+             <c:if test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
+              <div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>
+             </c:if>
          </div>
-     </div>--%>
+     </div>
 </div>

@@ -35,28 +35,26 @@
                                 <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
                                 <input type="text" class="form-control cart-picker" id="litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>">
                               </p>
-
                               <c:forEach items="${cartData.entries}" var="entry">
                                  <cart:blRentalCartItem entry="${entry}" cartData="${cartData}" />
                               </c:forEach>
                               <!-- Form to update the cart total on the selection of damage Waiver from the dropdown -->
-								<form:form id="updateDamageWaiverForm" action="${cartUpdateDamageWaiverFormAction}" method="post" >
-					                 <input type="hidden" name="entryNumber" value="" />
-					                 <input type="hidden" name="damageWaiverType" value="" />
-           						</form:form>
+								              <form:form id="updateDamageWaiverForm" action="${cartUpdateDamageWaiverFormAction}" method="post" >
+					                      <input type="hidden" name="entryNumber" value="" />
+					                      <input type="hidden" name="damageWaiverType" value="" />
+           						        </form:form>
                               <div class="cart-actions">
                                   <a href="/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
-                                  <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
+                                  <a href="" class="btn btn-sm btn-primary float-end" id="cart-continue">
                                     <spring:theme code="general.continue.button" />
                                   </a>
-                                  <a href="#" class="btn btn-sm btn-outline float-end me-3"><spring:theme code="general.update.button" /></a>
                               </div>
                               <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
-                              <%-- <div class="notification notification-warning">This is a cart warning.</div>
-                              <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
+                              <div id="cart-warning" class="notification notification-warning" style="display:none"><spring:theme code="text.date.range.not.available" /></div>
+                              <%--<div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                               <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                               <div class="order-actions my-4">
                                   <a href="#" alt="Print Order"><i class="icon-print"></i></a>

@@ -38,7 +38,6 @@
                                  <a href="/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                  <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
                                  <spring:theme code="general.continue.button" /></a>
-                                 <a href="#" class="btn btn-sm btn-outline float-end me-3"><spring:theme code="general.update.button" /></a>
                               </div>
                               <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
