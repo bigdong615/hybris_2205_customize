@@ -450,7 +450,7 @@
 	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
 	<!-- ENd Shipping-->
 	
-	<!-- BL-542 : Adding cart populator in the converter list. -->
+	<!-- BL-542 : Adding cart populator in the converter list to populate total damage waiver price on checkout step 2. -->
 	<bean parent="modifyPopulatorList">
 		<property name="list" ref="extendedCartConverter"/>
 		<property name="add" ref="cartPopulator"/>
