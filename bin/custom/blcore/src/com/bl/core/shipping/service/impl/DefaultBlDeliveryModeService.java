@@ -3,7 +3,6 @@ package com.bl.core.shipping.service.impl;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.enums.CarrierEnum;
-import com.bl.core.enums.DeliveryTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
@@ -21,11 +20,14 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeValueModel;
 import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -119,26 +121,25 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                                        final String rentalEnd,
                                                                                        final String carrier,
                                                                                        final boolean payByCustomer) {
-        final boolean available = checkCartEntriesAvailability();
+        Collection<ZoneDeliveryModeModel> deliveryModeModels = null;
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
         final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 rentalStart);
-        if(available) {
             if (result >= BlInventoryScanLoggingConstants.TWO) {
-                return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+                deliveryModeModels = getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
                         null, payByCustomer);
             } else if (result == BlInventoryScanLoggingConstants.ONE) {
                 final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
                 if(currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
-                    return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                    deliveryModeModels = getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                             null, payByCustomer);
                 } else {
-                    return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                    deliveryModeModels = getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                             pstCutOffTime, payByCustomer);
                 }
             }
-        }
-        return Collections.emptyList();
+        return CollectionUtils.isNotEmpty(deliveryModeModels) && checkCartEntriesAvailability(rentalStart, rentalEnd, deliveryModeModels)
+                ? deliveryModeModels : Collections.emptyList();
     }
 
     /**
@@ -167,19 +168,21 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerPickUpDeliveryModesWithRentalDates(final String rentalStart,
                                                                                                   final String rentalEnd,
                                                                                                   final boolean payByCustomer) {
-        final boolean available = checkCartEntriesAvailability();
+        Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels;
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
         final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 rentalStart);
         if (result >= BlInventoryScanLoggingConstants.TWO) {
-            return available ? getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, null, payByCustomer)
-                    : getPartnerZoneUPSStoreDeliveryModesNotLike(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, null, payByCustomer);
+            blPickUpZoneDeliveryModeModels = getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+                    null, payByCustomer);
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
-            return available ? getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT, pstCutOffTime, payByCustomer)
-                    : getPartnerZoneUPSStoreDeliveryModesNotLike(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT, pstCutOffTime, payByCustomer);
+            blPickUpZoneDeliveryModeModels = getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                    pstCutOffTime, payByCustomer);
         } else {
             return Collections.emptyList();
         }
+        return CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels) && checkCartEntriesAvailability(rentalStart, rentalEnd,
+                blPickUpZoneDeliveryModeModels) ? blPickUpZoneDeliveryModeModels : Collections.emptyList();
     }
 
     /**
@@ -209,9 +212,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     @Override
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModes(final String partnerZone, final String rentalStart,
                                                                                 final String rentalEnd, final boolean payByCustomer) {
-        if(checkCartEntriesAvailability()) {
-            final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao().
-                    getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
+        final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao().
+                getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
+        if(CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels) && checkCartEntriesAvailability(rentalStart, rentalEnd,
+                blPickUpZoneDeliveryModeModels)) {
             final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>(blPickUpZoneDeliveryModeModels);
             final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date())
                     , rentalStart);
@@ -261,8 +265,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                       final boolean payByCustomer) {
 
         final Collection<BlRushDeliveryModeModel> blRushDeliveryModeModels = getBlZoneDeliveryModeDao().getBlRushDeliveryModes(
-                deliveryMode, pstCutOffTime, payByCustomer).stream().filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart)).collect(Collectors.toList());
-        return CollectionUtils.isNotEmpty(blRushDeliveryModeModels) ? blRushDeliveryModeModels : Collections.emptyList();
+                deliveryMode, pstCutOffTime, payByCustomer).stream().filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart))
+                .collect(Collectors.toList());
+        return CollectionUtils.isNotEmpty(blRushDeliveryModeModels) && checkCartEntriesAvailability(rentalStart, rentalEnd,
+                blRushDeliveryModeModels) ? blRushDeliveryModeModels : Collections.emptyList();
     }
 
     /**
@@ -489,38 +495,64 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     @Override
     public boolean checkSFOrNYCPinCodeValidity(final String pinCode, final String deliveryType) {
         if(validateZip(pinCode)) {
-            if (deliveryType.equals(DeliveryTypeEnum.SF.toString())) {
-                try {
-                    final SameDayCityResData sameDayCityResData = getBlFedExSameDayService().getAvailability(getSameDayCityReqData(pinCode));
-                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day delivery pinCode validity");
-                    return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable(): false;
-                } catch (URISyntaxException e) {
-                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Exception in Checking same day delivery pinCode validity", e);
-                    return false;
-                }
-            } else {
-                try {
-                    final SameDayCityResData sameDayCityResData = getBlFedExSameDayService().getAvailability(getSameDayCityReqData(pinCode));
-                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking next day delivery pinCode validity");
-                    return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable(): false;
-                } catch (URISyntaxException e) {
-                    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Exception Checking next day delivery pinCode validity", e);
-                    return false;
-                }
+            try {
+                final SameDayCityResData sameDayCityResData = getBlFedExSameDayService().getAvailability(getSameDayCityReqData(pinCode,
+                        getWarehouseZipCode(deliveryType, true)));
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day fedex integration pinCode validity");
+                return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable(): Boolean.FALSE;
+            } catch (URISyntaxException e) {
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Exception in Checking same day fedex integration pinCode validity", e);
+                return false;
             }
         }
         return false;
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getWarehouseZipCode(final String deliveryType, final boolean payByCustomer) {
+        final BlRushDeliveryModeModel blRushDeliveryModeModel = getBlZoneDeliveryModeDao().getBlRushDeliveryModeForWarehouseZipCode(
+                deliveryType, payByCustomer);
+        if(blRushDeliveryModeModel != null) {
+            final WarehouseModel warehouseModel = blRushDeliveryModeModel.getWarehouse();
+            if(warehouseModel != null) {
+                return getPOSAddress(warehouseModel.getPointsOfService());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This method will take POS and will return zipCode of warehouse
+     *
+     * @param pos Point OF Service collection from warehouse
+     * @return zipCode
+     */
+    private String getPOSAddress(final Collection<PointOfServiceModel> pos) {
+        if(CollectionUtils.isNotEmpty(pos)) {
+            for (PointOfServiceModel model : pos) {
+                final AddressModel addressModel = model.getAddress();
+                if (addressModel != null) {
+                    return addressModel.getPostalcode();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * This method will create Request data for Same Day city service
      *
      * @param pinCode validation zipcode
+     * @param zipCode validation warehouse
      * @return Request data for service
      */
-    private SameDayCityReqData getSameDayCityReqData(final String pinCode) {
+    private SameDayCityReqData getSameDayCityReqData(final String pinCode, final String zipCode) {
         final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
         sameDayCityReqData.setDeliveryAddressZipCode(pinCode);
+        sameDayCityReqData.setWarehouseZipCode(zipCode);
         return sameDayCityReqData;
     }
 
@@ -533,13 +565,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         return Pattern.compile("^[0-9]{5}(?:-[0-9]{4})?$").matcher(zipCode).matches();
     }
 
-
     /**
      * This method will check cart entries for gear availability
      *
-     * @return boolean true or false
+     * @param rentalStart date
+     * @param rentalEnd date
+     * @param deliveryModeModels delivery models
+     * @return boolean
      */
-    public boolean checkCartEntriesAvailability() {
+    public boolean checkCartEntriesAvailability(final String rentalStart, final String rentalEnd,
+                                                final Collection<? extends ZoneDeliveryModeModel> deliveryModeModels) {
         return true;
     }
 

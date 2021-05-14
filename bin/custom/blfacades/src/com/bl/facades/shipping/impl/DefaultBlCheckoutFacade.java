@@ -365,6 +365,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setPickUpPersonLastName(null);
             cartModel.setPickUpPersonEmail(null);
             cartModel.setPickUpPersonPhone(null);
+            cartModel.setDeliveryNotes(null);
+            cartModel.setStatusUpdate(Boolean.FALSE);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
             return "SUCCESS";

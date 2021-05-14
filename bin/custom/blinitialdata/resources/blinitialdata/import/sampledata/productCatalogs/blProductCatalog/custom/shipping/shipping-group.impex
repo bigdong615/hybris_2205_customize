@@ -3,8 +3,8 @@
 
 
 INSERT_UPDATE ShippingGroup ; code[unique = 'true']		; name 								; shippingType(code)
-							; SHIP_HOME_HOTEL_BUSINESS	; Ship to a Home, Hotel or Business	; FAST
+							; SHIP_HOME_HOTEL_BUSINESS	; Ship to an Address				; FAST
 							; BL_PARTNER_PICKUP         ; BL & Partner Pickup 				; FASTER
-							; SHIP_HOLD_UPS_OFFICE      ; Ship & Hold at a UPS Office		; FAST
-							; SAME_DAY_DELIVERY         ; Same Day Delivery (SF Bay Area)	; FASTEST
-							; NEXT_DAY_RUSH_DELIVERY    ; BL RUSH Delivery (NYC)			; FASTEST
+							; SHIP_HOLD_UPS_OFFICE      ; Ship to a UPS Location			; FAST
+							; SAME_DAY_DELIVERY         ; SF Bay Area						; FASTEST
+							; NEXT_DAY_RUSH_DELIVERY    ; NYC Metro Area					; FASTEST

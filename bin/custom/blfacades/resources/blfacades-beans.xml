@@ -141,6 +141,7 @@
         <property name="openingDaysDetails" type="java.util.Map&lt;String, String>"/>
         <property name="pickStoreAddress" type="Boolean"/>
         <property name="upsStoreAddress" type="Boolean"/>
+        <property name="url" type="String"/>
     </bean>
     <!-- Shipping End-->
 

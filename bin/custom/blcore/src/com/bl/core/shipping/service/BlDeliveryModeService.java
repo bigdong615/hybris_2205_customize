@@ -193,4 +193,13 @@ public interface BlDeliveryModeService {
      * @return long i.e., difference in days
      */
     int checkDateForRental(final String currentDay, final String rentalStart);
+
+    /**
+     * This method will return zipCOde from address associated on warehouse
+     *
+     * @param deliveryType SF/NYC
+     * @param payByCustomer true for customer
+     * @return zipCode from warehouse address
+     */
+    String getWarehouseZipCode(final String deliveryType, final boolean payByCustomer);
 }

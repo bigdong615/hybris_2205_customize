@@ -200,6 +200,22 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
      * {@inheritDoc}
      */
     @Override
+    public BlRushDeliveryModeModel getBlRushDeliveryModeForWarehouseZipCode(final String deliveryMode, final boolean payByCustomer) {
+        final StringBuilder barcodeList = new StringBuilder("select {rush.pk} from {BlRushDeliveryMode as rush}, {DeliveryTypeEnum as dt} " +
+                "where {dt.pk} = {rush.deliveryType} and {dt.code} = ?deliveryMode and {rush.active} = 1 and {rush.payByCustomer} = ?payByCustomer");
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("deliveryMode", deliveryMode);
+        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+        final Collection<BlRushDeliveryModeModel> results = getFlexibleSearchService().<BlRushDeliveryModeModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_RUSH_ZONE_DELIVERY_MODE + deliveryMode);
+        return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod,
                                                                       final boolean payByCustomer) {
         final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ZoneDeliveryMode as zone} " +

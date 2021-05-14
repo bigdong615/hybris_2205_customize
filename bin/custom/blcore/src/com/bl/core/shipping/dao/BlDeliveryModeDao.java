@@ -108,4 +108,13 @@ public interface BlDeliveryModeDao {
      * @return dimensionalFactor
      */
     Integer getDimensionalFactorForDeliveryFromStore(final String baseStore);
+
+    /**
+     * This method will give rush model for delivery type for warehouse zipCode
+     *
+     * @param deliveryMode
+     * @param payByCustomer
+     * @return
+     */
+    BlRushDeliveryModeModel getBlRushDeliveryModeForWarehouseZipCode(final String deliveryMode, final boolean payByCustomer);
 }
