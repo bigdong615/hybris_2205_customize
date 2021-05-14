@@ -115,18 +115,17 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	{
 		final CartModel cartModel = getSessionCart();
 		final String cartCode = cartModel.getCode();
-		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} on Cart: {}", rentalStartDate, cartCode);
 		cartModel.setRentalStartDate(rentalStartDate);
-		BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental End Date: {} on Cart: {}", rentalEndDate, cartCode);
 		cartModel.setRentalEndDate(rentalEndDate);
 		try 
 		{			
 			getModelService().save(cartModel);
+			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}", rentalStartDate, rentalEndDate, cartCode);
 		}
 		catch(final Exception exception)
 		{
 			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, 
-					"Error while saving rental dates on cart - {}", cartCode);
+					"Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate, cartCode);
 		}
 	}
 
