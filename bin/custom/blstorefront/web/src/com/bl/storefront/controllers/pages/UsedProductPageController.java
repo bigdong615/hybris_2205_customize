@@ -32,12 +32,8 @@ public class UsedProductPageController extends AbstractBlProductPageController {
       final HttpServletRequest request, final HttpServletResponse response)
       throws CMSItemNotFoundException, UnsupportedEncodingException {
     final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
-    final List<ProductOption> extraOptions = Arrays
-        .asList(ProductOption.VARIANT_MATRIX_BASE, ProductOption.VARIANT_MATRIX_URL,
-            ProductOption.VARIANT_MATRIX_MEDIA);
-
     final ProductData productData = productFacade
-        .getProductForCodeAndOptions(productCode, extraOptions);
+        .getProductForCodeAndOptions(productCode, null);
     productData.setProductPageType(BlControllerConstants.USED_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, false);
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
@@ -46,10 +42,7 @@ public class UsedProductPageController extends AbstractBlProductPageController {
 				ProductOption.URL, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
 				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
 				ProductOption.VARIANT_FULL, ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA,
-				ProductOption.REQUIRED_SERIAL_DATA) );
-
-		options.addAll(extraOptions);
-		
+				ProductOption.REQUIRED_SERIAL_DATA) );		
     return productDetail(encodedProductCode, options, productData, model, request, response);
   }
 }

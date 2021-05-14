@@ -52,12 +52,8 @@ public class RentalProductPageController extends AbstractBlProductPageController
       throws CMSItemNotFoundException, UnsupportedEncodingException {
 
     final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
-    final List<ProductOption> extraOptions = Arrays
-        .asList(ProductOption.VARIANT_MATRIX_BASE, ProductOption.VARIANT_MATRIX_URL,
-            ProductOption.VARIANT_MATRIX_MEDIA);
-
     final ProductData productData = productFacade
-        .getProductForCodeAndOptions(productCode, extraOptions);
+        .getProductForCodeAndOptions(productCode, null);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
       model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
@@ -67,9 +63,6 @@ public class RentalProductPageController extends AbstractBlProductPageController
 				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
 				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
 				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA) );
-
-		options.addAll(extraOptions);
-		
       return productDetail(encodedProductCode, options, productData, model, request, response);
   }
 }

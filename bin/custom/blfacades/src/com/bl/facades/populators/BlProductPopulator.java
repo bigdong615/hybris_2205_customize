@@ -17,7 +17,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 /*
- * This populator is used for populating bl related specific product attribute.
+ * This populator is used for populating bl Rental Product related specific product attribute.
  *  @author  Vijay Vishwakarma
  */
 public class BlProductPopulator extends AbstractBlProductPopulator implements Populator<BlProductModel, ProductData> {

@@ -24,6 +24,7 @@ import com.bl.facades.product.data.SerialProductData;
 
 
 /**
+ * This populator is used for populating bl Serial Product related specific product attribute.
  * @author Ravikumar
  *
  */
