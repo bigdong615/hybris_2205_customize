@@ -398,15 +398,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 
 		getRequestContextData(request).setProduct(productModel);
 
-		final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
-				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
-				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
-				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
-				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA) );
-
-		options.addAll(extraOptions);
-
-		final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, options);
+		final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, extraOptions);
 
 		sortVariantOptionData(productData);
 		storeCmsPageInModel(model, getPageForProduct(productCode));
