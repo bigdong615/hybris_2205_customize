@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import java.util.Date;
+
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
  *
@@ -61,6 +63,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   public void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType)
   {
 	  getBlCartService().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate)
+  {
+	  getBlCartService().setRentalDatesOnCart(rentalStartDate, rentalEndDate);
   }
 
   /**
