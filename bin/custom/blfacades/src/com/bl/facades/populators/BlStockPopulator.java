@@ -51,10 +51,7 @@ public class BlStockPopulator<SOURCE extends ProductModel, TARGET extends StockD
 					blProductModel.getCode(), baseStore.getWarehouses(), startDay, endDay);
 			final StockLevelStatus stockLevelStatus = stockResult.getStockLevelStatus();
 			stockData.setStockLevelStatus(stockLevelStatus);
-			if (StockLevelStatus.LOWSTOCK.equals(stockLevelStatus)) {
-				stockData
-						.setStockLevel(stockResult.getAvailableCount());
-			}
+			stockData.setStockLevel(stockResult.getAvailableCount());
 		}
 	}
 

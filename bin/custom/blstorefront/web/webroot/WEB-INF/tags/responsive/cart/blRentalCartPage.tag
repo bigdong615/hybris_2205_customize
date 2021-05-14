@@ -1,4 +1,3 @@
-<%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template"%>
@@ -32,7 +31,10 @@
                           <div id="order" class="col-lg-7">
                               <h1><spring:theme code="text.rental.cart.title"/></h1>
                               <hr>
-                              <p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;<input type="text" class="form-control cart-picker" id="litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>"></p>
+                              <p>
+                                <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
+                                <input type="text" class="form-control cart-picker" id="litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+                              </p>
 
                               <c:forEach items="${cartData.entries}" var="entry">
                                  <cart:blRentalCartItem entry="${entry}" cartData="${cartData}" />
