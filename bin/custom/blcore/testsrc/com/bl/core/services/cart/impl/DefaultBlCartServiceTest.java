@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.mockito.*;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
@@ -44,6 +45,10 @@ public class DefaultBlCartServiceTest {
 
   @Mock
   private CalculationService calculationService;
+  
+  private Date rentalStartDate = new Date();
+  
+  private Date rentalEndDate = new Date();
 
   @Before
   public void setup() {
@@ -64,5 +69,14 @@ public class DefaultBlCartServiceTest {
     parameter.setCart(cartModel);
     commerceCartService.removeAllEntries(parameter);
     Mockito.verify(modelService, Mockito.times(1)).removeAll(entries);
+  }
+  
+  @Test
+  public void testSetRentalDatesOnCart()
+  {
+	  cartModel.setRentalStartDate(rentalStartDate);
+	  cartModel.setRentalEndDate(rentalEndDate);
+	  modelService.save(cartModel);
+      Mockito.verify(modelService, Mockito.times(1)).save(cartModel);
   }
 }
