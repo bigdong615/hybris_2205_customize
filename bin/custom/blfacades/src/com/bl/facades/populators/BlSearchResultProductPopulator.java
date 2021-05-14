@@ -52,8 +52,7 @@ import com.bl.logging.BlLogger;
 public class BlSearchResultProductPopulator implements Populator<SearchResultValueData, ProductData> {
 
 	private static final Logger LOG = Logger.getLogger(BlSearchResultProductPopulator.class);
-  private static final String BL_IMAGE = "blimage";
-  private static final String MEDIA_FORMAT = "300Wx300H";
+
 
   private ImageFormatMapping imageFormatMapping;
   private PriceDataFactory priceDataFactory;
@@ -235,8 +234,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   protected void addImageData(final SearchResultValueData source, final String imageFormat, final String mediaFormatQualifier,
       final ImageDataType type, final List<ImageData> images)
   {
-    if(mediaFormatQualifier.equalsIgnoreCase(MEDIA_FORMAT)) {
-      final String splitter = BL_IMAGE;
+    if(mediaFormatQualifier.equalsIgnoreCase(BlCoreConstants.MEDIA_FORMAT)) {
+      final String splitter = BlCoreConstants.BL_IMAGE;
       final String multiImage = getValue(source, "img-" + mediaFormatQualifier);
 
       if(null != multiImage && !multiImage.isEmpty() && multiImage.contains(splitter)) {
@@ -351,18 +350,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     }
   }
 
-  /**
-   * This method is created to add pproduct tags to target in case if rental product
-   * @param source soucre object
-   * @param target target to be fill
-   * @param key key to fetch value from source
-   * @param value value to be set for target
-   */
-  private void addProductTagForRent (final SearchResultValueData source, final ProductData target ,final String key , final String value) {
-    if (null!=this.<Boolean>getValue(source, key)  && this.<Boolean>getValue(source, key)) {
-      target.setProductTagValues(value);
-    }
-  }
 
   /**
    * This method is greated for setting upcoming product to target
@@ -376,23 +363,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     }
   }
 
-  private void addStock(final ProductData target) {
-    try
-    {
-      // In case of low stock then make a call to the stock service to determine if in or out of stock.
-      // In this case (low stock) it is ok to load the product from the DB and do the real stock check
-      final ProductModel productModel = getProductService().getProductForCode(target.getCode());
-      if (productModel != null)
-      {
-        target.setStock(getStockConverter().convert(productModel));
-      }
-    }
-    catch (final UnknownIdentifierException ex)
-    {
-      target.setStock(getStockLevelStatusConverter().convert(StockLevelStatus.OUTOFSTOCK));
-    }
-
-  }
 
   protected PromotionData createPromotionData()
   {

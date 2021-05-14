@@ -10,7 +10,7 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearc
  * This Class created to populate custom attribute to search results
  * @author Manikandan
  */
-public class BlProductCategorySearchPagePopulator<QUERY, STATE, RESULT, ITEM extends ProductData, SCAT, CATEGORY>
+public class BlProductCategorySearchPagePopulator<QUERY, STATE, RESULT, ITEM extends ProductData, SCAT, CATEGORY> //NOSONAR
     extends ProductCategorySearchPagePopulator<QUERY, STATE, RESULT, ProductData, SCAT, CATEGORY> {
 
   /**
