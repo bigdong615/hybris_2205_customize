@@ -37,7 +37,13 @@
 		<script src="${commonResourcePathHtml}/js/jquery.slideviewer.custom.1.2.js"></script>
 		
 		<%-- Custom ACC JS --%>
+
+		<%-- added custom js bl-custom.js for gift card --%>
+		<script src="${commonResourcePathHtml}/js/bl-custom.js"></script>
+		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+
     <script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+
 		<script src="${commonResourcePathHtml}/js/acc.autocomplete.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.carousel.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.cart.js"></script>

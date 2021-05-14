@@ -14,7 +14,7 @@
             <ycommerce:testId code="orderDetails_appliedVouchers_label">
                 <c:forEach items="${order.appliedVouchers}" var="voucher">
                     <li class="coupon-list__item">
-                        <span class="coupon-code">${fn:escapeXml(voucher)}</span>
+                        <span id="${voucher}" class="coupon-code glyphicon glyphicon-remove js-release-voucher-remove-btn voucher-list__item-remove">${fn:escapeXml(voucher)}</span>
                     </li>
                 </c:forEach>
             </ycommerce:testId>

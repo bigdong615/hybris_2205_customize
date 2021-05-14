@@ -538,7 +538,7 @@
 		<property name="itemCleanupHooks" ref="csTicketRetentionHooks"/>
 		<property name="ticketBusinessService" ref="ticketBusinessService"/>
 	</bean>
-	
+
 	<!-- Impex Import Services to be used while system initialization or update process -->
 	<!-- BlCoreDataImportService class is used to import common data, product catalog, content catalog, store 
     	from coredata while performing system initialization or update process. -->
@@ -661,6 +661,61 @@
 	<bean id="blGlobalCategorySource" parent="abstractCategorySource">
 		<property name="rootCategory" value="1"/>
 	</bean>
+
+
+	<!--BL-xyz GIFT CARD EMAIL START -->
+	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BLGiftCardEmailEventListener"
+		parent="abstractAcceleratorSiteEventListener">
+		<property name="modelService" ref="modelService" />
+		<property name="businessProcessService" ref="businessProcessService" />
+	</bean>
+
+	<bean id="giftCardEmailProcessDefinitionResource"
+		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
+		<property name="resource"
+			value="classpath:/blcore/processes/giftCardEmailProcess.xml" />
+	</bean>
+
+	<bean id="generateGiftCardEmail" parent="abstractGenerateEmailAction">
+		<property name="frontendTemplateName" value="GiftCardEmailTemplate" />
+	</bean>
+
+	<!--BL-xyz GIFT CARD EMAIL END-->
+
+	<!--BL-xyx changes related to gift card Start-->
+	<alias name="blGiftCardDaoImpl" alias="giftCardDao" />
+	<bean id="blGiftCardDaoImpl" class="com.bl.core.services.dao.impl.BlGiftCardDaoImpl">
+		<property name="flexibleSearchService" ref="flexibleSearchService" />
+	</bean>
+
+	<alias name="defaultGiftCardOrderMethodHook" alias="giftCardOrderMethodHook" />
+	<bean id="defaultGiftCardOrderMethodHook"
+		  class="com.bl.core.order.hook.impl.GiftCardOrderMethodHook">
+		<property name="eventService" ref="eventService" />
+		<property name="modelService" ref="modelService" />
+	</bean>
+
+	<bean id="commerceGiftCardOrderMethodHookMergeDirective"
+		  depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="giftCardOrderMethodHook" />
+	</bean>
+
+	<alias name="blGiftCardServiceImpl" alias="giftCardService" />
+	<bean id="blGiftCardServiceImpl"
+		  class="com.bl.core.services.gitfcard.impl.DefaultBlGiftCardService">
+	</bean>
+
+	<bean id="giftCardbalance" class="com.bl.core.attributes.GiftCardBalanceHandler" />
+
+	<alias alias="blCheckoutCartCalculationStrategy" name="defaultCheckoutCartCalculationStrategy" />
+	<bean id="defaultCheckoutCartCalculationStrategy"
+		  class="com.bl.core.services.order.impl.BLCommerceCartCalculationStrategy"
+		  parent="defaultCommerceCartCalculationStrategy">
+		<property name="giftCardService" ref="giftCardService" />
+	</bean>
+
+	<!--BL-xyx changes related to gift card End-->
+
 
 
 	<!-- BL-110-v2 BLInventoryLocation item Prepare Interceptor to generate inventoryLocationID-->
@@ -856,5 +911,6 @@
 	<alias alias="zoneDeliveryModeService" name="blDeliveryModeService"/>
 	<bean id="blDeliveryModeService" class="com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService"
 		  parent="defaultZoneDeliveryModeService"/>
+
 
 </beans>

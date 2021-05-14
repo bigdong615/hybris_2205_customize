@@ -152,6 +152,44 @@
             </targetElement>
         </relation>
 
+
+        <relation code="GiftCard2Movement" generate="true" localized="false"
+                  autocreate="true">
+            <sourceElement qualifier="giftCard" type="GiftCard"
+                           cardinality="one" />
+            <targetElement qualifier="movements" type="GiftCardMovement"
+                           cardinality="many" collectiontype="list" />
+        </relation>
+
+        <relation code="GiftCard2Order" generate="true" localized="false"
+                  autocreate="true">
+            <deployment table="GiftCard2OrderRel" typecode="25671" />
+            <sourceElement qualifier="giftCard" type="GiftCard"
+                           cardinality="many" collectiontype="list" />
+            <targetElement qualifier="order" type="AbstractOrder"
+                           cardinality="many" collectiontype="list" />
+        </relation>
+
+        <relation code="GiftCard2Disputeorder" generate="true"
+                  localized="false" autocreate="true">
+            <deployment table="GiftCard2Disputeorder" typecode="25674" />
+            <sourceElement qualifier="giftCard" type="GiftCard"
+                           cardinality="many" collectiontype="list" />
+            <targetElement qualifier="disputeorder" type="AbstractOrder"
+                           cardinality="many" collectiontype="list" />
+        </relation>
+
+
+        <relation code="GiftCard2Customer" generate="true" localized="false"
+                  autocreate="true">
+            <sourceElement qualifier="giftCard" type="GiftCard"
+                           cardinality="many" collectiontype="list" />
+            <targetElement qualifier="customer" type="Customer"
+                           cardinality="one" />
+        </relation>
+
+    
+
         <!--BlInventoryLocationToInventoryLocationScanHistory-->
         <relation code="BlInventoryLocation2InventoryLocationScanHistoryRelation" autocreate="true" generate="true" localized="false">
             <sourceElement qualifier="blInventoryLocation" type="BlInventoryLocation" cardinality="one">
@@ -161,6 +199,7 @@
                 <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
             </targetElement>
         </relation>
+	
 
         <!-- BL-542 -->
         <relation code="ShippingGroup2ZoneDeliveryRel" autocreate="true" generate="true" localized="false">
@@ -267,7 +306,7 @@
             </itemtype>
         </typegroup>
 
-		<!-- Custom CMS ItemTypes -->
+        <!-- Custom CMS ItemTypes -->
 		<typegroup name="cms">
 			<itemtype code="CustomPromoMessageComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" >
 				<description>CMS Paragraph Component that contains the Promotion message section on header</description>
@@ -1005,6 +1044,157 @@
                  </attribute>
                </attributes>
             </itemtype>
+
+
+            <!--<BL-xyz changes related to giftCard Start>-->
+            <itemtype code="AbstractOrder" autocreate="false" generate="false">
+                <description>Base BL order extension that contains additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="giftCardAmount" type="java.lang.Double">
+                        <description>Gift Card Amount</description>
+                        <modifiers read="true" write="true" search="false"
+                                   optional="true" />
+                        <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="grandTotal" type="java.lang.Double">
+                        <description>Grand Total</description>
+                        <modifiers read="true" write="true" search="false"
+                                   optional="true" />
+                        <persistence type="property" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="GiftCardEmailProcess" extends="StoreFrontCustomerProcess"
+                      autocreate="true" generate="true">
+                <description>Represents process that is used for sending Gift Card email.
+                </description>
+                <attributes>
+                    <attribute qualifier="customerEmail" type="java.lang.String">
+                        <persistence type="property" />
+                        <description>Customer Email</description>
+                    </attribute>
+                    <attribute qualifier="giftcard" type="GiftCard">
+                        <persistence type="property" />
+                        <description>Gift Card for which email is sent</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="GiftCard" autocreate="true" generate="true">
+                <deployment table="GiftCard" typecode="25239" />
+                <attributes>
+                    <attribute qualifier="code" type="java.lang.String">
+                        <modifiers write="true" read="true" optional="false"
+                                   search="true" unique="true" />
+                        <persistence type="property" />
+                    </attribute>
+
+                    <attribute qualifier="amount" type="java.lang.Double">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"
+                                   optional="true" />
+                    </attribute>
+
+                    <attribute qualifier="currency" type="Currency">
+                        <description>The currency context</description>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"
+                                   optional="true" />
+                    </attribute>
+
+                    <attribute qualifier="maxamount" type="java.lang.Double">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"
+                                   optional="true" />
+                    </attribute>
+
+                    <attribute type="java.util.Date" qualifier="startDate">
+                        <modifiers write="true" read="true" optional="true"
+                                   search="true" />
+                        <persistence type="property" />
+                    </attribute>
+
+                    <attribute type="java.util.Date" qualifier="endDate">
+                        <modifiers write="true" read="true" optional="true"
+                                   search="true" />
+                        <persistence type="property" />
+                    </attribute>
+
+                    <attribute qualifier="active" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers search="false" optional="true" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+
+                    <attribute qualifier="email" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers search="false" optional="true" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+
+                    <attribute qualifier="issuer" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers search="false" optional="true" />
+                    </attribute>
+
+                    <attribute autocreate="true" qualifier="balance" type="java.lang.Double">
+                        <modifiers write="false" />
+                        <persistence type="dynamic" attributeHandler="giftCardbalance" />
+                        <description>Dynamic attribute for balance</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+
+            <itemtype code="GiftCardMovement" autocreate="true"
+                      generate="true">
+                <deployment table="GiftCardMovement" typecode="25240" />
+                <attributes>
+
+                    <attribute qualifier="transactionId" type="java.lang.String">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                    </attribute>
+
+                    <attribute qualifier="amount" type="java.lang.Double">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"
+                                   optional="true" />
+                    </attribute>
+
+                    <attribute qualifier="currency" type="Currency">
+                        <description>The currency context</description>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"
+                                   optional="true" />
+                    </attribute>
+
+                    <attribute qualifier="order" type="Order">
+                        <description>The currency context</description>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"
+                                   optional="true" />
+                    </attribute>
+
+                    <attribute qualifier="commited" type="java.lang.Boolean">
+                        <description>The currency context</description>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"
+                                   optional="true" />
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    </attribute>
+
+                    <attribute type="java.util.Date" qualifier="redeemDate">
+                        <modifiers write="true" read="true" optional="true"
+                                   search="true" />
+                        <persistence type="property" />
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            
+
          
          	<itemtype code="StockLevel" autocreate="false" generate="false">
             <description>Extending StockLevel type to include date related fields</description>
@@ -1346,6 +1536,7 @@
                     </attribute>
                 </attributes>
             </itemtype>
+
 
             <itemtype code="ZoneDeliveryModeValue" extends="GenericItem" autocreate="false" generate="false" >
                 <attributes>

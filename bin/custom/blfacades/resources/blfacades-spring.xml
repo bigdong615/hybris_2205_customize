@@ -455,5 +455,37 @@
 		<property name="list" ref="extendedCartConverter"/>
 		<property name="add" ref="cartPopulator"/>
 	</bean>
+
+	<!--BL-563 Gift Card-->
+	<alias name="defaultBlOrderPopulator" alias="blOrderPopulator" />
+	<bean id="defaultBlOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="orderPopulator">
+	</bean>
+
+	<bean id="defaultCartConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CartData"/>
+		<property name="populators">
+			<list>
+				<ref bean="cartPopulator"/>
+				<ref bean="pickupOrderEntryGroupPopulator"/>
+				<ref bean="deliveryOrderEntryGroupPopulator"/>
+				<ref bean="orderAppliedVouchersPopulator"/>
+				<!-- <ref bean="blCartPopulator"/> -->
+			</list>
+		</property>
+	</bean>
+
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="orderConverter"/>
+		<property name="add" ref="blOrderPopulator"/>
+	</bean>
+
+	<bean id="giftCardEmailContext"
+		class="com.bl.facades.process.email.context.GiftCardEmailContext"
+		parent="abstractEmailContext" scope="prototype">
+	</bean>
+
+
+	<alias name="defaultBlGiftCardFacade" alias="blGiftCardFacade"/>
+	<bean id="defaultBlGiftCardFacade" class="com.bl.facades.giftcard.impl.DefaultBlGiftCardFacade"/>
 	
 </beans>
