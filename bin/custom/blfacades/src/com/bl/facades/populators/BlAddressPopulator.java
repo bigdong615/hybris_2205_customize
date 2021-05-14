@@ -15,6 +15,9 @@ public class BlAddressPopulator extends AddressPopulator {
         if(source.getAddressType() != null) {
             target.setAddressType(source.getAddressType().toString());
         }
+        target.setOpeningDaysDetails(source.getOpeningDaysDetails());
+        target.setUpsStoreAddress(source.getUpsStoreAddress());
+        target.setPickStoreAddress(source.getPickStoreAddress());
     }
 
 }

@@ -4,8 +4,20 @@ import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.core.model.user.AddressModel;
+import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
+import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+
+import javax.annotation.Resource;
 
 public class BlAddressDataUtil extends AddressDataUtil {
+
+    @Resource(name="commonI18NService")
+    private CommonI18NService commonI18NService;
 
     @Override
     public AddressData convertToAddressData(final AddressForm addressForm)
@@ -20,6 +32,9 @@ public class BlAddressDataUtil extends AddressDataUtil {
             final BlAddressForm blAddressForm = (BlAddressForm) addressForm;
             addressData.setEmail(blAddressForm.getEmail());
             addressData.setAddressType(blAddressForm.getAddressType());
+            addressData.setUpsStoreAddress(blAddressForm.isUpsStoreAddress());
+            addressData.setOpeningDaysDetails(blAddressForm.getOpeningDaysDetails());
+            addressData.setPickStoreAddress(blAddressForm.isPickStoreAddress());
         }
     }
 

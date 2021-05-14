@@ -54,6 +54,9 @@
                                 </button>
                             </div>
                             <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                            <div class="page-loader-new-layout">
+                            	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+                            </div>
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
