@@ -186,6 +186,14 @@
 	    <property name="deliveryAddressZipCode" type="String"/>
   	</bean>
 
+
+  <!--Added for custom attribute -->
+
+  <bean class="de.hybris.platform.commerceservices.search.resultdata.SearchResultValueData">
+    <property name="blPage" type="String"/>
+  </bean>
+
+
 </beans>
 
 

@@ -17,9 +17,11 @@ import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.model.pages.CategoryPageModel;
 import de.hybris.platform.commercefacades.product.data.CategoryData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.commercefacades.search.data.SearchQueryData;
 import de.hybris.platform.commercefacades.search.data.SearchStateData;
 import de.hybris.platform.commerceservices.search.facetdata.FacetRefinement;
 import de.hybris.platform.commerceservices.search.facetdata.ProductCategorySearchPageData;
+import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
@@ -42,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
-    private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";
+    private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";  //NOSONAR
 
     @ResponseBody
     @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
@@ -110,7 +112,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
 
         final CategorySearchEvaluator categorySearch = new CategorySearchEvaluator(categoryCode, searchQuery, page, showMode,
-            sortCode, categoryPage);
+            sortCode, categoryPage , category.isRentalCategory() ? BlCoreConstants.RENTAL_GEAR : BlCoreConstants.USED_GEAR_CODE);
 
         ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData = null;
         try
@@ -231,4 +233,87 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
         return BlCoreConstants.EMPTY_STRING;
     }
+
+    // Created to add custom attribute to searchQueryData
+    protected class CategorySearchEvaluator
+    {
+        private final String categoryCode;
+        private final SearchQueryData searchQueryData = new SearchQueryData();
+        private final int page;
+        private final ShowMode showMode;
+        private final String sortCode;
+        private CategoryPageModel categoryPage;
+        private boolean showCategoriesOnly;
+        private ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData;
+
+        public CategorySearchEvaluator(final String categoryCode, final String searchQuery, final int page, final ShowMode showMode,
+            final String sortCode, final CategoryPageModel categoryPage , final String blPageType)
+        {
+            this.categoryCode = categoryCode;
+            this.searchQueryData.setBlPage(blPageType);
+            this.searchQueryData.setValue(searchQuery);
+            this.page = page;
+            this.showMode = showMode;
+            this.sortCode = sortCode;
+            this.categoryPage = categoryPage;
+            searchQueryData.setBlPage(blPageType);
+        }
+
+        public void doSearch()
+        {
+            showCategoriesOnly = false;
+            if (searchQueryData.getValue() == null)
+            {
+                // Direct category link without filtering
+                searchPageData = getProductSearchFacade().categorySearch(categoryCode);
+                if (categoryPage != null)
+                {
+                    showCategoriesOnly = !categoryHasDefaultPage(categoryPage)
+                        && CollectionUtils.isNotEmpty(searchPageData.getSubCategories());
+                }
+            }
+            else
+            {
+                // We have some search filtering
+                if (categoryPage == null)
+                {
+                    // Load the default category page
+                    categoryPage = getDefaultCategoryPage();
+                }
+
+                final SearchStateData searchState = new SearchStateData();
+                searchState.setQuery(searchQueryData);
+
+                final PageableData pageableData = createPageableData(page, getSearchPageSize(), sortCode, showMode);
+                searchPageData = getProductSearchFacade().categorySearch(categoryCode, searchState, pageableData);
+
+            }
+            //Encode SearchPageData
+            searchPageData = (ProductCategorySearchPageData) encodeSearchPageData(searchPageData);
+        }
+
+        public int getPage()
+        {
+            return page;
+        }
+
+        public CategoryPageModel getCategoryPage()
+        {
+            return categoryPage;
+        }
+
+        public boolean isShowCategoriesOnly()
+        {
+            return showCategoriesOnly;
+        }
+
+        public ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> getSearchPageData()
+        {
+            return searchPageData;
+        }
+    }
+
+
 }
+
+
