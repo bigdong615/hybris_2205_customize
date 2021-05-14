@@ -4,6 +4,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.impl.DefaultCartFacade;
@@ -27,7 +28,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
   private static final Logger LOGGER = Logger.getLogger(DefaultBlCartFacade.class);
   private BlCartService blCartService;
-  public static final String SERIAL_CODE_MISSING = "serialCodeNotPresent";
+
 
   /**
    * {@inheritDoc}
@@ -90,7 +91,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
     try {
       if (StringUtils.isNotEmpty(serialCode) && !StringUtils
-          .equalsIgnoreCase(serialCode, SERIAL_CODE_MISSING) && CollectionUtils
+          .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
           .isNotEmpty(blProductModel.getSerialProducts())) {
         for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
           if (blSerialProduct.getProductId().equals(serialCode)) {
@@ -132,11 +133,11 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
       final CartModel cartModel,
       final CommerceCartModification commerceCartModification) {
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
-        .equals("success") && blSerialProductModel == null) {
+        .equals(BlFacadesConstants.SUCCESS) && blSerialProductModel == null) {
       cartModel.setIsRentalCart(Boolean.TRUE);
     }
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
-        .equals("success") && blSerialProductModel != null) {
+        .equals(BlFacadesConstants.SUCCESS) && blSerialProductModel != null) {
       cartModel.setIsRentalCart(Boolean.FALSE);
     }
     getModelService().save(cartModel);
@@ -155,7 +156,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     BlSerialProductModel blSerialProductModel = null;
 
     if (StringUtils.isNotEmpty(serialCode) && !StringUtils
-        .equalsIgnoreCase(serialCode, SERIAL_CODE_MISSING) && CollectionUtils
+        .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
         .isNotEmpty(blProductModel.getSerialProducts())) {
       for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
         if (blSerialProduct.getProductId().equals(serialCode)) {

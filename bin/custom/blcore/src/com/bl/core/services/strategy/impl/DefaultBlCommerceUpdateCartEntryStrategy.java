@@ -10,12 +10,14 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceUpdateCartEntryStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -41,38 +43,114 @@ public class DefaultBlCommerceUpdateCartEntryStrategy extends
 
     final ModelService modelService = getModelService();
 
-    if (entryNewQuantity >= 0) {
-      // Adjust the entry quantity to the new value
-      entryToUpdate.setQuantity(Long.valueOf(entryNewQuantity));
-      modelService.save(entryToUpdate);
-      modelService.refresh(cartModel);
-      final CommerceCartParameter parameter = new CommerceCartParameter();
-      parameter.setEnableHooks(true);
-      parameter.setCart(cartModel);
-      getCommerceCartCalculationStrategy().calculateCart(parameter);
-      modelService.refresh(entryToUpdate);
+    if (entryNewQuantity <= 0) {
+      return removeEntry(cartModel, entryToUpdate, newQuantity, modelService);
 
-      // Return the modification data
-      final CommerceCartModification modification = new CommerceCartModification();
-      modification.setQuantityAdded(actualAllowedQuantityChange);
-      modification.setEntry(entryToUpdate);
-      modification.setQuantity(entryNewQuantity);
+    } else {
+      return updateEntry(cartModel, entryToUpdate, actualAllowedQuantityChange, newQuantity,
+          entryNewQuantity,
+          modelService);
+    }
 
-      //isMaxOrderQuantitySet functionality is not applicable for BL.
+  }
+
+  /**
+   * Update cart entry.
+   *
+   * @param cartModel
+   * @param entryToUpdate
+   * @param actualAllowedQuantityChange
+   * @param newQuantity
+   * @param entryNewQuantity
+   * @param modelService
+   * @return CommerceCartModification
+   */
+  private CommerceCartModification updateEntry(final CartModel cartModel,
+      final AbstractOrderEntryModel entryToUpdate, final long actualAllowedQuantityChange,
+      final long newQuantity,
+      final long entryNewQuantity, final ModelService modelService) {
+    // Adjust the entry quantity to the new value
+    entryToUpdate.setQuantity(Long.valueOf(entryNewQuantity));
+    modelService.save(entryToUpdate);
+    modelService.refresh(cartModel);
+    final CommerceCartParameter parameter = new CommerceCartParameter();
+    parameter.setEnableHooks(true);
+    parameter.setCart(cartModel);
+    getCommerceCartCalculationStrategy().calculateCart(parameter);
+    modelService.refresh(entryToUpdate);
+
+    // Return the modification data
+    final CommerceCartModification modification = new CommerceCartModification();
+    modification.setQuantityAdded(actualAllowedQuantityChange);
+    modification.setEntry(entryToUpdate);
+    modification.setQuantity(entryNewQuantity);
+
+    //isMaxOrderQuantitySet functionality is not applicable for BL.
       /*if (isMaxOrderQuantitySet(maxOrderQuantity) && entryNewQuantity == maxOrderQuantity.longValue())
       {
         modification.setStatusCode(CommerceCartModificationStatus.MAX_ORDER_QUANTITY_EXCEEDED);
       }*/
-      if (newQuantity == entryNewQuantity) {
-        modification.setStatusCode(CommerceCartModificationStatus.SUCCESS);
-      } else {
-        modification.setStatusCode(CommerceCartModificationStatus.LOW_STOCK);
-      }
-
-      return modification;
+    if (newQuantity == entryNewQuantity) {
+      modification.setStatusCode(CommerceCartModificationStatus.SUCCESS);
+    } else {
+      modification.setStatusCode(CommerceCartModificationStatus.LOW_STOCK);
     }
 
-    return new CommerceCartModification();
+    return modification;
+  }
+
+  /**
+   * Remove cart entry.
+   *
+   * @param cartModel
+   * @param entryToUpdate
+   * @param newQuantity
+   * @param modelService
+   * @return CommerceCartModification
+   */
+  private CommerceCartModification removeEntry(final CartModel cartModel,
+      final AbstractOrderEntryModel entryToUpdate, final long newQuantity,
+      final ModelService modelService) {
+    final CartEntryModel entry = new CartEntryModel() {
+      @Override
+      public Double getBasePrice() {
+        return null;
+      }
+
+      @Override
+      public Double getTotalPrice() {
+        return null;
+      }
+    };
+    entry.setOrder(cartModel);
+    entry.setEntryGroupNumbers(new HashSet<>(entryToUpdate.getEntryGroupNumbers()));
+    entry.setProduct(entryToUpdate.getProduct());
+
+    // The allowed new entry quantity is zero or negative
+    // just remove the entry
+    modelService.remove(entryToUpdate);
+    modelService.refresh(cartModel);
+    normalizeEntryNumbers(cartModel);
+
+    final CommerceCartParameter parameter = new CommerceCartParameter();
+    parameter.setEnableHooks(true);
+    parameter.setCart(cartModel);
+    getCommerceCartCalculationStrategy().calculateCart(parameter);
+
+    // Return an empty modification
+    final CommerceCartModification modification = new CommerceCartModification();
+    modification.setEntry(entry);
+    modification.setQuantity(0);
+    // We removed all the quantity from this row
+    modification.setQuantityAdded(-entryToUpdate.getQuantity().longValue());
+
+    if (newQuantity == 0) {
+      modification.setStatusCode(CommerceCartModificationStatus.SUCCESS);
+    } else {
+      modification.setStatusCode(CommerceCartModificationStatus.LOW_STOCK);
+    }
+
+    return modification;
   }
 
   /**
