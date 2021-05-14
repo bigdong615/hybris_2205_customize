@@ -48,6 +48,7 @@
 		<script src="${commonResourcePathHtml}/js/acc.colorbox.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.common.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.forgottenpassword.js"></script>
+		<script src="${commonResourcePathHtml}/js/acc.account.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.global.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.hopdebug.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.imagegallery.js"></script>
