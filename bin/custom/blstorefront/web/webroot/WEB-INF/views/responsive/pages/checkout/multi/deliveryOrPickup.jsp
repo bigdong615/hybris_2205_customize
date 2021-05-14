@@ -75,15 +75,15 @@
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Wait!</h5>
+            <h5 class="modal-title"><spring:theme code="shipping.interception.change.date.warning.wait"/></h5>
             <button type="button" class="btn-close" aria-label="Close" id="shippingCloseIconModal"></button>
           </div>
           <div class="modal-body"> 
           <input type="hidden" value="" id="rentalStartDate">
           <input type="hidden" value="" id="rentalEndDate">
-              <p class="body14"><spring:theme code="shipping.interception.change.date.warning"/></p>
-              <a href="#" class="btn btn-primary btn-block my-4" id="shippingChangeRentalDate">Continue</a>
-              <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" id="shippingCloseModal">Cancel</a></p>
+              <p class="body14"><spring:theme code="shipping.interception.change.date.warning.message"/></p>
+              <a href="#" class="btn btn-primary btn-block my-4" id="shippingChangeRentalDate"><spring:theme code="shipping.interception.change.date.warning.continue"/></a>
+              <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" id="shippingCloseModal"><spring:theme code="shipping.interception.change.date.warning.cancel"/></a></p>
           </div>
         </div>
       </div>
