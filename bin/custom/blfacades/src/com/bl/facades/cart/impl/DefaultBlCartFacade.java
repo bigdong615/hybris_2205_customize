@@ -4,6 +4,8 @@ import com.bl.core.services.cart.BlCartService;
 import com.bl.facades.cart.BlCartFacade;
 import de.hybris.platform.commercefacades.order.impl.DefaultCartFacade;
 
+import java.util.Date;
+
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
  *
@@ -47,6 +49,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   public void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType)
   {
 	  getBlCartService().updateCartEntryDamageWaiver(entryNumber, damageWaiverType);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate)
+  {
+	  getBlCartService().setRentalDatesOnCart(rentalStartDate, rentalEndDate);
   }
 
   /**

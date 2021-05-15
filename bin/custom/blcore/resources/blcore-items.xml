@@ -1525,6 +1525,16 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="rentalStartDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Selected rental start date</description>
+                    </attribute>
+                    <attribute qualifier="rentalEndDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						<description>Selected rental end date</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>

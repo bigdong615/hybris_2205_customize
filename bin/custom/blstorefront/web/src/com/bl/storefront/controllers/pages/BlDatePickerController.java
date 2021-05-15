@@ -80,6 +80,8 @@ public class BlDatePickerController extends AbstractPageController
 					datePickerCookieValue.append(BlControllerConstants.SEPARATOR);
 					datePickerCookieValue.append(endDay);
 					blRentalDateCookieGenerator.addCookie(response, datePickerCookieValue.toString());
+					// Setting rental start date and end date on cart
+					getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 					// Resetting cart and cart entries calculation flag to false, so that it recalculates once the rental dates is changed
 					getBlCartFacade().resetCartCalculationFlag(); 
 					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Cookie added for {} for the duration of {} and {} ",
@@ -111,6 +113,8 @@ public class BlDatePickerController extends AbstractPageController
 	{
 		blRentalDateCookieGenerator.removeCookie(response);
 		blDatePickerService.removeRentalDatesFromSession();
+		// Resetting rental start date and end date on cart
+		getBlCartFacade().setRentalDatesOnCart(null, null);
 		// Resetting cart and cart entries calculation flag to false, so that it recalculates once the rental dates is reset
 		getBlCartFacade().resetCartCalculationFlag(); 
 		return BlControllerConstants.SUCCESS;

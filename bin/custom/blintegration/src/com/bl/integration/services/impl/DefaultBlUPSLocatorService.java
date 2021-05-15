@@ -89,13 +89,13 @@ public class DefaultBlUPSLocatorService  implements BlUPSLocatorService {
       }
     } catch (JAXBException e) {
       populateResponseExceptionData(upsLocatorResposeData,e);
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling Marshaling :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling Marshaling :{}",e.getMessage());
     } catch (RestClientException e) {
       populateResponseExceptionData(upsLocatorResposeData,e);
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling calling UPS API :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling calling UPS API :{}",e.getMessage());
     } catch (Exception e) {
       populateResponseExceptionData(upsLocatorResposeData,e);
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure from UPS service :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure from UPS service :{}",e.getMessage());
     }
     return upsLocatorResposeData;
   }
@@ -116,7 +116,7 @@ public class DefaultBlUPSLocatorService  implements BlUPSLocatorService {
       strWriter.flush();
       xmlRequest = strWriter.getBuffer().toString();
     } catch (IOException e) {
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling create buffer :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling create buffer :{}",e.getMessage());
     }
      return xmlRequest;
   }
