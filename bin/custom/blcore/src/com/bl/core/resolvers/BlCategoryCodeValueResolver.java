@@ -57,7 +57,7 @@ public class BlCategoryCodeValueResolver extends
   }
 
   protected Object getPropertyValue(final Object model, final String propertyName) {
-    return modelService.getAttributeValue(model, propertyName);
+    return getModelService().getAttributeValue(model, propertyName);
   }
 
 

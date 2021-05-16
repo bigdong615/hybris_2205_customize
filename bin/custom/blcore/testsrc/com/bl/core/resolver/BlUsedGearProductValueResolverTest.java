@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.resolvers.BlUsedGearProductValueResolver;
+import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.jalo.JaloSession;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
@@ -25,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+@UnitTest
 public class BlUsedGearProductValueResolverTest {
 
   private static final String INDEXED_PROPERTY_NAME = "forSale";

@@ -48,7 +48,7 @@ public class BlGlobalFacetValueResolver extends
             indexedProperty, blProductModel);
       for (final CategoryModel category : categories)
       {
-        if(!BlCoreConstants.BRANDS.equalsIgnoreCase(category.getName()) && CATEGORY_LIST.contains(category.getName().toLowerCase())) {
+        if(CATEGORY_LIST.contains(category.getName().toLowerCase())) {
           inputDocument.addField(indexedProperty, createFieldValue(category));
         }
     }
@@ -69,7 +69,7 @@ public class BlGlobalFacetValueResolver extends
 
   private Object getPropertyValue(final Object model, final String propertyName)
   {
-    return modelService.getAttributeValue(model, propertyName);
+    return getModelService().getAttributeValue(model, propertyName);
   }
 
 
