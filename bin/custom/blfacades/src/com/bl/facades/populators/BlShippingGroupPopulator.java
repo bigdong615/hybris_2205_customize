@@ -11,6 +11,7 @@ public class BlShippingGroupPopulator implements Populator<ShippingGroupModel, B
         if(null != shippingGroupModel && null != blShippingGroupData) {
             blShippingGroupData.setCode(shippingGroupModel.getCode());
             blShippingGroupData.setName(shippingGroupModel.getName());
+            blShippingGroupData.setShippingType(String.valueOf(shippingGroupModel.getShippingType()));
         }
     }
 }

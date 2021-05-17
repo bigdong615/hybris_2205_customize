@@ -3,13 +3,10 @@
  */
 package com.bl.storefront.controllers.pages;
 
-import com.bl.core.datepicker.BlDatePickerService;
-import com.bl.core.services.cart.BlCartService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -49,19 +46,14 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.site.BaseSiteService;
-import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
@@ -142,17 +134,8 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name ="cartFacade")
 	private BlCartFacade blCartFacade;
 
-  @Resource(name = "blDatePickerService")
-  private BlDatePickerService blDatePickerService;
-
-  @Resource(name = "blCommerceStockService")
-  private BlCommerceStockService blCommerceStockService;
-
-  @Resource(name = "baseStoreService")
-  private BaseStoreService baseStoreService;
-
-  @Resource(name = "cartService")
-  private BlCartService blCartService;
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
 
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
@@ -169,6 +152,7 @@ public class CartPageController extends AbstractCartPageController
 	@RequestMapping(method = RequestMethod.GET)
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
+		getCheckoutFacade().removeDeliveryDetails();
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
 		return prepareCartUrl(model);
 	}
@@ -745,84 +729,6 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	/**
-	 * Update product quantity based on the quantity selected from rental add to cart popup.
-	 *
-	 * @param entryNumber
-	 * @param model
-	 * @param form
-	 * @param bindingResult
-	 * @param request
-	 * @return
-	 * @throws CMSItemNotFoundException
-	 */
-	@PostMapping(value = "/updateQuantity")
-	@ResponseBody
-	public void updateQuantity(@RequestParam("entryNumber") final long entryNumber, final Model model,
-			@Valid final UpdateQuantityForm form, final BindingResult bindingResult,
-			final HttpServletRequest request) throws CommerceCartModificationException {
-		if (bindingResult.hasErrors()) {
-			for (final ObjectError error : bindingResult.getAllErrors()) {
-				if ("typeMismatch".equals(error.getCode())) {
-					LOG.debug(Config.getParameter("basket.error.quantity.invalid"));
-				} else {
-					LOG.debug(error.getDefaultMessage());
-				}
-			}
-		} else if (getCartFacade().hasEntries()) {
-			try {
-				getCartFacade().updateCartEntry(entryNumber,
-						form.getQuantity().longValue());
-
-				LOG.debug("Product quantity: " + form.getQuantity() + " updated successfully for cart entry: "+ entryNumber);
-
-			} catch (final CommerceCartModificationException exception) {
-				LOG.warn("Couldn't update product with the entry number: " + entryNumber + ".", exception);
-			}
-		}
-	}
-
-  /**
-   * Check if date range not selected and stock is not available for any product which are present
-   * on current cart, then don't redirect to next(2nd) step.
-   *
-   * @param model
-   * @return success or failure
-   */
-  @GetMapping(value = "/checkDateAndStock")
-  @ResponseBody
-  public String checkDateRangeAndStock(final Model model) {
-    final long stockNotAvailable = 0L;
-    final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-    final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore()
-        .getWarehouses();
-    final CartModel cartModel = blCartService.getSessionCart();
-    if (rentalDateDto == null) {
-
-      return BlControllerConstants.FAILURE_RESULT;
-    } else {
-      final Date startDay = BlDateTimeUtils
-          .convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-              BlControllerConstants.DATE_FORMAT_PATTERN);
-      final Date endDay = BlDateTimeUtils
-          .convertStringDateToDate(rentalDateDto.getSelectedToDate(),
-              BlControllerConstants.DATE_FORMAT_PATTERN);
-      final List<AbstractOrderEntryModel> abstractOrderEntryModelList = cartModel.getEntries();
-      for (final AbstractOrderEntryModel abstractOrderEntryModel : abstractOrderEntryModelList) {
-
-        final long stockLevel = blCommerceStockService
-            .getAvailableCount(abstractOrderEntryModel.getProduct().getCode(), warehouseModelList,
-                startDay, endDay);
-        if (stockLevel == stockNotAvailable) {
-          return BlControllerConstants.FAILURE_RESULT;
-        }
-
-      }
-    }
-    return BlControllerConstants.SUCCESS;
-  }
-
-
-  /**
 	 * @return the blCartFacade
 	 */
 	public BlCartFacade getBlCartFacade()
@@ -836,5 +742,14 @@ public class CartPageController extends AbstractCartPageController
 	public void setBlCartFacade(BlCartFacade blCartFacade)
 	{
 		this.blCartFacade = blCartFacade;
+	}
+
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
+	}
+
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
 	}
 }
