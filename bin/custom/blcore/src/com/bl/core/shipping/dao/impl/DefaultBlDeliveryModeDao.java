@@ -244,6 +244,20 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     }
 
     @Override
+ 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer)
+ 	{
+ 		final StringBuilder deliveyModeList = new StringBuilder(
+ 				"select {pk} from {ZoneDeliveryMode} where {active} = 1 and {payByCustomer} = ?payByCustomer");
+
+ 		final FlexibleSearchQuery query = new FlexibleSearchQuery(deliveyModeList);
+ 		query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+
+ 		final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel> search(query)
+ 				.getResult();
+ 		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+ 	}
+    
+    @Override
     public FlexibleSearchService getFlexibleSearchService() {
         return flexibleSearchService;
     }
