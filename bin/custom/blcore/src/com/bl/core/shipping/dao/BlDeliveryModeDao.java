@@ -117,4 +117,12 @@ public interface BlDeliveryModeDao {
      * @return
      */
     BlRushDeliveryModeModel getBlRushDeliveryModeForWarehouseZipCode(final String deliveryMode, final boolean payByCustomer);
+
+    /**
+ 	 * This method will return all the delivery mode
+ 	 *
+ 	 * @param payByCustomer
+ 	 * @return
+ 	 */
+ 	Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
 }
