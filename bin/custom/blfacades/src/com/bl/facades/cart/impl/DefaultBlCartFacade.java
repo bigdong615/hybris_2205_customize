@@ -12,12 +12,11 @@ import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
+import java.util.Date;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import java.util.Date;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -108,7 +107,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setCreateNewEntry(true);
       }
     } catch (Exception exception) {
-      BlLogger.logMessage(LOGGER, Level.DEBUG,
+      BlLogger.logMessage(LOGGER, Level.ERROR,
           "Unable to set product model, unit and new entry to CommerceCartParameter",exception);
     }
 
@@ -133,21 +132,22 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
       final CartModel cartModel,
       final CommerceCartModification commerceCartModification) {
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
-        .equals(BlFacadesConstants.SUCCESS) && blSerialProductModel == null) {
-      cartModel.setIsRentalCart(Boolean.TRUE);
-    }
-    if (commerceCartModification != null && commerceCartModification.getStatusCode()
-        .equals(BlFacadesConstants.SUCCESS) && blSerialProductModel != null) {
-      cartModel.setIsRentalCart(Boolean.FALSE);
+        .equals(BlFacadesConstants.SUCCESS)) {
+
+      if (blSerialProductModel == null) {
+        cartModel.setIsRentalCart(Boolean.TRUE);
+      } else {
+        cartModel.setIsRentalCart(Boolean.FALSE);
+      }
     }
     getModelService().save(cartModel);
   }
 
-  /**
+    /**
    * {@inheritDoc}
    */
   @Override
-  public boolean isRentalAndUsedProduct(final String productCode, final String serialCode) {
+  public boolean isRentalProductAddedToCartInUsedGearCart(final String productCode, final String serialCode) {
 
     boolean isAddToCartNotAllowed = false;
     CartModel cartModel = blCartService.getSessionCart();
@@ -167,11 +167,13 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     }
 
     if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+      //It prevents user to add product to cart, if current cart is rental cart and user tries to add used gear product.
       if (Boolean.TRUE.equals(cartModel.getIsRentalCart())
           && blSerialProductModel != null) {
         isAddToCartNotAllowed = true;
       }
 
+      //It prevents user to add product to cart, if current cart is used gear cart and user tries to add rental product.
       if (Boolean.FALSE.equals(cartModel.getIsRentalCart())
           && blSerialProductModel == null) {
         isAddToCartNotAllowed = true;

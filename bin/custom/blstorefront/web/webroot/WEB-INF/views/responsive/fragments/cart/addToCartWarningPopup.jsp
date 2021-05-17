@@ -26,7 +26,7 @@
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btn-outline" data-bs-dismiss="modal">Cancel</a>
-                <a href="#" class="btn btn-primary">Continue</a>
+                <a href="#" class="btn btn-primary" data-bs-dismiss="modal">Continue</a>
             </div>
    </div>
 

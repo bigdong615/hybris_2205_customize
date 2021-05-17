@@ -107,6 +107,7 @@
 
      <div class="productNotifications row">
          <div class="col-12">
+             <%-- This div is commented and can be used for product level warning as per requirement--%>
              <%--<div class="notification notification-warning">This is a product warning.</div>--%>
              <c:if test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
               <div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>

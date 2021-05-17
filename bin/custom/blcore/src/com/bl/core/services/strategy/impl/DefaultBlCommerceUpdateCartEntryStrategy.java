@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-/**
+/** This class is used to get available stock and modify cart entry.
  * @author Neeraj Singh
  */
 public class DefaultBlCommerceUpdateCartEntryStrategy extends
@@ -37,120 +37,8 @@ public class DefaultBlCommerceUpdateCartEntryStrategy extends
       final AbstractOrderEntryModel entryToUpdate,
       final long actualAllowedQuantityChange, final long newQuantity,
       final Integer maxOrderQuantity) {
-    // Now work out how many that leaves us with on this entry
-    final long entryNewQuantity =
-        entryToUpdate.getQuantity().longValue() + actualAllowedQuantityChange;
+    return super.modifyEntry(cartModel,entryToUpdate,actualAllowedQuantityChange,newQuantity,maxOrderQuantity);
 
-    final ModelService modelService = getModelService();
-
-    if (entryNewQuantity <= 0) {
-      return removeEntry(cartModel, entryToUpdate, newQuantity, modelService);
-
-    } else {
-      return updateEntry(cartModel, entryToUpdate, actualAllowedQuantityChange, newQuantity,
-          entryNewQuantity,
-          modelService);
-    }
-
-  }
-
-  /**
-   * Update cart entry.
-   *
-   * @param cartModel
-   * @param entryToUpdate
-   * @param actualAllowedQuantityChange
-   * @param newQuantity
-   * @param entryNewQuantity
-   * @param modelService
-   * @return CommerceCartModification
-   */
-  private CommerceCartModification updateEntry(final CartModel cartModel,
-      final AbstractOrderEntryModel entryToUpdate, final long actualAllowedQuantityChange,
-      final long newQuantity,
-      final long entryNewQuantity, final ModelService modelService) {
-    // Adjust the entry quantity to the new value
-    entryToUpdate.setQuantity(Long.valueOf(entryNewQuantity));
-    modelService.save(entryToUpdate);
-    modelService.refresh(cartModel);
-    final CommerceCartParameter parameter = new CommerceCartParameter();
-    parameter.setEnableHooks(true);
-    parameter.setCart(cartModel);
-    getCommerceCartCalculationStrategy().calculateCart(parameter);
-    modelService.refresh(entryToUpdate);
-
-    // Return the modification data
-    final CommerceCartModification modification = new CommerceCartModification();
-    modification.setQuantityAdded(actualAllowedQuantityChange);
-    modification.setEntry(entryToUpdate);
-    modification.setQuantity(entryNewQuantity);
-
-    //isMaxOrderQuantitySet functionality is not applicable for BL.
-      /*if (isMaxOrderQuantitySet(maxOrderQuantity) && entryNewQuantity == maxOrderQuantity.longValue())
-      {
-        modification.setStatusCode(CommerceCartModificationStatus.MAX_ORDER_QUANTITY_EXCEEDED);
-      }*/
-    if (newQuantity == entryNewQuantity) {
-      modification.setStatusCode(CommerceCartModificationStatus.SUCCESS);
-    } else {
-      modification.setStatusCode(CommerceCartModificationStatus.LOW_STOCK);
-    }
-
-    return modification;
-  }
-
-  /**
-   * Remove cart entry.
-   *
-   * @param cartModel
-   * @param entryToUpdate
-   * @param newQuantity
-   * @param modelService
-   * @return CommerceCartModification
-   */
-  private CommerceCartModification removeEntry(final CartModel cartModel,
-      final AbstractOrderEntryModel entryToUpdate, final long newQuantity,
-      final ModelService modelService) {
-    final CartEntryModel entry = new CartEntryModel() {
-      @Override
-      public Double getBasePrice() {
-        return null;
-      }
-
-      @Override
-      public Double getTotalPrice() {
-        return null;
-      }
-    };
-    entry.setOrder(cartModel);
-    entry.setEntryGroupNumbers(new HashSet<>(entryToUpdate.getEntryGroupNumbers()));
-    entry.setProduct(entryToUpdate.getProduct());
-
-    // The allowed new entry quantity is zero or negative
-    // just remove the entry
-    modelService.remove(entryToUpdate);
-    modelService.refresh(cartModel);
-    normalizeEntryNumbers(cartModel);
-
-    final CommerceCartParameter parameter = new CommerceCartParameter();
-    parameter.setEnableHooks(true);
-    parameter.setCart(cartModel);
-    getCommerceCartCalculationStrategy().calculateCart(parameter);
-
-    // Return an empty modification
-    final CommerceCartModification modification = new CommerceCartModification();
-    modification.setEntry(entry);
-    modification.setQuantity(0);
-    // We removed all the quantity from this row
-    modification.setQuantityAdded(-entryToUpdate.getQuantity().longValue());
-
-    if (newQuantity == 0) {
-      modification.setStatusCode(CommerceCartModificationStatus.SUCCESS);
-    } else {
-      modification.setStatusCode(CommerceCartModificationStatus.LOW_STOCK);
-    }
-
-    return modification;
   }
 
   /**
@@ -183,7 +71,7 @@ public class DefaultBlCommerceUpdateCartEntryStrategy extends
       stockLevel = getBlCommerceStockService()
           .getAvailableCount(productModel.getCode(), warehouseModelList, startDay, endDay);
 
-      // Now limit that to the total available in stock
+      // this is to update the quantity as per availability.
       newTotalQuantityAfterStockLimit = Math.min(newTotalQuantity, stockLevel);
     } else {
       newTotalQuantityAfterStockLimit = newTotalQuantity;

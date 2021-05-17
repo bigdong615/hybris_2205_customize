@@ -86,7 +86,7 @@ public class AddToCartController extends AbstractController
 			return getViewWithBindingErrorMessages(model, bindingErrors);
 		}
 
-    if(blCartFacade.isRentalAndUsedProduct(code,serialCode)){
+    if(blCartFacade.isRentalProductAddedToCartInUsedGearCart(code,serialCode)){
 			LOG.debug("Rental and Used gear products are not allowed together");
 			return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
 		}

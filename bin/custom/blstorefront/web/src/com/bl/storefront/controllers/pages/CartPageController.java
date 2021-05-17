@@ -331,17 +331,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		if (bindingResult.hasErrors())
 		{
-			for (final ObjectError error : bindingResult.getAllErrors())
-			{
-				if ("typeMismatch".equals(error.getCode()))
-				{
-					GlobalMessages.addErrorMessage(model, "basket.error.quantity.invalid");
-				}
-				else
-				{
-					GlobalMessages.addErrorMessage(model, error.getDefaultMessage());
-				}
-			}
+			handleBindingResultError(model, bindingResult);
 		}
 		else if (getCartFacade().hasEntries())
 		{
@@ -362,6 +352,21 @@ public class CartPageController extends AbstractCartPageController
 
 		// if could not update cart, display cart/quote page again with error
 		return prepareCartUrl(model);
+	}
+
+	/**
+	 * It handles error for BindingResult.
+	 * @param model
+	 * @param bindingResult
+	 */
+	private void handleBindingResultError(Model model, BindingResult bindingResult) {
+		for (final ObjectError error : bindingResult.getAllErrors()) {
+			if ("typeMismatch".equals(error.getCode())) {
+				GlobalMessages.addErrorMessage(model, "basket.error.quantity.invalid");
+			} else {
+				GlobalMessages.addErrorMessage(model, error.getDefaultMessage());
+			}
+		}
 	}
 
 	@Override
@@ -766,22 +771,21 @@ public class CartPageController extends AbstractCartPageController
 			@Valid final UpdateQuantityForm form, final BindingResult bindingResult,
 			final HttpServletRequest request) throws CommerceCartModificationException {
 		if (bindingResult.hasErrors()) {
-			for (final ObjectError error : bindingResult.getAllErrors()) {
-				if ("typeMismatch".equals(error.getCode())) {
-					LOG.debug(Config.getParameter("basket.error.quantity.invalid"));
-				} else {
-					LOG.debug(error.getDefaultMessage());
-				}
-			}
+			handleBindingResultError(model, bindingResult);
 		} else if (getCartFacade().hasEntries()) {
 			try {
 				getCartFacade().updateCartEntry(entryNumber,
 						form.getQuantity().longValue());
 
-				LOG.debug("Product quantity: " + form.getQuantity() + " updated successfully for cart entry: "+ entryNumber);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+						"Product quantity: {} updated successfully for cart entry: {}", form.getQuantity(),
+						entryNumber);
 
 			} catch (final CommerceCartModificationException exception) {
-				LOG.warn("Couldn't update product with the entry number: " + entryNumber + ".", exception);
+				BlLogger
+						.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(),
+								exception,
+								"Couldn't update product with the entry number: {}", entryNumber);
 			}
 		}
 	}

@@ -11,6 +11,7 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 
 /**
+ * This class is used to add product to cart.
  * @author Neeraj Singh
  */
 public class DefaultBlCommerceAddToCartStrategy extends

@@ -56,10 +56,10 @@ public interface BlCartFacade extends CartFacade {
   CartModificationData addToCart(final String productCode,final long quantity,final String serialCode) throws CommerceCartModificationException;
 
   /**
-   * Prevent add to cart when user try to add rental product in used gear cart and vice-versa.
+   * It prevents the product to be added to cart if rental products is added in used gear cart and vice-versa
    * @param productCode
    * @param serialCode
    * @return
    */
-  boolean isRentalAndUsedProduct(final String productCode, final String serialCode);
+  boolean isRentalProductAddedToCartInUsedGearCart(final String productCode, final String serialCode);
 }
