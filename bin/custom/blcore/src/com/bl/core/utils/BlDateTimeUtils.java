@@ -434,10 +434,37 @@ public final class BlDateTimeUtils
 	 * This method will give us current time in specified time-zone time zone
 	 * @return String date in specified zone
 	 */
-	public static String getCurrentDateUsingCalendar(final String timeZone) {
+	public static String getCurrentDateUsingCalendar(final String timeZone, final Date date) {
 		final DateFormat dateFormat = new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
-		return dateFormat.format(new Date());
+		return dateFormat.format(date);
+	}
+
+	/**
+	 * This method will convert string to date with specified time zone
+	 *
+	 * @param date date
+	 * @param zone timeZone
+	 * @return date
+	 */
+	public static Date getStringToDateWithTimeZone(final String date, final String zone) {
+		try
+		{
+			SimpleDateFormat sdf = null;
+			if(date.contains("-")) {
+				sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN);
+			} else {
+				sdf = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+			}
+			sdf.setTimeZone(TimeZone.getTimeZone(zone));
+			return sdf.parse(date);
+		}
+		catch (final DateTimeParseException | ParseException e)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, date);
+		}
+		return null;
+
 	}
 
 	/**
@@ -446,8 +473,9 @@ public final class BlDateTimeUtils
 	 * @param timeZone PST/EST
 	 * @return Day of Week like SUNDAY
 	 */
-	public static DayOfWeek getDayOfWeek(final String timeZone) {
-			return LocalDate.parse(getCurrentDateUsingCalendar(timeZone), getFormatter("MM-dd-yyyy")).getDayOfWeek();
+	public static DayOfWeek getDayOfWeek(final String timeZone, final String date) {
+		return LocalDate.parse(getCurrentDateUsingCalendar(timeZone, getStringToDateWithTimeZone(date, BlDeliveryModeLoggingConstants.ZONE_PST)),
+				getFormatter(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN)).getDayOfWeek();
 	}
 
 	/**
@@ -464,4 +492,24 @@ public final class BlDateTimeUtils
 		return calendar.getTime();
 	}
 
+	/**
+	 * This method will calculate time to check cutOff time condition
+	 *
+	 * @param time zone mode time to compare
+	 * @return true/false
+	 */
+	public static boolean compareTimeWithCutOff(final String time) {
+		try {
+			final SimpleDateFormat sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.DATE_TIME);
+			if(StringUtils.isNotEmpty(time)) {
+				if(sdf.parse(time).compareTo(sdf.parse(BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST))) > 0){
+					return true;
+				}
+			}
+			return false;
+		} catch (ParseException e) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
+			return false;
+		}
+	}
 }

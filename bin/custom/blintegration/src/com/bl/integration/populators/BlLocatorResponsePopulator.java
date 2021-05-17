@@ -31,7 +31,12 @@ public class BlLocatorResponsePopulator {
           DropLocationType dropLocation = (DropLocationType) location;
           UpsStoreData locatorResponseData = new UpsStoreData();
           locatorResponseData.setLocationId(dropLocation.getLocationID());
-          locatorResponseData.setLatestGroundDropOffTime(dropLocation.getLatestGroundDropOffTime());
+
+          final List<String> openingDaysGroundDropOffTime = dropLocation.getLatestGroundDropOffTime();
+          if(CollectionUtils.isNotEmpty(openingDaysGroundDropOffTime)) {
+            locatorResponseData.setLatestGroundDropOffTime(getOpeningDaysDetails(openingDaysGroundDropOffTime));
+          }
+
           AddressKeyFormatType addressKeyFormat = dropLocation.getAddressKeyFormat();
           if (addressKeyFormat != null) {
             populateAddressData(locatorResponseData,addressKeyFormat);
@@ -47,7 +52,25 @@ public class BlLocatorResponsePopulator {
     }
   }
 
-/**
+  /**
+   * Create opening day details list for UPS store
+   * @param openingDaysGroundDropOffTime ups response
+   * @return list of string for opening day schedules
+   */
+  private List<String> getOpeningDaysDetails(final List<String> openingDaysGroundDropOffTime) {
+    final List<String> openingDaysDetails = new ArrayList<>();
+    for(String day : openingDaysGroundDropOffTime.get(0).split(";")) {
+      if(day.contains(",")){
+        openingDaysDetails.add(day.split(",")[0] + ":" +day.split(":")[1]);
+        openingDaysDetails.add(day.split(",")[1]);
+      } else {
+        openingDaysDetails.add(day);
+      }
+    }
+    return openingDaysDetails;
+  }
+
+  /**
  * This method used for populating error data.
  */
   private void populateErrorData(UpsLocatorResposeData upsLocatorResposeData,Error error , String statusMessage){

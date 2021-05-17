@@ -67,6 +67,7 @@ Designed by Veneer Studio
 
 /* form fields */
 input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat; }
+.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat; }
 input.success { padding-right: 30px; border-color: #52bfc0!important; color: #52bfc0!important; background: url(../assets/icon-check-teal.svg) right 8px center no-repeat; }
 #order .shipProduct .dropdown a, #order .paymentOption .dropdown a, #order .shipProduct .dropdown button, #order .paymentOption .dropdown button { padding: 10px 35px 10px 10px; }
 #order .paymentOption .dropdown > a { margin: 6px 0; }
@@ -100,4 +101,26 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
     #confirmationWindow { padding: 60px 0; }
     #confirmationWindow h1 { font-size: 28px;}
     .order-actions.text-center a { margin: 0 10px; }
+}
+
+.page-loader-new-layout{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	background-color: rgba(0,0,0,0.5);
+	z-index: 9999;
+	display: none;
+	user-select: none;
+}
+.page-loader-new-layout img {
+    margin: auto;
+    position: absolute;
+    right:0;
+    bottom:0;
+    top:0;
+    left:0;
+    width: 6%;
+    height: initial;
 }
