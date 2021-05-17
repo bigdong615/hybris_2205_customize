@@ -105,7 +105,7 @@ public class BlUPSAddressResponsePopulator {
   /**
    * This method used for populating region data.
    */
-  public void populateRegionData(final RegionModel source, final RegionData target) {
+  private void populateRegionData(final RegionModel source, final RegionData target) {
     target.setName(source.getName());
     target.setIsocode(source.getIsocode());
     target.setIsocodeShort(source.getIsocodeShort());
