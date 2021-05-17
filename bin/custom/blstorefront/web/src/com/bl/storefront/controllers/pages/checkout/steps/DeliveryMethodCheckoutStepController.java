@@ -3,8 +3,11 @@
  */
 package com.bl.storefront.controllers.pages.checkout.steps;
 
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
@@ -40,6 +43,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
 	@Resource(name = "checkoutFacade")
 	private BlCheckoutFacade checkoutFacade;
+	
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() 
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
 	@Override
 	public BlCheckoutFacade getCheckoutFacade() {

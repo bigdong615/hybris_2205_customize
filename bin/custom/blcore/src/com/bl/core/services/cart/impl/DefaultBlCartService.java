@@ -10,8 +10,12 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
+
+import java.util.Date;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -100,6 +104,28 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 			getModelService().save(cartModel);
 			final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
 			getCommerceCartCalculationStrategy().recalculateCart(parameter);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate)
+	{
+		final CartModel cartModel = getSessionCart();
+		final String cartCode = cartModel.getCode();
+		cartModel.setRentalStartDate(rentalStartDate);
+		cartModel.setRentalEndDate(rentalEndDate);
+		try 
+		{			
+			getModelService().save(cartModel);
+			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}", rentalStartDate, rentalEndDate, cartCode);
+		}
+		catch(final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, 
+					"Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate, cartCode);
 		}
 	}
 
