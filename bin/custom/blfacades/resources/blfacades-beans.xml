@@ -97,6 +97,7 @@
       <property name="pickUpPersonPhone" type="java.lang.String"/>
       <property name="statusUpdate" type="Boolean"/>
       <property name="deliveryNotes" type="String"/>
+      <property name="isRentalCart" type="java.lang.Boolean"/>
   </bean>
 
     <!-- Shipping -->
