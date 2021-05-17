@@ -11,7 +11,7 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 
 /**
- * This class is used to add product to cart.
+ * This class overrides the OOB add to cart implementation to override the OOB availability logic
  * @author Neeraj Singh
  */
 public class DefaultBlCommerceAddToCartStrategy extends
@@ -57,6 +57,7 @@ public class DefaultBlCommerceAddToCartStrategy extends
       } else {
         // Not allowed to add any quantity, or maybe even asked to reduce the quantity
         // Do nothing!
+        //This code can be needed for used gear add to cart implementation.
         final String status = getStatusCodeForNotAllowedQuantityChange(maxOrderQuantity,
             maxOrderQuantity);
 
@@ -85,10 +86,10 @@ public class DefaultBlCommerceAddToCartStrategy extends
       final long quantityToAdd, final PointOfServiceModel deliveryPointOfService) {
 
     //based on used gear add to cart below commented code need to update/remove.
-    /*if(productModel instanceof BlSerialProductModel) {
+    /*if(productModel instanceof BlSerialProductModel) { //NOSONAR
       return getAllowedCartAdjustmentForProduct(cartModel, productModel, quantityToAdd,
           deliveryPointOfService);
-    }*/
+    }*/ //NOSONAR
 
     return DEFAULT_STOCK_QUANTITY;
   }

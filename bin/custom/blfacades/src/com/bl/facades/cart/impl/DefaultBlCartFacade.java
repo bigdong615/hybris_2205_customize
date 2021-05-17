@@ -89,6 +89,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     final CommerceCartParameter parameter = new CommerceCartParameter();
 
     try {
+      //For used gear product
       if (StringUtils.isNotEmpty(serialCode) && !StringUtils
           .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
           .isNotEmpty(blProductModel.getSerialProducts())) {
@@ -102,13 +103,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
           }
         }
       } else {
+        //For rental product
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(true);
       }
     } catch (Exception exception) {
       BlLogger.logMessage(LOGGER, Level.ERROR,
-          "Unable to set product model, unit and new entry to CommerceCartParameter",exception);
+          "Unable to set product model, unit and new entry to CommerceCartParameter", exception);
     }
 
     parameter.setEnableHooks(true);
@@ -133,7 +135,6 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
       final CommerceCartModification commerceCartModification) {
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
         .equals(BlFacadesConstants.SUCCESS)) {
-
       if (blSerialProductModel == null) {
         cartModel.setIsRentalCart(Boolean.TRUE);
       } else {

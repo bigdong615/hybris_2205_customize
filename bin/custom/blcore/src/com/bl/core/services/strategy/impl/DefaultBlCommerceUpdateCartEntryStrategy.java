@@ -6,18 +6,13 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
-import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceUpdateCartEntryStrategy;
-import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 /** This class is used to get available stock and modify cart entry.
@@ -37,8 +32,8 @@ public class DefaultBlCommerceUpdateCartEntryStrategy extends
       final AbstractOrderEntryModel entryToUpdate,
       final long actualAllowedQuantityChange, final long newQuantity,
       final Integer maxOrderQuantity) {
-    return super.modifyEntry(cartModel,entryToUpdate,actualAllowedQuantityChange,newQuantity,maxOrderQuantity);
-
+      return super.modifyEntry(cartModel, entryToUpdate, actualAllowedQuantityChange, newQuantity,
+        maxOrderQuantity);
   }
 
   /**
