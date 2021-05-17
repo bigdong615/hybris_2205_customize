@@ -1,24 +1,28 @@
 package com.bl.integration.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.ups.address.data.AVSResposeData;
-import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.response.jaxb.Error;
 import com.bl.integration.shipping.response.avsresponse.AddressKeyFormatType;
 import com.bl.integration.shipping.response.avsresponse.AddressValidationResponse;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
+import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 
 public class BlUPSAddressResponsePopulator {
 
-  /*@Resource(name = "i18NFacade")
-  private I18NFacade i18NFacade;
-  */
+  @Resource(name = "commonI18NService")
+  private CommonI18NService commonI18NService;
+
   /**
    * Populating response data from UPS Address Validator.
    */
@@ -48,26 +52,21 @@ public class BlUPSAddressResponsePopulator {
   private AddressData populateAddressData(AddressKeyFormatType addressKeyFormat) {
     String code = addressKeyFormat.getAddressClassification().getCode();
     AddressData addressData = new AddressData();
-    if (code.equals(BlintegrationConstants.RESIDENTIAL_ADDRESS_TYPE_CODE)) {
+    if (code.equals(BlCoreConstants.RESIDENTIAL_ADDRESS_TYPE_CODE)) {
       addressData.setAddressType(AddressTypeEnum.RESIDENTIAL.getCode());
-    } else if (code.equals(BlintegrationConstants.BUSINESS_ADDRESS_TYPE_CODE)) {
+    } else if (code.equals(BlCoreConstants.BUSINESS_ADDRESS_TYPE_CODE)) {
       addressData.setAddressType(AddressTypeEnum.BUSINESS.getCode());
     } else {
-      addressData.setAddressType(BlintegrationConstants.ADDRESS_TYPE_UNKNOWN);
+      addressData.setAddressType(BlCoreConstants.ADDRESS_TYPE_UNKNOWN);
     }
     addressData.setLine1(addressKeyFormat.getAddressLine().get(0));
     addressData.setTown(addressKeyFormat.getPoliticalDivision2());
     addressData.setPostalCode(
         addressKeyFormat.getPostcodePrimaryLow() + "-" + addressKeyFormat.getPostcodeExtendedLow());
-    /*final CountryData countryData = i18NFacade.getCountryForIsocode(addressKeyFormat.getCountryCode());
-    final RegionData regionData = i18NFacade.getRegion(addressKeyFormat.getCountryCode(),
-        addressKeyFormat.getCountryCode() + "-" + addressKeyFormat.getPoliticalDivision1());*/
-    final CountryData countryData = new CountryData();
-    countryData.setIsocode("US");
+    final CountryModel country = commonI18NService.getCountry(addressKeyFormat.getCountryCode());
+    final RegionData regionData = getRegionData(country, addressKeyFormat.getPoliticalDivision1());
+    CountryData countryData = populateCountryData(country);
     addressData.setCountry(countryData);
-
-    final RegionData regionData = new RegionData();
-    regionData.setIsocodeShort("CA");
     addressData.setRegion(regionData);
     return addressData;
   }
@@ -82,4 +81,34 @@ public class BlUPSAddressResponsePopulator {
     avsResposeData.setResult(Collections.emptyList());
   }
 
+  /**
+   * This method used for populating country data.
+   */
+  private CountryData populateCountryData(final CountryModel countryModel) {
+    CountryData countryData = new CountryData();
+    countryData.setIsocode(countryModel.getIsocode());
+    countryData.setName(countryModel.getName());
+    return countryData;
+  }
+
+  /**
+   * This method used for providing region data.
+   */
+  private RegionData getRegionData(final CountryModel countryModel, final String iso) {
+    String regionIso = countryModel.getIsocode() + "-" + iso;
+    RegionModel regionModel = commonI18NService.getRegion(countryModel, regionIso);
+    RegionData regionData = new RegionData();
+    populateRegionData(regionModel, regionData);
+    return regionData;
+  }
+
+  /**
+   * This method used for populating region data.
+   */
+  public void populateRegionData(final RegionModel source, final RegionData target) {
+    target.setName(source.getName());
+    target.setIsocode(source.getIsocode());
+    target.setIsocodeShort(source.getIsocodeShort());
+    target.setCountryIso(source.getCountry().getIsocode());
+  }
 }
