@@ -587,6 +587,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Business days difference: {} ", days);
         return days;
     }
+    
+    /**
+ 	 * {@inheritDoc}
+ 	 */
+ 	
+ 	@Override
+ 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer)
+ 	{
+ 		return getBlZoneDeliveryModeDao().getAllDeliveryModes(payByCustomer);
+ 	}
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
         return blDeliveryModeDao;
