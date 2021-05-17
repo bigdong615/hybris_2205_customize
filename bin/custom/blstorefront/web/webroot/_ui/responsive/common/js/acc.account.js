@@ -94,7 +94,7 @@ ACC.account = {
 					url: targetUrl,
 					success: function (response) {
 						if (response === 'login.error.account.not.found.title') {
-							$("#errorMessages_login").html("Email Address and Password are required");
+							$("#errorMessages_login").html("Your Email or password was incorrect");
 						} else {
 							location.reload();
 						}
@@ -104,7 +104,7 @@ ACC.account = {
 					}
 				});
 			} else {
-				$("#errorMessages_login").html("Email Address and Password are required");
+				$("#errorMessages_login").html("Your Email or password was incorrect");
 			}
 
 		});
