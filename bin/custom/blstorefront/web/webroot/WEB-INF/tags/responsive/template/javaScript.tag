@@ -90,10 +90,6 @@
         <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
         </c:if>
 
-        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
-            <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>
-        </c:if>
-
 		<%-- Cms Action JavaScript files --%>
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
@@ -129,6 +125,11 @@
 				 }
 			});
 		</script>
+		
+        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+            <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>
+        </c:if>
+
 		<c:if test="${cmsPage.uid eq 'homepage'}">
 		<script>
         document.addEventListener(
@@ -150,6 +151,7 @@
             perPage: 1,
             type: 'fade',
             gap: 0,
+            keyboard: false,
         } ).mount();
         new Splide( '#cat-slider', {
             perPage: 4,
@@ -160,26 +162,23 @@
                 '640': {
                     perPage: 3,
                 },
-                '480': {
-                    perPage: 2,  
-                },
             },
             rewind : true,
             gap: 30,
+            keyboard: false,
         } ).mount();
          new Splide( '#gear-slider', {
             perPage: 3,
             breakpoints: {
                 '991': {
                     perPage: 2,
-                },
-                '640': {
-                    perPage: 1,
-                },
+                }
+
             },
             rewind : true,
             gap: 20,
             padding: 10,
+            keyboard: false,
         } ).mount();  
         document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
@@ -190,32 +189,31 @@
                     pagination: false,
                 },
             },
-            //,
+           keyboard: false,
           } ).mount());
         document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 3,
             gap: 20,
-            //drag   : true,
+            keyboard: false,
         } ).mount());
          new Splide( '#testimonials-slider', {
             perPage: 1,
             type: 'fade',
             arrows: false,
+            keyboard: false,
         } ).mount(); 
         new Splide( '#blog-slider', {
             perPage: 3,
             breakpoints: {
                 '991': {
                     perPage: 2,
-                },
-                '640': {
-                    perPage: 1,
-                },
+                }
             },
             rewind : true,
             gap: 20,
             padding: 10,
+            keyboard: false,
         } ).mount();
      // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
          const picker = new Litepicker({ 

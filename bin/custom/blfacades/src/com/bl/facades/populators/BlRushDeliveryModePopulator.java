@@ -12,15 +12,15 @@ public class BlRushDeliveryModePopulator extends BlZoneDeliveryModePopulator {
     {
         super.populate(source, target);
         if(null != target && source instanceof BlRushDeliveryModeModel ) {
-
             BlRushDeliveryModeModel blRushDeliveryModeModel = (BlRushDeliveryModeModel) source;
-            BlRushDeliveryModeData blRushDeliveryModeData = (BlRushDeliveryModeData) target;
-
-            blRushDeliveryModeData.setShippingArea(blRushDeliveryModeModel.getShippingArea());
-            blRushDeliveryModeData.setRadius(Double.toString(blRushDeliveryModeModel.getRadius()));
-            blRushDeliveryModeData.setDeliveryType(blRushDeliveryModeModel.getDeliveryType().toString());
+            if(target instanceof BlRushDeliveryModeData) {
+                BlRushDeliveryModeData blRushDeliveryModeData = (BlRushDeliveryModeData) target;
+                blRushDeliveryModeData.setShippingArea(blRushDeliveryModeModel.getShippingArea());
+                if(blRushDeliveryModeModel.getRadius() != null) {
+                    blRushDeliveryModeData.setRadius(Double.toString(blRushDeliveryModeModel.getRadius()));
+                }
+                blRushDeliveryModeData.setDeliveryType(blRushDeliveryModeModel.getDeliveryType().toString());
+            }
         }
     }
-
-
 }
