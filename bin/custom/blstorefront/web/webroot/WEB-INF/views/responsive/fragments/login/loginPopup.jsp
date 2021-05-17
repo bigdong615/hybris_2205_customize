@@ -44,7 +44,7 @@
                        	<input type="hidden" name="errorMessages_id" id="errorMessages_id" data-value="${ycommerce:sanitizeHTML(errorMessages)}"/>
                        			</c:forEach>
         </c:if>
-
+        <div class ="notification notification-error" id="errorMessages_login"> </div>
         <p class="body14 text-center mb-0 mt-4">
           <a class="js-signUp-popup" data-link="<c:url value='/login/register'/>"
             href="#signUp" data-bs-toggle="modal" data-bs-dismiss="modal">

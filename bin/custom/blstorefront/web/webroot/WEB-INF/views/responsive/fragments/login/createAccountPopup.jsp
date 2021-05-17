@@ -17,11 +17,11 @@
       </h5>
       <c:url value="/login/register" var="registerActionUrl" />
       <form:form method="post" modelAttribute="registerForm" action="${registerActionUrl}" id="signUppopup-validation">
-        <formElement:formInputBox idKey="register.email" path="email"
+        <formElement:formInputBox idKey="register-form-id" path="email"
           inputCSS="form-control mb-3"  placeholder="register.email"/>
         <formElement:formPasswordBox idKey="password"  path="pwd"
           inputCSS="form-control mb-2 "  placeholder="register.pwd" />
-        <formElement:formPasswordBox idKey="register.checkPwd"
+        <formElement:formPasswordBox idKey="checkPwd-form-id"
           path="checkPwd" inputCSS="form-control mb-2"  placeholder="register.checkPwd" />
         <ycommerce:testId code="register_Register_button">
           <button type="submit" class="btn btn-block btn-primary mt-4 js-signUp-popup-validation" value="${registerActionUrl}">
@@ -36,6 +36,11 @@
                                          			</c:forEach>
                            </c:if>
 
+           <div class ="notification notification-error">
+                                       <div id="errorMessages_sigin_email"></div> &nbsp;
+                                       <div id="errorMessages_sigin_pwd"></div> &nbsp;
+                                       <div id="errorMessages_sigin_chkPwd"></div>
+           </div>
         <p class="body14 text-center mb-0 mt-4">
           <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
             data-bs-toggle="modal" data-bs-dismiss="modal">

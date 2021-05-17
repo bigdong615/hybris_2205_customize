@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
 
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -43,7 +44,11 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             model.addAttribute(form);
             model.addAttribute(new LoginForm());
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
-            return ControllerConstants.Views.Fragments.Login.CreateAccountPopup;
+            StringBuilder stringBuilder = new StringBuilder("Error:");
+            for(ObjectError objectError : bindingResult.getAllErrors()) {
+              stringBuilder.append(objectError.getCode()).append(":");
+            }
+            return stringBuilder.toString();
         }
         final RegisterData data = new RegisterData();
         data.setLogin(form.getEmail());
@@ -63,7 +68,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             model.addAttribute(new LoginForm());
             bindingResult.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.DUBLICATE_UID_ERROR);
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
-            return ControllerConstants.Views.Fragments.Login.CreateAccountPopup;
+            return  BlControllerConstants.DUBLICATE_UID_ERROR;
         }
 
         return REDIRECT_PREFIX + getSuccessRedirect(request, response);

@@ -73,6 +73,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 	}
 
 	@GetMapping
+	@ResponseBody
 	public String doLogin(@RequestHeader(value = "referer", required = false) final String referer,
 			@RequestParam(value = "error", defaultValue = "false") final boolean loginError, final Model model,
 			final HttpServletRequest request, final HttpServletResponse response, final HttpSession session)
@@ -98,6 +99,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 		{
 			model.addAttribute("loginError", Boolean.valueOf(loginError));
 			GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
+			return BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT;
 		}
 		return ControllerConstants.Views.Fragments.Login.LoginPopup;
 	}
@@ -112,6 +114,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 	}
 
 	@PostMapping(value = "/register")
+	@ResponseBody
 	public String doRegister(@RequestHeader(value = "referer", required = false) final String referer, final RegisterForm form,
 			final BindingResult bindingResult, final Model model, final HttpServletRequest request,
 			final HttpServletResponse response, final RedirectAttributes redirectModel) throws CMSItemNotFoundException
