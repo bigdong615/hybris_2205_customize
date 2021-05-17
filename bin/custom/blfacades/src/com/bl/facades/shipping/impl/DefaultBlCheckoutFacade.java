@@ -404,6 +404,17 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 .getSelectedToDate() : null;
     }
 
+    
+ 	/**
+ 	 * {@inheritDoc}
+ 	 */
+
+ 	@Override
+ 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer)
+ 	{
+ 		return getBlZoneDeliveryModeService().getAllDeliveryModes(payByCustomer);
+ 	}
+ 	
     public BlDeliveryModeService getBlZoneDeliveryModeService() {
         return blDeliveryModeService;
     }

@@ -202,4 +202,13 @@ public interface BlDeliveryModeService {
      * @return zipCode from warehouse address
      */
     String getWarehouseZipCode(final String deliveryType, final boolean payByCustomer);
+    
+ 	/**
+ 	 * This method will return all the delivery modes
+ 	 *
+ 	 * @param payByCustomer
+ 	 * @return Collection of ZoneDeliveryModeModels
+ 	 */
+
+ 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
 }
