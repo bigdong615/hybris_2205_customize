@@ -13,24 +13,36 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <c:if test="${not empty deliveryAddresses}">
-    <div id="ship-it-saved-addresses-dropdown">
+    <div id="delivery-saved-addresses-dropdown">
         <b><spring:theme code="text.ship.it.saved.delivery.address"/></b>
         <div class="dropdown my-2">
             <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start my-4" onChange="onSavedAddressChange()">
+                <option class="text" selected="selected">
+                    Enter New Address in the Saved Shipping Address dropdow.
+                </option>
                 <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">
-                    <option value="${deliveryAddress.id}">
-                        ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.country.isocode}, ${deliveryAddress.postalCode}
-                    </option>
+                    <c:choose>
+                        <c:when test="${deliveryAddress.defaultAddress}">
+                            <option value="${deliveryAddress.id}" selected="selected">
+                                ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.country.isocode}, ${deliveryAddress.postalCode}
+                            </option>
+                        </c:when>
+                        <c:otherwise>
+                            <option value="${deliveryAddress.id}">
+                                ${deliveryAddress.line1}, ${deliveryAddress.town}, ${deliveryAddress.country.isocode}, ${deliveryAddress.postalCode}
+                            </option>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
             </select>
         </div>
-        <a onClick="onAddNewAddressClicked()" class="gray80"><spring:theme code="text.add.new.shipping.address"/></a>
+        <a onClick="onAddNewAddressClicked()" class="gray80 newAddressAdd"><spring:theme code="text.add.new.shipping.address"/></a>
     </div>
 </c:if>
 
-<div id="ship-it-shippingAddressFormDiv">
+<div id="delivery-shippingAddressFormDiv">
     <b class="mt-4"><spring:theme code="text.existing.shipping.address"/></b>
-    <div id="ship-it-shippingAddressForm" class="mb-5">
+    <div id="delivery-shippingAddressForm" class="mb-1">
         <form:form method="POST" modelAttribute="addressForm">
             <formElement:formInputBox idKey="address.firstName" placeholder="address.firstName" labelKey="" path="firstName" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.lastName" labelKey="" placeholder="address.lastName" path="lastName" inputCSS="form-control" mandatory="true" />
@@ -43,6 +55,5 @@
             <formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="email" inputCSS="form-control" mandatory="false" />
             <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control" mandatory="false" />
         </form:form>
-        <input type="checkbox" id="save-address"><label for="save-address"><span class="gray80">Save address</span></label>
     </div>
 </div>

@@ -1,8 +1,8 @@
 package com.bl.integration.populators;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.response.jaxb.Error;
 import com.bl.integration.shipping.response.avsresponse.AddressKeyFormatType;
 import com.bl.integration.shipping.response.avsresponse.AddressValidationResponse;
@@ -52,12 +52,12 @@ public class BlUPSAddressResponsePopulator {
   private AddressData populateAddressData(AddressKeyFormatType addressKeyFormat) {
     String code = addressKeyFormat.getAddressClassification().getCode();
     AddressData addressData = new AddressData();
-    if (code.equals(BlCoreConstants.RESIDENTIAL_ADDRESS_TYPE_CODE)) {
+    if (code.equals(BlintegrationConstants.RESIDENTIAL_ADDRESS_TYPE_CODE)) {
       addressData.setAddressType(AddressTypeEnum.RESIDENTIAL.getCode());
-    } else if (code.equals(BlCoreConstants.BUSINESS_ADDRESS_TYPE_CODE)) {
+    } else if (code.equals(BlintegrationConstants.BUSINESS_ADDRESS_TYPE_CODE)) {
       addressData.setAddressType(AddressTypeEnum.BUSINESS.getCode());
     } else {
-      addressData.setAddressType(BlCoreConstants.ADDRESS_TYPE_UNKNOWN);
+      addressData.setAddressType(BlintegrationConstants.ADDRESS_TYPE_UNKNOWN);
     }
     addressData.setLine1(addressKeyFormat.getAddressLine().get(0));
     addressData.setTown(addressKeyFormat.getPoliticalDivision2());

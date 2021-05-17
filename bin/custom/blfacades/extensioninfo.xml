@@ -12,11 +12,11 @@
                 		
         
         <requires-extension name="acceleratorfacades"/>
-                		
-        
+
+        <requires-extension name="blintegration"/>
+
         <requires-extension name="blcore"/>
-                		
-        
+
         <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="com.bl.facades"/>
                 		
         

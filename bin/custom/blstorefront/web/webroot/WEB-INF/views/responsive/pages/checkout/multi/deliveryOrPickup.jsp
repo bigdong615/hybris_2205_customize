@@ -48,12 +48,15 @@
                                 </div>
                             </div><!-- End Accordion -->
                             <div class="cart-actions">
-                                <a href="/blstorefront/bl/en/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                <a href="/blstorefront/bl/en/cart" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
                                     <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                 </button>
                             </div>
                             <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                            <div class="page-loader-new-layout">
+                            	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+                            </div>
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>

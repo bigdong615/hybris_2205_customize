@@ -24,8 +24,8 @@ public class BlDeliveryModeLoggingConstants {
 
     public static final String TOTAL_WEIGHT= "TotalWeight";
     public static final String DIMENSIONAL_WEIGHT= "DimensionalWeight";
-    public static final String DIMENSIONAL_FACTOR_KEY= "delivery.cost.default.dimension.factor";
-    public static final int DIMENSIONAL_FACTOR= 194;
+    public static final String STORE= "bl";
+    public static final int DIMENSIONAL_FACTOR= 149;
 
     public static final String PST_CUT_OFF_TIME_CONST = " and {pickZone.cutOffTime} > ?pstCutOffTime";
     public static final String PST_CUT_OFF_TIME = "pstCutOffTime";
@@ -58,6 +58,10 @@ public class BlDeliveryModeLoggingConstants {
     public static final String FETCH_PARTNER_PICKUP_UPS_STORE_ZONE_DELIVERY_MODE_AM = "Fetching delivery modes for Partner-pickup shipping groups for UPS Store without AM ";
     public static final String FETCH_RUSH_ZONE_DELIVERY_MODE = "Fetching delivery modes for rush delivery shipping groups for :";
     public static final String FETCH_SHIPPING_COST = "Fetching shipping cost for : ";
+    public static final String BASE_STORE_DIMENSIONAL_FACTOR = "Fetching dimensional factor from base store : ";
+
+
+    public static final String PAY_BY_CUSTOMER = "payByCustomer";
 
     private BlDeliveryModeLoggingConstants() {}
 }

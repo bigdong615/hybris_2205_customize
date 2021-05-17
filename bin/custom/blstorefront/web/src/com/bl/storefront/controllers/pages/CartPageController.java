@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -133,6 +134,9 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name ="cartFacade")
 	private BlCartFacade blCartFacade;
 
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -148,6 +152,7 @@ public class CartPageController extends AbstractCartPageController
 	@RequestMapping(method = RequestMethod.GET)
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
+		getCheckoutFacade().removeDeliveryDetails();
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
 		return prepareCartUrl(model);
 	}
@@ -737,5 +742,14 @@ public class CartPageController extends AbstractCartPageController
 	public void setBlCartFacade(BlCartFacade blCartFacade)
 	{
 		this.blCartFacade = blCartFacade;
+	}
+
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
+	}
+
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
 	}
 }
