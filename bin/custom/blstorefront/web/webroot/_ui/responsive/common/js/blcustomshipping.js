@@ -89,6 +89,7 @@
                      shippingModes += '</option>';
                      if(i == 0) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                        calculateCartTotal();
                      }
                  }
                  shippingModes += '</select>';
@@ -100,7 +101,6 @@
              }
          },
          error: function (data) {
-             console.log('error');
              $('.page-loader-new-layout').hide();
          }
      });
@@ -163,6 +163,7 @@
                     shippingModes += '</option>';
                     if(i == 0) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                        calculateCartTotal();
                     }
                 }
                 shippingModes += '</select>';
@@ -175,7 +176,6 @@
             }
         },
         error: function (data) {
-            console.log('error');
             $('.page-loader-new-layout').hide();
         }
     });
@@ -201,7 +201,7 @@
      } else {
          (async() => {
              await savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
-                 .find('#ship-it-shipping-methods-select-box').val(), false, createUPSStoreAddress());
+                .find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
          })();
      }
  }
@@ -227,7 +227,6 @@
                  if(data != null && data.length != 0 && data.statusMessage == 'Success') {
                      if(data.result != null && data.result.length != 0) {
                          let upsStores = '';
-                         console.log(data.result);
                          sessionStorage.setItem("UPSStores", JSON.stringify(data.result));
                          for (let i = 0; i < data.result.length; i++) {
                              upsStores += '<div id="ups-location-1" class="row store-location mb-3">' +
@@ -267,7 +266,6 @@
                  }
              },
              error: function (data) {
-                 console.log('error');
                  $('.page-loader-new-layout').hide();
              }
          });
@@ -439,12 +437,13 @@
         success: function (data) {
             if(data != null && data.length != 0) {
                 let partnerDelivery = '';
-                console.log(data);
                 for (let i = 0; i < data.length; i++) {
                     if(i == 0 && data.length == 1) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                        calculateCartTotal();
                     } else {
                         $('#cart-shipping-cost').text('$0.00');
+                        calculateCartTotal();
                     }
                     partnerDelivery += '<div id="pickup-nyc" class="row store-location mb-3">' +
                                             '<div class="col-1">' +
@@ -564,6 +563,7 @@
       $('#sameDayShippingMethods').html('');
       $('#sameDayZipCheckText').val('');
       $('#cart-shipping-cost').text('$0.00');
+      calculateCartTotal();
   });
 
   function onChangeOfSameDayShippingMethod() {
@@ -619,6 +619,7 @@
                                for (let i = 0; i < data.length; i++) {
                                     if(i == 0) {
                                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                                        calculateCartTotal();
                                     }
                                     var selectionText = data[i].name.split("_");
                                    sameDayShippingModes += '<option value="' + data[i].code + '">' + selectionText[0];
@@ -644,7 +645,6 @@
                            }
                        },
                        error: function (data) {
-                           console.log('error');
                            $('.page-loader-new-layout').hide();
                        }
                    });
@@ -654,7 +654,6 @@
                 }
             },
             error: function (data) {
-                   console.log('error');
                    $('.page-loader-new-layout').hide();
             }
         });
@@ -872,12 +871,19 @@
     upsStoreAddress, openingDaysDetails) {
     if(openingDaysDetails != null) {
         let openingDaysDetailsMap = new Map([
-          [openingDaysDetails[0].split(': ')[0], openingDaysDetails[0].split(':')[1]],
+          [openingDaysDetails[0].split(': ')[0],  openingDaysDetails[0].split(':')[1]],
           [openingDaysDetails[1].split(': ')[0], openingDaysDetails[1].split(':')[1]],
           [openingDaysDetails[2].split(': ')[0], openingDaysDetails[2].split(':')[1]],
         ])
-        openingDaysDetails = new Map([...openingDaysDetailsMap]);
+        openingDaysDetails = openingDaysDetailsMap;
     }
+
+    if(regionIso.includes('-')) {
+        regionIso = regionIso;
+    } else {
+       regionIso = countryIso+ '-' +regionIso;
+    }
+
     let addressForm = {
         firstName : firstName,
         lastName : lastName,
@@ -948,7 +954,6 @@
              $('.page-loader-new-layout').hide();
          },
          error: function (data) {
-             console.log('error');
              $('.page-loader-new-layout').hide();
          }
      });
@@ -974,7 +979,6 @@
              $('.page-loader-new-layout').hide();
          },
          error: function (data) {
-             console.log('error');
              $('.page-loader-new-layout').hide();
          }
      });
@@ -998,7 +1002,6 @@
              //TODO: Handle for payment method for checkout
          },
          error: function (data) {
-             console.log('error');
              $('.page-loader-new-layout').hide();
          }
      });
@@ -1028,8 +1031,7 @@
              $('.page-loader-new-layout').hide();
          },
          error: function (data) {
-             console.log('error');
-
+            $('.page-loader-new-layout').hide();
          }
      });
   }
@@ -1038,19 +1040,38 @@
   function onChangeOfShipItShipToHome(event) {
       $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]')
         .val() + '"]').text().split('$')[1]);
+      calculateCartTotal();
   }
 
   function onChangeOfShipItShipToUPS() {
-        $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box')
+     $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box')
             .val()+ '"]').text().split('$')[1]);
+     calculateCartTotal();
   }
 
   function onSelectOfPartnerAddress(event) {
     $('#cart-shipping-cost').text($('#'+event.getAttribute('id')+'-pickUpCost').text().trim());
+    calculateCartTotal();
   }
 
   function onChangeOfSameDayShippingMethodForCost() {
     $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]')
                     .val()+ '"]').text().split('$')[1]);
+    calculateCartTotal();
+  }
 
+  function calculateCartTotal() {
+    let total = checkNaN(parseFloat($('#cart-shipping-subTotal').text().split('$')[1])) +
+                checkNaN(parseFloat($('#cart-shipping-waiver').text().split('$')[1])) +
+                checkNaN(parseFloat($('#cart-shipping-cost').text().split('$')[1])) +
+                checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1]));
+    $('#cart-shipping-total').text('$' + total.toFixed(2));
+  }
+
+  function checkNaN(attribute) {
+    if(isNaN(attribute)) {
+        return 0.00;
+    } else {
+        return attribute;
+    }
   }

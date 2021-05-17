@@ -23,7 +23,7 @@
           <tbody>
               <tr>
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
-                  <td class="text-end"><format:blPrice priceData="${cartData.subTotal}"/></td>
+                  <td class="text-end" id="cart-shipping-subTotal"><format:blPrice priceData="${cartData.subTotal}"/></td>
               </tr>
               <tr>
                   <td class="gray80"><spring:theme code="text.cart.damage.waiver"/>
@@ -31,7 +31,7 @@
                         <i class="icon-support"></i>
                     </a>
                   </td>
-                  <td class="text-end"><format:blPrice priceData="${cartData.totalDamageWaiverCost}"/></td>
+                  <td class="text-end" id="cart-shipping-waiver"><format:blPrice priceData="${cartData.totalDamageWaiverCost}"/></td>
               </tr>
               <tr>
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.shipping"/></td>
@@ -40,11 +40,11 @@
               </tr>
               <tr>
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
-                  <td class="text-end">$XX</td>
+                  <td class="text-end" id="cart-shipping-tax">$XX</td>
               </tr>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
-                  <td class="text-end"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
+                  <td class="text-end" id="cart-shipping-total"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
               </tr>
           </tbody>
       </table>
