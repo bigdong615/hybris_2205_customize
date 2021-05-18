@@ -9,15 +9,6 @@ Added Media Query for Search Box
 }
 
 /**
-Added for Empty Search text
-**/
-
-.js-shopping-button-empty {
-padding-left:0px !important;
-}
-.icon-production { background: url(../assets/icon-equipment.svg) center no-repeat; }
-
-/**
 Added for removing add to cart popup background, when unable to add product to cart.
 **/
 .remove-popup-background{
