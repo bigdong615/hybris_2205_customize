@@ -7,6 +7,7 @@ import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
+import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
@@ -66,6 +67,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        //getCheckoutFacade().removeDeliveryDetails();
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
@@ -189,6 +191,20 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @ResponseBody
     public String removeDeliveryDetailsFromCart() {
         return getCheckoutFacade().removeDeliveryDetails();
+    }
+
+    @PostMapping(value = "/avsCheck")
+    @RequireHardLogIn
+    @ResponseBody
+    public AVSResposeData getAVSResponse(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult,
+                                         final Model model, final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
+        getAddressValidator().validate(addressForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            final AVSResposeData avsResposeData = new AVSResposeData();
+            avsResposeData.setErrorDescription("address.error.formentry.invalid");
+            return avsResposeData;
+        }
+        return getCheckoutFacade().getAVSResponse(addressDataUtil.convertToAddressData(addressForm));
     }
 
     @PostMapping(value = "/add")
