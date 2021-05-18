@@ -5,10 +5,12 @@ import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
@@ -153,12 +155,20 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 	  * @return Collection of ZoneDeliveryModeModels
 	  */
  	Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
- 	
- 	/**
-    * This method will check cart entries for gear availability
-    *
-    * @param deliveryModeCode the delivery mode code
-    * @return true, if successful
-    */
-   boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode);
+
+    /**
+     * This method will integrate AVS in checkout flow
+     *
+     * @param addressData requested address data
+     * @return Address Validation Response addresses
+     */
+    AVSResposeData getAVSResponse(final AddressData addressData);
+    
+    /**
+     * Check availability for delivery mode.
+     *
+     * @param deliveryModeCode the delivery mode code
+     * @return true, if successful
+     */
+    boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode);
 }

@@ -14,14 +14,16 @@ import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.integration.services.BlUPSAddressValidatorService;
 import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
-
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -52,6 +54,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     @Resource(name = "blUPSLocatorService")
     private BlUPSLocatorService blUPSLocatorService;
+
+    @Resource(name = "upsAddressValidatorService")
+    BlUPSAddressValidatorService blUPSAddressValidatorService;
 
     private BlDatePickerService blDatePickerService;
     private Converter<ZoneDeliveryModeModel, ZoneDeliveryModeData> blZoneDeliveryModeConverter;
@@ -371,9 +376,19 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setStatusUpdate(Boolean.FALSE);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
+            getModelService().save(cartModel);
+            getModelService().refresh(cartModel);
             return BlFacadesConstants.RESULT_SUCCESS;
         }
         return "ERROR";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AVSResposeData getAVSResponse(final AddressData addressData) {
+        return getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
     }
 
     /**
@@ -492,5 +507,13 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     public void setBlUPSLocatorService(BlUPSLocatorService blUPSLocatorService) {
         this.blUPSLocatorService = blUPSLocatorService;
+    }
+
+    public BlUPSAddressValidatorService getBlUPSAddressValidatorService() {
+        return blUPSAddressValidatorService;
+    }
+
+    public void setBlUPSAddressValidatorService(BlUPSAddressValidatorService blUPSAddressValidatorService) {
+        this.blUPSAddressValidatorService = blUPSAddressValidatorService;
     }
 }
