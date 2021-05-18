@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.integration.populators.BlUPSAddressResponsePopulator;
+import com.bl.integration.response.jaxb.Error;
 import com.bl.integration.shipping.response.avsresponse.AddressClassificationType;
 import com.bl.integration.shipping.response.avsresponse.AddressKeyFormatType;
 import com.bl.integration.shipping.response.avsresponse.AddressValidationResponse;
@@ -46,6 +47,8 @@ public class BlUPSAddressResponsePopulatorTest {
   private static String REGION_NAME = "California";
   private static String POSTCODE_PRIMARY_LOW = "95054";
   private static String POSTCODE_EXTENDED_LOW = "1218";
+  private static String ERROR_CODE = "350104";
+  private static String ERROR_DESCRIPTION = "The country code is missing or invalid.";
 
   @Mock
   private AddressValidationResponse xavRespon;
@@ -59,19 +62,53 @@ public class BlUPSAddressResponsePopulatorTest {
   private CountryModel country;
   @Mock
   private RegionModel regionModel;
+  @Mock
+  private Error error;
   private AddressClassificationType addressClassificationType;
   private AVSResposeData avsResposeData;
   private AddressKeyFormatType addressKeyFormatType;
-
+  private List<Error> errorList;
 
   @Before
   public void prepare() {
     MockitoAnnotations.initMocks(this);
+    errorList = new ArrayList<>();
     when(xavRespon.getResponse()).thenReturn(response);
     avsResposeData = new AVSResposeData();
+  }
+
+  @Test
+  public void shouldPopulateAddressKeyFormat() {
     addressClassificationType = new AddressClassificationType();
     addressClassificationType.setCode(ADDRESS_TYPE_CODE);
     addressKeyFormatType = new AddressKeyFormatType();
+    populateAddressKeyFormatData(addressKeyFormatType);
+    addressKeyformatList = new ArrayList<>();
+    addressKeyformatList.add(addressKeyFormatType);
+    mockingData();
+    populator.populateAddressKeyFormatData(xavRespon, avsResposeData);
+    avsResposeData.getResult();
+    Assert.assertEquals(avsResposeData.getStatusCode(), STATUS_CODE);
+    Assert.assertEquals(avsResposeData.getStatusMessage(), STATUS_MESSAGE);
+    verifyAddressData();
+  }
+
+  @Test
+  public void ShouldHandleError(){
+    errorList.add(error);
+    when(error.getErrorCode()).thenReturn(ERROR_CODE);
+    when(error.getErrorDescription()).thenReturn(ERROR_DESCRIPTION);
+    when(response.getError()).thenReturn(errorList);
+    when(response.getResponseStatusDescription()).thenReturn(STATUS_MESSAGE);
+    when(xavRespon.getResponse()).thenReturn(response);
+    populator.populateAddressKeyFormatData(xavRespon, avsResposeData);
+    assertNotNull(avsResposeData.getResult());
+    assertEquals(avsResposeData.getStatusCode(),ERROR_CODE);
+    assertEquals(avsResposeData.getStatusMessage(),STATUS_MESSAGE);
+    assertEquals(avsResposeData.getErrorDescription(),ERROR_DESCRIPTION);
+  }
+
+  private void populateAddressKeyFormatData(AddressKeyFormatType addressKeyFormatType){
     addressKeyFormatType.getAddressLine().add(ADDRESS_LINE);
     addressKeyFormatType.setCountryCode(COUNTRY_CODE);
     addressKeyFormatType.setPoliticalDivision1(REGION_CODE);
@@ -79,14 +116,9 @@ public class BlUPSAddressResponsePopulatorTest {
     addressKeyFormatType.setPostcodePrimaryLow(POSTCODE_PRIMARY_LOW);
     addressKeyFormatType.setPostcodeExtendedLow(POSTCODE_EXTENDED_LOW);
     addressKeyFormatType.setAddressClassification(addressClassificationType);
-    addressKeyformatList = new ArrayList<>();
-    addressKeyformatList.add(addressKeyFormatType);
-
   }
 
-
-  @Test
-  public void shouldPopulateAddressKeyFormat() {
+  private void mockingData(){
     when(xavRespon.getAddressKeyFormat()).thenReturn(addressKeyformatList);
     when(xavRespon.getResponse().getResponseStatusCode()).thenReturn(STATUS_CODE);
     when(xavRespon.getResponse().getResponseStatusDescription()).thenReturn(STATUS_MESSAGE);
@@ -99,10 +131,9 @@ public class BlUPSAddressResponsePopulatorTest {
     when(regionModel.getIsocode()).thenReturn(COUNTRY_CODE + "-" + REGION_CODE);
     when(commonI18NService.getRegion(country, COUNTRY_CODE + "-" + REGION_CODE))
         .thenReturn(regionModel);
-    populator.populateAddressKeyFormatData(xavRespon, avsResposeData);
-    avsResposeData.getResult();
-    Assert.assertEquals(avsResposeData.getStatusCode(), STATUS_CODE);
-    Assert.assertEquals(avsResposeData.getStatusMessage(), STATUS_MESSAGE);
+  }
+
+  private void verifyAddressData(){
     avsResposeData.getResult().forEach(addressData -> {
       assertNotNull(addressData);
       assertEquals(addressData.getAddressType(), AddressTypeEnum.RESIDENTIAL.getCode());
@@ -118,5 +149,4 @@ public class BlUPSAddressResponsePopulatorTest {
       assertEquals(regionData.getCountryIso(), COUNTRY_CODE);
     });
   }
-
 }
