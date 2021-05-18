@@ -857,4 +857,19 @@
 	<bean id="blDeliveryModeService" class="com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService"
 		  parent="defaultZoneDeliveryModeService"/>
 
+	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->
+	<alias name="blCommerceAddToCartStrategy" alias="commerceAddToCartStrategy"/>
+	<bean id="blCommerceAddToCartStrategy"
+		class="com.bl.core.services.strategy.impl.DefaultBlCommerceAddToCartStrategy"
+		parent="defaultCommerceAddToCartStrategy">
+	</bean>
+
+	<alias name="blCommerceUpdateCartEntryStrategy" alias="commerceUpdateCartEntryStrategy"/>
+	<bean id="blCommerceUpdateCartEntryStrategy"
+		class="com.bl.core.services.strategy.impl.DefaultBlCommerceUpdateCartEntryStrategy"
+		parent="defaultCommerceUpdateCartEntryStrategy">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+	</bean>
+
 </beans>

@@ -13,11 +13,13 @@
         <spring:theme code="checkout.multi.order.summary"/>
       </h5>
       <hr>
+      <c:if test="${cartData.isRentalCart}">
       <p>
         <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
         <input type="text" class="form-control cart-picker" id="summary-litepicker"
             placeholder="<spring:theme code="text.rental.cart.select.date"/>">
         </p>
+      </c:if>
       <hr>
       <table id="costSummary">
           <tbody>

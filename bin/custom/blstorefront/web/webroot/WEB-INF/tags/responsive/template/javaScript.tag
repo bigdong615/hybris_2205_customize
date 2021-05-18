@@ -86,9 +86,8 @@
 		<script src="${commonResourcePathHtml}/js/_autoload.js"></script>
 
 		<%-- custom js file --%>
-        <c:if test="${cmsPage.uid eq 'cartpage'}">
         <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
-        </c:if>
+
 
 		<%-- Cms Action JavaScript files --%>
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">

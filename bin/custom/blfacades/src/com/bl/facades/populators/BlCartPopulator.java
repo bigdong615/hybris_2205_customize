@@ -26,6 +26,8 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
 		target.setPickUpPersonEmail(source.getPickUpPersonEmail());
 		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
+		target.setIsRentalCart(source.getIsRentalCart());
+
 	}
 
 }
