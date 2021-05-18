@@ -9,7 +9,6 @@ import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
-import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
@@ -148,10 +147,18 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
     void setUPSAddressOnCart(final AddressModel addressModel);
     
  	/**
- 	 * This method will return all the delivery modes
- 	 *
- 	 * @param payByCustomer
- 	 * @return Collection of ZoneDeliveryModeModels
- 	 */
+	  * This method will return all the delivery modes.
+	  *
+	  * @param payByCustomer the pay by customer
+	  * @return Collection of ZoneDeliveryModeModels
+	  */
  	Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
+ 	
+ 	/**
+    * This method will check cart entries for gear availability
+    *
+    * @param deliveryModeCode the delivery mode code
+    * @return true, if successful
+    */
+   boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode);
 }

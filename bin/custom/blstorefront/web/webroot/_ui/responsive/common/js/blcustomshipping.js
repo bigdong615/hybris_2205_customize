@@ -95,6 +95,7 @@
                  $('#shipToHomeShippingMethods').html(shippingModes);
                  $('.page-loader-new-layout').hide();
              } else {
+             	 $('#cart-shipping-cost').text('$0.00');
                  showErrorNotification('Rental Dates not eligible for the selected shipping option!!');
                  $('.page-loader-new-layout').hide();
              }
@@ -109,7 +110,10 @@
  function shipToHomeShippingContinue(shippingMethod) {
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
-      if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
+      var isAvailable = checkAvailability(deliveryMode);
+      if(isAvailable)
+      {
+      	if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
           savedAddress = $('select[id="ship-it-savedAddresses"]').val();
           (async() => {
             await saveSelectedAddress(savedAddress, deliveryMode);
@@ -134,6 +138,12 @@
               showErrorNotification("Please enter mandatory fields values!!", true);
           }
       }
+      }
+      else
+      {
+      	window.location.reload();
+      }
+      
   }
 
  //UPS-Store
@@ -170,6 +180,7 @@
                 $('#checkZipForUPSPickup').show();
                 $('.page-loader-new-layout').hide();
             } else {
+            	$('#cart-shipping-cost').text('$0.00');
                 showErrorNotification('Rental Dates not eligible for the selected shipping option!!');
                 $('.page-loader-new-layout').hide();
             }
@@ -481,6 +492,7 @@
                 showErrorNotificationPickUp('They must show ID at time of pickup');
                 $('.page-loader-new-layout').hide();
             } else {
+            	$('#cart-shipping-cost').text('$0.00');
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
                 $('.page-loader-new-layout').hide();
             }
@@ -639,6 +651,7 @@
                                }
                                 $('.page-loader-new-layout').hide();
                            } else {
+                           		$('#cart-shipping-cost').text('$0.00');
                                showErrorNotificationSameDay('No delivery windows are available for this date. Please change your shipping method or rental date to continue.');
                                $('.page-loader-new-layout').hide();
                            }
@@ -670,7 +683,10 @@
     var savedAddress = null;
     var sameDayDeliveryNote = $('#sameDayDeliveryNote').val();
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
-    if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
+    var isAvailable = checkAvailability(deliveryMode);
+      if(isAvailable)
+      {
+      	if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
         savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
         $.ajax({
            url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/saveDeliveryDetails',
@@ -735,6 +751,11 @@
             $('.page-loader-new-layout').hide();
         }
     }
+      }
+      else
+      {
+      	window.location.reload();
+      }    
   }
 
   function emptySFOrNYCAddressForm() {
@@ -1005,7 +1026,10 @@
  }
 
  async function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
-     $.ajax({
+ var isAvailable = checkAvailability(deliveryMethod);
+      if(isAvailable)
+      {
+     	$.ajax({
          url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/addPickUpDetails',
          data: JSON.stringify(blPickUpByForm),
          type: "POST",
@@ -1032,6 +1056,11 @@
 
          }
      });
+     }
+     else
+     {
+     	window.location.reload();
+     }
   }
 
   //show Price of shipping on cart
@@ -1054,3 +1083,30 @@
                     .val()+ '"]').text().split('$')[1]);
 
   }
+  
+  //checks the product availability for the selected delivery mode
+  function checkAvailability(deliveryMode){
+  var isAvailable;
+ 	$.ajax({
+        url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/checkAvailability',
+        async: false,
+        data: {
+            	deliveryMethod : deliveryMode
+            },
+        type: "GET",
+        success: function (data) {
+            if(data=='success') {
+          		isAvailable = true;
+            }
+            else
+            {
+            	isAvailable = false;
+            }
+        },
+        error: function (error) {
+        	isAvailable = false;
+			console.log(error);
+        }
+    });
+    return isAvailable;
+ }
