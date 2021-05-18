@@ -399,6 +399,7 @@
 
 	<bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
 		<property name="taxAvalaraCalculated" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="avalaraCalculated" type="Boolean"/>
 	</bean>
 
 	<bean class="com.bl.tax.ResponseData">

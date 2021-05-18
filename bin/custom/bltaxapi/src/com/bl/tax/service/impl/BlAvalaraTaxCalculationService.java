@@ -14,7 +14,7 @@ public class BlAvalaraTaxCalculationService {
    */
   public void calculateTaxWithOrderTotal(final AbstractOrderModel abstractOrderModel , final TaxResponse taxResponse)
   {
-      abstractOrderModel.setTotalAvalaraTaxCalculated(setTotalTaxToOrder(taxResponse));
+      abstractOrderModel.setTotalTax(setTotalTaxToOrder(taxResponse));
       abstractOrderModel.setIsOrderTaxExempt(0.0 < taxResponse.getTotalExempt()
           && 0.0 == taxResponse.getTotalTax() ? Boolean.TRUE :Boolean.FALSE);
 }

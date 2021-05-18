@@ -13,7 +13,6 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.impl.DefaultWarehouseService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
@@ -200,7 +199,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     final List<TaxLine> taxLines = taxRequest.getLines();
     final TaxLine shippingTaxLine =  new TaxLine();
     final TaxLine discountTaxLine =  new TaxLine();
-    if(abstractOrder.getDeliveryMode() instanceof ZoneDeliveryModeModel) {
+    if(null != abstractOrder.getDeliveryMode()) {
       shippingTaxLine.setQuantity(BltaxapiConstants.QTY);
       shippingTaxLine.setNumber(taxRequest.getLines().get(taxRequest.getLines().size() -1).getNumber() + 1);
       shippingTaxLine.setItemCode(BltaxapiConstants.SHIPPING);

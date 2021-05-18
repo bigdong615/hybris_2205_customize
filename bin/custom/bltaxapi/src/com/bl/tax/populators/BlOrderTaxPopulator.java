@@ -19,6 +19,7 @@ public class BlOrderTaxPopulator extends CartPopulator {
   public void populate(final CartModel source, final CartData target)
   {
     super.populate(source ,target);
-    target.setTaxAvalaraCalculated(createPrice(source , source.getTotalAvalaraTaxCalculated()));
+    target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
+    target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
   }
 }

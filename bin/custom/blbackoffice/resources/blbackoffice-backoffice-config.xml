@@ -584,7 +584,20 @@
             </y:group>
         </y:actions>
     </context>
-  	
+
+
+
+<!--To calculate the total without tax -->
+  <context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
+      <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" name="Order editor area">
+      <ea:tab name="customersupportbackoffice.order.tab.details">
+        <ea:section name="customersupportbackoffice.section.order.general.totals" columns="3">
+          <editorArea:customPanel name="customersupportbackoffice.order.details.total" spring-bean="blTotalPriceWithTaxRenderer"/>
+        </ea:section>
+      </ea:tab>
+      </editorArea:editorArea>
+  </context>
+
 </config>
 
 
