@@ -37,6 +37,12 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String PICKUP_ZIP_CODE = "pickUpZipCode";
 	public static final String DROPOFF_ZIP_CODE = "dropOffZipCode";
 	public static final String X_API_KEY = "X-Api-Key";
+
+	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
+	public static final String FAILURE_STRING = "Failure";
+	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
+	public static final String RESIDENTIAL_ADDRESS_TYPE_CODE = "2";
+	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
 	
 	private BlintegrationConstants()
 	{

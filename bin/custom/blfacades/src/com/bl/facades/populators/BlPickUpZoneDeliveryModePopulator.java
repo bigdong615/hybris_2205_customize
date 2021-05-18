@@ -8,8 +8,11 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
+import javax.annotation.Resource;
+
 public class BlPickUpZoneDeliveryModePopulator extends BlZoneDeliveryModePopulator {
 
+    @Resource(name = "addressConverter")
     private Converter<AddressModel, AddressData> addressConverter;
 
     @Override
@@ -24,8 +27,10 @@ public class BlPickUpZoneDeliveryModePopulator extends BlZoneDeliveryModePopulat
             blPickUpZoneDeliveryModeData.setPassword(blPickUpZoneDeliveryModeModel.getPassword());
             blPickUpZoneDeliveryModeData.setExternalStores(blPickUpZoneDeliveryModeModel.getExternalStores());
             blPickUpZoneDeliveryModeData.setExternalStoreUrl(blPickUpZoneDeliveryModeModel.getExternalStoreUrl());
-            blPickUpZoneDeliveryModeData.setInternalStoreAddress(getAddressConverter().convert(
-                    blPickUpZoneDeliveryModeModel.getInternalStoreAddress()));
+            if(blPickUpZoneDeliveryModeModel.getInternalStoreAddress() != null) {
+                blPickUpZoneDeliveryModeData.setInternalStoreAddress(getAddressConverter().convert(
+                        blPickUpZoneDeliveryModeModel.getInternalStoreAddress()));
+            }
         }
     }
 

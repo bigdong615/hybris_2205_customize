@@ -140,13 +140,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_FOUR = 4;
 	public static final int CONDITION_RATING_THREE = 3;
 	public static final int CONDITION_RATING_TWO = 2;
-	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
-	public static final String FAILURE_STRING = "Failure";
-	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
-	public static final String RESIDENTIAL_ADDRESS_TYPE_CODE = "2";
-	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
-
-
 
 	private BlCoreConstants()
 	{

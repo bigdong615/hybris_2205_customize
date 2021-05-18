@@ -59,6 +59,7 @@
   <!--BL-166 : Add accelerator facades specific product options -->
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
+    <value>REQUIRED_SERIAL_DATA</value>
   </enum>
 
   <!--BL-174 : This DTO contains date related information(for temporary purpose once local storage code is ready
@@ -94,10 +95,9 @@
       <property name="pickUpPersonLastName" type="java.lang.String"/>
       <property name="pickUpPersonEmail" type="java.lang.String"/>
       <property name="pickUpPersonPhone" type="java.lang.String"/>
-      <property name="giftCode" type="String"/>
-      <property name="grandTotal" type="PriceData"/>
-      <property name="giftCardDiscount" type="PriceData"/>
-      <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
+      <property name="statusUpdate" type="Boolean"/>
+      <property name="deliveryNotes" type="String"/>
+      <property name="isRentalCart" type="java.lang.Boolean"/>
   </bean>
 
     <!-- Shipping -->
@@ -114,6 +114,7 @@
     <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
         <property name="code" type="String"/>
         <property name="name" type="String"/>
+        <property name="shippingType" type="String"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlPartnerPickUpStoreData">
@@ -139,6 +140,10 @@
 
     <bean class="de.hybris.platform.commercefacades.user.data.AddressData">
         <property name="addressType" type="String"/>
+        <property name="openingDaysDetails" type="java.util.Map&lt;String, String>"/>
+        <property name="pickStoreAddress" type="Boolean"/>
+        <property name="upsStoreAddress" type="Boolean"/>
+        <property name="url" type="String"/>
     </bean>
     <!-- Shipping End-->
 
@@ -188,22 +193,6 @@
 	    <property name="warehouseZipCode" type="String"/>
 	    <property name="deliveryAddressZipCode" type="String"/>
   	</bean>
-
-  <!--BL-563 Gift Card-->
-  <bean class="com.bl.facades.giftcard.data.BLGiftCardData">
-    <property name="code" type="String"/>
-    <property name="amount" type="java.lang.Double"/>
-    <property name="redeemamount" type="java.lang.Double"/>
-    <property name="balanceamount" type="java.lang.Double"/>
-    <property name="reedemDate" type="java.util.Date" />
-    <property name="cartId" type="String" />
-    <property name="url" type="String" />
-    <property name="currency" type="de.hybris.platform.commercefacades.storesession.data.CurrencyData" />
-    <property name="amountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
-    <property name="balanceamountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
-    <property name="indicator" type="String" />
-  </bean>
-
 
 </beans>
 

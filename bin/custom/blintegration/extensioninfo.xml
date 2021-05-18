@@ -10,8 +10,8 @@
         
         <requires-extension name="commercewebservicescommons"/>
         <requires-extension name="bllogging"/>
-        <requires-extension name="blcore"/>
-        <requires-extension name="blfacades"/>
+        <!--<requires-extension name="blcore"/>-->
+        <!--<requires-extension name="blfacades"/>-->
        
       
         
