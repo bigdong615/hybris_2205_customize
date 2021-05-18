@@ -57,41 +57,165 @@
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
               <h5 class="d-none d-md-block">Dont forget</h5>
-              <div class="row d-none d-md-flex mt-4">
-                  <div class="col-md-4">
-                      <div class="card">
-                          <span class="badge badge-new">New</span>
-                          <span class="bookmark"></span>
-                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg"></li>
-                          <p class="overline"><a href="#">Canon</a></p>
-                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
-                          <h6 class="price">$44</h6>
-                          <a href="#" class="btn btn-primary">Add to Rental</a>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                      <div class="card">
-                          <span class="badge badge-new">New</span>
-                          <span class="bookmark"></span>
-                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
-                          <p class="overline"><a href="#">Canon</a></p>
-                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
-                          <h6 class="price">$44</h6>
-                          <a href="#" class="btn btn-primary">Add to Rental</a>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                      <div class="card">
-                          <span class="badge badge-new">New</span>
-                          <span class="bookmark"></span>
-                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
-                          <p class="overline"><a href="#">Canon</a></p>
-                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
-                          <h6 class="price">$44</h6>
-                          <a href="#" class="btn btn-primary">Add to Rental</a>
-                      </div>
-                  </div>
-              </div>
+
+                  <!--BL-537: changes start -->
+             <div id="gear-sliders" class="splide mt-4">
+                <div class="splide__track">
+                   <ul class="splide__list">
+                      <li class="splide__slide">
+                         <div class="card">
+                            <span class="badge badge-new">New</span>
+                            <span class="bookmark"></span>
+                            <div class="card-slider-modal splide">
+                               <div class="splide__track">
+                                  <ul class="splide__list">
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                  </ul>
+                               </div>
+                            </div>
+                            <p class="overline"><a href="#">Canon</a></p>
+                            <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                            <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
+                            <a href="#" class="btn btn-primary">Add to Rental</a>
+                         </div>
+                      </li>
+                      <li class="splide__slide">
+                         <div class="card">
+                            <span class="badge badge-new">New</span>
+                            <span class="bookmark"></span>
+                            <div class="card-slider-modal splide">
+                               <div class="splide__track">
+                                  <ul class="splide__list">
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                  </ul>
+                               </div>
+                            </div>
+                            <p class="overline"><a href="#">Canon</a></p>
+                            <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                            <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
+                            <a href="#" class="btn btn-primary">Add to Rental</a>
+                         </div>
+                      </li>
+                      <li class="splide__slide">
+                         <div class="card">
+                            <span class="badge badge-new">New</span>
+                            <span class="bookmark"></span>
+                            <div class="card-slider-modal splide">
+                               <div class="splide__track">
+                                  <ul class="splide__list">
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                  </ul>
+                               </div>
+                            </div>
+                            <p class="overline"><a href="#">Canon</a></p>
+                            <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                            <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
+                            <a href="#" class="btn btn-primary">Add to Rental</a>
+                         </div>
+                      </li>
+                      <li class="splide__slide">
+                         <div class="card">
+                            <span class="badge badge-new">New</span>
+                            <span class="bookmark"></span>
+                            <div class="card-slider-modal splide">
+                               <div class="splide__track">
+                                  <ul class="splide__list">
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                  </ul>
+                               </div>
+                            </div>
+                            <p class="overline"><a href="#">Canon</a></p>
+                            <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                            <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
+                            <a href="#" class="btn btn-primary">Add to Rental</a>
+                         </div>
+                      </li>
+                      <li class="splide__slide">
+                         <div class="card">
+                            <span class="badge badge-new">New</span>
+                            <span class="bookmark"></span>
+                            <div class="card-slider-modal splide">
+                               <div class="splide__track">
+                                  <ul class="splide__list">
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                  </ul>
+                               </div>
+                            </div>
+                            <p class="overline"><a href="#">Canon</a></p>
+                            <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                            <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
+                            <a href="#" class="btn btn-primary">Add to Rental</a>
+                         </div>
+                      </li>
+                      <li class="splide__slide">
+                         <div class="card">
+                            <span class="badge badge-new">New</span>
+                            <span class="bookmark"></span>
+                            <div class="card-slider-modal splide">
+                               <div class="splide__track">
+                                  <ul class="splide__list">
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                     <li class="splide__slide"><img
+                                        src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                                     </li>
+                                  </ul>
+                               </div>
+                            </div>
+                            <p class="overline"><a href="#">Canon</a></p>
+                            <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                            <h6 class="price">$44 <span class="period">Jan 31 - Feb 2</span></h6>
+                            <a href="#" class="btn btn-primary">Add to Rental</a>
+                         </div>
+                      </li>
+                   </ul>
+                </div>
+             </div>
+<!--BL-537: changes end -->
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>

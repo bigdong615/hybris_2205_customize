@@ -14,3 +14,16 @@ Added for removing add to cart popup background, when unable to add product to c
 .remove-popup-background{
  opacity:0 !important;
 }
+
+/* BL-581*/
+.mm-listitem hr:last-child{display:none;}
+
+/*for BL-494 */
+.icon-production { background: url(../assets/icon-equipment.svg) center no-repeat; }
+
+/* for BL-573 */
+.showmore-margintop{position: relative; top: 30px;}
+
+ /*for BL-537 changes*/
+#gear-sliders > .splide__arrows .splide__arrow--prev, #blog-slider > .splide__arrows .splide__arrow--prev, #gear-slider-cart > .splide__arrows .splide__arrow--prev { margin-left: -30px; }
+#gear-sliders > .splide__arrows .splide__arrow--next, #blog-slider > .splide__arrows .splide__arrow--next, #gear-slider-cart > .splide__arrows .splide__arrow--next { margin-right: -30px; }

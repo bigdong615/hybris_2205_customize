@@ -9,11 +9,12 @@
    </c:when>
    <c:otherwise>
    
-    <!-- Added condition for BL-85  -->   
+    <!-- Added condition for BL-85  -->
+    <!---BL-607:remove mb-4 class from h6 tag -->
      <c:choose>
 		<c:when
 			test="${pageType == 'PRODUCTSEARCH' && blPageType == 'rentalGear'}">
-			<h6 class="search-term mb-4">
+			<h6 class="search-term">
 				&quot;<spring:theme code="text.rental.gear.slp"/> &quot;<span class="search-count">
 					&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
 			</h6>

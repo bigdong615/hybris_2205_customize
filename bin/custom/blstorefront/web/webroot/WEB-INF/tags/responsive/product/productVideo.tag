@@ -13,7 +13,8 @@
                     <div class="embed-responsive embed-responsive-16by9">
                             <iframe class="embed-responsive-item" src="${productVideo.videoUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
                     </div>
-                  <p class="text-start mt-1">${productVideo.videoName}<span class="gray80 float-end">${productVideo.videoDuration}</span></p>
+                    <!-- BL-556 : removing video name and duration. -->
+                  <!-- <p class="text-start mt-1">${productVideo.videoName}<span class="gray80 float-end">${productVideo.videoDuration}</span></p> -->
                 </li>
               </c:forEach>
            </ul>
