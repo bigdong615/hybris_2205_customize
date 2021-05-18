@@ -53,6 +53,8 @@ public class BlControllerConstants
   public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
   public static final String REFERER= "Referer";
   public static final String HOME_PAGE_URL = "/";
+	public static final String FAILURE_RESULT = "failure";
+
 
 	private BlControllerConstants()
 	{
