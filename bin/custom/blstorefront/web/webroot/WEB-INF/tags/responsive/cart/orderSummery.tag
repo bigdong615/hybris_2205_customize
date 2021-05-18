@@ -13,17 +13,19 @@
         <spring:theme code="checkout.multi.order.summary"/>
       </h5>
       <hr>
+      <c:if test="${cartData.isRentalCart}">
       <p>
         <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
         <input type="text" class="form-control cart-picker" id="summary-litepicker"
             placeholder="<spring:theme code="text.rental.cart.select.date"/>">
         </p>
+      </c:if>
       <hr>
       <table id="costSummary">
           <tbody>
               <tr>
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
-                  <td class="text-end"><format:blPrice priceData="${cartData.subTotal}"/></td>
+                  <td class="text-end" id="cart-shipping-subTotal"><format:blPrice priceData="${cartData.subTotal}"/></td>
               </tr>
               <tr>
                   <td class="gray80"><spring:theme code="text.cart.damage.waiver"/>
@@ -31,7 +33,7 @@
                         <i class="icon-support"></i>
                     </a>
                   </td>
-                  <td class="text-end"><format:blPrice priceData="${cartData.totalDamageWaiverCost}"/></td>
+                  <td class="text-end" id="cart-shipping-waiver"><format:blPrice priceData="${cartData.totalDamageWaiverCost}"/></td>
               </tr>
               <tr>
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.shipping"/></td>
@@ -42,17 +44,16 @@
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
                    <td class="text-end">
                   <c:choose>
-                    <c:when test="${pageType =='CART'}">
+                    <c:when test="${pageType =='CART' || cartData.avalaraCalculated ne 'true'}">
                             TBD
                      </c:when>
                      <c:otherwise><format:price priceData="${cartData.taxAvalaraCalculated}"/></c:otherwise>
                   </c:choose>
                 </td>
-
               </tr>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
-                  <td class="text-end"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
+                  <td class="text-end" id="cart-shipping-total"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
               </tr>
           </tbody>
       </table>

@@ -3,7 +3,7 @@
     <path dir='${HYBRIS_BIN_DIR}' autoload='false' />	
 	<!-- BL custom extensions autoload -->
     <!-- <path dir="${HYBRIS_BIN_DIR}/custom" autoload="true" /> -->
-    
+
     <!-- BL custom extensions -->
       <extension name='blassistedservicestorefront' />
       <extension name='blbackoffice' />
@@ -20,10 +20,10 @@
       <extension name='blstorefront' />
       <extension name='bllogging' />
       <extension name='bltaxapi' />
-    <extension name='blintegration'/>
+      <extension name='blintegration'/>
 
-	
-	<!-- Extension to enable Accelerator Services -->
+
+    <!-- Extension to enable Accelerator Services -->
 	<extension name='acceleratorbackoffice' />
     <extension name='acceleratorservices' />
     <extension name='acceleratorstorefrontcommons' />
@@ -293,12 +293,12 @@
 	
 	<!-- UnComment the extensions below to enable Subscription Bundles provides functionality 
 	and tests which rely upon having both Configurable Bundles and Subscriptions modules in order to function. -->
-	<extension name='subscriptionbundlebackoffice' />
+	  <!--<extension name='subscriptionbundlebackoffice' />
     <extension name='subscriptionbundlefacades' />
     <extension name='subscriptionbundleservices' />
     <extension name='subscriptionbackoffice' />
     <extension name='subscriptionfacades' />
-    <extension name='subscriptionservices' />
+    <extension name='subscriptionservices' />-->
 	
 	<!-- UnComment the extensions below to enable Timed Access Promotion Engine module it enables the UI for displaying the Flash Buy button -->
 	<!-- <extension name='timedaccesspromotionengineaddon' />
@@ -312,9 +312,9 @@
 	<!-- The Selective Cart module allows customers to select what items in the cart for checking out, 
 	while leaving other items remain in the cart for future considerations, 
 	thus improving shopping experience and increasing conversion rate. -->
-	 <extension name='selectivecartfacades' />
+	  <!--<extension name='selectivecartfacades' />
     <extension name='selectivecartservices' />
-    <extension name='selectivecartsplitlistaddon' /> 
+    <extension name='selectivecartsplitlistaddon' />-->
 	
 	<!-- UnComment the extensions below to enable YForms Feature-->
 	<!-- <extension name='ywebservices' />
@@ -408,6 +408,5 @@
     <extension name='yvoid' />
 	<extension name='yaddon' /> -->
 
-	
   </extensions>
 </hybrisconfig>
