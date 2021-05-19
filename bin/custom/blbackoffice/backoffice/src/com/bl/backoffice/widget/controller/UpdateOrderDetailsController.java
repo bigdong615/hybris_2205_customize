@@ -1,5 +1,5 @@
 //
-// Decompiled by Procyon v0.5.36
+// author Aditi Sharma
 //
 
 package com.bl.backoffice.widget.controller;
@@ -13,7 +13,10 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.order.CalculationService;
+import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -30,6 +33,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.zkoss.zk.ui.Component;
@@ -93,6 +97,12 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	private Combobox deliveryModeCombobox;
 
 	@Wire
+	private Combobox isPickStoreAddress;
+
+	@Wire
+	private Combobox isUPSStoreAddress;
+
+	@Wire
 	private Textbox pickupPersonFName;
 
 	@Wire
@@ -125,10 +135,19 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	@Autowired
 	private BlFedExSameDayService fedExSameDayServiceImpl;
 
-	ListModelList<RegionData> listModelList = new ListModelList<>();
+	@Autowired
+	CalculationService calculationService;
 
-	ListModelList<DeliveryModeModel> deliveryList = new ListModelList<>();
+	private Converter<RegionModel, RegionData> regionConverter;
 
+	private ListModelList<RegionData> listModelList = new ListModelList<>();
+
+	private ListModelList<DeliveryModeModel> deliveryList = new ListModelList<>();
+
+	private ListModelList isPickupStore = new ListModelList();
+	private ListModelList isUpsStore = new ListModelList();
+
+	boolean isDeliveryModeChange = false;
 
 	static
 	{
@@ -138,9 +157,9 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 			i18NFacade = (I18NFacade) context.getBean("i18NFacade");
 		}
-		catch (final Exception e)
+		catch (final BeansException ex)
 		{
-			LOG.info("Bean entry not found " + e);
+			BlLogger.logMessage(LOG, Level.ERROR, ex.getMessage());
 		}
 	}
 
@@ -170,34 +189,29 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		this.pickUpPersonEmail.setValue(getOrderModel().getPickUpPersonEmail());
 		this.pickUpPersonPhone.setValue(getOrderModel().getPickUpPersonPhone());
 
+		isPickupStore = new ListModelList<>(getBooleanValueList());
+
+		final boolean isPickupAddSelected = getOrderModel().getDeliveryAddress().getPickStoreAddress()
+				? isPickupStore.addToSelection(Boolean.TRUE)
+				: isPickupStore.addToSelection(Boolean.FALSE);
+		isPickStoreAddress.setModel(isPickupStore);
+
+		BlLogger.logMessage(LOG, Level.INFO, "isPickUpAddessSelected : " + isPickupAddSelected);
+
+		isUpsStore = new ListModelList<>(getBooleanValueList());
+
+		final boolean isUpsStoreAddSelected = getOrderModel().getDeliveryAddress().getUpsStoreAddress()
+				? isUpsStore.addToSelection(Boolean.TRUE)
+				: isUpsStore.addToSelection(Boolean.FALSE);
+
+		isUPSStoreAddress.setModel(isUpsStore);
+
+		BlLogger.logMessage(LOG, Level.INFO, "isUPSAddessSelected : " + isUpsStoreAddSelected);
+
 		getBlRegionData(regionCodeList, blRegionCode);
 
 		getBlDeliveryModes();
 
-	}
-
-	/**
-	 * This method will set all delivery modes to combo box
-	 */
-	private void getBlDeliveryModes()
-	{
-		final Collection<ZoneDeliveryModeModel> deliveyModeList = getCheckoutFacade().getAllDeliveryModes(false);
-		deliveryList = new ListModelList<>(deliveyModeList);
-		deliveryList.addToSelection(deliveryList.get(0));
-		deliveryModeCombobox.setModel(deliveryList);
-	}
-
-	/**
-	 * @param regionCodeList
-	 * @param blRegionCode
-	 */
-	private void getBlRegionData(final List regionCodeList, final List<RegionData> blRegionCode)
-	{
-		regionCodeList.addAll(blRegionCode);
-		listModelList = new ListModelList<>(regionCodeList);
-
-		listModelList.addToSelection(listModelList.get(0));
-		regionCombobox.setModel(listModelList);
 	}
 
 	@ViewEvent(componentID = "regionCombobox", eventName = "onChange")
@@ -228,22 +242,43 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
 
 		final String deliveryAddressZipCode = getOrderModel().getDeliveryAddress().getPostalcode();
-		String warehouseZipCode = "";
+
+		validateZipCodeForDelivery(sameDayCityReqData, deliveryAddressZipCode);
+	}
+
+	@ViewEvent(componentID = "postalCode", eventName = "onChange")
+	public void changeZipCode()
+	{
+		final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
+		validateZipCodeForDelivery(sameDayCityReqData, this.postalCode.getValue());
+	}
+
+	@ViewEvent(componentID = "isPickStoreAddress", eventName = "onChange")
+	public void isPickUpStoreAddress()
+	{
+		isPickupStore.addToSelection(this.isPickStoreAddress.getValue());
+	}
+
+	@ViewEvent(componentID = "isUPSStoreAddress", eventName = "onChange")
+	public void isUpsStoreAddress()
+	{
+		isUpsStore.addToSelection(this.isUPSStoreAddress.getValue());
+	}
+
+	/**
+	 * @param sameDayCityReqData
+	 * @param deliveryAddressZipCode
+	 * @param warehouseZipCode
+	 */
+	private void validateZipCodeForDelivery(final SameDayCityReqData sameDayCityReqData, final String deliveryAddressZipCode)
+	{
 		final ZoneDeliveryModeModel blZoneDeliveryMode = this.deliveryModeCombobox.getSelectedItem().getValue();
+
 		if (blZoneDeliveryMode instanceof BlRushDeliveryModeModel)
 		{
 			final BlRushDeliveryModeModel zonedeliveryMode = (BlRushDeliveryModeModel) blZoneDeliveryMode;
 
-			if ("SAME_DAY_DELIVERY".equals(zonedeliveryMode.getShippingGroup().getCode())
-					|| "NEXT_DAY_RUSH_DELIVERY".equals(zonedeliveryMode.getShippingGroup().getCode()))
-			{
-				PointOfServiceModel pointOfServiceModel = new PointOfServiceModel();
-				if (zonedeliveryMode.getWarehouse() != null && zonedeliveryMode.getWarehouse().getPointsOfService() != null)
-				{
-					pointOfServiceModel = Iterables.get(zonedeliveryMode.getWarehouse().getPointsOfService(), 0);
-				}
-				warehouseZipCode = pointOfServiceModel.getAddress().getPostalcode();
-			}
+			final String warehouseZipCode = getWarehouseZipCode(zonedeliveryMode);
 
 			sameDayCityReqData.setWarehouseZipCode(warehouseZipCode);
 			sameDayCityReqData.setDeliveryAddressZipCode(deliveryAddressZipCode);
@@ -254,12 +289,14 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				if (BooleanUtils.isTrue(resData.getServiceApplicable()))
 				{
 					deliveryList.addToSelection(blZoneDeliveryMode);
+					isDeliveryModeChange = true;
 				}
 				else
 				{
 					deliveryList.addToSelection(getOrderModel().getDeliveryMode());
-					Messagebox.show("blbackoffice.updateshipping.inValid.zipCode");
-					throw new WrongValueException(this.deliveryModeCombobox, this.getLabel("Error Here"));
+					Messagebox.show("Selected shipping method service is not applicable for added zip code");
+					throw new WrongValueException(this.deliveryModeCombobox,
+							this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
 
 				}
 			}
@@ -305,12 +342,31 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeToSet.trim());
 		getOrderModel().setDeliveryMode(deliveryModeModel);
+
+		getOrderModel().getDeliveryAddress().setPickStoreAddress(
+				"true".equalsIgnoreCase(this.isPickStoreAddress.getValue().trim()) ? Boolean.TRUE : Boolean.FALSE);
+
+		getOrderModel().getDeliveryAddress().setPickStoreAddress(
+				"true".equalsIgnoreCase(this.isUPSStoreAddress.getValue().trim()) ? Boolean.TRUE : Boolean.FALSE);
+
 		modelService.save(addressModel);
 		modelService.refresh(addressModel);
+		getOrderModel().setCalculated(false);
 		modelService.save(orderModel);
 		modelService.refresh(orderModel);
+		if (BooleanUtils.isTrue(isDeliveryModeChange))
+		{
+			try
+			{
+				getCalculationService().calculate(getOrderModel());
+				isDeliveryModeChange = false;
+			}
+			catch (final CalculationException ex)
+			{
+				BlLogger.logMessage(LOG, Level.ERROR, ex.getMessage());
+			}
+		}
 		this.showMessageBox();
-
 	}
 
 	protected void validateRequest()
@@ -327,9 +383,93 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		if (StringUtils.isEmpty(this.town.getValue()))
 		{
-			throw new WrongValueException(this.line1, this.getLabel("blbackoffice.updateshipping.missing.town"));
+			throw new WrongValueException(this.town, this.getLabel("blbackoffice.updateshipping.missing.town"));
 		}
 
+		if (StringUtils.isEmpty(this.regionCombobox.getValue()))
+		{
+			throw new WrongValueException(this.regionCombobox, this.getLabel("blbackoffice.updateshipping.missing.region"));
+		}
+
+		if (StringUtils.isEmpty(this.deliveryModeCombobox.getValue()))
+		{
+			throw new WrongValueException(this.deliveryModeCombobox,
+					this.getLabel("blbackoffice.updateshipping.missing.deliveryMode"));
+		}
+
+		if (StringUtils.isEmpty(this.postalCode.getValue()))
+		{
+			throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.missing.postalCode"));
+		}
+
+	}
+
+	/**
+	 * @param warehouseZipCode
+	 * @param zonedeliveryMode
+	 * @return warehouseZipCode
+	 */
+	private String getWarehouseZipCode(final BlRushDeliveryModeModel zonedeliveryMode)
+	{
+		String warehouseZipCode = "";
+		if ("SAME_DAY_DELIVERY".equals(zonedeliveryMode.getShippingGroup().getCode())
+				|| "NEXT_DAY_RUSH_DELIVERY".equals(zonedeliveryMode.getShippingGroup().getCode()))
+		{
+			PointOfServiceModel pointOfServiceModel = new PointOfServiceModel();
+			if (zonedeliveryMode.getWarehouse() != null && zonedeliveryMode.getWarehouse().getPointsOfService() != null)
+			{
+				pointOfServiceModel = Iterables.get(zonedeliveryMode.getWarehouse().getPointsOfService(), 0);
+			}
+			if (pointOfServiceModel.getAddress() != null && pointOfServiceModel.getAddress().getPostalcode() != null)
+			{
+				warehouseZipCode = pointOfServiceModel.getAddress().getPostalcode();
+			}
+		}
+		return warehouseZipCode;
+	}
+
+	/**
+	 * @return valueList
+	 */
+	private List getBooleanValueList()
+	{
+		final List valueList = new ArrayList();
+		valueList.add(Boolean.TRUE);
+		valueList.add(Boolean.FALSE);
+		return valueList;
+	}
+
+	/**
+	 * This method will set all delivery modes to combo box
+	 */
+	private void getBlDeliveryModes()
+	{
+		final Collection<ZoneDeliveryModeModel> deliveyModeList = getCheckoutFacade().getAllBlDeliveryModes();
+		deliveryList = new ListModelList<>(deliveyModeList);
+		deliveryList.addToSelection(getOrderModel().getDeliveryMode());
+		deliveryModeCombobox.setModel(deliveryList);
+	}
+
+	/**
+	 * @param regionCodeList
+	 * @param blRegionCode
+	 */
+	private void getBlRegionData(final List regionCodeList, final List<RegionData> blRegionCode)
+	{
+		regionCodeList.addAll(blRegionCode);
+		listModelList = new ListModelList<>(regionCodeList);
+
+		final RegionData selectedRegion = getRegionConverter().convert(getOrderModel().getDeliveryAddress().getRegion());
+
+		for (final RegionData regionData : listModelList)
+		{
+			if (regionData.getIsocode().equals(selectedRegion.getIsocode()))
+			{
+				listModelList.addToSelection(regionData);
+			}
+		}
+
+		regionCombobox.setModel(listModelList);
 	}
 
 	protected void showMessageBox()
@@ -426,6 +566,40 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	public void setFedExSameDayServiceImpl(final BlFedExSameDayService fedExSameDayServiceImpl)
 	{
 		this.fedExSameDayServiceImpl = fedExSameDayServiceImpl;
+	}
+
+	/**
+	 * @return the calculationService
+	 */
+	public CalculationService getCalculationService()
+	{
+		return calculationService;
+	}
+
+	/**
+	 * @param calculationService
+	 *           the calculationService to set
+	 */
+	public void setCalculationService(final CalculationService calculationService)
+	{
+		this.calculationService = calculationService;
+	}
+
+	/**
+	 * @return the regionConverter
+	 */
+	public Converter<RegionModel, RegionData> getRegionConverter()
+	{
+		return regionConverter;
+	}
+
+	/**
+	 * @param regionConverter
+	 *           the regionConverter to set
+	 */
+	public void setRegionConverter(final Converter<RegionModel, RegionData> regionConverter)
+	{
+		this.regionConverter = regionConverter;
 	}
 
 }
