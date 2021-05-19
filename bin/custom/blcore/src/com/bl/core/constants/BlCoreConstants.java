@@ -137,6 +137,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_THREE = 3;
 	public static final int CONDITION_RATING_TWO = 2;
 
+	public static final String LENSES ="lenses";
+	public static final String CAMERAS ="cameras";
+	public static final String PRODUCTION ="production";
+	public static final String BL_IMAGE = "blimage";
+
+
 	private BlCoreConstants()
 	{
 		//empty
