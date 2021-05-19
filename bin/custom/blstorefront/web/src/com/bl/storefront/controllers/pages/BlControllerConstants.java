@@ -65,6 +65,10 @@ public class BlControllerConstants
 
 	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
 
+	public static final String ERROR_MESSAGE = "Error:";
+	public static final String RATIO = ":";
+
+
 	private BlControllerConstants()
 	{
 		//empty

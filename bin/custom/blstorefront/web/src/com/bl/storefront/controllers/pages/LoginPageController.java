@@ -52,7 +52,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 	@Override
 	protected String getSuccessRedirect(final HttpServletRequest request, final HttpServletResponse response)
 	{
-		if (httpSessionRequestCache.getRequest(request, response) != null)
+		if (null != httpSessionRequestCache.getRequest(request, response))
 		{
 			return httpSessionRequestCache.getRequest(request, response).getRedirectUrl();
 		}
@@ -181,7 +181,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 			final HttpServletRequest request, final HttpServletResponse response, final Model model) {
 		if (loginError) {
 			model.addAttribute("loginError", Boolean.valueOf(loginError));
-			GlobalMessages.addErrorMessage(model, "login.error.account.not.found.title");
+			GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
 		} else {
 			storeReferer(referer, request, response);
 		}
