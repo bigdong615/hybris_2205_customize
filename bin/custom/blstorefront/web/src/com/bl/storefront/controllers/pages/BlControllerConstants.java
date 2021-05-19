@@ -56,6 +56,12 @@ public class BlControllerConstants
 	public static final String FAILURE_RESULT = "failure";
 	public static final String ERROR = "error";
 
+	public static final String REQUEST = "request";
+	public static final String RESPONSE = "response";
+
+
+	public static final String CATEGORY_CODE_PATH_PATTERN = FORWARD_SLASH +"{categoryCode:.*}";
+	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{parentcategory:.*}" + CATEGORY_CODE_PATH_PATTERN;
 
 	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
 

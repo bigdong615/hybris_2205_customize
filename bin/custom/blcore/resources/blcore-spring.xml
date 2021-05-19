@@ -610,58 +610,6 @@
 		<property name="defaultBlMediaService" ref="defaultBlMediaService"/>
 	</bean>
 
- <!--Custom Value provider created for image format 300Wx300H to have multiple images to be indexed to solr-->
-	<bean id="defaultBlImageValueProvider"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BlImageValueProvider">
-		<property name="mediaFormat" value="300Wx300H"/>
-		<property name="mediaService" ref="mediaService" />
-		<property name="fieldNameProvider" ref="solrFieldNameProvider" />
-		<property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
-	</bean>
-
-	<!--BL-75-->
-
-	<bean id="abstractBlCategoryCodeValueProvider" abstract="true"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BlCategoryCodeValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
-	</bean>
-
-	<bean id="blBrandCategoryCodeValueProvider" parent="abstractBlCategoryCodeValueProvider">
-		<property name="categorySource" ref="blBrandCategorySource"/>
-	</bean>
-
-	<bean id="blBrandCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="brands"/>
-	</bean>
-
-	<bean id="blCategoryCodeValueProvider" parent="abstractBlCategoryCodeValueProvider">
-		<property name="categorySource" ref="blCategorySource"/>
-	</bean>
-
-	<bean id="blCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="1"/>
-	</bean>
-
-
-	<!--BL-79 Value Provider to get the store facet and data index to solr -->
-
-	<bean id="abstractBlGlobalFacetValueProvider" abstract="true"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BlGlobalFacetValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
-	</bean>
-
-	<bean id="blGlobalValueProvider" parent="abstractBlGlobalFacetValueProvider">
-		<property name="categorySource" ref="blGlobalCategorySource"/>
-	</bean>
-
-	<bean id="blGlobalCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="1"/>
-	</bean>
-
 
 	<!-- BL-110-v2 BLInventoryLocation item Prepare Interceptor to generate inventoryLocationID-->
 	<alias name="blInventoryLocationPrepareInterceptor" alias="blInventoryLocationPrepareInterceptor"/>
@@ -690,12 +638,6 @@
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
 
-	<!--BL-80 Adding for usedgear product value provider-->
-	<bean id="blUsedGearProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUsedGearProductValueProvider"
-		parent="abstractPropertyFieldValueProvider">
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-	</bean>
-
 	<!--BL-166 : This bean is override to change default product pattern-->
 	<alias name="defaultProductModelUrlResolver" alias="productModelUrlResolver"/>
 	<bean id="defaultProductModelUrlResolver"
@@ -714,11 +656,7 @@
 		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
 	</bean>
 
-	<!--Added for upcoming products-->
-	<bean id="blUpComingProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUpComingProductValueProvider"
-		parent="abstractPropertyFieldValueProvider">
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-	</bean>
+
 	<!--Pricing Logic changes-->
 	<alias name="defaultBlPricingService" alias="blPricingService"/>
 	<bean id="defaultBlPricingService" class="com.bl.core.services.calculation.impl.DefaultBlPricingService">
@@ -813,6 +751,51 @@
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
 	</bean>
+
+
+ <!--BL-331 Solr Field Value Resolver -->
+
+  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
+
+  <bean id="abstractBlCategoryCodeValueResolver" abstract="true" class="com.bl.core.resolvers.BlCategoryCodeValueResolver" parent="abstractValueResolver" >
+    <property name="modelService" ref="modelService"/>
+  </bean>
+
+  <bean id="blBrandCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
+    <property name="categorySource" ref="blBrandCategorySourceResolver"/>
+  </bean>
+
+  <bean id="blBrandCategorySourceResolver" parent="abstractCategorySource">
+    <property name="rootCategory" value="brands"/>
+  </bean>
+
+  <bean id="blCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
+    <property name="categorySource" ref="blCategorySource"/>
+  </bean>
+
+  <bean id="blCategorySource" parent="abstractCategorySource">
+    <property name="rootCategory" value="1"/>
+  </bean>
+
+  <bean id="abstractBlGlobalFacetValueResolver" abstract="true" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
+    <property name="modelService" ref="modelService"/>
+  </bean>
+
+  <bean id="blGlobalValueResolver" parent="abstractBlGlobalFacetValueResolver">
+    <property name="categorySource" ref="blGlobalCategorySource"/>
+  </bean>
+
+  <bean id="blGlobalCategorySource" parent="abstractCategorySource">
+    <property name="rootCategory" value="1"/>
+  </bean>
+
+  <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
+    <property name="mediaFormat" value="300Wx300H"/>
+    <property name="mediaService" ref="mediaService" />
+    <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
+  </bean>
+
+	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
 
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
