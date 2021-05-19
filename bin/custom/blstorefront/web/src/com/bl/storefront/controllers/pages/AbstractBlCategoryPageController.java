@@ -123,7 +123,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
 
         populateModelAttributeForCategory(model ,categorySearch , categoryCode , searchPageData , category, showMode , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST));
-        populateRequiredDataToCategory(model ,category ,searchPageData , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST) , searchQuery);
+        populateRequiredDataForCategory(model ,category ,searchPageData , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST) , searchQuery);
         return getViewPage(categorySearch.getCategoryPage());
 
     }
@@ -268,7 +268,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     /*
      * This method created to populate required details for category
      */
-    private void populateRequiredDataToCategory(final Model model , final CategoryModel category ,
+    private void populateRequiredDataForCategory(final Model model , final CategoryModel category ,
         final ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData ,final HttpServletRequest request, final String searchQuery) {
         updatePageTitle(category, model);
         // To check whether the category is Rental Gear
@@ -278,7 +278,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         requestContextData.setCategory(category);
         requestContextData.setSearch(searchPageData);
 
-        populateModelForRenatalAndUsedGearCategory(model,category ,searchQuery);
+        populateModelForRentalAndUsedGearCategory(model,category ,searchQuery);
         setMetaData(category ,model);
     }
 
@@ -304,7 +304,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     /**
      *This method created to populate model attribute for  rental category
      */
-    private void populateModelForRenatalAndUsedGearCategory(final Model model , final CategoryModel category , final String searchQuery) {
+    private void populateModelForRentalAndUsedGearCategory(final Model model , final CategoryModel category , final String searchQuery) {
 
         if (searchQuery != null)
         {
@@ -327,7 +327,6 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     /**
      * This method created to set the meta keywords and to set the metdata for category
      */
-
     private void setMetaData(final CategoryModel category , final Model model) {
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
             category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
