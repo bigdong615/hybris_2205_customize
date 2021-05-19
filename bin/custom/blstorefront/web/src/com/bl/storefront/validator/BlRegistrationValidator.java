@@ -61,11 +61,7 @@ public class BlRegistrationValidator implements Validator{
 
     protected void validatePassword(final Errors errors, final String pwd)
     {
-        if (StringUtils.isEmpty(pwd))
-        {
-            errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PWD_INVALID);
-        }
-        else if (StringUtils.length(pwd) < BlControllerConstants.PASSWORD_MIN_LENGTH || StringUtils.length(pwd) >BlControllerConstants.PASSWORD_MAX_LENGTH)
+        if (StringUtils.isEmpty(pwd) || StringUtils.length(pwd) < BlControllerConstants.PASSWORD_MIN_LENGTH || StringUtils.length(pwd) >BlControllerConstants.PASSWORD_MAX_LENGTH)
         {
             errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PWD_INVALID);
         }
