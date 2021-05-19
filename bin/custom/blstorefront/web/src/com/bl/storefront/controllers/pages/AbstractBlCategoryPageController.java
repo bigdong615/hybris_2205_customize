@@ -44,10 +44,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
-    private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";  //NOSONAR
 
     @ResponseBody
-    @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
+    @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
     public FacetRefinement<SearchStateData> getFacets(@PathVariable("categoryCode") final String categoryCode,
                                                       @RequestParam(value = "q", required = false) final String searchQuery,
                                                       @RequestParam(value = "page", defaultValue = "0") final int page,
@@ -57,7 +56,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
     @ResponseBody
-    @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/results", method = RequestMethod.GET)
+    @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/results", method = RequestMethod.GET)
     public SearchResultsData<ProductData> getResults(@PathVariable("categoryCode") final String categoryCode,
                                                      @RequestParam(value = "q", required = false) final String searchQuery,
                                                      @RequestParam(value = "page", defaultValue = "0") final int page,
@@ -70,9 +69,8 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     /**
      * this method is created commonly for both rental and used gear categories to fetch the products
      */
-    protected String performSearchAndGetResultsPage(final String categoryCode, String searchQuery, final int page, // NOSONAR
-        final ShowMode showMode, final String sortCode, final Model model, final HttpServletRequest request,
-        final HttpServletResponse response) throws UnsupportedEncodingException
+    protected String performSearchAndGetResultsPage(final String categoryCode, String searchQuery, final int page, //NOSONAR
+        final ShowMode showMode, final String sortCode, final Model model, final Map<Object, Object> requestAndResponseMap) throws UnsupportedEncodingException
     {
         final CategoryModel category = getCommerceCategoryService().getCategoryForCode(categoryCode);
 
@@ -93,13 +91,12 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                     }
                 }
         }
-
-        final String redirection = checkRequestUrl(request, response, getCategoryModelUrlResolver().resolve(category));
+        final String redirection = checkRequestUrl((HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST),
+            (HttpServletResponse) requestAndResponseMap.get(BlControllerConstants.RESPONSE), getCategoryModelUrlResolver().resolve(category));
         if (StringUtils.isNotEmpty(redirection))
         {
             return redirection;
         }
-
         final CategoryPageModel categoryPage = getCategoryPage(category);
 
         //BL-80 Added to get default sorting as newest for Used New Arrivals Category
@@ -125,54 +122,8 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
             searchPageData = createEmptySearchResult(categoryCode);
         }
 
-        final boolean showCategoriesOnly = categorySearch.isShowCategoriesOnly();
-
-        storeCmsPageInModel(model, categorySearch.getCategoryPage());
-        storeContinueUrl(request);
-
-        populateModel(model, searchPageData, showMode);
-        model.addAttribute(WebConstants.BREADCRUMBS_KEY, getSearchBreadcrumbBuilder().getBreadcrumbs(categoryCode, searchPageData));
-        model.addAttribute("showCategoriesOnly", showCategoriesOnly);
-        model.addAttribute("categoryName", category.getName());
-        model.addAttribute("pageType", PageType.CATEGORY.name());
-        model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
-        model.addAttribute("footerContent",category.getFooterContent());
-        model.addAttribute(BlCoreConstants.CLEAR_BRAND,BlCoreConstants.RENTAL_CLEAR_ALL);
-        model.addAttribute(BlCoreConstants.CLEAR_USED_GEAR_CATEGORY,BlCoreConstants.USED_GEAR_CLEAR_ALL);
-
-        updatePageTitle(category, model);
-        // To check whether the category is Rental Gear
-        addModelAttributeForRentalAndUsedCategory(category,model);
-
-        final RequestContextData requestContextData = getRequestContextData(request);
-        requestContextData.setCategory(category);
-        requestContextData.setSearch(searchPageData);
-
-        if (searchQuery != null)
-        {
-            model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
-        }
-
-        // If its rental gear
-        if(category.isRentalCategory() && category.isFacetedCategory()) {
-            addClearAllModelAttribute(model);
-        }
-        else if(category.isFacetedCategory()) {
-            addClearAllModelAttributeForUsedGear(model);
-        }
-
-        // Added Model attribute for rental Date duration from BlRentalDateUtils class
-        if(category.isRentalCategory()) {
-          model.addAttribute(BlControllerConstants.RENTAL_DATE, BlRentalDateUtils.getRentalsDuration());
-
-        }
-
-        final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
-            category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
-                Collectors.toSet()));
-        final String metaDescription = MetaSanitizerUtil.sanitizeDescription(category.getDescription());
-        setUpMetaData(model, metaKeywords, metaDescription);
-
+        populateModelForCategory(model ,categorySearch , categoryCode , searchPageData , category, showMode , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST));
+        populateCommonForCategory(model ,category ,searchPageData , (HttpServletRequest) requestAndResponseMap.get(BlControllerConstants.REQUEST) , searchQuery);
         return getViewPage(categorySearch.getCategoryPage());
 
     }
@@ -313,6 +264,64 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
         }
     }
 
+
+    private void populateCommonForCategory(final Model model , final CategoryModel category ,
+        final ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData ,final HttpServletRequest request, final String searchQuery) {
+        updatePageTitle(category, model);
+        // To check whether the category is Rental Gear
+        addModelAttributeForRentalAndUsedCategory(category,model);
+
+        final RequestContextData requestContextData = getRequestContextData(request);
+        requestContextData.setCategory(category);
+        requestContextData.setSearch(searchPageData);
+
+        populateModelForRenatalAndUsedGearCategory(model,category ,searchQuery);
+        setMetaData(category ,model);
+    }
+
+    private void populateModelForCategory(final Model model , final CategorySearchEvaluator categorySearch , final String categoryCode ,
+        ProductCategorySearchPageData<SearchStateData, ProductData, CategoryData> searchPageData , final CategoryModel category , final ShowMode showMode , final HttpServletRequest request ) {
+        storeCmsPageInModel(model, categorySearch.getCategoryPage());
+        storeContinueUrl(request);
+        populateModel(model, searchPageData, showMode);
+        final boolean showCategoriesOnly = categorySearch.isShowCategoriesOnly();
+        model.addAttribute(WebConstants.BREADCRUMBS_KEY, getSearchBreadcrumbBuilder().getBreadcrumbs(categoryCode, searchPageData));
+        model.addAttribute("showCategoriesOnly", showCategoriesOnly);
+        model.addAttribute("categoryName", category.getName());
+        model.addAttribute("pageType", PageType.CATEGORY.name());
+        model.addAttribute("userLocation", getCustomerLocationService().getUserLocation());
+        model.addAttribute("footerContent",category.getFooterContent());
+        model.addAttribute(BlCoreConstants.CLEAR_BRAND,BlCoreConstants.RENTAL_CLEAR_ALL);
+        model.addAttribute(BlCoreConstants.CLEAR_USED_GEAR_CATEGORY,BlCoreConstants.USED_GEAR_CLEAR_ALL);
+    }
+
+    private void populateModelForRenatalAndUsedGearCategory(final Model model , final CategoryModel category , final String searchQuery) {
+
+        if (searchQuery != null)
+        {
+            model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
+        }
+        // If its rental gear
+        if(category.isRentalCategory() && category.isFacetedCategory()) {
+            addClearAllModelAttribute(model);
+        }
+        else if(category.isFacetedCategory()) {
+            addClearAllModelAttributeForUsedGear(model);
+        }
+        // Added Model attribute for rental Date duration from BlRentalDateUtils class
+        if(category.isRentalCategory()) {
+            model.addAttribute(BlControllerConstants.RENTAL_DATE, BlRentalDateUtils.getRentalsDuration());
+        }
+
+    }
+
+    private void setMetaData(final CategoryModel category , final Model model) {
+        final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
+            category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
+                Collectors.toSet()));
+        final String metaDescription = MetaSanitizerUtil.sanitizeDescription(category.getDescription());
+        setUpMetaData(model, metaKeywords, metaDescription);
+    }
 
 }
 
