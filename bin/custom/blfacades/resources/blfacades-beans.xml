@@ -95,6 +95,9 @@
       <property name="pickUpPersonLastName" type="java.lang.String"/>
       <property name="pickUpPersonEmail" type="java.lang.String"/>
       <property name="pickUpPersonPhone" type="java.lang.String"/>
+      <property name="statusUpdate" type="Boolean"/>
+      <property name="deliveryNotes" type="String"/>
+      <property name="isRentalCart" type="java.lang.Boolean"/>
   </bean>
 
     <!-- Shipping -->
@@ -111,6 +114,7 @@
     <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
         <property name="code" type="String"/>
         <property name="name" type="String"/>
+        <property name="shippingType" type="String"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlPartnerPickUpStoreData">
@@ -136,6 +140,10 @@
 
     <bean class="de.hybris.platform.commercefacades.user.data.AddressData">
         <property name="addressType" type="String"/>
+        <property name="openingDaysDetails" type="java.util.Map&lt;String, String>"/>
+        <property name="pickStoreAddress" type="Boolean"/>
+        <property name="upsStoreAddress" type="Boolean"/>
+        <property name="url" type="String"/>
     </bean>
     <!-- Shipping End-->
 

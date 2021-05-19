@@ -393,27 +393,19 @@
 	<alias name="defaultBlZoneDeliveryModePopulator" alias="zoneDeliveryModePopulator"/>
 	<bean id="defaultBlZoneDeliveryModePopulator" class="com.bl.facades.populators.BlZoneDeliveryModePopulator"/>
 
-	<alias name="defaultBlZoneDeliveryModeConverter" alias="blZoneDeliveryModeConverter"/>
-	<bean id="defaultBlZoneDeliveryModeConverter" parent="defaultZoneDeliveryModeConverter">
-		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData"/>
-		<property name="populators">
-			<list>
-				<ref bean="defaultBlZoneDeliveryModePopulator"/>
-			</list>
-		</property>
-	</bean>
-
 	<bean parent="modifyPopulatorList">
-		<property name="list" ref="zoneDeliveryModeConverter"/>
-		<property name="add" ref="defaultBlZoneDeliveryModePopulator"/>
+		<property name="list" ref="defaultZoneDeliveryModeConverter"/>
+		<property name="add"  ref="defaultBlZoneDeliveryModePopulator"/>
 	</bean>
 
 	<!--BlPickUpZoneDeliveryModePopulatorConverter-->
 	<alias name="defaultBlPickUpZoneDeliveryModePopulator" alias="defaultBlZoneDeliveryModePopulator"/>
-	<bean id="defaultBlPickUpZoneDeliveryModePopulator" class="com.bl.facades.populators.BlPickUpZoneDeliveryModePopulator"/>
+	<bean id="defaultBlPickUpZoneDeliveryModePopulator" class="com.bl.facades.populators.BlPickUpZoneDeliveryModePopulator">
+			<property name="addressConverter" ref="addressConverter"/>
+	</bean>
 
 	<alias name="defaultBlPickUpZoneDeliveryModeConverter" alias="blPickUpZoneDeliveryModeConverter"/>
-	<bean id="defaultBlPickUpZoneDeliveryModeConverter" parent="defaultBlZoneDeliveryModeConverter">
+	<bean id="defaultBlPickUpZoneDeliveryModeConverter" parent="defaultZoneDeliveryModeConverter">
 		<property name="targetClass" value="com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData" />
 		<property name="populators">
 			<list>
@@ -422,17 +414,12 @@
 		</property>
 	</bean>
 
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="zoneDeliveryModeConverter"/>
-		<property name="add" ref="defaultBlPickUpZoneDeliveryModePopulator"/>
-	</bean>
-
 	<!--BlRushDeliveryModePopulatorConverter-->
 	<alias name="defaultBlRushDeliveryModePopulator" alias="defaultBlZoneDeliveryModePopulator"/>
 	<bean id="defaultBlRushDeliveryModePopulator" class="com.bl.facades.populators.BlRushDeliveryModePopulator"/>
 
 	<alias name="defaultBlRushDeliveryModeConverter" alias="blRushDeliveryModeConverter"/>
-	<bean id="defaultBlRushDeliveryModeConverter" parent="defaultBlZoneDeliveryModeConverter">
+	<bean id="defaultBlRushDeliveryModeConverter" parent="defaultZoneDeliveryModeConverter">
 		<property name="targetClass" value="com.bl.facades.shipping.data.BlRushDeliveryModeData" />
 		<property name="populators">
 			<list>
@@ -441,16 +428,11 @@
 		</property>
 	</bean>
 
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="zoneDeliveryModeConverter"/>
-		<property name="add" ref="defaultBlRushDeliveryModePopulator"/>
-	</bean>
-
 	<!--Cart Calculation Strategy for calculating delivery cost-->
 	<alias name="checkoutFacade" alias="checkoutFacade"/>
 	<bean id="checkoutFacade" class="com.bl.facades.shipping.impl.DefaultBlCheckoutFacade" parent="defaultCheckoutFacade">
 		<property name="blDatePickerService" ref="blDatePickerService"/>
-		<property name="blZoneDeliveryModeConverter" ref="blZoneDeliveryModeConverter"/>
+		<property name="blZoneDeliveryModeConverter" ref="defaultZoneDeliveryModeConverter"/>
 		<property name="blPickUpZoneDeliveryModeConverter" ref="blPickUpZoneDeliveryModeConverter"/>
 		<property name="blRushDeliveryModeConverter" ref="blRushDeliveryModeConverter"/>
 		<property name="blShippingGroupConverter" ref="blShippingGroupConverter"/>
@@ -464,6 +446,9 @@
 
 	<alias name="defaultBlAddressPopulator" alias="addressPopulator"/>
 	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
+
+	<alias name="defaultBlAddressReversePopulator" alias="addressReversePopulator"/>
+	<bean id="defaultBlAddressReversePopulator" class="com.bl.facades.populators.BlAddressReversePopulator" parent="defaultAddressReversePopulator"/>
 	<!-- ENd Shipping-->
 	
 	<!-- BL-542 : Adding cart populator in the converter list to populate total damage waiver price on checkout step 2. -->

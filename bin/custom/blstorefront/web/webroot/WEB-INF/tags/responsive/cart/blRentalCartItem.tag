@@ -15,24 +15,20 @@
 
 <div class="cartProduct">
      <div class="row">
-         <div>
-              <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
-              		modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
-              	<input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
-              	<input type="hidden" name="productCode" value="${entry.product.code}" />
-              	<input type="hidden" name="initialQuantity" value="${entry.quantity}" />
-              	<input type="hidden" name="quantity" value=0 />
-                <button type="button"
-              	  class="shopping-cart__item-remove button button--plain-text"
-              	  id="removeEntry_${entry.entryNumber}">
-              	  X
-              	</button>
-              </form:form>
-         </div>
          <div class="col-md-2 text-center">
           <a href="${fn:escapeXml(productUrl)}"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
          </div>
-         <div class="col-md-7 mt-3"><b>${entry.product.name}</b></div>
+         <div class="col-md-7 mt-3">
+           <b>${entry.product.name}</b>
+           <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
+                      modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
+               <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
+               <input type="hidden" name="productCode" value="${entry.product.code}" />
+               <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
+               <input type="hidden" name="quantity" value=0 />
+               <a href="" class="shopping-cart__item-remove" id="removeEntry_${entry.entryNumber}"><small>Remove Item</small></a>
+           </form:form>
+         </div>
          <div class="col-md-3 mt-3 text-md-end">
              <b><format:price priceData="${entry.totalPrice}" displayFreeForZero="true" /></span></b>
              <c:url value="/cart/update" var="cartUpdateFormAction"/>
@@ -109,10 +105,13 @@
          </div>
      </div>--%>
 
-     <%--<div class="productNotifications row">
+     <div class="productNotifications row">
          <div class="col-12">
-             <div class="notification notification-warning">This is a product warning.</div>
-             <div class="notification notification-error">This item is no longer available for your selected date range. Change your dates or select a comparable item.</div>
+             <%-- This div is commented and can be used for product level warning as per requirement--%>
+             <%--<div class="notification notification-warning">This is a product warning.</div>--%>
+             <c:if test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
+              <div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>
+             </c:if>
          </div>
-     </div>--%>
+     </div>
 </div>
