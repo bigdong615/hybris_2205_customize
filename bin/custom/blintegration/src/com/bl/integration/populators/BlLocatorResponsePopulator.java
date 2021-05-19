@@ -1,8 +1,10 @@
 package com.bl.integration.populators;
 
+import com.bl.facades.locator.data.DistanceData;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.locator.data.UpsStoreData;
 import com.bl.integration.response.jaxb.AddressKeyFormatType;
+import com.bl.integration.response.jaxb.DistanceType;
 import com.bl.integration.response.jaxb.DropLocationType;
 import com.bl.integration.response.jaxb.Error;
 import com.bl.integration.response.jaxb.LocatorResponse;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *This class was created to populate UPS Locator response.
@@ -18,6 +21,8 @@ import org.apache.commons.collections4.CollectionUtils;
  */
 public class BlLocatorResponsePopulator {
 
+  @Value("${blintegration.locator.result.count}")
+  private String maximumResult;
 
   public void populateDropDownLocation(UpsLocatorResposeData upsLocatorResposeData,LocatorResponse locatorResponse) {
     List<UpsStoreData> locatorResponseDTOList = new ArrayList<>();
@@ -26,7 +31,9 @@ public class BlLocatorResponsePopulator {
     } else {
       SearchResultsType searchResult = locatorResponse.getSearchResults();
       List<Object> locationList = searchResult.getDisclaimerAndDropLocation();
-      locationList.forEach(location -> {
+
+      for(int count=0;count<locationList.size();count++ ){
+        Object location = locationList.get(count);
         if (location instanceof DropLocationType) {
           DropLocationType dropLocation = (DropLocationType) location;
           UpsStoreData locatorResponseData = new UpsStoreData();
@@ -41,9 +48,21 @@ public class BlLocatorResponsePopulator {
           if (addressKeyFormat != null) {
             populateAddressData(locatorResponseData,addressKeyFormat);
           }
+          DistanceType distanceType = dropLocation.getDistance();
+          DistanceData distance = new DistanceData();
+          if (distanceType != null) {
+            populateDistanceData(distanceType, distance);
+          }
+          locatorResponseData.setDistance(distance);
+          locatorResponseData.setContactNumber(
+              CollectionUtils.isNotEmpty(dropLocation.getPhoneNumber()) ? dropLocation
+                  .getPhoneNumber().get(0) : "");
           locatorResponseDTOList.add(locatorResponseData);
         }
-      });
+        if(count>Integer.parseInt(maximumResult)-1){
+          break;
+        }
+      }
       upsLocatorResposeData.setResult(locatorResponseDTOList);
       upsLocatorResposeData
           .setStatusCode(locatorResponse.getResponse().getResponseStatusCode());
@@ -91,5 +110,14 @@ public class BlLocatorResponsePopulator {
     locatorResponseData.setPoliticalDivision2(addressKeyFormat.getPoliticalDivision2());
     locatorResponseData.setPostcodePrimaryLow(addressKeyFormat.getPostcodePrimaryLow());
     locatorResponseData.setPostcodeExtendedLow(addressKeyFormat.getPostcodeExtendedLow());
+  }
+
+  /**
+   * This method used for populating distance data.
+   */
+  private void populateDistanceData(DistanceType distanceType, DistanceData distance) {
+    distance.setUnitCode(distanceType.getUnitOfMeasurement().getCode());
+    distance.setUnitDescription(distanceType.getUnitOfMeasurement().getDescription());
+    distance.setValue(distanceType.getValue());
   }
 }
