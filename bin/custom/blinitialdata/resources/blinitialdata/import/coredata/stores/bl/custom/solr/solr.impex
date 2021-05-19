@@ -124,28 +124,27 @@ INSERT_UPDATE SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ;
 # Create the queries that will be used to extract data for Solr  And Excluding Product while going for Indexing Based on some restriction
 INSERT_UPDATE SolrIndexerQuery                                                                                                                            ; solrIndexedType(identifier)[unique = true] ; identifier[unique = true]          ; type(code) ; injectCurrentDate[default = true] ; injectCurrentTime[default = true] ; injectLastIndexTime[default = true] ; query ; user(uid) 
                                                                                                                                                           ; $solrIndexedType                           ; $searchIndexNamePrefix-fullQuery   ; full       ;                                   ;                                   ; false                               ; "     
-SELECT {PK} FROM {blProduct} where {productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN ('SUBPARTS','CONSUMABLES')}})" ; anonymous 
+SELECT {PK} FROM {blProduct as bl}, {Catalog as c}, {CatalogVersion as cv} where {productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN ('SUBPARTS','CONSUMABLES')}}) AND {bl.catalogVersion}={cv.pk} AND {cv.catalog}={c.pk} AND {cv.version}='Online'" ; anonymous
                                                                                                                                                           
                                                                                                                                                           ; $solrIndexedType                           ; $searchIndexNamePrefix-updateQuery ; update     ;                                   ;                                   ;                                     ; "     
-SELECT DISTINCT tbl.pk, tbl.code FROM (                                                                                                                   
-{{                                                                                                                                                        
-SELECT DISTINCT {p:PK} AS pk, {p:code} AS code, {p:varianttype} AS varianttype                                                                            
-FROM {Product AS p LEFT JOIN CustomerReview AS cr ON {cr:product}={p:PK} }                                                                                
-WHERE {p:modifiedtime} >= ?lastIndexTime OR {cr:modifiedtime} >= ?lastIndexTime                                                                           
-AND {productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}})                                              
-}}                                                                                                                                                        
-UNION                                                                                                                                                     
-{{                                                                                                                                                        
-SELECT {p:PK}  AS pk, {p:code} AS code, {p:varianttype} AS varianttype FROM {Product AS p} WHERE                                                          
-{productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}})                                                  
-AND {p:code} IN (                                                                                                                                         
-{{                                                                                                                                                        
-SELECT DISTINCT {sl:productCode} FROM {StockLevel AS sl} WHERE {sl:modifiedtime} >= ?lastIndexTime                                                        
-}}                                                                                                                                                        
-)                                                                                                                                                         
-}}                                                                                                                                                        
-) tbl WHERE (tbl.varianttype IS NULL OR tbl.varianttype NOT IN ( {{ SELECT {PK} FROM {varianttype} WHERE {code} = 'ElectronicsColorVariantProduct'}}) )   
-AND tbl.code NOT IN({{ SELECT {code} FROM {GenericVariantProduct} }}) ORDER BY tbl.code                                                                   
+SELECT DISTINCT tbl.pk, tbl.code FROM (
+	{{
+		SELECT DISTINCT {p:PK} AS pk, {p:code} AS code
+		FROM {blProduct AS p}, {Catalog as c}, {CatalogVersion as cv}
+		WHERE {p:modifiedtime} >= ?lastIndexTime
+		AND {productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}}) AND {p.catalogVersion}={cv.pk} AND {cv.catalog}={c.pk} AND {cv.version}='Online'
+	}}
+	UNION
+	{{
+		SELECT {p:PK}  AS pk, {p:code} AS code FROM {blProduct AS p}, {Catalog as c}, {CatalogVersion as cv} WHERE
+		{productType} NOT IN ({{select {pk} from {productTypeEnum}  where {code} IN('SUBPARTS','CONSUMABLES')}})
+		AND {p:code} IN (
+			{{
+				SELECT DISTINCT {sl:productCode} FROM {StockLevel AS sl} WHERE {sl:modifiedtime} >= ?lastIndexTime
+			}}
+		) AND {p.catalogVersion}={cv.pk} AND {cv.catalog}={c.pk} AND {cv.version}='Online'
+	}}
+)tbl
 "                                                                                                                                             ; anonymous 
                                                                                                                                                           
                                                                                                                                                           
