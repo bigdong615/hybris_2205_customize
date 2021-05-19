@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
@@ -263,15 +264,36 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @RequireHardLogIn
     @ResponseBody
     public String doSelectDeliveryAddress(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+                                          @RequestParam("shippingGroup") final String shippingGroup,
+                                          @RequestParam("deliveryMode") final String deliveryMode,
+                                          @RequestParam("rushZip") final String rushZip,
                                           final RedirectAttributes redirectAttributes) {
         final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
         if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
             return getCheckoutStep().onValidation(validationResults);
         }
+
         if (StringUtils.isNotBlank(selectedAddressCode)) {
             final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
-            final boolean hasSelectedAddressData = selectedAddressData != null;
-            if (hasSelectedAddressData) {
+            if (selectedAddressData != null) {
+                final String addressType = selectedAddressData.getAddressType();
+                final String pinCode = selectedAddressData.getPostalCode();
+                if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
+                        BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
+                    if(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip)) {
+                        if((deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) || deliveryMode.contains(
+                                BlDeliveryModeLoggingConstants.SAVER)) && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+                            return BlDeliveryModeLoggingConstants.AM_ERROR;
+                        }
+                    } else {
+                        return BlDeliveryModeLoggingConstants.PIN_ERROR;
+                    }
+                } else {
+                    if(StringUtils.isNotEmpty(addressType) && deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) &&
+                            !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+                        return BlDeliveryModeLoggingConstants.AM_ERROR;
+                    }
+                }
                 setDeliveryAddress(selectedAddressData);
             }
         }

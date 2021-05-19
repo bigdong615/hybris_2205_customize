@@ -501,12 +501,8 @@ public final class BlDateTimeUtils
 	public static boolean compareTimeWithCutOff(final String time) {
 		try {
 			final SimpleDateFormat sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.DATE_TIME);
-			if(StringUtils.isNotEmpty(time)) {
-				if(sdf.parse(time).compareTo(sdf.parse(BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST))) > 0){
-					return true;
-				}
-			}
-			return false;
+			return StringUtils.isNotEmpty(time) ? sdf.parse(BlDateTimeUtils.getCurrentTimeUsingCalendar(
+					BlDeliveryModeLoggingConstants.ZONE_PST)).before(sdf.parse(time)) : Boolean.FALSE;
 		} catch (ParseException e) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
 			return false;

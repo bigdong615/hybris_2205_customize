@@ -231,7 +231,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             for(BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                 checkDeliveryModeValidityOfTypePartner(newBlPickUpZoneDeliveryModeModels, result, pickUpZoneDeliveryModeModel);
             }
-            return CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels) ? blPickUpZoneDeliveryModeModels.stream()
+            return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels.stream()
                     .filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList()) : Collections.emptyList();
         }
         return Collections.emptyList();
@@ -363,7 +363,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         }
         final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
                 calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
-                        BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getCode());
+                        BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getShippingCostCode().getCode());
         if(shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping calculated amount: {} ",
                     shippingCostModel.getAmount());

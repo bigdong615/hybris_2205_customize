@@ -127,6 +127,15 @@
             <value code="FASTER"/>
             <value code="FASTEST"/>
         </enumtype>
+
+        <enumtype generate="true" code="ShippingCostEnum" autocreate="true" dynamic="true">
+            <value code="UPS_STANDARD_ROUND_TRIP"/>
+            <value code="UPS_STANDARD_AM_ROUND_TRIP"/>
+            <value code="UPS_OVERNIGHT_ROUND_TRIP"/>
+            <value code="UPS_OVERNIGHT_SAVER_ROUND_TRIP"/>
+            <value code="FEDEX_STANDARD_ROUND_TRIP"/>
+            <value code="FEDEX_OVERNIGHT_ROUND_TRIP"/>
+        </enumtype>
         <!-- BL-542 End-->
 
     </enumtypes>
@@ -186,14 +195,14 @@
             </targetElement>
         </relation>
 
-        <relation code="ZoneDeliveryMode2ShippingCostRel" autocreate="true" generate="true" localized="false">
+        <!--<relation code="ZoneDeliveryMode2ShippingCostRel" autocreate="true" generate="true" localized="false">
             <sourceElement qualifier="zoneDeliveryMode" type="ZoneDeliveryMode" cardinality="one">
                 <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
             </sourceElement>
             <targetElement qualifier="shippingCost" type="ShippingCost" cardinality="many" ordered="false">
                 <modifiers read="true" write="true" search="true" optional="true"/>
             </targetElement>
-        </relation>
+        </relation>-->
         <!-- BL-542 End-->
 
     </relations>
@@ -1402,6 +1411,10 @@
                         <modifiers read="true" write="true" search="true" optional="false" />
                         <defaultvalue>Boolean.TRUE</defaultvalue>
                     </attribute>
+                    <attribute qualifier="shippingCostCode" type="ShippingCostEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -1491,6 +1504,10 @@
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                     <attribute qualifier="amount" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="shippingCostCode" type="ShippingCostEnum" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
