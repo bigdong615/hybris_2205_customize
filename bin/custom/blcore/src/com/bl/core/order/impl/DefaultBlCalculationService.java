@@ -140,9 +140,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
 			order.setTotalPrice(Double.valueOf(totalRounded));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
-			// taxes
-			/*final double totalTaxes = calculateTotalTaxValues(order, recalculate, digits,
-					getTaxCorrectionFactor(taxValueMap, subtotal, total, order), taxValueMap);*/
 			final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(order.getTotalTax(), digits);
 			order.setTotalTax(Double.valueOf(totalRoundedTaxes));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
