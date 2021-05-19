@@ -657,9 +657,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
  	 */
  	
  	@Override
- 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer)
+ 	public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes()
  	{
- 		return getBlZoneDeliveryModeDao().getAllDeliveryModes(payByCustomer);
+ 		return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
  	}
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {

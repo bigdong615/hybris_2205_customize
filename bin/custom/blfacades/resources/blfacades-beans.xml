@@ -153,6 +153,12 @@
     <property name="countryCode" type="String"/>
   </bean>
 
+  <bean class="com.bl.facades.locator.data.DistanceData">
+    <property name="unitCode" type="String"/>
+    <property name="unitDescription" type="String"/>
+    <property name="value" type="String"/>
+  </bean>
+
   <bean class="com.bl.facades.locator.data.UpsStoreData">
     <property name="locationId" type="String"/>
     <property name="latestGroundDropOffTime" type="java.util.List&lt;String>"/>
@@ -163,6 +169,8 @@
     <property name="politicalDivision2" type="String"/>
     <property name="postcodePrimaryLow" type="String"/>
     <property name="postcodeExtendedLow" type="String"/>
+    <property name="contactNumber" type="String"/>
+    <property name="distance" type="com.bl.facades.locator.data.DistanceData"/>
   </bean>
 
   <bean class="com.bl.facades.locator.data.UpsLocatorResposeData">
