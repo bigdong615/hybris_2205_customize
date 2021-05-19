@@ -195,7 +195,7 @@
   	</bean>
 
 
-  <!--Added for custom attribute -->
+  <!--Added this property to segregate the Rental and Used Gear code on PLP and SLP to improve performance -->
 
   <bean class="de.hybris.platform.commerceservices.search.resultdata.SearchResultValueData">
     <property name="blPage" type="String"/>

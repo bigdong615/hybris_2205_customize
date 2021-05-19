@@ -458,7 +458,7 @@
 	</bean>
 
 
-	<!--Added to Populate Custom Attribute-->
+	<!--Added these populators to segregate the Rental and Used Gear code on PLP and SLP to improve performance-->
 
 	<alias name="blProductCategorySearchPagePopulator" alias="productCategorySearchPagePopulator"/>
 	<bean id="blProductCategorySearchPagePopulator"
