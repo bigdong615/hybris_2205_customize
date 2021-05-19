@@ -40,9 +40,9 @@ public class BlUPSAddressResponsePopulator {
           addressDataList.add(addressData);
         });
         avsResposeData.setResult(addressDataList);
-        avsResposeData.setStatusCode(xavRespon.getResponse().getResponseStatusCode());
-        avsResposeData.setStatusMessage(xavRespon.getResponse().getResponseStatusDescription());
       }
+      avsResposeData.setStatusCode(xavRespon.getResponse().getResponseStatusCode());
+      avsResposeData.setStatusMessage(xavRespon.getResponse().getResponseStatusDescription());
     }
   }
 
