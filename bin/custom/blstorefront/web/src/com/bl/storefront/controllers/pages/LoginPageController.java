@@ -56,13 +56,13 @@ public class LoginPageController extends AbstractBlLoginPageController
 		{
 			return httpSessionRequestCache.getRequest(request, response).getRedirectUrl();
 		}
-		return request.getHeader("Referer");
+		return request.getHeader(BlControllerConstants.REFERER);
 	}
 
 	@Override
 	protected AbstractPageModel getCmsPage() throws CMSItemNotFoundException
 	{
-		return getContentPageForLabelOrId("login");
+		return getContentPageForLabelOrId(BlControllerConstants.LOG_IN);
 	}
 
 
@@ -97,7 +97,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 		loginForm.setJ_username(username);
 		if (loginError)
 		{
-			model.addAttribute("loginError", Boolean.valueOf(loginError));
+			model.addAttribute(BlControllerConstants.LOG_IN_ERROR, loginError);
 			GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
 			return BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT;
 		}
@@ -106,7 +106,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 
 	protected void storeReferer(final String referer, final HttpServletRequest request, final HttpServletResponse response)
 	{
-		if (StringUtils.isNotBlank(referer) && !StringUtils.endsWith(referer, "/login")
+		if (StringUtils.isNotBlank(referer) && !StringUtils.endsWith(referer, BlControllerConstants.LOG_IN_URL)
 				&& StringUtils.contains(referer, request.getServerName()))
 		{
 			httpSessionRequestCache.saveRequest(request, response);
@@ -180,7 +180,7 @@ public class LoginPageController extends AbstractBlLoginPageController
 	private void addModelAttributes(final boolean loginError, final String referer,
 			final HttpServletRequest request, final HttpServletResponse response, final Model model) {
 		if (loginError) {
-			model.addAttribute("loginError", Boolean.valueOf(loginError));
+			model.addAttribute(BlControllerConstants.LOG_IN_ERROR, loginError);
 			GlobalMessages.addErrorMessage(model, BlControllerConstants.LOGIN_EMAIL_OR_PASSWORD_INCORRECT);
 		} else {
 			storeReferer(referer, request, response);

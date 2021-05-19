@@ -68,6 +68,10 @@ public class BlControllerConstants
 	public static final String ERROR_MESSAGE = "Error:";
 	public static final String RATIO = ":";
 
+	public static final String LOG_IN = "login";
+	public static final String LOG_IN_ERROR = "loginError";
+	public static final String LOG_IN_URL = "/login";
+
 
 	private BlControllerConstants()
 	{

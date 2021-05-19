@@ -42,7 +42,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             model.addAttribute(form);
             model.addAttribute(new LoginForm());
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
-            StringBuilder stringBuilder = new StringBuilder(BlControllerConstants.ERROR_MESSAGE);
+            final StringBuilder stringBuilder = new StringBuilder(BlControllerConstants.ERROR_MESSAGE);
             for(ObjectError objectError : bindingResult.getAllErrors()) {
               stringBuilder.append(objectError.getCode()).append(BlControllerConstants.RATIO);
             }
