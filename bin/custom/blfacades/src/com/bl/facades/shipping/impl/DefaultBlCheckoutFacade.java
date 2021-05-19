@@ -6,6 +6,7 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.*;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.locator.data.UPSLocatorRequestData;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.shipping.BlCheckoutFacade;
@@ -323,7 +324,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
-            return "SUCCESS";
+            return BlFacadesConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
             return "FAILURE";
@@ -343,7 +344,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
-            return "SUCCESS";
+            return BlFacadesConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
             return "FAILURE";
@@ -353,7 +354,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     @Override
     public boolean setDeliveryModeIfAvailable() {
         final CartModel cartModel = getCart();
-        return cartModel != null && cartModel.getDeliveryMode() != null ? true : false;
+        return cartModel != null && cartModel.getDeliveryMode() != null;
     }
 
     /**
@@ -377,7 +378,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             getModelService().refresh(cartModel);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
-            return "SUCCESS";
+            return BlFacadesConstants.RESULT_SUCCESS;
         }
         return "ERROR";
     }
@@ -430,6 +431,19 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	{
  		return getBlZoneDeliveryModeService().getAllDeliveryModes(payByCustomer);
  	}
+ 	
+ 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode)
+	{
+		final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeCode);
+		return Objects.nonNull(deliveryModeModel) && deliveryModeModel instanceof ZoneDeliveryModeModel
+				? getBlZoneDeliveryModeService().checkCartEntriesAvailability(getRentalStartDate(), getRentalEndDate(),
+						(ZoneDeliveryModeModel) deliveryModeModel)
+				: Boolean.FALSE;
+	}
  	
     public BlDeliveryModeService getBlZoneDeliveryModeService() {
         return blDeliveryModeService;
