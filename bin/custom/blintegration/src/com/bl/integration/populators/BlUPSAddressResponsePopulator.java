@@ -40,9 +40,9 @@ public class BlUPSAddressResponsePopulator {
           addressDataList.add(addressData);
         });
         avsResposeData.setResult(addressDataList);
-        avsResposeData.setStatusCode(xavRespon.getResponse().getResponseStatusCode());
-        avsResposeData.setStatusMessage(xavRespon.getResponse().getResponseStatusDescription());
       }
+      avsResposeData.setStatusCode(xavRespon.getResponse().getResponseStatusCode());
+      avsResposeData.setStatusMessage(xavRespon.getResponse().getResponseStatusDescription());
     }
   }
 
@@ -105,7 +105,7 @@ public class BlUPSAddressResponsePopulator {
   /**
    * This method used for populating region data.
    */
-  public void populateRegionData(final RegionModel source, final RegionData target) {
+  private void populateRegionData(final RegionModel source, final RegionData target) {
     target.setName(source.getName());
     target.setIsocode(source.getIsocode());
     target.setIsocodeShort(source.getIsocodeShort());
