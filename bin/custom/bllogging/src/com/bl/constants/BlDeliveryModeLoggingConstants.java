@@ -18,6 +18,11 @@ public class BlDeliveryModeLoggingConstants {
     public static final String ZONE_PST= "PST";
     public static final String ZONE_EST= "EST";
 
+    public static final String AM= "AM";
+    public static final String SAVER= "SAVER";
+    public static final String AM_ERROR = "AM-ERROR";
+    public static final String PIN_ERROR = "PIN-ERROR";
+
     public static final String RENTAL_DATE_PATTERN= "MM-dd-yyyy";
     public static final String RENTAL_FE_DATE_PATTERN= "dd-MM-yyyy";
     public static final String LOCAL_DATE_PATTERN= "yyyy-MM-dd";

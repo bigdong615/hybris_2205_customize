@@ -19,10 +19,6 @@ public class BlAddressPopulator extends AddressPopulator {
         target.setOpeningDaysDetails(source.getOpeningDaysDetails());
         target.setUpsStoreAddress(source.getUpsStoreAddress());
         target.setPickStoreAddress(source.getPickStoreAddress());
-        if(source.getOwner() instanceof PointOfServiceModel) {
-            final PointOfServiceModel pointOfServiceModel = (PointOfServiceModel) source.getOwner();
-            target.setUrl("https://www.google.com/maps/place/BorrowLenses/" + "@" + pointOfServiceModel.getLatitude() + "," +
-                    pointOfServiceModel.getLongitude());
-        }
+        target.setUrl(source.getUrl());
     }
 }
