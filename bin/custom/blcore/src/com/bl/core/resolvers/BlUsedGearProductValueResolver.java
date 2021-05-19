@@ -30,7 +30,7 @@ public class BlUsedGearProductValueResolver extends
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
     inputDocument.addField(indexedProperty ,blProductModel.getSerialProducts().stream().anyMatch(
-        BlProductModel::getForSale) && BooleanUtils.isTrue(blProductModel.getForSale()) ? Boolean.TRUE : Boolean.FALSE);
+        BlProductModel::getForSale) && BooleanUtils.isTrue(blProductModel.getForSale()));
   }
 
 }

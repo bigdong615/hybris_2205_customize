@@ -755,15 +755,11 @@
 
  <!--BL-331 Solr Field Value Resolver -->
 
-  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver"
-    parent="abstractValueResolver"/>
+  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
 
-  <bean id="abstractBlCategoryCodeValueResolver" abstract="true"
-    class="com.bl.core.resolvers.BlCategoryCodeValueResolver"
-    parent="abstractValueResolver" >
+  <bean id="abstractBlCategoryCodeValueResolver" abstract="true" class="com.bl.core.resolvers.BlCategoryCodeValueResolver" parent="abstractValueResolver" >
     <property name="modelService" ref="modelService"/>
   </bean>
-
 
   <bean id="blBrandCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
     <property name="categorySource" ref="blBrandCategorySourceResolver"/>
@@ -781,9 +777,7 @@
     <property name="rootCategory" value="1"/>
   </bean>
 
-  <bean id="abstractBlGlobalFacetValueResolver" abstract="true"
-    class="com.bl.core.resolvers.BlGlobalFacetValueResolver"
-    parent="abstractValueResolver">
+  <bean id="abstractBlGlobalFacetValueResolver" abstract="true" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
     <property name="modelService" ref="modelService"/>
   </bean>
 
@@ -795,16 +789,13 @@
     <property name="rootCategory" value="1"/>
   </bean>
 
-  <bean id="blImageValueResolver"
-    class="com.bl.core.resolvers.BlImageValueResolver"
-    parent="abstractValueResolver" >
+  <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
     <property name="mediaFormat" value="300Wx300H"/>
     <property name="mediaService" ref="mediaService" />
     <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
   </bean>
 
-	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver"
-		parent="abstractValueResolver"/>
+	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
 
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>

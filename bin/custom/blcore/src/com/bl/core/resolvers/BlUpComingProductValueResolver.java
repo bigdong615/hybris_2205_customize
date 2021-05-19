@@ -33,7 +33,7 @@ public class BlUpComingProductValueResolver extends
       final ValueResolverContext<Object, Object> valueResolverContext) throws FieldValueProviderException
   {
     inputDocument.addField(indexedProperty, BooleanUtils.isTrue(blProductModel.getForRent())
-        && CollectionUtils.isEmpty(blProductModel.getSerialProducts()) ? Boolean.TRUE :Boolean.FALSE);
+        && CollectionUtils.isEmpty(blProductModel.getSerialProducts()));
   }
 
 }
