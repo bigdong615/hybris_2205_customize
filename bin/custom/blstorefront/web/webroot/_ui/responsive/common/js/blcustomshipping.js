@@ -91,6 +91,7 @@
                  shippingModes += '</select>';
                  $('#shipToHomeShippingMethods').html(shippingModes);
              } else {
+             	 $('#cart-shipping-cost').text('$0.00');
                  showErrorNotification('Rental Dates not eligible for the selected shipping option!!');
              }
          },
@@ -106,6 +107,9 @@
  function shipToHomeShippingContinue(shippingMethod) {
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
+      var isAvailable = checkAvailability(deliveryMode);
+      if(isAvailable)
+      {
       if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
           saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), deliveryMode);
       } else {
@@ -126,7 +130,13 @@
               showErrorNotification("Please enter mandatory fields values!!", true);
           }
       }
- }
+      }
+      else
+      {
+      	window.location.reload();
+      }
+      
+  }
 
  //UPS-Store
  function fetchUPSDeliveryMethods() {
@@ -162,6 +172,7 @@
                 $('#shipToUPSShippingMethods').html(shippingModes);
                 $('#checkZipForUPSPickup').show();
             } else {
+            	$('#cart-shipping-cost').text('$0.00');
                 showErrorNotification('Rental Dates not eligible for the selected shipping option!!');
             }
         },
@@ -463,6 +474,7 @@
                 }
                 showErrorNotificationPickUp('They must show ID at time of pickup');
             } else {
+            	$('#cart-shipping-cost').text('$0.00');
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
             }
         },
@@ -621,6 +633,7 @@
                                    $('#same-day-status-updates-div #same-day-status-updates').prop("checked", false);
                                }
                            } else {
+                           		$('#cart-shipping-cost').text('$0.00');
                                showErrorNotificationSameDay('No delivery windows are available for this date. Please change your shipping method or rental date to continue.');
                            }
                        },
@@ -654,6 +667,9 @@
     var savedAddress = null;
     var sameDayDeliveryNote = $('#sameDayDeliveryNote').val();
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
+    var isAvailable = checkAvailability(deliveryMode);
+      if(isAvailable)
+      {
     if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
         savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
         $.ajax({
@@ -720,6 +736,11 @@
             showErrorNotificationSameDay("Please enter mandatory fields values!!", true);
             $('.page-loader-new-layout').hide();
         }
+    }
+      }
+      else
+      {
+      	window.location.reload();
     }
   }
 
@@ -1103,6 +1124,9 @@
  }
 
  function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
+ var isAvailable = checkAvailability(deliveryMethod);
+      if(isAvailable)
+      {
      $.ajax({
          url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/addPickUpDetails',
          data: JSON.stringify(blPickUpByForm),
@@ -1149,6 +1173,11 @@
             $('.page-loader-new-layout').hide();
          }
      });
+     }
+     else
+     {
+     	window.location.reload();
+     }
   }
 
   //show Price of shipping on cart
@@ -1190,3 +1219,30 @@
         return attribute;
     }
   }
+  
+  //checks the product availability for the selected delivery mode
+  function checkAvailability(deliveryMode){
+  var isAvailable;
+ 	$.ajax({
+        url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/checkAvailability',
+        async: false,
+        data: {
+            	deliveryMethod : deliveryMode
+            },
+        type: "GET",
+        success: function (data) {
+            if(data=='success') {
+          		isAvailable = true;
+            }
+            else
+            {
+            	isAvailable = false;
+            }
+        },
+        error: function (error) {
+        	isAvailable = false;
+			console.log(error);
+        }
+    });
+    return isAvailable;
+ }
