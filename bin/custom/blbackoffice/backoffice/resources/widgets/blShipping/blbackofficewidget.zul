@@ -63,7 +63,6 @@
                 <label value="${labels.blbackoffice.updateshipping.customer.regionSelector}" width="50%" />
 				  <combobox   xmlns:w="client" id="regionCombobox"
                                         model="${each.regionCombobox}" 
-                                        readonly="true" 
                                         sclass="oms-widget-updateorder__template-reason"
                                         style="">
                                 <template name="model">
@@ -76,7 +75,6 @@
              	<label value="${labels.blbackoffice.updateshipping.customer.deliveryModes}" width="50%" />
 				  <combobox   xmlns:w="client" id="deliveryModeCombobox"
                                         model="${each.deliveryModeCombobox}" 
-                                        readonly="true" 
                                         sclass="oms-widget-updateorder__template-reason"
                                         style="">
                                 <template name="model">
@@ -118,6 +116,31 @@
                     <hlayout>
                        <textbox sclass="oms-widget-updateorder-input-text-box" id="pickUpPersonPhone" width="240px" />
                     </hlayout>
+                </row>
+                <row>
+             	<label value="${labels.blbackoffice.updateshipping.customer.isPickUpStoreAddress}" width="50%" />
+				  <combobox   xmlns:w="client" id="isPickStoreAddress"
+                                        model="${each.isPickStoreAddress}" 
+                                        readonly="true" 
+                                        sclass="oms-widget-updateorder__template-reason"
+                                        style="">
+                                <template name="model">
+                                    <comboitem label="${forEachStatus.previous.each} ${each}" 
+                                    forEach="${each}" />
+                                </template>
+                            </combobox>
+                            
+                  <label value="${labels.blbackoffice.updateshipping.customer.isUpsStoreAddress}" width="50%" />
+				  <combobox   xmlns:w="client" id="isUPSStoreAddress"
+                                        model="${each.isUPSStoreAddress}" 
+                                        readonly="true" 
+                                        sclass="oms-widget-updateorder__template-reason"
+                                        style="">
+                                <template name="model">
+                                    <comboitem label="${forEachStatus.previous.each} ${each}" 
+                                    forEach="${each}" />
+                                </template>
+                            </combobox>
                 </row>
                 
                 </rows>

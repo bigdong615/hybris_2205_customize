@@ -427,9 +427,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	 */
 
  	@Override
- 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer)
+ 	public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes()
  	{
- 		return getBlZoneDeliveryModeService().getAllDeliveryModes(payByCustomer);
+ 		return getBlZoneDeliveryModeService().getAllBlDeliveryModes();
  	}
  	
  	/**

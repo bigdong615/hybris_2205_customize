@@ -207,11 +207,10 @@ public interface BlDeliveryModeService {
  	/**
 	  * This method will return all the delivery modes.
 	  *
-	  * @param payByCustomer the pay by customer
 	  * @return Collection of ZoneDeliveryModeModels
 	  */
 
- 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
+ 	public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
  	
  	/**
 	  * This method will check cart entries for gear availability.
