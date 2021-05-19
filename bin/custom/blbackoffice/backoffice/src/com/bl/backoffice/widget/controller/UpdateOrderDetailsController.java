@@ -351,13 +351,15 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		modelService.save(addressModel);
 		modelService.refresh(addressModel);
-		getOrderModel().setCalculated(false);
 		modelService.save(orderModel);
 		modelService.refresh(orderModel);
 		if (BooleanUtils.isTrue(isDeliveryModeChange))
 		{
 			try
 			{
+				getOrderModel().setCalculated(false);
+				modelService.save(orderModel);
+				modelService.refresh(orderModel);
 				getCalculationService().calculate(getOrderModel());
 				isDeliveryModeChange = false;
 			}
