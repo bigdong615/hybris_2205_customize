@@ -2,10 +2,10 @@ package com.bl.core.shipping.service;
 
 import com.bl.core.model.*;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
+import java.text.ParseException;
 import java.util.Collection;
 
 /**
@@ -26,38 +26,43 @@ public interface BlDeliveryModeService {
      * @param rentalStart date
      * @param rentalEnd date
      * @param carrier UPS/FedEx
+     * @param payByCustomer to get customer related delivery modes
      * @return Collection of object with delivery-modes differentiating in UPS and FedEx
      */
-    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesWithRentalDates(final String rentalStart,
-                                                                                      final String rentalEnd,
-                                                                                      final String carrier);
+    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesWithRentalDates(final String rentalStart, final String rentalEnd,
+                                                                                final String carrier, final boolean payByCustomer);
 
     /**
      * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes to fetch all modes
      * @param rentalStart date
      * @param rentalEnd date
+     * @param payByCustomer to get customer related delivery modes
      * @return Map object with delivery-modes differentiating in UPS and FedEx
      */
-    Collection<ZoneDeliveryModeModel> getAllShipToHomeDeliveryModesWithRentalDates(final String rentalStart,
-                                                                                             final String rentalEnd);
+    Collection<ZoneDeliveryModeModel> getAllShipToHomeDeliveryModesWithRentalDates(final String rentalStart, final String rentalEnd,
+                                                                                   final boolean payByCustomer);
 
     /**
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group from dao.
      * @param carrier which will differentiate UPS or FedEx
      * @param mode i.e., Standard or Overnight
      * @param pstCutOffTime to check cutOffTime
+     * @param payByCustomer ge delivery modes based on customer
      * @return Collection of ZoneDeliveryModeModels
      */
-    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModes(final String carrier, final String mode, final String pstCutOffTime);
+    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModes(final String carrier, final String mode, final String pstCutOffTime,
+                                                                 final boolean payByCustomer);
 
     /**
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group from dao.
      * @param carrier which will differentiate UPS or FedEx
      * @param mode i.e., Standard or Overnight
      * @param pstCutOffTime to check cutOffTime
+     * @param payByCustomer ge delivery modes based on customer
      * @return Collection of ZoneDeliveryModeModels
      */
-    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode, final String pstCutOffTime);
+    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode, final String pstCutOffTime,
+                                                                        final boolean payByCustomer);
 
     /**
      *This method will fetch all the Partner PickUp Store from dao
@@ -72,9 +77,11 @@ public interface BlDeliveryModeService {
      *
      * @param mode i.e., standard or overnight
      * @param pstCutOffTime to check cutOffTime
+     * @param payByCustomer ge delivery modes based on customer
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
-    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModes(final String mode, final String pstCutOffTime);
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModes(final String mode, final String pstCutOffTime,
+                                                                                  final boolean payByCustomer);
 
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store
@@ -82,27 +89,32 @@ public interface BlDeliveryModeService {
      *
      * @param mode i.e., standard or overnight
      * @param pstCutOffTime to check cutOffTime
+     * @param payByCustomer ge delivery modes based on customer
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
-    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime);
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
+                                                                                         final boolean payByCustomer);
 
     /**
      * method with contain business logic for Partner-PickUp Delivery Modes
      * @param rentalStart date
      * @param rentalEnd date
+     * @param payByCustomer to get customer related delivery modes
      * @return Collection of object with delivery-modes differentiating in Partner-PickUp Stores
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerPickUpDeliveryModesWithRentalDates(final String rentalStart,
-                                                                                final String rentalEnd);
+                                                                                final String rentalEnd, final boolean payByCustomer);
 
     /**
      * method with contain business logic for Partner-PickUp to fetch all modes
      * @param rentalStart date
      * @param rentalEnd date
+     * @param payByCustomer to get customer related delivery modes
      * @return Collection object with delivery-modes differentiating in Partner-PickUp Stores
      */
     Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithRentalDatesForUPSStore(final String rentalStart,
-                                                                                                       final String rentalEnd);
+                                                                                                         final String rentalEnd,
+                                                                                                         final boolean payByCustomer);
 
     /**
      * This method will check validity of user entered pinCode for SF or NYC
@@ -116,13 +128,17 @@ public interface BlDeliveryModeService {
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
      *  depending on the selected zone from dao.
+     *
      * @param partnerZone i.e., name
      * @param rentalStart date
      * @param rentalEnd date
+     * @param payByCustomer to get customer related delivery modes
      * @return Collection of BlPickUpZoneDeliveryModeModel
+     * @throws ParseException the parse exception
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModes(final String partnerZone, final String rentalStart,
-                                                                         final String rentalEnd);
+                                                                         final String rentalEnd, final boolean payByCustomer)
+            throws ParseException;
 
     /**
      * This method will fetch the partner-pickup-zone from DB who has delivery-modes associated to it from dao
@@ -135,16 +151,18 @@ public interface BlDeliveryModeService {
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute from dao
      * @param deliveryMode to specify SF or NYC Shipping group
      * @param pstCutOffTime for time condition
-     * @param pinCode entered by user
+     * @param rentalStart date
+     * @param rentalEnd date
+     * @param payByCustomer to get customer related delivery modes
      * @return Collection of BlRushDeliveryModeModel
      */
-    Collection<BlRushDeliveryModeModel> getBlRushDeliveryModes(final String pinCode, final String deliveryMode,
-                                                               final String pstCutOffTime);
+    Collection<BlRushDeliveryModeModel> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime,final String rentalStart,
+                                                               final String rentalEnd, final boolean payByCustomer);
 
     /**
      * This method will fetch shipping cost model for calculated value for variable delivery cost model from dao
      *
-     * @param calculatedCost value\
+     * @param calculatedCost value
      * @param deliveryMethod name
      * @return double i.e., shipping cost model amount
      */
@@ -167,4 +185,42 @@ public interface BlDeliveryModeService {
      * @return double value of amount
      */
     double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel);
+
+    /**
+     * This method will check conditions on rentalDate to return appropriate delivery modes
+     *
+     * @param currentDay  means current Day
+     * @param rentalStart means start rental date
+     * @return long i.e., difference in days
+     */
+    int checkDateForRental(final String currentDay, final String rentalStart);
+
+    /**
+     * This method will return zipCOde from address associated on warehouse
+     *
+     * @param deliveryType SF/NYC
+     * @param payByCustomer true for customer
+     * @return zipCode from warehouse address
+     */
+    String getWarehouseZipCode(final String deliveryType, final boolean payByCustomer);
+    
+ 	/**
+	  * This method will return all the delivery modes.
+	  *
+	  * @param payByCustomer the pay by customer
+	  * @return Collection of ZoneDeliveryModeModels
+	  */
+
+ 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
+ 	
+ 	/**
+	  * This method will check cart entries for gear availability.
+	  *
+	  * @param rentalStart date
+	  * @param rentalEnd date
+	  * @param deliveryModeModel the delivery mode model
+	  * @return boolean
+	  */
+   boolean checkCartEntriesAvailability(final String rentalStart, final String rentalEnd,
+         final ZoneDeliveryModeModel deliveryModeModel);
 }

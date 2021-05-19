@@ -1,7 +1,7 @@
 package com.bl.integration.services.impl;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.populators.BlUPSAddressRequestPopulator;
 import com.bl.integration.populators.BlUPSAddressResponsePopulator;
 import com.bl.integration.services.BlUPSAddressValidatorService;
@@ -163,8 +163,8 @@ public class DefaultBlUPSAddressValidatorService implements BlUPSAddressValidato
    * This method used for populating Exception.
    */
   private void populateResponseExceptionData(AVSResposeData avsResposeData, Exception e) {
-    avsResposeData.setStatusCode(BlCoreConstants.INTERNAL_SERVER_ERROR_CODE);
-    avsResposeData.setStatusMessage(BlCoreConstants.FAILURE_STRING);
+    avsResposeData.setStatusCode(BlintegrationConstants.INTERNAL_SERVER_ERROR_CODE);
+    avsResposeData.setStatusMessage(BlintegrationConstants.FAILURE_STRING);
     avsResposeData.setErrorDescription(e.getMessage());
   }
 }

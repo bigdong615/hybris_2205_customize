@@ -9,9 +9,8 @@ Added Media Query for Search Box
 }
 
 /**
-Added for Empty Search text
+Added for removing add to cart popup background, when unable to add product to cart.
 **/
-
-.js-shopping-button-empty {
-padding-left:0px !important;
+.remove-popup-background{
+ opacity:0 !important;
 }
