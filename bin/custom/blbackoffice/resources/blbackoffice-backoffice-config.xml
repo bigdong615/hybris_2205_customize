@@ -632,7 +632,7 @@
                 <advanced-search:field name="warehouse" selected="false"/>
                 <advanced-search:field name="businessTypeDelivery" selected="false"/>
                 <advanced-search:field name="payByCustomer" selected="false"/>                
-                <advanced-search:field name="shippingGroup" selected="false"/>
+                <advanced-search:field name="shippingGroup" selected="true"/>
             </advanced-search:field-list>
         </advanced-search:advanced-search>
    		</context> 
@@ -658,7 +658,7 @@
                 <advanced-search:field name="warehouse" selected="false"/>
                 <advanced-search:field name="businessTypeDelivery" selected="false"/>
                 <advanced-search:field name="payByCustomer" selected="false"/>                
-                <advanced-search:field name="shippingGroup" selected="false"/>
+                <advanced-search:field name="shippingGroup" selected="true"/>
             </advanced-search:field-list>
         </advanced-search:advanced-search>
    		</context>    
@@ -681,7 +681,7 @@
                 <advanced-search:field name="warehouse" selected="false"/>
                 <advanced-search:field name="businessTypeDelivery" selected="false"/>
                 <advanced-search:field name="payByCustomer" selected="false"/>                
-                <advanced-search:field name="shippingGroup" selected="false"/>
+                <advanced-search:field name="shippingGroup" selected="true"/>
         	</advanced-search:field-list>
         </advanced-search:advanced-search>
    		</context>   		
