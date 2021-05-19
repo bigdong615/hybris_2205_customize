@@ -61,7 +61,7 @@ public class BlRegistrationValidator implements Validator{
 
     protected void validatePassword(final Errors errors, final String pwd)
     {
-        if (StringUtils.length(pwd) < BlControllerConstants.PASSWORD_MIN_LENGTH || StringUtils.length(pwd) >BlControllerConstants.PASSWORD_MAX_LENGTH)
+        if (BlControllerConstants.PASSWORD_MIN_LENGTH > StringUtils.length(pwd)|| BlControllerConstants.PASSWORD_MAX_LENGTH < StringUtils.length(pwd))
         {
             errors.rejectValue(BlControllerConstants.PASSWORD_STRING, BlControllerConstants.REGISTER_PWD_INVALID);
         }
@@ -69,7 +69,7 @@ public class BlRegistrationValidator implements Validator{
 
     protected void validateEmail(final Errors errors, final String email)
     {
-        if (StringUtils.length(email) > BlControllerConstants.EMAIL_MAX_LENGTH || !validateEmailAddress(email))
+        if (BlControllerConstants.EMAIL_MAX_LENGTH < StringUtils.length(email) || !validateEmailAddress(email))
         {
             errors.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.REGISTER_EMAIL_INVALID);
         }
