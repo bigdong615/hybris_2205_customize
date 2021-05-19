@@ -59,7 +59,7 @@ public class BlLocatorResponsePopulator {
                   .getPhoneNumber().get(0) : "");
           locatorResponseDTOList.add(locatorResponseData);
         }
-        if(count>Integer.parseInt(maximumResult)-1){
+        if(count>(Integer.parseInt(maximumResult)-1)){
           break;
         }
       }
