@@ -31,36 +31,39 @@ public class BlLocatorResponsePopulator {
     } else {
       SearchResultsType searchResult = locatorResponse.getSearchResults();
       List<Object> locationList = searchResult.getDisclaimerAndDropLocation();
+      if (CollectionUtils.isNotEmpty(locationList)) {
+        for (int count = 0; count < locationList.size(); count++) {
+          Object location = locationList.get(count);
+          if (location instanceof DropLocationType) {
+            DropLocationType dropLocation = (DropLocationType) location;
+            UpsStoreData locatorResponseData = new UpsStoreData();
+            locatorResponseData.setLocationId(dropLocation.getLocationID());
 
-      for(int count=0;count<locationList.size();count++ ){
-        Object location = locationList.get(count);
-        if (location instanceof DropLocationType) {
-          DropLocationType dropLocation = (DropLocationType) location;
-          UpsStoreData locatorResponseData = new UpsStoreData();
-          locatorResponseData.setLocationId(dropLocation.getLocationID());
+            final List<String> openingDaysGroundDropOffTime = dropLocation
+                .getLatestGroundDropOffTime();
+            if (CollectionUtils.isNotEmpty(openingDaysGroundDropOffTime)) {
+              locatorResponseData
+                  .setLatestGroundDropOffTime(getOpeningDaysDetails(openingDaysGroundDropOffTime));
+            }
 
-          final List<String> openingDaysGroundDropOffTime = dropLocation.getLatestGroundDropOffTime();
-          if(CollectionUtils.isNotEmpty(openingDaysGroundDropOffTime)) {
-            locatorResponseData.setLatestGroundDropOffTime(getOpeningDaysDetails(openingDaysGroundDropOffTime));
+            AddressKeyFormatType addressKeyFormat = dropLocation.getAddressKeyFormat();
+            if (addressKeyFormat != null) {
+              populateAddressData(locatorResponseData, addressKeyFormat);
+            }
+            DistanceType distanceType = dropLocation.getDistance();
+            DistanceData distance = new DistanceData();
+            if (distanceType != null) {
+              populateDistanceData(distanceType, distance);
+            }
+            locatorResponseData.setDistance(distance);
+            locatorResponseData.setContactNumber(
+                CollectionUtils.isNotEmpty(dropLocation.getPhoneNumber()) ? dropLocation
+                    .getPhoneNumber().get(0) : "");
+            locatorResponseDTOList.add(locatorResponseData);
           }
-
-          AddressKeyFormatType addressKeyFormat = dropLocation.getAddressKeyFormat();
-          if (addressKeyFormat != null) {
-            populateAddressData(locatorResponseData,addressKeyFormat);
+          if (count > (Integer.parseInt(maximumResult) - 1)) {
+            break;
           }
-          DistanceType distanceType = dropLocation.getDistance();
-          DistanceData distance = new DistanceData();
-          if (distanceType != null) {
-            populateDistanceData(distanceType, distance);
-          }
-          locatorResponseData.setDistance(distance);
-          locatorResponseData.setContactNumber(
-              CollectionUtils.isNotEmpty(dropLocation.getPhoneNumber()) ? dropLocation
-                  .getPhoneNumber().get(0) : "");
-          locatorResponseDTOList.add(locatorResponseData);
-        }
-        if(count>(Integer.parseInt(maximumResult)-1)){
-          break;
         }
       }
       upsLocatorResposeData.setResult(locatorResponseDTOList);
