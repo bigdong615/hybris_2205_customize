@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<groups xmlns="http://www.isdc.ro/wro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
+   <group name="addons_responsive">
+      <js>/_ui/addons/blconfigurablebundleaddon/responsive/common/js/blconfigurablebundleaddon.js</js>
+      <css>/_ui/addons/blconfigurablebundleaddon/responsive/common/css/blconfigurablebundleaddon.css</css>
+      <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/blorderselfserviceaddon.js</js>
+      <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/cms/cancelorderaction.js</js>
+      <js>/_ui/addons/blorderselfserviceaddon/responsive/common/js/cms/returnorderaction.js</js>
+      <css>/_ui/addons/blorderselfserviceaddon/responsive/common/css/blorderselfserviceaddon.css</css>
+      <js>/_ui/addons/profiletagaddon/responsive/common/js/profiletagaddon.js</js>
+      <js>/_ui/addons/profiletagaddon/responsive/common/js/acc.product.js</js>
+      <css>/_ui/addons/profiletagaddon/responsive/common/css/profiletagaddon.css</css>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/urlsearchparamspolyfill.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/blassistedservicestorefront.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/jquery.tablesorter.pager.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/jquery.tablesorter.min.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/Chart.min.js</js>
+      <js>/_ui/addons/blassistedservicestorefront/responsive/common/js/asm.storefinder.js</js>
+      <css>/_ui/addons/blassistedservicestorefront/responsive/common/css/blassistedservicestorefront.css</css>
+      <css>/_ui/addons/blassistedservicestorefront/responsive/common/css/storeFinder.css</css>
+      <css>/_ui/addons/blassistedservicestorefront/responsive/common/css/customer360.css</css>
+      <js>/_ui/addons/blcustomerticketingaddon/responsive/common/js/blcustomerticketingaddon.js</js>
+      <css>/_ui/addons/blcustomerticketingaddon/responsive/common/css/blcustomerticketingaddon.css</css>
+      <js>/_ui/addons/smarteditaddon/shared/common/js/webApplicationInjector.js</js>
+      <js>/_ui/addons/smarteditaddon/shared/common/js/reprocessPage.js</js>
+      <js>/_ui/addons/smarteditaddon/shared/common/js/adjustComponentRenderingToSE.js</js>
+      <js>/_ui/addons/smarteditaddon/responsive/common/js/smarteditaddon.js</js>
+      <css>/_ui/addons/smarteditaddon/responsive/common/css/smarteditaddon.css</css>
+      <js>/_ui/addons/selectivecartsplitlistaddon/responsive/common/js/selectivecartsplitlistaddon.js</js>
+      <css>/_ui/addons/selectivecartsplitlistaddon/responsive/common/css/selectivecartsplitlistaddon.css</css>
+   </group>
+</groups>
+
