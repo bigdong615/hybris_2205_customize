@@ -45,7 +45,7 @@
                    <td class="text-end">
                   <c:choose>
                     <c:when test="${pageType =='CART' || cartData.avalaraCalculated ne 'true'}">
-                            TBD
+                           <format:blPrice priceData="${cartData.taxAvalaraCalculated}"/>
                      </c:when>
                      <c:otherwise><format:price priceData="${cartData.taxAvalaraCalculated}"/></c:otherwise>
                   </c:choose>
