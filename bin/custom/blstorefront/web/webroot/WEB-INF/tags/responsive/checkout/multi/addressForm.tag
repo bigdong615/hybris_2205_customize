@@ -31,9 +31,12 @@
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
+                <option value="newAddress" id="#newAddress" style=" display: none;">
+                    <spring:theme code="text.enter.new.shipping.address"/>
+                </option>
             </select>
         </div>
-        <a onClick="onAddNewAddressClicked()" class="gray80"><spring:theme code="text.add.new.shipping.address"/></a>
+        <a onClick="onAddNewAddressClicked()" class="gray80 newAddressAdd"><spring:theme code="text.add.new.shipping.address"/></a>
     </div>
 </c:if>
 
