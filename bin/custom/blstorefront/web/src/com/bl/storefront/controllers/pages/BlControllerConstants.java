@@ -63,6 +63,16 @@ public class BlControllerConstants
 	public static final String CATEGORY_CODE_PATH_PATTERN = FORWARD_SLASH +"{categoryCode:.*}";
 	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{parentcategory:.*}" + CATEGORY_CODE_PATH_PATTERN;
 
+	public static final String LOGIN_EMAIL_OR_PASSWORD_INCORRECT = "login.error.account.not.found.title";
+
+	public static final String ERROR_MESSAGE = "Error:";
+	public static final String RATIO = ":";
+
+	public static final String LOG_IN = "login";
+	public static final String LOG_IN_ERROR = "loginError";
+	public static final String LOG_IN_URL = "/login";
+
+
 	private BlControllerConstants()
 	{
 		//empty

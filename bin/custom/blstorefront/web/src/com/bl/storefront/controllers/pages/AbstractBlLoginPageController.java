@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
-
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -42,7 +42,12 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             model.addAttribute(form);
             model.addAttribute(new LoginForm());
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
-            return handleRegistrationError(model);
+            // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
+            final StringBuilder stringBuilder = new StringBuilder(BlControllerConstants.ERROR_MESSAGE);
+            for(ObjectError objectError : bindingResult.getAllErrors()) {
+              stringBuilder.append(objectError.getCode()).append(BlControllerConstants.RATIO);
+            }
+            return stringBuilder.toString();
         }
         final RegisterData data = new RegisterData();
         data.setLogin(form.getEmail());
@@ -62,7 +67,7 @@ public abstract class AbstractBlLoginPageController extends AbstractLoginPageCon
             model.addAttribute(new LoginForm());
             bindingResult.rejectValue(BlControllerConstants.EMAIL, BlControllerConstants.DUBLICATE_UID_ERROR);
             GlobalMessages.addErrorMessage(model, BlControllerConstants.FORM_GLOBAL_ERROR);
-            return handleRegistrationError(model);
+            return  BlControllerConstants.DUBLICATE_UID_ERROR;
         }
 
         return REDIRECT_PREFIX + getSuccessRedirect(request, response);
