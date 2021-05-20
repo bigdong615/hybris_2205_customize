@@ -280,13 +280,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                 final String pinCode = selectedAddressData.getPostalCode();
                 if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
                         BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-                    if(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip)) {
-                        if((deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) || deliveryMode.contains(
-                                BlDeliveryModeLoggingConstants.SAVER)) && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
-                            return BlDeliveryModeLoggingConstants.AM_ERROR;
-                        }
-                    } else {
-                        return BlDeliveryModeLoggingConstants.PIN_ERROR;
+                    if(!(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip))) {
+                       return BlDeliveryModeLoggingConstants.PIN_ERROR;
                     }
                 } else {
                     if(StringUtils.isNotEmpty(addressType) && deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) &&
