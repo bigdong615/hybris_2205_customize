@@ -94,7 +94,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.FORRENT);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) && //NOSONAR
-			blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE) && Boolean.TRUE.equals(blSerialProduct
+			SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus()) && Boolean.TRUE.equals(blSerialProduct
 						.getForSale()) && Boolean.FALSE.equals(blSerialProduct.getForRent())) {
 					getBlStockService().findAndDeleteStockRecords(blSerialProduct);
 				}
@@ -118,9 +118,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.SERIALSTATUS);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)) {
-				if (blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE)) {
+				if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
 					updateStockRecordsAsAvailable(blSerialProduct, initialValue);
-				} else if(initialValue.equals(SerialStatusEnum.ACTIVE)){
+				} else if(SerialStatusEnum.ACTIVE.equals(initialValue)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
 				}
 			}
