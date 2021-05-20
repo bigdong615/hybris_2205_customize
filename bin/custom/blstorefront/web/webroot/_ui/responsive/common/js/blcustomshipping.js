@@ -96,7 +96,7 @@
                  shippingModes += '</select>';
                  $('#shipToHomeShippingMethods').html(shippingModes);
              } else {
-             	 $('#cart-shipping-cost').text('$0.00');
+             	 $('#cart-shipping-cost').text('-');
                  showErrorNotification('Rental Dates not eligible for the selected shipping option!!', false);
              }
          },
@@ -176,7 +176,7 @@
                 $('#shipToUPSShippingMethods').html(shippingModes);
                 $('#checkZipForUPSPickup').show();
             } else {
-            	$('#cart-shipping-cost').text('$0.00');
+            	$('#cart-shipping-cost').text('-');
                 showErrorNotification('Rental Dates not eligible for the selected shipping option!!', false);
                 $('#checkZipForUPSPickup').hide();
             }
@@ -451,7 +451,7 @@
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
                         calculateCartTotal();
                     } else {
-                        $('#cart-shipping-cost').text('$0.00');
+                        $('#cart-shipping-cost').text('-');
                         calculateCartTotal();
                     }
                     partnerDelivery += '<div id="pickup-nyc" class="row store-location mb-3">' +
@@ -488,7 +488,7 @@
                 }
                 showErrorNotificationPickUp('They must show ID at time of pickup');
             } else {
-            	$('#cart-shipping-cost').text('$0.00');
+            	$('#cart-shipping-cost').text('-');
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
             }
         },
@@ -577,7 +577,7 @@
       $('#sameDayShippingMethodsNotification').hide();
       $('#sameDayShippingMethods').html('');
       $('#sameDayZipCheckText').val('');
-      $('#cart-shipping-cost').text('$0.00');
+      $('#cart-shipping-cost').text('-');
       calculateCartTotal();
   });
 
@@ -651,7 +651,7 @@
                                    $('#same-day-status-updates-div #same-day-status-updates').prop("checked", false);
                                }
                            } else {
-                           	   $('#cart-shipping-cost').text('$0.00');
+                           	   $('#cart-shipping-cost').text('-');
                                showErrorNotificationSameDay('No delivery windows are available for this date. Please change your shipping method or rental date to continue.', false);
                            }
                        },
