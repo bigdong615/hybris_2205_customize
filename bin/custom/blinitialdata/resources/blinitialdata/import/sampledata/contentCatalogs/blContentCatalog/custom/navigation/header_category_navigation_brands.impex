@@ -123,7 +123,7 @@ INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; na
 ;                         ; BlackmagicLink   ; Blackmagic Link ; "/rent/category/brands/Blackmagic" ; Blackmagic                 ;                                    ; Blackmagic        ;
 ;                         ; ProfotoLink      ; Profoto Link    ; "/rent/category/brands/Profoto" ; Profoto                    ;                                    ; Profoto           ;
 ;                         ; HasselbladLink   ; Hasselblad Link ; "/rent/category/brands/Hasselblad" ; Hasselblad                 ;                                    ; Hasselblad        ;
-;                         ; AtomosLink       ; Atomos Link     ; "/rent/category/brands/Atomos" ;                            ;                                    ; Atomos            ;
+;                         ; AtomosLink       ; Atomos Link     ; "/rent/category/brands/Atomos" ;Atomos                            ;                                    ; Atomos            ;
 
 
 #                              ; BLCategoryNavNode       ;                  ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode
