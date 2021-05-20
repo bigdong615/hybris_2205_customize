@@ -302,9 +302,14 @@
                                          '<a href="#" target="_blank">' +
                                              stores[i].addressLine + ',' + stores[i].politicalDivision1 + ' ' +
                                              stores[i].politicalDivision2 + ' ' + stores[i].postcodePrimaryLow +
-                                         '</a><br>' +
-                                         '0.1 mi  •  555-456-7894' +
-                                      '</p>' +
+                                         '</a><br>' ;
+                                         if(stores[i].distance != null) {
+                                            upsStores +=  stores[i].distance.value + ' ' +stores[i].distance.unitCode + ' • ';
+                                         }
+                                         if(stores[i].distance != null) {
+                                             upsStores += stores[i].contactNumber;
+                                         }
+                        upsStores += '</p>' +
                                   '</div>' +
                                   '<div class="col-11 offset-1 col-md-4 offset-md-0">';
                                   if(stores[i].latestGroundDropOffTime != null && stores[i].latestGroundDropOffTime.length != 0) {
@@ -360,7 +365,7 @@
      $('#ship-it-notification').hide();
  }
 
- function createPickUPFormObject(firstName, lastName, phone, email) {
+ function createPickUPFormObject(firstName, lastName, email, phone) {
       let blPickUpByForm = {
           firstName : firstName,
           lastName : lastName,
@@ -486,7 +491,7 @@
                 if(data.length == 1) {
                     $('#partnerPickUpShippingMethods #pickup-nyc').first().find('input[name="pickup-locations"]').prop("checked", true);
                 }
-                showErrorNotificationPickUp('They must show ID at time of pickup');
+                showErrorNotificationForPickUpId('They must show ID at time of pickup');
             } else {
             	$('#cart-shipping-cost').text('-');
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
@@ -554,7 +559,7 @@
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').removeClass('error');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
-     showErrorNotificationPickUp('They must show ID at time of pickup');
+     showErrorNotificationForPickUpId('They must show ID at time of pickup');
  }
 
  function pickUpByMeClick() { $("#store-pickup-person").hide(); }
@@ -782,8 +787,14 @@
   }
 
  //Error Notifications
+ function showErrorNotificationForPickUpId(msg, status) {
+     let notification = '<div class="notification notification-warning">' + msg + '</div>';
+     $('#pick-up-notification').html(notification);
+     $('#pick-up-notification').show();
+ }
+
  function showErrorNotification(msg, status) {
-    let notification = '<div class="notification notification-warning">' + msg + '</div>';
+    let notification = '<div class="notification notification-error">' + msg + '</div>';
     $('#ship-it-notification').html(notification);
     $('#ship-it-notification').show();
     if(status) {
@@ -792,13 +803,13 @@
  }
 
  function showErrorNotificationPickUp(msg) {
-     let notification = '<div class="notification notification-warning">' + msg + '</div>';
+     let notification = '<div class="notification notification-error">' + msg + '</div>';
      $('#pick-up-notification').html(notification);
      $('#pick-up-notification').show();
  }
 
  function showErrorNotificationSameDay(msg, status) {
-    let notification = '<div class="notification notification-warning">' + msg + '</div>';
+    let notification = '<div class="notification notification-error">' + msg + '</div>';
     $('#same-day-notification').html(notification);
     $('#same-day-notification').show();
     if(status) {
@@ -1126,11 +1137,7 @@
                       console.log(error)
                     })
              } else if(data == 'AM-ERROR') {
-                if(shippingGroup == 'SHIP_HOME_HOTEL_BUSINESS') {
-                    showAMDeliveryErrorMessage('SHIP');
-                } else {
-                    showAMDeliveryErrorMessage('RUSH');
-                }
+                showAMDeliveryErrorMessage('SHIP');
                 $('.page-loader-new-layout').hide();
              } else {
                 showErrorNotificationSameDay('Your saved address must match the zipcode you used for shipping options, please change your address or zipcode and try again.', false);
