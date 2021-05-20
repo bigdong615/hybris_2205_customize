@@ -166,7 +166,7 @@ public interface BlDeliveryModeService {
      * @param deliveryMethod name
      * @return double i.e., shipping cost model amount
      */
-    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod);
+    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final ZoneDeliveryModeModel deliveryMethod);
 
     /**
      * This method will return amount for delivery mode selected for order
