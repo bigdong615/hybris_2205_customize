@@ -4,13 +4,9 @@
     shipToHomeShippingMethods();
     changeUPSStore();
     hideShippingForm();
-     $(".text").hide();
-      $(".newAddressAdd").click(function(){
-        $(".text").show();
-      });
 });
 
-  $('#ship-it-select-box').change(function () {
+ $('#ship-it-select-box').change(function () {
    dropdown = $('#ship-it-select-box').val();
    $('.ship-it-tab-content').hide();
    $('#' + "tab-" + dropdown).show();
@@ -47,6 +43,7 @@
     $('#ship-it-notification').hide();
     $('#shipToHomeShippingMethods').html('');
     shipToHomeShippingMethods();
+    $('#ship-it-save-address').prop("checked", true);
 });
 
  function onChangeOfShipItShippingMethod() {
@@ -89,18 +86,20 @@
                      shippingModes += '</option>';
                      if(i == 0) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                        calculateCartTotal();
                      }
                  }
                  shippingModes += '</select>';
                  $('#shipToHomeShippingMethods').html(shippingModes);
-                 $('.page-loader-new-layout').hide();
              } else {
-                 showErrorNotification('Rental Dates not eligible for the selected shipping option!!');
-                 $('.page-loader-new-layout').hide();
+             	 $('#cart-shipping-cost').text('$0.00');
+                 showErrorNotification('Rental Dates not eligible for the selected shipping option!!', false);
              }
          },
+         complete: function() {
+             $('.page-loader-new-layout').hide();
+         },
          error: function (data) {
-             console.log('error');
              $('.page-loader-new-layout').hide();
          }
      });
@@ -109,11 +108,11 @@
  function shipToHomeShippingContinue(shippingMethod) {
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
+      var isAvailable = checkAvailability(deliveryMode);
+      if(isAvailable)
+      {
       if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
-          savedAddress = $('select[id="ship-it-savedAddresses"]').val();
-          (async() => {
-            await saveSelectedAddress(savedAddress, deliveryMode);
-          })();
+          saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null);
       } else {
           var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
           var lastName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
@@ -125,15 +124,19 @@
           var email = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
           var phone = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
           if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone)) {
-              (async() => {
-                  await addNewAddress(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(), townCity.val(),
-                        regionIso.val(), 'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
-                        phone.val(), email.val(), false, null), deliveryMode);
-              })();
+              addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
+                                                                 'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
+                                                                 phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP');
           } else {
               showErrorNotification("Please enter mandatory fields values!!", true);
           }
       }
+      }
+      else
+      {
+      	window.location.reload();
+      }
+      
   }
 
  //UPS-Store
@@ -163,19 +166,21 @@
                     shippingModes += '</option>';
                     if(i == 0) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                        calculateCartTotal();
                     }
                 }
                 shippingModes += '</select>';
                 $('#shipToUPSShippingMethods').html(shippingModes);
                 $('#checkZipForUPSPickup').show();
-                $('.page-loader-new-layout').hide();
             } else {
-                showErrorNotification('Rental Dates not eligible for the selected shipping option!!');
-                $('.page-loader-new-layout').hide();
+            	$('#cart-shipping-cost').text('$0.00');
+                showErrorNotification('Rental Dates not eligible for the selected shipping option!!', false);
             }
         },
+        complete: function() {
+            $('.page-loader-new-layout').hide();
+        },
         error: function (data) {
-            console.log('error');
             $('.page-loader-new-layout').hide();
         }
     });
@@ -190,19 +195,15 @@
              var email = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
              var phone = $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
              if(validateFormData(firstName, lastName, null, null, null, null, email, phone)) {
-                 (async() => {
-                   await savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
-                         $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
-                 })();
+                 savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+                        $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
              } else {
                   showErrorNotification("Please enter mandatory fields values!!", true);
              }
          }
      } else {
-         (async() => {
-             await savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
-                 .find('#ship-it-shipping-methods-select-box').val(), false, createUPSStoreAddress());
-         })();
+         savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null), $('#shipToUPSShippingMethods')
+                         .find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
      }
  }
 
@@ -219,7 +220,6 @@
              },
              type: "GET",
              dataType: 'json',
-             async: false,
              beforeSend: function(){
                 $('.page-loader-new-layout').show();
              },
@@ -227,7 +227,6 @@
                  if(data != null && data.length != 0 && data.statusMessage == 'Success') {
                      if(data.result != null && data.result.length != 0) {
                          let upsStores = '';
-                         console.log(data.result);
                          sessionStorage.setItem("UPSStores", JSON.stringify(data.result));
                          for (let i = 0; i < data.result.length; i++) {
                              upsStores += '<div id="ups-location-1" class="row store-location mb-3">' +
@@ -243,31 +242,36 @@
                                                             '" target="_blank">' +
                                                              data.result[i].addressLine + ',' + data.result[i].politicalDivision1 + ' ' +
                                                              data.result[i].politicalDivision2 + ' ' + data.result[i].postcodePrimaryLow +
-                                                         '</a><br>' +
-                                                         '0.1 mi  •  555-456-7894' +
-                                                      '</p>' +
+                                                         '</a><br>' ;
+                                           if(data.result[i].distance != null) {
+                                               upsStores +=  data.result[i].distance.value + ' ' +data.result[i].distance.unitCode + '•';
+                                           }
+                                           if(data.result[i].distance != null) {
+                                               upsStores +=  data.result[i].contactNumber;
+                                           }
+                                           upsStores += '</p>' +
                                                   '</div>' +
                                                   '<div class="col-11 offset-1 col-md-4 offset-md-0">';
                                                   if(data.result[i].latestGroundDropOffTime != null && data.result[i].latestGroundDropOffTime.length != 0) {
                                          upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' +
-                                                      '<p class="mb-0"><span class="gray80">' +data.result[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;' +
-                                                                 data.result[i].latestGroundDropOffTime[1].split(':')[1] + '</p>' +
+                                                      '<p class="mb-0"><span class="gray80">' +data.result[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;&nbsp;' +
+                                                                 data.result[i].latestGroundDropOffTime[1].split(': ')[1] + '</p>' +
                                                       '<p class="mb-0"><span class="gray80">' + data.result[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
-                                                                 data.result[i].latestGroundDropOffTime[2].split(':')[1] + '</p>';
+                                                                 data.result[i].latestGroundDropOffTime[2].split(': ')[1] + '</p>';
                                                   }
                                     upsStores += '</div>' +
                                              '</div>';
                          }
                          $('#ship-it-SHIP_HOLD_UPS_OFFICE').html(upsStores);
-                         $('.page-loader-new-layout').hide();
                      }
                  } else {
                      showErrorNotification('Whoops! Something went wrong, please try again to Find UPS store later.', false);
-                     $('.page-loader-new-layout').hide();
                  }
              },
+             complete: function() {
+                 $('.page-loader-new-layout').hide();
+             },
              error: function (data) {
-                 console.log('error');
                  $('.page-loader-new-layout').hide();
              }
          });
@@ -311,6 +315,8 @@
                 $('#ship-it-SHIP_HOLD_UPS_OFFICE').html(upsStores);
                 $('#changeUPSStoreButton').show();
                 $('#ship-it-pickup-gear').show();
+                $('#ship-it-ups-zip-code').val('');
+                $('#checkZipForUPSPickup').hide();
              }
          }
      }
@@ -323,13 +329,15 @@
          for (let i = 0; i < stores.length; i++) {
              if(stores[i].locationId == upsSelectedStoreId) {
                  return createAddressFormObject(stores[i].consigneeName, "UPS", stores[i].addressLine, null, stores[i].politicalDivision2,
-                         stores[i].politicalDivision1, stores[i].countryCode, stores[i].postcodePrimaryLow, false, null, null, true, stores[i].latestGroundDropOffTime)
+                         stores[i].politicalDivision1, stores[i].countryCode, stores[i].postcodePrimaryLow, false, null, null, true,
+                         stores[i].latestGroundDropOffTime, 'BUSINESS')
              }
          }
      }
   }
 
  function changeUPSStore() {
+     $('#checkZipForUPSPickup').show();
      $('#ship-it-ups-zip-code').val('');
      $('#changeUPSStoreButton').hide();
      $('#ship-it-pickup-gear').hide();
@@ -375,19 +383,15 @@
              var email = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]');
              var phone = $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]');
              if(validateFormData(firstName, lastName, null, null, null, null, email, phone)) {
-                 (async() => {
-                   await savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
+                   savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                              $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
-                 })();
              } else {
                   showErrorNotification("Please enter mandatory fields values!!", true);
              }
          }
      } else {
-         (async() => {
-           await savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null),
+           savePickUpByFormOnCart(createPickUPFormObject(null, null, null, null),
                  $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
-         })();
      }
  }
 
@@ -432,19 +436,19 @@
             partnerZone: partnerZone,
         },
         type: "GET",
-        async: false,
         beforeSend: function(){
             $('.page-loader-new-layout').show();
         },
         success: function (data) {
             if(data != null && data.length != 0) {
                 let partnerDelivery = '';
-                console.log(data);
                 for (let i = 0; i < data.length; i++) {
                     if(i == 0 && data.length == 1) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                        calculateCartTotal();
                     } else {
                         $('#cart-shipping-cost').text('$0.00');
+                        calculateCartTotal();
                     }
                     partnerDelivery += '<div id="pickup-nyc" class="row store-location mb-3">' +
                                             '<div class="col-1">' +
@@ -479,11 +483,13 @@
                     $('#partnerPickUpShippingMethods #pickup-nyc').first().find('input[name="pickup-locations"]').prop("checked", true);
                 }
                 showErrorNotificationPickUp('They must show ID at time of pickup');
-                $('.page-loader-new-layout').hide();
             } else {
+            	$('#cart-shipping-cost').text('$0.00');
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
-                $('.page-loader-new-layout').hide();
             }
+        },
+        complete: function() {
+            $('.page-loader-new-layout').hide();
         },
         error: function (error) {
             $('.page-loader-new-layout').hide();
@@ -564,6 +570,7 @@
       $('#sameDayShippingMethods').html('');
       $('#sameDayZipCheckText').val('');
       $('#cart-shipping-cost').text('$0.00');
+      calculateCartTotal();
   });
 
   function onChangeOfSameDayShippingMethod() {
@@ -574,7 +581,6 @@
        $('#sameDayShippingMethodsNotification').hide();
        $('#sameDayShippingMethods').html('');
        $('#sameDayZipCheckText').val('');
-
   }
 
   function sameDayZipCheck() {
@@ -592,7 +598,6 @@
             },
             type: "GET",
             dataType: 'json',
-            async: false,
             beforeSend: function(){
                 $('.page-loader-new-layout').show();
             },
@@ -606,7 +611,6 @@
                        },
                        type: "GET",
                        dataType: 'json',
-                       async: false,
                        beforeSend: function(){
                             $('.page-loader-new-layout').show();
                        },
@@ -619,6 +623,7 @@
                                for (let i = 0; i < data.length; i++) {
                                     if(i == 0) {
                                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                                        calculateCartTotal();
                                     }
                                     var selectionText = data[i].name.split("_");
                                    sameDayShippingModes += '<option value="' + data[i].code + '">' + selectionText[0];
@@ -637,29 +642,31 @@
                                    $('#same-day-status-updates-div').hide();
                                    $('#same-day-status-updates-div #same-day-status-updates').prop("checked", false);
                                }
-                                $('.page-loader-new-layout').hide();
                            } else {
-                               showErrorNotificationSameDay('No delivery windows are available for this date. Please change your shipping method or rental date to continue.');
-                               $('.page-loader-new-layout').hide();
+                           	   $('#cart-shipping-cost').text('$0.00');
+                               showErrorNotificationSameDay('No delivery windows are available for this date. Please change your shipping method or rental date to continue.', false);
                            }
                        },
+                       complete: function() {
+                           $('.page-loader-new-layout').hide();
+                       },
                        error: function (data) {
-                           console.log('error');
                            $('.page-loader-new-layout').hide();
                        }
                    });
                 } else {
-                    showErrorNotificationSameDay('Whoops! We were unable to get shipping information back from FedEx, please change your shipping method or try again in a few minutes');
-                    $('.page-loader-new-layout').hide();
+                    showErrorNotificationSameDay('Whoops! We were unable to get shipping information back from FedEx, please change your shipping method or try again in a few minutes', false);
                 }
             },
+            complete: function() {
+                $('.page-loader-new-layout').hide();
+            },
             error: function (data) {
-                   console.log('error');
                    $('.page-loader-new-layout').hide();
             }
         });
     } else {
-        showErrorNotificationSameDay('Sorry, Same Day delivery is not available for your zipcode!');
+        showErrorNotificationSameDay('Sorry, Same Day delivery is not available for your zipcode!', false);
         $('.page-loader-new-layout').hide();
     }
   }
@@ -670,6 +677,9 @@
     var savedAddress = null;
     var sameDayDeliveryNote = $('#sameDayDeliveryNote').val();
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
+    var isAvailable = checkAvailability(deliveryMode);
+      if(isAvailable)
+      {
     if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
         savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
         $.ajax({
@@ -680,14 +690,12 @@
            },
            type: "GET",
            dataType: 'json',
-           async: false,
            beforeSend: function(){
                 $('.page-loader-new-layout').show();
            },
            success: function (data) {
                 if(data == 'SUCCESS') {
-                    saveSelectedAddress(savedAddress, deliveryMode);
-                    $('.page-loader-new-layout').hide();
+                    saveSelectedAddress(savedAddress, $('#same-day-select-box').val(), deliveryMode, $('#sameDayZipCheckText').val());
                 }
            },
            error: function (data) {
@@ -713,18 +721,19 @@
                },
                type: "GET",
                dataType: 'json',
-               async: false,
                beforeSend: function(){
                     $('.page-loader-new-layout').show();
                },
                success: function (data) {
                     if(data == 'SUCCESS') {
-                        addNewAddress(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(), townCity.val(),
-                            regionIso.val(), 'US', postcode.val(), $('#same-day-address-div').find('input[id="same-day-save-address"]')
-                            .prop("checked"), phone.val(), email.val(), false, null), deliveryMode);
-                            $('.page-loader-new-layout').hide();
+                        addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(),
+                                                    townCity.val(),regionIso.val(), 'US', postcode.val(),
+                                                    $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
+                                                    phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH');
                     }
-                    $('.page-loader-new-layout').hide();
+               },
+               complete: function() {
+                   $('.page-loader-new-layout').hide();
                },
                error: function (data) {
                     $('.page-loader-new-layout').hide();
@@ -734,6 +743,11 @@
             showErrorNotificationSameDay("Please enter mandatory fields values!!", true);
             $('.page-loader-new-layout').hide();
         }
+    }
+      }
+      else
+      {
+      	window.location.reload();
     }
   }
 
@@ -869,15 +883,22 @@
  }
 
  function createAddressFormObject(firstName, lastName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
-    upsStoreAddress, openingDaysDetails) {
+    upsStoreAddress, openingDaysDetails, addressType) {
     if(openingDaysDetails != null) {
         let openingDaysDetailsMap = new Map([
-          [openingDaysDetails[0].split(': ')[0], openingDaysDetails[0].split(':')[1]],
+          [openingDaysDetails[0].split(': ')[0],  openingDaysDetails[0].split(':')[1]],
           [openingDaysDetails[1].split(': ')[0], openingDaysDetails[1].split(':')[1]],
           [openingDaysDetails[2].split(': ')[0], openingDaysDetails[2].split(':')[1]],
         ])
-        openingDaysDetails = new Map([...openingDaysDetailsMap]);
+        openingDaysDetails = openingDaysDetailsMap;
     }
+
+    if(regionIso.includes('-')) {
+        regionIso = regionIso;
+    } else {
+       regionIso = countryIso+ '-' +regionIso;
+    }
+
     let addressForm = {
         firstName : firstName,
         lastName : lastName,
@@ -891,7 +912,8 @@
         phone : phone,
         email : email,
         upsStoreAddress: upsStoreAddress,
-        openingDaysDetails: openingDaysDetails
+        openingDaysDetails: openingDaysDetails,
+        addressType: addressType
     };
     return addressForm;
  }
@@ -929,87 +951,254 @@
  }
 
  //AJAX
- async function saveSelectedAddress(selectedAddress, deliveryMode) {
+ function addressValidationService(addressForm, deliveryMode, section) {
+    sessionStorage.setItem("enteredAddressForm", JSON.stringify(addressForm));
+    sessionStorage.setItem("section", JSON.stringify(section));
+    $.ajax({
+        url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/avsCheck',
+        data: JSON.stringify(addressForm),
+        type: "POST",
+        contentType : 'application/json; charset=utf-8',
+        mimeType : 'application/json',
+        cache : false,
+        beforeSend: function(){
+           $('.page-loader-new-layout').show();
+        },
+        success: function (data) {
+            let addressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
+            if(data != null && data.statusMessage == 'Success' && data.result.length > 0) {
+                 sessionStorage.setItem("avsFlowDeliveryMode", JSON.stringify(deliveryMode));
+                 let whatYouEntered = addressForm.line1 + '<br/>' + addressForm.townCity + ', ' + addressForm.regionIso.split('-')[1] + ' ' +
+                                         addressForm.postcode ;
+                 $('#whatYouEntered').html(whatYouEntered);
+                 sessionStorage.setItem("suggestedAddressForm", JSON.stringify(data.result[0]));
+                 let whatWeSuggest = data.result[0].line1 + '<br/>' + data.result[0].town + ', ' + data.result[0].region.isocodeShort +
+                                     ' ' + data.result[0].postalCode;
+                 $('#whatWeSuggest').html(whatWeSuggest);
+                 $('#avsCheck').modal('show');
+            } else {
+                 //suggested state not supported error from response
+                 addNewAddress(addressForm, deliveryMode)
+                     .then((data) => {
+                         sessionStorage.removeItem("enteredAddressForm");
+                         saveDeliveryMode(deliveryMode, false)
+                             .then((data) => {
+                                 $('.page-loader-new-layout').hide();
+                                 window.location.reload();
+                             })
+                             .catch((error) => {
+                               console.log(error)
+                             })
+                     })
+                     .catch((error) => {
+                       console.log(error)
+                     })
+            }
+        },
+        complete: function() {
+            $('.page-loader-new-layout').hide();
+        },
+        error: function (data) {
+            $('.page-loader-new-layout').hide();
+        }
+    });
+ }
+
+ function onClickOfSaveSuggestedAddress() {
+     let addressForm = JSON.parse(sessionStorage.getItem("suggestedAddressForm"));
+     let enteredAddressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
+     let deliveryMode = JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode"));
+     let section = JSON.parse(sessionStorage.getItem("section"));
+     if(section == 'SHIP') {
+        if(deliveryMode.includes('AM') && addressForm.addressType != 'BUSINESS') {
+            showAMDeliveryErrorMessage(section);
+            $('#avsCheck').modal('hide');
+        } else {
+            callAddNewAddress(enteredAddressForm, addressForm, deliveryMode);
+        }
+     } else {
+        if((deliveryMode.includes('AM') || deliveryMode.includes('SAVER')) && addressForm.addressType != 'BUSINESS') {
+            showAMDeliveryErrorMessage(section);
+            $('#avsCheck').modal('hide');
+        } else {
+            callAddNewAddress(enteredAddressForm, addressForm, deliveryMode);
+        }
+     }
+ }
+
+ function callAddNewAddress(enteredAddressForm, addressForm, deliveryMode) {
+    addNewAddress(createAddressFormObject(enteredAddressForm.firstName, enteredAddressForm.lastName, addressForm.line1, addressForm.line2,
+         addressForm.town, addressForm.region.isocode, 'US', addressForm.postalCode, enteredAddressForm.saveInAddressBook,
+         enteredAddressForm.phone, enteredAddressForm.email, false, null, addressForm.addressType),
+         JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode")))
+              .then((data) => {
+                  sessionStorage.removeItem("suggestedAddressForm");
+                  sessionStorage.removeItem("enteredAddressForm");
+                  sessionStorage.removeItem("avsFlowDeliveryMode");
+                  sessionStorage.removeItem("rushStatus");
+                  saveDeliveryMode(deliveryMode, false)
+                       .then((data) => {
+                           $('.page-loader-new-layout').hide();
+                           window.location.reload();
+                       })
+                       .catch((error) => {
+                         console.log(error)
+                       })
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+ }
+
+ function onClickOfSaveEnteredAddress() {
+    let deliveryMode = JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode"));
+    let addressForm = JSON.parse(sessionStorage.getItem("suggestedAddressForm"));
+    let section = JSON.parse(sessionStorage.getItem("section"));
+    if(section == 'SHIP') {
+        if(deliveryMode.includes('AM') && addressForm.addressType != 'BUSINESS') {
+            showAMDeliveryErrorMessage(section);
+            $('#avsCheck').modal('hide');
+        } else {
+            callEnteredAddNewAddress(addressForm, deliveryMode);
+        }
+    } else {
+        if((deliveryMode.includes('AM') || deliveryMode.includes('SAVER')) && addressForm.addressType != 'BUSINESS') {
+            showAMDeliveryErrorMessage(section);
+            $('#avsCheck').modal('hide');
+        } else {
+            callEnteredAddNewAddress(addressForm, deliveryMode);
+        }
+    }
+ }
+
+ function callEnteredAddNewAddress(addressForm, deliveryMode) {
+    let newAddressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
+    newAddressForm['addressType'] = addressForm.addressType;
+    addNewAddress(newAddressForm, JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode")))
+          .then((data) => {
+              sessionStorage.removeItem("suggestedAddressForm");
+              sessionStorage.removeItem("enteredAddressForm");
+              sessionStorage.removeItem("avsFlowDeliveryMode");
+              sessionStorage.removeItem("rushStatus");
+              saveDeliveryMode(deliveryMode, false)
+                 .then((data) => {
+                     $('.page-loader-new-layout').hide();
+                     window.location.reload();
+                 })
+                 .catch((error) => {
+                   console.log(error)
+                 })
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+ }
+
+ function showAMDeliveryErrorMessage(section) {
+    if(section == 'RUSH') {
+        showErrorNotificationSameDay('AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!', false);
+    } else {
+        showErrorNotification('AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!', false);
+    }
+ }
+
+ function saveSelectedAddress(selectedAddress, shippingGroup, deliveryMode, rushZip) {
      $.ajax({
          url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/selectAddress',
          data: {
-             selectedAddressCode: selectedAddress
+             selectedAddressCode: selectedAddress,
+             shippingGroup: shippingGroup,
+             deliveryMode: deliveryMode,
+             rushZip: rushZip
          },
          type: "GET",
-         async: false,
          beforeSend: function(){
             $('.page-loader-new-layout').show();
          },
          success: function (data) {
              if(data == 'SUCCESS') {
-                 saveDeliveryMode(deliveryMode, false);
-                 $('.page-loader-new-layout').hide();
+                saveDeliveryMode(deliveryMode, false)
+                    .then((data) => {
+                        $('.page-loader-new-layout').hide();
+                        window.location.reload();
+                    })
+                    .catch((error) => {
+                      console.log(error)
+                    })
+             } else if(data == 'AM-ERROR') {
+                if(shippingGroup == 'SHIP_HOME_HOTEL_BUSINESS') {
+                    showAMDeliveryErrorMessage('SHIP');
+                } else {
+                    showAMDeliveryErrorMessage('RUSH');
+                }
+                $('.page-loader-new-layout').hide();
+             } else {
+                showErrorNotificationSameDay('Your saved address must match the zipcode you used for shipping options, please change your address or zipcode and try again.', false);
+                $('.page-loader-new-layout').hide();
              }
-             $('.page-loader-new-layout').hide();
          },
          error: function (data) {
-             console.log('error');
              $('.page-loader-new-layout').hide();
          }
      });
  }
 
  async function addNewAddress(addressForm, deliveryMode) {
-     $.ajax({
-         url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/add',
-         data: JSON.stringify(addressForm),
-         type: "POST",
-         async: false,
-         contentType : 'application/json; charset=utf-8',
-         mimeType : 'application/json',
-         cache : false,
-         beforeSend: function(){
-            $('.page-loader-new-layout').show();
-         },
-         success: function (data) {
-             if(data == 'SUCCESS') {
-                 saveDeliveryMode(deliveryMode, false);
-                 $('.page-loader-new-layout').hide();
+    return new Promise((resolve, reject) => {
+         $.ajax({
+             url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/add',
+             data: JSON.stringify(addressForm),
+             type: "POST",
+             contentType : 'application/json; charset=utf-8',
+             mimeType : 'application/json',
+             cache : false,
+             beforeSend: function(){
+                $('.page-loader-new-layout').show();
+             },
+             success: function (data) {
+                 if(data == 'SUCCESS') {
+                    resolve(data);
+                 }
+             },
+             error: function (data) {
+                 reject(data);
              }
-             $('.page-loader-new-layout').hide();
-         },
-         error: function (data) {
-             console.log('error');
-             $('.page-loader-new-layout').hide();
-         }
-     });
+         });
+    });
  }
 
  async function saveDeliveryMode(deliveryMode, internalAddressIndicator) {
-     $.ajax({
-         url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/select',
-         data: {
-             delivery_method: deliveryMode,
-             internalStoreAddress: internalAddressIndicator
-         },
-         type: "GET",
-         async: false,
-         beforeSend: function(){
-            $('.page-loader-new-layout').show();
-         },
-         success: function (data) {
-            $('.page-loader-new-layout').hide();
-             window.location.reload();
-             //TODO: Handle for payment method for checkout
-         },
-         error: function (data) {
-             console.log('error');
-             $('.page-loader-new-layout').hide();
-         }
-     });
+    return new Promise((resolve, reject) => {
+         $.ajax({
+             url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/select',
+             data: {
+                 delivery_method: deliveryMode,
+                 internalStoreAddress: internalAddressIndicator
+             },
+             type: "GET",
+             async: false,
+             beforeSend: function(){
+                $('.page-loader-new-layout').show();
+             },
+             success: function (data) {
+                 resolve(data);
+                 //TODO: Handle for payment method for checkout
+             },
+             error: function (data) {
+                 reject(data);
+             }
+         });
+    });
  }
 
- async function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
+ function savePickUpByFormOnCart(blPickUpByForm, deliveryMethod, status, upsStoreAddress) {
+ var isAvailable = checkAvailability(deliveryMethod);
+      if(isAvailable)
+      {
      $.ajax({
          url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/addPickUpDetails',
          data: JSON.stringify(blPickUpByForm),
          type: "POST",
-         async: false,
          contentType : 'application/json; charset=utf-8',
          mimeType : 'application/json',
          cache : false,
@@ -1019,38 +1208,109 @@
          success: function (data) {
              if(data != null) {
                  if(upsStoreAddress != null) {
-                     addNewAddress(upsStoreAddress, deliveryMethod);
+                    addNewAddress(upsStoreAddress, deliveryMethod)
+                        .then((data) => {
+                            saveDeliveryMode(deliveryMethod, status)
+                                .then((data) => {
+                                    $('.page-loader-new-layout').hide();
+                                    window.location.reload();
+                                })
+                                .catch((error) => {
+                                  console.log(error)
+                                })
+                        })
+                        .catch((error) => {
+                          console.log(error)
+                        })
                  } else {
-                     saveDeliveryMode(deliveryMethod, status);
+                    saveDeliveryMode(deliveryMethod, status)
+                        .then((data) => {
+                            $('.page-loader-new-layout').hide();
+                            window.location.reload();
+                        })
+                        .catch((error) => {
+                          console.log(error)
+                        })
                  }
-                 $('.page-loader-new-layout').hide();
              }
-             $('.page-loader-new-layout').hide();
+         },
+         complete: function() {
+
          },
          error: function (data) {
-             console.log('error');
-
+            $('.page-loader-new-layout').hide();
          }
      });
+     }
+     else
+     {
+     	window.location.reload();
+     }
   }
 
   //show Price of shipping on cart
   function onChangeOfShipItShipToHome(event) {
       $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]')
         .val() + '"]').text().split('$')[1]);
+      calculateCartTotal();
   }
 
   function onChangeOfShipItShipToUPS() {
-        $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box')
+     $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box')
             .val()+ '"]').text().split('$')[1]);
+     calculateCartTotal();
   }
 
   function onSelectOfPartnerAddress(event) {
     $('#cart-shipping-cost').text($('#'+event.getAttribute('id')+'-pickUpCost').text().trim());
+    calculateCartTotal();
   }
 
   function onChangeOfSameDayShippingMethodForCost() {
     $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]')
                     .val()+ '"]').text().split('$')[1]);
-
+    calculateCartTotal();
   }
+
+  function calculateCartTotal() {
+    let total = checkNaN(parseFloat($('#cart-shipping-subTotal').text().split('$')[1])) +
+                checkNaN(parseFloat($('#cart-shipping-waiver').text().split('$')[1])) +
+                checkNaN(parseFloat($('#cart-shipping-cost').text().split('$')[1])) +
+                checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1]));
+    $('#cart-shipping-total').text('$' + total.toFixed(2));
+  }
+
+  function checkNaN(attribute) {
+    if(isNaN(attribute)) {
+        return 0.00;
+    } else {
+        return attribute;
+    }
+  }
+  
+  //checks the product availability for the selected delivery mode
+  function checkAvailability(deliveryMode){
+  var isAvailable;
+ 	$.ajax({
+        url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/checkAvailability',
+        async: false,
+        data: {
+            	deliveryMethod : deliveryMode
+            },
+        type: "GET",
+        success: function (data) {
+            if(data=='success') {
+          		isAvailable = true;
+            }
+            else
+            {
+            	isAvailable = false;
+            }
+        },
+        error: function (error) {
+        	isAvailable = false;
+			console.log(error);
+        }
+    });
+    return isAvailable;
+ }

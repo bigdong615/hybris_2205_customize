@@ -2,7 +2,6 @@ package com.bl.core.shipping.service;
 
 import com.bl.core.model.*;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
@@ -129,11 +128,13 @@ public interface BlDeliveryModeService {
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
      *  depending on the selected zone from dao.
+     *
      * @param partnerZone i.e., name
      * @param rentalStart date
      * @param rentalEnd date
      * @param payByCustomer to get customer related delivery modes
      * @return Collection of BlPickUpZoneDeliveryModeModel
+     * @throws ParseException the parse exception
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModes(final String partnerZone, final String rentalStart,
                                                                          final String rentalEnd, final boolean payByCustomer)
@@ -204,11 +205,21 @@ public interface BlDeliveryModeService {
     String getWarehouseZipCode(final String deliveryType, final boolean payByCustomer);
     
  	/**
- 	 * This method will return all the delivery modes
- 	 *
- 	 * @param payByCustomer
- 	 * @return Collection of ZoneDeliveryModeModels
- 	 */
+	  * This method will return all the delivery modes.
+	  *
+	  * @return Collection of ZoneDeliveryModeModels
+	  */
 
- 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
+ 	public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
+ 	
+ 	/**
+	  * This method will check cart entries for gear availability.
+	  *
+	  * @param rentalStart date
+	  * @param rentalEnd date
+	  * @param deliveryModeModel the delivery mode model
+	  * @return boolean
+	  */
+   boolean checkCartEntriesAvailability(final String rentalStart, final String rentalEnd,
+         final ZoneDeliveryModeModel deliveryModeModel);
 }

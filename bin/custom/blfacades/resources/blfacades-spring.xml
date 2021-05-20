@@ -456,5 +456,18 @@
 		<property name="list" ref="extendedCartConverter"/>
 		<property name="add" ref="cartPopulator"/>
 	</bean>
-	
+
+
+	<!--Added these populators to segregate the Rental and Used Gear code on PLP and SLP to improve performance-->
+
+	<alias name="blProductCategorySearchPagePopulator" alias="productCategorySearchPagePopulator"/>
+	<bean id="blProductCategorySearchPagePopulator"
+		class="com.bl.facades.populators.BlProductCategorySearchPagePopulator" parent="defaultProductCategorySearchPagePopulator">
+	</bean>
+
+	<alias name="blSearchResponseQueryPopulator" alias="commerceSearchResponseQueryPopulator" />
+	<bean id="blSearchResponseQueryPopulator" class="com.bl.facades.populators.BlSearchResponseQueryPopulator" parent="defaultCommerceSearchResponseQueryPopulator"/>
+
+
+
 </beans>
