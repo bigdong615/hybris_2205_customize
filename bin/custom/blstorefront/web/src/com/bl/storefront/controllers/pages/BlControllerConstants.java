@@ -54,7 +54,14 @@ public class BlControllerConstants
   public static final String REFERER= "Referer";
   public static final String HOME_PAGE_URL = "/";
 	public static final String FAILURE_RESULT = "failure";
+	public static final String ERROR = "error";
 
+	public static final String REQUEST = "request";
+	public static final String RESPONSE = "response";
+
+
+	public static final String CATEGORY_CODE_PATH_PATTERN = FORWARD_SLASH +"{categoryCode:.*}";
+	public static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = FORWARD_SLASH +"{parentcategory:.*}" + CATEGORY_CODE_PATH_PATTERN;
 
 	private BlControllerConstants()
 	{

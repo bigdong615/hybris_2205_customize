@@ -148,14 +148,6 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     void setUPSAddressOnCart(final AddressModel addressModel);
     
- 	/**
- 	 * This method will return all the delivery modes
- 	 *
- 	 * @param payByCustomer
- 	 * @return Collection of ZoneDeliveryModeModels
- 	 */
- 	Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
-
     /**
      * This method will integrate AVS in checkout flow
      *
@@ -163,4 +155,20 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return Address Validation Response addresses
      */
     AVSResposeData getAVSResponse(final AddressData addressData);
+    
+    /**
+     * Check availability for delivery mode.
+     *
+     * @param deliveryModeCode the delivery mode code
+     * @return true, if successful
+     */
+    boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode);
+    
+  	/**
+  	 * This method will return all the delivery modes
+  	 *
+  	 * @param payByCustomer
+  	 * @return Collection of ZoneDeliveryModeModels
+  	 */
+  	Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
 }

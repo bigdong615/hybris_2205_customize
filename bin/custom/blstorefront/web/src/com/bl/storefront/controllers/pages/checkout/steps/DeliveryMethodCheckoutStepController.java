@@ -4,10 +4,14 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
@@ -61,6 +65,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
     @Resource(name = "baseStoreService")
     private BaseStoreService baseStoreService;
+    
+    @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+ 	 private RentalDateDto getRentalsDuration() 
+ 	 {
+ 		 return BlRentalDateUtils.getRentalsDuration();
+ 	 }
 
     @GetMapping(value = "/chooseShipping")
     @RequireHardLogIn
@@ -170,10 +180,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @RequireHardLogIn
     public String doSelectDeliveryMode(@RequestParam("delivery_method") final String selectedDeliveryMethod,
                                        @RequestParam("internalStoreAddress") final boolean internalStoreAddress) {
-        if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
-            getCheckoutFacade().setDeliveryMode(selectedDeliveryMethod, internalStoreAddress);
-        }
-        return getCheckoutStep().nextStep();
+   	 if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
+     	  return getCheckoutFacade().setDeliveryMode(selectedDeliveryMethod, internalStoreAddress)
+     			  ? getCheckoutStep().nextStep() : BlControllerConstants.ERROR;
+       }
+       return BlControllerConstants.ERROR;
     }
 
     @PostMapping(value = "/addPickUpDetails")
@@ -253,15 +264,36 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @RequireHardLogIn
     @ResponseBody
     public String doSelectDeliveryAddress(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+                                          @RequestParam("shippingGroup") final String shippingGroup,
+                                          @RequestParam("deliveryMode") final String deliveryMode,
+                                          @RequestParam("rushZip") final String rushZip,
                                           final RedirectAttributes redirectAttributes) {
         final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
         if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
             return getCheckoutStep().onValidation(validationResults);
         }
+
         if (StringUtils.isNotBlank(selectedAddressCode)) {
             final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
-            final boolean hasSelectedAddressData = selectedAddressData != null;
-            if (hasSelectedAddressData) {
+            if (selectedAddressData != null) {
+                final String addressType = selectedAddressData.getAddressType();
+                final String pinCode = selectedAddressData.getPostalCode();
+                if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
+                        BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
+                    if(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip)) {
+                        if((deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) || deliveryMode.contains(
+                                BlDeliveryModeLoggingConstants.SAVER)) && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+                            return BlDeliveryModeLoggingConstants.AM_ERROR;
+                        }
+                    } else {
+                        return BlDeliveryModeLoggingConstants.PIN_ERROR;
+                    }
+                } else {
+                    if(StringUtils.isNotEmpty(addressType) && deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) &&
+                            !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+                        return BlDeliveryModeLoggingConstants.AM_ERROR;
+                    }
+                }
                 setDeliveryAddress(selectedAddressData);
             }
         }
@@ -290,6 +322,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public String next(final RedirectAttributes redirectAttributes) {
         return getCheckoutStep().nextStep();
     }
+    
+    @GetMapping(value = "/checkAvailability")
+ 	 @ResponseBody
+ 	 public String checkDeliveryModeAvailability(@RequestParam("deliveryMethod") final String selectedDeliveryMethod,
+ 			final Model model) 
+ 	 {
+ 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
+ 	 		 && getCheckoutFacade().checkAvailabilityForDeliveryMode(selectedDeliveryMethod) ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
+ 	 }
 
     /**
      * Will set the delivery address
