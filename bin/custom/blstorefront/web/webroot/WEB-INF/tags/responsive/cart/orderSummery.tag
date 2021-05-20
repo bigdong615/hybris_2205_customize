@@ -42,7 +42,7 @@
               </tr>
               <tr>
                   <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
-                   <td class="text-end">
+                   <td class="text-end" id="cart-shipping-tax">
                   <c:choose>
                     <c:when test="${pageType =='CART' || cartData.avalaraCalculated ne 'true'}">
                            <format:blPrice priceData="${cartData.taxAvalaraCalculated}"/>

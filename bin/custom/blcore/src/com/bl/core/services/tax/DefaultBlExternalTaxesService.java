@@ -51,7 +51,9 @@ public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
         }
       }
       abstractOrder.setTotalTax(0.0);
+      abstractOrder.setAvalaraTaxCalculated(false);
     }
+    abstractOrder.setAvalaraTaxCalculated(false);
     abstractOrder.setTotalTax(0.0);
     return false;
   }
