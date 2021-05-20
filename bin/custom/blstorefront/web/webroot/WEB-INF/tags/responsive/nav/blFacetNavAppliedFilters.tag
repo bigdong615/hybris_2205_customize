@@ -5,7 +5,7 @@
 
 <c:choose>
    <c:when test="${not empty searchPageData.freeTextSearch && searchPageData.freeTextSearch ne null}">
-      <h6 class="search-term mb-4">&quot;${searchPageData.freeTextSearch} &quot;<span class="search-count"> &#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span></h6>
+      <h6 class="search-term">&quot;${searchPageData.freeTextSearch} &quot;<span class="search-count"> &#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span></h6>
    </c:when>
    <c:otherwise>
    
@@ -21,13 +21,13 @@
 		</c:when>		
 		<c:when
 			test="${pageType == 'PRODUCTSEARCH' && blPageType == 'usedGear'}">
-			<h6 class="search-term mb-4">
+			<h6 class="search-term">
 				&quot;<spring:theme code="text.used.gear.slp"/> &quot;<span class="search-count">
 					&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
 			</h6>
 		</c:when>		
 		<c:otherwise> 
-		<h6 class="search-term mb-4">
+		<h6 class="search-term">
 		<c:set var="displayText" value="${searchPageData.categoryCode}"/>
 		<c:if test ="${displayText eq 'rentalgear'}">
 		   <spring:theme code="text.rental.gear.slp" var="rentalText"/>
