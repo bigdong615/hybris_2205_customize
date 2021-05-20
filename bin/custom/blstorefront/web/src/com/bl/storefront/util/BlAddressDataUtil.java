@@ -4,15 +4,12 @@ import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.commercefacades.user.data.AddressData;
-import de.hybris.platform.core.model.c2l.CountryModel;
-import de.hybris.platform.core.model.c2l.RegionModel;
-import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.servicelayer.dto.converter.ConversionException;
-import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
-import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlAddressDataUtil extends AddressDataUtil {
 
@@ -33,7 +30,14 @@ public class BlAddressDataUtil extends AddressDataUtil {
             addressData.setEmail(blAddressForm.getEmail());
             addressData.setAddressType(blAddressForm.getAddressType());
             addressData.setUpsStoreAddress(blAddressForm.isUpsStoreAddress());
-            addressData.setOpeningDaysDetails(blAddressForm.getOpeningDaysDetails());
+            final java.lang.String openingDays = blAddressForm.getOpeningDaysDetails();
+            if(StringUtils.isNotEmpty(openingDays)) {
+                Map<String, String> openingDaysMap = new HashMap<>();
+                openingDaysMap.put(openingDays.split(";")[0].split(": ")[0], openingDays.split(";")[0].split(": ")[1]);
+                openingDaysMap.put(openingDays.split(";")[1].split(": ")[0], openingDays.split(";")[1].split(": ")[1]);
+                openingDaysMap.put(openingDays.split(";")[2].split(": ")[0], openingDays.split(";")[2].split(": ")[1]);
+                addressData.setOpeningDaysDetails(openingDaysMap);
+            }
             addressData.setPickStoreAddress(blAddressForm.isPickStoreAddress());
         }
     }
