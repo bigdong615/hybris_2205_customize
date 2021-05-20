@@ -25,7 +25,7 @@
 			<spring:theme code="text.free" text="FREE"/>
 		</c:if>
 		<c:if test="${not displayFreeForZero}">
-			$0.00
+			-
 		</c:if>
 	</c:otherwise>
 </c:choose>
