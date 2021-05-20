@@ -3,15 +3,11 @@
  */
 package com.bl.storefront.security;
 
-import com.bl.storefront.controllers.pages.BlControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.security.BruteForceAttackCounter;
-
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -31,7 +27,6 @@ public class LoginAuthenticationFailureHandler extends SimpleUrlAuthenticationFa
 		// Store the j_username in the session
 		request.getSession().setAttribute("SPRING_SECURITY_LAST_USERNAME", request.getParameter("j_username"));
 
-		super.setDefaultFailureUrl(request.getHeader(BlControllerConstants.REFERER));
 		super.onAuthenticationFailure(request, response, exception);
 	}
 

@@ -124,3 +124,26 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
     width: 6%;
     height: initial;
 }
+
+  .tab-container .form-group:nth-child(6) {
+    float: left;
+    width:40%;
+  }
+  .tab-container .form-group:nth-child(7) {
+    float:right;
+    width:58%;
+  }
+  .accordion select {
+    background: url(../assets/select-dropdrown.png) 6px no-repeat;
+    background-size: 10px;
+    background-position: right;
+    background-position-x: calc(100% - 18px);
+  }
+  .accordion select::-ms-expand {
+    display: none !important;
+  }
+
+  .accordion select {
+   -moz-appearance: none;
+   -webkit-appearance: none;
+  }
