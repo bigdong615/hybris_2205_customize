@@ -1,28 +1,33 @@
 package com.bl.core.utils;
 
-import com.bl.constants.BlDeliveryModeLoggingConstants;
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.logging.BlLogger;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.logging.BlLogger;
 
 /**
  * This class is used to convert the date format
@@ -429,10 +434,37 @@ public final class BlDateTimeUtils
 	 * This method will give us current time in specified time-zone time zone
 	 * @return String date in specified zone
 	 */
-	public static String getCurrentDateUsingCalendar(final String timeZone) {
+	public static String getCurrentDateUsingCalendar(final String timeZone, final Date date) {
 		final DateFormat dateFormat = new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
-		return dateFormat.format(new Date());
+		return dateFormat.format(date);
+	}
+
+	/**
+	 * This method will convert string to date with specified time zone
+	 *
+	 * @param date date
+	 * @param zone timeZone
+	 * @return date
+	 */
+	public static Date getStringToDateWithTimeZone(final String date, final String zone) {
+		try
+		{
+			SimpleDateFormat sdf = null;
+			if(date.contains("-")) {
+				sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN);
+			} else {
+				sdf = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+			}
+			sdf.setTimeZone(TimeZone.getTimeZone(zone));
+			return sdf.parse(date);
+		}
+		catch (final DateTimeParseException | ParseException e)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, date);
+		}
+		return null;
+
 	}
 
 	/**
@@ -441,7 +473,39 @@ public final class BlDateTimeUtils
 	 * @param timeZone PST/EST
 	 * @return Day of Week like SUNDAY
 	 */
-	public static DayOfWeek getDayOfWeek(final String timeZone) {
-			return LocalDate.parse(getCurrentDateUsingCalendar(timeZone), getFormatter("MM-dd-yyyy")).getDayOfWeek();
+	public static DayOfWeek getDayOfWeek(final String timeZone, final String date) {
+		return LocalDate.parse(getCurrentDateUsingCalendar(timeZone, getStringToDateWithTimeZone(date, BlDeliveryModeLoggingConstants.ZONE_PST)),
+				getFormatter(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN)).getDayOfWeek();
+	}
+
+	/**
+	 * It gets the date which is after a year
+	 *
+	 * @return the date
+	 */
+	public static Date getNextYearsSameDay()
+	{
+		final Date currentDate = new Date();
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTime(currentDate);
+		calendar.add(Calendar.YEAR, 1);
+		return calendar.getTime();
+	}
+
+	/**
+	 * This method will calculate time to check cutOff time condition
+	 *
+	 * @param time zone mode time to compare
+	 * @return true/false
+	 */
+	public static boolean compareTimeWithCutOff(final String time) {
+		try {
+			final SimpleDateFormat sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.DATE_TIME);
+			return StringUtils.isNotEmpty(time) ? sdf.parse(BlDateTimeUtils.getCurrentTimeUsingCalendar(
+					BlDeliveryModeLoggingConstants.ZONE_PST)).before(sdf.parse(time)) : Boolean.FALSE;
+		} catch (ParseException e) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
+			return false;
+		}
 	}
 }

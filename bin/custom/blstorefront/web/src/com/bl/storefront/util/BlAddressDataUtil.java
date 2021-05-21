@@ -4,8 +4,17 @@ import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlAddressDataUtil extends AddressDataUtil {
+
+    @Resource(name="commonI18NService")
+    private CommonI18NService commonI18NService;
 
     @Override
     public AddressData convertToAddressData(final AddressForm addressForm)
@@ -20,6 +29,16 @@ public class BlAddressDataUtil extends AddressDataUtil {
             final BlAddressForm blAddressForm = (BlAddressForm) addressForm;
             addressData.setEmail(blAddressForm.getEmail());
             addressData.setAddressType(blAddressForm.getAddressType());
+            addressData.setUpsStoreAddress(blAddressForm.isUpsStoreAddress());
+            final java.lang.String openingDays = blAddressForm.getOpeningDaysDetails();
+            if(StringUtils.isNotEmpty(openingDays)) {
+                Map<String, String> openingDaysMap = new HashMap<>();
+                openingDaysMap.put(openingDays.split(";")[0].split(": ")[0], openingDays.split(";")[0].split(": ")[1]);
+                openingDaysMap.put(openingDays.split(";")[1].split(": ")[0], openingDays.split(";")[1].split(": ")[1]);
+                openingDaysMap.put(openingDays.split(";")[2].split(": ")[0], openingDays.split(";")[2].split(": ")[1]);
+                addressData.setOpeningDaysDetails(openingDaysMap);
+            }
+            addressData.setPickStoreAddress(blAddressForm.isPickStoreAddress());
         }
     }
 

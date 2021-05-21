@@ -1,7 +1,7 @@
 #% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs shipping-cost.impex =========================");
 
 
-INSERT_UPDATE ShippingCost; shippingRateId[unique = 'true']; zoneDeliveryMode(code[unique = 'true']); shippingMethodId; name                           ; floor; ceiling; amount
+INSERT_UPDATE ShippingCost; shippingRateId[unique = 'true']; shippingCostCode(code)                 ; shippingMethodId; name                           ; floor; ceiling; amount
                           ; 422                            ; UPS_STANDARD_ROUND_TRIP                ; 1               ; UPS Standard Round Trip        ; 0    ; 0.5    ; 39.9
                           ; 423                            ; UPS_STANDARD_ROUND_TRIP                ; 1               ; UPS Standard Round Trip        ; 0.5  ; 1      ; 24.95
                           ; 424                            ; UPS_STANDARD_ROUND_TRIP                ; 1               ; UPS Standard Round Trip        ; 1    ; 1.5    ; 18.3

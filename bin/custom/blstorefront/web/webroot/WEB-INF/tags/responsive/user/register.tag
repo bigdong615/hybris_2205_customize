@@ -23,13 +23,11 @@
 <form:form method="post" modelAttribute="registerForm" action="${action}">
 
 	<formElement:formInputBox idKey="register.email"
-		labelKey="register.email" path="email" inputCSS="form-control"
-		mandatory="true" />
-	<formElement:formPasswordBox idKey="password" labelKey="register.pwd"
-		path="pwd" inputCSS="form-control password-strength" mandatory="true" />
+		 path="email" inputCSS="form-control" />
+	<formElement:formPasswordBox idKey="password"
+		path="pwd" inputCSS="form-control "/>
 	<formElement:formPasswordBox idKey="register.checkPwd"
-		labelKey="register.checkPwd" path="checkPwd" inputCSS="form-control"
-		mandatory="true" />
+		 path="checkPwd" inputCSS="form-control"/>
 
     <c:if test="${ not empty consentTemplateData }">
         <form:hidden path="consentForm.consentTemplateId" value="${consentTemplateData.id}" />

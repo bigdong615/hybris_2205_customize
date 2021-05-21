@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+ */
+package com.bl.integration.constants;
+
+/**
+ * Global class for all Blintegration constants. You can add global constants for your extension into this class.
+ */
+@SuppressWarnings({"deprecation","squid:CallToDeprecatedMethod"})
+public final class BlintegrationConstants extends GeneratedBlintegrationConstants
+{
+	public static final String EXTENSIONNAME = "blintegration";
+	public static final String AUTHORIZATION_SCOPE_PROPERTY = EXTENSIONNAME + ".oauth.scope";
+	public static final String LICENSE_URL_PROPERTY = EXTENSIONNAME + ".license.url";
+	public static final String TERMS_OF_SERVICE_URL_PROPERTY = EXTENSIONNAME + ".terms.of.service.url";
+	public static final String LICENSE_PROPERTY = EXTENSIONNAME + ".licence";
+	public static final String DOCUMENTATION_DESC_PROPERTY = EXTENSIONNAME + ".documentation.desc";
+	public static final String DOCUMENTATION_TITLE_PROPERTY = EXTENSIONNAME + ".documentation.title";
+	public static final String API_VERSION = "1.0.0";
+
+	public static final String AUTHORIZATION_URL = "/authorizationserver/oauth/token";
+    @SuppressWarnings("squid:S2068")
+	public static final String PASSWORD_AUTHORIZATION_NAME = "oauth2_password";
+	public static final String CLIENT_CREDENTIAL_AUTHORIZATION_NAME = "oauth2_client_credentials";
+
+	public static final String SAMPLE_MAP_STRING_KEY = "StringKey";
+	public static final String SAMPLE_MAP_STRING_VALUE = "StringValue";
+	public static final String SAMPLE_MAP_INTEGER_KEY = "integerKey";
+	public static final int SAMPLE_MAP_INTEGER_VALUE = 10001;
+
+	public static final String SAMPLE_LIST_STRING_VALUE = "new String";
+	public static final double SAMPLE_LIST_DOUBLE_VALUE = 0.123d;
+
+	public static final String HOST = "blintegration.host";
+	public static final String HOST_DEFAULT = "hostname";
+
+	public static final String PICKUP_ZIP_CODE = "pickUpZipCode";
+	public static final String DROPOFF_ZIP_CODE = "dropOffZipCode";
+	public static final String X_API_KEY = "X-Api-Key";
+
+	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
+	public static final String FAILURE_STRING = "Failure";
+	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
+	public static final String RESIDENTIAL_ADDRESS_TYPE_CODE = "2";
+	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
+	
+	private BlintegrationConstants()
+	{
+		//empty to avoid instantiating this constant class
+	}
+
+	// implement here constants used by this extension
+}

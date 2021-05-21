@@ -1,0 +1,45 @@
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs sample_data_accountpage.impex =========================");
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+# Language
+$lang=en
+
+
+INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;page;actions(uid,$contentCV);&componentRef
+                                 ;;AccountAddressBookComponent;Account Address Book Component;accountAddressBookPage.jsp;;AccountAddressBookComponent
+                                 ;;AccountAddEditAddressComponent;Account Add Edit Address Component;accountEditAddressPage.jsp;;AccountAddEditAddressComponent
+                                 ;;AccountOrderHistoryComponent;Account History Component;accountOrderHistoryPage.jsp;ViewOrderAction;AccountOrderHistoryComponent
+                                 ;;UpdatePasswordComponent;Update Password Component;accountChangePasswordPage.jsp;;UpdatePasswordComponent
+                                 ;;SavedCartsComponent   ;Saved Carts Component  ;accountSavedCartsPage.jsp;;SavedCartsComponent
+                                 ;;BookmarksComponent    ; Bookmarks Component   ; accountBookmarksPage.jsp ;;BookmarksComponent
+                                 ;;VerificationImagesComponent ; Verification Images Component ; accountVerificationImagesPage.jsp ;; VerificationImagesComponent
+                                 ;;CreditCartsComponent    ; Credit Carts Component   ; accountCreditCartsPage.jsp ;;CreditCartsComponent
+
+# CMS View Order Action
+INSERT_UPDATE ViewOrderAction;$contentCV[unique=true];uid[unique=true];url;name;&actionRef
+                             ;;ViewOrderAction;/my-account/order/{orderCode};View Order Action;ViewOrderAction
+
+
+# ContentSlot
+INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef);;;
+                         ;;BodyContent-address-book;Body Content Slot for Account Address Book;true;AccountAddressBookComponent;;;
+                         ;;BodyContent-add-edit-address;Body Content Slot for Add Edit Address;true;AccountAddEditAddressComponent;;;
+                         ;;BodyContent-orders;Body Content Slot for My Account Order History;true;AccountOrderHistoryComponent;;;
+                         ;;BodyContent-updatePassword;Body Content Slot for Update Password;true;UpdatePasswordComponent;;;
+                         ;;BodyContentSlot-saved-carts;Body Content Slot for Saved Carts;true;SavedCartsComponent;;;
+                         ;;BodyContentSlot-bookmarks ;Body Content Slot for Bookmarks;true;BookmarksComponent;;;
+                         ;;BodyContentSlot-verificationImages;Body Content Slot for Verification Images;true;VerificationImagesComponent;;;
+                         ;;BodyContentSlot-creditCarts;Body Content Slot for Credit Carts;true;CreditCartsComponent;;;
+
+
+# ContentSlotForPage
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true];contentSlot(uid,$contentCV)[unique=true];;;
+                                ;;BodyContent-address-book   ;BodyContent;address-book;BodyContent-address-book;;;
+                                ;;BodyContent-add-edit-address;BodyContent;add-edit-address;BodyContent-add-edit-address;;;
+                                ;;BodyContent-orders          ;BodyContent;orders;BodyContent-orders;;;
+                                ;;BodyContent-updatePassword;BodyContent;updatePassword;BodyContent-updatePassword;;;
+                                ;;BodyContent-saved-carts  ; BodyContent; saved-carts ;BodyContentSlot-saved-carts;;;
+                                ;;BodyContent-bookmarks  ;BodyContent; bookmarks ;BodyContentSlot-bookmarks;;;
+                                ;;BodyContent-verificationImages  ;BodyContent; verificationImages ;BodyContentSlot-verificationImages;;;
+                                ;;BodyContent-creditCarts  ;BodyContent; creditCarts ;BodyContentSlot-creditCarts;;;

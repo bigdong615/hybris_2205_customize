@@ -23,9 +23,11 @@ public interface BlDeliveryModeDao {
      * @param carrier ie., UPS or FedEx
      * @param mode i.e., standard or overnight
      * @param pstCutOffTime for time condition
+     *
      * @return Collection of ZoneDeliveryModeModel
      */
-    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModes(final String carrier, final String mode, final String pstCutOffTime);
+    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModes(final String carrier, final String mode, final String pstCutOffTime,
+                                                                 final boolean payByCustomer);
 
     /**
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group
@@ -35,7 +37,8 @@ public interface BlDeliveryModeDao {
      * @param pstCutOffTime for time condition
      * @return Collection of ZoneDeliveryModeModel
      */
-    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode, final String pstCutOffTime);
+    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode, final String pstCutOffTime,
+                                                                        final boolean payByCustomer);
 
     /**
      * This method will fetch all the partner-pickup-zones from DB who has delivery-modes associated to it
@@ -54,10 +57,9 @@ public interface BlDeliveryModeDao {
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group
      *  depending on the selected zone.
      * @param partnerZone for PartnerPickupStore
-     * @param pstCutOffTime for time condition
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
-    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModes(final String partnerZone, final String pstCutOffTime);
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModes(final String partnerZone, final boolean payByCustomer);
 
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store.
@@ -66,7 +68,8 @@ public interface BlDeliveryModeDao {
      * @param pstCutOffTime for time condition
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
-    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModes(final String mode, final String pstCutOffTime);
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModes(final String mode, final String pstCutOffTime,
+                                                                                  final boolean payByCustomer);
 
     /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store not
@@ -76,7 +79,8 @@ public interface BlDeliveryModeDao {
      * @param pstCutOffTime for time condition
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
-    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime);
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
+                                                                                         final boolean payByCustomer);
 
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute
@@ -84,14 +88,40 @@ public interface BlDeliveryModeDao {
      * @param pstCutOffTime for time condition
      * @return Collection of BlRushDeliveryModeModel
      */
-    Collection<BlRushDeliveryModeModel> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime);
+    Collection<BlRushDeliveryModeModel> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime, final boolean payByCustomer);
 
     /**
      * This method will fetch shipping cost model for calculated value for variable delivery cost model
      *
      * @param calculatedCost value\
      * @param deliveryMethod name
+     * @param payByCustomer who will pay
      * @return SHippingCostModel
      */
-    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod);
+    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod,
+                                                               final boolean payByCustomer);
+
+    /**
+     * This method will fetch dimensional factor stored on base store
+     *
+     * @param baseStore name/code
+     * @return dimensionalFactor
+     */
+    Integer getDimensionalFactorForDeliveryFromStore(final String baseStore);
+
+    /**
+     * This method will give rush model for delivery type for warehouse zipCode
+     *
+     * @param deliveryMode
+     * @param payByCustomer
+     * @return
+     */
+    BlRushDeliveryModeModel getBlRushDeliveryModeForWarehouseZipCode(final String deliveryMode, final boolean payByCustomer);
+
+	/**
+	 * This method will return all the delivery mode
+	 *
+	 * @return
+	 */
+	Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
 }
