@@ -27,7 +27,7 @@
             <spring:theme code="login.rememberme"/>
           </small>
         </label>
-        <a href="#forgotPass" data-bs-toggle="modal" data-bs-dismiss="modal" class="float-end">
+        <a href="#forgotPass"  data-bs-dismiss="modal" class="js-forgot-password float-end">
           <small>
             <spring:theme code="login.link.forgottenPwd"/>
           </small>
@@ -44,10 +44,10 @@
                        	<input type="hidden" name="errorMessages_id" id="errorMessages_id" data-value="${ycommerce:sanitizeHTML(errorMessages)}"/>
                        			</c:forEach>
         </c:if>
-        <div class ="notification notification-error" id="errorMessages_login"> </div>
+        <div class ="notification notification-error d-none" id="errorMessages_login"> </div>
         <p class="body14 text-center mb-0 mt-4">
           <a class="js-signUp-popup" data-link="<c:url value='/login/register'/>"
-            href="#signUp" data-bs-toggle="modal" data-bs-dismiss="modal">
+            href="#signUp" data-bs-dismiss="modal">
             <spring:theme code="register.new.customer"/>
           </a>
         </p>
