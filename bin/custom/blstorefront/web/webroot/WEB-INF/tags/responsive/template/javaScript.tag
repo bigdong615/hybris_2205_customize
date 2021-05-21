@@ -615,9 +615,10 @@
                                              primarySlider.sync( secondarySlider ).mount();
 
                                               var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+                                             console.log(image-qty)
                                              
-                                             
-                                               if(image_qty>4){
+                                               if(image_qty>4)
+                                               {
                                                 
                                              var secondarySlider = new Splide( '#product-thumbnails', {
                                                  rewind      : true,
@@ -655,7 +656,7 @@
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
-                                              }
+                                               }
                                               // BL:574 code ends here
 
                                              // Initialize Overview Video Slider - required for Single Product Page
@@ -810,10 +811,11 @@
            $(swap).click(function (event) {
             event.preventDefault();
               $('.hide-product-row').toggle('slow');
-                if(swap.innerHTML === "Show More") {
-                   swap.innerHTML = "Show Less";
+              //BL-573 and BL-572 : added + icon and html code for + and _
+                if(swap.innerHTML === "Show More +") {
+                   swap.innerHTML = "Show Less &#8722;";
                     } else {
-                  swap.innerHTML = "Show More";
+                  swap.innerHTML = "Show More &#43;";
                    }
                 });
              // Mobile Menu styles - #my-menu is required for ALL pages
@@ -874,7 +876,7 @@
              primarySlider.sync( secondarySlider ).mount();
 
               var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
-                            
+                            console.log(image_qty);
                  if(image_qty>4){
                          var secondarySlider = new Splide( '#product-thumbnails', {
                                                  rewind      : true,
@@ -903,14 +905,15 @@
                                                  keyboard: false,
                                                   fixedWidth  : 380,
                                                  fixedHeight : 380,
+                                                 breakpoints :{
                                                   '600': {
                                                          fixedWidth  : 250,
                                                          fixedHeight : 250,
                                                          
                                                      }
                                              },
+                                             
                                              } );
-                                             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
                                               }
          // BL:574 code ends here part2

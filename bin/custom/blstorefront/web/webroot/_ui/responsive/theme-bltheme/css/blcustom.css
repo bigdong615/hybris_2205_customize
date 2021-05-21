@@ -22,7 +22,9 @@ Added for removing add to cart popup background, when unable to add product to c
 .icon-production { background: url(../assets/icon-equipment.svg) center no-repeat; }
 
 /* for BL-573 */
-.showmore-margintop{position: relative; top: 30px;}
+.showmore-margintop{position: relative; top: 25px;}
+
+
 
  /*for BL-537 changes*/
 #gear-sliders > .splide__arrows .splide__arrow--prev, #blog-slider > .splide__arrows .splide__arrow--prev, #gear-slider-cart > .splide__arrows .splide__arrow--prev { margin-left: -30px; }

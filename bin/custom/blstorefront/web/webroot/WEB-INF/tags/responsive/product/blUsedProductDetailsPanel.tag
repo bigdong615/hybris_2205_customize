@@ -68,13 +68,14 @@
                                 	</c:otherwise>
                                 </c:choose>
                                 </table>
-                                <c:if test="${product.serialproducts.size() >3}">
+                               <c:if test="${product.serialproducts.size() >3}"> 
                                  <!--BL-573  and BL-572  added class showmore-margintop -->
                                 <p class="mt-4"><a href="#" id="showmore" class="showmore-margintop"><spring:theme code="pdp.show.more.button.text"/></a>
-                                </c:if>
+                                </c:if> 
                                 <c:if test="${product.forRent}">
                                 <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-                                <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
+                              <!--  BL:573 and  572 mt-4 added -->
+                                <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end mt-4"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
                                 </c:if>
                             </div>
                         </div>
