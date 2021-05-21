@@ -36,14 +36,14 @@
                                          			</c:forEach>
                            </c:if>
 
-           <div class ="notification notification-error">
+           <div class ="notification notification-error d-none" id="errorMessages_sigin_errorbox">
                                        <div id="errorMessages_sigin_email"></div> &nbsp;
                                        <div id="errorMessages_sigin_pwd"></div> &nbsp;
                                        <div id="errorMessages_sigin_chkPwd"></div>
            </div>
         <p class="body14 text-center mb-0 mt-4">
           <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
-            data-bs-toggle="modal" data-bs-dismiss="modal">
+             data-bs-dismiss="modal">
             <spring:theme code="login.login" />
           </a>
           &nbsp;
