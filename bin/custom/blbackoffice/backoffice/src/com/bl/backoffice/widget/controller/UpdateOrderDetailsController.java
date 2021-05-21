@@ -45,6 +45,7 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.facades.fexEx.data.SameDayCityReqData;
 import com.bl.facades.fexEx.data.SameDayCityResData;
@@ -147,6 +148,8 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	private ListModelList isPickupStore = new ListModelList();
 	private ListModelList isUpsStore = new ListModelList();
 
+	final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
+
 	boolean isDeliveryModeChange = false;
 
 	static
@@ -167,9 +170,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	@SocketEvent(socketId = "inputObject")
 	public void initCustomerAddressForm(final OrderModel inputObject)
 	{
-		final List regionCodeList = new ArrayList();
-		final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
-
 		this.setOrderModel(inputObject);
 		this.getWidgetInstanceManager()
 				.setTitle(String.valueOf(this.getWidgetInstanceManager().getLabel("blbackoffice.updateshipping.confirm.title")) + " "
@@ -181,7 +181,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		this.line2.setValue(deliveryAddress.getLine2());
 		this.postalCode.setValue(deliveryAddress.getPostalcode());
 		this.town.setValue(deliveryAddress.getTown());
-		this.contactNo.setValue(deliveryAddress.getCellphone());
+		this.contactNo.setValue(deliveryAddress.getPhone1());
 		this.countryCode
 				.setValue(deliveryAddress.getCountry().getName() + " " + "[" + deliveryAddress.getCountry().getIsocode() + "]");
 		this.pickupPersonFName.setValue(getOrderModel().getPickUpPersonFirstName());
@@ -208,7 +208,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		BlLogger.logMessage(LOG, Level.INFO, "isUPSAddessSelected : " + isUpsStoreAddSelected);
 
-		getBlRegionData(regionCodeList, blRegionCode);
+		getBlRegionData(blRegionCode);
 
 		getBlDeliveryModes();
 
@@ -272,7 +272,42 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	 */
 	private void validateZipCodeForDelivery(final SameDayCityReqData sameDayCityReqData, final String deliveryAddressZipCode)
 	{
+		AddressModel deliveryAddress = getOrderModel().getDeliveryAddress();
 		final ZoneDeliveryModeModel blZoneDeliveryMode = this.deliveryModeCombobox.getSelectedItem().getValue();
+		if (blZoneDeliveryMode instanceof BlPickUpZoneDeliveryModeModel)
+		{
+			isDeliveryModeChange = true;
+			final BlPickUpZoneDeliveryModeModel zonedeliveryMode = (BlPickUpZoneDeliveryModeModel) blZoneDeliveryMode;
+
+			if ("BL_PARTNER_PICKUP".equals(zonedeliveryMode.getShippingGroup().getCode()))
+			{
+				deliveryAddress.setPickStoreAddress(true);
+				deliveryAddress.setUpsStoreAddress(false);
+				final AddressModel pickUpStoreAddress = zonedeliveryMode.getInternalStoreAddress();
+				final AddressModel pickupDeliveryAddress = modelService.clone(pickUpStoreAddress);
+				pickupDeliveryAddress.setShippingAddress(true);
+				deliveryAddress = pickupDeliveryAddress;
+			}
+
+			if ("SHIP_HOLD_UPS_OFFICE".equals(zonedeliveryMode.getShippingGroup().getCode()))
+			{
+				deliveryAddress.setPickStoreAddress(false);
+				deliveryAddress.setUpsStoreAddress(true);
+			}
+		}
+
+		if (!(blZoneDeliveryMode instanceof BlPickUpZoneDeliveryModeModel))
+		{
+			isDeliveryModeChange = true;
+			deliveryAddress.setPickStoreAddress(false);
+			deliveryAddress.setUpsStoreAddress(false);
+			this.pickupPersonFName.setValue("");
+			this.pickupPersonLName.setValue("");
+			this.pickUpPersonEmail.setValue("");
+			this.pickUpPersonPhone.setValue("");
+		}
+
+		populateAddressData(deliveryAddress);
 
 		if (blZoneDeliveryMode instanceof BlRushDeliveryModeModel)
 		{
@@ -308,6 +343,20 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		}
 	}
 
+	/**
+	 * @param deliveryAddress
+	 */
+	private void populateAddressData(final AddressModel deliveryAddress)
+	{
+		this.firstName.setValue(deliveryAddress.getFirstname());
+		this.lastName.setValue(deliveryAddress.getLastname());
+		this.line1.setValue(deliveryAddress.getLine1());
+		this.line2.setValue(deliveryAddress.getLine2());
+		this.town.setValue(deliveryAddress.getTown());
+		this.contactNo.setValue(deliveryAddress.getPhone1());
+		getBlRegionDataOnPopup(blRegionCode, deliveryAddress.getRegion());
+	}
+
 	@ViewEvent(componentID = "undochanges", eventName = "onClick")
 	public void reset()
 	{
@@ -315,7 +364,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	}
 
 	@ViewEvent(componentID = "confirmAddress", eventName = "onClick")
-	public void confirmCancellation()
+	public void confirmOrder()
 	{
 		this.validateRequest();
 		final AddressModel addressModel = getOrderModel().getDeliveryAddress();
@@ -373,10 +422,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 	protected void validateRequest()
 	{
-		if (StringUtils.isEmpty(this.firstName.getValue()))
-		{
-			throw new WrongValueException(this.firstName, this.getLabel("blbackoffice.updateshipping.missing.firstname"));
-		}
 
 		if (StringUtils.isEmpty(this.line1.getValue()))
 		{
@@ -402,6 +447,11 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		if (StringUtils.isEmpty(this.postalCode.getValue()))
 		{
 			throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.missing.postalCode"));
+		}
+
+		if (StringUtils.isEmpty(this.contactNo.getValue()))
+		{
+			throw new WrongValueException(this.contactNo, this.getLabel("blbackoffice.updateshipping.missing.contactNo"));
 		}
 
 	}
@@ -456,8 +506,9 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	 * @param regionCodeList
 	 * @param blRegionCode
 	 */
-	private void getBlRegionData(final List regionCodeList, final List<RegionData> blRegionCode)
+	private void getBlRegionData(final List<RegionData> blRegionCode)
 	{
+		final List regionCodeList = new ArrayList();
 		regionCodeList.addAll(blRegionCode);
 		listModelList = new ListModelList<>(regionCodeList);
 
@@ -474,9 +525,34 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		regionCombobox.setModel(listModelList);
 	}
 
+
+	/**
+	 * @param regionCodeList
+	 * @param blRegionCode
+	 */
+	private void getBlRegionDataOnPopup(final List<RegionData> blRegionCode, final RegionModel regionModel)
+	{
+		final List regionCodeList = new ArrayList();
+		regionCodeList.addAll(blRegionCode);
+		listModelList = new ListModelList<>(regionCodeList);
+
+		final RegionData selectedRegion = getRegionConverter().convert(regionModel);
+
+		for (final RegionData regionData : listModelList)
+		{
+			if (regionData.getIsocode().equals(selectedRegion.getIsocode()))
+			{
+				listModelList.addToSelection(regionData);
+			}
+		}
+
+		regionCombobox.setModel(listModelList);
+	}
+
+
 	protected void showMessageBox()
 	{
-		Messagebox.show("Address Updated Successfully");
+		Messagebox.show("Details Updated Successfully");
 
 	}
 

@@ -293,6 +293,108 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
+	
+	<context merge-by="type" parent="GenericItem" type="ShippingCost" component="editor-area">
+	    <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+	    <editorArea:tab name="ShippingCost">
+                <editorArea:section name="Shipping Cost Info">
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="name"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingRateId"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingMethodId"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="floor"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="ceiling"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="amount"/>
+                    <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingCostCode"/>
+                </editorArea:section>
+       	</editorArea:tab>
+         </editorArea:editorArea>
+    </context>
+    
+   	<context merge-by="type" parent="GenericItem" type="ZoneDeliveryMode" component="editor-area">
+	    <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+	    	<editorArea:tab name="ZoneDeliveryMode">
+                <editorArea:section name="Zone Delivery Mode">
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="code"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="name"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingCostCode"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="cutOffTime"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="numberOfDaysToSkip"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingMethodId"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingMethodType"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="carrier"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="warehouse"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="businessTypeDelivery"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="payByCustomer"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingGroup"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="values"/>
+	            <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="daysToSkip"/>
+                </editorArea:section>
+       		</editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+    
+       	<context merge-by="type" parent="GenericItem" type="BlPickUpZoneDeliveryMode" component="editor-area">
+	    <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+	    	<editorArea:tab name="BlPickUpZoneDelivery">
+	    	 <editorArea:section name="BlPickupZone Delivery Info"> 
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="externalStoreUrl"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="userName"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="password"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="internalStoreAddress"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="partnerPickUpStore"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="externalStores"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="warehousePickUp"/>
+                </editorArea:section>
+                <editorArea:section name="Zone Delivery Info">
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="code"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="name"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingCostCode"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="cutOffTime"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="numberOfDaysToSkip"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingMethodId"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingMethodType"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="carrier"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="warehouse"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="businessTypeDelivery"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="payByCustomer"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingGroup"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="values"/>
+	            <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="daysToSkip"/>
+                </editorArea:section>
+               
+       		</editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+    
+        <context merge-by="type" parent="GenericItem" type="BlRushDeliveryMode" component="editor-area">
+	    <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+	    	<editorArea:tab name="BlRushDelivery">
+	    		<editorArea:section name="BlRush Delivery Info"> 
+               	 	<editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="deliveryType"/>
+                	<editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingArea"/>
+               	 	<editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="radius"/>
+            	 </editorArea:section>
+                <editorArea:section name="Zone Delivery Info">
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="code"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="name"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingCostCode"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="cutOffTime"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="numberOfDaysToSkip"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingMethodId"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingMethodType"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="carrier"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="warehouse"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="businessTypeDelivery"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="payByCustomer"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="shippingGroup"/>
+                <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="values"/>
+	            <editorArea:attribute xmlns="http://www.hybris.com/cockpitng/component/editorArea" qualifier="daysToSkip"/>
+                
+                </editorArea:section>
+               
+       		</editorArea:tab>
+        </editorArea:editorArea>
+    </context>
 
     <!-- BL-110 Inventory Web Scan Tool -->
     <context component="explorer-tree" merge-by="module">
@@ -721,7 +823,20 @@
             </y:group>
         </y:actions>
     </context>
-  	
+
+
+
+<!--To calculate the total without tax -->
+  <context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
+      <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" name="Order editor area">
+      <ea:tab name="customersupportbackoffice.order.tab.details">
+        <ea:section name="customersupportbackoffice.section.order.general.totals" columns="3">
+          <editorArea:customPanel name="customersupportbackoffice.order.details.total" spring-bean="blTotalPriceWithTaxRenderer"/>
+        </ea:section>
+      </ea:tab>
+      </editorArea:editorArea>
+  </context>
+
 </config>
 
 
