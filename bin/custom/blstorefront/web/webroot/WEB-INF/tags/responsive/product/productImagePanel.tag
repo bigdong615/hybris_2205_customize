@@ -38,12 +38,7 @@
             <div class="splide__track" >
                    <ul class="splide__list">
                          <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
-                             
-                            <li class="splide__slide"><img src="${fn:escapeXml(container.product.url)}" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
+                                 <li class="splide__slide"><img src="${fn:escapeXml(container.product.url)}" alt="${fn:escapeXml(container.thumbnail.altText)}"></li>
                          </c:forEach>
                    </ul>
             </div>
@@ -52,11 +47,6 @@
                        <div class="splide__track">
                            <ul class="splide__list">
                                  <c:forEach items="${galleryImages}" var="container" varStatus="varStatus">
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg"></li>
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg"></li>
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg"></li>
-                                 <li class="splide__slide"><img src="https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg"></li>
-
                                     <li class="splide__slide"><img src="${fn:escapeXml(container.product.url)}"></li>
                                  </c:forEach>
                            </ul>

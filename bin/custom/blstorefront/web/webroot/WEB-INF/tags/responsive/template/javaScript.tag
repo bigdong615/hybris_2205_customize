@@ -615,7 +615,7 @@
                                              primarySlider.sync( secondarySlider ).mount();
 
                                               var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
-                                             console.log(image-qty)
+                                             
                                              
                                                if(image_qty>4)
                                                {
