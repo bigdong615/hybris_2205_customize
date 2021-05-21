@@ -272,6 +272,7 @@
 		<property name="imageConverter" ref="imageConverter"/>
 		<property name="modelService" ref="modelService"/>
 	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
+		  <property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator" />
 	</bean>
 
 	<alias name="defaultBlSerialProductDataPopulator" alias="blSerialProductDataPopulator"/>
@@ -280,7 +281,10 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 	</bean>
-	
+
+	<bean id="blWishlistOptionsPopulator" class="com.bl.facades.populators.BlWishlistOptionsPopulator">
+	</bean>
+
 	<!-- BL-166:This bean is override to configure bl related populator-->
 	<alias name="defaultProductConfiguredPopulator" alias="productConfiguredPopulator"/>
 	<bean id="productVariantConfiguredPopulator" parent="defaultProductConfiguredPopulator">
@@ -288,6 +292,7 @@
 			<map key-type="de.hybris.platform.commercefacades.product.ProductOption" merge="true">
 				<entry key="REQUIRED_DATA" value-ref="blProductPopulator"/>
 				<entry key="REQUIRED_SERIAL_DATA" value-ref="blSerialProductDataPopulator"/>
+				<entry key="REQUIRED_WISHLIST" value-ref="blWishlistOptionsPopulator"/>
 			</map>
 		</property>
 	</bean>
@@ -468,6 +473,15 @@
 	<alias name="blSearchResponseQueryPopulator" alias="commerceSearchResponseQueryPopulator" />
 	<bean id="blSearchResponseQueryPopulator" class="com.bl.facades.populators.BlSearchResponseQueryPopulator" parent="defaultCommerceSearchResponseQueryPopulator"/>
 
+	<alias name="wishlistFacade" alias="wishlistFacade"/>
+	<bean id="wishlistFacade" class="com.bl.facades.wishlist.impl.DefaultBlWishListFacade">
+		<property name="userService" ref="userService"/>
+		<property name="productService" ref="productService"/>
+		<property name="wishlistService" ref="wishlistService"/>
+	</bean>
 
-
+	<alias name="wishlistPopulator" alias="wishlistPopulator"/>
+	<bean id="wishlistPopulator" class="com.bl.facades.populators.BlWishListPopulator">
+		<property name="userService" ref="userService"/>
+	</bean>
 </beans>
