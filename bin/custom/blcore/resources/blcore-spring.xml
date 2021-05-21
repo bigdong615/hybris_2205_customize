@@ -753,6 +753,11 @@
 	</bean>
 
 
+	<!--Avalara Tax-->
+	<alias name="defaultBlExternalTaxesService" alias="externalTaxesService"/>
+	<bean id="defaultBlExternalTaxesService"
+		class="com.bl.core.services.tax.DefaultBlExternalTaxesService" parent="defaultExternalTaxesService" />
+
  <!--BL-331 Solr Field Value Resolver -->
 
   <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
@@ -804,6 +809,7 @@
 		<property name="blDamageWaiverGenericDao" ref="blDamageWaiverGenericDao"/>
 		<property name="defaultOrderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
 		<property name="defaultCommonI18NService" ref="commonI18NService"/>
+		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
 	</bean>
 	
 	<!-- BL-462 : Generic dao to get the full list of Damage Waiver Percantage defined for damage Waiver types -->

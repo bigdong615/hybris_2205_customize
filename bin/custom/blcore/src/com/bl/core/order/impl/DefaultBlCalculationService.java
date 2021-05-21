@@ -1,5 +1,6 @@
 package com.bl.core.order.impl;
 
+import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlDamageWaiverPricingModel;
 import com.bl.core.model.BlProductModel;
@@ -45,6 +46,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private GenericDao<BlDamageWaiverPricingModel> blDamageWaiverGenericDao;
 	private OrderRequiresCalculationStrategy defaultOrderRequiresCalculationStrategy;
 	private CommonI18NService defaultCommonI18NService;
+	private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
 
 	/**
 	 * Reset all values of entry before calculation.
@@ -97,6 +99,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
+		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 
 	/**
@@ -117,6 +120,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
@@ -132,14 +136,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 			// set total
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
-					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts;
+					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
 			order.setTotalPrice(Double.valueOf(totalRounded));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
-			// taxes
-			final double totalTaxes = calculateTotalTaxValues(order, recalculate, digits,
-					getTaxCorrectionFactor(taxValueMap, subtotal, total, order), taxValueMap);
-			final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(totalTaxes, digits);
+			final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(order.getTotalTax(), digits);
 			order.setTotalTax(Double.valueOf(totalRoundedTaxes));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
@@ -471,6 +472,16 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	public void setDefaultCommonI18NService(final CommonI18NService defaultCommonI18NService)
 	{
 		this.defaultCommonI18NService = defaultCommonI18NService;
+	}
+
+
+	public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService() {
+		return defaultBlExternalTaxesService;
+	}
+
+	public void setDefaultBlExternalTaxesService(
+			DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
+		this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
 	}
 
 }
