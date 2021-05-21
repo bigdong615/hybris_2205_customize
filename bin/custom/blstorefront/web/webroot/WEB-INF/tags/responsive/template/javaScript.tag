@@ -601,6 +601,14 @@
                                                  pagination : false,
                                                  arrows     : false,
                                                  keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                          }
+                                                 },
                                              } );
 
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
@@ -636,6 +644,14 @@
                                                  pagination : false,
                                                  arrows     : false,
                                                  keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                     }   
+                                                     },
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
@@ -844,6 +860,15 @@
                  pagination : false,
                  arrows     : false,
                  keyboard: false,
+                  fixedWidth  : 380,
+                  fixedHeight : 380,
+                  breakpoints : {
+                  '600': {
+                          fixedWidth  : 250,
+                          fixedHeight : 250,
+                                                         
+                         } 
+                  },                                
              } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
@@ -876,6 +901,14 @@
                                                  pagination : false,
                                                  arrows     : false,
                                                  keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                  '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                         
+                                                     }
+                                             },
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();

@@ -16,7 +16,7 @@ Added for removing add to cart popup background, when unable to add product to c
 }
 
 /* BL-581*/
-.mm-listitem hr:last-child{display:none;}
+ 
 
 /*for BL-494 */
 .icon-production { background: url(../assets/icon-equipment.svg) center no-repeat; }

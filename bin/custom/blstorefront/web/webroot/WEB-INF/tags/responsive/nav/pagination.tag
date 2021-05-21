@@ -55,7 +55,7 @@
             <a href="${nextPageUrl}" class="btn-arrow-right"></a>
            </c:if>
             <c:if test="${!hasNextPage}">
-                       <a href="javascript:void(0)" class="btn-arrow-right"></a>
+                       <a href="javascript:void(0)" class="btn-arrow-right disabled"></a>
             </c:if>
       </c:otherwise>
       </c:choose>
