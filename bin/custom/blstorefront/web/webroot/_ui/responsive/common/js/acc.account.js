@@ -47,6 +47,7 @@ ACC.account = {
 					data: formValues,
 					url: targetUrl,
 					success: function (response) {
+				   // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						var splitValue = '';
 						if (response.startsWith("Error:")) {
 							splitValue = response.split(":");
@@ -118,6 +119,7 @@ ACC.account = {
 					data: formValues,
 					url: targetUrl,
 					success: function (response) {
+					 // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
 							$("#errorMessages_login").html("Your Email or password was incorrect");

@@ -42,7 +42,7 @@
                                        <div id="errorMessages_sigin_chkPwd"></div>
            </div>
         <p class="body14 text-center mb-0 mt-4">
-          <a class="js-login-popup " href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
+          <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
              data-bs-dismiss="modal">
             <spring:theme code="login.login" />
           </a>
