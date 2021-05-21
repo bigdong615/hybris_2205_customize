@@ -7,7 +7,6 @@ ACC.account = {
 	accountLink: function () {
 		/* This function is responsible for providing form object for the login popup*/
 		$(document).on("click", ".js-login-popup", function (e) {
-			
 			e.preventDefault();
 			$('#signIn').html("");
 			$.ajax({
@@ -17,12 +16,7 @@ ACC.account = {
 					setTimeout(function(){$("#signIn").modal('show');},500); 
 				}
 			})
-
-			
-			
 		});
-
-	
 
 		/*This function is responsible for providing form object for the sign up popup*/
 		$(document).on("click", ".js-signUp-popup", function (e) {
@@ -37,19 +31,12 @@ ACC.account = {
 			})
 		});
 
-
 		$(document).on("click", ".js-forgot-password", function (e) {
 			e.preventDefault();
-			
 					setTimeout(function(){$("#forgotPass").modal('show');},500)
-				
-			
 		});
 
-		
-
 		/** Added for BL-31 to make validation for registration **/
-
 		$(document).on("click", ".js-signUp-popup-validation", function (e) {
 			e.preventDefault();
 			var formValues = $('#signUppopup-validation').serialize();
@@ -62,33 +49,26 @@ ACC.account = {
 					success: function (response) {
 						var splitValue = '';
 						if (response.startsWith("Error:")) {
-							
 							splitValue = response.split(":");
 							if (splitValue.includes('register.email.invalid')) {
-								
 								$("#errorMessages_sigin_email").html("Please enter a valid email");
 							}
 							if (splitValue.includes('register.pwd.invalid')) {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
-									console.log("d-none removed case1");
 								}
 								$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
 							}
 							if (splitValue.includes('validation.checkPwd.equals')) {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
-									console.log("d-none removed case1");
 								}
 								$("#errorMessages_sigin_chkPwd").html("Your passwords did not match, please enter them again");
 							}
 						} else if (response === 'registration.error.account.exists.title') {
-
 							if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 								$("#errorMessages_sigin_errorbox").removeClass("d-none");
-								console.log("d-none removed case1");
 							}
-
 							$("#errorMessages_sigin_email").html("Whoops, it looks like you’re already signed up with a BorrowLenses account");
 						} else {
 							$("#errorMessages_sigin_errorbox").addClass("d-none");
@@ -103,17 +83,14 @@ ACC.account = {
 			if ($('#register-form-id').val() === '') {
 				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 					$("#errorMessages_sigin_errorbox").removeClass("d-none");
-					console.log("d-none removed");
 				}
 				$("#errorMessages_sigin_email").html("Looks like you forgot to enter your email address");
-				
 			} else {
 				$("#errorMessages_sigin_email").html("");
 			}
 			if ($('#password').val() === '') {
 				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 					$("#errorMessages_sigin_errorbox").removeClass("d-none");
-					console.log("d-none removed");
 				}
 				$("#errorMessages_sigin_pwd").html("Your password needs to be at least 6 characters long");
 			} else {
@@ -122,20 +99,17 @@ ACC.account = {
 			if ($('#checkPwd-form-id').val() === '') {
 				if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 					$("#errorMessages_sigin_errorbox").removeClass("d-none");
-					console.log("d-none removed");
 				}
 				$("#errorMessages_sigin_chkPwd").html("Be sure to provide your password confirmation");
 			} else {
 				$("#errorMessages_sigin_errorbox").addClass("d-none");
 				$("#errorMessages_sigin_chkPwd").html("");
 			}
-
 		});
 
 
 		$(document).on("click", ".js-login-popup-validation", function (e) {
 			e.preventDefault();
-		
 			var formValues = $('#login-popup-validation').serialize();
 			var targetUrl = $(this).val();
 			if ($('#j_username').val() !== '' && $('#j_password').val() !== '') {
@@ -147,7 +121,6 @@ ACC.account = {
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
 							$("#errorMessages_login").html("Your Email or password was incorrect");
-							
 						} else {
 							location.reload();
 						}
@@ -160,7 +133,6 @@ ACC.account = {
 				$("#errorMessages_login").removeClass("d-none");
 				$("#errorMessages_login").html("Your Email or password was incorrect");
 			}
-
 		});
 
 	}
