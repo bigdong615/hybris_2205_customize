@@ -27,7 +27,6 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeValueModel;
 import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
@@ -282,11 +281,15 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * {@inheritDoc}
      */
     @Override
-    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod) {
-        return getUserService().getCurrentUser() instanceof CustomerModel ? getBlZoneDeliveryModeDao()
-                .getShippingCostForCalculatedDeliveryCost(calculatedCost, deliveryMethod, true) :
-                getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost, deliveryMethod, false);
-    }
+ 	public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost,
+ 			final ZoneDeliveryModeModel deliveryMethod)
+ 	{
+ 		return deliveryMethod.isPayByCustomer()
+ 				? getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
+ 						deliveryMethod.getShippingCostCode().getCode(), true)
+ 				: getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
+ 						deliveryMethod.getShippingCostCode().getCode(), false);
+ 	}
 
     /**
      * {@inheritDoc}
@@ -312,7 +315,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
-        if(getUserService().getCurrentUser() instanceof CustomerModel) {
+   	 if (zoneDeliveryModeModel.isPayByCustomer())
+   	 {
             return getPayByCustomerShippingCost(order, zoneDeliveryModeModel);
         }
         return BlInventoryScanLoggingConstants.ZERO;
@@ -363,7 +367,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         }
         final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
                 calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
-                        BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel.getShippingCostCode().getCode());
+                        BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel);
         if(shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping calculated amount: {} ",
                     shippingCostModel.getAmount());

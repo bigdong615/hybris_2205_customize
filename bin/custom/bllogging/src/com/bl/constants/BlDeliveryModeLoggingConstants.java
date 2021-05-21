@@ -19,7 +19,6 @@ public class BlDeliveryModeLoggingConstants {
     public static final String ZONE_EST= "EST";
 
     public static final String AM= "AM";
-    public static final String SAVER= "SAVER";
     public static final String AM_ERROR = "AM-ERROR";
     public static final String PIN_ERROR = "PIN-ERROR";
 
@@ -30,7 +29,7 @@ public class BlDeliveryModeLoggingConstants {
     public static final String TOTAL_WEIGHT= "TotalWeight";
     public static final String DIMENSIONAL_WEIGHT= "DimensionalWeight";
     public static final String STORE= "bl";
-    public static final int DIMENSIONAL_FACTOR= 149;
+    public static final int DIMENSIONAL_FACTOR= 194;
 
     public static final String PST_CUT_OFF_TIME_CONST = " and {pickZone.cutOffTime} > ?pstCutOffTime";
     public static final String PST_CUT_OFF_TIME = "pstCutOffTime";

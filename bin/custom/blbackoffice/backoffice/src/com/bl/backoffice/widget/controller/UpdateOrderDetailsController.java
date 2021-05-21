@@ -45,6 +45,7 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.facades.fexEx.data.SameDayCityReqData;
 import com.bl.facades.fexEx.data.SameDayCityResData;
@@ -272,7 +273,33 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	 */
 	private void validateZipCodeForDelivery(final SameDayCityReqData sameDayCityReqData, final String deliveryAddressZipCode)
 	{
+		final AddressModel deliveryAddress = getOrderModel().getDeliveryAddress();
 		final ZoneDeliveryModeModel blZoneDeliveryMode = this.deliveryModeCombobox.getSelectedItem().getValue();
+		if (blZoneDeliveryMode instanceof BlPickUpZoneDeliveryModeModel)
+		{
+			final BlPickUpZoneDeliveryModeModel zonedeliveryMode = (BlPickUpZoneDeliveryModeModel) blZoneDeliveryMode;
+
+			if (zonedeliveryMode.getShippingGroup().getCode().equals("BL_PARTNER_PICKUP"))
+			{
+				deliveryAddress.setPickStoreAddress(true);
+				deliveryAddress.setUpsStoreAddress(false);
+			}
+
+			if (zonedeliveryMode.getShippingGroup().getCode().equals("SHIP_HOLD_UPS_OFFICE"))
+			{
+				deliveryAddress.setPickStoreAddress(false);
+				deliveryAddress.setUpsStoreAddress(true);
+			}
+		}
+
+		if (blZoneDeliveryMode instanceof ZoneDeliveryModeModel || blZoneDeliveryMode instanceof BlRushDeliveryModeModel)
+		{
+			deliveryAddress.setPickStoreAddress(false);
+			deliveryAddress.setUpsStoreAddress(false);
+		}
+
+		modelService.save(deliveryAddress);
+		modelService.refresh(deliveryAddress);
 
 		if (blZoneDeliveryMode instanceof BlRushDeliveryModeModel)
 		{
@@ -315,7 +342,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	}
 
 	@ViewEvent(componentID = "confirmAddress", eventName = "onClick")
-	public void confirmCancellation()
+	public void confirmOrder()
 	{
 		this.validateRequest();
 		final AddressModel addressModel = getOrderModel().getDeliveryAddress();
@@ -402,6 +429,11 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		if (StringUtils.isEmpty(this.postalCode.getValue()))
 		{
 			throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.missing.postalCode"));
+		}
+
+		if (StringUtils.isEmpty(this.contactNo.getValue()))
+		{
+			throw new WrongValueException(this.contactNo, this.getLabel("blbackoffice.updateshipping.missing.contactNo"));
 		}
 
 	}
