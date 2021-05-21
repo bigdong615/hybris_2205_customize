@@ -195,14 +195,14 @@
             </targetElement>
         </relation>
 
-        <!--<relation code="ZoneDeliveryMode2ShippingCostRel" autocreate="true" generate="true" localized="false">
+        <relation code="ZoneDeliveryMode2ShippingCostRel" autocreate="true" generate="true" localized="false">
             <sourceElement qualifier="zoneDeliveryMode" type="ZoneDeliveryMode" cardinality="one">
-                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
             </sourceElement>
             <targetElement qualifier="shippingCost" type="ShippingCost" cardinality="many" ordered="false">
                 <modifiers read="true" write="true" search="true" optional="true"/>
             </targetElement>
-        </relation>-->
+        </relation>
         <!-- BL-542 End-->
 
     </relations>
@@ -1357,6 +1357,11 @@
                     <attribute qualifier="shippingType" type="ShippingTypeEnum" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="defaultShippingGroup" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>

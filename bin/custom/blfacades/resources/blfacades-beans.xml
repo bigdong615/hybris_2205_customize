@@ -115,6 +115,7 @@
         <property name="code" type="String"/>
         <property name="name" type="String"/>
         <property name="shippingType" type="String"/>
+        <property name="defaultShippingGroup" type="Boolean"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlPartnerPickUpStoreData">
