@@ -24,7 +24,7 @@
 
 
 <c:if test="${searchPageData.pagination.totalNumberOfResults > 0}">
-   <div class="btn-group">
+   <div class="btn-group product-sort">
       <c:if test="${not empty searchPageData.sorts}">
          <form id="sortForm${top ? '1' : '2'}" name="sortForm${top ? '1' : '2'}" method="get" action="#">
             <select id="sortOptions${top ? '1' : '2'}" name="sort" class="form-control">

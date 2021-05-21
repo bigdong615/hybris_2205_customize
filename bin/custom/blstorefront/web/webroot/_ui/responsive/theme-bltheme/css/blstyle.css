@@ -171,6 +171,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 
 /* Buttons */
 .btn { text-decoration: none; padding: 10px 16px; letter-spacing: 1px; }
+@media screen and (max-width: 490px) { #gear-slider .card .btn { padding: 10px 0px; }}
 .btn-sm { padding: 6px 8px; }
 .btn-block, button.btn-block { display: block; width: 100%; }
 /* Primary Button Style */
@@ -404,6 +405,7 @@ ul.checklist li:before { opacity: .5; content: ''; display: block; position: abs
 #featuredPromo { margin: 0 0 30px; }
 #featuredPromo a { display: block; }
 #featuredPromo .promoImg { width: 100%; height: auto; border-radius: 10px; }
+#productFilter { max-height: 600px; overflow-x: auto; }
 #productFilter > h6 { padding-left: 40px; background: url(../assets/icon-filter.svg) no-repeat left center; }
 #mobileFilter h6 a.filter-button { text-decoration: none; color: #3d3c3c; padding-left: 40px; background: url(../assets/icon-filter.svg) no-repeat left center; }
 .clear-filters { float: right; font-size: 14px; color: #3d3c3c; display:inline-block; padding-top: 2px; }
@@ -434,6 +436,26 @@ hr { background-color: #D4D3D3; opacity: 1; }
 #seoContent p { color: #858585; }
 .sale { color: #C06B15; margin-bottom: .5rem; }
 .saleprice { font-weight: 700; }
+
+/* BL-492 - 7.*/
+#sortDropdown {
+  border: none;
+  background: transparent;
+  color: #3d3c3c;
+}
+
+/* BL-492 - 2. */
+@media screen and (min-width: 767px) {
+  #matchingProducts div .card { min-height: 530px !important; }
+}
+
+@media screen and (min-width: 992px) {
+  #matchingProducts div .card { min-height: 425px !important; }
+}
+
+@media screen and (min-width: 1200px) {
+  #matchingProducts div .card { min-height: 520px !important; }
+}
 
 /* Radio Buttons + Checkboxes */
 input[type=radio],
