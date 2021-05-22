@@ -26,7 +26,14 @@
                     <select id="same-day-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfSameDayShippingMethod()">
                         <c:forEach items="${shippingGroup}" var="entry" varStatus="loop">
                             <c:if test="${entry.shippingType eq 'FASTEST'}">
-                                <option value="${entry.code}"> ${entry.name} </option>
+                                <c:choose>
+                                    <c:when test="${entry.defaultShippingGroup}">
+                                        <option value="${entry.code}" selected="selected"> ${entry.name} </option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${entry.code}"> ${entry.name} </option>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:if>
                         </c:forEach>
                     </select>

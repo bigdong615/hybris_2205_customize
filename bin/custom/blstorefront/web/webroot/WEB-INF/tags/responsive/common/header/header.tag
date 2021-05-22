@@ -129,9 +129,9 @@
                           <spring:theme code="forgottenPwd.title"/>
                        </button>
                        <p class="body14 text-center mb-0 mt-4">
-                          <a href="#">
-                             <spring:theme code="login.login"/>
-                          </a>
+                           <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>" data-bs-dismiss="modal">
+                                   <spring:theme code="login.login" />
+                            </a>
                        </p>
                     </form>
                  </div>

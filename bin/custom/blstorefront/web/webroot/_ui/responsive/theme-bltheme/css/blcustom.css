@@ -14,3 +14,12 @@ Added for removing add to cart popup background, when unable to add product to c
 .remove-popup-background{
  opacity:0 !important;
 }
+
+/**
+BL-31 Added for error message in login and create account popup
+**/
+.notification-error {
+ border: none!important;
+ border-left-color: #e64b4f !important;
+ border-left: 4px solid !important;
+}

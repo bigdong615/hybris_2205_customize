@@ -23,13 +23,20 @@
         <div class="collapse show" id="ship-it-expand" data-bs-parent="#shippingOptions">
             <div class="tab-container">
                 <div class="tab-navigation">
-                  <select id="ship-it-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfShipItShippingMethod()">
-                    <c:forEach items="${shippingGroup}" var="entry" varStatus="loop">
-                        <c:if test="${entry.shippingType eq 'FAST'}">
-                            <option value="${entry.code}"> ${entry.name} </option>
-                        </c:if>
-                    </c:forEach>
-                  </select>
+                    <select id="ship-it-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfShipItShippingMethod()">
+                        <c:forEach items="${shippingGroup}" var="entry" varStatus="loop">
+                            <c:if test="${entry.shippingType eq 'FAST'}">
+                                <c:choose>
+                                    <c:when test="${entry.defaultShippingGroup}">
+                                        <option value="${entry.code}" selected="selected"> ${entry.name} </option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${entry.code}"> ${entry.name} </option>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
+                        </c:forEach>
+                    </select>
                 </div>
                 <div id="tab-SHIP_HOME_HOTEL_BUSINESS" class="ship-it-tab-content">
                     <checkout:addressForm />
