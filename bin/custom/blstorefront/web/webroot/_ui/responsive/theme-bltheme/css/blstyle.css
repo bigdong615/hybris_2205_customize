@@ -222,6 +222,8 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .splide__pagination { width: 100%; position: absolute; bottom: -30px; padding: 0; }
 .splide__pagination__page { border: 1px solid #3d3c3c; width: 9px; height: 9px; background: #3d3c3c; border-radius: 50%; display: block; padding: 0; margin: 0 5px; }
 .splide__pagination__page.is-active { background-color: transparent; }
+/* BL-492 - 2. */
+.card-slider .splide__pagination { bottom: 10px !important }
 
 /* Cards */
 .card { padding: 30px; background-color: white; transition: .2s; border-radius: 6px; }
@@ -497,12 +499,10 @@ input[type=checkbox] + label:before{ border-radius:0px; }
 #productExtras .filter-expand[aria-expanded="true"] { background: url(../assets/icon-filter-close.svg) right center no-repeat; }
 .reviewBlock, .reviewActions { padding: 10px 40px 20px 40px; }
 .reviewActions a:first-child { margin-right: 10px; }
-#theUsedProcess .col-6 { padding-top: 90px; background-position: top center; background-repeat: no-repeat; }
-#theUsedProcess .col-6:first-child { background-image: url(../assets/icon-used-inspected.webp); background-size: 71px; }
-#theUsedProcess .col-6:nth-child(2) { background-image: url(../assets/icon-used-guarantee.webp); background-size: 32px; }
-#theUsedProcess .col-6:nth-child(3) { background-image: url(../assets/icon-used-condition.webp); background-size: 62px; }
-#theUsedProcess .col-6:last-child { background-image: url(../assets/icon-used-returns.webp); background-size: 71px; }
+/* BL-547 - remove unnecessary styles of #theUsedProcess .col-6*/
+/* BL-547 - remove the images included with css*/
 #theUsedProcess .col-6 h6 { padding: 0; }
+#theUsedProcess .col-6 img { max-width: 65px; max-height: 65px; margin-bottom: 20px; }
 #usedProductList { text-align: center; width: 100%; }
 #usedProductList thead tr { background-color: #F3F3F3; }
 #usedProductList tr th { font-size: 14px; font-weight: 400; padding: 10px 0; }
