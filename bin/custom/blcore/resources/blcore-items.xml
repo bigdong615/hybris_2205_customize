@@ -1215,7 +1215,7 @@
                </attribute>
                <attribute qualifier="waiverPercentage" type="java.lang.Double">
                  <persistence type="property"/>
-                 <modifiers read="true" write="false" optional="false" initial="true"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Damage Waiver Price Percent</description>
                </attribute>
              </attributes>
