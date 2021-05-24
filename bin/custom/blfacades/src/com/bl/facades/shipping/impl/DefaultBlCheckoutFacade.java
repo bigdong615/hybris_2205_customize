@@ -20,6 +20,7 @@ import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
@@ -352,9 +353,23 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     @Override
-    public boolean setDeliveryModeIfAvailable() {
-        final CartModel cartModel = getCart();
-        return cartModel != null && cartModel.getDeliveryMode() != null;
+    public boolean hasNoDeliveryAddress()
+    {
+        final CartData cartData = getCheckoutCart();
+        return hasShippingItems() && (cartData == null || cartData.getDeliveryAddress() == null);
+    }
+
+    @Override
+    public CartData getCheckoutCart()
+    {
+        final CartData cartData = getCartFacade().getSessionCart();
+        if (cartData != null)
+        {
+            //cartData.setDeliveryAddress(getDeliveryAddress());
+            cartData.setDeliveryMode(getDeliveryMode());
+            cartData.setPaymentInfo(getPaymentDetails());
+        }
+        return cartData;
     }
 
     /**

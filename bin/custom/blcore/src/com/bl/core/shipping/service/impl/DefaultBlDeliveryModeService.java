@@ -246,7 +246,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private void checkDeliveryModeValidityOfTypePartner(final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels,
                                                         final int result, final BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel) {
         if(pickUpZoneDeliveryModeModel.isWarehousePickUp()) {
-            if(!BlDateTimeUtils.compareTimeWithCutOff(pickUpZoneDeliveryModeModel.getCutOffTime())) {
+            if(result == BlInventoryScanLoggingConstants.ZERO && !BlDateTimeUtils.compareTimeWithCutOff(
+                    pickUpZoneDeliveryModeModel.getCutOffTime())){
                 blPickUpZoneDeliveryModeModels.remove(pickUpZoneDeliveryModeModel);
             }
         } else {
@@ -405,8 +406,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     maxLength = getMaxLength(maxLength, blSerialProduct.getLength());
                 }
             }
-            final double dimensionalWeight = (maxHeight * sumWidth * maxLength) /
-                    getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE);
+            final double dimensionalWeight = ((double) (maxHeight * sumWidth * maxLength) /
+                    getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE));
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Total weight: {} ", totalWeight.doubleValue());
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Dimensional weight: {} ", dimensionalWeight);
 
