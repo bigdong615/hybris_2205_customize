@@ -44,7 +44,9 @@
                                                                 <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
                                                                 <c:set value="this is alternate" var="altTextHtml"/>
                                                                 <!--BL-534: added <a> tag-->
-                                                                    <li class="splide__slide"> <a href ="#"><img src="${primaryImagePdpUrl}"></a</li> 
+                                                                    <li class="splide__slide">
+                                                                      <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                       <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}"></a</li> 
                                                           </c:if>
                                                        </c:forEach>
                                                        </ul>
