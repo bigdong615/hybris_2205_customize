@@ -1,3 +1,4 @@
+<%--
 <%@ page trimDirectiveWhitespaces="true"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template"%>
@@ -189,5 +190,5 @@
         </cms:pageSlot>
     </div>
 </div>
-
 </template:page>
+ --%>

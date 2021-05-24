@@ -218,9 +218,9 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     @Override
     public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod,
                                                                       final boolean payByCustomer) {
-        final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ZoneDeliveryMode as zone} " +
-                "where {sc.zoneDeliveryMode} = {zone.pk} and {zone.active} = 1 and {zone.code} = ?deliveryMethod and " +
-                "{sc.floor} < ?calculatedCost and ?calculatedCost <= {sc.ceiling} and {zone.payByCustomer} = ?payByCustomer";
+        final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ZoneDeliveryMode as zone}, {ShippingCostEnum as costEnum}" +
+                " where {sc.zoneDeliveryMode} = {zone.pk} and {zone.active} = 1 and {sc.shippingCostCode} = {costEnum.pk} and {costEnum.code} = ?deliveryMethod" +
+                " and {sc.floor} < ?calculatedCost and ?calculatedCost <= {sc.ceiling} and {zone.payByCustomer} = ?payByCustomer";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("deliveryMethod", deliveryMethod);
         query.addQueryParameter("calculatedCost", calculatedCost);

@@ -77,9 +77,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
-        //getCheckoutFacade().removeDeliveryDetails();
-        final CartData cartData = getCheckoutFacade().getCheckoutCart();
-        model.addAttribute(CART_DATA, cartData);
+        model.addAttribute(CART_DATA, getCheckoutFacade().getCheckoutCart());
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
         model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
@@ -223,9 +221,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @ResponseBody
     public String add(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
                       final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
-        final CartData cartData = getCheckoutFacade().getCheckoutCart();
         getAddressValidator().validate(addressForm, bindingResult);
-        populateCommonModelAttributes(model, cartData, addressForm);
+        populateCommonModelAttributes(model, getCheckoutFacade().getCheckoutCart(), addressForm);
         if (bindingResult.hasErrors()) {
             GlobalMessages.addErrorMessage(model, "address.error.formentry.invalid");
             return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
@@ -278,21 +275,29 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             if (selectedAddressData != null) {
                 final String addressType = selectedAddressData.getAddressType();
                 final String pinCode = selectedAddressData.getPostalCode();
-                if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
-                        BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-                    if(!(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip))) {
-                       return BlDeliveryModeLoggingConstants.PIN_ERROR;
-                    }
-                } else {
-                    if(StringUtils.isNotEmpty(addressType) && deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) &&
-                            !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
-                        return BlDeliveryModeLoggingConstants.AM_ERROR;
-                    }
+                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, deliveryMode, rushZip, addressType, pinCode);
+                if (pinError != null) {
+                    return pinError;
                 }
                 setDeliveryAddress(selectedAddressData);
             }
         }
         return SUCCESS;
+    }
+
+    private String checkErrorIfAnyBeforeSavingAddress(String shippingGroup, String deliveryMode, String rushZip, String addressType, String pinCode) {
+        if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
+                BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
+            if(!(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip))) {
+               return BlDeliveryModeLoggingConstants.PIN_ERROR;
+            }
+        } else {
+            if(StringUtils.isNotEmpty(addressType) && deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) &&
+                    !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+                return BlDeliveryModeLoggingConstants.AM_ERROR;
+            }
+        }
+        return null;
     }
 
     @GetMapping(value = "/saveDeliveryDetails")
@@ -359,7 +364,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             throws CMSItemNotFoundException {
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("deliveryAddresses", getDeliveryAddresses(cartData.getDeliveryAddress()));
-        model.addAttribute("noAddress", Boolean.valueOf(getCheckoutFlowFacade().hasNoDeliveryAddress()));
+        model.addAttribute("noAddress", Boolean.valueOf(getCheckoutFacade().hasNoDeliveryAddress()));
         model.addAttribute("addressFormEnabled", Boolean.valueOf(getCheckoutFacade().isNewAddressEnabledForCart()));
         model.addAttribute("removeAddressEnabled", Boolean.valueOf(getCheckoutFacade().isRemoveAddressEnabledForCart()));
         model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.TRUE);
@@ -369,11 +374,6 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(addressForm.getCountryIso()));
             model.addAttribute("country", addressForm.getCountryIso());
         }
-        prepareDataForPage(model);
-        final ContentPageModel multiCheckoutSummaryPage = getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL);
-        storeCmsPageInModel(model, multiCheckoutSummaryPage);
-        setUpMetaDataForContentPage(model, multiCheckoutSummaryPage);
-        setCheckoutStepLinksForModel(model, getCheckoutStep());
     }
 
     protected String getBreadcrumbKey() {

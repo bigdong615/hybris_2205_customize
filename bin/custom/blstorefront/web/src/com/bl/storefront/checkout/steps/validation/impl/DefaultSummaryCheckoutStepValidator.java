@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.checkout.steps.validation.impl;
 
+import com.bl.facades.shipping.BlCheckoutFacade;
 import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.validation.ValidationResults;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.commercefacades.order.data.CartData;
@@ -11,10 +12,15 @@ import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.validation
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
+
 
 public class DefaultSummaryCheckoutStepValidator extends AbstractCheckoutStepValidator
 {
 	private static final Logger LOGGER = Logger.getLogger(DefaultSummaryCheckoutStepValidator.class);
+
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
 
 	@Override
 	public ValidationResults validateOnEnter(final RedirectAttributes redirectAttributes)
@@ -61,11 +67,11 @@ public class DefaultSummaryCheckoutStepValidator extends AbstractCheckoutStepVal
 			return ValidationResults.REDIRECT_TO_CART;
 		}
 
-		if (getCheckoutFlowFacade().hasNoDeliveryAddress())
+		if (getCheckoutFacade().hasNoDeliveryAddress())
 		{
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.INFO_MESSAGES_HOLDER,
 					"checkout.multi.deliveryAddress.notprovided");
-			return ValidationResults.REDIRECT_TO_DELIVERY_ADDRESS;
+			return ValidationResults.REDIRECT_TO_DELIVERY_METHOD;
 		}
 
 		if (getCheckoutFlowFacade().hasNoDeliveryMode())
@@ -75,5 +81,14 @@ public class DefaultSummaryCheckoutStepValidator extends AbstractCheckoutStepVal
 			return ValidationResults.REDIRECT_TO_DELIVERY_METHOD;
 		}
 		return null;
+	}
+
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
+	}
+
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
 	}
 }
