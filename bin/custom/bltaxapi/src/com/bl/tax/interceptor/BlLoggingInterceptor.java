@@ -48,7 +48,7 @@ public class BlLoggingInterceptor implements ClientHttpRequestInterceptor {
     BlLogger.logMessage(LOG,Level.INFO,"URI : {}" + request.getURI());
     BlLogger.logMessage(LOG,Level.INFO,"Method : {}" + request.getMethod());
     BlLogger.logMessage(LOG,Level.INFO,"URI : {}"+request.getURI());
-    BlLogger.logMessage(LOG,Level.INFO,"Request Body : {}",new String(body, StandardCharsets.UTF_8));
+    BlLogger.logMessage(LOG,Level.DEBUG,"Request Body : {}",new String(body, StandardCharsets.UTF_8));
     BlLogger.logMessage(LOG, Level.INFO,"==========================Tax Request End================================================");
   }
 
@@ -73,7 +73,7 @@ public class BlLoggingInterceptor implements ClientHttpRequestInterceptor {
       BlLogger.logMessage(LOG, Level.INFO,"===========================Tax Response Begin==========================================");
       BlLogger.logMessage(LOG, Level.INFO,"Status code: {}" + response.getStatusCode());
       BlLogger.logMessage(LOG, Level.INFO,"Status text: {}", response.getStatusText());
-      BlLogger.logMessage(LOG, Level.INFO,"Response Body : {}", inputStringBuilder.toString());
+      BlLogger.logMessage(LOG, Level.DEBUG,"Response Body : {}", inputStringBuilder.toString());
       BlLogger.logMessage(LOG, Level.INFO,"===========================Tax Response End==========================================");
 
     } catch (Exception e) {
