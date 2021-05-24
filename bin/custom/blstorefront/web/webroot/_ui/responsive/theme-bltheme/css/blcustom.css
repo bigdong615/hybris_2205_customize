@@ -29,3 +29,7 @@ BL-31 Added for error message in login and create account popup
   background: transparent;
   color: #3d3c3c;
 }
+/*for BL-494 */
+.icon-production {
+ background: url(../assets/icon-equipment.svg) center no-repeat;
+  }
