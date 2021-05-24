@@ -39,7 +39,7 @@ INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique
                              ;;26134;207730 ;207730 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003824;true;;982.3;Canon;756.55;333813;;2;BARCODE;1257B002;13803064551;LENSES
                              ;;37374;220232 ;220232 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003736;true;;955;Norman's;756.55;333793;;2;BARCODE;1257B002;13803064551;LENSES
 
-UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFirstActive[dateformat=dd.MM.yyyy HH:mm];totalRepairSpend;purchaseOrder;orderNumberRecord;invoiceNumberRecord;trackingNumber;invoiceNumber;invoiceDate;firmwareVersion;isArchived[default=false]
+UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFirstActive[dateformat=dd.MM.yyyy HH:mm];totalRepairSpend;purchaseOrder;orderNumberRecord;invoiceNumberRecord;trackingNumber;invoiceNumber;invoiceDate;firmwareVersion
                       ;;5122541 ;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;
                       ;;6051076 ;;"Sold to 1123639";;;;;;;;;
                       ;;6128205 ;;;;;;;;;;;

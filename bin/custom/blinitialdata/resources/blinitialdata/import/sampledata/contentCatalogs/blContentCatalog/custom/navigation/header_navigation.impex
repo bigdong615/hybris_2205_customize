@@ -32,7 +32,7 @@ INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; n
 INSERT_UPDATE CMSNavigationNode ; uid[unique=true]          ; $contentCV[unique=true] ; name                        ; parent(uid, $contentCV) ; &nodeRef                  ; children(uid,$contentCV) 
                                 ; BLNavNode                 ;                         ; BL Site                     ; BLSiteRootNode          ; BLNavNode                 ;                          
                                 ; BLCategoryNavNode         ;                         ; BL Category Navigation Node ; BLNavNode               ; BLCategoryNavNode         ;                          
-                                ; BLMobileNavNode           ;                         ; BL Mobile Nodes             ; BLNavNode               ; BLMobileNavNode           ; BLMobileNavNode          ;    
+                                ; BLMobileNavNode           ;                         ; BL Mobile Nodes             ; BLNavNode               ; BLMobileNavNode           ;
                                 
                                 
 INSERT_UPDATE CategoryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                             ; styleClass ; &componentRef          ; navigationNode(&nodeRef) ; wrapAfter 
