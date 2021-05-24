@@ -24,12 +24,13 @@
 	<ul>
 		<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
 		<c:url value="/login" var="loginUrl" />
-		<li><a class="dropdown-item" href="${loginUrl}"><spring:theme code="text.header.account.create.account" /></a></li>
-		<li><a class="dropdown-item" href="${loginUrl}"><spring:theme code="text.header.account.sign.in" /></a></li>
+		<li><a class="dropdown-item js-signUp-popup"  data-link="<c:url value='/login/register'/>" href="#" data-bs-toggle="modal" data-bs-target="#signUp"><spring:theme code="text.header.account.create.account" /></a></li>
+		<li><a class="dropdown-item js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#" data-bs-toggle="modal" data-bs-target="#signIn"><spring:theme code="text.header.account.sign.in" /></a></li>
 		</sec:authorize>
 		<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 		<c:forEach items="${component.navigationNode.entries}" var="entry">
-			<li><a class="dropdown-item" href="${entry.item.url }">${entry.item.linkName }</a></li>
+		  <c:url var="acountNavURL" value="${entry.item.url }"/>
+			<li><a class="dropdown-item" href="${acountNavURL}">${entry.item.linkName }</a></li>
 		</c:forEach>		
 		<li class="divider"></li>
 		<c:url value="/logout" var="signoutUrl" />

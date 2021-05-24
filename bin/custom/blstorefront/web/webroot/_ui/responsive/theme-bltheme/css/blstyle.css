@@ -491,7 +491,7 @@ input[type=checkbox] + label:before{ border-radius:0px; }
 #usedProductList a:not(.btn) { color: #3d3c3c; }
 .hide-product-row { display: none; }
 
-footer { padding: 60px 0 30px; background-color: #3d3c3c; margin-top: 30px; }
+footer { padding: 60px 0 30px; background-color: #3d3c3c; /*margin-top: 30px;*/ }
 footer ul { padding-left: 0; }
 footer ul li { padding: 6px 0; }
 footer b { display: block; }
@@ -533,6 +533,10 @@ footer .social a:hover { opacity: .7; }
 #signIn .modal-title { width: 100%; }
 #signIn .modal-title img { max-width: 84px; height: auto; }
 #signIn a { color: #52bfc0; }
+
+.signinbox .modal-title { width: 100%; }
+.signinbox .modal-title img { max-width: 84px; height: auto; }
+.signinbox a { color: #52bfc0; }
 /* Damage Waiver */
 #damageWaivers img { width: 50px; height: auto; }
 

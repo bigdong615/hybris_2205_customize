@@ -4,6 +4,8 @@ import de.hybris.platform.commercefacades.order.CartFacade;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
+import java.util.Date;
+
 /**
  * It is responsible for getting all necessary information for cart.
  *
@@ -34,6 +36,14 @@ public interface BlCartFacade extends CartFacade {
    * @param damageWaiverType the damage Waiver type
    */
   void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType);
+  
+  /**
+   * Sets the rental dates on cart.
+   *
+   * @param rentalStartDate the rental start date
+   * @param rentalEndDate the rental end date
+   */
+  void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate);
 
   /**
    * This method is used to add product to cart.
@@ -46,10 +56,10 @@ public interface BlCartFacade extends CartFacade {
   CartModificationData addToCart(final String productCode,final long quantity,final String serialCode) throws CommerceCartModificationException;
 
   /**
-   * Prevent add to cart when user try to add rental product in used gear cart and vice-versa.
+   * It prevents the product to be added to cart if rental products is added in used gear cart and vice-versa
    * @param productCode
    * @param serialCode
    * @return
    */
-  boolean isRentalAndUsedProduct(final String productCode, final String serialCode);
+  boolean isRentalProductAddedToCartInUsedGearCart(final String productCode, final String serialCode);
 }

@@ -97,7 +97,7 @@ public final class BlLogger
         // Replace % Characters with Empty string. Because it's causing the String.format() to throw an exception
         parsedMessage = parsedMessage.replace(INVALID_CHAR, StringUtils.EMPTY);
         // Convert all valid {} into %s
-        parsedMessage = parsedMessage.replaceAll(ARGS_PATTERN, ARGS_PLACE_HOLDER);
+        parsedMessage = parsedMessage.replaceAll(ARGS_PATTERN, ARGS_PLACE_HOLDER);//NOSONAR
         // Fill %s place holder(s) with value(s) from the <code>args</code>  parameter.
         return String.format(parsedMessage, args);
     }

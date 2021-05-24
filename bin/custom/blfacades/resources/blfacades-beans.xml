@@ -59,6 +59,7 @@
   <!--BL-166 : Add accelerator facades specific product options -->
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
+    <value>REQUIRED_SERIAL_DATA</value>
   </enum>
 
   <!--BL-174 : This DTO contains date related information(for temporary purpose once local storage code is ready
@@ -89,8 +90,126 @@
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
   <bean class="de.hybris.platform.commercefacades.order.data.AbstractOrderData">
   	<property name="totalDamageWaiverCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
-    <property name="isRentalCart" type="java.lang.Boolean"/>
+      <property name="pickUpByMe" type="java.lang.Boolean"/>
+      <property name="pickUpPersonFirstName" type="java.lang.String"/>
+      <property name="pickUpPersonLastName" type="java.lang.String"/>
+      <property name="pickUpPersonEmail" type="java.lang.String"/>
+      <property name="pickUpPersonPhone" type="java.lang.String"/>
+      <property name="statusUpdate" type="Boolean"/>
+      <property name="deliveryNotes" type="String"/>
+      <property name="isRentalCart" type="java.lang.Boolean"/>
   </bean>
+
+    <!-- Shipping -->
+    <bean class="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="daysToSkip" type="java.util.Collection&lt;String>"/>
+        <property name="cutOffTime" type="String"/>
+        <property name="numberOfDaysToSkip" type="String"/>
+        <property name="shippingMethodId" type="String"/>
+        <property name="shippingMethodType" type="String"/>
+        <property name="carrier" type="String"/>
+        <property name="warehouse" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
+        <property name="code" type="String"/>
+        <property name="name" type="String"/>
+        <property name="shippingType" type="String"/>
+        <property name="defaultShippingGroup" type="Boolean"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlPartnerPickUpStoreData">
+        <property name="code" type="String"/>
+        <property name="name" type="String"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData"
+          extends="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="externalStores" type="Boolean"/>
+        <property name="externalStoreUrl" type="String"/>
+        <property name="userName" type="String"/>
+        <property name="password" type="String"/>
+        <property name="internalStoreAddress" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+    </bean>
+
+    <bean class="com.bl.facades.shipping.data.BlRushDeliveryModeData"
+          extends="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
+        <property name="deliveryType" type="String"/>
+        <property name="shippingArea" type="String"/>
+        <property name="radius" type="String"/>
+    </bean>
+
+    <bean class="de.hybris.platform.commercefacades.user.data.AddressData">
+        <property name="addressType" type="String"/>
+        <property name="openingDaysDetails" type="java.util.Map&lt;String, String>"/>
+        <property name="pickStoreAddress" type="Boolean"/>
+        <property name="upsStoreAddress" type="Boolean"/>
+        <property name="url" type="String"/>
+    </bean>
+    <!-- Shipping End-->
+
+  <!-- UPS Locator start -->
+  <bean class="com.bl.facades.locator.data.UPSLocatorRequestData">
+    <property name="zipcode" type="String"/>
+    <property name="countryCode" type="String"/>
+  </bean>
+
+  <bean class="com.bl.facades.locator.data.DistanceData">
+    <property name="unitCode" type="String"/>
+    <property name="unitDescription" type="String"/>
+    <property name="value" type="String"/>
+  </bean>
+
+  <bean class="com.bl.facades.locator.data.UpsStoreData">
+    <property name="locationId" type="String"/>
+    <property name="latestGroundDropOffTime" type="java.util.List&lt;String>"/>
+    <property name="consigneeName" type="String"/>
+    <property name="addressLine" type="String"/>
+    <property name="countryCode" type="String"/>
+    <property name="politicalDivision1" type="String"/>
+    <property name="politicalDivision2" type="String"/>
+    <property name="postcodePrimaryLow" type="String"/>
+    <property name="postcodeExtendedLow" type="String"/>
+    <property name="contactNumber" type="String"/>
+    <property name="distance" type="com.bl.facades.locator.data.DistanceData"/>
+  </bean>
+
+  <bean class="com.bl.facades.locator.data.UpsLocatorResposeData">
+    <property name="statusCode" type="String"/>
+    <property name="statusMessage" type="String"/>
+    <property name="errorDescription" type="String"/>
+    <property name="result" type="java.util.List&lt;UpsStoreData>"/>
+  </bean>
+  <!-- UPS Locator end -->
+
+  <!-- UPS Address Validator response data -->
+  <bean class="com.bl.facades.ups.address.data.AVSResposeData">
+    <property name="statusCode" type="String"/>
+    <property name="statusMessage" type="String"/>
+    <property name="errorDescription" type="String"/>
+    <property name="result"
+      type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.AddressData>"/>
+  </bean>
+  
+      <!-- FedEx Same day Delivery -->
+    <bean class="com.bl.facades.fexEx.data.SameDayCityResData">
+	    <property name="serviceApplicable" type="Boolean"/>
+	    <property name="errorCode" type="java.lang.Integer"/>
+	    <property name="errorResponse" type="String"/>
+  	</bean>
+  	
+  	 <bean class="com.bl.facades.fexEx.data.SameDayCityReqData">
+	    <property name="warehouseZipCode" type="String"/>
+	    <property name="deliveryAddressZipCode" type="String"/>
+  	</bean>
+
+
+  <!--Added this property to segregate the Rental and Used Gear code on PLP and SLP to improve performance -->
+
+  <bean class="de.hybris.platform.commerceservices.search.resultdata.SearchResultValueData">
+    <property name="blPage" type="String"/>
+  </bean>
+
 
 </beans>
 

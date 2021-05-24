@@ -30,10 +30,24 @@
 			<map>
 				<entry key="previous" value-ref="REDIRECT_TO_CART"/>
 				<entry key="current" value-ref="REDIRECT_MULTI_STEP_CHECKOUT"/>
-				<entry key="next" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
+				<entry key="next" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
 			</map>
 		</property>
 		<property name="progressBarId" value="multi"/>
+	</bean>
+
+	<alias name="defaultDeliveryMethodCheckoutStep" alias="deliveryMethodCheckoutStep" />
+	<bean id="defaultDeliveryMethodCheckoutStep"  parent="checkoutStep">
+		<property name="checkoutGroup" ref="defaultCheckoutGroup"/>
+		<property name="checkoutStepValidator" ref="deliveryMethodCheckoutValidator"/>
+		<property name="transitions">
+			<map merge="true">
+				<entry key="previous" value-ref="REDIRECT_TO_CART"/>
+				<entry key="current" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+				<entry key="next" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+			</map>
+		</property>
+		<property name="progressBarId" value="deliveryMethod"/>
 	</bean>
 
 	<alias name="defaultDeliveryAddressCheckoutStep" alias="deliveryAddressCheckoutStep" />
@@ -48,20 +62,6 @@
 			</map>
 		</property>
 		<property name="progressBarId" value="deliveryAddress"/>
-	</bean>
-
-	<alias name="defaultDeliveryMethodCheckoutStep" alias="deliveryMethodCheckoutStep" />
-	<bean id="defaultDeliveryMethodCheckoutStep"  parent="checkoutStep">
-		<property name="checkoutGroup" ref="defaultCheckoutGroup"/>
-		<property name="checkoutStepValidator" ref="deliveryMethodCheckoutValidator"/>
-		<property name="transitions">
-			<map merge="true">
-				<entry key="previous" value-ref="REDIRECT_TO_DELIVERY_ADDRESS"/>
-				<entry key="current" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
-				<entry key="next" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
-			</map>
-		</property>
-		<property name="progressBarId" value="deliveryMethod"/>
 	</bean>
 
 	<alias name="defaultPickupLocationCheckoutStep" alias="pickupLocationCheckoutStep" />

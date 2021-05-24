@@ -158,3 +158,29 @@ seemore[i].id ="abc-"+i;
                          });
 
   });
+
+
+ }
+
+//BL-461,465 Product Availability
+$('#cart-continue').on("click", function (e) {
+	e.preventDefault();
+
+	$.ajax({
+		url: ACC.config.encodedContextPath + "/cart/checkDateAndStock",
+		type: 'GET',
+    success: function (response) {
+
+			if (response == 'success') {
+				var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
+				window.location.href = url;
+			} else {
+				$('#cart-warning').css('display', 'block');
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
+		}
+	});
+});
+>>>>>>> develop

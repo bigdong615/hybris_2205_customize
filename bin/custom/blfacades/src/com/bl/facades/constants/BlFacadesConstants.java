@@ -20,7 +20,9 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String DATE_FORMAT = "dd-MM-yyyy";
   public static final String START_DATE = "startDate";
   public static final String END_DATE = "endDate";
-
+  public static final String SERIAL_CODE_MISSING = "serialCodeNotPresent";
+  public static final String SUCCESS = "success";
+  public static final String RESULT_SUCCESS = "SUCCESS";
   private BlFacadesConstants() {
     //empty
   }

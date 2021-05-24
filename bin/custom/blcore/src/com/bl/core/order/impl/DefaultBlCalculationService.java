@@ -1,5 +1,13 @@
 package com.bl.core.order.impl;
 
+import com.bl.core.services.tax.DefaultBlExternalTaxesService;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlDamageWaiverPricingModel;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.order.BlCalculationService;
+import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -12,27 +20,17 @@ import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.util.DiscountValue;
 import de.hybris.platform.util.PriceValue;
 import de.hybris.platform.util.TaxValue;
-
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.BlDamageWaiverPricingModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.order.BlCalculationService;
-import com.bl.core.price.service.BlCommercePriceService;
-import com.bl.logging.BlLogger;
 
 
 /**
@@ -48,6 +46,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private GenericDao<BlDamageWaiverPricingModel> blDamageWaiverGenericDao;
 	private OrderRequiresCalculationStrategy defaultOrderRequiresCalculationStrategy;
 	private CommonI18NService defaultCommonI18NService;
+	private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
 
 	/**
 	 * Reset all values of entry before calculation.
@@ -100,6 +99,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
+		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 
 	/**
@@ -120,6 +120,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
@@ -135,14 +136,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 			// set total
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
-					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts;
+					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
 			order.setTotalPrice(Double.valueOf(totalRounded));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Rounded Price : {}", totalRounded);
-			// taxes
-			final double totalTaxes = calculateTotalTaxValues(order, recalculate, digits,
-					getTaxCorrectionFactor(taxValueMap, subtotal, total, order), taxValueMap);
-			final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(totalTaxes, digits);
+			final double totalRoundedTaxes = getDefaultCommonI18NService().roundCurrency(order.getTotalTax(), digits);
 			order.setTotalTax(Double.valueOf(totalRoundedTaxes));
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
@@ -325,7 +323,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				damageWaiverPricing.getWaiverPercentage().doubleValue());
 		final Double gearGuardWaiverPrice = calculateDamageWaiverPrice(BigDecimal.valueOf(cartEntry.getBasePrice().doubleValue()),
 				damageWaiverPricing);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Guard Waiver Price - {}", gearGuardWaiverPrice.doubleValue());
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Gear Guard Waiver Price - {}", gearGuardWaiverPrice);
 		cartEntry.setGearGuardWaiverPrice(gearGuardWaiverPrice);
 		cartEntry.setGearGuardWaiverSelected(getDamageWaiverFlag(cartEntry.getGearGuardWaiverSelected(), Boolean.TRUE));
 		return gearGuardWaiverPrice;
@@ -383,10 +381,10 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 	private Double calculateDamageWaiverPrice(final BigDecimal price, final BlDamageWaiverPricingModel damageWaiverPricingModel)
 	{
-		final BigDecimal WaiverPricingPercent = BigDecimal.valueOf(damageWaiverPricingModel.getWaiverPercentage().doubleValue())
+		final BigDecimal waiverPricingPercent = BigDecimal.valueOf(damageWaiverPricingModel.getWaiverPercentage().doubleValue())
 				.divide(BigDecimal.valueOf(100)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
 
-		final BigDecimal gearGuardWaiverPrice = price.multiply(WaiverPricingPercent).setScale(BlCoreConstants.DECIMAL_PRECISION,
+		final BigDecimal gearGuardWaiverPrice = price.multiply(waiverPricingPercent).setScale(BlCoreConstants.DECIMAL_PRECISION,
 				BlCoreConstants.ROUNDING_MODE);
 		return gearGuardWaiverPrice.doubleValue();
 	}
@@ -474,6 +472,16 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	public void setDefaultCommonI18NService(final CommonI18NService defaultCommonI18NService)
 	{
 		this.defaultCommonI18NService = defaultCommonI18NService;
+	}
+
+
+	public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService() {
+		return defaultBlExternalTaxesService;
+	}
+
+	public void setDefaultBlExternalTaxesService(
+			DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
+		this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
 	}
 
 }

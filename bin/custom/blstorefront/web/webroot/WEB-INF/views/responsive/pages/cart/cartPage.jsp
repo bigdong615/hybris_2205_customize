@@ -11,19 +11,18 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-
 <template:page pageTitle="${pageTitle}">
 
 <%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
 
   <c:choose>
-     <c:when test="${cartData.isRentalCart}">
-        <cart:blRentalCartPage/>
-     </c:when>
-       <c:otherwise>
-         <cart:blUsedGearCartPage/>
-       </c:otherwise>
+      <c:when test="${cartData.isRentalCart}">
+            <cart:blRentalCartPage/>
+      </c:when>
+      <c:otherwise>
+            <cart:blUsedGearCartPage/>
+      </c:otherwise>
   </c:choose>
 
 </template:page>

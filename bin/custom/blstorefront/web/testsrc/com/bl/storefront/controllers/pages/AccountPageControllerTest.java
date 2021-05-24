@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorservices.config.SiteConfigService;
 import de.hybris.platform.acceleratorservices.storefront.util.PageTitleResolver;
@@ -154,7 +155,7 @@ public class AccountPageControllerTest
 	@Mock
 	private AbstractPageModel abstractPageModel;
 	@Mock
-	private AddressForm addressForm;
+	private BlAddressForm addressForm;
 	@Mock
 	private UpdateEmailForm emailForm;
 	@Mock
@@ -284,7 +285,7 @@ public class AccountPageControllerTest
 	@Test
 	public void shouldPrepareAddress()
 	{
-		final AddressForm addressForm = accountController.getPreparedAddressForm();
+		final BlAddressForm addressForm = accountController.getPreparedAddressForm();
 		assertEquals(FIRST_NAME, addressForm.getFirstName());
 		assertEquals(LAST_NAME, addressForm.getLastName());
 		assertEquals(TITLE_CODE, addressForm.getTitleCode());
