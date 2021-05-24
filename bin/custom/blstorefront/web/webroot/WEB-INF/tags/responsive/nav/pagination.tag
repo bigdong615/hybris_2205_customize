@@ -27,7 +27,7 @@
       <c:when test="${pageType == 'PRODUCTSEARCH'}">
       <c:if test="${hasPreviousPage}">
        <!-- BL-451:removed disabled class -->
-       <a href="${previousPageUrl}&blPageType=${blPageType}" class="btn-arrow-left "></a>
+       <a href="${previousPageUrl}&blPageType=${blPageType}" class="btn-arrow-left"></a>
        </c:if>
         <c:if test="${!hasPreviousPage}">
               <a href="javascript:void(0)" class="btn-arrow-left disabled"></a>
@@ -44,7 +44,7 @@
       <c:otherwise>
        <!-- BL-451:removed disabled class -->
       <c:if test="${hasPreviousPage}">
-       <a href="${previousPageUrl}" class="btn-arrow-left "></a>
+       <a href="${previousPageUrl}" class="btn-arrow-left"></a>
       </c:if>
        <!-- BL-451:fixing pagination  added disabled class -->
        <c:if test="${!hasPreviousPage}">
