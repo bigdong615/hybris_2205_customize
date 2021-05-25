@@ -297,6 +297,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public double getShippingCostAmount(final AbstractOrderModel order, final DeliveryModeModel deliveryMode) {
+   	 BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getShippingCostAmount", deliveryMode.getCode());
         if(deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
             final BlPickUpZoneDeliveryModeModel zoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) deliveryMode;
             return getAmountForAppropriateZoneModel(order, zoneDeliveryModeModel);
@@ -316,6 +317,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
+   	 BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getAmountForAppropriateZoneModel", zoneDeliveryModeModel.getCode());
    	 if (zoneDeliveryModeModel.isPayByCustomer())
    	 {
             return getPayByCustomerShippingCost(order, zoneDeliveryModeModel);
@@ -332,7 +334,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private double getPayByCustomerShippingCost(AbstractOrderModel order, ZoneDeliveryModeModel zoneDeliveryModeModel) {
         for(ZoneDeliveryModeValueModel valueModel : zoneDeliveryModeModel.getValues()) {
+      	  BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost", valueModel.getPk());
             if(!valueModel.isFixedAmount()) {
+           BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost : Inside", valueModel.getPk());
                 final Map<String, Double> calculatedValueMap;
                 try {
                     calculatedValueMap = getCalculatedWeightForDelivery(order);
