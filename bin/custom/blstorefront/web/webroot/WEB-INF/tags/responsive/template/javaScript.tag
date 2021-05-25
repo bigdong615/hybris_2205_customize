@@ -219,6 +219,18 @@
             padding: 10,
             keyboard: false,
         } ).mount();
+        //BL-520 - disable previous dates
+        let date = new Date();
+        let dd = String(date.getDate() - 1).padStart(2, '0');
+        let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+        let yyyy = date.getFullYear();
+        let today = mm + '/' + dd + '/' + yyyy;
+
+        //BL-520 - disable dates after one year from today's date
+        let oneYearFromNow = new Date();
+        let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+        const disallowedDates = [['01-01-2001', today]];
+
      // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
          const picker = new Litepicker({ 
             element: document.getElementById('litepicker'),
@@ -269,7 +281,21 @@
   	                    }
   	                });    			
       			});
-      			}
+      			},
+      			//BL-520 - disable weekends in the calendar
+                 lockDaysFilter: (day) => {
+                    const d = day.getDay();
+                    return [6, 0].includes(d);
+                   },
+                 lockDays: disallowedDates,
+                 //Limit days selection to 90 days
+                  maxDays: 90,
+                 //Disable dates after one year from today
+                  maxDate: disableDatesOneYearFomNow,
+                 //Set Sunday to be the first day in the calendar's header
+                 firstDay: 0,
+                 //Change the defaul button values
+                buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
         }); 
          // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
          const mpicker = new Litepicker({ 
@@ -322,7 +348,20 @@
                      }
                  });
        			});
-       			}
+       			},
+       			lockDaysFilter: (day) => {
+                  const d = day.getDay();
+                  return [6, 0].includes(d);
+                 },
+                lockDays: disallowedDates,
+               //Limit days selection to 90 days
+               maxDays: 90,
+              //Disable dates after one year from today
+                maxDate: disableDatesOneYearFomNow,
+               //Set Sunday to be the first day in the calendar's header
+               firstDay: 0,
+              //Change the defaul button values
+                buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
          });
          // Added code to remove same name and id on search text box specific to device
          if ($(window).width() < 480 ) {
@@ -381,7 +420,7 @@
                       pagination: false,
                   },
               },
-              //,
+              keyboard: false,
           } ).mount());
       </script>
   	</c:if>
@@ -394,6 +433,17 @@
                 $("input#litepicker").attr("placeholder","Dates...");
             }
             else { $("input#litepicker").attr("placeholder","Select Rental Dates...");}
+            //BL-520 - disable previous dates
+             let date = new Date();
+             let dd = String(date.getDate() - 1).padStart(2, '0');
+             let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+             let yyyy = date.getFullYear();
+             let today = mm + '/' + dd + '/' + yyyy;
+
+             //BL-520 - disable dates after one year from today's date
+                 let oneYearFromNow = new Date();
+                 let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                 const disallowedDates = [['01-01-2001', today]];
             const picker = new Litepicker({
                 element: document.getElementById('litepicker'),
                 //plugins: ['mobilefriendly'],
@@ -445,7 +495,21 @@
       	                }); 
         			
         			});
-        			}
+        			},
+        			 //BL-520 - disable weekends in the calendar
+                         lockDaysFilter: (day) => {
+                             const d = day.getDay();
+                             return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                         maxDays: 90,
+                      //Disable dates after one year from today
+                         maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                         firstDay: 0,
+                     //Change the defaul button values
+                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
             });
             const mpicker = new Litepicker({
                 element: document.getElementById('mobile-litepicker'),
@@ -497,7 +561,21 @@
                         }
                     });
           			});
-          			}
+          			},
+          			 //BL-520 - disable weekends in the calendar
+                        lockDaysFilter: (day) => {
+                              const d = day.getDay();
+                               return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                         maxDays: 90,
+                      //Disable dates after one year from today
+                         maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                         firstDay: 0,
+                      //Change the defaul button values
+                         buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
             });
         </script>
   	</c:if>
@@ -628,7 +706,22 @@
                                       	                }); 
                                            			
                                            			});
-                                           			}
+                                           			},
+
+                                           	//BL-520 - disable weekends in the calendar
+                                                    lockDaysFilter: (day) => {
+                                                         const d = day.getDay();
+                                                         return [6, 0].includes(d);
+                                                       },
+                                                    lockDays: disallowedDates,
+                                            //Limit days selection to 90 days
+                                                    maxDays: 90,
+                                            //Disable dates after one year from today
+                                                    maxDate: disableDatesOneYearFomNow,
+                                            //Set Sunday to be the first day in the calendar's header
+                                                    firstDay: 0,
+                                            //Change the defaul button values
+                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                                              });
 
                                              // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
@@ -675,7 +768,21 @@
                                                          }
                                                      });
                                            			});
-                                           			}
+                                           			},
+                                           //BL-520 - disable weekends in the calendar
+                                                    lockDaysFilter: (day) => {
+                                                         const d = day.getDay();
+                                                         return [6, 0].includes(d);
+                                                       },
+                                                    lockDays: disallowedDates,
+                                          //Limit days selection to 90 days
+                                                    maxDays: 90,
+                                          //Disable dates after one year from today
+                                                    maxDate: disableDatesOneYearFomNow,
+                                          //Set Sunday to be the first day in the calendar's header
+                                                    firstDay: 0,
+                                          //Change the defaul button values
+                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                                              });
                                          // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
                                                  document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
@@ -826,6 +933,17 @@
                     function(){ $('.screen').removeClass('show') }
                 );
                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                //BL-520 - disable previous dates
+                   let date = new Date();
+                   let dd = String(date.getDate() - 1).padStart(2, '0');
+                   let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                   let yyyy = date.getFullYear();
+                   let today = mm + '/' + dd + '/' + yyyy;
+
+                //BL-520 - disable dates after one year from today's date
+                   let oneYearFromNow = new Date();
+                   let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                   const disallowedDates = [['01-01-2001', today]];
                 const picker = new Litepicker({
                     element: document.getElementById('litepicker'),
                     plugins: ['mobilefriendly'],
@@ -868,7 +986,21 @@
           	                    }
           	                }); 
               			});
-              			}
+              			},
+              		 //BL-520 - disable weekends in the calendar
+                        lockDaysFilter: (day) => {
+                            const d = day.getDay();
+                            return [6, 0].includes(d);
+                          },
+                        lockDays: disallowedDates,
+                     //Limit days selection to 90 days
+                        maxDays: 90,
+                    //Disable dates after one year from today
+                        maxDate: disableDatesOneYearFomNow,
+                   //Set Sunday to be the first day in the calendar's header
+                        firstDay: 0,
+                   //Change the defaul button values
+                        buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                 });
                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
                 const summarypicker = new Litepicker({
@@ -914,7 +1046,21 @@
                             }
                         });
               			});
-              			}
+              			},
+              //BL-520 - disable weekends in the calendar
+                       lockDaysFilter: (day) => {
+                               const d = day.getDay();
+                               return [6, 0].includes(d);
+                             },
+                       lockDays: disallowedDates,
+              //Limit days selection to 90 days
+                      maxDays: 90,
+              //Disable dates after one year from today
+                      maxDate: disableDatesOneYearFomNow,
+              //Set Sunday to be the first day in the calendar's header
+                      firstDay: 0,
+              //Change the defaul button values
+                      buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                 });
             </script>
         </c:if>
@@ -996,6 +1142,17 @@
                     function(){ $('.screen').removeClass('show') }
                 );
                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+              //BL-520 - disable previous dates
+                   let date = new Date();
+                   let dd = String(date.getDate() - 1).padStart(2, '0');
+                   let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                   let yyyy = date.getFullYear();
+                   let today = mm + '/' + dd + '/' + yyyy;
+
+              //BL-520 - disable dates after one year from today's date
+                   let oneYearFromNow = new Date();
+                   let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                   const disallowedDates = [['01-01-2001', today]];
                 const picker = new Litepicker({
                     element: document.getElementById('litepicker'),
                     plugins: ['mobilefriendly'],
@@ -1030,7 +1187,21 @@
                         	$("#rentalEndDate").val(date2.toDateString());
                         	$('#editWarning').modal('show');
                         });
-                        }
+                        },
+                    //BL-520 - disable weekends in the calendar
+                         lockDaysFilter: (day) => {
+                             const d = day.getDay();
+                              return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                    //Limit days selection to 90 days
+                          maxDays: 90,
+                    //Disable dates after one year from today
+                          maxDate: disableDatesOneYearFomNow,
+                    //Set Sunday to be the first day in the calendar's header
+                          firstDay: 0,
+                   //Change the defaul button values
+                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                 });
                 
                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
@@ -1068,7 +1239,21 @@
                         	$("#rentalEndDate").val(date2.toDateString());
                         	$('#editWarning').modal('show');
                         });
-                    }
+                    },
+                   //BL-520 - disable weekends in the calendar
+                        lockDaysFilter: (day) => {
+                              const d = day.getDay();
+                              return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                   //Limit days selection to 90 days
+                         maxDays: 90,
+                  //Disable dates after one year from today
+                         maxDate: disableDatesOneYearFomNow,
+                  //Set Sunday to be the first day in the calendar's header
+                         firstDay: 0,
+                  //Change the defaul button values
+                         buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                 });
                 
                 $(document).ready(function() {
