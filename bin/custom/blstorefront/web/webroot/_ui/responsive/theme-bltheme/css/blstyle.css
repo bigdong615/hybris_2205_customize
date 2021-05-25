@@ -196,6 +196,13 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .btn-secondary:hover, .btn-secondary:active { background-color: #32a3a4; border: 1px solid #32a3a4; }
 .btn-secondary:focus { border: 1px solid #32a3a4; background-color: #32a3a4; }
 /* Outline Button Style */
+
+.btn-outline { border: 1px solid #cccccc; }
+.litepicker .reset-button { color: #3d3c3c; position: absolute; bottom: 30px; left: 50px; text-transform: initial; }
+@media screen and (max-width: 480px) { .litepicker .reset-button { position: relative; bottom: 0; left: 0 }}
+@media screen and (max-width: 480px) { .litepicker .preview-date-range { display: block; padding-bottom: 10px; }}
+
+
 .btn-outline, .litepicker .container__footer .button-cancel { background-color: transparent; border: 1px solid #cccccc; color: #3d3c3c; }
 .btn-outline:hover, .btn-outline:active, .litepicker .container__footer .button-cancel:hover, .litepicker .container__footer .button-cancel:active { background-color: #f3f3f3; border: 1px solid #4b4a4b; }
 .btn-outline:focus, .litepicker .container__footer .button-cancel:focus { border: 1px solid #4b4a4b; }
@@ -338,6 +345,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .litepicker:not(.mobilefriendly) .container__months .month-item { width: calc(var(--litepicker-month-width) + 57px); padding: 10px 20px 0; }
 .litepicker:not(.mobilefriendly) .container__months.columns-2 { padding: 30px 20px 0; -webkit-box-shadow: none; box-shadow: none; border-radius: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; width: calc((var(--litepicker-month-width) * 2) + 200px); }
 .litepicker .container__months .month-item-header { font-size: 20px; }
+.litepicker .container__months .month-item { transform: none !important; }
 .litepicker .container__months .month-item-header div>.month-item-name, .litepicker .container__months .month-item-header div>.month-item-year { font-weight: 400; }
 .litepicker .container__footer { background-color: white; -webkit-box-shadow: none; box-shadow: none; padding: 20px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; margin: 0; }
 /* BL-535 - Add space between selcted dates*/
@@ -347,7 +355,6 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .litepicker .container__days .day-item:hover { color: #52bfc0; -webkit-box-shadow: inset 0 0 0 1px #52bfc0; box-shadow: inset 0 0 0 1px #52bfc0; border-radius: 50%; }
 .litepicker .container__days .day-item.past { opacity: .5; cursor: default; }
 .litepicker .container__days .day-item.past:hover { -webkit-box-shadow: none; box-shadow: none; color: #3d3c3c; }
-.litepicker .container__days>div, .litepicker .container__days>a { padding: 12px 14px; width: 46px; height: 46px;  }
 .litepicker .container__days .day-item.is-start-date { border-radius: 50%; background-color: #52bfc0; position: relative; transform-style: preserve-3d;}
 .litepicker .container__days .day-item.is-start-date:hover, .litepicker .container__days .day-item.is-end-date:hover { color: white; }
 .litepicker .container__days .day-item.is-start-date:before { content:''; display: block; height: 46px; width: 19px; right: 0; top: 0; position: absolute; background-color: #c1e2e3; transform: translateZ(-1px); }
@@ -359,8 +366,6 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .litepicker .container__days .day-item.is-start-date.is-end-date:hover { color: #fff; }
 .litepicker .container__days .day-item.is-start-date.is-end-date:before { display: none; }
 .litepicker .container__footer { padding: 10px 20px 30px; }
-.litepicker .container__footer .button-apply { margin-right: 0; }
-.litepicker .reset-button { position: absolute; bottom: 20px; left: 20px; text-transform: none; }
 .litepicker .reset-button:hover { color: #e64b4f!important; }
 .litepicker .container__months .month-item-header .button-previous-month:hover>svg, .litepicker .container__months .month-item-header .button-next-month:hover>svg{ fill: #52bfc0; }
 .litepicker .is-today { border: 2px solid #eee !important; border-radius: 50% !important; color: black !important }

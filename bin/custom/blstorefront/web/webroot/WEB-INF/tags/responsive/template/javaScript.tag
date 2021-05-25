@@ -229,7 +229,7 @@
         //BL-520 - disable dates after one year from today's date
         let oneYearFromNow = new Date();
         let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-        const disallowedDates = [['01-01-2001', today]];
+        const disallowedDates = [['2001-01-01', today]];
 
      // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
          const picker = new Litepicker({ 
@@ -443,7 +443,7 @@
              //BL-520 - disable dates after one year from today's date
                  let oneYearFromNow = new Date();
                  let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-                 const disallowedDates = [['01-01-2001', today]];
+                 const disallowedDates = [['2001-01-01', today]];
             const picker = new Litepicker({
                 element: document.getElementById('litepicker'),
                 //plugins: ['mobilefriendly'],
@@ -943,7 +943,7 @@
                 //BL-520 - disable dates after one year from today's date
                    let oneYearFromNow = new Date();
                    let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-                   const disallowedDates = [['01-01-2001', today]];
+                   const disallowedDates = [['2001-01-01', today]];
                 const picker = new Litepicker({
                     element: document.getElementById('litepicker'),
                     plugins: ['mobilefriendly'],
@@ -1152,7 +1152,7 @@
               //BL-520 - disable dates after one year from today's date
                    let oneYearFromNow = new Date();
                    let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-                   const disallowedDates = [['01-01-2001', today]];
+                   const disallowedDates = [['2001-01-01', today]];
                 const picker = new Litepicker({
                     element: document.getElementById('litepicker'),
                     plugins: ['mobilefriendly'],
