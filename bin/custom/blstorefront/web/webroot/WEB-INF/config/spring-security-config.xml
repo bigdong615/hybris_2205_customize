@@ -97,6 +97,7 @@
 				login-processing-url="/j_spring_security_check"
 				  />
 
+		<!--Added for logout-->
 		<security:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler" />
 
 		<security:port-mappings>
