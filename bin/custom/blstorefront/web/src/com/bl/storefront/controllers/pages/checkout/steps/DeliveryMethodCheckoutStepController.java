@@ -245,7 +245,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(BlDeliveryModeLoggingConstants.UPS.equals(newAddress.getLastName())) {
             getCheckoutFacade().setUPSAddressOnCartForIam(newAddress);
         }
-        getUserFacade().addAddress(newAddress);
+        if(newAddress.isVisibleInAddressBook()) {
+            getUserFacade().addAddress(newAddress);
+        }
         final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
         // Set the new address as the selected checkout delivery address
         getCheckoutFacade().setDeliveryAddress(newAddress);
