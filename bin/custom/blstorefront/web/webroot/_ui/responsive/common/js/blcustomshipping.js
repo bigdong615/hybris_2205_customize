@@ -59,7 +59,7 @@
         emptyAddressFormAttributes();
         hideShippingForm();
         shipToHomeShippingMethods();
-    } else if(shippingMethod == 'SHIP_HOLD_UPS_OFFICE') {
+    } else if(shippingMethod == 'SHIP_UPS_OFFICE') {
         fetchUPSDeliveryMethods();
         changeUPSStore();
     }
@@ -147,7 +147,7 @@
     $.ajax({
         url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/chooseShippingDelivery',
         data: {
-            shippingGroup: "SHIP_HOLD_UPS_OFFICE",
+            shippingGroup: "SHIP_UPS_OFFICE",
             partnerZone: null
         },
         type: "GET",
@@ -212,7 +212,7 @@
  }
 
  function onClickOfFindStore() {
-     $('#ship-it-SHIP_HOLD_UPS_OFFICE').html('');
+     $('#ship-it-SHIP_UPS_OFFICE').html('');
      $('#ship-it-notification').html('');
      $('#ship-it-notification').hide();
      let pinCode = $('#ship-it-ups-zip-code').val();
@@ -266,7 +266,7 @@
                                     upsStores += '</div>' +
                                              '</div>';
                          }
-                         $('#ship-it-SHIP_HOLD_UPS_OFFICE').html(upsStores);
+                         $('#ship-it-SHIP_UPS_OFFICE').html(upsStores);
                      }
                  } else {
                      showErrorNotification('Whoops! Something went wrong, please try again to Find UPS store later.', false);
@@ -291,7 +291,7 @@
          for (let i = 0; i < stores.length; i++) {
             let upsStores = '';
              if(stores[i].locationId == upsSelectedStoreId) {
-                $('#ship-it-SHIP_HOLD_UPS_OFFICE').html('');
+                $('#ship-it-SHIP_UPS_OFFICE').html('');
                 upsStores += '<div id="ups-location-1" class="row store-location mb-3">' +
                                   '<div class="col-1">' +
                                       '<input type="hidden" id="' + stores[i].locationId + '" name="ups-location"><label for="' +
@@ -321,7 +321,7 @@
                                   }
                     upsStores += '</div>' +
                              '</div>';
-                $('#ship-it-SHIP_HOLD_UPS_OFFICE').html(upsStores);
+                $('#ship-it-SHIP_UPS_OFFICE').html(upsStores);
                 $('#changeUPSStoreButton').show();
                 $('#ship-it-pickup-gear').show();
                 $('#ship-it-ups-zip-code').val('');
@@ -338,7 +338,7 @@
          for (let i = 0; i < stores.length; i++) {
              if(stores[i].locationId == upsSelectedStoreId) {
                  return createAddressFormObject(stores[i].consigneeName, "UPS", stores[i].addressLine, null, stores[i].politicalDivision2,
-                         stores[i].politicalDivision1, stores[i].countryCode, stores[i].postcodePrimaryLow, false, null, null, true,
+                         stores[i].politicalDivision1, stores[i].countryCode, stores[i].postcodePrimaryLow, false, stores[i].contactNumber, null, true,
                          stores[i].latestGroundDropOffTime, 'BUSINESS')
              }
          }
@@ -351,7 +351,7 @@
      $('#changeUPSStoreButton').hide();
      $('#ship-it-pickup-gear').hide();
      $("#ship-it-pickup-person").hide();
-     $('#ship-it-SHIP_HOLD_UPS_OFFICE').html("");
+     $('#ship-it-SHIP_UPS_OFFICE').html("");
      $('#store-pickup-me').prop("checked", true);
      $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]').val('');
      $("#ship-it-pickup-person #blPickUpByForm").find('.form-group').find('input[id="blPickUpBy.firstName"]').removeClass('error');

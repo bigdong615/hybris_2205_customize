@@ -142,11 +142,18 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
     String setDeliveryDetails(final String deliveryNote, final boolean statusUpdate);
 
     /**
-     * This methos will save address on cart
+     * This method will save address on cart
      *
      * @param addressModel model
      */
     void setUPSAddressOnCart(final AddressModel addressModel);
+
+    /**
+     * This method will save address on cart for UPS Iam
+     *
+     * @param addressData data
+     */
+    void setUPSAddressOnCartForIam(final AddressData addressdata);
     
     /**
      * This method will integrate AVS in checkout flow
