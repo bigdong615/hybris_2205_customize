@@ -10,6 +10,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/cart/add" var="addToCartUrl"/>
+<c:url value="/wishlist/add" var="addWishList"/>
 
 <c:choose>
 	<c:when test="${not empty productReferences and component.maximumNumberProducts > 0}">
@@ -19,6 +20,7 @@
             				        	<li class="splide__slide">
                                             <div class="card">
                                          <c:choose>
+
                                                   <c:when test="${productReference.target.stock.stockLevelStatus.code eq 'lowStock'}">
                                             				<span class="badge badge-limited-stock"><spring:theme
                                             						code="text.product.tile.flag.only.left"
@@ -35,7 +37,19 @@
                                                       </c:if>
                                                   </c:otherwise>
                                          </c:choose>
-                                               <span class="bookmark"></span>
+                                               <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                                               <input type="hidden" name="productCodePost" id="productCodePost" value="${productReference.target.code}">
+                                               <c:choose>
+                                                  <c:when test="${productReference.target.isBookMarked}">
+                                                   <span class="bookmark bookmark-checked js-add-to-wishlist bookmarkicons" data-product-code="${productReference.target.code}"
+                                                    data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+                                                  </c:when>
+                                                  <c:otherwise>
+                                                   <span class="bookmark js-add-to-wishlist bookmarkicons" data-product-code="${productReference.target.code}"
+                                                   data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+                                                  </c:otherwise>
+                                               </c:choose>
+                                               </form>
                                                    <div class="card-slider splide">
                                                      <div class="splide__track">
                                                        <ul class="splide__list">

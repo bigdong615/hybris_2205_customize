@@ -1,5 +1,6 @@
 package com.bl.storefront.controllers.wishlist;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.populators.BlWishListPopulator;
 import com.bl.facades.wishlist.impl.DefaultBlWishListFacade;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -32,41 +33,47 @@ public class BlWishlistController {
   private Converter<Wishlist2Model, Wishlist2Data> wishlistConverter;
 
   @RequireHardLogIn
-  @ResponseBody
   @RequestMapping(value = "/wishlist/add", method = RequestMethod.POST)
+  @ResponseBody
   public String addToWishlist(@RequestParam("productwishlistCode") final String code) {
     try {
       wishlistFacade.addToWishlist(code);
-      return "Success";
+      return BlCoreConstants.SUCCESS;
     } catch (Exception e) {
-      LOG.error("Wishlist not found", e);
-      return "error";
+      LOG.error("in default wish list " + code + "already Exists", e);
+      return BlCoreConstants.ERROR;
     }
   }
 
+//  @RequireHardLogIn
+//  @RequestMapping(value = "/bookmarks", method = RequestMethod.GET)
+//  public List<ProductData> getWishlist(final Model model) {
+//
+//    //ProductData productData = new ProductData();
+//    List<ProductData> wishlistData = null;
+//    List<Wishlist2Model> wishlist = wishlistFacade.getWishlist();
+//
+//    for (Wishlist2Model wishlistModel : wishlist) {
+//      ProductData productData = new ProductData();
+//      wishListPopulator.populate(wishlistModel, productData);
+//      wishlistData.add(productData);
+//    }
+//
+//    model.addAttribute("wishlistData", wishlistData);
+//    return wishlistData;
+//  }
+
   @RequireHardLogIn
-  @RequestMapping(value = "/getwishlist", method = RequestMethod.GET)
-  public List<ProductData> getWishlist(final Model model) {
-
-    //ProductData productData = new ProductData();
-    List<ProductData> productData1 = null;
-    List<Wishlist2Model> wishlist = wishlistFacade.getWishlist();
-
-    for (Wishlist2Model wishlistModel : wishlist) {
-      ProductData productData = new ProductData();
-      wishListPopulator.populate(wishlistModel, productData);
-      productData1.add(productData);
-    }
-
-    model.addAttribute("wishlist2Data", productData1);
-    return productData1;
-  }
-
-  @RequireHardLogIn
-  @ResponseBody
   @RequestMapping(value = "/removewishlist", method = RequestMethod.POST)
-  public void removeWishlist(@RequestParam("removeproductCode") final String code) {
-    wishlistFacade.removeWishlist(code);
-
+  @ResponseBody
+  public String removeWishlist(@RequestParam("removeproductCode") final String code) {
+    try {
+      wishlistFacade.removeWishlist(code);
+      return BlCoreConstants.SUCCESS;
+    } catch (Exception e) {
+      LOG.error("in default wishlist " + code + "not found OR" + code
+          + "found more than one entry in default wish list entry");
+      return BlCoreConstants.ERROR;
+    }
   }
 }

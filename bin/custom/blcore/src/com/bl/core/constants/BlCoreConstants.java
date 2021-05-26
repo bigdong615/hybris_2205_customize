@@ -149,6 +149,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES ="lenses";
 	public static final String CAMERAS ="cameras";
 	public static final String PRODUCTION ="production";
+	public static final String SUCCESS = "Success";
+	public static final String ERROR = "Error";
+
 
 
 	private BlCoreConstants()

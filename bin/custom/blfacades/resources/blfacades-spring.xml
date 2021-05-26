@@ -283,6 +283,9 @@
 	</bean>
 
 	<bean id="blWishlistOptionsPopulator" class="com.bl.facades.populators.BlWishlistOptionsPopulator">
+		<property name="userService" ref="userService"/>
+		<property name="productService" ref="productService"/>
+		<property name="wishlistService" ref="wishlistService"/>
 	</bean>
 
 	<!-- BL-166:This bean is override to configure bl related populator-->
@@ -337,7 +340,13 @@
 		<property name="key" value="REQUIRED_SERIAL_DATA" />
 		<property name="add" ref="blSerialProductDataPopulator" />
 	</bean>
-	
+
+	<bean parent="configurablePopulatorModification">
+		<property name="target" ref="productConfiguredPopulator" />
+		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
+		<property name="key" value="REQUIRED_WISHLIST" />
+		<property name="add" ref="blWishlistOptionsPopulator" />
+	</bean>
 	<!-- To populate the stock data -->
 	<alias name="defaultBlStockPopulator" alias="blStockPopulator"/>
     <bean id="defaultBlStockPopulator" parent="abstractPopulatingConverter"

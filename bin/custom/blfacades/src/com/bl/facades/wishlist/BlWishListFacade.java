@@ -8,7 +8,7 @@ public interface BlWishListFacade {
 
   void addToWishlist(String code);
 
-  List<Wishlist2Model> getWishlist();
+  Wishlist2Model getWishlist();
 
   void removeWishlist(String code);
 

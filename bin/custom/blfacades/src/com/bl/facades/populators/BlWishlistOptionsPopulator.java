@@ -1,6 +1,8 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.logging.BlLogger;
+import de.hybris.platform.commerceservices.search.solrfacetsearch.populators.SearchSolrQueryPopulator;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -11,10 +13,12 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.wishlist2.Wishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
+import org.apache.log4j.Logger;
 import org.springframework.util.ObjectUtils;
 
 public class BlWishlistOptionsPopulator implements Populator<BlProductModel, ProductData> {
 
+  private static final Logger LOG = Logger.getLogger(BlWishlistOptionsPopulator.class);
   private UserService userService;
   private Wishlist2Service wishlistService;
   private ProductService productService;
@@ -22,21 +26,28 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
   @Override
   public void populate(BlProductModel source, ProductData target)
       throws ConversionException {
+//      if (!userService.isAnonymousUser(userService.getCurrentUser())) {
+    try
+    {
+        final UserModel user = getUserService().getCurrentUser();
+        Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
+        final ProductModel product = getProductService().getProductForCode(source.getCode());
+        Wishlist2EntryModel entry = getWishlistService()
+            .getWishlistEntryForProduct(product, wishlist);
 
-    final UserModel user = getUserService().getCurrentUser();
-    Wishlist2Model wishlist2Model = getWishlistService().getDefaultWishlist(user);
-    final ProductModel product = getProductService().getProductForCode(source.getCode());
-    Wishlist2EntryModel entry = getWishlistService()
-        .getWishlistEntryForProduct(product, wishlist2Model);
 
-    try {
-      if (!ObjectUtils.isEmpty(entry)) {
-        target.setIsBookMarked(true);
-      }
-    } catch (Exception e) {
-      target.setIsBookMarked(false);
-    }
+          if (!ObjectUtils.isEmpty(entry)) {
+            target.setIsBookMarked(true);
+          }
+        } catch (Exception e) {
+          target.setIsBookMarked(false);
+          LOG.error("Wish list found more than one product entry");
+        }
+//      }
 
+//    catch (Exception e) {
+//      LOG.error("User is not logged in to the site");
+//    }
   }
 
   public UserService getUserService() {

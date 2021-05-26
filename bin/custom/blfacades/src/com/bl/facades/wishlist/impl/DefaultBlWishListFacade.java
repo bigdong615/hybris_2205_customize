@@ -33,8 +33,8 @@ public class DefaultBlWishListFacade implements BlWishListFacade {
   }
 
   @Override
-  public List<Wishlist2Model> getWishlist() {
-    return getWishlistService().getWishlists();
+  public Wishlist2Model getWishlist() {
+    return getWishlistService().getDefaultWishlist();
   }
 
   @Override

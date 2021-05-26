@@ -14,3 +14,5 @@ Added for removing add to cart popup background, when unable to add product to c
 .remove-popup-background{
  opacity:0 !important;
 }
+
+.bookmark-checked{background-color:red !important;}

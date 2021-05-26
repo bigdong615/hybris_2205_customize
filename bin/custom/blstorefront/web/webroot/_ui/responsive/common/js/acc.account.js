@@ -111,5 +111,86 @@ ACC.account = {
 
 		});
 
+		 var bookmarkicons = document.querySelectorAll(".bookmarkicons");
+               console.log(bookmarkicons.length);
+                  for(var i=0;i<bookmarkicons.length;i++){
+                         bookmarkicons[i].id ="bookmarkicons-"+(i+1);
+                         alert("for loop is running");
+                          }
+
+
+              $(document).on('click',".js-add-to-wishlist", function(e) {
+              alert("inside wishlist");
+                                      e.preventDefault();
+                                       var bookmarkId =this.getAttribute("id");
+                                        var productCode = $(this).attr('data-product-code');
+                                       // var targetAddUrl = $(".add_to_wishList_form").attr("action");
+                                        var targetAddUrl    = ACC.config.encodedContextPath + "/wishlist/add"
+                                        var targetRemoveUrl = ACC.config.encodedContextPath + "/removewishlist"
+                                        var bookmarkValue = $(this).attr('data-bookmark-value');
+                                        if(document.getElementById(bookmarkId).classList.contains("bookmark-checked"))
+                                        {
+                                        $.ajax({
+                                                       url: targetRemoveUrl,
+                                                       type: 'POST',
+                                                       data: {removeproductCode: productCode},
+                                                       success: function (response) {
+                                                     //  alert(success);
+                                                       if(response === 'Success'){
+                                                        alert("product removed from wishlist");
+                                                        document.getElementById(bookmarkId).classList.remove("bookmark-checked");
+                                                       }
+                                                       else{
+                                                       alert("found error while removing the product");
+                                                       }
+
+                                                         },
+                                                       error: function (jqXHR, textStatus, errorThrown) {
+                                                           console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                                                        }
+                                                 });
+
+                                        }
+                                        else{
+                                       $.ajax({
+                                          url: targetAddUrl,
+                                          type: 'POST',
+                                          data: {productwishlistCode: productCode},
+                                          success: function (response) {
+                                        //  alert(success);
+                                          if(response === 'Success'){
+                                           alert("product added to wishlist");
+                                           document.getElementById(bookmarkId).classList.add("bookmark-checked");
+                                          }
+                                          else{
+                                          alert("found error while adding product to wishlist");
+                                          }
+
+                                            },
+                                          error: function (jqXHR, textStatus, errorThrown) {
+                                              console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                                           }
+                                       });
+
+                                       }
+                });
+
+                $('.wishlist_entry-remove').on("click", function (e){
+                alert("inside removing entry from whishlist");
+                            	e.preventDefault();
+                            	var entryNumber = $(this).attr('id');
+                            	var form = $('#removewishlistForm' + entryNumber[1]);
+
+                            	var productCode = $(this).attr('data-productcode');
+                            	var initialCartQuantity = form.find('input[name=initialQuantity]');
+                            //	var cartQuantity = form.find('input[name=quantity]');
+
+                            	ACC.track.trackRemoveFromCart(productCode, initialCartQuantity.val());
+                            //	cartQuantity.val(0);
+                            //	initialCartQuantity.val(0);
+                            	$(".wishlist_entry-remove").attr("disabled", "disabled");
+                            	form.submit();
+                       });
+
 	}
 };
