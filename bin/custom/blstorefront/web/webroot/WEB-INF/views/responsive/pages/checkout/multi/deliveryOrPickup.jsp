@@ -53,7 +53,9 @@
                                     <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                 </button>
                             </div>
-                            <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                            <div id="statusUpdateTestMessage">
+
+                            </div>
                             <div class="page-loader-new-layout">
                             	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
                             </div>

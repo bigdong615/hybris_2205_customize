@@ -176,11 +176,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
      */
     @GetMapping(value = "/select")
     @RequireHardLogIn
+    @ResponseBody
     public String doSelectDeliveryMode(@RequestParam("delivery_method") final String selectedDeliveryMethod,
                                        @RequestParam("internalStoreAddress") final boolean internalStoreAddress) {
    	 if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
      	  return getCheckoutFacade().setDeliveryMode(selectedDeliveryMethod, internalStoreAddress)
-     			  ? getCheckoutStep().nextStep() : BlControllerConstants.ERROR;
+     			  ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
        }
        return BlControllerConstants.ERROR;
     }
