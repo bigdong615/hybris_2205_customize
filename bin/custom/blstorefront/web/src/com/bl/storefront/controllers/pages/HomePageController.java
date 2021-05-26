@@ -30,9 +30,7 @@ import com.bl.facades.product.data.RentalDateDto;
 public class HomePageController extends AbstractPageController
 {
 	private static final String LOGOUT = "logout";
-	private static final String ACCOUNT_CONFIRMATION_SIGNOUT_TITLE = "account.confirmation.signout.title";
-	private static final String ACCOUNT_CONFIRMATION_CLOSE_TITLE = "account.confirmation.close.title";
-	
+
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() 
 	{
@@ -46,12 +44,6 @@ public class HomePageController extends AbstractPageController
 	{
 		if (logout)
 		{
-			String message = ACCOUNT_CONFIRMATION_SIGNOUT_TITLE;
-			if (closeAcc)
-			{
-				message = ACCOUNT_CONFIRMATION_CLOSE_TITLE;
-			}
-			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.INFO_MESSAGES_HOLDER, message);
 			return REDIRECT_PREFIX + ROOT;
 		}
 		final ContentPageModel contentPage = getContentPageForLabelOrId(null);
