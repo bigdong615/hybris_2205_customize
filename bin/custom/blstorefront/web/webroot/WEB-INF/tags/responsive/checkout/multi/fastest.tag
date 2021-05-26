@@ -78,7 +78,7 @@
                         </label>
                     </div>
                     <div id="same-day-status-updates-div">
-                        <input type="checkbox" id="same-day-status-updates">
+                        <input type="checkbox" id="same-day-status-updates" onChange="onChangeOfStatusUpdate()">
                         <label for="same-day-status-updates">
                             <span class="gray80"><spring:theme code="text.checkout.multi.order.same.day.delivery.get.text.msg.status"/></span>
                         </label>

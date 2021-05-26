@@ -469,9 +469,11 @@
                                                 '<p>' + data[i].name + '- <span id="' + data[i].code + '-pickUpCost">' + data[i].deliveryCost.formattedValue + ' </span><br>' +
                                                     '<a href="' + data[i].internalStoreAddress.url + '" target="_blank">' +
                                                         data[i].internalStoreAddress.formattedAddress +
-                                                    '</a><br>' +
-                                                    data[i].internalStoreAddress.phone +
-                                                '</p>' ;
+                                                    '</a><br>';
+                         if(data[i].internalStoreAddress.phone != null) {
+                             partnerDelivery += data[i].internalStoreAddress.phone;
+                         }
+                            partnerDelivery += '</p>' ;
                          if(data[i].internalStoreAddress.openingDaysDetails != null) {
                             partnerDelivery += '<p class="mb-0 mt-3"><span class="gray80">M-F</span> ' +
                                                     data[i].internalStoreAddress.openingDaysDetails["M-F"] +
@@ -654,6 +656,11 @@
                                    $('#same-day-save-address-div #same-day-save-address').prop("checked", false);
                                    $('#same-day-status-updates-div').hide();
                                    $('#same-day-status-updates-div #same-day-status-updates').prop("checked", false);
+                               } else {
+                                    $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.postcode"]')
+                                        .val($('#sameDayZipCheckText').val());
+                                    $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.postcode"]')
+                                        .prop("disabled", true);
                                }
                            } else {
                            	   $('#cart-shipping-cost').text('-');
@@ -995,7 +1002,7 @@
                          saveDeliveryMode(deliveryMode, false)
                              .then((data) => {
                                  $('.page-loader-new-layout').hide();
-                                 window.location.reload();
+                                 window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                              })
                              .catch((error) => {
                                console.log(error)
@@ -1050,7 +1057,7 @@
                   saveDeliveryMode(deliveryMode, false)
                        .then((data) => {
                            $('.page-loader-new-layout').hide();
-                           window.location.reload();
+                           window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                        })
                        .catch((error) => {
                          console.log(error)
@@ -1094,7 +1101,7 @@
               saveDeliveryMode(deliveryMode, false)
                  .then((data) => {
                      $('.page-loader-new-layout').hide();
-                     window.location.reload();
+                     window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                  })
                  .catch((error) => {
                    console.log(error)
@@ -1131,7 +1138,7 @@
                 saveDeliveryMode(deliveryMode, false)
                     .then((data) => {
                         $('.page-loader-new-layout').hide();
-                        window.location.reload();
+                        window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                     })
                     .catch((error) => {
                       console.log(error)
@@ -1188,8 +1195,12 @@
                 $('.page-loader-new-layout').show();
              },
              success: function (data) {
-                 resolve(data);
-                 //TODO: Handle for payment method for checkout
+                if(data == 'success') {
+                    resolve(data);
+                    //TODO: Handle for payment method for checkout
+                } else {
+                    reject(data);
+                }
              },
              error: function (data) {
                  reject(data);
@@ -1219,7 +1230,7 @@
                                 saveDeliveryMode(deliveryMethod, status)
                                     .then((data) => {
                                         $('.page-loader-new-layout').hide();
-                                        window.location.reload();
+                                        window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                                     })
                                     .catch((error) => {
                                       console.log(error)
@@ -1232,7 +1243,7 @@
                         saveDeliveryMode(deliveryMethod, status)
                             .then((data) => {
                                 $('.page-loader-new-layout').hide();
-                                window.location.reload();
+                                window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                             })
                             .catch((error) => {
                               console.log(error)
@@ -1292,6 +1303,15 @@
     } else {
         return attribute;
     }
+  }
+
+  function onChangeOfStatusUpdate() {
+    if($('#same-day-status-updates-div #same-day-status-updates').prop("checked") == true) {
+        $('#statusUpdateTestMessage').html('<p class="mt-5 body14 gray60"> *Standard text message and data rates may apply.</p>');
+    } else {
+        $('#statusUpdateTestMessage').html('');
+    }
+
   }
   
   //checks the product availability for the selected delivery mode
