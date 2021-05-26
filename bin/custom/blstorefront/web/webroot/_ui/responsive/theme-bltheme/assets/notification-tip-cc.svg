@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="16px" viewBox="0 0 20 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/check with circle</title>
+    <g id="Designs" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Account-CreditCards" transform="translate(-413.000000, -321.000000)" fill="#52BFC0">
+            <g id="tip" transform="translate(393.000000, 300.000000)">
+                <g id="Group" transform="translate(18.000000, 17.000000)">
+                    <g id="local_atm-24px" transform="translate(2.000000, 4.000000)">
+                        <path d="M9,13 L11,13 L11,12 L12,12 C12.55,12 13,11.55 13,11 L13,8 C13,7.45 12.55,7 12,7 L9,7 L9,6 L13,6 L13,4 L11,4 L11,3 L9,3 L9,4 L8,4 C7.45,4 7,4.45 7,5 L7,8 C7,8.55 7.45,9 8,9 L11,9 L11,10 L7,10 L7,12 L9,12 L9,13 Z M18,0 L2,0 C0.89,0 0.01,0.89 0.01,2 L0,14 C0,15.11 0.89,16 2,16 L18,16 C19.11,16 20,15.11 20,14 L20,2 C20,0.89 19.11,0 18,0 Z M18,14 L2,14 L2,2 L18,2 L18,14 Z" id="Shape"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
