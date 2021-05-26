@@ -6,8 +6,10 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import com.bl.core.data.StockResult;
+import com.bl.facades.product.data.RentalDateDto;
 
 
 /**
@@ -69,15 +71,63 @@ public interface BlCommerceStockService
 			final Date startDate, final Date endDate);
 
 	/**
-	 * It checks whether the serial product is not assigned to any rental orders
+	 * It checks whether the serial product is not assigned to any rental orders.
 	 *
-	 * @param serialProductCode
-	 *           the serial product code
-	 * @param productCode
-	 *           the sku product code
-	 * @param productCode
-	 *           the sku product code
+	 * @param serialProductCode           the serial product code
+	 * @param productCode           the sku product code
 	 * @return boolean
 	 */
 	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode);
+	
+	/**
+	 * Gets the next availability date.
+	 *
+	 * @param productCode
+	 *           the product code
+	 * @param dates
+	 *           the dates
+	 * @param warehouses
+	 *           the warehouses
+	 * @param qtyToCheck
+	 *           the qty to check
+	 * @return the next availability date
+	 */
+	public Date getNextAvailabilityDate(final String productCode, final RentalDateDto dates,
+			final Collection<WarehouseModel> warehouses, final int qtyToCheck);
+
+	/**
+	 * Gets the stock for product codes and date.
+	 *
+	 * @param productCodes
+	 *           the product codes
+	 * @param warehouses
+	 *           the warehouses
+	 * @param startDate
+	 *           the start date
+	 * @param endDate
+	 *           the end date
+	 * @return the stock for product codes and date
+	 */
+	Collection<StockLevelModel> getStockForProductCodesAndDate(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
+
+	/**
+	 * Collect available qty.
+	 *
+	 * @param startDate
+	 *           the start date
+	 * @param endDate
+	 *           the end date
+	 * @param stockLevels
+	 *           the stock levels
+	 * @param availability
+	 *           the availability
+	 * @param totalUnits
+	 *           the total units
+	 * @param productCode
+	 *           the product code
+	 */
+	void collectAvailableQty(final Date startDate, final Date endDate, final Collection<StockLevelModel> stockLevels,
+			final List<Long> availability, final List<Long> totalUnits, final String productCode);
+	
 }

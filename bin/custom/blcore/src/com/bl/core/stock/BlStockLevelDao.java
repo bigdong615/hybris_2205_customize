@@ -5,6 +5,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -60,4 +61,21 @@ public interface BlStockLevelDao
 	 */
 	public boolean isUsedGearSerialNotAssignedToAnyRentalOrders(final String serialProductCode,
 			final Date startDate, final Date endDate);
+	
+	/**
+	 * Find stock levels for product codes and date.
+	 *
+	 * @param productCodes
+	 *           the product codes
+	 * @param warehouses
+	 *           the warehouses
+	 * @param startDate
+	 *           the start date
+	 * @param endDate
+	 *           the end date
+	 * @return the collection
+	 */
+	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(List<String> productCodes,
+			List<WarehouseModel> warehouses, Date startDate, Date endDate);
+	
 }

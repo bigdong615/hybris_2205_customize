@@ -2,16 +2,35 @@ package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -32,6 +51,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   private CommerceCartService commerceCartService;
   
   private CommerceCartCalculationStrategy commerceCartCalculationStrategy;
+
+	private BlCommerceStockService blCommerceStockService;
 
   /**
    * {@inheritDoc}
@@ -184,6 +205,109 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		cartEntryModel.setNoDamageWaiverSelected(noGearGuardWaiverSelected);
 		cartEntryModel.setCalculated(Boolean.FALSE);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, Long> checkAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
+			final RentalDateDto rentalDatesFromSession)
+	{
+		final List<String> lProductCodes = new ArrayList<>();
+		cartData.getEntries().forEach(entry -> lProductCodes.add(entry.getProduct().getCode()));
+		final Date startDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT);
+		final Date endDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
+		final Collection<StockLevelModel> stockForProductCodesAndDate = getBlCommerceStockService()
+				.getStockForProductCodesAndDate(lProductCodes, warehouses, startDate, endDate);
+		return groupByProductsAvailability(stockForProductCodesAndDate, startDate, endDate, lProductCodes);
+
+	}
+
+	/**
+	 * Group by products availability.
+	 *
+	 * @param stockLevels
+	 *           the stock levels
+	 * @param startDate
+	 *           the start date
+	 * @param endDate
+	 *           the end date
+	 * @param lProductCodes
+	 *           the l product codes
+	 * @return the map
+	 */
+	private Map<String, Long> groupByProductsAvailability(final Collection<StockLevelModel> stockLevels, final Date startDate,
+			final Date endDate, final List<String> lProductCodes)
+	{
+		final Map<String, Long> stockLevelProductWise = new HashMap<>();
+		makeZeroQtyIfNotAvailable(stockLevels, lProductCodes).forEach((productCode, lStockLevels) -> {
+			final List<Long> availableCount = new ArrayList<>();
+			final List<Long> totalCount = new ArrayList<>();
+			getBlCommerceStockService().collectAvailableQty(startDate, endDate, lStockLevels, availableCount, totalCount,
+					productCode);
+			Long availability = Long.valueOf(0);
+			Long totalUnits = Long.valueOf(0);
+			if (CollectionUtils.isNotEmpty(totalCount) && CollectionUtils.isNotEmpty(availableCount))
+			{
+				availability = availableCount.stream().mapToLong(Long::longValue).min().getAsLong();
+				totalUnits = totalCount.stream().mapToLong(Long::longValue).min().getAsLong();
+			}
+			stockLevelProductWise.put(productCode, availability);
+		});
+		return stockLevelProductWise;
+	}
+
+	/**
+	 * Make zero qty if not available.
+	 *
+	 * @param stockLevels
+	 *           the stock levels
+	 * @param lProductCodes
+	 *           the l product codes
+	 * @return the map
+	 */
+	private Map<String, List<StockLevelModel>> makeZeroQtyIfNotAvailable(final Collection<StockLevelModel> stockLevels,
+			final List<String> lProductCodes)
+	{
+		final Map<String, List<StockLevelModel>> newProductWiseStocks = new HashMap<>();
+		final Map<String, List<StockLevelModel>> productWiseStocks = stockLevels.stream()
+				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getProductCode()));
+		lProductCodes.removeIf(productCode -> productWiseStocks.containsKey(productCode));
+		newProductWiseStocks.putAll(productWiseStocks);
+		lProductCodes.forEach(productCode -> newProductWiseStocks.put(productCode, Collections.emptyList()));
+		return newProductWiseStocks;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getNextAvailabilityDate(final String productCode, final RentalDateDto rentalDates,
+			final Collection<WarehouseModel> warehouses, final int qtyToCheck)
+	{
+		final Date nextAvailabilityDate = getBlCommerceStockService().getNextAvailabilityDate(productCode, rentalDates, warehouses,
+				qtyToCheck);
+		if (Objects.nonNull(nextAvailabilityDate))
+		{
+			final Date newAvailableDate = Date
+					.from(getFormattedDateTime(nextAvailabilityDate).minusDays(1).atZone(ZoneId.systemDefault()).toInstant());
+			return BlDateTimeUtils.convertDateToStringDate(newAvailableDate, BlCoreConstants.RENTAL_DATE_FORMAT);
+		}
+		return StringUtils.EMPTY;
+	}
+
+	/**
+	 * Gets the formatted date time.
+	 *
+	 * @param date
+	 *           the date
+	 * @return the formatted date time
+	 */
+	private LocalDateTime getFormattedDateTime(final Date date)
+	{
+		final Instant instant = Instant.ofEpochMilli(date.getTime());
+		return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+	}
 
   public CommerceCartService getCommerceCartService() {
     return commerceCartService;
@@ -208,5 +332,21 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	{
 		this.commerceCartCalculationStrategy = commerceCartCalculationStrategy;
 	}
-	
+
+	/**
+	 * @return the blCommerceStockService
+	 */
+	public BlCommerceStockService getBlCommerceStockService()
+	{
+		return blCommerceStockService;
+	}
+
+	/**
+	 * @param blCommerceStockService the blCommerceStockService to set
+	 */
+	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
+	}
+
 }
