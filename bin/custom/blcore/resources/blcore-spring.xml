@@ -533,6 +533,7 @@
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
 		<property name="commerceCartService" ref="commerceCartService" />
 		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
 	</bean>
 
 
@@ -591,6 +592,7 @@
 	
 	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 	
 	<!-- BL-73 Created bean for discontinued product -->	

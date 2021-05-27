@@ -13,23 +13,17 @@
 	<spring:theme code="text.addToCart" var="addToCartText"/>
 	<c:url value="/cart" var="cartUrl"/>
 	<ycommerce:testId code="addToCartPopup">
-
-   <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Wait!</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                 Rental and used gear can not be ordered together.
-              </div>
-            </div>
-            <div class="modal-footer">
-                <a href="#" class="btn btn-outline" data-bs-dismiss="modal">Cancel</a>
-                <a href="#" class="btn btn-primary" data-bs-dismiss="modal">Continue</a>
-            </div>
-   </div>
-
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title"><spring:theme code="shipping.interception.change.date.warning.wait"/></h5>
+               <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+             </div>
+             <div class="modal-body">
+                 <p class="body14"><spring:theme code="text.addtocart.interception.popup"/></p>
+                 <a href="#" class="btn btn-primary btn-block my-4" id="mixedProductInterception"><spring:theme code="shipping.interception.change.date.warning.continue"/></a>
+                 <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal"><spring:theme code="shipping.interception.change.date.warning.cancel"/></a></p>
+             </div>
+           </div>
   </ycommerce:testId>
 	</spring:htmlEscape>
 </spring:escapeBody>"
