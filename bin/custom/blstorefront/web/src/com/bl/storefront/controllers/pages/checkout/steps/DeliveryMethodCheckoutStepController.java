@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
@@ -77,7 +78,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
-        model.addAttribute(CART_DATA, getCheckoutFacade().getCheckoutCart());
+        final CartData cartData = getCheckoutFacade().getCheckoutCart();
+        model.addAttribute(CART_DATA, cartData);
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
         model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
@@ -91,6 +93,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         final ContentPageModel deliveryOrPickUpPage = getContentPageForLabelOrId(DELIVERY_OR_PICKUP);
         storeCmsPageInModel(model, deliveryOrPickUpPage);
         setUpMetaDataForContentPage(model, deliveryOrPickUpPage);
+        if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
+        }
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
 
