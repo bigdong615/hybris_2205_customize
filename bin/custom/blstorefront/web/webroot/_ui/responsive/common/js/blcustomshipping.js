@@ -610,6 +610,15 @@
        $('#sameDayZipCheckText').val('');
   }
 
+  $("#sameDayZipCheckText").on('change keydown paste input', function(){
+    hideErrorForInputValidation();
+    $('#same-day-notification').val('');
+    $('#same-day-notification').hide();
+    $('#same-day-address-div').hide();
+    $('#sameDayShippingMethodsNotification').hide();
+    $('#sameDayShippingMethods').html('');
+  });
+
   function sameDayZipCheck() {
     hideErrorForInputValidation();
     $('#same-day-notification').val('');
@@ -1029,7 +1038,7 @@
         },
         success: function (data) {
             let addressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
-            if(data != null && data.statusMessage == 'Success' && data.result.length > 0) {
+            if(data != null && data.statusMessage == 'Success' && data.result != null && data.result.length > 0) {
                  sessionStorage.setItem("avsFlowDeliveryMode", JSON.stringify(deliveryMode));
                  let whatYouEntered = addressForm.line1 + '<br/>' + addressForm.townCity + ', ' + addressForm.regionIso.split('-')[1] + ' ' +
                                          addressForm.postcode ;

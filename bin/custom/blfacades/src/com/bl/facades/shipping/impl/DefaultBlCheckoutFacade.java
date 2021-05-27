@@ -35,6 +35,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -98,6 +99,17 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 : Collections.emptyList());
 
         return allGroupModels;
+    }
+
+    @Override
+    protected AddressModel createDeliveryAddressModel(final AddressData addressData, final CartModel cartModel)
+    {
+        final AddressModel addressModel = getModelService().create(AddressModel.class);
+        getAddressReversePopulator().populate(addressData, addressModel);
+        addressModel.setOwner(cartModel);
+        getModelService().save(addressModel);
+        getModelService().refresh(addressModel);
+        return addressModel;
     }
 
     /**
