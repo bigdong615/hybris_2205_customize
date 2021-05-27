@@ -69,7 +69,7 @@ public class DefaultBlCommerceUpdateCartEntryStrategy extends
 	}
   
   /**
-	 * Gets the allowed cart adjustment for product from popup.
+	 * Gets the quantity for product from add to cart popup without checking stock availability
 	 *
 	 * @param cartModel
 	 *           the cart model
