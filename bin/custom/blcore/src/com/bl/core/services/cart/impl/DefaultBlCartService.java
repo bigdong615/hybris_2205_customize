@@ -2,16 +2,24 @@ package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -32,6 +40,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   private CommerceCartService commerceCartService;
   
   private CommerceCartCalculationStrategy commerceCartCalculationStrategy;
+
+	private BlCommerceStockService blCommerceStockService;
 
   /**
    * {@inheritDoc}
@@ -184,6 +194,21 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		cartEntryModel.setNoDamageWaiverSelected(noGearGuardWaiverSelected);
 		cartEntryModel.setCalculated(Boolean.FALSE);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
+			final RentalDateDto rentalDatesFromSession)
+	{
+		final List<String> lProductCodes = new ArrayList<>();
+		cartData.getEntries().forEach(entry -> lProductCodes.add(entry.getProduct().getCode()));
+		final Date startDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT);
+		final Date endDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
+		return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
+
+	}
 
   public CommerceCartService getCommerceCartService() {
     return commerceCartService;
@@ -208,5 +233,21 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	{
 		this.commerceCartCalculationStrategy = commerceCartCalculationStrategy;
 	}
-	
+
+	/**
+	 * @return the blCommerceStockService
+	 */
+	public BlCommerceStockService getBlCommerceStockService()
+	{
+		return blCommerceStockService;
+	}
+
+	/**
+	 * @param blCommerceStockService the blCommerceStockService to set
+	 */
+	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
+	}
+
 }

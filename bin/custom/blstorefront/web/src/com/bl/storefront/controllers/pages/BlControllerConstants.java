@@ -72,6 +72,9 @@ public class BlControllerConstants
 	public static final String LOG_IN = "login";
 	public static final String LOG_IN_ERROR = "loginError";
 	public static final String LOG_IN_URL = "/login";
+	
+	public static final String RENTAL_DATE_FORMAT = "MMM dd";
+	public static final String NEXT_AVAILABLE_DATE = "nextAvailabilityDate";
 
 
 	private BlControllerConstants()
