@@ -53,7 +53,8 @@ public class BlControllerConstants
   public static final String CONFIRM_PASSWORD_STRING = "checkPwd";
   public static final String REFERER= "Referer";
   public static final String HOME_PAGE_URL = "/";
-	public static final String FAILURE_RESULT = "failure";
+	public static final String RENTAL_DATE_FAILURE_RESULT = "rentalDateNotSelected";
+	public static final String STOCK_FAILURE_RESULT = "stockNotAvailable";
 	public static final String ERROR = "error";
 
 	public static final String REQUEST = "request";

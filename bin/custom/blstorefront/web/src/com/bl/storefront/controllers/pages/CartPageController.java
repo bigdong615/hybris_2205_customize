@@ -807,7 +807,7 @@ public class CartPageController extends AbstractCartPageController
 		final CartModel cartModel = blCartService.getSessionCart();
 		if (rentalDateDto == null) {
 
-			return BlControllerConstants.FAILURE_RESULT;
+			return BlControllerConstants.RENTAL_DATE_FAILURE_RESULT;
 		} else {
 			final Date startDay = BlDateTimeUtils
 					.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
@@ -822,7 +822,7 @@ public class CartPageController extends AbstractCartPageController
 						.getAvailableCount(abstractOrderEntryModel.getProduct().getCode(), warehouseModelList,
 								startDay, endDay);
 				if (stockLevel == stockNotAvailable) {
-					return BlControllerConstants.FAILURE_RESULT;
+					return BlControllerConstants.STOCK_FAILURE_RESULT;
 				}
 
 			}
