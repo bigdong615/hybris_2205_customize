@@ -78,6 +78,11 @@
 	<property name="serialId" type="String"/>
   </bean>
   
+  <bean class="com.bl.facades.product.data.AvailabilityMessage">
+  	<property name="messageCode" type="String"/>
+  	<property name="arguments" type="java.util.List&lt;String>"/>
+  </bean>
+  
   <!-- Adding custom attributes in existing DTO of OrderEntryData -->
   <bean class="de.hybris.platform.commercefacades.order.data.OrderEntryData">
   	<property name="gearGuardWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
@@ -85,6 +90,7 @@
 	<property name="gearGuardWaiverSelected" type="java.lang.Boolean"/>
 	<property name="gearGuardProFullWaiverSelected" type="java.lang.Boolean"/>
 	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
+	<property name="availabilityMessage" type="com.bl.facades.product.data.AvailabilityMessage"/>
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -209,6 +215,10 @@
   <bean class="de.hybris.platform.commerceservices.search.resultdata.SearchResultValueData">
     <property name="blPage" type="String"/>
   </bean>
+  
+  <bean class="de.hybris.platform.commerceservices.service.data.CommerceCartParameter">
+		  <property name="isFromAddToCartPopup" type="Boolean"/>
+	</bean>	
 
 
 </beans>

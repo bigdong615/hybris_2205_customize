@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
@@ -507,5 +508,86 @@ public final class BlDateTimeUtils
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
 			return false;
 		}
+	}
+	
+	/**
+	 * Subtracts days in rental dates excluding Weekends.
+	 *
+	 * @param numberOfDaysToRemove
+	 *           the number of days to remove
+	 * @param rentalDate
+	 *           the rental date
+	 * @return the date
+	 */
+	public static Date subtractDaysInRentalDates(final int numberOfDaysToRemove, final String rentalDate)
+	{
+		try
+		{
+			LocalDate localDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+			if (Objects.nonNull(localDate))
+			{
+				int subtractedDays = 0;
+				while (subtractedDays < numberOfDaysToRemove)
+				{
+					localDate = localDate.minusDays(1);
+					subtractedDays = checkForSkipingDays(localDate, subtractedDays);
+				}
+				return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			}
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+		catch (final DateTimeParseException exception)
+		{
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+	}
+
+	/**
+	 * Adds the days in rental dates excluding Weekends.
+	 *
+	 * @param numberOfDaysToAdd
+	 *           the number of days to add
+	 * @param rentalDate
+	 *           the rental date
+	 * @return the date
+	 */
+	public static Date addDaysInRentalDates(final int numberOfDaysToAdd, final String rentalDate)
+	{
+		try
+		{
+			LocalDate localDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+			if (Objects.nonNull(localDate))
+			{
+				int addedDays = 0;
+				while (addedDays < numberOfDaysToAdd)
+				{
+					localDate = localDate.plusDays(1);
+					addedDays = checkForSkipingDays(localDate, addedDays);
+				}
+				return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			}
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+		catch (final DateTimeParseException e)
+		{
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+	}
+
+	/**
+	 * Check if the date falls on weekends .
+	 *
+	 * @param localDate
+	 *           the local date
+	 * @param addedDays
+	 *           the added days
+	 */
+	private static int checkForSkipingDays(final LocalDate localDate, int addedDays)
+	{
+		if (!(localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY))
+		{
+			return addedDays + 1;
+		}
+		return addedDays;
 	}
 }

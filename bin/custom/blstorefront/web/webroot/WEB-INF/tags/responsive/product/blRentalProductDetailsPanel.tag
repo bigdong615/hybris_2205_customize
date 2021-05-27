@@ -59,7 +59,17 @@
                                        </div>
                                  </div>
                                  <div id="pickupDelivery">
-                                   <p><span class="arrival">Get it on Jan 31</span> <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a></p>
+                                 <p>
+	                                 <c:choose>
+	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
+	                                 		<span class="arrival"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 	</c:when>
+	                                 	<c:when test="${not empty nextAvailabilityDate }">
+	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span> 
+	                                 	</c:when>
+	                                 </c:choose>
+	                                 <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a>
+                                 </p>
                                   </div>
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->

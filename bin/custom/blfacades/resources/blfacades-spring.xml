@@ -293,6 +293,9 @@
 	<alias name="defaultBlCartFacade" alias="cartFacade" />
 	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
 		<property name="blCartService" ref="cartService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
 	</bean>
 
 	<!--BL-80 entry for Used Gear Category Model Resolver-->

@@ -32,6 +32,9 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
+
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.storefront.controllers.ControllerConstants;
 
 import java.io.UnsupportedEncodingException;
@@ -39,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +112,12 @@ public class AbstractBlProductPageController extends AbstractPageController
 
 	@Resource(name = "futureStockFacade")
 	private FutureStockFacade futureStockFacade;
+	
+	@Resource(name = "blCommerceStockService")
+	private BlCommerceStockService blCommerceStockService;
+	
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
 
 	/*
 	 * This method is used for render pdp.
@@ -399,7 +409,6 @@ public class AbstractBlProductPageController extends AbstractPageController
 		getRequestContextData(request).setProduct(productModel);
 
 		final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, extraOptions);
-
 		sortVariantOptionData(productData);
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
@@ -411,7 +420,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 					Boolean.valueOf(CollectionUtils.isNotEmpty(productData.getVariantMatrix())));
 		}
 	}
-
+	
 	protected void populateProductData(final ProductData productData, final Model model)
 	{
 		model.addAttribute("galleryImages", getGalleryImages(productData));
@@ -506,6 +515,36 @@ public class AbstractBlProductPageController extends AbstractPageController
 		return cmsPageService.getPageForProduct(productModel, getCmsPreviewService().getPagePreviewCriteria());
 	}
 
+	/**
+	 * @return the blCommerceStockService
+	 */
+	public BlCommerceStockService getBlCommerceStockService()
+	{
+		return blCommerceStockService;
+	}
 
+	/**
+	 * @param blCommerceStockService the blCommerceStockService to set
+	 */
+	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
+	}
+
+	/**
+	 * @return the blDatePickerService
+	 */
+	public BlDatePickerService getBlDatePickerService()
+	{
+		return blDatePickerService;
+	}
+
+	/**
+	 * @param blDatePickerService the blDatePickerService to set
+	 */
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	{
+		this.blDatePickerService = blDatePickerService;
+	}
 
 }
