@@ -285,11 +285,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
  	public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost,
  			final ZoneDeliveryModeModel deliveryMethod)
  	{
- 		return deliveryMethod.isPayByCustomer()
- 				? getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
- 						deliveryMethod.getShippingCostCode().getCode(), true)
- 				: getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
- 						deliveryMethod.getShippingCostCode().getCode(), false);
+ 		return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
+                deliveryMethod.getShippingCostCode().getCode());
  	}
 
     /**
@@ -317,9 +314,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
-   	 BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getAmountForAppropriateZoneModel", zoneDeliveryModeModel.getCode());
-   	 if (zoneDeliveryModeModel.isPayByCustomer())
-   	 {
+   	    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getAmountForAppropriateZoneModel", zoneDeliveryModeModel.getCode());
+   	    if (zoneDeliveryModeModel.isPayByCustomer())
+   	    {
             return getPayByCustomerShippingCost(order, zoneDeliveryModeModel);
         }
         return BlInventoryScanLoggingConstants.ZERO;
@@ -431,7 +428,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private BigDecimal getBigDecimal(final BigDecimal totalWeight, final BlProductModel blSerialProduct) {
         return blSerialProduct.getWeight() != null ? (totalWeight.add(blSerialProduct.getWeight())) :
-                (totalWeight.add(BigDecimal.valueOf(BlInventoryScanLoggingConstants.ZERO_FIVE)));
+                (totalWeight.add(BigDecimal.valueOf(BlInventoryScanLoggingConstants.ZERO)));
     }
 
     /**
@@ -516,7 +513,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         if(validateZip(pinCode)) {
             try {
                 final SameDayCityResData sameDayCityResData = getBlFedExSameDayService().getAvailability(getSameDayCityReqData(pinCode,
-                        getWarehouseZipCode(deliveryType, true)));
+                        BlDeliveryModeLoggingConstants.SF.equals(deliveryType) ? "94070" : "10004"));
+                        //getWarehouseZipCode(deliveryType, true)));
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day fedex integration pinCode validity");
                 return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable(): Boolean.FALSE;
             } catch (URISyntaxException e) {

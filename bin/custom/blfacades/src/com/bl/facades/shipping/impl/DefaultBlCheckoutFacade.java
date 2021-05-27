@@ -288,8 +288,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             final AddressModel addressModel = blPickUpZoneDeliveryModeModel.getInternalStoreAddress();
             if (addressModel != null) {
                 addressModel.setPickStoreAddress(Boolean.TRUE);
+                if(cartModel.isPickUpByMe()) {
+                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
+                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
+                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
+                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
+                }
                 getModelService().save(addressModel);
-                getModelService().refresh(cartModel);
+                getModelService().refresh(addressModel);
                 setUPSAddressOnCart(addressModel);
             }
         }
@@ -306,6 +312,26 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setDeliveryAddress(addressModel);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUPSAddressOnCartForIam(final AddressData address) {
+        final CartModel cartModel = getCart();
+        try {
+            if (cartModel != null && address != null && cartModel.isPickUpByMe()) {
+                cartModel.setPickUpPersonFirstName(address.getFirstName());
+                cartModel.setPickUpPersonLastName(address.getLastName());
+                cartModel.setPickUpPersonEmail(address.getEmail());
+                cartModel.setPickUpPersonPhone(address.getPhone());
+                getModelService().save(cartModel);
+                getModelService().refresh(cartModel);
+            }
+        } catch (Exception e) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving UPS pickUpByMe details", e);
         }
     }
 

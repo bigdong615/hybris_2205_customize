@@ -216,15 +216,13 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
      * {@inheritDoc}
      */
     @Override
-    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod,
-                                                                      final boolean payByCustomer) {
-        final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ZoneDeliveryMode as zone}, {ShippingCostEnum as costEnum}" +
-                " where {sc.zoneDeliveryMode} = {zone.pk} and {zone.active} = 1 and {sc.shippingCostCode} = {costEnum.pk} and {costEnum.code} = ?deliveryMethod" +
-                " and {sc.floor} < ?calculatedCost and ?calculatedCost <= {sc.ceiling} and {zone.payByCustomer} = ?payByCustomer";
+    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod) {
+        final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ShippingCostEnum as costEnum}" +
+                " where {sc.shippingCostCode} = {costEnum.pk} and {costEnum.code} = ?deliveryMethod" +
+                " and ?calculatedCost >= {sc.floor} and ?calculatedCost < {sc.ceiling}";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("deliveryMethod", deliveryMethod);
         query.addQueryParameter("calculatedCost", calculatedCost);
-        query.addQueryParameter("payByCustomer", payByCustomer);
         final Collection<ShippingCostModel> results = getFlexibleSearchService().<ShippingCostModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_SHIPPING_COST);
         return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
