@@ -63,8 +63,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	private static final String STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
 			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
 			+ StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE
-			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus " + AND
-			+ StockLevelModel.WAREHOUSE + "} IN (?warehouses) ";
+			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) ";
 
 	/**
 	 * {@inheritDoc}
@@ -200,10 +199,8 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		{
 			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY);
 			fQuery.addQueryParameter("productCodes", productCodes);
-			fQuery.addQueryParameter(BlCoreConstants.START_DATE, BlDateTimeUtils.getFormattedStartDay(startDate).getTime());
-			fQuery.addQueryParameter(BlCoreConstants.END_DATE, BlDateTimeUtils.getFormattedEndDay(endDate).getTime());
+			addQueryParameter(startDate, endDate, fQuery);
 			fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
-			fQuery.addQueryParameter("reservedStatus", Boolean.FALSE);
 			fQuery.addQueryParameter("warehouses", warehouse);
 
 			final SearchResult result = getFlexibleSearchService().search(fQuery);

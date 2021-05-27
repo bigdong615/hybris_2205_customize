@@ -424,7 +424,7 @@ public class CartPageController extends AbstractCartPageController
 	private void setNextAvailableDate(final long entryNumber, final String productCode, final UpdateQuantityForm form,
 			final RedirectAttributes redirectModel, final RentalDateDto rentalDateDto)
 	{
-		final String nextAvailabilityDate = blCartService.getNextAvailabilityDate(productCode, rentalDateDto, null,
+		final String nextAvailabilityDate = blCommerceStockService.getNextAvailabilityDateInCheckout(productCode, rentalDateDto, null,
 				form.getQuantity().intValue());
 		if (StringUtils.isNotBlank(nextAvailabilityDate))
 		{
@@ -830,8 +830,7 @@ public class CartPageController extends AbstractCartPageController
 		final CartData cartData = getBlCartFacade().getSessionCartWithEntryOrdering(false);
 		if(BooleanUtils.isTrue(cartData.getIsRentalCart()))
 		{
-			final boolean enableContinueButton = getBlCartFacade().checkAvailabilityForRentalCart(cartData);
-			model.addAttribute("enableContinueButton", enableContinueButton);
+			getBlCartFacade().checkAvailabilityForRentalCart(cartData);
 		}
 		if (CollectionUtils.isEmpty(cartData.getEntries())) {
 			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.EMPTY_CART_CMS_PAGE_LABEL);
@@ -888,91 +887,27 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	@PostMapping(value = "/updateQuantity")
 	@ResponseBody
-	public String updateQuantity(@RequestParam("entryNumber")
-	final long entryNumber, @RequestParam("productCode")
-	final String productCode, final Model model, @Valid
-	final UpdateQuantityForm form, final BindingResult bindingResult, final HttpServletRequest request)
-			throws CommerceCartModificationException
-	{
-		if (bindingResult.hasErrors())
-		{
+	public void updateQuantity(@RequestParam("entryNumber") final long entryNumber, final Model model,
+			@Valid final UpdateQuantityForm form, final BindingResult bindingResult,
+			final HttpServletRequest request) throws CommerceCartModificationException {
+		if (bindingResult.hasErrors()) {
 			handleBindingResultError(model, bindingResult);
-		}
-		else if (getCartFacade().hasEntries())
-		{
-			try
-			{
-				final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-				if (Objects.nonNull(rentalDateDto))
-				{
-					return popupUpdateQty(entryNumber, rentalDateDto, productCode, form);
-				}
-				else
-				{
-					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
-				}
+		} else if (getCartFacade().hasEntries()) {
+			try {
+				getBlCartFacade().updateCartEntryFromPopup(entryNumber,
+						form.getQuantity().longValue());
 
-				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Product quantity: {} updated successfully for cart entry: {}",
-						form.getQuantity(), entryNumber);
-				return StringUtils.EMPTY;
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+						"Product quantity: {} updated successfully for cart entry: {}", form.getQuantity(),
+						entryNumber);
 
-			}
-			catch (final CommerceCartModificationException exception)
-			{
-				BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(), exception,
-						"Couldn't update product with the entry number: {}", entryNumber);
-				return BlControllerConstants.ERROR;
+			} catch (final CommerceCartModificationException exception) {
+				BlLogger
+						.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CART_INTERNAL_ERROR.getCode(),
+								exception,
+								"Couldn't update product with the entry number: {}", entryNumber);
 			}
 		}
-		return BlControllerConstants.ERROR;
-	}
-
-	/**
-	 * Popup update qty.
-	 *
-	 * @param entryNumber
-	 *           the entry number
-	 * @param rentalDateDto
-	 *           the rental date dto
-	 * @param productCode
-	 *           the product code
-	 * @param form
-	 *           the form
-	 * @return the string
-	 * @throws CommerceCartModificationException
-	 *            the commerce cart modification exception
-	 */
-	private String popupUpdateQty(final long entryNumber, final RentalDateDto rentalDateDto, final String productCode,
-			final UpdateQuantityForm form) throws CommerceCartModificationException
-	{
-		final long availableStockForProduct = getAvailableStockForProduct(rentalDateDto, productCode);
-		if (availableStockForProduct <= 0)
-		{
-			final String nextAvailabilityDate = blCartService.getNextAvailabilityDate(productCode, rentalDateDto, null,
-					form.getQuantity().intValue());
-			if (StringUtils.isNotBlank(nextAvailabilityDate))
-			{
-				return form.getQuantity().longValue() > 1
-						? "[".concat(String.valueOf(form.getQuantity().longValue()))
-								.concat("] copies of this item are not available until [").concat(nextAvailabilityDate).concat("].")
-								.concat(" Change your dates or select a different item to continue.")
-						: "This item is not available until [".concat(nextAvailabilityDate)
-								.concat("]. Change your dates or select a different item to continue.");
-			}
-		}
-		else if (availableStockForProduct < form.getQuantity().longValue())
-		{
-			return "Only [".concat(String.valueOf(availableStockForProduct))
-					.concat("] copies of this item are available for your selected date range.")
-					.concat(" Change your quantity or dates to continue.");
-		}
-		else
-		{
-			getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
-		}
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Product quantity: {} updated successfully for cart entry: {}",
-				form.getQuantity(), entryNumber);
-		return StringUtils.EMPTY;
 	}
 
 	/**

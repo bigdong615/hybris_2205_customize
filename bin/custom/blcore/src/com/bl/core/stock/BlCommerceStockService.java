@@ -7,6 +7,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.bl.core.data.StockResult;
 import com.bl.facades.product.data.RentalDateDto;
@@ -80,7 +81,7 @@ public interface BlCommerceStockService
 	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode);
 	
 	/**
-	 * Gets the next availability date.
+	 * Gets the next availability date for the product against the quantity to check.
 	 *
 	 * @param productCode
 	 *           the product code
@@ -96,7 +97,7 @@ public interface BlCommerceStockService
 			final Collection<WarehouseModel> warehouses, final int qtyToCheck);
 
 	/**
-	 * Gets the stock for product codes and date.
+	 * Gets the list of stocks for product codes and dates.
 	 *
 	 * @param productCodes
 	 *           the product codes
@@ -112,22 +113,45 @@ public interface BlCommerceStockService
 			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
 
 	/**
-	 * Collect available qty.
+	 * Grouping the products availability by product codes.
 	 *
 	 * @param startDate
 	 *           the start date
 	 * @param endDate
 	 *           the end date
-	 * @param stockLevels
-	 *           the stock levels
-	 * @param availability
-	 *           the availability
-	 * @param totalUnits
-	 *           the total units
+	 * @param lProductCodes
+	 *           the l product codes
+	 * @param warehouses
+	 *           the warehouses
+	 * @return the map
+	 */
+	Map<String, Long> groupByProductsAvailability(final Date startDate, final Date endDate, final List<String> lProductCodes,
+			final List<WarehouseModel> warehouses);
+
+	/**
+	 * Gets the next availability date for the product on checkout by subtracting one day from available date.
+	 *
 	 * @param productCode
 	 *           the product code
+	 * @param rentalDates
+	 *           the rental dates
+	 * @param warehouses
+	 *           the warehouses
+	 * @param qtyToCheck
+	 *           the qty to check
+	 * @return the next availability date
 	 */
-	void collectAvailableQty(final Date startDate, final Date endDate, final Collection<StockLevelModel> stockLevels,
-			final List<Long> availability, final List<Long> totalUnits, final String productCode);
-	
+	String getNextAvailabilityDateInCheckout(final String productCode, final RentalDateDto rentalDates,
+			final Collection<WarehouseModel> warehouses, final int qtyToCheck);
+
+	/**
+	 * Gets the next availability date for the product on PDP.
+	 *
+	 * @param productCode
+	 *           the product code
+	 * @param rentalDate
+	 *           the rental date
+	 * @return the next availability date for PDP
+	 */
+	String getNextAvailabilityDateInPDP(final String productCode, final RentalDateDto rentalDate);
 }

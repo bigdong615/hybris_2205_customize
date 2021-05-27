@@ -215,6 +215,10 @@
   <bean class="de.hybris.platform.commerceservices.search.resultdata.SearchResultValueData">
     <property name="blPage" type="String"/>
   </bean>
+  
+  <bean class="de.hybris.platform.commerceservices.service.data.CommerceCartParameter">
+		  <property name="isFromAddToCartPopup" type="Boolean"/>
+	</bean>	
 
 
 </beans>

@@ -51,7 +51,7 @@ public interface BlCartService extends CartService {
   void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate);
   
   /**
-	 * Check availability for rental cart.
+	 * Gets the list of available quantity for rental cart entries.
 	 *
 	 * @param cartData
 	 *           the cart data
@@ -61,23 +61,7 @@ public interface BlCartService extends CartService {
 	 *           the rental dates from session
 	 * @return the map
 	 */
-	Map<String, Long> checkAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
+	Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
 			final RentalDateDto rentalDatesFromSession);
-
-	/**
-	 * Gets the next availability date.
-	 *
-	 * @param productCode
-	 *           the product code
-	 * @param rentalDates
-	 *           the rental dates
-	 * @param warehouses
-	 *           the warehouses
-	 * @param qtyToCheck
-	 *           the qty to check
-	 * @return the next availability date
-	 */
-	String getNextAvailabilityDate(final String productCode, final RentalDateDto rentalDates,
-			final Collection<WarehouseModel> warehouses, final int qtyToCheck);
 	
 }

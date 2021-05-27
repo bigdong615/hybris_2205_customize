@@ -63,7 +63,7 @@ public interface BlStockLevelDao
 			final Date startDate, final Date endDate);
 	
 	/**
-	 * Find stock levels for product codes and date.
+	 * Find stock levels for list of products and date.
 	 *
 	 * @param productCodes
 	 *           the product codes

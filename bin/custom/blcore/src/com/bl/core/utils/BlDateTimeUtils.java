@@ -575,7 +575,7 @@ public final class BlDateTimeUtils
 	}
 
 	/**
-	 * Check for skiping days.
+	 * Check if the date falls on weekends .
 	 *
 	 * @param localDate
 	 *           the local date

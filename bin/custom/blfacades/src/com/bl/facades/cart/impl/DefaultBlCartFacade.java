@@ -4,14 +4,17 @@ import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 
+import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
+import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.impl.DefaultCartFacade;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
@@ -26,13 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.assertj.core.util.Lists;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -47,6 +50,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private BlDatePickerService blDatePickerService;
   
   private BaseStoreService baseStoreService;
+  
+  private BlCommerceStockService blCommerceStockService;
 
   /**
    * {@inheritDoc}
@@ -206,47 +211,68 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean checkAvailabilityForRentalCart(final CartData cartData)
+	public void checkAvailabilityForRentalCart(final CartData cartData)
 	{
-		final AtomicBoolean enableContinueToCheckout = new AtomicBoolean(Boolean.TRUE);
-		final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
-		if (BooleanUtils.isTrue(cartData.getIsRentalCart()) && Objects.nonNull(rentalDatesFromSession)
-				&& CollectionUtils.isNotEmpty(cartData.getEntries()))
+		try
 		{
-			final List<WarehouseModel> warehouses = getBaseStoreService().getCurrentBaseStore().getWarehouses();
-			final Map<String, Long> availabilityForRentalCart = getBlCartService().checkAvailabilityForRentalCart(cartData,
-					warehouses, rentalDatesFromSession);
-			cartData.getEntries().forEach(entry -> {
-				final int cartEntryQty = entry.getQuantity().intValue();
-				final String productCode = entry.getProduct().getCode();
-				final int availableQty = availabilityForRentalCart.get(productCode).intValue();
-				if (availableQty == 0)
-				{
-					final String nextAvailabilityDate = getBlCartService().getNextAvailabilityDate(productCode, rentalDatesFromSession,
-							warehouses, cartEntryQty);
-					if (StringUtils.isNotBlank(nextAvailabilityDate))
+			final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
+			if (BooleanUtils.isTrue(cartData.getIsRentalCart()) && Objects.nonNull(rentalDatesFromSession)
+					&& CollectionUtils.isNotEmpty(cartData.getEntries()))
+			{
+				final List<WarehouseModel> warehouses = getBaseStoreService().getCurrentBaseStore().getWarehouses();
+				final Map<String, Long> availabilityForRentalCart = getBlCartService().getAvailabilityForRentalCart(cartData,
+						warehouses, rentalDatesFromSession);
+				cartData.getEntries().forEach(entry -> {
+					final int cartEntryQty = entry.getQuantity().intValue();
+					final String productCode = entry.getProduct().getCode();
+					final int availableQty = availabilityForRentalCart.get(productCode).intValue();
+					if (availableQty == 0)
 					{
-						entry.setAvailabilityMessage(cartEntryQty > 1
-								? getMessage("cart.entry.item.availability.qty.no.stock.available",
-										Arrays.asList(String.valueOf(cartEntryQty), nextAvailabilityDate))
-								: getMessage("cart.entry.item.availability.no.stock.available.till",
-										Arrays.asList(nextAvailabilityDate)));
+						final String nextAvailabilityDate = getBlCommerceStockService().getNextAvailabilityDateInCheckout(productCode,
+								rentalDatesFromSession, warehouses, cartEntryQty);
+						setNextAvailableDateToCartEntry(entry, cartEntryQty, nextAvailabilityDate);
 					}
-					enableContinueToCheckout.set(Boolean.FALSE);
-				}
-				else if (BooleanUtils.negate(availableQty >= cartEntryQty))
-				{
-					entry.setAvailabilityMessage(
-							getMessage("cart.entry.item.availability.low.stock.available", Arrays.asList(String.valueOf(availableQty))));
-					enableContinueToCheckout.set(Boolean.FALSE);
-				}
-			});
+					else if (BooleanUtils.negate(availableQty >= cartEntryQty))
+					{
+						entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.available",
+								Arrays.asList(String.valueOf(availableQty))));
+					}
+				});
+			}
 		}
-		return enableContinueToCheckout.get();
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+					"Error while checking next availability for cart - {}", cartData.getCode());
+			final AvailabilityMessage productUnavailableMessage = getMessage("text.stock.not.available", Lists.emptyList());
+			cartData.getEntries().forEach(cartEntry -> cartEntry.setAvailabilityMessage(productUnavailableMessage));
+		}
 	}
 
 	/**
-	 * Gets the message object.
+	 * Sets the next available date with message to cart entry.
+	 *
+	 * @param entry
+	 *           the entry
+	 * @param cartEntryQty
+	 *           the cart entry qty
+	 * @param nextAvailabilityDate
+	 *           the next availability date
+	 */
+	private void setNextAvailableDateToCartEntry(final OrderEntryData entry, final int cartEntryQty,
+			final String nextAvailabilityDate)
+	{
+		if (StringUtils.isNotBlank(nextAvailabilityDate))
+		{
+			entry.setAvailabilityMessage(cartEntryQty > 1
+					? getMessage("cart.entry.item.availability.qty.no.stock.available",
+							Arrays.asList(String.valueOf(cartEntryQty), nextAvailabilityDate))
+					: getMessage("cart.entry.item.availability.no.stock.available.till", Arrays.asList(nextAvailabilityDate)));
+		}
+	}
+
+	/**
+	 * Gets the availability message object by setting message and list of arguments.
 	 *
 	 * @param messageCode
 	 *           the message code
@@ -262,6 +288,25 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		return message;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public CartModificationData updateCartEntryFromPopup(final long entryNumber, final long quantity)
+			throws CommerceCartModificationException
+	{
+		final AddToCartParams dto = new AddToCartParams();
+		dto.setQuantity(quantity);
+		final CommerceCartParameter parameter = getCommerceCartParameterConverter().convert(dto);
+		parameter.setEnableHooks(true);
+		parameter.setEntryNumber(entryNumber);
+		parameter.setIsFromAddToCartPopup(true);
+
+		final CommerceCartModification modification = getCommerceCartService().updateQuantityForCartEntry(parameter);
+
+		return getCartModificationConverter().convert(modification);
+	}
+	
   /**
    * Gets the bl cart service.
    *
@@ -312,6 +357,22 @@ public BaseStoreService getBaseStoreService()
 public void setBaseStoreService(BaseStoreService baseStoreService)
 {
 	this.baseStoreService = baseStoreService;
+}
+
+/**
+ * @return the blCommerceStockService
+ */
+public BlCommerceStockService getBlCommerceStockService()
+{
+	return blCommerceStockService;
+}
+
+/**
+ * @param blCommerceStockService the blCommerceStockService to set
+ */
+public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+{
+	this.blCommerceStockService = blCommerceStockService;
 }
 
 }

@@ -67,11 +67,25 @@ public interface BlCartFacade extends CartFacade {
   boolean isRentalProductAddedToCartInUsedGearCart(final String productCode, final String serialCode);
   
   /**
-	 * Check availability for rental cart.
+	 * Check availability for rental cart entries. If available quantity is less then the entry quantity then it will set
+	 * message on cart line items.
 	 *
 	 * @param cartData
 	 *           the cart data
 	 * @return true, if successful
 	 */
-	boolean checkAvailabilityForRentalCart(final CartData cartData);
+	void checkAvailabilityForRentalCart(final CartData cartData);
+
+	/**
+	 * Update the product quantity cart entry from add to cart popup.
+	 *
+	 * @param entryNumber
+	 *           the entry number
+	 * @param quantity
+	 *           the quantity
+	 * @return the cart modification data
+	 * @throws CommerceCartModificationException
+	 *            the commerce cart modification exception
+	 */
+	CartModificationData updateCartEntryFromPopup(long entryNumber, long quantity) throws CommerceCartModificationException;
 }
