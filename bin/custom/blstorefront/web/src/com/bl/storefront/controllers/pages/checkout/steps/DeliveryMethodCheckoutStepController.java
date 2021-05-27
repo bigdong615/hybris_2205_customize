@@ -241,13 +241,20 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if (addressRequiresReview) {
             return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
         }
-        getUserFacade().addAddress(newAddress);
+
+        if(BlDeliveryModeLoggingConstants.UPS.equals(newAddress.getLastName())) {
+            getCheckoutFacade().setUPSAddressOnCartForIam(newAddress);
+        }
+        if(newAddress.isVisibleInAddressBook()) {
+            getUserFacade().addAddress(newAddress);
+        }
         final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
         // Set the new address as the selected checkout delivery address
         getCheckoutFacade().setDeliveryAddress(newAddress);
         if (previousSelectedAddress != null && !previousSelectedAddress.isVisibleInAddressBook()) { // temporary address should be removed
             getUserFacade().removeAddress(previousSelectedAddress);
         }
+
         return SUCCESS;
     }
 
