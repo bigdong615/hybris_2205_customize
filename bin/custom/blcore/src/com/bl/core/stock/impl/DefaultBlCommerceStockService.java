@@ -519,7 +519,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		{
 			final List<Date> missingDatesForStock = getMissingDatesForStock(stockLevelsDatewise, newRentalStartDate,
 					newRentalEndDate);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Missing Stock dates for product {} are {}", productCode,
+			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "Missing Stock dates for product {} are {}", productCode,
 					missingDatesForStock);
 			return getNextDate(1, missingDatesForStock.get(missingDatesForStock.size() - 1));
 		}
