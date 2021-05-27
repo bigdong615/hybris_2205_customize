@@ -42,9 +42,11 @@ public class BlDeliveryModeLoggingConstants {
 
     public static final String SHIP_HOME_HOTEL_BUSINESS = "SHIP_HOME_HOTEL_BUSINESS";
     public static final String BL_PARTNER_PICKUP = "BL_PARTNER_PICKUP";
-    public static final String SHIP_HOLD_UPS_OFFICE = "SHIP_HOLD_UPS_OFFICE";
+    public static final String SHIP_HOLD_UPS_OFFICE = "SHIP_UPS_OFFICE";
     public static final String SAME_DAY_DELIVERY = "SAME_DAY_DELIVERY";
     public static final String NEXT_DAY_RUSH_DELIVERY = "NEXT_DAY_RUSH_DELIVERY";
+
+    public static final String UPS = "UPS";
 
     public static final String SHIP_HOME_HOTEL_BUSINESS_MSG = "Ship to home, hotel business";
     public static final String BL_PARTNER_PICKUP_MSG = "BL-Partner pickup";
