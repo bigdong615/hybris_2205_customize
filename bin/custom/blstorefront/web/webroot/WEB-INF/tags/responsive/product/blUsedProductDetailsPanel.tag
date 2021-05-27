@@ -85,7 +85,11 @@
                <div class="container">
                    <div class="row justify-content-center">
                        <div class="col-lg-11 col-xl-9">
-                           <h5>Buying used gear is easy</h5>
+                           <h5><cms:pageSlot position="BuyingUsedGearIsEasyTitleSlot"
+                               							var="feature">
+                               							<cms:component component="${feature}" />
+                               						</cms:pageSlot>
+                           </h5>
                            <div class="row mt-5">
                                <div class="col-6 col-md-3 text-center">
                                    <h6>Inspected & cleaned by our experts</h6>

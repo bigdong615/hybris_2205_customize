@@ -405,6 +405,11 @@
 				jaloclass="de.hybris.platform.acceleratorcms.jalo.components.SupportNavigationComponent">
 				<description>Custom Navigation component for Support navigation node on header.</description>
 			</itemtype>
+
+      <itemtype code="BuyingUsedGearIsEasyComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
+        jaloclass="com.bl.core.cms.components.BuyingUsedGearIsEasyComponent">
+        <description>Custom CMS Paragraph Component type that contains additional attribute for buying used gear is easy section on PDP</description>
+      </itemtype>
 		</typegroup>
 
         <typegroup name="borrowLenses">
@@ -1388,7 +1393,7 @@
             </itemtype>
 
             <itemtype code="PartnerPickUpStore" extends="GenericItem" autocreate="true" generate="true">
-                <deployment table="partnerPickUpStore" typecode="12210" />
+                <deployment table="partnerPickUpStore" typecode="12310" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
