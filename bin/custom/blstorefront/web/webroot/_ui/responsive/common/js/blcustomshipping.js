@@ -1,9 +1,11 @@
  $(document).ready(function() {
+    resetSelectBox('ship-it-select-box');
     defaultShipIt();
     hideLabelsFromForm();
     shipToHomeShippingMethods();
     changeUPSStore();
     hideShippingForm();
+    hideErrorForInputValidation();
 });
 
  $('#ship-it-select-box').change(function () {
@@ -36,6 +38,8 @@
 
  //ShipIt
  $("input[id='ship-it']").click(function() {
+    hideErrorForInputValidation();
+    $("#ship-it-savedAddresses option[value='newAddress']").removeAttr("selected");
     defaultShipIt();
     resetSelectBox('ship-it-select-box');
     hideShippingForm();
@@ -51,6 +55,7 @@
 });
 
  function onChangeOfShipItShippingMethod() {
+    hideErrorForInputValidation();
     $('#ship-it-notification').html("");
     var shippingMethod = $('#ship-it-select-box').val();
     if(shippingMethod == 'SHIP_HOME_HOTEL_BUSINESS') {
@@ -110,6 +115,7 @@
   }
 
  function shipToHomeShippingContinue(shippingMethod) {
+      hideErrorForInputValidation();
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
       if(checkAvailability(deliveryMode))
@@ -131,7 +137,7 @@
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
                                                                      phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP');
               } else {
-                  showErrorNotification("Please enter mandatory fields values!!", true);
+                  showErrorForInputValidation('Ship');
               }
           }
       }
@@ -202,7 +208,7 @@
                  savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                         $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
              } else {
-                  showErrorNotification("Please enter mandatory fields values!!", true);
+                  showErrorForInputValidation('Rush');
              }
          }
      } else {
@@ -377,6 +383,7 @@
 
  //PickUp
  $("input[id='pickup']").click(function() {
+     hideErrorForInputValidation();
      resetSelectBox('pick-up-select-box');
      resetPartnerPickUpSection();
      showPartnerPickUpDeliveryModes($('#pick-up-select-box').val());
@@ -509,6 +516,7 @@
  }
 
  function onAddNewAddressClicked() {
+    hideErrorForInputValidation();
     if($('input[name="shipProduct"]:checked').attr('id') == 'ship-it') {
         $('#delivery-shippingAddressFormDiv').show();
         $('#ship-it-save-address-div').show();
@@ -546,6 +554,7 @@
         $('#same-day-notification').val('');
         $('#same-day-notification').hide();
     }
+    hideErrorForInputValidation();
  }
 
  function pickUpBySomeoneForm() {
@@ -573,6 +582,8 @@
 
   //SF Or NYC
   $("input[id='sameday']").click(function() {
+      hideErrorForInputValidation();
+      $("#ship-it-savedAddresses option[value='newAddress']").removeAttr("selected");
       if($('#same-day-address-div #delivery-saved-addresses-dropdown').length == 1) {
           $('#same-day-address-div #delivery-shippingAddressFormDiv').hide();
       }
@@ -589,6 +600,7 @@
   });
 
   function onChangeOfSameDayShippingMethod() {
+       hideErrorForInputValidation();
        $('#same-day-notification').val('');
        $('#same-day-notification').hide('');
        $('#same-day-address-div').hide();
@@ -599,6 +611,7 @@
   }
 
   function sameDayZipCheck() {
+    hideErrorForInputValidation();
     $('#same-day-notification').val('');
     $('#same-day-notification').hide();
     $('#same-day-address-div').hide();
@@ -692,6 +705,7 @@
   }
 
   function SFOrNYCShippingSectionContinue() {
+    hideErrorForInputValidation();
     $('#same-day-notification').val('');
     $('#same-day-notification').hide();
     var savedAddress = null;
@@ -759,7 +773,7 @@
                    }
                 });
             } else {
-                showErrorNotificationSameDay("Please enter mandatory fields values!!", true);
+                showErrorForInputValidation('Rush');
                 $('.page-loader-new-layout').hide();
             }
         }
@@ -794,6 +808,37 @@
   }
 
  //Error Notifications
+ function showErrorForInputValidation(section) {
+    let notification = '';
+    if(section == 'Ship') {
+        notification += '<div class="notification notification-error"> You are missing ' +
+                            $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error').length +
+                            ' required fields.' +
+                            '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
+    } else {
+        notification += '<div class="notification notification-error"> You are missing ' +
+                            $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error').length +
+                            ' required fields.' +
+                            '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
+    }
+    notification += '</div>';
+    $('#showErrorForInputValidation').html(notification);
+    $('#showErrorForInputValidation').show();
+ }
+
+ function scrollUpForError(event) {
+    if(event.getAttribute('class') == 'Ship') {
+        return $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+    } else {
+        return $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+    }
+ }
+
+ function hideErrorForInputValidation() {
+    $('#showErrorForInputValidation').html('');
+    $('#showErrorForInputValidation').hide();
+ }
+
  function showErrorNotificationForPickUpId(msg, status) {
      let notification = '<div class="notification notification-warning">' + msg + '</div>';
      $('#pick-up-notification').html(notification);

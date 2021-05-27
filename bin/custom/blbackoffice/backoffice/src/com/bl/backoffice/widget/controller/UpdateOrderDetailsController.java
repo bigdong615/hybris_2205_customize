@@ -289,7 +289,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				deliveryAddress = pickupDeliveryAddress;
 			}
 
-			if ("SHIP_HOLD_UPS_OFFICE".equals(zonedeliveryMode.getShippingGroup().getCode()))
+			if ("SHIP_UPS_OFFICE".equals(zonedeliveryMode.getShippingGroup().getCode()))
 			{
 				deliveryAddress.setPickStoreAddress(false);
 				deliveryAddress.setUpsStoreAddress(true);
