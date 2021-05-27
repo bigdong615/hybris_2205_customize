@@ -47,6 +47,9 @@
                                     <checkout:fastest/>
                                 </div>
                             </div><!-- End Accordion -->
+                            <div id="showErrorForInputValidation">
+
+                            </div>
                             <div class="cart-actions">
                                 <a href="/blstorefront/bl/en/cart" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
