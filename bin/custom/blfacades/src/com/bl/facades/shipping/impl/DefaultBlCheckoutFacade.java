@@ -2,7 +2,9 @@ package com.bl.facades.shipping.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.GeneratedBlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.*;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -40,6 +42,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {javadoc}
@@ -71,7 +74,30 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public Collection<BlShippingGroupData> getAllShippingGroups() {
-        return getBlShippingGroupConverter().convertAll(getBlZoneDeliveryModeService().getAllShippingGroups());
+        return getBlShippingGroupConverter().convertAll(sortModelsOnShippingGroupType(getBlZoneDeliveryModeService().getAllShippingGroups()));
+    }
+
+    private Collection<ShippingGroupModel> sortModelsOnShippingGroupType(final Collection<ShippingGroupModel> shippingGroupModels) {
+        Collection<ShippingGroupModel> allGroupModels = new ArrayList<>();
+
+        final Collection<ShippingGroupModel> fastGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FAST.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+        final Collection<ShippingGroupModel> fasterGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FASTER.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+        final Collection<ShippingGroupModel> fastestGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FASTEST.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fastGroupModels) ? fastGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fasterGroupModels) ? fasterGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fastestGroupModels) ? fastestGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+
+        return allGroupModels;
     }
 
     /**
@@ -391,7 +417,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         final CartData cartData = getCartFacade().getSessionCart();
         if (cartData != null)
         {
-            //cartData.setDeliveryAddress(getDeliveryAddress());
             cartData.setDeliveryMode(getDeliveryMode());
             cartData.setPaymentInfo(getPaymentDetails());
         }
