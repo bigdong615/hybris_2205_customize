@@ -120,7 +120,9 @@ INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]
                                     ;                         ; BrandTitleComponent             ; Brand Title Component               ; BrandTitleComponent             ; "Brands"               
                                     ;                         ; RentingGearIsEasyTitleComponent ; Renting Gear IsEasy Title Component ; RentingGearIsEasyTitleComponent ; "Renting gear is easy" 
                                     ;                         ; CategoriesTitleComponent        ; Categories Title Component          ; CategoriesTitleComponent        ; "Categories"           
-                                    ;                         ; TheyBorrowFromUsTitleComponent  ; They BorrowFromUs Title Component   ; TheyBorrowFromUsTitleComponent  ; "They Borrow From Us"  
+                                    ;                         ; TheyBorrowFromUsTitleComponent  ; They BorrowFromUs Title Component   ; TheyBorrowFromUsTitleComponent  ; "They Borrow From Us"
+                                    ;                         ; BuyingUsedGearIsEasyTitleComponent ; Buying Used Gear Is Easy Title Component ; BuyingUsedGearIsEasyTitleComponent ; "Buying used gear is easy"
+
 
 #Mobile device navigation link component for ship or pickup, support and Account nav link                                    
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url  ; target(code)[default='sameWindow'] 
@@ -162,7 +164,13 @@ INSERT_UPDATE ProductCarouselComponent;$contentCV[unique=true];uid[unique=true]	
                                  
 INSERT_UPDATE SearchBoxComponent; $contentCV[unique = true]; uid[unique = true]; name       ; &componentRef
                                 ;                          ; BlSearchBox       ; Search Box ; BlSearchBox
-                                 
+
+INSERT_UPDATE BuyingUsedGearIsEasyComponent ; $contentCV[unique=true] ; uid[unique=true]        ; name                         ; &componentRef             ;usedGearData
+                                            ;                         ;BuyingUsedGearComponent1 ; Buying Used Gear Component1  ; BuyingUsedGearComponent1  ; Inspected & cleaned by our experts
+                                            ;                         ;BuyingUsedGearComponent2 ; Buying Used Gear Component2  ; BuyingUsedGearComponent2  ; We guarantee your gear will work perfectly
+                                            ;                         ;BuyingUsedGearComponent3 ; Buying Used Gear Component3  ; BuyingUsedGearComponent3  ; Know what to expect with condition details
+                                            ;                         ;BuyingUsedGearComponent4 ; Buying Used Gear Component4  ; BuyingUsedGearComponent4  ; Try it yourself with easy returns
+
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; cmsComponents(uid,$contentCV)                                                                                                                                                                                                 
                    ;                         ; PromoBannerSlot                    ; PromoBannerComponent                                                                                                                                                                                                          
@@ -192,6 +200,6 @@ UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 
 				   ;						 ; HomePageFeaturedGearSectionSlot    ; HomePageFeaturedGearComponent                   
                    ;                         ; MobileMiniCartSlot                 ; MiniCart                   
                    ;                         ; HomePageBannerSearchBoxSlot        ; BlSearchBox
-                   ;                         ; MobileHomePageBannerSearchBoxSlot  ; BlSearchBox				   
-                   
-                                      
+                   ;                         ; MobileHomePageBannerSearchBoxSlot  ; BlSearchBox
+
+

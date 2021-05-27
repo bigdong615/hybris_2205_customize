@@ -409,6 +409,13 @@
       <itemtype code="BuyingUsedGearIsEasyComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
         jaloclass="com.bl.core.cms.components.BuyingUsedGearIsEasyComponent">
         <description>Custom CMS Paragraph Component type that contains additional attribute for buying used gear is easy section on PDP</description>
+        <attributes>
+          <attribute qualifier="usedGearData" type="localized:java.lang.String">
+            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true" />
+            <description>Localized usedGearData only for Buying Used Gear Is Easy section </description>
+          </attribute>
+        </attributes>
       </itemtype>
 		</typegroup>
 

@@ -25,10 +25,15 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; HomePageRentingGearSectionSlot     ;                                                                       ;                           ; wide
                               ; BreadcrumbSection                 ;                                                                        ;                           ;wide
                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
+                             ; BuyingUsedGearIsEasyTitleSlot ;                                                                       ;                           ; wide
+                             ; BuyingUsedGearIsEasySectionSlot     ;                                                                       ;                           ; wide
+
 
 
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
                           ;                         ;BreadcrumbSlot                      ;Breadcrumb slot
+                          ;                         ; BuyingUsedGearIsEasySectionSlot     ; BuyingUsedGearComponent1,BuyingUsedGearComponent2,BuyingUsedGearComponent3,BuyingUsedGearComponent4
+                          ;                         ; BuyingUsedGearIsEasyTitleSlot ; BuyingUsedGearIsEasyTitleComponent
 
 
 ###  Define ContentSlot For Template  ###
@@ -49,7 +54,8 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; HomePageRentingGearSectionSlot-productDetails     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
                                       ;                        ; BreadcrumbSlot-productDetails                     ; BreadcrumbSection                 ;                                                        ; BreadcrumbSlot                           ; true
                                     ;                          ; SearchBoxBl-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
-
+                                   ;                         ; BuyingUsedGearIsEasyTitleSlot1-productDetails    ; BuyingUsedGearIsEasyTitleSlot      ;                                                                                 ; BuyingUsedGearIsEasyTitleSlot           ; true
+                                    ;                         ; BuyingUsedGearIsEasySectionSlot1-productDetails  ; BuyingUsedGearIsEasySectionSlot   ;                                                                                 ; BuyingUsedGearIsEasySectionSlot            ; true
 
 # Product Details Page
 INSERT_UPDATE ProductPage ; $contentCV[unique=true] ; uid[unique=true] ; name            ; masterTemplate(uid,$contentCV) ; defaultPage ; approvalStatus(code)[default='approved']
