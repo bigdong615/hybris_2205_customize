@@ -45,14 +45,7 @@
            						        </form:form>
                               <div class="cart-actions">
                                   <a href="/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
-                                  <c:choose>
-                                  	<c:when test="${not empty enableContinueButton && enableContinueButton == false}">
-                                  		<a href="" class="btn btn-sm btn-primary float-end disabled" id="cart-continue">
-                                  	</c:when>
-                                  	<c:otherwise>
-                                  		<a href="" class="btn btn-sm btn-primary float-end " id="cart-continue">
-                                  	</c:otherwise>
-                                  </c:choose>
+                                  <a href="" class="btn btn-sm btn-primary float-end" id="cart-continue">
                                     <spring:theme code="general.continue.button" />
                                   </a>
                               </div>

@@ -98,20 +98,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                           type: 'POST',
                           data: form.serialize(),
                           success: function (response) {
-	                          if(response == "error")
-	                          {
-	                          	$('#popupErrorMessage').text('Something Went Wrong');
-	                          	$('#popupErrorMessage').show();
-	                          }
-	                          else if(response == "")
-	                          {
-	                          	$('#popupErrorMessage').hide();
-	                          }
-	                          else
-	                          {
-	                          	$('#popupErrorMessage').text(response);
-	                          	$('#popupErrorMessage').show();
-	                          }
+                             console.log("Quantity updated");
                           },
                           error: function (jqXHR, textStatus, errorThrown) {
                             console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);

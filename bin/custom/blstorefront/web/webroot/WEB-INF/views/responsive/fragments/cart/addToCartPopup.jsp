@@ -36,8 +36,7 @@
             <div class="modal-body">
               <div class="row">
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b><span class="gray80"><spring:theme code="pdp.rental.dates.label.text"/></span>
-                  <div class="notification notification-error" id="popupErrorMessage" style="display:none"></div></div>
+                  <div class="col-md-7 mt-4"><b>${product.name}</b><span class="gray80"><spring:theme code="pdp.rental.dates.label.text"/></span></div>
                   <div class="col-md-3 mt-4 text-md-end">
                       <b>${entry.basePrice.formattedValue}</b>
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
