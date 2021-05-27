@@ -37,6 +37,7 @@ import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -72,6 +73,12 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private BlCartService blCartService;
     
     private BaseStoreService baseStoreService;
+
+    @Value("${shipping.sf.zip.code}")
+    private String sf;
+
+    @Value("${shipping.nyc.zip.code}")
+    private String nyc;
 
     /**
      * {@inheritDoc}
@@ -513,8 +520,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         if(validateZip(pinCode)) {
             try {
                 final SameDayCityResData sameDayCityResData = getBlFedExSameDayService().getAvailability(getSameDayCityReqData(pinCode,
-                        BlDeliveryModeLoggingConstants.SF.equals(deliveryType) ? "94070" : "10004"));
-                        //getWarehouseZipCode(deliveryType, true)));
+                        BlDeliveryModeLoggingConstants.SF.equals(deliveryType) ? sf : nyc));
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day fedex integration pinCode validity");
                 return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable(): Boolean.FALSE;
             } catch (URISyntaxException e) {
@@ -523,22 +529,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
         }
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWarehouseZipCode(final String deliveryType, final boolean payByCustomer) {
-        final BlRushDeliveryModeModel blRushDeliveryModeModel = getBlZoneDeliveryModeDao().getBlRushDeliveryModeForWarehouseZipCode(
-                deliveryType, payByCustomer);
-        if(blRushDeliveryModeModel != null) {
-            final WarehouseModel warehouseModel = blRushDeliveryModeModel.getWarehouse();
-            if(warehouseModel != null) {
-                return getPOSAddress(warehouseModel.getPointsOfService());
-            }
-        }
-        return null;
     }
 
     /**
