@@ -347,8 +347,6 @@ public class CartPageController extends AbstractCartPageController
 				{
 					final CartModificationData cartModification = getCartFacade().updateCartEntry(entryNumber,
 							form.getQuantity().longValue());
-					addFlashMessage(form, request, redirectModel, cartModification);
-					
 				}
 				else
 				{
@@ -403,7 +401,6 @@ public class CartPageController extends AbstractCartPageController
 		{
 			final CartModificationData cartModification = getCartFacade().updateCartEntry(entryNumber,
 					form.getQuantity().longValue());
-			addFlashMessage(form, request, redirectModel, cartModification);
 		}
 	}
 
