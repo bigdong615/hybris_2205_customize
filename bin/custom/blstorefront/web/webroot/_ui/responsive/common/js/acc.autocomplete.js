@@ -111,11 +111,11 @@ ACC.autocomplete = {
 			$search.yautocomplete()
 		}
 
-	/** Added Unique Class for mobile search box**/
-		$search2 = $(".js-site-search-input-mobile");
-    		if($search2.length>0){
-    			$search2.yautocomplete()
-    		}
+		/** Added unique class for mobile search box**/
+			$search2 = $(".js-site-search-input-mobile");
+        		if($search2.length>0){
+        			$search2.yautocomplete()
+        		}
 
 	},
 
@@ -126,10 +126,10 @@ ACC.autocomplete = {
             $('.js_search_button').prop('disabled', this.value == "" ? true : false);
         })
 
-    /**Added Unique id for Mobile Search Box**/
-         $('#js-site-search-input-mob').keyup(function(){
-                	$('#js-site-search-input-mob').val($('#js-site-search-input-mob').val().replace(/^\s+/gm,''));
-                    $('.js_search_button').prop('disabled', this.value == "" ? true : false);
-                })
+        /**Added unique id for Mobile Search Box**/
+          $('#js-site-search-input-mob').keyup(function(){
+                        	$('#js-site-search-input-mob').val($('#js-site-search-input-mob').val().replace(/^\s+/gm,''));
+                            $('.js_search_button').prop('disabled', this.value == "" ? true : false);
+                        })
     }
 };

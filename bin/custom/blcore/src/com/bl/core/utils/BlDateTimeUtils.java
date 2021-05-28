@@ -1,7 +1,9 @@
 package com.bl.core.utils;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -10,19 +12,23 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.logging.BlLogger;
-
 
 /**
  * This class is used to convert the date format
@@ -322,8 +328,7 @@ public final class BlDateTimeUtils
 	 * @param dateFormat
 	 * @return the Formatted String Date
 	 */
-	public static String convertLocalDateToString(final LocalDate localDate, final String dateFormat)
-	{
+	public static String convertLocalDateToString(final LocalDate localDate, final String dateFormat) {
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 		return localDate.format(formatter);
 	}
@@ -356,4 +361,233 @@ public final class BlDateTimeUtils
 		return startDate;
 	}
 
+	/**
+	 * @author Namrata Lohar
+	 * This method will take string and return locale date
+	 *
+	 * @param date means current Day
+	 * @return LocalDate date
+	 *
+	 */
+	public static LocalDate convertToLocaleDate(final String date) {
+		try
+		{
+			final SimpleDateFormat sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+			final Date newDate = sdf.parse(date);
+			return LocalDate.parse(new SimpleDateFormat(BlDeliveryModeLoggingConstants.LOCAL_DATE_PATTERN).format(newDate));
+		}
+		catch (final DateTimeParseException | ParseException e)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE,
+					date);
+		}
+		return null;
+	}
+
+	/**
+	 * @author Namrata Lohar
+	 * This method will calculate difference between two business days
+	 *
+	 * @param startDate means current Day
+	 * @param endDate means start rental date
+	 * @return long i.e., difference in days
+	 *
+	 * Note: these parameters are getting updated in method body that is why not marked as final otherwise need to explicitely
+	 * take extra attributes!!
+	 */
+	public static int getDaysBetweenBusinessDays(final String startDate, final String endDate) {
+		LocalDate start = BlDateTimeUtils.convertStringDateToLocalDate(startDate, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+		LocalDate end = BlDateTimeUtils.convertStringDateToLocalDate(endDate, BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN);
+		if(null != start && null != end) {
+			if (start.getDayOfWeek().getValue() > BlInventoryScanLoggingConstants.FIVE) {
+				start = start.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+			}
+			if (end.getDayOfWeek().getValue() > BlInventoryScanLoggingConstants.FIVE) {
+				end = end.with(TemporalAdjusters.previous(DayOfWeek.FRIDAY));
+			}
+			if (start.isAfter(end)) {
+				return BlInventoryScanLoggingConstants.ZERO;
+			}
+			Long weeks = ChronoUnit.WEEKS.between(start, end);
+			if (start.getDayOfWeek().getValue() > end.getDayOfWeek().getValue()) {
+				weeks += BlInventoryScanLoggingConstants.ONE;
+			}
+			return BlInventoryScanLoggingConstants.FIVE * weeks.intValue() + end.getDayOfWeek().getValue() - start.getDayOfWeek().getValue();
+		}
+		return BlInventoryScanLoggingConstants.ZERO;
+	}
+
+	/**
+	 * @author Namrata Lohar
+	 *
+	 * This method will give us current time in specified time-zone time zone
+	 * @return String time HH:mm
+	 */
+	public static String getCurrentTimeUsingCalendar(final String timeZone) {
+		final DateFormat dateFormat = new SimpleDateFormat(BlDeliveryModeLoggingConstants.DATE_TIME);
+		dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+		return dateFormat.format(Calendar.getInstance().getTime());
+	}
+
+	/**
+	 * @author Namrata Lohar
+	 *
+	 * This method will give us current time in specified time-zone time zone
+	 * @return String date in specified zone
+	 */
+	public static String getCurrentDateUsingCalendar(final String timeZone, final Date date) {
+		final DateFormat dateFormat = new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN);
+		dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
+		return dateFormat.format(date);
+	}
+
+	/**
+	 * This method will convert string to date with specified time zone
+	 *
+	 * @param date date
+	 * @param zone timeZone
+	 * @return date
+	 */
+	public static Date getStringToDateWithTimeZone(final String date, final String zone) {
+		try
+		{
+			SimpleDateFormat sdf = null;
+			if(date.contains("-")) {
+				sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN);
+			} else {
+				sdf = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+			}
+			sdf.setTimeZone(TimeZone.getTimeZone(zone));
+			return sdf.parse(date);
+		}
+		catch (final DateTimeParseException | ParseException e)
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, date);
+		}
+		return null;
+
+	}
+
+	/**
+	 * This method will return day of week for input timezone
+	 *
+	 * @param timeZone PST/EST
+	 * @return Day of Week like SUNDAY
+	 */
+	public static DayOfWeek getDayOfWeek(final String timeZone, final String date) {
+		return LocalDate.parse(getCurrentDateUsingCalendar(timeZone, getStringToDateWithTimeZone(date, BlDeliveryModeLoggingConstants.ZONE_PST)),
+				getFormatter(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN)).getDayOfWeek();
+	}
+
+	/**
+	 * It gets the date which is after a year
+	 *
+	 * @return the date
+	 */
+	public static Date getNextYearsSameDay()
+	{
+		final Date currentDate = new Date();
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTime(currentDate);
+		calendar.add(Calendar.YEAR, 1);
+		return calendar.getTime();
+	}
+
+	/**
+	 * This method will calculate time to check cutOff time condition
+	 *
+	 * @param time zone mode time to compare
+	 * @return true/false
+	 */
+	public static boolean compareTimeWithCutOff(final String time) {
+		try {
+			final SimpleDateFormat sdf = new SimpleDateFormat(BlDeliveryModeLoggingConstants.DATE_TIME);
+			return StringUtils.isNotEmpty(time) ? sdf.parse(BlDateTimeUtils.getCurrentTimeUsingCalendar(
+					BlDeliveryModeLoggingConstants.ZONE_PST)).before(sdf.parse(time)) : Boolean.FALSE;
+		} catch (ParseException e) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
+			return false;
+		}
+	}
+	
+	/**
+	 * Subtracts days in rental dates excluding Weekends.
+	 *
+	 * @param numberOfDaysToRemove
+	 *           the number of days to remove
+	 * @param rentalDate
+	 *           the rental date
+	 * @return the date
+	 */
+	public static Date subtractDaysInRentalDates(final int numberOfDaysToRemove, final String rentalDate)
+	{
+		try
+		{
+			LocalDate localDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+			if (Objects.nonNull(localDate))
+			{
+				int subtractedDays = 0;
+				while (subtractedDays < numberOfDaysToRemove)
+				{
+					localDate = localDate.minusDays(1);
+					subtractedDays = checkForSkipingDays(localDate, subtractedDays);
+				}
+				return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			}
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+		catch (final DateTimeParseException exception)
+		{
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+	}
+
+	/**
+	 * Adds the days in rental dates excluding Weekends.
+	 *
+	 * @param numberOfDaysToAdd
+	 *           the number of days to add
+	 * @param rentalDate
+	 *           the rental date
+	 * @return the date
+	 */
+	public static Date addDaysInRentalDates(final int numberOfDaysToAdd, final String rentalDate)
+	{
+		try
+		{
+			LocalDate localDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+			if (Objects.nonNull(localDate))
+			{
+				int addedDays = 0;
+				while (addedDays < numberOfDaysToAdd)
+				{
+					localDate = localDate.plusDays(1);
+					addedDays = checkForSkipingDays(localDate, addedDays);
+				}
+				return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			}
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+		catch (final DateTimeParseException e)
+		{
+			return getDate(rentalDate, BlCoreConstants.DATE_FORMAT);
+		}
+	}
+
+	/**
+	 * Check if the date falls on weekends .
+	 *
+	 * @param localDate
+	 *           the local date
+	 * @param addedDays
+	 *           the added days
+	 */
+	private static int checkForSkipingDays(final LocalDate localDate, int addedDays)
+	{
+		if (!(localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY))
+		{
+			return addedDays + 1;
+		}
+		return addedDays;
+	}
 }

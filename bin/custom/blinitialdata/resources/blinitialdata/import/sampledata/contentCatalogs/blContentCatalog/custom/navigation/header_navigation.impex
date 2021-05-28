@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------
-#% impex.info("=============================== Importing content from sampledata header_navigation.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs header_navigation.impex =========================");
 $contentCatalog=blContentCatalog
 $contentCatalogName=bl Content Catalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
@@ -32,7 +32,7 @@ INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; n
 INSERT_UPDATE CMSNavigationNode ; uid[unique=true]          ; $contentCV[unique=true] ; name                        ; parent(uid, $contentCV) ; &nodeRef                  ; children(uid,$contentCV) 
                                 ; BLNavNode                 ;                         ; BL Site                     ; BLSiteRootNode          ; BLNavNode                 ;                          
                                 ; BLCategoryNavNode         ;                         ; BL Category Navigation Node ; BLNavNode               ; BLCategoryNavNode         ;                          
-                                ; BLMobileNavNode           ;                         ; BL Mobile Nodes             ; BLNavNode               ; BLMobileNavNode           ; BLMobileNavNode          ;    
+                                ; BLMobileNavNode           ;                         ; BL Mobile Nodes             ; BLNavNode               ; BLMobileNavNode           ;
                                 
                                 
 INSERT_UPDATE CategoryNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                             ; styleClass ; &componentRef          ; navigationNode(&nodeRef) ; wrapAfter 

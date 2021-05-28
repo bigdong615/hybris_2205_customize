@@ -15,7 +15,8 @@
                 		
         
         <requires-extension name="blcore"/>
-                		
+         <requires-extension name="commercefacades"/>   
+        <requires-extension name="blfacades"/>                    		
         
         <coremodule generated="true" manager="org.blbackoffice.jalo.YacceleratorbackofficeManager" packageroot="org.blbackoffice"/>
                 		

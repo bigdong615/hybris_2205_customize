@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<!--
+	ATTENTION: This is just an example file. You have to edit it according to your needs.
+-->
+
+<items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xsi:noNamespaceSchemaLocation="items.xsd">
+
+	<!-- Added additional attribute for Avalara Tax-->
+
+	<itemtypes>
+		<typegroup name="Cart">
+		<itemtype code="AbstractOrder" autocreate="false" generate="false">
+		<description>Extending AbstractOrder type with additional attributes
+		</description>
+			<attributes>
+				<attribute qualifier="avalaraTaxCalculated" type="java.lang.Boolean">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>Boolean.FALSE</defaultvalue>
+				</attribute>
+			<attribute qualifier="isOrderTaxExempt" type="java.lang.Boolean">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+				<defaultvalue>Boolean.FALSE</defaultvalue>
+			</attribute>
+			</attributes>
+		</itemtype>
+
+			<itemtype code="AbstractOrderEntry" autocreate="false" generate="false">
+			<description>Extending the AbstractOrderEntry with additional attributes.</description>
+			<attributes>
+					<attribute qualifier="avalaraLineTax" type="java.lang.Double">
+						<persistence type="property">
+							<columntype>
+								<value>java.math.BigDecimal</value>
+							</columntype>
+						</persistence>
+						<modifiers read="true" write="true" search="true" optional="true"/>
+					</attribute>
+			</attributes>
+			</itemtype>
+		</typegroup>
+
+
+		<!-- Added additional attribute on user level for avalara tax -->
+
+		<typegroup name="User">
+		<itemtype code="User" autocreate="false" generate="false">
+			<attributes>
+			<attribute qualifier="isTaxExempt" type="java.lang.Boolean">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+				<defaultvalue>Boolean.FALSE</defaultvalue>
+			</attribute>
+			<attribute qualifier="taxExemptNumber" type="java.lang.String">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+				<defaultvalue>Determines the customer taxExemptNumber</defaultvalue>
+			</attribute>
+			<attribute qualifier="taxExemptExpiry" type="java.util.Date">
+				<modifiers read="true" write="true" optional="true" />
+				<persistence type="property" />
+				<defaultvalue>Determines the customer taxExempt Expiry date</defaultvalue>
+			</attribute>
+				<attribute qualifier="taxExemptState" type="java.lang.String">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property" />
+					<defaultvalue>Determines the customer taxExemptState</defaultvalue>
+				</attribute>
+			</attributes>
+		</itemtype>
+		</typegroup>
+
+
+		<!--Added Addiional attribute on warehouse for adding wareouse address for avalara tax-->
+
+		<typegroup name="Warehouse">
+		<itemtype code="Warehouse" autocreate="false" generate="false">
+		<description>Extending Warehouse type with additional attributes.</description>
+			<attributes>
+		<attribute qualifier="originAddress" type="Address">
+			<modifiers read="true" write="true" partof="false" search="true"
+				optional="true" />
+			<persistence type="property" />
+		</attribute>
+			</attributes>
+		</itemtype>
+		</typegroup>
+	</itemtypes>
+
+</items>

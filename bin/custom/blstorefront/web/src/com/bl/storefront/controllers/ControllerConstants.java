@@ -104,6 +104,8 @@ public interface ControllerConstants
 				String HostedOrderPostPage = "pages/checkout/multi/hostedOrderPostPage"; // NOSONAR
 				String SilentOrderPostPage = "pages/checkout/multi/silentOrderPostPage"; // NOSONAR
 				String GiftWrapPage = "pages/checkout/multi/giftWrapPage"; // NOSONAR
+
+				String DeliveryOrPickupPage = "pages/checkout/multi/deliveryOrPickup"; // NOSONAR
 			}
 
 			interface Password // NOSONAR
@@ -188,6 +190,12 @@ public interface ControllerConstants
 			{
 				String PasswordResetRequestPopup = "fragments/password/passwordResetRequestPopup"; // NOSONAR
 				String ForgotPasswordValidationMessage = "fragments/password/forgotPasswordValidationMessage"; // NOSONAR
+			}
+
+			interface Login {
+
+				String LoginPopup = "fragments/login/loginPopup";
+				String CreateAccountPopup = "fragments/login/createAccountPopup";
 			}
 
 			interface Product // NOSONAR

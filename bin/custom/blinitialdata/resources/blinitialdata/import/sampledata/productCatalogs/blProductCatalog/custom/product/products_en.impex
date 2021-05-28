@@ -2,7 +2,7 @@
 # Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 # -----------------------------------------------------------------------
 # ImpEx for Importing Product Localisations
-#% impex.info("=============================== Importing content from BLInitialData products_en.impex =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs products_en.impex =========================");
 
 # Macros / Replacement Parameter definitions
 $productCatalog=blProductCatalog

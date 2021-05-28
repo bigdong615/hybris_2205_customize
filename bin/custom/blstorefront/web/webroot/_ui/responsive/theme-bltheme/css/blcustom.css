@@ -9,16 +9,27 @@ Added Media Query for Search Box
 }
 
 /**
-Added for Empty Search text
-**/
-
-.js-shopping-button-empty {
-padding-left:0px !important;
-}
-
-/**
 Added for removing add to cart popup background, when unable to add product to cart.
 **/
 .remove-popup-background{
  opacity:0 !important;
 }
+
+/**
+BL-31 Added for error message in login and create account popup
+**/
+.notification-error {
+ border: none!important;
+ border-left-color: #e64b4f !important;
+ border-left: 4px solid !important;
+}
+/* BL-492 - 7.*/
+.sortDropdownForListPage {
+  border: none;
+  background: transparent;
+  color: #3d3c3c;
+}
+/*for BL-494 */
+.icon-production {
+ background: url(../assets/icon-equipment.svg) center no-repeat;
+  }
