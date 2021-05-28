@@ -152,8 +152,12 @@
             gap: 0,
             keyboard: false,
         } ).mount();
+
+        //  BL-450 adding removing pagination and arrow dynamically on homepage
         new Splide( '#cat-slider', {
             perPage: 4,
+             arrows :false,
+            pagination:false,
             breakpoints: {
                 //'991': {
                 //    perPage: 3,
@@ -167,6 +171,55 @@
             gap: 30,
             keyboard: false,
         } ).mount();
+            
+           var cat_slider_image_qty = document.getElementById("cat-slider-list").getElementsByTagName("li").length;
+           
+            if(cat_slider_image_qty<=4){
+                 new Splide( '#cat-slider', {
+                perPage: 4,
+                arrows :false,
+                pagination:false,
+                breakpoints: {
+                '480': {
+                    perPage: 2, 
+                  pagination:true
+                },
+              }
+               } ).mount();
+
+            }
+
+         if(cat_slider_image_qty>4){
+       
+          new Splide( '#cat-slider', {
+            perPage: 4,
+            arrows :true,
+            pagination:true,
+            breakpoints: {
+                '991': {
+                    perPage: 4,
+                },
+                '640': {
+                    
+                    perPage: 4,
+                   
+                },
+                '480': {
+                    perPage: 2,
+                     
+                    
+                },
+            },
+            rewind : true,
+            gap: 30,
+           } ).mount();
+         }
+
+        if(cat_slider_image_qty<=2 && screen.width<=480){
+           document.querySelector("#cat-slider .splide__pagination").classList.add("d-none");
+         }
+
+ // code end here for BL-450 --end--
          new Splide( '#gear-slider', {
             perPage: 3,
             breakpoints: {
@@ -458,15 +511,18 @@
                                                  function(){ $('.screen').removeClass('show') }
                                              );
                                              // Create and mount the product thumbnail slider - Required for Single Product Page
+
+                                             //     BL-574:code edited for product-thumbnail start here
+
                                              var secondarySlider = new Splide( '#product-thumbnails', {
                                                  rewind      : true,
                                                  fixedWidth  : 115,
                                                  fixedHeight : 115,
                                                  isNavigation: true,
                                                  gap         : 10,
-                                                 focus       : 'center',
                                                  pagination  : false,
                                                  cover       : true,
+                                                 arrows      : false,
                                                  breakpoints : {
                                                      '600': {
                                                          fixedWidth  : 80,
@@ -482,9 +538,64 @@
                                                  pagination : false,
                                                  arrows     : false,
                                                  keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                          }
+                                                 },
+                                             } );
+
+                                             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+                                             primarySlider.sync( secondarySlider ).mount();
+
+                                              var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+                                             
+                                             
+                                               if(image_qty>4)
+                                               {
+                                                
+                                             var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 focus       : 'center',
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : true,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                     }   
+                                                     },
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
+                                               }
+                                              // BL:574 code ends here
+
                                              // Initialize Overview Video Slider - required for Single Product Page
                                              new Splide( '#overview-slider', {
                                                  perPage: 2,
@@ -666,10 +777,11 @@
            $(swap).click(function (event) {
             event.preventDefault();
               $('.hide-product-row').toggle('slow');
-                if(swap.innerHTML === "Show More") {
-                   swap.innerHTML = "Show Less";
+              //BL-573 and BL-572 : added + icon and html code for + and _
+                if(swap.innerHTML === "Show More +") {
+                   swap.innerHTML = "Show Less &#8722;";
                     } else {
-                  swap.innerHTML = "Show More";
+                  swap.innerHTML = "Show More &#43;";
                    }
                 });
              // Mobile Menu styles - #my-menu is required for ALL pages
@@ -690,15 +802,17 @@
                  function(){ $('.screen').removeClass('show') }
              );
              // Create and mount the product thumbnail slider - Required for Single Product Page
+           // BL-574 : product thumbnail center code start here
+
              var secondarySlider = new Splide( '#product-thumbnails', {
                  rewind      : true,
                  fixedWidth  : 115,
                  fixedHeight : 115,
                  isNavigation: true,
                  gap         : 10,
-                 focus       : 'center',
                  pagination  : false,
                  cover       : true,
+                 arrows      : false,
                  breakpoints : {
                      '600': {
                          fixedWidth  : 80,
@@ -714,9 +828,62 @@
                  pagination : false,
                  arrows     : false,
                  keyboard: false,
+                  fixedWidth  : 380,
+                  fixedHeight : 380,
+                  breakpoints : {
+                  '600': {
+                          fixedWidth  : 250,
+                          fixedHeight : 250,
+                                                         
+                         } 
+                  },                                
              } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
+
+              var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+                            console.log(image_qty);
+                 if(image_qty>4){
+                         var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 focus       : 'center',
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : true,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints :{
+                                                  '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                         
+                                                     }
+                                             },
+                                             
+                                             } );
+                                             primarySlider.sync( secondarySlider ).mount();
+                                              }
+         // BL:574 code ends here part2
+
              // Initialize Overview Video Slider - required for Single Product Page
              new Splide( '#overview-slider', {
                  perPage: 2,
