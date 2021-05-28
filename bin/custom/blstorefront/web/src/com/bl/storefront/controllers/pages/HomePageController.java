@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -47,7 +48,7 @@ public class HomePageController extends AbstractPageController
 		storeCmsPageInModel(model, contentPage);
 		setUpMetaDataForContentPage(model, contentPage);
 		updatePageTitle(model, contentPage);
-
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
 		return getViewForPage(model);
 	}
 

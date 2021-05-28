@@ -2,7 +2,6 @@ package com.bl.facades.shipping.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.GeneratedBlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.*;
@@ -35,7 +34,6 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -158,15 +156,33 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                     BlDeliveryModeLoggingConstants.ZONE_PST), payByCustomer) : getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF,
                     null, payByCustomer);
         } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
-            return getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), rentalStart) == BlInventoryScanLoggingConstants.ONE
-                    ? getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC, BlDateTimeUtils.getCurrentTimeUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_EST), payByCustomer) : getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC,
-                    null, payByCustomer);
+            return getBlRushDeliveryModeData(rentalStart, payByCustomer);
         } else {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG);
             return getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+        }
+    }
+
+    /**
+     *
+     * @param rentalStart date
+     * @param payByCustomer flag
+     * @return collection of RushDeliveryData
+     */
+    private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeData(String rentalStart, boolean payByCustomer) {
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
+        final int result = getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
+                BlDeliveryModeLoggingConstants.ZONE_EST, new Date()), rentalStart);
+        if(result == BlInventoryScanLoggingConstants.ONE) {
+            final Collection<BlRushDeliveryModeData> blRushDeliveryModeData = getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC,
+                    BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_EST), payByCustomer);
+            return CollectionUtils.isNotEmpty(blRushDeliveryModeData) ? blRushDeliveryModeData.stream().filter(mode ->
+                    !mode.getCode().equals(BlDeliveryModeLoggingConstants.RUSH_NYC_NEXT_DAY_9_To_12)).collect(Collectors.toList())
+                    : Collections.emptyList();
+        } else if(result >= BlInventoryScanLoggingConstants.TWO) {
+            return getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC,null, payByCustomer);
+        } else {
+            return Collections.emptyList();
         }
     }
 

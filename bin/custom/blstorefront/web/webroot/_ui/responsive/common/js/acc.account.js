@@ -52,6 +52,9 @@ ACC.account = {
 						if (response.startsWith("Error:")) {
 							splitValue = response.split(":");
 							if (splitValue.includes('register.email.invalid')) {
+							if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
+                                  $("#errorMessages_sigin_errorbox").removeClass("d-none");
+                                  }
 								$("#errorMessages_sigin_email").html("Please enter a valid email");
 							}
 							if (splitValue.includes('register.pwd.invalid')) {
