@@ -7,7 +7,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:set value="cart/emptyCart" var="emptyCart" />
@@ -45,9 +45,18 @@
            						        </form:form>
                               <div class="cart-actions">
                                   <a href="/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                  <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                                   <a class="btn btn-sm btn-primary float-end js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
+                                   data-bs-toggle="modal" data-bs-target="#signIn">
+                                    <spring:theme code="general.continue.button" />
+                                   </a>
+                                  </sec:authorize>
+                                  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
                                   <a href="" class="btn btn-sm btn-primary float-end" id="cart-continue">
                                     <spring:theme code="general.continue.button" />
-                                  </a>
+                                   </a>
+                                  </sec:authorize>
+
                               </div>
                               <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
