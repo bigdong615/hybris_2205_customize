@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
@@ -27,6 +28,7 @@ import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
@@ -44,6 +46,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
+
+    @Resource(name = "cartService")
+    private BlCartService blCartService;
 
     @ResponseBody
     @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
@@ -133,6 +138,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
         if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+            model.addAttribute(BlControllerConstants.CART_MODEL,blCartService.getSessionCart());
         }
         else {
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);

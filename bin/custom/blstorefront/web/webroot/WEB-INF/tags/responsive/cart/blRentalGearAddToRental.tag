@@ -34,9 +34,18 @@
 				<div class="page-loader-new-layout">
             <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
         </div>
-					<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-               			<div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-            		</div>
+        <c:choose>
+				  <c:when test="${(cartModel.isRentalCart eq 'true') || (empty cartModel.entries)}">
+             <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                   <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+             </div>
+          </c:when>
+          <c:otherwise>
+            <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+            </div>
+          </c:otherwise>
+        </c:choose>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
                 <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
                       <spring:theme code="text.add.to.rental" />

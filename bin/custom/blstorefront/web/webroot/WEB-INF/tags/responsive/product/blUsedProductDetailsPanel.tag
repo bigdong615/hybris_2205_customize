@@ -46,9 +46,11 @@
                                         </tr>
                                     	</thead>
 		                                  <tbody>
-		                                    <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                                           <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-                                        </div>
+                                          <c:if test="${(not empty cartModel.entries) && (cartModel.isRentalCart eq 'true')}">
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                                              </div>
+                                          </c:if>
                                         <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
 		                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
 		                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
