@@ -56,6 +56,7 @@
 		                                            <td><format:price priceData="${serialProduct.finalSalePrice}"/></td>
 		                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
 		                                            <td class="text-end">
+		                                            <!-- BL-537 : Added  class js-usedProduct-button -->
 		                                             <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart"
                                                 		  data-product-code="${product.code}" data-serial="${serialProduct.serialId}">
                                                  <spring:theme code="basket.add.to.basket"/>
@@ -67,12 +68,14 @@
                                 	</c:otherwise>
                                 </c:choose>
                                 </table>
-                                <c:if test="${product.serialproducts.size() >3}">
-                                <p class="mt-4"><a href="#" id="showmore"><spring:theme code="pdp.show.more.button.text"/></a>
-                                </c:if>
+                               <c:if test="${product.serialproducts.size() >3}"> 
+                                 <!--BL-573  and BL-572  added class showmore-margintop -->
+                                <p class="mt-4"><a href="#" id="showmore" class="showmore-margintop"><spring:theme code="pdp.show.more.button.text"/></a>
+                                </c:if> 
                                 <c:if test="${product.forRent}">
                                 <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-                                <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
+                              <!--  BL:573 and  572 mt-4 added -->
+                                <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end mt-4"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
                                 </c:if>
                             </div>
                         </div>
