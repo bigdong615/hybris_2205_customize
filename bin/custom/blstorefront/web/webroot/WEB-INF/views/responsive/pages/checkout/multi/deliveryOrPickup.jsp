@@ -13,6 +13,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
+<c:url value="/cart" var="cart" />
 
 <template:page pageTitle="${pageTitle}">
     <section id="cartProcess" class="cart cart-rental">
@@ -51,7 +52,7 @@
 
                             </div>
                             <div class="cart-actions">
-                                <a href="/blstorefront/bl/en/cart" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                <a href="${cart}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
                                     <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                 </button>

@@ -37,6 +37,7 @@ import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -245,9 +246,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(BlDeliveryModeLoggingConstants.UPS.equals(newAddress.getLastName())) {
             getCheckoutFacade().setUPSAddressOnCartForIam(newAddress);
         }
-        if(newAddress.isVisibleInAddressBook()) {
-            getUserFacade().addAddress(newAddress);
-        }
+
+        getUserFacade().addAddress(newAddress);
         final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
         // Set the new address as the selected checkout delivery address
         getCheckoutFacade().setDeliveryAddress(newAddress);
