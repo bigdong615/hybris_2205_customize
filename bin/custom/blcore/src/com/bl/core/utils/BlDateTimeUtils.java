@@ -610,8 +610,8 @@ public final class BlDateTimeUtils
 	public static Date getRentalEndDate(final List<Date> blackOutDates, final RentalDateDto rentalDates,
 			final Date lastDateToCheck)
 	{
-		final Date rentalEndDate = BlDateTimeUtils.getDate(rentalDates.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
-		final Date endDateIncludeShipping = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
+		final Date rentalEndDate = getDate(rentalDates.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
+		final Date endDateIncludeShipping = addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
 				rentalDates.getSelectedToDate(), blackOutDates);
 		Date nextEndDate = null;
 		if (endDateIncludeShipping.compareTo(lastDateToCheck) >= 0)
