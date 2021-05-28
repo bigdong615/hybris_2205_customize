@@ -386,8 +386,10 @@
      $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
      $('#ship-it-notification').val('');
      $('#ship-it-notification').hide();
-     $('#ship-it-am-notification').html('');
-     $('#ship-it-am-notification').hide();
+     if($('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').attr('businesstype') == "false") {
+        $('#ship-it-am-notification').html('');
+        $('#ship-it-am-notification').hide();
+     }
  }
 
  function createPickUPFormObject(firstName, lastName, email, phone) {
