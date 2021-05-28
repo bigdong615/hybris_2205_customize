@@ -59,6 +59,11 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel._TYPECODE + WHERE + StockLevelModel.DATE
 			+ DATE_PARAM + AND + StockLevelModel.SERIALPRODUCTCODE + "} = ?serialProductCode " + AND
 			+ StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus";
+	
+	private static final String STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
+			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
+			+ StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE
+			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) ";
 
 	/**
 	 * {@inheritDoc}
@@ -178,5 +183,35 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 		}
 		return Boolean.FALSE;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(final List<String> productCodes,
+			final List<WarehouseModel> warehouse, final Date startDate, final Date endDate)
+	{
+		if (null == warehouse)
+		{
+			throw new IllegalArgumentException("warehouses cannot be null.");
+		}
+		else
+		{
+			final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY);
+			fQuery.addQueryParameter("productCodes", productCodes);
+			addQueryParameter(startDate, endDate, fQuery);
+			fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
+			fQuery.addQueryParameter("warehouses", warehouse);
 
+			final SearchResult result = getFlexibleSearchService().search(fQuery);
+			final List<StockLevelModel> stockLevels = result.getResult();
+			if (CollectionUtils.isEmpty(stockLevels))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+						"No Stock Levels found for product codes : {} and date between : {} and {}", productCodes, startDate, endDate);
+				return Collections.emptyList();
+			}
+			return stockLevels;
+		}
+	}
 }

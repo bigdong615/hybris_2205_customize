@@ -41,3 +41,18 @@ BL-31 Added for error message in login and create account popup
  border-left-color: #e64b4f !important;
  border-left: 4px solid !important;
 }
+/* BL-492 - 7.*/
+.sortDropdownForListPage {
+  border: none;
+  background: transparent;
+  color: #3d3c3c;
+}
+/*for BL-494 */
+.icon-production {
+ background: url(../assets/icon-equipment.svg) center no-repeat;
+  }
+  .btn-outline { border: 1px solid #cccccc; }
+  .litepicker .reset-button { color: #3d3c3c; position: absolute; bottom: 30px; left: 50px; text-transform: initial; }
+  @media screen and (max-width: 480px) { .litepicker .reset-button { position: relative; bottom: 0; left: 0 }}
+  @media screen and (max-width: 480px) { .litepicker .preview-date-range { display: block; padding-bottom: 10px; }}
+.litepicker .container__months .month-item { transform: none !important; }

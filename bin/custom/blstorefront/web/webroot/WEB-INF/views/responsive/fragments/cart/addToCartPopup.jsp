@@ -36,7 +36,11 @@
             <div class="modal-body">
               <div class="row">
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b><span class="gray80"><spring:theme code="pdp.rental.dates.label.text"/></span></div>
+                  <div class="col-md-7 mt-4"><b>${product.name}</b>
+                  <c:if test="${not empty rentalDate.selectedFromDate}">
+                    <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate} (${rentalDate.numberOfDays} days)</span>
+                  </c:if>
+                  </div>
                   <div class="col-md-3 mt-4 text-md-end">
                       <b>${entry.basePrice.formattedValue}</b>
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
@@ -56,7 +60,7 @@
               </div>
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
-              <h5 class="d-none d-md-block">Dont forget</h5>
+              <h5 class="d-none d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
               <div class="row d-none d-md-flex mt-4">
                   <div class="col-md-4">
                       <div class="card">

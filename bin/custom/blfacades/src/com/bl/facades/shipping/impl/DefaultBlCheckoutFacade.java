@@ -2,7 +2,9 @@ package com.bl.facades.shipping.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.GeneratedBlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.*;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -20,6 +22,7 @@ import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
@@ -32,6 +35,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -39,6 +43,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {javadoc}
@@ -70,7 +75,41 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public Collection<BlShippingGroupData> getAllShippingGroups() {
-        return getBlShippingGroupConverter().convertAll(getBlZoneDeliveryModeService().getAllShippingGroups());
+        return getBlShippingGroupConverter().convertAll(sortModelsOnShippingGroupType(getBlZoneDeliveryModeService().getAllShippingGroups()));
+    }
+
+    private Collection<ShippingGroupModel> sortModelsOnShippingGroupType(final Collection<ShippingGroupModel> shippingGroupModels) {
+        Collection<ShippingGroupModel> allGroupModels = new ArrayList<>();
+
+        final Collection<ShippingGroupModel> fastGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FAST.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+        final Collection<ShippingGroupModel> fasterGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FASTER.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+        final Collection<ShippingGroupModel> fastestGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FASTEST.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fastGroupModels) ? fastGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fasterGroupModels) ? fasterGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fastestGroupModels) ? fastestGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+
+        return allGroupModels;
+    }
+
+    @Override
+    protected AddressModel createDeliveryAddressModel(final AddressData addressData, final CartModel cartModel)
+    {
+        final AddressModel addressModel = getModelService().create(AddressModel.class);
+        getAddressReversePopulator().populate(addressData, addressModel);
+        addressModel.setOwner(cartModel);
+        getModelService().save(addressModel);
+        getModelService().refresh(addressModel);
+        return addressModel;
     }
 
     /**
@@ -287,8 +326,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             final AddressModel addressModel = blPickUpZoneDeliveryModeModel.getInternalStoreAddress();
             if (addressModel != null) {
                 addressModel.setPickStoreAddress(Boolean.TRUE);
+                if(cartModel.isPickUpByMe()) {
+                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
+                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
+                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
+                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
+                }
                 getModelService().save(addressModel);
-                getModelService().refresh(cartModel);
+                getModelService().refresh(addressModel);
                 setUPSAddressOnCart(addressModel);
             }
         }
@@ -305,6 +350,26 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setDeliveryAddress(addressModel);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUPSAddressOnCartForIam(final AddressData address) {
+        final CartModel cartModel = getCart();
+        try {
+            if (cartModel != null && address != null && cartModel.isPickUpByMe()) {
+                cartModel.setPickUpPersonFirstName(address.getFirstName());
+                cartModel.setPickUpPersonLastName(address.getLastName());
+                cartModel.setPickUpPersonEmail(address.getEmail());
+                cartModel.setPickUpPersonPhone(address.getPhone());
+                getModelService().save(cartModel);
+                getModelService().refresh(cartModel);
+            }
+        } catch (Exception e) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving UPS pickUpByMe details", e);
         }
     }
 
@@ -352,9 +417,22 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     @Override
-    public boolean setDeliveryModeIfAvailable() {
-        final CartModel cartModel = getCart();
-        return cartModel != null && cartModel.getDeliveryMode() != null;
+    public boolean hasNoDeliveryAddress()
+    {
+        final CartData cartData = getCheckoutCart();
+        return hasShippingItems() && (cartData == null || cartData.getDeliveryAddress() == null);
+    }
+
+    @Override
+    public CartData getCheckoutCart()
+    {
+        final CartData cartData = getCartFacade().getSessionCart();
+        if (cartData != null)
+        {
+            cartData.setDeliveryMode(getDeliveryMode());
+            cartData.setPaymentInfo(getPaymentDetails());
+        }
+        return cartData;
     }
 
     /**

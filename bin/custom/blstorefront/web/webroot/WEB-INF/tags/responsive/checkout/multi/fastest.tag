@@ -72,13 +72,13 @@
                     <textarea class="form-control mt-2 mb-4" id="sameDayDeliveryNote" placeholder="Optional (i.e. deliver to back door.)"></textarea>
                     <checkout:addressForm />
                     <div id="same-day-save-address-div">
-                        <input type="checkbox" id="same-day-save-address" checked>
+                        <input type="checkbox" id="same-day-save-address">
                         <label for="same-day-save-address">
                             <span class="gray80"><spring:theme code="text.add.new.shipping.save.address"/></span>
                         </label>
                     </div>
                     <div id="same-day-status-updates-div">
-                        <input type="checkbox" id="same-day-status-updates">
+                        <input type="checkbox" id="same-day-status-updates" onChange="onChangeOfStatusUpdate()">
                         <label for="same-day-status-updates">
                             <span class="gray80"><spring:theme code="text.checkout.multi.order.same.day.delivery.get.text.msg.status"/></span>
                         </label>

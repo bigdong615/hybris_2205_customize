@@ -28,8 +28,6 @@ public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
 
     if (getDecideExternalTaxesStrategy().shouldCalculateExternalTaxes(abstractOrder))
     {
-      getModelService().save(abstractOrder);
-      getModelService().refresh(abstractOrder);
       if (CollectionUtils.isNotEmpty(abstractOrder.getEntries()))
       {
         final ExternalTaxDocument exTaxDocument = getCalculateExternalTaxesStrategy().calculateExternalTaxes(abstractOrder);
@@ -37,6 +35,7 @@ public class DefaultBlExternalTaxesService extends DefaultExternalTaxesService {
         // check if external tax calculation was successful
         if (!exTaxDocument.getAllTaxes().isEmpty() && !exTaxDocument.getShippingCostTaxes().isEmpty())
         {
+          abstractOrder.setNet(true);
           getApplyExternalTaxesStrategy().applyExternalTaxes(abstractOrder, exTaxDocument);
           getSessionService().setAttribute(SESSION_EXTERNAL_TAX_DOCUMENT, exTaxDocument);
           saveOrder(abstractOrder);
