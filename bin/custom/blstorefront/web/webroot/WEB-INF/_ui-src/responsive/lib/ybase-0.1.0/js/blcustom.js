@@ -71,6 +71,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                         ACC.minicart.updateMiniCartDisplay();
+                                      }
                                       updateQuantity();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
