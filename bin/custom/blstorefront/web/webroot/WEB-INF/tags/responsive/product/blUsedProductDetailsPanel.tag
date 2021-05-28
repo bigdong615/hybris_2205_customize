@@ -57,7 +57,7 @@
 		                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
 		                                            <td class="text-end">
 		                                            <!-- BL-537 : Added  class js-usedProduct-button -->
-		                                             <button type="button" class="btn btn-primary js-add-to-cart js-usedProduct-button" data-bs-toggle="modal" data-bs-target="#addToCart"
+		                                             <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart"
                                                 		  data-product-code="${product.code}" data-serial="${serialProduct.serialId}">
                                                  <spring:theme code="basket.add.to.basket"/>
                                                  </button></td>
