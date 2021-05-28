@@ -273,15 +273,21 @@
                                            if(data.result[i].distance != null) {
                                                upsStores +=  data.result[i].contactNumber;
                                            }
-                                           upsStores += '</p>' +
-                                                  '</div>' +
-                                                  '<div class="col-11 offset-1 col-md-4 offset-md-0">';
+                                           upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0">';
                                                   if(data.result[i].latestGroundDropOffTime != null && data.result[i].latestGroundDropOffTime.length != 0) {
-                                         upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' +
-                                                      '<p class="mb-0"><span class="gray80">' +data.result[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;&nbsp;' +
-                                                                 data.result[i].latestGroundDropOffTime[1].split(': ')[1] + '</p>' +
-                                                      '<p class="mb-0"><span class="gray80">' + data.result[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
-                                                                 data.result[i].latestGroundDropOffTime[2].split(': ')[1] + '</p>';
+                                                        if(data.result[i].latestGroundDropOffTime[0] != null && data.result[i].latestGroundDropOffTime[0].split(': ')[0] == 'Mon-Fri') {
+                                         upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                        } else {
+                                         upsStores += '<p class="mb-0"><span class="gray80">M-S</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                        }
+                                                      if(data.result[i].latestGroundDropOffTime[1] != null) {
+                                         upsStores += '<p class="mb-0"><span class="gray80">' +data.result[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;&nbsp;' +
+                                                                                 data.result[i].latestGroundDropOffTime[1].split(': ')[1] + '</p>' ;
+                                                      }
+                                                      if(data.result[i].latestGroundDropOffTime[2] != null) {
+                                         upsStores += '<p class="mb-0"><span class="gray80">' + data.result[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
+                                                                                 data.result[i].latestGroundDropOffTime[2].split(': ')[1] + '</p>';
+                                                      }
                                                   }
                                     upsStores += '</div>' +
                                              '</div>';
@@ -332,15 +338,21 @@
                                          if(stores[i].distance != null) {
                                              upsStores += stores[i].contactNumber;
                                          }
-                        upsStores += '</p>' +
-                                  '</div>' +
-                                  '<div class="col-11 offset-1 col-md-4 offset-md-0">';
+                        upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0">';
                                   if(stores[i].latestGroundDropOffTime != null && stores[i].latestGroundDropOffTime.length != 0) {
-                         upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' +
-                                      '<p class="mb-0"><span class="gray80">' +stores[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;' +
-                                                 stores[i].latestGroundDropOffTime[1].split(':')[1] + '</p>' +
-                                      '<p class="mb-0"><span class="gray80">' + stores[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
-                                                 stores[i].latestGroundDropOffTime[2].split(':')[1] + '</p>';
+                                                      if(stores[i].latestGroundDropOffTime[0] != null && stores[i].latestGroundDropOffTime[0].split(': ')[0] == 'Mon-Fri') {
+                                       upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                      } else {
+                                       upsStores += '<p class="mb-0"><span class="gray80">M-S</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                      }
+                                                    if(stores[i].latestGroundDropOffTime[1] != null) {
+                                       upsStores += '<p class="mb-0"><span class="gray80">' +stores[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;&nbsp;' +
+                                                                               stores[i].latestGroundDropOffTime[1].split(': ')[1] + '</p>' ;
+                                                    }
+                                                    if(stores[i].latestGroundDropOffTime[2] != null) {
+                                       upsStores += '<p class="mb-0"><span class="gray80">' + stores[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
+                                                                               stores[i].latestGroundDropOffTime[2].split(': ')[1] + '</p>';
+                                                    }
                                   }
                     upsStores += '</div>' +
                              '</div>';
@@ -977,9 +989,18 @@
  }
 
  function createAddressFormObject(firstName, lastName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
-    upsStoreAddress, openingDaysDetails, addressType) {
-    if(openingDaysDetails != null) {
-        openingDaysDetails = openingDaysDetails[0] + ';' + openingDaysDetails[1].trim() + ';' + openingDaysDetails[2].trim();
+    upsStoreAddress, openingDays, addressType) {
+    let openingDaysDetails = '';
+    if(openingDays != null) {
+        if(openingDays[0] != null) {
+            openingDaysDetails += openingDays[0].trim();
+        }
+        if(openingDays[1] != null) {
+            openingDaysDetails += ';' + openingDays[1].trim();
+        }
+        if(openingDays[2] != null) {
+            openingDaysDetails += ';' + openingDays[2].trim();
+        }
     }
     if(regionIso.includes('-')) {
         regionIso = regionIso;
