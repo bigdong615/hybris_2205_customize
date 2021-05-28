@@ -99,6 +99,7 @@
                     </div>
                 </div>
                 <div id="ship-it-notification"></div>
+                <div id="ship-it-am-notification"></div>
             </div>
         </div>
     </div>

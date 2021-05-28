@@ -277,6 +277,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                           @RequestParam("shippingGroup") final String shippingGroup,
                                           @RequestParam("deliveryMode") final String deliveryMode,
                                           @RequestParam("rushZip") final String rushZip,
+                                          @RequestParam("businessType") final boolean businessType,
                                           final RedirectAttributes redirectAttributes) {
         final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
         if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
@@ -288,7 +289,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             if (selectedAddressData != null) {
                 final String addressType = selectedAddressData.getAddressType();
                 final String pinCode = selectedAddressData.getPostalCode();
-                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, deliveryMode, rushZip, addressType, pinCode);
+                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
                 if (pinError != null) {
                     return pinError;
                 }
@@ -298,15 +299,24 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         return SUCCESS;
     }
 
-    private String checkErrorIfAnyBeforeSavingAddress(String shippingGroup, String deliveryMode, String rushZip, String addressType, String pinCode) {
+    /**
+     *
+     * @param shippingGroup name
+     * @param businessType yes/no
+     * @param rushZip if rush delivery
+     * @param addressType business/not
+     * @param pinCode if rush
+     * @return
+     */
+    private String checkErrorIfAnyBeforeSavingAddress(final String shippingGroup, final boolean businessType,
+                                                      final String rushZip, final String addressType, final String pinCode) {
         if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
                 BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
             if(!(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip))) {
                return BlDeliveryModeLoggingConstants.PIN_ERROR;
             }
         } else {
-            if(StringUtils.isNotEmpty(addressType) && deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) &&
-                    !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+            if(StringUtils.isNotEmpty(addressType) && businessType && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
                 return BlDeliveryModeLoggingConstants.AM_ERROR;
             }
         }
