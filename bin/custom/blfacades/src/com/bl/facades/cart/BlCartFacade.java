@@ -92,7 +92,7 @@ public interface BlCartFacade extends CartFacade {
 	CartModificationData updateCartEntryFromPopup(long entryNumber, long quantity) throws CommerceCartModificationException;
 	
 	/**
-	 * Check availability on cart continue for next checkout step.
+	 * Check availability in cart page on continue button to go to next checkout step
 	 *
 	 * @param sessionRentalDate
 	 *           the session rental date

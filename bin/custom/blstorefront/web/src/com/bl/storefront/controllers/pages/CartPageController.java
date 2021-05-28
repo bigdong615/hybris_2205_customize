@@ -452,12 +452,11 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	private long getAvailableStockForProduct(final RentalDateDto rentalDateDto, final String productCode)
 	{
-		final int daysToAdd = 2;
 		final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore().getWarehouses();
 		final List<Date> blackOutDates = Lists
 				.newArrayList(CollectionUtils.emptyIfNull(baseStoreService.getCurrentBaseStore().getBlackOutDates()));
-		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(daysToAdd, rentalDateDto.getSelectedFromDate(), blackOutDates);
-		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(daysToAdd, rentalDateDto.getSelectedToDate(), blackOutDates);
+		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedFromDate(), blackOutDates);
+		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedToDate(), blackOutDates);
 		return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
 	}
 

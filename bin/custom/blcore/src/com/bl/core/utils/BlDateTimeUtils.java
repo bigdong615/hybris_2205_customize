@@ -117,7 +117,7 @@ public final class BlDateTimeUtils
 	 */
 	public static String convertDateToStringDate(final Date date, final String pattern)
 	{
-		return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).format(getFormatter(pattern));
+		return getFormattedDateTime(date).format(getFormatter(pattern));
 	}
 
 	/**
@@ -147,7 +147,7 @@ public final class BlDateTimeUtils
 	 */
 	public static ZonedDateTime getZonedDateTime(final Date date, final ZoneId zoneId)
 	{
-		final LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+		final LocalDateTime localDateTime = getFormattedDateTime(date);
 		return ZonedDateTime.of(localDateTime, zoneId);
 	}
 
