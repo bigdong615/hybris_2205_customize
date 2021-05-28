@@ -12,7 +12,7 @@
 </c:if>
 
 <div class="account-section-header ${noBorder}">
-    <spring:theme code="text.account.addressBook"/>
+   <strong> <spring:theme code="text.account.addressBook"/></strong>
 
         <ycommerce:testId code="addressBook_addNewAddress_button">
             <div class="account-section-header-add pull-right">
@@ -38,7 +38,7 @@
 					<div class="col-xs-12 col-sm-6 col-md-4 card">
 						<ul class="pull-left">
 							<li>
-								<strong>${fn:escapeXml(address.title)}&nbsp;${fn:escapeXml(address.firstName)}&nbsp;${fn:escapeXml(address.lastName)}
+								<strong>${fn:escapeXml(address.firstName)}&nbsp;${fn:escapeXml(address.lastName)}
 									<c:if test="${address.defaultAddress}">
 										(<spring:theme code="text.default"/>)
 									</c:if>
@@ -48,8 +48,10 @@
 							<c:if test="${not empty fn:escapeXml(address.line2)}">
 								<li>${fn:escapeXml(address.line2)}</li>
 							</c:if>
-							<li>${fn:escapeXml(address.town)}&nbsp;${fn:escapeXml(address.region.name)}</li>
-							<li> ${fn:escapeXml(address.country.name)}&nbsp;${fn:escapeXml(address.postalCode)}</li>
+							<li>${fn:escapeXml(address.town)}&nbsp;${fn:escapeXml(address.region.isocodeShort)}&nbsp;${fn:escapeXml(address.postalCode)}</li>
+						<c:if test="${not empty address.email}" >
+							<li> ${fn:escapeXml(address.email)}
+							</c:if>
 							<li>${fn:escapeXml(address.phone)}</li>
 						</ul>
 
@@ -63,12 +65,12 @@
 						<div class="account-cards-actions pull-left">
 							<ycommerce:testId code="addressBook_editAddress_button">
 								<a class="action-links" href="edit-address/${fn:escapeXml(ycommerce:encodeUrl(address.id))}">
-									<span class="glyphicon glyphicon-pencil"></span>
+									Edit Address<span class="glyphicon glyphicon-pencil"></span>
 								</a>
 							</ycommerce:testId>
 							<ycommerce:testId code="addressBook_removeAddress_button">
 								<a href="#" class="action-links removeAddressFromBookButton" data-address-id="${fn:escapeXml(address.id)}" data-popup-title="<spring:theme code="text.address.delete.popup.title" />">
-									<span class="glyphicon glyphicon-remove"></span>
+								Remove address<span class="glyphicon glyphicon-remove"></span>
 								</a>
 							</ycommerce:testId>
 						</div>

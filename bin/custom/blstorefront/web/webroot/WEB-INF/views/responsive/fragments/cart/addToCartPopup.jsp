@@ -4,12 +4,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
-
-<c:set var="entryNumberHtml" value="${fn:escapeXml(entry.entryNumber)}"/>
-<c:set var="productCodeHtml" value="${fn:escapeXml(entry.product.code)}"/>
-<c:set var="quantityHtml" value="${fn:escapeXml(entry.quantity)}"/>
-
+<c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
+<c:url value="/cart" var="viewCartUrl"/>
 {"quickOrderErrorData": [
 <c:forEach items="${quickOrderErrorData}" var="quickOrderEntry" varStatus="status">
 	<c:set var="productCode" value="${fn:escapeXml(quickOrderEntry.productData.code)}" />
@@ -37,24 +36,31 @@
             <div class="modal-body">
               <div class="row">
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b><span class="gray80"><spring:theme code="pdp.rental.dates.label.text"/></span></div>
+                  <div class="col-md-7 mt-4"><b>${product.name}</b>
+                  <c:if test="${not empty rentalDate.selectedFromDate}">
+                    <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate} (${rentalDate.numberOfDays} days)</span>
+                  </c:if>
+                  </div>
                   <div class="col-md-3 mt-4 text-md-end">
-                      <b>${product.price.formattedValue}$XX</b>
-                      <spring:theme code="text.quantity"/>
-                      <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
-                      <input type="hidden" name="productCode" value="${entry.product.code}" />
-                      <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
-                      <input type="hidden" name="quantity" value="${entry.quantity}" />
-                      <select path="quantity" name="productQuantity" id="popupQuantity" class="mt-3 js-update-quantity">
-                         <c:forEach var="item" begin="1" end="10">
+                      <b>${entry.basePrice.formattedValue}</b>
+                      <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
+                          modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
+                          <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
+                          <input type="hidden" name="productCode" value="${entry.product.code}" />
+                          <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
+                          <input type="hidden" name="quantity" value="${entry.quantity}" />
+                        <spring:theme code="text.quantity"/>
+                        <select class="mt-3 select js-select js-component-init js-update-quantity" id="shopping-cart-qty_${entry.entryNumber}" name="shopping-cart-qty">
+                           <c:forEach var="item" begin="1" end="10">
                              <option value="${item}" ${item == quantity ? 'selected="selected"' : ''}>${item}</option>
-                         </c:forEach>
-                      </select>
+                           </c:forEach>
+                       </select>
+                      </form:form>
                   </div>
               </div>
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
-              <h5 class="d-none d-md-block">Dont forget</h5>
+              <h5 class="d-none d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
               <div class="row d-none d-md-flex mt-4">
                   <div class="col-md-4">
                       <div class="card">
@@ -93,7 +99,7 @@
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>
-                <a href="/blstorefront/bl/en/cart" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>
+                <a href="${viewCartUrl}" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>
             </div>
    </div>
 

@@ -35,4 +35,22 @@
 		  class="com.bl.backoffice.wizards.util.WebScanToolUtil">
 	</bean>
 
+
+ <!-- Added for Avalara Tax while saving the order-->
+
+	<alias name="blDefaultEditorAreaLogicHandler" alias="editorAreaLogicHandler"/>
+	<bean id="blDefaultEditorAreaLogicHandler"
+		class="com.bl.backoffice.wizards.handler.BlDefaultEditorAreaLogicHandler" parent="defaultEditorAreaLogicHandler">
+		<property name="calculationService" ref="calculationService"/>
+		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
+	</bean>
+
+	<!--To render the order-->
+
+	<bean id="blTotalPriceWithTaxRenderer" class="com.bl.backoffice.wizards.renderer.BlTotalPriceWithTaxRenderer"  parent="editorAreaPanelRenderer">
+		<property name="typeFacade" ref="typeFacade"/>
+		<property name="labelService" ref="labelService" />
+	</bean>
+
+
 </beans>

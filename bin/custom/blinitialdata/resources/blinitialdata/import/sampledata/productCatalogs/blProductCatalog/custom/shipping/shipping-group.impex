@@ -1,0 +1,10 @@
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs shipping-group.impex =========================");
+
+
+
+INSERT_UPDATE ShippingGroup ; code[unique = 'true']		; name 						; defaultShippingGroup[default='false']		; shippingType(code)
+							; SHIP_HOME_HOTEL_BUSINESS	; Ship to an Address		; true										; FAST
+							; BL_PARTNER_PICKUP         ; BL & Partner Pickup 		;											; FASTER
+							; SHIP_UPS_OFFICE      		; Ship to a UPS Location	;											; FAST
+							; SAME_DAY_DELIVERY         ; SF Bay Area				; true										; FASTEST
+							; NEXT_DAY_RUSH_DELIVERY    ; NYC Metro Area			;											; FASTEST

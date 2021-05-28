@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 
+import com.bl.facades.shipping.BlCheckoutFacade;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -60,6 +61,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	private static final String CART_DATA_ATTR = "cartData";
 
 	private static final Logger LOGGER = Logger.getLogger(PaymentMethodCheckoutStepController.class);
+
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade checkoutFacade;
 
 	@Resource(name = "addressDataUtil")
 	private AddressDataUtil addressDataUtil;
@@ -410,6 +414,15 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		CYBERSOURCE_SOP_CARD_TYPES.put("amex", "003");
 		CYBERSOURCE_SOP_CARD_TYPES.put("diners", "005");
 		CYBERSOURCE_SOP_CARD_TYPES.put("maestro", "024");
+	}
+
+	@Override
+	public BlCheckoutFacade getCheckoutFacade() {
+		return checkoutFacade;
+	}
+
+	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+		this.checkoutFacade = checkoutFacade;
 	}
 
 }

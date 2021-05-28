@@ -10,139 +10,19 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-<c:set value="cart/emptyCart" var="emptyCart" />
-<c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 
 <template:page pageTitle="${pageTitle}">
 
 <%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
 
-  <div class="screen"></div>
-     <section id="cartProcess" class="cart cart-rental">
-          <div class="container">
-              <div id="cartSteps" class="row justify-content-center">
-                  <div class="col-xl-10">
-                      <span class="step1 active"><i class="number">1</i> <spring:theme code="text.checkout.multi.order.rental"/></span>
-                      <span class="step2"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
-                      <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
-                      <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
-                  </div>
-              </div>
-              <div class="row justify-content-center">
-                  <div class="col-xl-10">
-                      <div class="row">
-                          <div id="order" class="col-lg-7">
-                              <h1><spring:theme code="text.rental.cart.title"/></h1>
-                              <hr>
-                              <p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;<input type="text" class="form-control cart-picker" id="litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>"></p>
-
-                              <c:forEach items="${cartData.entries}" var="entry">
-                                 <cart:rentalCartItem entry="${entry}" cartData="${cartData}" />
-                              </c:forEach>
-                              <!-- Form to update the cart total on the selection of damage Waiver from the dropdown -->
-								<form:form id="updateDamageWaiverForm" action="${cartUpdateDamageWaiverFormAction}" method="post" >
-					                 <input type="hidden" name="entryNumber" value="" />
-					                 <input type="hidden" name="damageWaiverType" value="" />   
-           						</form:form>
-                              <div class="cart-actions">
-                                  <a href="/blstorefront/bl/en/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
-                                  <a href="#" class="btn btn-sm btn-primary float-end"><spring:theme code="general.continue.button" /></a>
-                                  <a href="#" class="btn btn-sm btn-outline float-end me-3"><spring:theme code="general.update.button" /></a>
-                              </div>
-                              <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
-                          </div>
-                          <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
-                              <div id="orderSummary" class="card">
-                                  <h5><spring:theme code="checkout.multi.order.summary"/></h5>
-                                  <hr>
-                                  <p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;<input type="text" class="form-control cart-picker" id="summary-litepicker" placeholder="<spring:theme code="text.rental.cart.select.date"/>"></p>
-                                  <hr>
-                                  <table id="costSummary">
-                                      <tbody>
-                                          <tr>
-                                              <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
-                                              <td class="text-end"><format:price priceData="${cartData.subTotal}"/></td>
-                                          </tr>
-                                          <tr>
-                                              <td class="gray80"><spring:theme code="text.cart.damage.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
-                                              <td class="text-end"><format:price priceData="${cartData.totalDamageWaiverCost}"/></td>
-                                          </tr>
-                                          <tr>
-                                              <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.shipping"/></td>
-                                              <td class="text-end">$XX</td>
-                                          </tr>
-                                          <tr>
-                                              <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
-                                              <td class="text-end">$XX</td>
-                                          </tr>
-                                          <tr class="total">
-                                              <td><spring:theme code="basket.page.total"/></td>
-                                              <td class="text-end"><format:price priceData="${cartData.totalPriceWithTax}"/></td>
-                                          </tr>
-                                      </tbody>
-                                  </table>
-                                  <div class="input-group my-3">
-                                    <input type="text" class="form-control" placeholder="<spring:theme code="text.checkout.multi.order.summary.promocode.placeholder"/>">
-                                    <div class="input-group-append">
-                                      <button class="btn btn-secondary" type="button"><spring:theme code="text.voucher.apply.button.label"/></button>
-                                    </div>
-                                  </div>
-                                  <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
-                              </div>
-                              <%-- <div class="notification notification-warning">This is a cart warning.</div>
-                              <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
-                              <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
-                              <div class="order-actions my-4"><a href="#" alt="Print Order"><i class="icon-print"></i></a><a href="#"><i class="icon-save" alt="Save Order"></i></a><a href="${emptyCart}" alt="Trash Order" class="clear-cart-page"><i class="icon-trash"></i></a></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-     </section>
-
-    <%-- Damage Waivers Modal --%>
-    <div class="modal fade" id="damageWaivers" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><spring:theme code="text.damage.Waiver.model.title"/></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-4">
-                    <div class="text-center col-md-3 col-lg-2">
-                        <img src="${themeResourcePath}/assets/gear-guard-plus.png">
-                    </div>
-                    <div class="col-md-9 col-lg-10">
-                        <p><b><spring:theme code="text.damage.Waiver.model.option.pro"/></b></p>
-                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.pro.description"/></p>
-                        <hr>
-                    </div>
-                </div>
-                <div class="row mb-4">
-                    <div class="text-center col-md-3 col-lg-2">
-                        <img src="${themeResourcePath}/assets/gear-guard.png">
-                    </div>
-                    <div class="col-md-9 col-lg-10">
-                        <p><b><spring:theme code="text.damage.Waiver.model.option.gear"/></b></p>
-                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.gear.description"/></p>
-                        <hr>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="text-center col-md-3 col-lg-2">
-                        <img src="${themeResourcePath}/assets/gear-guard-none.png">
-                    </div>
-                    <div class="col-md-9 col-lg-10">
-                        <p><b><spring:theme code="text.damage.Waiver.model.option"/></b></p>
-                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.description"/></p>
-                    </div>
-                </div>
-            </div>
-          </div>
-      </div>
-  </div>
+  <c:choose>
+      <c:when test="${cartData.isRentalCart}">
+            <cart:blRentalCartPage/>
+      </c:when>
+      <c:otherwise>
+            <cart:blUsedGearCartPage/>
+      </c:otherwise>
+  </c:choose>
 
 </template:page>

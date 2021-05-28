@@ -2,11 +2,13 @@
 #% impex.enableExternalImpExSyntaxParsing(true)
 #% impex.enableExternalDataCodeExecution(true)
 
-#% impex.info("=============================== Importing content from BLInitialData core_custom_common_data_sequence =========================");
+#% impex.info("=============================== Importing content from BLInitialData coredata/common core_custom_common_data_sequence =========================");
 
 #mention custom paths here
 $commonCustomPath = /blinitialdata/import/coredata/common/custom
 
-#Mention here common custom impexes in sequence
+# User Access Rights Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/user-access-rights.impex"), "utf-8", 0, 0);
+
+# Essential Data Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/essential-data.impex"), "utf-8", 0, 0);

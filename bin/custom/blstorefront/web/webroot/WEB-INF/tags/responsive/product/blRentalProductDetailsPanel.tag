@@ -12,6 +12,9 @@
  				<cms:component component="${component}"/>
  </cms:pageSlot>
     <section id="theProduct">
+        <div class="page-loader-new-layout">
+          <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+        </div>
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-12">
@@ -47,7 +50,7 @@
                                          </c:if>
                                       </c:otherwise>
                                     </c:choose>
-                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
+                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="${themeResourcePath}/assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
                                 </ul>
@@ -59,7 +62,17 @@
                                        </div>
                                  </div>
                                  <div id="pickupDelivery">
-                                   <p><span class="arrival">Get it on Jan 31</span> <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a></p>
+                                 <p>
+	                                 <c:choose>
+	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
+	                                 		<span class="arrival"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 	</c:when>
+	                                 	<c:when test="${not empty nextAvailabilityDate }">
+	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span> 
+	                                 	</c:when>
+	                                 </c:choose>
+	                                 <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a>
+                                 </p>
                                   </div>
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
@@ -91,10 +104,8 @@
                                            <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
                                         </div>
                                         <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
-                                           <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
-                                           <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
-                                  		  	<button id="addToCartButton" type="submit"
-                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn" data-bs-toggle="modal" data-bs-target="#addToCart">
+                                          <button type="button"
+                                  			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
                                   					<spring:theme code="basket.add.to.rental.cart.button.text" />
                                   				</button>
                                   		  </form>

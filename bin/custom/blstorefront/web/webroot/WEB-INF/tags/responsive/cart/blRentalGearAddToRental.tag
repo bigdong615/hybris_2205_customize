@@ -31,15 +31,15 @@
 					</button>
 				</c:when>
 				<c:otherwise>
+				<div class="page-loader-new-layout">
+            <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+        </div>
 					<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
                			<div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
             		</div>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
-                		<input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
-                		<input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
-                		<input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
-						    <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart">
-							    <spring:theme code="text.add.to.rental" />
+                <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
+                      <spring:theme code="text.add.to.rental" />
 						    </button>
 						</form:form>
 				</c:otherwise>

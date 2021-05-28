@@ -4,6 +4,8 @@
 -->
 <widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widgets.xsd">
+	
+	<!-- <import resource="prespective/blCustomOrder/blUpdateOrderDetails-backoffice-widgets.xml"/> -->
 
 	<!-- BL-110 Web Scan Tool Wizard -->
 	<widget-extension widgetId="mainSlot">
