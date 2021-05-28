@@ -134,7 +134,7 @@ $('#cart-continue').on("click", function (e) {
 			} else if (response == 'rentalDateNotSelected') {
 				$('#cart-warning').css('display', 'block');
 			}else{
-			  $('#cart-warning').css('display', 'none');
+			  window.location.href = ACC.config.encodedContextPath + "/cart";
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
