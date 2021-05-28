@@ -102,10 +102,17 @@ $('.shopping-cart__item-remove').on("click", function (e){
                           url: ACC.config.encodedContextPath + "/cart/updateQuantity",
                           type: 'POST',
                           data: form.serialize(),
+                          beforeSend: function(){
+                             $('.page-loader-new-layout').show();
+                          },
                           success: function (response) {
                              console.log("Quantity updated");
                           },
+                          complete: function() {
+                             $('.page-loader-new-layout').hide();
+                          },
                           error: function (jqXHR, textStatus, errorThrown) {
+                            $('.page-loader-new-layout').hide();
                             console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
                           }
                 });
@@ -176,8 +183,10 @@ $('#cart-continue').on("click", function (e) {
 			if (response == 'success') {
 				var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
 				window.location.href = url;
-			} else {
+			} else if (response == 'rentalDateNotSelected') {
 				$('#cart-warning').css('display', 'block');
+			}else{
+			  $('#cart-warning').css('display', 'none');
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {

@@ -130,7 +130,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         //For rental product
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
-        parameter.setCreateNewEntry(true);
+        parameter.setCreateNewEntry(false);
       }
     } catch (Exception exception) {
       BlLogger.logMessage(LOGGER, Level.ERROR,
