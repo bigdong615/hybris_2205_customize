@@ -20,9 +20,14 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; FooterSlot                         ;                                                                       ;                           ; footer
                               ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
                               ; FooterCopyRightslot                ;                                                                       ;                           ; wide
-                              ; MyAccountSlot     ;                                                                       ;                           ; navigation
+                              ; MyAccountSlot                      ;                                                                       ;                           ; navigation
                               ; HomePageRentingGearIsEasyTitleSlot ;                                                                       ;                           ; wide
                               ; HomePageRentingGearSectionSlot     ;                                                                       ;                           ; wide
+                              ; MobileHeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
                               ; BreadcrumbSection                 ;                                                                        ;                           ;wide
                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
 
@@ -49,6 +54,11 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; HomePageRentingGearSectionSlot-productDetails     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
                                       ;                        ; BreadcrumbSlot-productDetails                     ; BreadcrumbSection                 ;                                                        ; BreadcrumbSlot                           ; true
                                     ;                          ; SearchBoxBl-productDetails              ; SearchBoxBl                   ;                                                                                        ; SearchBoxBl                                ; true
+                                    ;                         ; MobileHeaderLinkForSupportSlot-productDetails      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                    ;                         ; MobileHeaderLinkForAccountSlot-productDetails      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true
+                                    ;                         ; MobileHeaderBottomInfo-productDetails              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
+                                   ;                         ; MobileHeaderLinkForShipOrPickupSlot-productDetails ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
+                                   ;                         ; MobileMiniCartSlot-productDetails                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
 
 
 # Product Details Page
