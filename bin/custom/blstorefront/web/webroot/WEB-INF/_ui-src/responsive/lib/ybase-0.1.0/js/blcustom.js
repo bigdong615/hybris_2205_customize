@@ -117,8 +117,31 @@ $('.shopping-cart__item-remove').on("click", function (e){
                           }
                 });
     });
-<<<<<<< HEAD
  }
+
+//BL-461,465 Product Availability
+$('#cart-continue').on("click", function (e) {
+	e.preventDefault();
+
+	$.ajax({
+		url: ACC.config.encodedContextPath + "/cart/checkDateAndStock",
+		type: 'GET',
+    success: function (response) {
+
+			if (response == 'success') {
+				var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
+				window.location.href = url;
+			} else if (response == 'rentalDateNotSelected') {
+				$('#cart-warning').css('display', 'block');
+			}else{
+			  $('#cart-warning').css('display', 'none');
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
+		}
+	});
+});
 
 function addId(){
 let seemore = document.querySelectorAll(".SeeMore2");
@@ -166,32 +189,4 @@ seemore[i].id ="abc-"+i;
                          });
 
   });
-=======
-
-
  }
-
-//BL-461,465 Product Availability
-$('#cart-continue').on("click", function (e) {
-	e.preventDefault();
-
-	$.ajax({
-		url: ACC.config.encodedContextPath + "/cart/checkDateAndStock",
-		type: 'GET',
-    success: function (response) {
-
-			if (response == 'success') {
-				var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
-				window.location.href = url;
-			} else if (response == 'rentalDateNotSelected') {
-				$('#cart-warning').css('display', 'block');
-			}else{
-			  $('#cart-warning').css('display', 'none');
-			}
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-			console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
-		}
-	});
-});
->>>>>>> develop
