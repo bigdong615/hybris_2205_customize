@@ -30,7 +30,7 @@ Added for removing add to cart popup background, when unable to add product to c
 
 /*BL- 605 */
 @media(min-width:767px){
-  #productExtras #gear-slider-list .card { padding: 30px 15px; }
+  #productExtras #gear-slider-list .card { padding: 30px 10px; }
 }
 
 /**
