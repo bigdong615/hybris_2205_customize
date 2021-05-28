@@ -672,7 +672,7 @@
   </bean>
 
   <bean id="blGlobalCategorySource" parent="abstractCategorySource">
-    <property name="rootCategory" value="brands"/>
+    <property name="rootCategory" value="1"/>
   </bean>
 
   <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
