@@ -16,6 +16,8 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -345,8 +347,7 @@ public class CartPageController extends AbstractCartPageController
 			{				
 				if (removeEntry)
 				{
-					final CartModificationData cartModification = getCartFacade().updateCartEntry(entryNumber,
-							form.getQuantity().longValue());
+					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
 				}
 				else
 				{
@@ -386,21 +387,27 @@ public class CartPageController extends AbstractCartPageController
 			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CommerceCartModificationException
 	{
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-		final long availableStockForProduct = getAvailableStockForProduct(rentalDateDto, productCode);
-		if (availableStockForProduct <= 0)
+		if(Objects.nonNull(rentalDateDto))
 		{
-			setNextAvailableDate(entryNumber, productCode, form, redirectModel, rentalDateDto);
-		}
-		else if (availableStockForProduct < form.getQuantity().longValue())
-		{
-			redirectModel.addFlashAttribute("entryNumber", entryNumber);
-			redirectModel.addFlashAttribute("entryMessage", getMessage("cart.entry.item.availability.low.stock.available",
-					Arrays.asList(String.valueOf(availableStockForProduct))));
+			final long availableStockForProduct = getAvailableStockForProduct(rentalDateDto, productCode);
+			if (availableStockForProduct <= 0)
+			{
+				setNextAvailableDate(entryNumber, productCode, form, redirectModel, rentalDateDto);
+			}
+			else if (availableStockForProduct < form.getQuantity().longValue())
+			{
+				redirectModel.addFlashAttribute("entryNumber", entryNumber);
+				redirectModel.addFlashAttribute("entryMessage", getMessage("cart.entry.item.availability.low.stock.available",
+						Arrays.asList(String.valueOf(availableStockForProduct))));
+			}
+			else
+			{
+				getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
+			}
 		}
 		else
 		{
-			final CartModificationData cartModification = getCartFacade().updateCartEntry(entryNumber,
-					form.getQuantity().longValue());
+			getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
 		}
 	}
 
@@ -445,10 +452,12 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	private long getAvailableStockForProduct(final RentalDateDto rentalDateDto, final String productCode)
 	{
+		final int daysToAdd = 2;
 		final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore().getWarehouses();
-		final Date startDay = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-				BlCoreConstants.DATE_FORMAT);
-		final Date endDay = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
+		final List<Date> blackOutDates = Lists
+				.newArrayList(CollectionUtils.emptyIfNull(baseStoreService.getCurrentBaseStore().getBlackOutDates()));
+		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(daysToAdd, rentalDateDto.getSelectedFromDate(), blackOutDates);
+		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(daysToAdd, rentalDateDto.getSelectedToDate(), blackOutDates);
 		return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
 	}
 
@@ -920,32 +929,18 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	@GetMapping(value = "/checkDateAndStock")
 	@ResponseBody
-	public String checkDateRangeAndStock(final Model model) {
-		final long stockNotAvailable = 0L;
+	public String checkDateRangeAndStock(final Model model) 
+	{
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-		final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore()
-				.getWarehouses();
-		final CartModel cartModel = blCartService.getSessionCart();
-		if (rentalDateDto == null) {
-
+		if (rentalDateDto == null)
+		{
 			return BlControllerConstants.RENTAL_DATE_FAILURE_RESULT;
-		} else {
-			final Date startDay = BlDateTimeUtils
-					.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-							BlControllerConstants.DATE_FORMAT_PATTERN);
-			final Date endDay = BlDateTimeUtils
-					.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
-							BlControllerConstants.DATE_FORMAT_PATTERN);
-			final List<AbstractOrderEntryModel> abstractOrderEntryModelList = cartModel.getEntries();
-			for (final AbstractOrderEntryModel abstractOrderEntryModel : abstractOrderEntryModelList) {
-
-				final long stockLevel = blCommerceStockService
-						.getAvailableCount(abstractOrderEntryModel.getProduct().getCode(), warehouseModelList,
-								startDay, endDay);
-				if (stockLevel == stockNotAvailable) {
-					return BlControllerConstants.STOCK_FAILURE_RESULT;
-				}
-
+		}
+		else
+		{
+			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))
+			{
+				return BlControllerConstants.STOCK_FAILURE_RESULT;
 			}
 		}
 		return BlControllerConstants.SUCCESS;
