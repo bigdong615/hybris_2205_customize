@@ -18,7 +18,6 @@ public class BlDeliveryModeLoggingConstants {
     public static final String ZONE_PST= "PST";
     public static final String ZONE_EST= "EST";
 
-    public static final String AM= "AM";
     public static final String AM_ERROR = "AM-ERROR";
     public static final String PIN_ERROR = "PIN-ERROR";
 
@@ -47,6 +46,8 @@ public class BlDeliveryModeLoggingConstants {
     public static final String NEXT_DAY_RUSH_DELIVERY = "NEXT_DAY_RUSH_DELIVERY";
 
     public static final String UPS = "UPS";
+
+    public static final String RUSH_NYC_NEXT_DAY_9_To_12 = "RUSH_NYC_NEXT_DAY_9_To_12";
 
     public static final String SHIP_HOME_HOTEL_BUSINESS_MSG = "Ship to home, hotel business";
     public static final String BL_PARTNER_PICKUP_MSG = "BL-Partner pickup";

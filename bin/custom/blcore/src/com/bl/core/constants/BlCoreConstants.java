@@ -42,6 +42,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String USED = "Used";
 	public static final String CATEGORY_MAP = "usedgear.rentalgear.map";
 	public static final String RENTAL_GEAR = "rentalgear";
+	public static final String RENTAL_SUMMARY_DATE = "rentalSummary";
 	public static final String IS_VIDEO = "isVideo";
 	public static final String IS_NEW = "isNew";
 	public static final String TRUE = "true";
@@ -149,6 +150,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES ="lenses";
 	public static final String CAMERAS ="cameras";
 	public static final String PRODUCTION ="production";
+	public static final int SKIP_TWO_DAYS = 2;
 
 
 	private BlCoreConstants()
