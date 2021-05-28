@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
@@ -188,7 +189,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		model.addAttribute(CART_DATA_ATTR, cartData);
-
+		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
+		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
 	}
 
