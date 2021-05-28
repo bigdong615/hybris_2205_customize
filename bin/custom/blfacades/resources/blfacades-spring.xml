@@ -461,4 +461,6 @@
 	<alias name="blSearchResponseQueryPopulator" alias="commerceSearchResponseQueryPopulator" />
 	<bean id="blSearchResponseQueryPopulator" class="com.bl.facades.populators.BlSearchResponseQueryPopulator" parent="defaultCommerceSearchResponseQueryPopulator"/>
 
+
+
 </beans>
