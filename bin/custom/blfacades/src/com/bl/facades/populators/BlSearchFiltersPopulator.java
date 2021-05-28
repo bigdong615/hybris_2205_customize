@@ -210,13 +210,14 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    */
   private void addQueryForCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,final String key , final String value) {
     target.getSearchQuery().addFilterQuery(key,value);
+    // Added for Rental Gear and Used Gear sorting field
           final String sortName = target.getPageableData().getSort();
-        for ( IndexedTypeSort indexedTypeSorts : target.getSearchQuery().getIndexedType().getSorts()) {
+        for (final IndexedTypeSort indexedTypeSorts : target.getSearchQuery().getIndexedType().getSorts()) {
           if(indexedTypeSorts.getCode().equalsIgnoreCase(sortName) && BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName)
           || indexedTypeSorts.getCode().equalsIgnoreCase(sortName) && BlCoreConstants.PRICE_DESC.equalsIgnoreCase(sortName)){
             indexedTypeSorts.getFields().clear();
             final List<IndexedTypeSortField> fields = new ArrayList<>();
-            IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
+            final IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
             indexedTypeSortField.setFieldName(BlCoreConstants.FOR_SALE.equalsIgnoreCase(key) ? BlCoreConstants.MIN_SERIAL_PRICE : BlCoreConstants.PRICE_VALUE);
             indexedTypeSortField.setAscending(BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName) ? true : false); //NOSONAR
             fields.add(indexedTypeSortField);
