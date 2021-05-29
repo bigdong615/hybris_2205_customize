@@ -2,6 +2,10 @@ package com.bl.core.datepicker;
 
 import com.bl.facades.product.data.RentalDateDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.util.Date;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -55,4 +59,11 @@ public interface BlDatePickerService
 	 * @param endDate the rental end date
 	 */
 	public void addRentalDatesIntoSession(final String startDate, final String endDate);
+	
+	/**
+	 * Gets the list of black out dates from current base store.
+	 *
+	 * @return the list of black out dates
+	 */
+	public List<Date> getListOfBlackOutDates();
 }

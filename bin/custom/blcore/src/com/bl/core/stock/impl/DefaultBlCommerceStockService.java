@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -46,6 +47,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	private static final Logger LOG = Logger.getLogger(DefaultBlCommerceStockService.class);
 	private BlStockLevelDao blStockLevelDao;
 	private BaseStoreService baseStoreService;
+	private BlDatePickerService blDatePickerService;
 
 	/**
 	 * {@inheritDoc}
@@ -352,8 +354,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 						"Before adding shipping days to Rental Start Date {} and Rental End Date {}", rentalDates.getSelectedFromDate(),
 						rentalDates.getSelectedToDate());
 				final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
-				final List<Date> blackOutDates = Lists
-						.newArrayList(CollectionUtils.emptyIfNull(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()));
+				final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
 				final Date newRentalStartDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
 						rentalDates.getSelectedFromDate(), blackOutDates);
 				final Date newRentalEndDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDates, lastDateToCheck);				
@@ -408,8 +409,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	{
 		Date nextAvailableDate = null;
 		Boolean continueCheck = Boolean.TRUE;
-		final List<Date> blackOutDates = Lists
-				.newArrayList(CollectionUtils.emptyIfNull(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()));
+		final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
 		while (nextAvailableDate == null && continueCheck)
 		{
 			Date nextStockUnavailableDate = getDateIfStockNotAvailable(productCode, lWareHouses, newRentalStartDate,
@@ -610,6 +610,22 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	public void setBaseStoreService(BaseStoreService baseStoreService)
 	{
 		this.baseStoreService = baseStoreService;
+	}
+
+	/**
+	 * @return the blDatePickerService
+	 */
+	public BlDatePickerService getBlDatePickerService()
+	{
+		return blDatePickerService;
+	}
+
+	/**
+	 * @param blDatePickerService the blDatePickerService to set
+	 */
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	{
+		this.blDatePickerService = blDatePickerService;
 	}
 
 }

@@ -6,14 +6,24 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.hybris.platform.servicelayer.session.SessionService;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.Lists;
 
+import de.hybris.platform.servicelayer.session.SessionService;
+import de.hybris.platform.store.services.BaseStoreService;
+
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -30,6 +40,7 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 {
 	private static final Logger LOG = Logger.getLogger(DefaultBlDatePickerService.class);
 	private SessionService sessionService;
+	private BaseStoreService baseStoreService;
 
 	/**
 	 * {@inheritDoc}
@@ -125,6 +136,30 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Date> getListOfBlackOutDates()
+	{
+		try
+		{
+			if (Objects.nonNull(getBaseStoreService().getCurrentBaseStore())
+					&& CollectionUtils.isNotEmpty(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()))
+			{
+				return getBaseStoreService().getCurrentBaseStore().getBlackOutDates().stream()
+						.map(date -> BlDateTimeUtils.getFormattedStartDay(date).getTime()).collect(Collectors.toList());
+			}
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logMessage(LOG, Level.ERROR, "", "Error while getting list of black out dates from current base store",
+					exception);
+		}
+
+		return Lists.newArrayList();
+	}
+	
+	/**
 	 * @return the sessionService
 	 */
 	public SessionService getSessionService()
@@ -139,6 +174,22 @@ public class DefaultBlDatePickerService implements BlDatePickerService
 	public void setSessionService(final SessionService sessionService)
 	{
 		this.sessionService = sessionService;
+	}
+
+	/**
+	 * @return the baseStoreService
+	 */
+	public BaseStoreService getBaseStoreService()
+	{
+		return baseStoreService;
+	}
+
+	/**
+	 * @param baseStoreService the baseStoreService to set
+	 */
+	public void setBaseStoreService(BaseStoreService baseStoreService)
+	{
+		this.baseStoreService = baseStoreService;
 	}
 
 }
