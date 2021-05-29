@@ -116,6 +116,9 @@
 				<div class="divider col-xl-10"></div>
 			</div>
 			<!-- BL-52 : HomePage Featured Gear section -->
+			<div class="page-loader-new-layout">
+           <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+      </div>
 			<div id="featured" class="row justify-content-center">
 				<div class="col-lg-11 col-xl-9">
 				  <c:choose>
