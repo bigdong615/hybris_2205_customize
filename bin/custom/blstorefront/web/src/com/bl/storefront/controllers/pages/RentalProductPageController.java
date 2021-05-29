@@ -11,6 +11,7 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,7 +62,7 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, null);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+      model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
     if(Objects.nonNull(rentalDatesFromSession))
     {
