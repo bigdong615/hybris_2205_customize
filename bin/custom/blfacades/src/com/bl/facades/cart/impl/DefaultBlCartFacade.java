@@ -341,18 +341,19 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 * @{InheritDoc }
 	 */
 	@Override
-	public void identifyCartType(final Model model) {
+	public String identifyCartType(final Model model) {
 		final CartModel cartModel = blCartService.getSessionCart();
 		if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
-			model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
+			return BlFacadesConstants.RENTAL_CART;
 		} else if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
-			model.addAttribute(BlFacadesConstants.USED_GEAR_CART, true);
+			return BlFacadesConstants.USED_GEAR_CART;
 		} else if (CollectionUtils
 				.isEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
-			model.addAttribute(BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED, true);
+			return BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED;
 		}
+		return null;
 	}
 	
   /**

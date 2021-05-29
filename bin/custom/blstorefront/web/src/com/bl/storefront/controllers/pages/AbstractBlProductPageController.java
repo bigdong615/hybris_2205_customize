@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -417,7 +416,10 @@ public class AbstractBlProductPageController extends AbstractPageController
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, productBreadcrumbBuilder.getBreadcrumbs(productCode));
-		blCartFacade.identifyCartType(model);
+    final String currentCartType = blCartFacade.identifyCartType(model);
+    if(StringUtils.isNotEmpty(currentCartType)){
+      model.addAttribute(currentCartType,true);
+    }
 		if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
 		{
 			model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,

@@ -102,9 +102,9 @@ public interface BlCartFacade extends CartFacade {
 	boolean checkAvailabilityOnCartContinue(final RentalDateDto sessionRentalDate);
 
 	/**
-	 * It identifies present cart type and set model attributes value true based on rental/used gear product present in cart.
+	 * It identifies type of cart, whether it is rental or used gear cart.
 	 * @param model
 	 */
-	void identifyCartType(final Model model);
+	String identifyCartType(final Model model);
 	
 }
