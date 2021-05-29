@@ -133,9 +133,3 @@ UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       
                              ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/DJI/c/DJI"             ; DJI                         
                              ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/Panasonic/c/Panasonic" ; Panasonic
 
-UPDATE BuyingUsedGearIsEasyComponent   ; $contentCV[unique=true] ; uid[unique=true]                 ; $picture[lang=$lang]
-                                       ;                         ; BuyingUsedGearComponent1 ;icon-used-inspected.png
-                                       ;                         ; BuyingUsedGearComponent2 ;icon-used-guarantee.png
-                                       ;                         ; BuyingUsedGearComponent3 ;icon-used-condition.png
-                                       ;                         ; BuyingUsedGearComponent3 ;icon-used-returns.png
-
