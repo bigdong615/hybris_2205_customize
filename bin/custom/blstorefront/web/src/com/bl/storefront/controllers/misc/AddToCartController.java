@@ -66,6 +66,7 @@ public class AddToCartController extends AbstractController
 	private static final String ERROR_MSG_TYPE = "errorMsg";
 	private static final String QUANTITY_INVALID_BINDING_MESSAGE_KEY = "basket.error.quantity.invalid.binding";
 	private static final String SHOWN_PRODUCT_COUNT = "blstorefront.storefront.minicart.shownProductCount";
+	private static final String PRODUCT_LIMIT = "addtocart.dontforget.product.limit";
 
 	private static final Logger LOG = Logger.getLogger(AddToCartController.class);
 
@@ -158,7 +159,7 @@ public class AddToCartController extends AbstractController
 		final List<ProductReferenceData> productReferences = productFacade
 				.getProductReferencesForCode(code, getEnumerationService().getEnumerationValues(
 						ProductReferenceTypeEnum._TYPECODE),
-						PRODUCT_OPTIONS, 50);
+						PRODUCT_OPTIONS, Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50)));
 
 		model.addAttribute("productReferences", productReferences);
 		model.addAttribute("dataChange", recognise);
