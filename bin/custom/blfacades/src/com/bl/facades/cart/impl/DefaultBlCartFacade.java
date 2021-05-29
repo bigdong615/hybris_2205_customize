@@ -316,7 +316,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	@Override
 	public boolean checkAvailabilityOnCartContinue(final RentalDateDto sessionRentalDate)
 	{
-		final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.FALSE);
+		final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
 		final CartModel cartModel = getBlCartService().getSessionCart();
 		if (Objects.nonNull(sessionRentalDate) && Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries()))
 		{
