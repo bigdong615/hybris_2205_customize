@@ -103,8 +103,8 @@ public interface BlCartFacade extends CartFacade {
 
 	/**
 	 * It identifies type of cart, whether it is rental or used gear cart.
-	 * @param model
+	 * @return String
 	 */
-	String identifyCartType(final Model model);
+	String identifyCartType();
 	
 }

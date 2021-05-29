@@ -144,7 +144,7 @@ public class SearchPageController extends AbstractSearchPageController
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
-		final String currentCartType = blCartFacade.identifyCartType(model);
+		final String currentCartType = blCartFacade.identifyCartType();
 		if(StringUtils.isNotEmpty(currentCartType)){
 			model.addAttribute(currentCartType,true);
 		}

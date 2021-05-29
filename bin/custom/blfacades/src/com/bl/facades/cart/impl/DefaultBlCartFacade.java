@@ -341,7 +341,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 * @{InheritDoc }
 	 */
 	@Override
-	public String identifyCartType(final Model model) {
+	public String identifyCartType() {
 		final CartModel cartModel = blCartService.getSessionCart();
 		if (CollectionUtils
 				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {

@@ -416,7 +416,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, productBreadcrumbBuilder.getBreadcrumbs(productCode));
-    final String currentCartType = blCartFacade.identifyCartType(model);
+    final String currentCartType = blCartFacade.identifyCartType();
     if(StringUtils.isNotEmpty(currentCartType)){
       model.addAttribute(currentCartType,true);
     }

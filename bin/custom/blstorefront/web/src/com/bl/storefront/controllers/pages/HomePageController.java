@@ -55,7 +55,7 @@ public class HomePageController extends AbstractPageController
 		setUpMetaDataForContentPage(model, contentPage);
 		updatePageTitle(model, contentPage);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-		final String currentCartType = blCartFacade.identifyCartType(model);
+		final String currentCartType = blCartFacade.identifyCartType();
 		if(StringUtils.isNotEmpty(currentCartType)){
 			model.addAttribute(currentCartType,true);
 		}

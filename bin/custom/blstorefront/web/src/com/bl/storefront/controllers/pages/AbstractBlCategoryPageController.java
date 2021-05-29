@@ -138,7 +138,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
         if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-            final String currentCartType = blCartFacade.identifyCartType(model);
+            final String currentCartType = blCartFacade.identifyCartType();
             if(StringUtils.isNotEmpty(currentCartType)){
                 model.addAttribute(currentCartType,true);
             }
