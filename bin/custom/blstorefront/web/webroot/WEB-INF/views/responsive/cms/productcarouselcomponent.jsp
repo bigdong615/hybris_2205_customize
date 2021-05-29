@@ -47,7 +47,8 @@
 												<c:if test="${productImage.format eq 'product' and productImage.imageType eq 'GALLERY'}">
 													<c:url value="${productImage.url}" var="primaryImageUrl" />
 	                       							<c:set value="this is alternate" var="altTextHtml"/>
-													<li class="splide__slide"><img src="${primaryImageUrl}"></li>
+	                       							<c:url var="rentUrl" value="/rent/product/${product.code}"/>
+													<li class="splide__slide"><a href="${rentUrl}"><img src="${primaryImageUrl}"></a></li>
 												</c:if>
 											</c:forEach>
 										</ul>
