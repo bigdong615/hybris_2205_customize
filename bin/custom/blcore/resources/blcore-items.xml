@@ -8,7 +8,7 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
-        <collectiontype code="ListOfMedia" elementtype="Media" autocreate="true" generate="true" type="list"/>
+        <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -407,21 +407,9 @@
 				<description>Custom Navigation component for Support navigation node on header.</description>
 			</itemtype>
 
-      <itemtype code="BuyingUsedGearIsEasyComponent" extends="AbstractBannerComponent" autocreate="true" generate="true"
-        jaloclass="com.bl.core.cms.components.BuyingUsedGearIsEasyComponent">
-        <description>Custom CMS Paragraph Component type that contains additional attribute for buying used gear is easy section on PDP</description>
-        <attributes>
-          <attribute qualifier="usedGearData" type="localized:java.lang.String">
-            <persistence type="property" />
-            <modifiers read="true" write="true" optional="true" />
-            <description>Localized usedGearData only for Buying Used Gear Is Easy section </description>
-          </attribute>
-        </attributes>
-      </itemtype>
-
       <itemtype code="BannerComponent" autocreate="false" generate="false">
         <attributes>
-          <attribute type="ListOfMedia" qualifier="mediaData">
+          <attribute type="MediasList" qualifier="medias">
             <modifiers read="true" write="true" optional="true" />
             <persistence type="property" />
           </attribute>

@@ -59,11 +59,12 @@ INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]            ; r
                     ;                         ; /images/theme/img-blog-2.jpg ; img-blog-2.jpg ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                     
                     ;                         ; /images/theme/img-blog-3.jpg ; img-blog-3.jpg ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;
 
-INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename                 ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
-                    ;                        ; icon-used-inspected.png     ; $siteResource/images/icon-used-inspected.png                                                ; icon-used-inspected          ;         ;image/svg+xml
-                    ;                        ; icon-used-guarantee.png     ; $siteResource/images/icon-used-guarantee.png                                                ; icon-used-guarantee          ;         ;image/svg+xml
-                    ;                        ; icon-used-condition.png     ; $siteResource/images/icon-used-condition.png                                                ;icon-used-condition           ;         ;image/svg+xml
-                    ;                        ; icon-used-returns.png       ; $siteResource/images/icon-used-returns.png                                                  ; icon-used-returns            ;         ;image/svg+xml
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ;description                                 ; realfilename                   ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
+                    ;                        ; icon-used-inspected111.png     ; $siteResource/images/icon-used-inspected.png                                                ;Inspected & cleaned by our experts          ; icon-used-inspected          ;         ;image/png+xml
+                    ;                        ; icon-used-guarantee111.png     ; $siteResource/images/icon-used-guarantee.png                                                ;We guarantee your gear will work perfectly  ; icon-used-guarantee          ;         ;image/png+xml
+                    ;                        ; icon-used-condition111.png     ; $siteResource/images/icon-used-condition.png                                                ;Know what to expect with condition details  ;icon-used-condition           ;         ;image/png+xml
+                    ;                        ; icon-used-returns111.png       ; $siteResource/images/icon-used-returns.png                                                  ;Try it yourself with easy returns           ; icon-used-returns            ;         ;image/png+xml
+
 
 UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]
                                ;                         ; BLSiteLogoComponent ; /images/theme/bl-logo@2x.png ;  

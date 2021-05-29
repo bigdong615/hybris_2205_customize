@@ -5,10 +5,10 @@
 
 <h5>${feature.headline}</h5>
   <div class="row mt-5">
-      <c:forEach items="${feature.mediaData}" var="medias">
+      <c:forEach items="${feature.medias}" var="image">
      <div class="col-6 col-md-3 text-center">
-            <img src="${medias.url}" />
-            <h6>${medias.description}</h6>
+            <img src="${image.url}" />
+            <h6>${image.description}</h6>
      </div>
      </c:forEach>
   </div>
