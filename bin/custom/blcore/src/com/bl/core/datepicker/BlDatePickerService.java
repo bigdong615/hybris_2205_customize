@@ -61,7 +61,7 @@ public interface BlDatePickerService
 	public void addRentalDatesIntoSession(final String startDate, final String endDate);
 	
 	/**
-	 * Gets the list of black out dates from current base store.
+	 * Gets the list of black out dates with time as 00:00:00 am from current base store.
 	 *
 	 * @return the list of black out dates
 	 */
