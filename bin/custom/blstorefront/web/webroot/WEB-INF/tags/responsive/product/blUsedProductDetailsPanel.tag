@@ -88,17 +88,10 @@
                <div class="container">
                    <div class="row justify-content-center">
                        <div class="col-lg-11 col-xl-9">
-                          <h5>
-                           <cms:pageSlot position="BuyingUsedGearIsEasySectionSlot" var="feature">
-                                 <cms:component component="${feature}" />
-                            </cms:pageSlot>
-                          </h5>
-                          <div class="row mt-5">
-                              <cms:pageSlot position="BuyingUsedGearIsEasyTitleSlot"
-                                  var="feature">
-                              <cms:component component="${feature}" />
-                           </cms:pageSlot>
-                          </div>
+                          <cms:pageSlot position="UsedGearComponentsectionslot"
+                       							var="feature">
+                       							<cms:component component="${feature}" />
+                       		</cms:pageSlot>
                        </div>
                    </div>
                </div>

@@ -8,6 +8,7 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
+        <collectiontype code="ListOfMedia" elementtype="Media" autocreate="true" generate="true" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -414,6 +415,15 @@
             <persistence type="property" />
             <modifiers read="true" write="true" optional="true" />
             <description>Localized usedGearData only for Buying Used Gear Is Easy section </description>
+          </attribute>
+        </attributes>
+      </itemtype>
+
+      <itemtype code="BannerComponent" autocreate="false" generate="false">
+        <attributes>
+          <attribute type="ListOfMedia" qualifier="mediaData">
+            <modifiers read="true" write="true" optional="true" />
+            <persistence type="property" />
           </attribute>
         </attributes>
       </itemtype>
@@ -1400,7 +1410,7 @@
             </itemtype>
 
             <itemtype code="PartnerPickUpStore" extends="GenericItem" autocreate="true" generate="true">
-                <deployment table="partnerPickUpStore" typecode="12210" />
+                <deployment table="partnerPickUpStore" typecode="12310" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
