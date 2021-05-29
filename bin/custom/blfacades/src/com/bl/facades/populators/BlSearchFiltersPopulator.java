@@ -213,13 +213,13 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
     // Added for Rental Gear and Used Gear sorting field
           final String sortName = target.getPageableData().getSort();
         for (final IndexedTypeSort indexedTypeSorts : target.getSearchQuery().getIndexedType().getSorts()) {
-          if(indexedTypeSorts.getCode().equalsIgnoreCase(sortName) && BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName)
-          || indexedTypeSorts.getCode().equalsIgnoreCase(sortName) && BlCoreConstants.PRICE_DESC.equalsIgnoreCase(sortName)){
+          if(indexedTypeSorts.getCode().equalsIgnoreCase(sortName) && (BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName)
+          ||  BlCoreConstants.PRICE_DESC.equalsIgnoreCase(sortName))){
             indexedTypeSorts.getFields().clear();
             final List<IndexedTypeSortField> fields = new ArrayList<>();
             final IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
             indexedTypeSortField.setFieldName(BlCoreConstants.FOR_SALE.equalsIgnoreCase(key) ? BlCoreConstants.MIN_SERIAL_PRICE : BlCoreConstants.PRICE_VALUE);
-            indexedTypeSortField.setAscending(BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName) ? true : false); //NOSONAR
+            indexedTypeSortField.setAscending(BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName));
             fields.add(indexedTypeSortField);
             indexedTypeSorts.setFields(fields);
           }
