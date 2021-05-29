@@ -663,17 +663,10 @@
     <property name="rootCategory" value="brands"/>
   </bean>
 
-  <bean id="abstractBlGlobalFacetValueResolver" abstract="true" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
+  <bean id="blGlobalValueResolver" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
     <property name="modelService" ref="modelService"/>
   </bean>
 
-  <bean id="blGlobalValueResolver" parent="abstractBlGlobalFacetValueResolver">
-    <property name="categorySource" ref="blGlobalCategorySource"/>
-  </bean>
-
-  <bean id="blGlobalCategorySource" parent="abstractCategorySource">
-    <property name="rootCategory" value="1"/>
-  </bean>
 
   <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
     <property name="mediaFormat" value="300Wx300H"/>

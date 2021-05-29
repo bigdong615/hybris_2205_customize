@@ -3,14 +3,13 @@ package com.bl.core.resolvers;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.category.model.CategoryModel;
-import de.hybris.platform.commerceservices.search.solrfacetsearch.provider.CategorySource;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.solrfacetsearch.config.IndexConfig;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.exceptions.FieldValueProviderException;
 import de.hybris.platform.solrfacetsearch.indexer.IndexerBatchContext;
 import de.hybris.platform.solrfacetsearch.indexer.spi.InputDocument;
 import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +23,6 @@ public class BlGlobalFacetValueResolver extends
 
   private static final List<String> CATEGORY_LIST = Arrays.asList(BlCoreConstants.LENSES, BlCoreConstants.CAMERAS, BlCoreConstants.PRODUCTION);
 
-  private CategorySource categorySource;
   private ModelService modelService;
 
 
@@ -42,11 +40,7 @@ public class BlGlobalFacetValueResolver extends
       final IndexerBatchContext indexerBatchContext, final IndexedProperty indexedProperty,
      final BlProductModel blProductModel, final ValueResolverContext<Object, Object> valueResolverContext)
       throws FieldValueProviderException {
-     final IndexConfig indexConfig = new IndexConfig();
-    final Collection<CategoryModel> categories = getCategorySource()
-        .getCategoriesForConfigAndProperty(indexConfig,
-            indexedProperty, blProductModel);
-      for (final CategoryModel category : categories)
+      for (final CategoryModel category : getCategoriesForProduct(new ArrayList<>() ,blProductModel))
       {
         if(CATEGORY_LIST.contains(category.getName().toLowerCase())) {
           inputDocument.addField(indexedProperty, createFieldValue(category));
@@ -55,6 +49,13 @@ public class BlGlobalFacetValueResolver extends
 
   }
 
+  public Collection<CategoryModel> getCategoriesForProduct(final Collection<CategoryModel> categories , final BlProductModel blProductModel) {
+    for (final CategoryModel category : blProductModel.getSupercategories()) {
+      categories.add(category);
+      categories.addAll(category.getSupercategories());
+    }
+    return categories;
+  }
 
   private Object createFieldValue(final CategoryModel category)
   {
@@ -71,19 +72,6 @@ public class BlGlobalFacetValueResolver extends
   {
     return getModelService().getAttributeValue(model, propertyName);
   }
-
-
-
-
-  public CategorySource getCategorySource() {
-    return categorySource;
-  }
-
-  public void setCategorySource(
-      CategorySource categorySource) {
-    this.categorySource = categorySource;
-  }
-
 
   public ModelService getModelService() {
     return modelService;
