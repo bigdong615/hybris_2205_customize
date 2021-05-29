@@ -99,5 +99,11 @@ public interface BlCartFacade extends CartFacade {
 	 * @return true, if stock is available for cart
 	 */
 	boolean checkAvailabilityOnCartContinue(final RentalDateDto sessionRentalDate);
+
+	/**
+	 * It identifies type of cart, whether it is rental or used gear cart.
+	 * @return String
+	 */
+	String identifyCartType();
 	
 }
