@@ -3,17 +3,21 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -46,6 +50,7 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.quote.data.QuoteData;
 import de.hybris.platform.commercefacades.voucher.VoucherFacade;
 import de.hybris.platform.commercefacades.voucher.exceptions.VoucherOperationException;
+import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
@@ -64,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -71,6 +77,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -325,7 +332,8 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String updateCartQuantities(@RequestParam("entryNumber") final long entryNumber, final Model model,
+	public String updateCartQuantities(@RequestParam("entryNumber") final long entryNumber, @RequestParam("productCode") final String productCode,
+			@RequestParam("removeEntry") final boolean removeEntry, final Model model,
 			@Valid final UpdateQuantityForm form, final BindingResult bindingResult, final HttpServletRequest request,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
@@ -336,10 +344,15 @@ public class CartPageController extends AbstractCartPageController
 		else if (getCartFacade().hasEntries())
 		{
 			try
-			{
-				final CartModificationData cartModification = getCartFacade().updateCartEntry(entryNumber,
-						form.getQuantity().longValue());
-				addFlashMessage(form, request, redirectModel, cartModification);
+			{				
+				if (removeEntry)
+				{
+					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
+				}
+				else
+				{
+					updateCartEntry(entryNumber, productCode, form, request, redirectModel);
+				}			
 
 				// Redirect to the cart page on update success so that the browser doesn't re-post again
 				return getCartPageRedirectUrl();
@@ -353,7 +366,117 @@ public class CartPageController extends AbstractCartPageController
 		// if could not update cart, display cart/quote page again with error
 		return prepareCartUrl(model);
 	}
+	
+	/**
+	 * Update cart entry.
+	 *
+	 * @param entryNumber
+	 *           the entry number
+	 * @param productCode
+	 *           the product code
+	 * @param form
+	 *           the form
+	 * @param request
+	 *           the request
+	 * @param redirectModel
+	 *           the redirect model
+	 * @throws CommerceCartModificationException
+	 *            the commerce cart modification exception
+	 */
+	private void updateCartEntry(final long entryNumber, final String productCode, final UpdateQuantityForm form,
+			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CommerceCartModificationException
+	{
+		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+		if(Objects.nonNull(rentalDateDto))
+		{
+			final long availableStockForProduct = getAvailableStockForProduct(rentalDateDto, productCode);
+			if (availableStockForProduct <= 0)
+			{
+				setNextAvailableDate(entryNumber, productCode, form, redirectModel, rentalDateDto);
+			}
+			else if (availableStockForProduct < form.getQuantity().longValue())
+			{
+				redirectModel.addFlashAttribute("entryNumber", entryNumber);
+				redirectModel.addFlashAttribute("entryMessage", getMessage("cart.entry.item.availability.low.stock.available",
+						Arrays.asList(String.valueOf(availableStockForProduct))));
+			}
+			else
+			{
+				getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
+			}
+		}
+		else
+		{
+			getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
+		}
+	}
 
+	/**
+	 * Sets the next available date.
+	 *
+	 * @param entryNumber
+	 *           the entry number
+	 * @param productCode
+	 *           the product code
+	 * @param form
+	 *           the form
+	 * @param redirectModel
+	 *           the redirect model
+	 * @param rentalDateDto
+	 *           the rental date dto
+	 */
+	private void setNextAvailableDate(final long entryNumber, final String productCode, final UpdateQuantityForm form,
+			final RedirectAttributes redirectModel, final RentalDateDto rentalDateDto)
+	{
+		final String nextAvailabilityDate = blCommerceStockService.getNextAvailabilityDateInCheckout(productCode, rentalDateDto, null,
+				form.getQuantity().intValue());
+		if (StringUtils.isNotBlank(nextAvailabilityDate))
+		{
+			redirectModel.addFlashAttribute("entryNumber", entryNumber);
+			redirectModel.addFlashAttribute("entryMessage",
+					form.getQuantity().longValue() > 1
+							? getMessage("cart.entry.item.availability.qty.no.stock.available",
+									Arrays.asList(String.valueOf(form.getQuantity().longValue()), nextAvailabilityDate))
+							: getMessage("cart.entry.item.availability.no.stock.available.till", Arrays.asList(nextAvailabilityDate)));
+		}
+	}
+
+	/**
+	 * Gets the available stock for product.
+	 *
+	 * @param rentalDateDto
+	 *           the rental date dto
+	 * @param productCode
+	 *           the product code
+	 * @return the available stock for product
+	 */
+	private long getAvailableStockForProduct(final RentalDateDto rentalDateDto, final String productCode)
+	{
+		final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore().getWarehouses();
+		final List<Date> blackOutDates = Lists
+				.newArrayList(CollectionUtils.emptyIfNull(baseStoreService.getCurrentBaseStore().getBlackOutDates()));
+		final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedFromDate(), blackOutDates);
+		final Date endDay = BlDateTimeUtils.addDaysInRentalDates(BlControllerConstants.SKIP_TWO_DAYS, rentalDateDto.getSelectedToDate(), blackOutDates);
+		return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
+	}
+
+	/**
+	 * Gets the message.
+	 *
+	 * @param messageCode
+	 *           the message code
+	 * @param arguments
+	 *           the arguments
+	 * @return the message
+	 */
+	private AvailabilityMessage getMessage(final String messageCode, final List<String> arguments)
+	{
+		final AvailabilityMessage message = new AvailabilityMessage();
+		message.setMessageCode(messageCode);
+		message.setArguments(arguments);
+		return message;
+	}
+	
 	/**
 	 * It handles error for BindingResult.
 	 * @param model
@@ -385,6 +508,10 @@ public class CartPageController extends AbstractCartPageController
 		model.addAttribute("siteQuoteEnabled", Config.getBoolean(siteQuoteProperty, Boolean.FALSE));
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, resourceBreadcrumbBuilder.getBreadcrumbs("breadcrumb.cart"));
 		model.addAttribute("pageType", PageType.CART.name());
+		final CartData cartData = getCartFacade().getSessionCart();
+		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
+		}
 	}
 
 	protected void addFlashMessage(final UpdateQuantityForm form, final HttpServletRequest request,
@@ -710,7 +837,10 @@ public class CartPageController extends AbstractCartPageController
 	protected void createProductList(final Model model) throws CMSItemNotFoundException {
 		final ContentPageModel contentPageModel;
 		final CartData cartData = getBlCartFacade().getSessionCartWithEntryOrdering(false);
-
+		if(BooleanUtils.isTrue(cartData.getIsRentalCart()))
+		{
+			getBlCartFacade().checkAvailabilityForRentalCart(cartData);
+		}
 		if (CollectionUtils.isEmpty(cartData.getEntries())) {
 			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.EMPTY_CART_CMS_PAGE_LABEL);
 			model.addAttribute(BlControllerConstants.CART_DATA, cartData);
@@ -718,8 +848,7 @@ public class CartPageController extends AbstractCartPageController
 		} else {
 			createProductEntryList(model, cartData);
 			contentPageModel = getContentPageForLabelOrId(BlControllerConstants.CART_CMS_PAGE_LABEL);
-		}
-
+		}		
 		storeCmsPageInModel(model, contentPageModel);
 		setUpMetaDataForContentPage(model, contentPageModel);
 	}
@@ -753,7 +882,7 @@ public class CartPageController extends AbstractCartPageController
 		}
 		return prepareCartUrl(model);
 	}
-
+	
 	/**
 	 * Update product quantity based on the quantity selected from rental add to cart popup.
 	 *
@@ -774,7 +903,7 @@ public class CartPageController extends AbstractCartPageController
 			handleBindingResultError(model, bindingResult);
 		} else if (getCartFacade().hasEntries()) {
 			try {
-				getCartFacade().updateCartEntry(entryNumber,
+				getBlCartFacade().updateCartEntryFromPopup(entryNumber,
 						form.getQuantity().longValue());
 
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -799,32 +928,18 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	@GetMapping(value = "/checkDateAndStock")
 	@ResponseBody
-	public String checkDateRangeAndStock(final Model model) {
-		final long stockNotAvailable = 0L;
+	public String checkDateRangeAndStock(final Model model) 
+	{
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-		final List<WarehouseModel> warehouseModelList = baseStoreService.getCurrentBaseStore()
-				.getWarehouses();
-		final CartModel cartModel = blCartService.getSessionCart();
-		if (rentalDateDto == null) {
-
-			return BlControllerConstants.FAILURE_RESULT;
-		} else {
-			final Date startDay = BlDateTimeUtils
-					.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-							BlControllerConstants.DATE_FORMAT_PATTERN);
-			final Date endDay = BlDateTimeUtils
-					.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
-							BlControllerConstants.DATE_FORMAT_PATTERN);
-			final List<AbstractOrderEntryModel> abstractOrderEntryModelList = cartModel.getEntries();
-			for (final AbstractOrderEntryModel abstractOrderEntryModel : abstractOrderEntryModelList) {
-
-				final long stockLevel = blCommerceStockService
-						.getAvailableCount(abstractOrderEntryModel.getProduct().getCode(), warehouseModelList,
-								startDay, endDay);
-				if (stockLevel == stockNotAvailable) {
-					return BlControllerConstants.FAILURE_RESULT;
-				}
-
+		if (rentalDateDto == null)
+		{
+			return BlControllerConstants.RENTAL_DATE_FAILURE_RESULT;
+		}
+		else
+		{
+			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))
+			{
+				return BlControllerConstants.STOCK_FAILURE_RESULT;
 			}
 		}
 		return BlControllerConstants.SUCCESS;

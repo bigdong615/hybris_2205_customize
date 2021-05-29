@@ -18,6 +18,9 @@ public class BlDeliveryModeLoggingConstants {
     public static final String ZONE_PST= "PST";
     public static final String ZONE_EST= "EST";
 
+    public static final String AM_ERROR = "AM-ERROR";
+    public static final String PIN_ERROR = "PIN-ERROR";
+
     public static final String RENTAL_DATE_PATTERN= "MM-dd-yyyy";
     public static final String RENTAL_FE_DATE_PATTERN= "dd-MM-yyyy";
     public static final String LOCAL_DATE_PATTERN= "yyyy-MM-dd";
@@ -25,7 +28,7 @@ public class BlDeliveryModeLoggingConstants {
     public static final String TOTAL_WEIGHT= "TotalWeight";
     public static final String DIMENSIONAL_WEIGHT= "DimensionalWeight";
     public static final String STORE= "bl";
-    public static final int DIMENSIONAL_FACTOR= 149;
+    public static final int DIMENSIONAL_FACTOR= 194;
 
     public static final String PST_CUT_OFF_TIME_CONST = " and {pickZone.cutOffTime} > ?pstCutOffTime";
     public static final String PST_CUT_OFF_TIME = "pstCutOffTime";
@@ -38,9 +41,13 @@ public class BlDeliveryModeLoggingConstants {
 
     public static final String SHIP_HOME_HOTEL_BUSINESS = "SHIP_HOME_HOTEL_BUSINESS";
     public static final String BL_PARTNER_PICKUP = "BL_PARTNER_PICKUP";
-    public static final String SHIP_HOLD_UPS_OFFICE = "SHIP_HOLD_UPS_OFFICE";
+    public static final String SHIP_HOLD_UPS_OFFICE = "SHIP_UPS_OFFICE";
     public static final String SAME_DAY_DELIVERY = "SAME_DAY_DELIVERY";
     public static final String NEXT_DAY_RUSH_DELIVERY = "NEXT_DAY_RUSH_DELIVERY";
+
+    public static final String UPS = "UPS";
+
+    public static final String RUSH_NYC_NEXT_DAY_9_To_12 = "RUSH_NYC_NEXT_DAY_9_To_12";
 
     public static final String SHIP_HOME_HOTEL_BUSINESS_MSG = "Ship to home, hotel business";
     public static final String BL_PARTNER_PICKUP_MSG = "BL-Partner pickup";

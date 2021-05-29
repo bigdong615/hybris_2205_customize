@@ -22,45 +22,12 @@
 	<bean id="acceleratorCoreSystemSetup" class="com.bl.core.setup.CoreSystemSetup"
 	       parent="abstractCoreSystemSetup"/>
 
-	<!-- Solr field value providers -->
-
-	<bean id="volumeAwareProductPriceValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.VolumeAwareProductPriceValueProvider"  parent="abstractPropertyFieldValueProvider">
-        <property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-        <property name="priceService" ref="priceService"/>
-        <property name="commonI18NService" ref="commonI18NService"/>
-        <property name="sessionService" ref="sessionService"/>
-        <property name="userService" ref="userService"/>
-        <property name="priceComparator" ref="volumePriceComparator"/>
-        <property name="catalogVersionService" ref="catalogVersionService"/>
-    </bean>
-
-    <bean id="volumePriceComparator" class="com.bl.core.comparators.VolumeAwarePriceInformationComparator" scope="singleton"/>
-
-    <bean id="productVolumePricesProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.ProductVolumePricesProvider"  parent="abstractPropertyFieldValueProvider">
-        <property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-        <property name="priceService" ref="priceService"/>
-    </bean>
-
-
-	<bean id="electronicsCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="1"/>
-		<!-- '1' is the root icecat category -->
-	</bean>
-	<bean id="electronicsBrandCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="brands"/>
-		<!-- 'brands' is the root of the brands hierarchy -->
+	<bean id="blBrandCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
+		<property name="categorySource" ref="blBrandCategorySourceResolver"/>
 	</bean>
 
-	<bean id="apparelCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="categories"/>
-		<!-- 'categories' is the root apparel category -->
-	</bean>
-	<bean id="apparelBrandCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="brands"/>
-		<!-- 'brands' is the root of the brands hierarchy -->
-	</bean>
-	<bean id="apparelCollectionCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="collections"/> <!-- 'collections' is the root of the collections hierarchy -->
+	<bean id="blCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
+		<property name="categorySource" ref="blBrandCategorySourceResolver"/>
 	</bean>
 
 	<bean id="abstractCategoryCodeValueProvider" abstract="true"
@@ -74,38 +41,6 @@
 	      parent="abstractPropertyFieldValueProvider" >
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
-	</bean>
-
-	<bean id="electronicsCategoryCodeValueProvider" parent="abstractCategoryCodeValueProvider">
-		<property name="categorySource" ref="electronicsCategorySource"/>
-	</bean>
-	<bean id="electronicsBrandCategoryCodeValueProvider" parent="abstractCategoryCodeValueProvider">
-		<property name="categorySource" ref="electronicsBrandCategorySource"/>
-	</bean>
-	<bean id="electronicsCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
-		<property name="categorySource" ref="electronicsCategorySource"/>
-	</bean>
-	<bean id="electronicsBrandCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
-		<property name="categorySource" ref="electronicsBrandCategorySource"/>
-	</bean>
-
-	<bean id="apparelCategoryCodeValueProvider" parent="abstractCategoryCodeValueProvider">
-		<property name="categorySource" ref="apparelCategorySource"/>
-	</bean>
-	<bean id="apparelBrandCategoryCodeValueProvider" parent="abstractCategoryCodeValueProvider">
-		<property name="categorySource" ref="apparelBrandCategorySource"/>
-	</bean>
-	<bean id="apparelCollectionCategoryCodeValueProvider" parent="abstractCategoryCodeValueProvider">
-		<property name="categorySource" ref="apparelCollectionCategorySource"/>
-	</bean>
-	<bean id="apparelCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
-		<property name="categorySource" ref="apparelCategorySource"/>
-	</bean>
-	<bean id="apparelBrandCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
-		<property name="categorySource" ref="apparelBrandCategorySource"/>
-	</bean>
-	<bean id="apparelCollectionCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
-		<property name="categorySource" ref="apparelCollectionCategorySource"/>
 	</bean>
 
 	<bean id="image515ValueProvider" parent="abstractImageValueProvider" >
@@ -147,45 +82,6 @@
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
-	<bean id="colorFacetValueProvider"
-	      class="com.bl.core.search.solrfacetsearch.provider.impl.ColorFacetValueProvider"
-	       parent="abstractPropertyFieldValueProvider">
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-	</bean>
-
-	<bean id="colorFacetDisplayNameProvider"
-	      class="com.bl.core.search.solrfacetsearch.provider.impl.ColorFacetDisplayNameProvider"
-	      >
-		<property name="enumerationService" ref="enumerationService"/>
-		<property name="i18nService" ref="i18nService"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
-	</bean>
-
-	<bean id="apparelPointOfServiceFacetDisplayNameProvider"
-	      class="com.bl.core.search.solrfacetsearch.provider.impl.PointOfServiceFacetDisplayNameProvider"
-	      >
-		<property name="pointOfServiceService" ref="pointOfServiceService"/>
-	</bean>
-
-	<bean id="electronicsPointOfServiceFacetDisplayNameProvider"
-	      class="com.bl.core.search.solrfacetsearch.provider.impl.PointOfServiceFacetDisplayNameProvider"
-	      >
-		<property name="pointOfServiceService" ref="pointOfServiceService"/>
-	</bean>
-
-	<bean id="genderValueProvider"
-	      class="com.bl.core.search.solrfacetsearch.provider.impl.GenderValueProvider"
-	       parent="abstractPropertyFieldValueProvider">
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-	</bean>
-
-	<bean id="genderFacetDisplayNameProvider"
-	      class="com.bl.core.search.solrfacetsearch.provider.impl.GenderFacetDisplayNameProvider"
-	      >
-		<property name="enumerationService" ref="enumerationService"/>
-		<property name="i18nService" ref="i18nService"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
-	</bean>
 
 	<!--
 		Event listeners are singletons, therefore the dependency for a bean in tenant-scope
@@ -375,23 +271,6 @@
 	      class="com.bl.core.suggestion.dao.impl.DefaultSimpleSuggestionDao"
 	      parent="abstractItemDao" >
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
-	</bean>
-
-	<!-- Product Reference Lookup Strategies-->
-	<alias name="apparelCrossSellingProductReferenceTargetStrategy" alias="crossSellingProductReferenceTargetStrategy"/>
-	<bean id="apparelCrossSellingProductReferenceTargetStrategy"
-	      parent="defaultCrossSellingProductReferenceTargetStrategy">
-		<property name="productReferenceTargetStrategies">
-			<list merge="true">
-				<ref bean="apparelSizeProductReferenceTargetStrategy"/>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="apparelSizeProductReferenceTargetStrategy"
-	      class="com.bl.core.strategies.impl.ApparelSizeProductReferenceTargetStrategy">
-		<property name="commerceCategoryService" ref="commerceCategoryService"/>
-		<property name="rootCategoryCode" value="categories"/>
 	</bean>
 
 	<!-- Sales quote process actions -->
@@ -610,58 +489,6 @@
 		<property name="defaultBlMediaService" ref="defaultBlMediaService"/>
 	</bean>
 
- <!--Custom Value provider created for image format 300Wx300H to have multiple images to be indexed to solr-->
-	<bean id="defaultBlImageValueProvider"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BlImageValueProvider">
-		<property name="mediaFormat" value="300Wx300H"/>
-		<property name="mediaService" ref="mediaService" />
-		<property name="fieldNameProvider" ref="solrFieldNameProvider" />
-		<property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
-	</bean>
-
-	<!--BL-75-->
-
-	<bean id="abstractBlCategoryCodeValueProvider" abstract="true"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BlCategoryCodeValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
-	</bean>
-
-	<bean id="blBrandCategoryCodeValueProvider" parent="abstractBlCategoryCodeValueProvider">
-		<property name="categorySource" ref="blBrandCategorySource"/>
-	</bean>
-
-	<bean id="blBrandCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="brands"/>
-	</bean>
-
-	<bean id="blCategoryCodeValueProvider" parent="abstractBlCategoryCodeValueProvider">
-		<property name="categorySource" ref="blCategorySource"/>
-	</bean>
-
-	<bean id="blCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="1"/>
-	</bean>
-
-
-	<!--BL-79 Value Provider to get the store facet and data index to solr -->
-
-	<bean id="abstractBlGlobalFacetValueProvider" abstract="true"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BlGlobalFacetValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
-	</bean>
-
-	<bean id="blGlobalValueProvider" parent="abstractBlGlobalFacetValueProvider">
-		<property name="categorySource" ref="blGlobalCategorySource"/>
-	</bean>
-
-	<bean id="blGlobalCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="1"/>
-	</bean>
-
 
 	<!-- BL-110-v2 BLInventoryLocation item Prepare Interceptor to generate inventoryLocationID-->
 	<alias name="blInventoryLocationPrepareInterceptor" alias="blInventoryLocationPrepareInterceptor"/>
@@ -690,12 +517,6 @@
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
 
-	<!--BL-80 Adding for usedgear product value provider-->
-	<bean id="blUsedGearProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUsedGearProductValueProvider"
-		parent="abstractPropertyFieldValueProvider">
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-	</bean>
-
 	<!--BL-166 : This bean is override to change default product pattern-->
 	<alias name="defaultProductModelUrlResolver" alias="productModelUrlResolver"/>
 	<bean id="defaultProductModelUrlResolver"
@@ -712,13 +533,11 @@
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
 		<property name="commerceCartService" ref="commerceCartService" />
 		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="baseStoreService" ref="baseStoreService" />
 	</bean>
 
-	<!--Added for upcoming products-->
-	<bean id="blUpComingProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlUpComingProductValueProvider"
-		parent="abstractPropertyFieldValueProvider">
-		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
-	</bean>
+
 	<!--Pricing Logic changes-->
 	<alias name="defaultBlPricingService" alias="blPricingService"/>
 	<bean id="defaultBlPricingService" class="com.bl.core.services.calculation.impl.DefaultBlPricingService">
@@ -774,6 +593,7 @@
 	
 	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 	
 	<!-- BL-73 Created bean for discontinued product -->	
@@ -814,6 +634,56 @@
 		<property name="sessionService" ref="sessionService"/>
 	</bean>
 
+
+	<!--Avalara Tax-->
+	<alias name="defaultBlExternalTaxesService" alias="externalTaxesService"/>
+	<bean id="defaultBlExternalTaxesService"
+		class="com.bl.core.services.tax.DefaultBlExternalTaxesService" parent="defaultExternalTaxesService" />
+
+ <!--BL-331 Solr Field Value Resolver -->
+
+  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
+
+  <bean id="abstractBlCategoryCodeValueResolver" abstract="true" class="com.bl.core.resolvers.BlCategoryCodeValueResolver" parent="abstractValueResolver" >
+    <property name="modelService" ref="modelService"/>
+  </bean>
+
+  <bean id="blBrandCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
+    <property name="categorySource" ref="blBrandCategorySourceResolver"/>
+  </bean>
+
+  <bean id="blBrandCategorySourceResolver" parent="abstractCategorySource">
+    <property name="rootCategory" value="brands"/>
+  </bean>
+
+  <bean id="blCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
+    <property name="categorySource" ref="blCategorySource"/>
+  </bean>
+
+  <bean id="blCategorySource" parent="abstractCategorySource">
+    <property name="rootCategory" value="brands"/>
+  </bean>
+
+  <bean id="abstractBlGlobalFacetValueResolver" abstract="true" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
+    <property name="modelService" ref="modelService"/>
+  </bean>
+
+  <bean id="blGlobalValueResolver" parent="abstractBlGlobalFacetValueResolver">
+    <property name="categorySource" ref="blGlobalCategorySource"/>
+  </bean>
+
+  <bean id="blGlobalCategorySource" parent="abstractCategorySource">
+    <property name="rootCategory" value="brands"/>
+  </bean>
+
+  <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
+    <property name="mediaFormat" value="300Wx300H"/>
+    <property name="mediaService" ref="mediaService" />
+    <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
+  </bean>
+
+	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
+
 	<!-- BL-462 : Extened OOTB DefaultCalculationService to calculate the prices as per the rental dates and to calculates damage Waiver prices -->
 	<alias name="defaultBlCalculationService" alias="calculationService"/>
 	<bean id="defaultBlCalculationService" class="com.bl.core.order.impl.DefaultBlCalculationService" parent="defaultCalculationService">
@@ -821,6 +691,7 @@
 		<property name="blDamageWaiverGenericDao" ref="blDamageWaiverGenericDao"/>
 		<property name="defaultOrderRequiresCalculationStrategy" ref="orderRequiresCalculationStrategy"/>
 		<property name="defaultCommonI18NService" ref="commonI18NService"/>
+		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
 	</bean>
 	
 	<!-- BL-462 : Generic dao to get the full list of Damage Waiver Percantage defined for damage Waiver types -->
@@ -854,8 +725,11 @@
 	<bean id="blDeliveryModeDao" class="com.bl.core.shipping.dao.impl.DefaultBlDeliveryModeDao"/>
 
 	<alias alias="zoneDeliveryModeService" name="blDeliveryModeService"/>
-	<bean id="blDeliveryModeService" class="com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService"
-		  parent="defaultZoneDeliveryModeService"/>
+	<bean id="blDeliveryModeService" class="com.bl.core.shipping.service.impl.DefaultBlDeliveryModeService" parent="defaultZoneDeliveryModeService">
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+		<property name="blCartService" ref="cartService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
 
 	<!--BL-461 - This is to override the OOB add to cart and show cart functionality.-->
 	<alias name="blCommerceAddToCartStrategy" alias="commerceAddToCartStrategy"/>

@@ -71,16 +71,6 @@
 		<property name="typeService" ref="typeService"/>
 	</bean>
 
-	<bean id="apparelProductPopulator" class="com.bl.facades.populators.ApparelProductPopulator" >
-		<property name="genderConverter" ref="genderConverter"/>
-	</bean>
-
-	<!-- Add the apparelProductPopulator to the productConverter -->
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="productConverter"/>
-		<property name="add" ref="apparelProductPopulator"/>
-	</bean>
-
 	<!-- accelerator Image Format Mappings -->
 	<alias name="acceleratorImageFormatMapping" alias="imageFormatMapping"/>
 	<bean id="acceleratorImageFormatMapping" parent="defaultImageFormatMapping">
@@ -303,6 +293,9 @@
 	<alias name="defaultBlCartFacade" alias="cartFacade" />
 	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
 		<property name="blCartService" ref="cartService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
 	</bean>
 
 	<!--BL-80 entry for Used Gear Category Model Resolver-->
@@ -457,36 +450,17 @@
 		<property name="add" ref="cartPopulator"/>
 	</bean>
 
-	<!--BL-563 Gift Card-->
-	<alias name="defaultBlOrderPopulator" alias="blOrderPopulator" />
-	<bean id="defaultBlOrderPopulator" class="com.bl.facades.populators.BlOrderPopulator" parent="orderPopulator">
+
+	<!--Added these populators to segregate the Rental and Used Gear code on PLP and SLP to improve performance-->
+
+	<alias name="blProductCategorySearchPagePopulator" alias="productCategorySearchPagePopulator"/>
+	<bean id="blProductCategorySearchPagePopulator"
+		class="com.bl.facades.populators.BlProductCategorySearchPagePopulator" parent="defaultProductCategorySearchPagePopulator">
 	</bean>
 
-	<bean id="defaultCartConverter" parent="abstractPopulatingConverter">
-		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.CartData"/>
-		<property name="populators">
-			<list>
-				<ref bean="cartPopulator"/>
-				<ref bean="pickupOrderEntryGroupPopulator"/>
-				<ref bean="deliveryOrderEntryGroupPopulator"/>
-				<ref bean="orderAppliedVouchersPopulator"/>
-				<!-- <ref bean="blCartPopulator"/> -->
-			</list>
-		</property>
-	</bean>
-
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="orderConverter"/>
-		<property name="add" ref="blOrderPopulator"/>
-	</bean>
-
-	<bean id="giftCardEmailContext"
-		class="com.bl.facades.process.email.context.GiftCardEmailContext"
-		parent="abstractEmailContext" scope="prototype">
-	</bean>
+	<alias name="blSearchResponseQueryPopulator" alias="commerceSearchResponseQueryPopulator" />
+	<bean id="blSearchResponseQueryPopulator" class="com.bl.facades.populators.BlSearchResponseQueryPopulator" parent="defaultCommerceSearchResponseQueryPopulator"/>
 
 
-	<alias name="defaultBlGiftCardFacade" alias="blGiftCardFacade"/>
-	<bean id="defaultBlGiftCardFacade" class="com.bl.facades.giftcard.impl.DefaultBlGiftCardFacade"/>
-	
+
 </beans>

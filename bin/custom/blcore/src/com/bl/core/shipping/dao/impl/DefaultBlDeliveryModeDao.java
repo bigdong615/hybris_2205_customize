@@ -135,7 +135,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModes(final String mode, final String pstCutOffTime,
                                                                                          final boolean payByCustomer) {
         final StringBuilder barcodeList = new StringBuilder("select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
-                "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_HOLD_UPS_OFFICE' and {pickZone.active} = 1 and" +
+                "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
                 " {pickZone.code} like '%" + mode + "%' and {pickZone.payByCustomer} = ?payByCustomer");
         if (pstCutOffTime != null) {
             barcodeList.append(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME_CONST);
@@ -158,7 +158,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
                                                                                                 final boolean payByCustomer) {
         final StringBuilder barcodeList = new StringBuilder("select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
-                "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_HOLD_UPS_OFFICE' and {pickZone.active} = 1 and" +
+                "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
                 " {pickZone.code} like '%" + mode + "%' and {zdm.code} not like '%AM%' and {pickZone.payByCustomer} = ?payByCustomer");
         if (pstCutOffTime != null) {
             barcodeList.append(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME_CONST);
@@ -216,15 +216,13 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
      * {@inheritDoc}
      */
     @Override
-    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod,
-                                                                      final boolean payByCustomer) {
-        final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ZoneDeliveryMode as zone} " +
-                "where {sc.zoneDeliveryMode} = {zone.pk} and {zone.active} = 1 and {zone.code} = ?deliveryMethod and " +
-                "{sc.floor} < ?calculatedCost and ?calculatedCost <= {sc.ceiling} and {zone.payByCustomer} = ?payByCustomer";
+    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod) {
+        final String barcodeList = "select {sc.pk} from {ShippingCost as sc}, {ShippingCostEnum as costEnum}" +
+                " where {sc.shippingCostCode} = {costEnum.pk} and {costEnum.code} = ?deliveryMethod" +
+                " and ?calculatedCost >= {sc.floor} and ?calculatedCost < {sc.ceiling}";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("deliveryMethod", deliveryMethod);
         query.addQueryParameter("calculatedCost", calculatedCost);
-        query.addQueryParameter("payByCustomer", payByCustomer);
         final Collection<ShippingCostModel> results = getFlexibleSearchService().<ShippingCostModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_SHIPPING_COST);
         return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
@@ -244,18 +242,17 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     }
 
     @Override
- 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer)
- 	{
- 		final StringBuilder deliveyModeList = new StringBuilder(
- 				"select {pk} from {ZoneDeliveryMode} where {active} = 1 and {payByCustomer} = ?payByCustomer");
+  	public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes()
+  	{
+  		final StringBuilder deliveyModeList = new StringBuilder(
+  				"select {pk} from {ZoneDeliveryMode} where {active} = 1");
 
- 		final FlexibleSearchQuery query = new FlexibleSearchQuery(deliveyModeList);
- 		query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
-
- 		final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel> search(query)
- 				.getResult();
- 		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
- 	}
+  		final FlexibleSearchQuery query = new FlexibleSearchQuery(deliveyModeList);
+  		
+  		final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel> search(query)
+  				.getResult();
+  		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+  	}
     
     @Override
     public FlexibleSearchService getFlexibleSearchService() {

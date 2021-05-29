@@ -13,9 +13,9 @@
     <inputType>de.hybris.platform.core.model.order.OrderModel</inputType>
     <outputType>de.hybris.platform.core.model.order.OrderModel</outputType>
 
-    <iconUri>icons/icon_action_updateOrder_default.png</iconUri>
-    <iconDisabledUri>icons/icon_action_updateOrder_disabled.png</iconDisabledUri>
-    <iconHoverUri>icons/icon_action_updateOrder_hover.png</iconHoverUri>
+    <iconUri>icons/icon_action_updateShipping_default.png</iconUri>
+    <iconDisabledUri>icons/icon_action_updateShipping_disabled.png</iconDisabledUri>
+    <iconHoverUri>icons/icon_action_updateShipping_hover.png</iconHoverUri>
 
     <settings>
         <setting key="viewMode" default-value="iconAndText"/>

@@ -110,20 +110,20 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]          ; $contentCV[unique
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en] ;  
 # Brands -- all brands         
 ;                         ; CanonLink        ; Canon Link      ; "/rent/category/brands/canon" ; canon                      ;                                    ; Canon             ;
-;                         ; SonyLink         ; Sony Link       ; "/rent/category/brands/Sony" ; sony                       ;                                    ; Sony              ;
+;                         ; SonyLink         ; Sony Link       ; "/rent/category/brands/Sony" ; Sony                       ;                                    ; Sony              ;
 ;                         ; NikonLink        ; Nikon Link      ; "/rent/category/brands/nikon" ; nikon                      ;                                    ; Nikon             ;
-;                         ; PanasonicLink    ; Panasonic Link  ; "/rent/category/brands/Panasonic" ; panasonic                  ;                                    ; Panasonic         ;
-;                         ; DJILink          ; DJI Link        ; "/rent/category/brands/DJI" ; dji                        ;                                    ; DJI               ;
-;                         ; REDLink          ; RED Link        ; "/rent/category/brands/RED" ; red                        ;                                    ; RED               ;
-;                         ; FujiLink         ; Fuji Link       ; "/rent/category/brands/Fuji" ; fuji                       ;                                    ; Fuji              ;
-;                         ; ZeissLink        ; Zeiss Link      ; "/rent/category/brands/Zeiss" ; zeiss                      ;                                    ; Zeiss             ;
-;                         ; ARRILink         ; ARRI Link       ; "/rent/category/brands/ARRI" ; arri                       ;                                    ; ARRI              ;
-;                         ; GoProLink        ; GoPro Link      ; "/rent/category/brands/GoPro" ; gopro                      ;                                    ; GoPro             ;
-;                         ; SigmaLink        ; Sigma Link      ; "/rent/category/brands/Sigma" ; sigma                      ;                                    ; Sigma             ;
-;                         ; BlackmagicLink   ; Blackmagic Link ; "/rent/category/brands/Blackmagic" ; blackmagic                 ;                                    ; Blackmagic        ;
-;                         ; ProfotoLink      ; Profoto Link    ; "/rent/category/brands/Profoto" ; profoto                    ;                                    ; Profoto           ;
-;                         ; HasselbladLink   ; Hasselblad Link ; "/rent/category/brands/Hasselblad" ; hasselblad                 ;                                    ; Hasselblad        ;
-;                         ; AtomosLink       ; Atomos Link     ; "/rent/category/brands/Atomos" ;                            ;                                    ; Atomos            ;
+;                         ; PanasonicLink    ; Panasonic Link  ; "/rent/category/brands/Panasonic" ; Panasonic                  ;                                    ; Panasonic         ;
+;                         ; DJILink          ; DJI Link        ; "/rent/category/brands/DJI" ; DJI                        ;                                    ; DJI               ;
+;                         ; REDLink          ; RED Link        ; "/rent/category/brands/RED" ; RED                        ;                                    ; RED               ;
+;                         ; FujiLink         ; Fuji Link       ; "/rent/category/brands/Fuji" ; Fuji                       ;                                    ; Fuji              ;
+;                         ; ZeissLink        ; Zeiss Link      ; "/rent/category/brands/Zeiss" ; Zeiss                      ;                                    ; Zeiss             ;
+;                         ; ARRILink         ; ARRI Link       ; "/rent/category/brands/ARRI" ; ARRI                       ;                                    ; ARRI              ;
+;                         ; GoProLink        ; GoPro Link      ; "/rent/category/brands/GoPro" ; GoPro                      ;                                    ; GoPro             ;
+;                         ; SigmaLink        ; Sigma Link      ; "/rent/category/brands/Sigma" ; Sigma                      ;                                    ; Sigma             ;
+;                         ; BlackmagicLink   ; Blackmagic Link ; "/rent/category/brands/Blackmagic" ; Blackmagic                 ;                                    ; Blackmagic        ;
+;                         ; ProfotoLink      ; Profoto Link    ; "/rent/category/brands/Profoto" ; Profoto                    ;                                    ; Profoto           ;
+;                         ; HasselbladLink   ; Hasselblad Link ; "/rent/category/brands/Hasselblad" ; Hasselblad                 ;                                    ; Hasselblad        ;
+;                         ; AtomosLink       ; Atomos Link     ; "/rent/category/brands/Atomos" ;Atomos                            ;                                    ; Atomos            ;
 
 
 #                              ; BLCategoryNavNode       ;                  ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode

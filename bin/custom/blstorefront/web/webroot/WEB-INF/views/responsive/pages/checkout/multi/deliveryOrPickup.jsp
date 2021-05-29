@@ -13,6 +13,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
+<c:url value="/cart" var="cart" />
 
 <template:page pageTitle="${pageTitle}">
     <section id="cartProcess" class="cart cart-rental">
@@ -47,13 +48,18 @@
                                     <checkout:fastest/>
                                 </div>
                             </div><!-- End Accordion -->
+                            <div id="showErrorForInputValidation">
+
+                            </div>
                             <div class="cart-actions">
-                                <a href="/blstorefront/bl/en/cart" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                <a href="${cart}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
                                     <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                 </button>
                             </div>
-                            <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                            <div id="statusUpdateTestMessage">
+
+                            </div>
                             <div class="page-loader-new-layout">
                             	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
                             </div>
@@ -90,5 +96,35 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="modal fade" id="avsCheck" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><spring:theme code="shipping.avs.integration.address.popup.header"/></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="whatYouEnteredBody">
+                        <p class="body14"> <b> <spring:theme code="shipping.avs.integration.address.popup.enter"/></b>
+                            <div id="whatYouEntered"> </div>
+                        </p>
+                    </div>
+                    <div id="whatWeSuggestBody">
+                        <p class="body14"><b> <spring:theme code="shipping.avs.integration.address.popup.suggest"/></b>
+                            <div id="whatWeSuggest"> </div>
+                        </p>
+                    </div>
+                    <a href="#" class="btn btn-primary btn-block my-4" onClick="onClickOfSaveSuggestedAddress()">
+                        <spring:theme code="shipping.avs.integration.address.popup.suggested"/>
+                    </a>
+                    <p class="text-center mb-0">
+                        <a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close" onClick="onClickOfSaveEnteredAddress()">
+                            <spring:theme code="shipping.avs.integration.address.popup.entered"/>
+                        </a>
+                    </p>
+              </div>
+            </div>
+        </div>
     </div>
 </template:page>

@@ -5,6 +5,7 @@ import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
@@ -141,17 +142,40 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
     String setDeliveryDetails(final String deliveryNote, final boolean statusUpdate);
 
     /**
-     * This methos will save address on cart
+     * This method will save address on cart
      *
      * @param addressModel model
      */
     void setUPSAddressOnCart(final AddressModel addressModel);
+
+    /**
+     * This method will save address on cart for UPS Iam
+     *
+     * @param addressData data
+     */
+    void setUPSAddressOnCartForIam(final AddressData addressdata);
     
- 	/**
- 	 * This method will return all the delivery modes
- 	 *
- 	 * @param payByCustomer
- 	 * @return Collection of ZoneDeliveryModeModels
- 	 */
- 	Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
+    /**
+     * This method will integrate AVS in checkout flow
+     *
+     * @param addressData requested address data
+     * @return Address Validation Response addresses
+     */
+    AVSResposeData getAVSResponse(final AddressData addressData);
+    
+    /**
+     * Check availability for delivery mode.
+     *
+     * @param deliveryModeCode the delivery mode code
+     * @return true, if successful
+     */
+    boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode);
+    
+  	/**
+  	 * This method will return all the delivery modes
+  	 *
+  	 * @param payByCustomer
+  	 * @return Collection of ZoneDeliveryModeModels
+  	 */
+  	Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
 }

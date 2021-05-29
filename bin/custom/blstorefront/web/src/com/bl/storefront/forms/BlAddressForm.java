@@ -15,7 +15,7 @@ public class BlAddressForm extends AddressForm {
     private String email;
     private boolean upsStoreAddress;
     private boolean pickStoreAddress;
-    private Map<String, String> openingDaysDetails;
+    private String openingDaysDetails;
 
     public boolean isPickStoreAddress() {
         return pickStoreAddress;
@@ -25,11 +25,11 @@ public class BlAddressForm extends AddressForm {
         this.pickStoreAddress = pickStoreAddress;
     }
 
-    public Map<String, String> getOpeningDaysDetails() {
+    public String getOpeningDaysDetails() {
         return openingDaysDetails;
     }
 
-    public void setOpeningDaysDetails(Map<String, String> openingDaysDetails) {
+    public void setOpeningDaysDetails(String openingDaysDetails) {
         this.openingDaysDetails = openingDaysDetails;
     }
 

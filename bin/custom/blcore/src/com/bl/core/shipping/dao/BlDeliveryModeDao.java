@@ -95,11 +95,9 @@ public interface BlDeliveryModeDao {
      *
      * @param calculatedCost value\
      * @param deliveryMethod name
-     * @param payByCustomer who will pay
      * @return SHippingCostModel
      */
-    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod,
-                                                               final boolean payByCustomer);
+    ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost, final String deliveryMethod);
 
     /**
      * This method will fetch dimensional factor stored on base store
@@ -118,11 +116,10 @@ public interface BlDeliveryModeDao {
      */
     BlRushDeliveryModeModel getBlRushDeliveryModeForWarehouseZipCode(final String deliveryMode, final boolean payByCustomer);
 
-    /**
- 	 * This method will return all the delivery mode
- 	 *
- 	 * @param payByCustomer
- 	 * @return
- 	 */
- 	Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer);
+	/**
+	 * This method will return all the delivery mode
+	 *
+	 * @return
+	 */
+	Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
 }

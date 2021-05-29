@@ -156,9 +156,14 @@
             perPage: 1,
             type: 'fade',
             gap: 0,
+            keyboard: false,
         } ).mount();
+
+        //  BL-450 adding removing pagination and arrow dynamically on homepage
         new Splide( '#cat-slider', {
             perPage: 4,
+             arrows :false,
+            pagination:false,
             breakpoints: {
                 //'991': {
                 //    perPage: 3,
@@ -166,26 +171,75 @@
                 '640': {
                     perPage: 3,
                 },
+               /* BL-536 - A.1. */
+            },
+            rewind : true,
+            gap: 30,
+            keyboard: false,
+        } ).mount();
+            
+           var cat_slider_image_qty = document.getElementById("cat-slider-list").getElementsByTagName("li").length;
+           
+            if(cat_slider_image_qty<=4){
+                 new Splide( '#cat-slider', {
+                perPage: 4,
+                arrows :false,
+                pagination:false,
+                breakpoints: {
                 '480': {
-                    perPage: 2,  
+                    perPage: 2, 
+                  pagination:true
+                },
+              }
+               } ).mount();
+
+            }
+
+         if(cat_slider_image_qty>4){
+       
+          new Splide( '#cat-slider', {
+            perPage: 4,
+            arrows :true,
+            pagination:true,
+            breakpoints: {
+                '991': {
+                    perPage: 4,
+                },
+                '640': {
+                    
+                    perPage: 4,
+                   
+                },
+                '480': {
+                    perPage: 2,
+                     
+                    
                 },
             },
             rewind : true,
             gap: 30,
-        } ).mount();
+           } ).mount();
+         }
+
+        if(cat_slider_image_qty<=2 && screen.width<=480){
+           document.querySelector("#cat-slider .splide__pagination").classList.add("d-none");
+         }
+
+ // code end here for BL-450 --end--
          new Splide( '#gear-slider', {
             perPage: 3,
             breakpoints: {
                 '991': {
                     perPage: 2,
+                    gap: 10,
+                    padding: 0
                 },
-                '640': {
-                    perPage: 1,
-                },
+                /* BL-536 - A.2. */
             },
             rewind : true,
             gap: 20,
             padding: 10,
+            keyboard: false,
         } ).mount();  
         document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
@@ -196,18 +250,20 @@
                     pagination: false,
                 },
             },
-            //,
+            keyboard: false,
           } ).mount());
         document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 3,
             gap: 20,
             //drag   : true,
+            keyboard: false,
         } ).mount());
          new Splide( '#testimonials-slider', {
             perPage: 1,
             type: 'fade',
             arrows: false,
+            keyboard: false,
         } ).mount(); 
         new Splide( '#blog-slider', {
             perPage: 3,
@@ -215,119 +271,14 @@
                 '991': {
                     perPage: 2,
                 },
-                '640': {
-                    perPage: 1,
-                },
+               /* BL-536 - A. 3 */
             },
             rewind : true,
             gap: 20,
             padding: 10,
+            keyboard: false,
         } ).mount();
-     // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-         const picker = new Litepicker({ 
-            element: document.getElementById('litepicker'),
-            singleMode: false,
-            numberOfMonths: 2,
-            numberOfColumns: 2,
-            autoApply: false,
-            format: "MMM D, YYYY",
-            resetButton: () => {
-				 let btn = document.createElement('button');
-				 btn.innerText = 'Reset Dates';
-				 btn.className = 'reset-button';
-				 btn.addEventListener('click', (evt) => {
-				 evt.preventDefault();
-				 $.ajax({
-                    url: ACC.config.encodedContextPath + '/resetDatepicker',
-                    type: "GET",
-                    success: function (data) {
-                    	if(data=='success')
-                        window.location.reload();
-                    },
-                    error: function (xhr, textStatus, error) {
-                       
-                    }
-                });
-				});
-				return btn;
-				},
-            setup: (picker) => {
-      			picker.on('button:apply', (date1, date2) => {
-      				var searchText = document.getElementById('js-site-search-input').value;
-      				var rentalGear = 'rentalGear';
-      				var contextPath = ACC.config.contextPath;
-      				$.ajax({
-  	                    url: ACC.config.encodedContextPath + '/datepicker',
-  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-  	                    type: "GET",
-  	                    success: function (data) {
-  	                    	if(searchText == '' && data=='success') {
-  	                    		window.location.reload();
-  	                    	}
-  	                    	else{               		
-  	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
-  	                    	}
-  	                    },
-  	                    error: function (xhr, textStatus, error) {
-  	                       
-  	                    }
-  	                });    			
-      			});
-      			}
-        }); 
-         // Initialize MOBILE Calendar Litepicker - required for ANY page with the MOBILE Calendar picker
-         const mpicker = new Litepicker({ 
-             element: document.getElementById('mobile-litepicker'),
-             plugins: ['mobilefriendly'],
-             singleMode: false,
-             numberOfMonths: 1,
-             numberOfColumns: 1,
-             autoApply: false,
-             format: "MMM D, YYYY",
-             resetButton: () => {
- 				 let btn = document.createElement('button');
- 				 btn.innerText = 'Reset';
- 				 btn.className = 'reset-button';
- 				 btn.addEventListener('click', (evt) => {
- 				 evt.preventDefault();
- 				 $.ajax({
-                     url: ACC.config.encodedContextPath + '/resetDatepicker',
-                     type: "GET",
-                     success: function (data) {
-                     	if(data=='success')
-                         window.location.reload();
-                     },
-                     error: function (xhr, textStatus, error) {
-                        
-                     }
-                 });
- 				});
- 				return btn;
- 				},
-             setup: (picker) => {
-       			picker.on('button:apply', (date1, date2) => {
-       				var searchText = document.getElementById('js-site-search-input-mob').value;
-      				var rentalGear = 'rentalGear';
-      				var contextPath = ACC.config.contextPath;
-      				$.ajax({
-  	                    url: ACC.config.encodedContextPath + '/datepicker',
-  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-  	                    type: "GET",
-  	                    success: function (data) {
-  	                    	if(searchText == '' && data=='success'){
-  	                    		window.location.reload();
-  	                    	}
-  	                    	else{
-  	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
-  	                    	}  	                        
-  	                    },
-                     error: function (xhr, textStatus, error) {
-                        
-                     }
-                 });
-       			});
-       			}
-         });
+
          // Added code to remove same name and id on search text box specific to device
          if ($(window).width() < 480 ) {
  		      	$("input.d-desk").attr("id","");
@@ -385,7 +336,7 @@
                       pagination: false,
                   },
               },
-              //,
+              keyboard: false,
           } ).mount());
       </script>
   	</c:if>
@@ -397,7 +348,18 @@
             if ($(window).width() < 400 ) {
                 $("input#litepicker").attr("placeholder","Dates...");
             }
-            else { $("input#litepicker").attr("placeholder","Select Rental Dates...");}
+            else { $("input#litepicker").attr("placeholder","Select dates...");}
+            //BL-520 - disable previous dates
+             let date = new Date();
+             let dd = String(date.getDate() - 1).padStart(2, '0');
+             let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+             let yyyy = date.getFullYear();
+             let today = mm + '/' + dd + '/' + yyyy;
+
+             //BL-520 - disable dates after one year from today's date
+                 let oneYearFromNow = new Date();
+                 let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                 const disallowedDates = [['2001-01-01', today]];
             const picker = new Litepicker({
                 element: document.getElementById('litepicker'),
                 //plugins: ['mobilefriendly'],
@@ -449,7 +411,21 @@
       	                }); 
         			
         			});
-        			}
+        			},
+        			 //BL-520 - disable weekends in the calendar
+                         lockDaysFilter: (day) => {
+                             const d = day.getDay();
+                             return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                         maxDays: 90,
+                      //Disable dates after one year from today
+                         maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                         firstDay: 0,
+                     //Change the defaul button values
+                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
             });
             const mpicker = new Litepicker({
                 element: document.getElementById('mobile-litepicker'),
@@ -501,7 +477,21 @@
                         }
                     });
           			});
-          			}
+          			},
+          			 //BL-520 - disable weekends in the calendar
+                        lockDaysFilter: (day) => {
+                              const d = day.getDay();
+                               return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                         maxDays: 90,
+                      //Disable dates after one year from today
+                         maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                         firstDay: 0,
+                      //Change the defaul button values
+                         buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
             });
         </script>
   	</c:if>
@@ -527,15 +517,18 @@
                                                  function(){ $('.screen').removeClass('show') }
                                              );
                                              // Create and mount the product thumbnail slider - Required for Single Product Page
+
+                                             //     BL-574:code edited for product-thumbnail start here
+
                                              var secondarySlider = new Splide( '#product-thumbnails', {
                                                  rewind      : true,
                                                  fixedWidth  : 115,
                                                  fixedHeight : 115,
                                                  isNavigation: true,
                                                  gap         : 10,
-                                                 focus       : 'center',
                                                  pagination  : false,
                                                  cover       : true,
+                                                 arrows      : false,
                                                  breakpoints : {
                                                      '600': {
                                                          fixedWidth  : 80,
@@ -551,9 +544,64 @@
                                                  pagination : false,
                                                  arrows     : false,
                                                  keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                          }
+                                                 },
+                                             } );
+
+                                             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+                                             primarySlider.sync( secondarySlider ).mount();
+
+                                              var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+                                             
+                                             
+                                               if(image_qty>4)
+                                               {
+                                                
+                                             var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 focus       : 'center',
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : true,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                     }   
+                                                     },
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
+                                               }
+                                              // BL:574 code ends here
+
                                              // Initialize Overview Video Slider - required for Single Product Page
                                              new Splide( '#overview-slider', {
                                                  perPage: 2,
@@ -632,7 +680,22 @@
                                       	                }); 
                                            			
                                            			});
-                                           			}
+                                           			},
+
+                                           	//BL-520 - disable weekends in the calendar
+                                                    lockDaysFilter: (day) => {
+                                                         const d = day.getDay();
+                                                         return [6, 0].includes(d);
+                                                       },
+                                                    lockDays: disallowedDates,
+                                            //Limit days selection to 90 days
+                                                    maxDays: 90,
+                                            //Disable dates after one year from today
+                                                    maxDate: disableDatesOneYearFomNow,
+                                            //Set Sunday to be the first day in the calendar's header
+                                                    firstDay: 0,
+                                            //Change the defaul button values
+                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                                              });
 
                                              // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
@@ -679,7 +742,21 @@
                                                          }
                                                      });
                                            			});
-                                           			}
+                                           			},
+                                           //BL-520 - disable weekends in the calendar
+                                                    lockDaysFilter: (day) => {
+                                                         const d = day.getDay();
+                                                         return [6, 0].includes(d);
+                                                       },
+                                                    lockDays: disallowedDates,
+                                          //Limit days selection to 90 days
+                                                    maxDays: 90,
+                                          //Disable dates after one year from today
+                                                    maxDate: disableDatesOneYearFomNow,
+                                          //Set Sunday to be the first day in the calendar's header
+                                                    firstDay: 0,
+                                          //Change the defaul button values
+                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                                              });
                                          // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
                                                  document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
@@ -706,10 +783,11 @@
            $(swap).click(function (event) {
             event.preventDefault();
               $('.hide-product-row').toggle('slow');
-                if(swap.innerHTML === "Show More") {
-                   swap.innerHTML = "Show Less";
+              //BL-573 and BL-572 : added + icon and html code for + and _
+                if(swap.innerHTML === "Show More +") {
+                   swap.innerHTML = "Show Less &#8722;";
                     } else {
-                  swap.innerHTML = "Show More";
+                  swap.innerHTML = "Show More &#43;";
                    }
                 });
              // Mobile Menu styles - #my-menu is required for ALL pages
@@ -730,15 +808,17 @@
                  function(){ $('.screen').removeClass('show') }
              );
              // Create and mount the product thumbnail slider - Required for Single Product Page
+           // BL-574 : product thumbnail center code start here
+
              var secondarySlider = new Splide( '#product-thumbnails', {
                  rewind      : true,
                  fixedWidth  : 115,
                  fixedHeight : 115,
                  isNavigation: true,
                  gap         : 10,
-                 focus       : 'center',
                  pagination  : false,
                  cover       : true,
+                 arrows      : false,
                  breakpoints : {
                      '600': {
                          fixedWidth  : 80,
@@ -754,9 +834,62 @@
                  pagination : false,
                  arrows     : false,
                  keyboard: false,
+                  fixedWidth  : 380,
+                  fixedHeight : 380,
+                  breakpoints : {
+                  '600': {
+                          fixedWidth  : 250,
+                          fixedHeight : 250,
+                                                         
+                         } 
+                  },                                
              } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
+
+              var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+                            console.log(image_qty);
+                 if(image_qty>4){
+                         var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 focus       : 'center',
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : true,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard: false,
+                                                  fixedWidth  : 380,
+                                                 fixedHeight : 380,
+                                                 breakpoints :{
+                                                  '600': {
+                                                         fixedWidth  : 250,
+                                                         fixedHeight : 250,
+                                                         
+                                                     }
+                                             },
+                                             
+                                             } );
+                                             primarySlider.sync( secondarySlider ).mount();
+                                              }
+         // BL:574 code ends here part2
+
              // Initialize Overview Video Slider - required for Single Product Page
              new Splide( '#overview-slider', {
                  perPage: 2,
@@ -809,6 +942,7 @@
 
 		</c:if>
 
+
 		<%-- BL-457 added JS for rental cart page --%>
 		<c:if test="${cmsPage.uid eq 'cartpage'}">
             <script>
@@ -829,97 +963,7 @@
                     function(){ $('.screen').addClass('show') },
                     function(){ $('.screen').removeClass('show') }
                 );
-                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-                const picker = new Litepicker({
-                    element: document.getElementById('litepicker'),
-                    plugins: ['mobilefriendly'],
-                    singleMode: false,
-                    numberOfMonths: 2,
-                    numberOfColumns: 2,
-                    autoApply: false,
-                    format: "MMM D, YYYY",
-                    resetButton: () => {
-        				 let btn = document.createElement('button');
-        				 btn.innerText = 'Reset Dates';
-        				 btn.className = 'reset-button';
-        				 btn.addEventListener('click', (evt) => {
-        				 evt.preventDefault();
-        				 $.ajax({
-                            url: ACC.config.encodedContextPath + '/resetDatepicker',
-                            type: "GET",
-                            success: function (data) {
-                            	if(data=='success')
-                                window.location.reload();
-                            },
-                            error: function (xhr, textStatus, error) {
-                               
-                            }
-                        });
-        				});
-        				return btn;
-        				},
-                    setup: (picker) => {
-              			picker.on('button:apply', (date1, date2) => {
-              				$.ajax({
-          	                    url: ACC.config.encodedContextPath + '/datepicker',
-          	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-          	                    type: "GET",
-          	                    success: function (data) {
-          	                    	window.location.reload();          	                        
-          	                    },
-          	                    error: function (xhr, textStatus, error) {
-          	                       
-          	                    }
-          	                }); 
-              			});
-              			}
-                });
-                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-                const summarypicker = new Litepicker({
-                    element: document.getElementById('summary-litepicker'),
-                    plugins: ['mobilefriendly'],
-                    singleMode: false,
-                    numberOfMonths: 2,
-                    numberOfColumns: 2,
-                    autoApply: false,
-                    format: "MMM D, YYYY",
-                    resetButton: () => {
-        				 let btn = document.createElement('button');
-        				 btn.innerText = 'Reset Dates';
-        				 btn.className = 'reset-button';
-        				 btn.addEventListener('click', (evt) => {
-        				 evt.preventDefault();
-        				 $.ajax({
-                            url: ACC.config.encodedContextPath + '/resetDatepicker',
-                            type: "GET",
-                            success: function (data) {
-                            	if(data=='success')
-                                window.location.reload();
-                            },
-                            error: function (xhr, textStatus, error) {
-                               
-                            }
-                        });
-        				});
-        				return btn;
-        				},
-                    setup: (picker) => {
-              			picker.on('button:apply', (date1, date2) => {
-              			$.ajax({
-                            url: ACC.config.encodedContextPath + '/datepicker',
-                            data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                            type: "GET",
-                            success: function (data) {
-                            	if(data=='success')
-                                window.location.reload();
-                            },
-                            error: function (xhr, textStatus, error) {
-                               
-                            }
-                        });
-              			});
-              			}
-                });
+
             </script>
         </c:if>
 
@@ -976,6 +1020,7 @@
         </c:if>
 
         <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+         <input type="hidden" id="isFromSummaryPage" value="true">
             <script>
                 //Replace button text
                 $(".dropdown-menu li button").click(function(){
@@ -999,82 +1044,7 @@
                     function(){ $('.screen').addClass('show') },
                     function(){ $('.screen').removeClass('show') }
                 );
-                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-                const picker = new Litepicker({
-                    element: document.getElementById('litepicker'),
-                    plugins: ['mobilefriendly'],
-                    singleMode: false,
-                    numberOfMonths: 2,
-                    numberOfColumns: 2,
-                    autoApply: false,
-                    format: "MMM D, YYYY",
-                    resetButton: () => {
-                         let btn = document.createElement('button');
-                         btn.innerText = 'Reset Dates';
-                         btn.className = 'reset-button';
-                         btn.addEventListener('click', (evt) => {
-                         evt.preventDefault();
-                         $.ajax({
-                            url: ACC.config.encodedContextPath + '/resetDatepicker',
-                            type: "GET",
-                            success: function (data) {
-                                if(data=='success')
-                                window.location.href = ACC.config.encodedContextPath + '/cart';
-                            },
-                            error: function (xhr, textStatus, error) {
 
-                            }
-                        });
-                        });
-                        return btn;
-                        },
-                    setup: (picker) => {
-                        picker.on('button:apply', (date1, date2) => {
-                        	$("#rentalStartDate").val(date1.toDateString());
-                        	$("#rentalEndDate").val(date2.toDateString());
-                        	$('#editWarning').modal('show');
-                        });
-                        }
-                });
-                
-                // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-                const summarypicker = new Litepicker({
-                    element: document.getElementById('summary-litepicker'),
-                    plugins: ['mobilefriendly'],
-                    singleMode: false,
-                    numberOfMonths: 2,
-                    numberOfColumns: 2,
-                    autoApply: false,
-                    format: "MMM D, YYYY",
-                    resetButton: () => {
-                         let btn = document.createElement('button');
-                         btn.innerText = 'Reset Dates';
-                         btn.className = 'reset-button';
-                         btn.addEventListener('click', (evt) => {
-                         evt.preventDefault();
-                             $.ajax({
-                                url: ACC.config.encodedContextPath + '/resetDatepicker',
-                                type: "GET",
-                                success: function (data) {
-                                    if(data=='success')
-                                    window.location.href = ACC.config.encodedContextPath + '/cart';
-                                },
-                                error: function (xhr, textStatus, error) {
-
-                                }
-                            });
-                        });
-                        return btn;
-                    },
-                    setup: (picker) => {
-                        picker.on('button:apply', (date1, date2) => {
-                        	$("#rentalStartDate").val(date1.toDateString());
-                        	$("#rentalEndDate").val(date2.toDateString());
-                        	$('#editWarning').modal('show');
-                        });
-                    }
-                });
-                
                 $(document).ready(function() {
                     $("#shippingChangeRentalDate").click(function(e) {
                     	e.preventDefault();
@@ -1114,6 +1084,156 @@
                 }
             </script>
         </c:if>
+          <c:if test="${fn:containsIgnoreCase(blPageType, 'rentalSummary')}">
+        		<script>
+                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                        //BL-520 - disable previous dates
+                           let date = new Date();
+                           let dd = String(date.getDate() - 1).padStart(2, '0');
+                           let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                           let yyyy = date.getFullYear();
+                           let today = mm + '/' + dd + '/' + yyyy;
+
+                        //BL-520 - disable dates after one year from today's date
+                           let oneYearFromNow = new Date();
+                           let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                           const disallowedDates = [['2001-01-01', today]];
+                        const picker = new Litepicker({
+                            element: document.getElementById('litepicker'),
+                            plugins: ['mobilefriendly'],
+                            singleMode: false,
+                            numberOfMonths: 2,
+                            numberOfColumns: 2,
+                            autoApply: false,
+                            format: "MMM D, YYYY",
+                            resetButton: () => {
+                				 let btn = document.createElement('button');
+                				 btn.innerText = 'Reset Dates';
+                				 btn.className = 'reset-button';
+                				 btn.addEventListener('click', (evt) => {
+                				 evt.preventDefault();
+                				 $.ajax({
+                                    url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                    type: "GET",
+                                    success: function (data) {
+                                    	if(data=='success')
+                                        window.location.reload();
+                                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                				});
+                				return btn;
+                				},
+                            setup: (picker) => {
+                      			picker.on('button:apply', (date1, date2) => {
+                                  //var isFromSummaryPage = $("#isFromSummaryPage").val();
+                                  //alert(isFromSummaryPage);
+                                  if($("#isFromSummaryPage").val() === 'true'){
+                      			      $("#rentalStartDate").val(date1.toDateString());
+                                      $("#rentalEndDate").val(date2.toDateString());
+                                      $('#editWarning').modal('show');
+                                   }else{
+                      				$.ajax({
+                  	                    url: ACC.config.encodedContextPath + '/datepicker',
+                  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                  	                    type: "GET",
+                  	                    success: function (data) {
+                  	                    	window.location.reload();
+                  	                    },
+                  	                    error: function (xhr, textStatus, error) {
+
+                  	                    }
+                  	                });
+        }
+                      			});
+                      			},
+                      		 //BL-520 - disable weekends in the calendar
+                                lockDaysFilter: (day) => {
+                                    const d = day.getDay();
+                                    return [6, 0].includes(d);
+                                  },
+                                lockDays: disallowedDates,
+                             //Limit days selection to 90 days
+                                maxDays: 90,
+                            //Disable dates after one year from today
+                                maxDate: disableDatesOneYearFomNow,
+                           //Set Sunday to be the first day in the calendar's header
+                                firstDay: 0,
+                           //Change the defaul button values
+                                buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                        });
+                        // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                        const summarypicker = new Litepicker({
+                            element: document.getElementById('summary-litepicker'),
+                            plugins: ['mobilefriendly'],
+                            singleMode: false,
+                            numberOfMonths: 2,
+                            numberOfColumns: 2,
+                            autoApply: false,
+                            format: "MMM D, YYYY",
+                            resetButton: () => {
+                				 let btn = document.createElement('button');
+                				 btn.innerText = 'Reset Dates';
+                				 btn.className = 'reset-button';
+                				 btn.addEventListener('click', (evt) => {
+                				 evt.preventDefault();
+                				 $.ajax({
+                                    url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                    type: "GET",
+                                    success: function (data) {
+                                    	if(data=='success')
+                                        window.location.reload();
+                                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                				});
+                				return btn;
+                				},
+                            setup: (picker) => {
+                      			picker.on('button:apply', (date1, date2) => {
+                      			// var isFromSummaryPage = $("#isFromSummaryPage").val();
+                                    if($("#isFromSummaryPage").val() === 'true'){
+                      			      $("#rentalStartDate").val(date1.toDateString());
+                                      $("#rentalEndDate").val(date2.toDateString());
+                                      $('#editWarning').modal('show');
+                                      }else{
+                      			$.ajax({
+                                    url: ACC.config.encodedContextPath + '/datepicker',
+                                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                    type: "GET",
+                                    success: function (data) {
+                                    	if(data=='success')
+                                        window.location.reload();
+                                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                                }
+                      			});
+                      			},
+                      //BL-520 - disable weekends in the calendar
+                               lockDaysFilter: (day) => {
+                                       const d = day.getDay();
+                                       return [6, 0].includes(d);
+                                     },
+                               lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                              maxDays: 90,
+                      //Disable dates after one year from today
+                              maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                              firstDay: 0,
+                      //Change the defaul button values
+                              buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                        });
+                  </script>
+        		</c:if>
+
 	</c:otherwise>
 </c:choose>
 

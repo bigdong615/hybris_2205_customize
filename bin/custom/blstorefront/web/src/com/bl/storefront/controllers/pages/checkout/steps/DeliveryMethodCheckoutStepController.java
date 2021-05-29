@@ -4,9 +4,15 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
+import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.forms.BlPickUpByForm;
@@ -32,6 +38,7 @@ import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,6 +67,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
     @Resource(name = "baseStoreService")
     private BaseStoreService baseStoreService;
+    
+    @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+ 	 private RentalDateDto getRentalsDuration() 
+ 	 {
+ 		 return BlRentalDateUtils.getRentalsDuration();
+ 	 }
 
     @GetMapping(value = "/chooseShipping")
     @RequireHardLogIn
@@ -81,6 +94,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         final ContentPageModel deliveryOrPickUpPage = getContentPageForLabelOrId(DELIVERY_OR_PICKUP);
         storeCmsPageInModel(model, deliveryOrPickUpPage);
         setUpMetaDataForContentPage(model, deliveryOrPickUpPage);
+        if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
+        }
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
 
@@ -166,12 +182,14 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
      */
     @GetMapping(value = "/select")
     @RequireHardLogIn
+    @ResponseBody
     public String doSelectDeliveryMode(@RequestParam("delivery_method") final String selectedDeliveryMethod,
                                        @RequestParam("internalStoreAddress") final boolean internalStoreAddress) {
-        if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
-            getCheckoutFacade().setDeliveryMode(selectedDeliveryMethod, internalStoreAddress);
-        }
-        return getCheckoutStep().nextStep();
+   	 if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
+     	  return getCheckoutFacade().setDeliveryMode(selectedDeliveryMethod, internalStoreAddress)
+     			  ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
+       }
+       return BlControllerConstants.ERROR;
     }
 
     @PostMapping(value = "/addPickUpDetails")
@@ -191,14 +209,27 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         return getCheckoutFacade().removeDeliveryDetails();
     }
 
+    @PostMapping(value = "/avsCheck")
+    @RequireHardLogIn
+    @ResponseBody
+    public AVSResposeData getAVSResponse(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult,
+                                         final Model model, final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
+        getAddressValidator().validate(addressForm, bindingResult);
+        if (bindingResult.hasErrors()) {
+            final AVSResposeData avsResposeData = new AVSResposeData();
+            avsResposeData.setErrorDescription("address.error.formentry.invalid");
+            return avsResposeData;
+        }
+        return getCheckoutFacade().getAVSResponse(addressDataUtil.convertToAddressData(addressForm));
+    }
+
     @PostMapping(value = "/add")
     @RequireHardLogIn
     @ResponseBody
     public String add(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
                       final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
-        final CartData cartData = getCheckoutFacade().getCheckoutCart();
         getAddressValidator().validate(addressForm, bindingResult);
-        populateCommonModelAttributes(model, cartData, addressForm);
+        populateCommonModelAttributes(model, getCheckoutFacade().getCheckoutCart(), addressForm);
         if (bindingResult.hasErrors()) {
             GlobalMessages.addErrorMessage(model, "address.error.formentry.invalid");
             return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
@@ -216,6 +247,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if (addressRequiresReview) {
             return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
         }
+
+        if(BlDeliveryModeLoggingConstants.UPS.equals(newAddress.getLastName())) {
+            getCheckoutFacade().setUPSAddressOnCartForIam(newAddress);
+        }
+
         getUserFacade().addAddress(newAddress);
         final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
         // Set the new address as the selected checkout delivery address
@@ -223,6 +259,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if (previousSelectedAddress != null && !previousSelectedAddress.isVisibleInAddressBook()) { // temporary address should be removed
             getUserFacade().removeAddress(previousSelectedAddress);
         }
+
         return SUCCESS;
     }
 
@@ -237,19 +274,53 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @RequireHardLogIn
     @ResponseBody
     public String doSelectDeliveryAddress(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+                                          @RequestParam("shippingGroup") final String shippingGroup,
+                                          @RequestParam("deliveryMode") final String deliveryMode,
+                                          @RequestParam("rushZip") final String rushZip,
+                                          @RequestParam("businessType") final boolean businessType,
                                           final RedirectAttributes redirectAttributes) {
         final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
         if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
             return getCheckoutStep().onValidation(validationResults);
         }
+
         if (StringUtils.isNotBlank(selectedAddressCode)) {
             final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
-            final boolean hasSelectedAddressData = selectedAddressData != null;
-            if (hasSelectedAddressData) {
+            if (selectedAddressData != null) {
+                final String addressType = selectedAddressData.getAddressType();
+                final String pinCode = selectedAddressData.getPostalCode();
+                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
+                if (pinError != null) {
+                    return pinError;
+                }
                 setDeliveryAddress(selectedAddressData);
             }
         }
         return SUCCESS;
+    }
+
+    /**
+     *
+     * @param shippingGroup name
+     * @param businessType yes/no
+     * @param rushZip if rush delivery
+     * @param addressType business/not
+     * @param pinCode if rush
+     * @return
+     */
+    private String checkErrorIfAnyBeforeSavingAddress(final String shippingGroup, final boolean businessType,
+                                                      final String rushZip, final String addressType, final String pinCode) {
+        if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
+                BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
+            if(!(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip))) {
+               return BlDeliveryModeLoggingConstants.PIN_ERROR;
+            }
+        } else {
+            if(StringUtils.isNotEmpty(addressType) && businessType && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+                return BlDeliveryModeLoggingConstants.AM_ERROR;
+            }
+        }
+        return null;
     }
 
     @GetMapping(value = "/saveDeliveryDetails")
@@ -274,6 +345,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public String next(final RedirectAttributes redirectAttributes) {
         return getCheckoutStep().nextStep();
     }
+    
+    @GetMapping(value = "/checkAvailability")
+ 	 @ResponseBody
+ 	 public String checkDeliveryModeAvailability(@RequestParam("deliveryMethod") final String selectedDeliveryMethod,
+ 			final Model model) 
+ 	 {
+ 	 	 return StringUtils.isNotBlank(selectedDeliveryMethod) 
+ 	 		 && getCheckoutFacade().checkAvailabilityForDeliveryMode(selectedDeliveryMethod) ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
+ 	 }
 
     /**
      * Will set the delivery address
@@ -307,7 +387,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             throws CMSItemNotFoundException {
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("deliveryAddresses", getDeliveryAddresses(cartData.getDeliveryAddress()));
-        model.addAttribute("noAddress", Boolean.valueOf(getCheckoutFlowFacade().hasNoDeliveryAddress()));
+        model.addAttribute("noAddress", Boolean.valueOf(getCheckoutFacade().hasNoDeliveryAddress()));
         model.addAttribute("addressFormEnabled", Boolean.valueOf(getCheckoutFacade().isNewAddressEnabledForCart()));
         model.addAttribute("removeAddressEnabled", Boolean.valueOf(getCheckoutFacade().isRemoveAddressEnabledForCart()));
         model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.TRUE);
@@ -317,11 +397,6 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(addressForm.getCountryIso()));
             model.addAttribute("country", addressForm.getCountryIso());
         }
-        prepareDataForPage(model);
-        final ContentPageModel multiCheckoutSummaryPage = getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL);
-        storeCmsPageInModel(model, multiCheckoutSummaryPage);
-        setUpMetaDataForContentPage(model, multiCheckoutSummaryPage);
-        setCheckoutStepLinksForModel(model, getCheckoutStep());
     }
 
     protected String getBreadcrumbKey() {

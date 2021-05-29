@@ -17,9 +17,6 @@
         <b><spring:theme code="text.ship.it.saved.delivery.address"/></b>
         <div class="dropdown my-2">
             <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start my-4" onChange="onSavedAddressChange()">
-                <option class="text" selected="selected">
-                    Enter New Address in the Saved Shipping Address dropdow.
-                </option>
                 <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">
                     <c:choose>
                         <c:when test="${deliveryAddress.defaultAddress}">
@@ -34,6 +31,9 @@
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
+                <option value="newAddress" id="#newAddress" style=" display: none;">
+                    <spring:theme code="text.enter.new.shipping.address"/>
+                </option>
             </select>
         </div>
         <a onClick="onAddNewAddressClicked()" class="gray80 newAddressAdd"><spring:theme code="text.add.new.shipping.address"/></a>

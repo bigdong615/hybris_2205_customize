@@ -24,8 +24,6 @@ import de.hybris.platform.servicelayer.ServicelayerTest;
 import de.hybris.platform.stock.StockService;
 import de.hybris.platform.testframework.TestUtils;
 import de.hybris.platform.util.CSVConstants;
-import com.bl.core.model.ApparelSizeVariantProductModel;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,9 +34,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
@@ -255,42 +251,6 @@ public class BatchIntegrationTest extends ServicelayerTest
 		Assert.assertEquals(formats, containerFormats);
 		Assert.assertEquals("Staged", container.getCatalogVersion().getVersion());
 		Assert.assertEquals("apparelProductCatalog", container.getCatalogVersion().getCatalog().getId());
-	}
-
-	@Test
-	public void testVariant() throws Exception
-	{
-		processFile(productId, "base_product-", new ProductContent()
-		{
-			@Override
-			public void writeContent(final PrintWriter writer) throws IOException
-			{
-				writer.print("ApparelSizeVariantProduct");
-				super.writeContent(writer);
-			}
-		});
-		final Long variantId = Long.valueOf(Math.abs((long) random.nextInt()));
-		final ProductModel product = processFile(productId, "variant-", new FileContent()
-		{
-			@Override
-			public void writeContent(final PrintWriter writer) throws IOException
-			{
-				writer.print(variantId);
-				writer.print(SEPARATOR);
-				writer.print(SEPARATOR);
-				writer.print("black");
-				writer.print(SEPARATOR);
-				writer.print("L");
-			}
-		});
-		final ApparelSizeVariantProductModel variant = (ApparelSizeVariantProductModel) productService.getProductForCode(variantId
-				.toString());
-		Assert.assertEquals("ApparelSizeVariantProduct", product.getVariantType().getCode());
-		Assert.assertEquals(product, variant.getBaseProduct());
-		Assert.assertEquals("black", variant.getStyle(Locale.ENGLISH));
-		Assert.assertNull(variant.getStyle(Locale.GERMAN));
-		Assert.assertEquals("L", variant.getSize(Locale.ENGLISH));
-		Assert.assertNull(variant.getSize(Locale.GERMAN));
 	}
 
 	protected void verifyMedia(final MediaModel media, final String format)

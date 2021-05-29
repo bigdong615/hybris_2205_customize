@@ -3,9 +3,11 @@ package com.bl.facades.shipping.impl;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.*;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.locator.data.UPSLocatorRequestData;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.shipping.BlCheckoutFacade;
@@ -13,13 +15,17 @@ import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.integration.services.BlUPSAddressValidatorService;
 import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -35,6 +41,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {javadoc}
@@ -51,6 +58,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     @Resource(name = "blUPSLocatorService")
     private BlUPSLocatorService blUPSLocatorService;
 
+    @Resource(name = "upsAddressValidatorService")
+    BlUPSAddressValidatorService blUPSAddressValidatorService;
+
     private BlDatePickerService blDatePickerService;
     private Converter<ZoneDeliveryModeModel, ZoneDeliveryModeData> blZoneDeliveryModeConverter;
     private Converter<BlPickUpZoneDeliveryModeModel, BlPickUpZoneDeliveryModeData> blPickUpZoneDeliveryModeConverter;
@@ -63,7 +73,41 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public Collection<BlShippingGroupData> getAllShippingGroups() {
-        return getBlShippingGroupConverter().convertAll(getBlZoneDeliveryModeService().getAllShippingGroups());
+        return getBlShippingGroupConverter().convertAll(sortModelsOnShippingGroupType(getBlZoneDeliveryModeService().getAllShippingGroups()));
+    }
+
+    private Collection<ShippingGroupModel> sortModelsOnShippingGroupType(final Collection<ShippingGroupModel> shippingGroupModels) {
+        Collection<ShippingGroupModel> allGroupModels = new ArrayList<>();
+
+        final Collection<ShippingGroupModel> fastGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FAST.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+        final Collection<ShippingGroupModel> fasterGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FASTER.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+        final Collection<ShippingGroupModel> fastestGroupModels = shippingGroupModels.stream().filter(model ->
+                ShippingTypeEnum.FASTEST.getCode().equals(model.getShippingType().getCode())).collect(Collectors.toList());
+
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fastGroupModels) ? fastGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fasterGroupModels) ? fasterGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+        allGroupModels.addAll(CollectionUtils.isNotEmpty(fastestGroupModels) ? fastestGroupModels.stream().sorted(
+                Comparator.comparing(ShippingGroupModel::isDefaultShippingGroup).reversed()).collect(Collectors.toList())
+                : Collections.emptyList());
+
+        return allGroupModels;
+    }
+
+    @Override
+    protected AddressModel createDeliveryAddressModel(final AddressData addressData, final CartModel cartModel)
+    {
+        final AddressModel addressModel = getModelService().create(AddressModel.class);
+        getAddressReversePopulator().populate(addressData, addressModel);
+        addressModel.setOwner(cartModel);
+        getModelService().save(addressModel);
+        getModelService().refresh(addressModel);
+        return addressModel;
     }
 
     /**
@@ -112,15 +156,33 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                     BlDeliveryModeLoggingConstants.ZONE_PST), payByCustomer) : getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF,
                     null, payByCustomer);
         } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
-            return getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), rentalStart) == BlInventoryScanLoggingConstants.ONE
-                    ? getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC, BlDateTimeUtils.getCurrentTimeUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_EST), payByCustomer) : getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC,
-                    null, payByCustomer);
+            return getBlRushDeliveryModeData(rentalStart, payByCustomer);
         } else {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG);
             return getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+        }
+    }
+
+    /**
+     *
+     * @param rentalStart date
+     * @param payByCustomer flag
+     * @return collection of RushDeliveryData
+     */
+    private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeData(String rentalStart, boolean payByCustomer) {
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
+        final int result = getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
+                BlDeliveryModeLoggingConstants.ZONE_EST, new Date()), rentalStart);
+        if(result == BlInventoryScanLoggingConstants.ONE) {
+            final Collection<BlRushDeliveryModeData> blRushDeliveryModeData = getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC,
+                    BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_EST), payByCustomer);
+            return CollectionUtils.isNotEmpty(blRushDeliveryModeData) ? blRushDeliveryModeData.stream().filter(mode ->
+                    !mode.getCode().equals(BlDeliveryModeLoggingConstants.RUSH_NYC_NEXT_DAY_9_To_12)).collect(Collectors.toList())
+                    : Collections.emptyList();
+        } else if(result >= BlInventoryScanLoggingConstants.TWO) {
+            return getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.NYC,null, payByCustomer);
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -280,8 +342,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             final AddressModel addressModel = blPickUpZoneDeliveryModeModel.getInternalStoreAddress();
             if (addressModel != null) {
                 addressModel.setPickStoreAddress(Boolean.TRUE);
+                if(cartModel.isPickUpByMe()) {
+                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
+                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
+                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
+                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
+                }
                 getModelService().save(addressModel);
-                getModelService().refresh(cartModel);
+                getModelService().refresh(addressModel);
                 setUPSAddressOnCart(addressModel);
             }
         }
@@ -305,6 +373,26 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * {@inheritDoc}
      */
     @Override
+    public void setUPSAddressOnCartForIam(final AddressData address) {
+        final CartModel cartModel = getCart();
+        try {
+            if (cartModel != null && address != null && cartModel.isPickUpByMe()) {
+                cartModel.setPickUpPersonFirstName(address.getFirstName());
+                cartModel.setPickUpPersonLastName(address.getLastName());
+                cartModel.setPickUpPersonEmail(address.getEmail());
+                cartModel.setPickUpPersonPhone(address.getPhone());
+                getModelService().save(cartModel);
+                getModelService().refresh(cartModel);
+            }
+        } catch (Exception e) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving UPS pickUpByMe details", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String savePickUpInfoOnCart(final BlPickUpByForm blPickUpByForm) {
         final CartModel cartModel = getCart();
         try {
@@ -317,7 +405,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
-            return "SUCCESS";
+            return BlFacadesConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
             return "FAILURE";
@@ -337,7 +425,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 getModelService().save(cartModel);
                 getModelService().refresh(cartModel);
             }
-            return "SUCCESS";
+            return BlFacadesConstants.RESULT_SUCCESS;
         } catch (Exception e) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
             return "FAILURE";
@@ -345,9 +433,22 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     }
 
     @Override
-    public boolean setDeliveryModeIfAvailable() {
-        final CartModel cartModel = getCart();
-        return cartModel != null && cartModel.getDeliveryMode() != null ? true : false;
+    public boolean hasNoDeliveryAddress()
+    {
+        final CartData cartData = getCheckoutCart();
+        return hasShippingItems() && (cartData == null || cartData.getDeliveryAddress() == null);
+    }
+
+    @Override
+    public CartData getCheckoutCart()
+    {
+        final CartData cartData = getCartFacade().getSessionCart();
+        if (cartData != null)
+        {
+            cartData.setDeliveryMode(getDeliveryMode());
+            cartData.setPaymentInfo(getPaymentDetails());
+        }
+        return cartData;
     }
 
     /**
@@ -369,9 +470,19 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setStatusUpdate(Boolean.FALSE);
             getModelService().save(cartModel);
             getModelService().refresh(cartModel);
-            return "SUCCESS";
+            getModelService().save(cartModel);
+            getModelService().refresh(cartModel);
+            return BlFacadesConstants.RESULT_SUCCESS;
         }
         return "ERROR";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AVSResposeData getAVSResponse(final AddressData addressData) {
+        return getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
     }
 
     /**
@@ -410,10 +521,23 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
  	 */
 
  	@Override
- 	public Collection<ZoneDeliveryModeModel> getAllDeliveryModes(final boolean payByCustomer)
+ 	public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes()
  	{
- 		return getBlZoneDeliveryModeService().getAllDeliveryModes(payByCustomer);
+ 		return getBlZoneDeliveryModeService().getAllBlDeliveryModes();
  	}
+ 	
+ 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkAvailabilityForDeliveryMode(final String deliveryModeCode)
+	{
+		final DeliveryModeModel deliveryModeModel = getDeliveryService().getDeliveryModeForCode(deliveryModeCode);
+		return Objects.nonNull(deliveryModeModel) && deliveryModeModel instanceof ZoneDeliveryModeModel
+				? getBlZoneDeliveryModeService().checkCartEntriesAvailability(getRentalStartDate(), getRentalEndDate(),
+						(ZoneDeliveryModeModel) deliveryModeModel)
+				: Boolean.FALSE;
+	}
  	
     public BlDeliveryModeService getBlZoneDeliveryModeService() {
         return blDeliveryModeService;
@@ -477,5 +601,13 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     public void setBlUPSLocatorService(BlUPSLocatorService blUPSLocatorService) {
         this.blUPSLocatorService = blUPSLocatorService;
+    }
+
+    public BlUPSAddressValidatorService getBlUPSAddressValidatorService() {
+        return blUPSAddressValidatorService;
+    }
+
+    public void setBlUPSAddressValidatorService(BlUPSAddressValidatorService blUPSAddressValidatorService) {
+        this.blUPSAddressValidatorService = blUPSAddressValidatorService;
     }
 }

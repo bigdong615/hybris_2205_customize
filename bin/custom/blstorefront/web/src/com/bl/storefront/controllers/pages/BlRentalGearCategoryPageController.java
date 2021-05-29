@@ -2,6 +2,8 @@ package com.bl.storefront.controllers.pages;
 
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
@@ -19,12 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "**/rent/category")
 public class BlRentalGearCategoryPageController extends AbstractBlCategoryPageController {
 
-  private static final String CATEGORY_CODE_PATH_VARIABLE_PATTERN = "/{parentcategory:.*}/{categoryCode:.*}";
 
   /**
    * This method created for getting results of level 2 categories
    */
-  @RequestMapping(value = CATEGORY_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+  @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
   public String category(@PathVariable("parentcategory") final String parentcategory, //NOSONAR
       @PathVariable("categoryCode") final String categoryCode, // NOSONAR
       @RequestParam(value = "q", required = false) final String searchQuery,
@@ -32,7 +33,10 @@ public class BlRentalGearCategoryPageController extends AbstractBlCategoryPageCo
       @RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
       @RequestParam(value = "sort", required = false) final String sortCode, final Model model,
       final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
-    return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, request, response);
+    final Map<Object, Object> requestAndResponseMap = new HashMap<>();
+    requestAndResponseMap.put(BlControllerConstants.REQUEST, request);
+    requestAndResponseMap.put(BlControllerConstants.RESPONSE, response);
+    return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model,requestAndResponseMap);
   }
 
   /**
@@ -46,7 +50,10 @@ public class BlRentalGearCategoryPageController extends AbstractBlCategoryPageCo
       @RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
       @RequestParam(value = "sort", required = false) final String sortCode, final Model model,
       final HttpServletRequest request, final HttpServletResponse response) throws UnsupportedEncodingException {
-    return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, request, response);
+    final Map<Object, Object> requestAndResponseMap = new HashMap<>();
+    requestAndResponseMap.put(BlControllerConstants.REQUEST, request);
+    requestAndResponseMap.put(BlControllerConstants.RESPONSE, response);
+    return performSearchAndGetResultsPage(categoryCode, searchQuery, page, showMode, sortCode, model, requestAndResponseMap);
   }
 
 }

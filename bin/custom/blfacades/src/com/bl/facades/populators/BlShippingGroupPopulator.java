@@ -12,6 +12,7 @@ public class BlShippingGroupPopulator implements Populator<ShippingGroupModel, B
             blShippingGroupData.setCode(shippingGroupModel.getCode());
             blShippingGroupData.setName(shippingGroupModel.getName());
             blShippingGroupData.setShippingType(String.valueOf(shippingGroupModel.getShippingType()));
+            blShippingGroupData.setDefaultShippingGroup(shippingGroupModel.isDefaultShippingGroup());
         }
     }
 }
