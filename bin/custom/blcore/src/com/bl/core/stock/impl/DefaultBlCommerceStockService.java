@@ -5,7 +5,7 @@ import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -172,8 +172,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		{
 			final Map<Object, List<StockLevelModel>> stockLevelsDatewise = stockLevels.stream()
 					.collect(Collectors.groupingBy(stockLevel -> stockLevel.getDate()));
-			final LocalDateTime rentalStartDate = getFormattedDateTime(startDate);
-			final LocalDateTime rentalEndDate = getFormattedDateTime(endDate);
+			final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);
+			final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDate);
 			final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
 			final Set<Object> datesPresentInStockTable = stockLevelsDatewise.keySet();
 			//This is to check whether stock for any particular day is missing in inventory table
@@ -210,17 +210,6 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		return getBlStockLevelDao().isUsedGearSerialNotAssignedToAnyRentalOrders(serialProductCode,
 				currentDate,
 				BlDateTimeUtils.getNextYearsSameDay());
-	}
-
-	/**
-	 * This is to get the date in LocalDateTime format
-	 *
-	 * @param date the date
-	 * @return LocalDateTime
-	 */
-	private LocalDateTime getFormattedDateTime(final Date date) {
-		final Instant instant = Instant.ofEpochMilli(date.getTime());
-		return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
 	}
 
 	/**
@@ -316,7 +305,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		if (Objects.nonNull(nextAvailabilityDate))
 		{
 			final String newAvailableDate = BlDateTimeUtils.convertDateToStringDate(
-					Date.from(getFormattedDateTime(nextAvailabilityDate).minusDays(1).atZone(ZoneId.systemDefault()).toInstant()),
+					Date.from(BlDateTimeUtils.getFormattedDateTime(nextAvailabilityDate).minusDays(1).atZone(ZoneId.systemDefault()).toInstant()),
 					BlCoreConstants.RENTAL_DATE_FORMAT);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "From Checkout : Until Date for product {} is {}", productCode,
 					newAvailableDate);
@@ -362,16 +351,17 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 						"Before adding shipping days to Rental Start Date {} and Rental End Date {}", rentalDates.getSelectedFromDate(),
 						rentalDates.getSelectedToDate());
+				final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
+				final List<Date> blackOutDates = Lists
+						.newArrayList(CollectionUtils.emptyIfNull(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()));
 				final Date newRentalStartDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
-						rentalDates.getSelectedFromDate());
-				final Date newRentalEndDate = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
-						rentalDates.getSelectedToDate());
+						rentalDates.getSelectedFromDate(), blackOutDates);
+				final Date newRentalEndDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDates, lastDateToCheck);				
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 						"After adding shipping days. New Rental Start Date {} and new Rental End Date {}", newRentalStartDate,
 						newRentalEndDate);
-				final Date lastDateToCheck = BlDateTimeUtils.getNextYearsSameDay();
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Last Date to check {}", lastDateToCheck);
-				if (newRentalEndDate.compareTo(lastDateToCheck) < 0)
+				if (newRentalEndDate.compareTo(lastDateToCheck) <= 0)
 				{
 					final int numberOfDaysToAdd = NumberUtils.toInt(rentalDates.getNumberOfDays()) + 4;
 					final Collection<WarehouseModel> lWareHouses = CollectionUtils.isNotEmpty(warehouses) ? warehouses
@@ -418,6 +408,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	{
 		Date nextAvailableDate = null;
 		Boolean continueCheck = Boolean.TRUE;
+		final List<Date> blackOutDates = Lists
+				.newArrayList(CollectionUtils.emptyIfNull(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()));
 		while (nextAvailableDate == null && continueCheck)
 		{
 			Date nextStockUnavailableDate = getDateIfStockNotAvailable(productCode, lWareHouses, newRentalStartDate,
@@ -426,16 +418,16 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 			{
 				newRentalStartDate = nextStockUnavailableDate;
 				newRentalEndDate = BlDateTimeUtils.addDaysInRentalDates(numberOfDaysToAdd,
-						BlDateTimeUtils.convertDateToStringDate(newRentalStartDate, BlCoreConstants.DATE_FORMAT));
+						BlDateTimeUtils.convertDateToStringDate(newRentalStartDate, BlCoreConstants.DATE_FORMAT), blackOutDates);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Next Dates to check availability is {} and {}", newRentalStartDate,
 						newRentalEndDate);
-				continueCheck = newRentalEndDate.compareTo(lastDateToCheck) < 0;
+				continueCheck = newRentalEndDate.compareTo(lastDateToCheck) <= 0;
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Continue check - {}", continueCheck);
 			}
 			else
 			{
 				nextAvailableDate = BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
-						BlDateTimeUtils.convertDateToStringDate(newRentalStartDate, BlCoreConstants.DATE_FORMAT));
+						BlDateTimeUtils.convertDateToStringDate(newRentalStartDate, BlCoreConstants.DATE_FORMAT), blackOutDates);
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Next Stock Available Date - {}", nextAvailableDate);
 				continueCheck = Boolean.FALSE;
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Continue check - {}", continueCheck);
@@ -567,8 +559,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 */
 	private long getNumberOfDays(final Date rentalStartDate, final Date rentalEndDate)
 	{
-		final LocalDateTime startDate = getFormattedDateTime(rentalStartDate);
-		final LocalDateTime endDate = getFormattedDateTime(rentalEndDate);
+		final LocalDateTime startDate = BlDateTimeUtils.getFormattedDateTime(rentalStartDate);
+		final LocalDateTime endDate = BlDateTimeUtils.getFormattedDateTime(rentalEndDate);
 
 		return ChronoUnit.DAYS.between(startDate, endDate.plusDays(1));
 	}
@@ -584,7 +576,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 */
 	private Date getNextDate(final int numberOfDaysToAdd, final Date date)
 	{
-		return Date.from(getFormattedDateTime(date).plusDays(numberOfDaysToAdd).atZone(ZoneId.systemDefault()).toInstant());
+		return Date.from(BlDateTimeUtils.getFormattedDateTime(date).plusDays(numberOfDaysToAdd).atZone(ZoneId.systemDefault()).toInstant());
 	}
 
 	/**

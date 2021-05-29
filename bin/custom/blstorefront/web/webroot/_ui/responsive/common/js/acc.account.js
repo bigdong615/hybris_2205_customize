@@ -42,6 +42,9 @@ ACC.account = {
 			var formValues = $('#signUppopup-validation').serialize();
 			var targetUrl = $(this).val();
 			if ($('#register-form-id').val() !== '' && $('#password').val() !== '' && $('#checkPwd-form-id').val() !== '') {
+			if(!$("#errorMessages_sigin_errorbox").hasClass("d-none")){
+            	$("#errorMessages_sigin_errorbox").addClass("d-none");
+            	}
 				$.ajax({
 					type: "POST",
 					data: formValues,
@@ -106,7 +109,6 @@ ACC.account = {
 				}
 				$("#errorMessages_sigin_chkPwd").html("Be sure to provide your password confirmation");
 			} else {
-				$("#errorMessages_sigin_errorbox").addClass("d-none");
 				$("#errorMessages_sigin_chkPwd").html("");
 			}
 		});

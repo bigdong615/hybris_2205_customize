@@ -6,6 +6,7 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
 
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
@@ -15,11 +16,14 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.store.services.BaseStoreService;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -42,6 +46,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   private CommerceCartCalculationStrategy commerceCartCalculationStrategy;
 
 	private BlCommerceStockService blCommerceStockService;
+	
+	private BaseStoreService baseStoreService;
 
   /**
    * {@inheritDoc}
@@ -202,12 +208,15 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
 			final RentalDateDto rentalDatesFromSession)
 	{
-		final List<String> lProductCodes = new ArrayList<>();
-		cartData.getEntries().forEach(entry -> lProductCodes.add(entry.getProduct().getCode()));
-		final Date startDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedFromDate(), BlCoreConstants.DATE_FORMAT);
-		final Date endDate = BlDateTimeUtils.getDate(rentalDatesFromSession.getSelectedToDate(), BlCoreConstants.DATE_FORMAT);
+		final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
+				.collect(Collectors.toList());
+		final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
+		final List<Date> blackOutDates = Lists
+				.newArrayList(CollectionUtils.emptyIfNull(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()));
+		final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
+				rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
+		final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
 		return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
-
 	}
 
   public CommerceCartService getCommerceCartService() {
@@ -248,6 +257,22 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
 	{
 		this.blCommerceStockService = blCommerceStockService;
+	}
+
+	/**
+	 * @return the baseStoreService
+	 */
+	public BaseStoreService getBaseStoreService()
+	{
+		return baseStoreService;
+	}
+
+	/**
+	 * @param baseStoreService the baseStoreService to set
+	 */
+	public void setBaseStoreService(BaseStoreService baseStoreService)
+	{
+		this.baseStoreService = baseStoreService;
 	}
 
 }
