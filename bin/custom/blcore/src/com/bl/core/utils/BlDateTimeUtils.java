@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -588,8 +589,9 @@ public final class BlDateTimeUtils
 	 */
 	private static int checkForSkipingDays(final LocalDate localDate, int addedDays, final Collection<Date> listOfBlackOutDates)
 	{
+		final Date dateToCheck = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		if (!(localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY 
-				|| listOfBlackOutDates.contains(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))))
+				|| listOfBlackOutDates.stream().anyMatch(date -> DateUtils.isSameDay(date, dateToCheck))))
 		{
 			return addedDays + 1;
 		}
@@ -621,7 +623,8 @@ public final class BlDateTimeUtils
 					&& nextEndDate.compareTo(rentalEndDate) > 0;
 			while (dateFallsOnBlackOutDate)
 			{
-				nextEndDate = Date.from(getFormattedDateTime(nextEndDate).minusDays(1).atZone(ZoneId.systemDefault()).toInstant());
+				nextEndDate = Date.from(getFormattedDateTime(nextEndDate)
+						.minusDays(1).atZone(ZoneId.systemDefault()).toInstant());
 				dateFallsOnBlackOutDate = isDateFallsOnBlackOutDate(nextEndDate, blackOutDates)
 						&& nextEndDate.compareTo(rentalEndDate) > 0;
 			}
@@ -656,6 +659,6 @@ public final class BlDateTimeUtils
 	{
 		final LocalDate localDate = dateToCheck.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		return localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY
-				|| blackOutDates.contains(dateToCheck);
+				|| blackOutDates.stream().anyMatch(date -> DateUtils.isSameDay(date, dateToCheck));
 	}
 }
