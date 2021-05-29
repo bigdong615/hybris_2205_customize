@@ -94,6 +94,8 @@ public class BlGlobalFacetValueResolverTest {
     blProductModel.setSupercategories(new ArrayList<>());
     when(blProductModel.getSupercategories()).thenReturn(new ArrayList<>());
     blGlobalFacetValueResolver.resolve(inputDocument , batchContext ,  Collections.singletonList(indexedProperty) , blProductModel);
+    Mockito.verify(inputDocument, Mockito.times(0)).addField(Mockito.any(IndexedProperty.class) ,  Mockito.any(CategoryModel.class));
+
   }
 
   // When products have multiple categories
@@ -118,6 +120,8 @@ public class BlGlobalFacetValueResolverTest {
     blProductModel.setSupercategories(categories);
     when(blProductModel.getSupercategories()).thenReturn(categories);
     blGlobalFacetValueResolver.resolve(inputDocument , batchContext ,  Collections.singletonList(indexedProperty) , blProductModel);
+    Mockito.verify(inputDocument, Mockito.times(1)).addField(Mockito.any(IndexedProperty.class) ,  Mockito.any(CategoryModel.class));
+
   }
 
   // When products as different category
@@ -142,6 +146,8 @@ public class BlGlobalFacetValueResolverTest {
     blProductModel.setSupercategories(categories);
     when(blProductModel.getSupercategories()).thenReturn(categories);
     blGlobalFacetValueResolver.resolve(inputDocument , batchContext ,  Collections.singletonList(indexedProperty) , blProductModel);
+    Mockito.verify(inputDocument, Mockito.times(1)).addField(Mockito.any(IndexedProperty.class) ,  Mockito.any(CategoryModel.class));
+
   }
 
 
@@ -213,6 +219,8 @@ public class BlGlobalFacetValueResolverTest {
     blProductModel.setSupercategories(categories);
     when(blProductModel.getSupercategories()).thenReturn(categories);
     blGlobalFacetValueResolver.resolve(inputDocument , batchContext ,  Collections.singletonList(indexedProperty) , blProductModel);
+   Mockito.verify(inputDocument, Mockito.times(3)).addField(Mockito.any(IndexedProperty.class) ,  Mockito.any(CategoryModel.class));
+
   }
 
 }
