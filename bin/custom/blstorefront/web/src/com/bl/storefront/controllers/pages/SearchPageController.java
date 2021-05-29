@@ -4,8 +4,8 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
@@ -73,8 +73,8 @@ public class SearchPageController extends AbstractSearchPageController
 	@Resource(name = "cmsComponentService")
 	private CMSComponentService cmsComponentService;
 
-	@Resource(name = "cartService")
-	private BlCartService blCartService;
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
 
 	/**
 	 * This common method created to get rental duration for rental products from BlRentalDateUtils class
@@ -143,7 +143,7 @@ public class SearchPageController extends AbstractSearchPageController
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,blPageType);
-		model.addAttribute(BlControllerConstants.CART_MODEL, blCartService.getSessionCart());
+		blCartFacade.identifyCartType(model);
 		final String metaDescription = MetaSanitizerUtil
 				.sanitizeDescription(getMessageSource().getMessage(SEARCH_META_DESCRIPTION_RESULTS, null,
 						SEARCH_META_DESCRIPTION_RESULTS, getI18nService().getCurrentLocale()) + " " + searchText + " "

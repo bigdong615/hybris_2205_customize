@@ -46,7 +46,7 @@
                                         </tr>
                                     	</thead>
 		                                  <tbody>
-                                          <c:if test="${(not empty cartModel.entries) && (cartModel.isRentalCart eq 'true')}">
+                                          <c:if test="${(allowAddToCart ne 'true') && (isRentalCart eq 'true') && (isUsedGearCart ne 'true')}">
                                               <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
                                                    <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
                                               </div>

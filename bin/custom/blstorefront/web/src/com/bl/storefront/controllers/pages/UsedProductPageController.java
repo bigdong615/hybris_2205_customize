@@ -1,7 +1,6 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.services.cart.BlCartService;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -27,9 +26,6 @@ public class UsedProductPageController extends AbstractBlProductPageController {
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
 
-  @Resource(name = "cartService")
-  private BlCartService blCartService;
-
   @RequestMapping(value = BlControllerConstants.PRODUCT_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
   public String rentalProductDetail(@PathVariable("productCode") final String encodedProductCode,
       final Model model,
@@ -41,7 +37,6 @@ public class UsedProductPageController extends AbstractBlProductPageController {
     productData.setProductPageType(BlControllerConstants.USED_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, false);
     model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
-    model.addAttribute(BlControllerConstants.CART_MODEL, blCartService.getSessionCart());
     final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
 				ProductOption.URL, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
 				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,

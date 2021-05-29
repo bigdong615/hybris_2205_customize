@@ -11,7 +11,6 @@ import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
-
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -23,22 +22,20 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
+import org.springframework.ui.Model;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -338,6 +335,24 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			return isAvailable.get();
 		}
 		return isAvailable.get();
+	}
+
+	/**
+	 * @{InheritDoc }
+	 */
+	@Override
+	public void identifyCartType(final Model model) {
+		final CartModel cartModel = blCartService.getSessionCart();
+		if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
+			model.addAttribute(BlFacadesConstants.RENTAL_CART, true);
+		} else if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
+			model.addAttribute(BlFacadesConstants.USED_GEAR_CART, true);
+		} else if (CollectionUtils
+				.isEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
+			model.addAttribute(BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED, true);
+		}
 	}
 	
   /**

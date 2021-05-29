@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.facades.cart.BlCartFacade;
 import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
@@ -118,6 +119,9 @@ public class AbstractBlProductPageController extends AbstractPageController
 	
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
+
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
 
 	/*
 	 * This method is used for render pdp.
@@ -413,7 +417,7 @@ public class AbstractBlProductPageController extends AbstractPageController
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, productBreadcrumbBuilder.getBreadcrumbs(productCode));
-
+		blCartFacade.identifyCartType(model);
 		if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
 		{
 			model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,

@@ -77,7 +77,6 @@ public class BlControllerConstants
 	public static final String NEXT_AVAILABLE_DATE = "nextAvailabilityDate";
 
 	public static final int SKIP_TWO_DAYS = 2;
-	public static final String CART_MODEL = "cartModel";
 
 	private BlControllerConstants()
 	{

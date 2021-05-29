@@ -8,6 +8,7 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import java.util.Date;
 
 import com.bl.facades.product.data.RentalDateDto;
+import org.springframework.ui.Model;
 
 /**
  * It is responsible for getting all necessary information for cart.
@@ -99,5 +100,11 @@ public interface BlCartFacade extends CartFacade {
 	 * @return true, if stock is available for cart
 	 */
 	boolean checkAvailabilityOnCartContinue(final RentalDateDto sessionRentalDate);
+
+	/**
+	 * It identifies present cart type and set model attributes value true based on rental/used gear product present in cart.
+	 * @param model
+	 */
+	void identifyCartType(final Model model);
 	
 }

@@ -5,8 +5,8 @@ package com.bl.storefront.controllers.pages;
 
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
@@ -47,8 +47,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
 
-    @Resource(name = "cartService")
-    private BlCartService blCartService;
+    @Resource(name = "cartFacade")
+    private BlCartFacade blCartFacade;
 
     @ResponseBody
     @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
@@ -138,7 +138,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
         if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-            model.addAttribute(BlControllerConstants.CART_MODEL,blCartService.getSessionCart());
+            blCartFacade.identifyCartType(model);
         }
         else {
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
