@@ -534,6 +534,7 @@
 		<property name="commerceCartService" ref="commerceCartService" />
 		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="baseStoreService" ref="baseStoreService" />
 	</bean>
 
 

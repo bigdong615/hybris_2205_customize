@@ -15,6 +15,24 @@ Added for removing add to cart popup background, when unable to add product to c
  opacity:0 !important;
 }
 
+/*for BL-494 */
+.icon-production { background: url(../assets/icon-equipment.svg) center no-repeat; }
+
+/* for BL-573 */
+.showmore-margintop{position: relative; top: 25px;}
+
+/* added for BL-534  */
+   .card .splide__arrow--prev { margin-left: -15px;    z-index: 2; position: absolute;  left: 0; }
+   .card .splide__arrows { margin-top: -30px; opacity: 0; transition: .2s;  }
+   .card:hover .splide__arrows { opacity: 1; } 
+   .card .splide__arrow { padding: 8px; background: rgba(255,255,255,.6); border-radius: 50%; z-index: 99; }
+   .card .splide__arrow--next { margin-right: -15px;z-index: 2; position: absolute; right: 0; }
+
+/*BL- 605 */
+@media(min-width:767px){
+  #productExtras #gear-slider-list .card { padding: 30px 10px; }
+}
+
 /**
 BL-31 Added for error message in login and create account popup
 **/

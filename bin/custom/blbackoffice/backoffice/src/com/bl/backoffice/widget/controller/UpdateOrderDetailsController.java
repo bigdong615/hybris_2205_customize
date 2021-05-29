@@ -301,10 +301,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 			isDeliveryModeChange = true;
 			deliveryAddress.setPickStoreAddress(false);
 			deliveryAddress.setUpsStoreAddress(false);
-			this.pickupPersonFName.setValue("");
-			this.pickupPersonLName.setValue("");
-			this.pickUpPersonEmail.setValue("");
-			this.pickUpPersonPhone.setValue("");
 		}
 
 		populateAddressData(deliveryAddress);
