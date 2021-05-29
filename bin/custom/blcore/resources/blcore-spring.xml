@@ -535,6 +535,7 @@
 		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
 	</bean>
 
 
@@ -594,6 +595,7 @@
 	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blDatePickerService" ref="blDatePickerService" />
 	</bean>
 	
 	<!-- BL-73 Created bean for discontinued product -->	
@@ -632,6 +634,7 @@
 
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 

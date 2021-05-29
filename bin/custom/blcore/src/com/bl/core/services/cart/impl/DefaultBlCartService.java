@@ -1,12 +1,12 @@
 package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
-import com.google.common.collect.Lists;
 
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -48,6 +46,8 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	private BlCommerceStockService blCommerceStockService;
 	
 	private BaseStoreService baseStoreService;
+	
+	private BlDatePickerService blDatePickerService;
 
   /**
    * {@inheritDoc}
@@ -211,8 +211,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
 				.collect(Collectors.toList());
 		final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
-		final List<Date> blackOutDates = Lists
-				.newArrayList(CollectionUtils.emptyIfNull(getBaseStoreService().getCurrentBaseStore().getBlackOutDates()));
+		final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
 		final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
 				rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
 		final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
@@ -273,6 +272,22 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	public void setBaseStoreService(BaseStoreService baseStoreService)
 	{
 		this.baseStoreService = baseStoreService;
+	}
+
+	/**
+	 * @return the blDatePickerService
+	 */
+	public BlDatePickerService getBlDatePickerService()
+	{
+		return blDatePickerService;
+	}
+
+	/**
+	 * @param blDatePickerService the blDatePickerService to set
+	 */
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	{
+		this.blDatePickerService = blDatePickerService;
 	}
 
 }
