@@ -35,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
-import org.springframework.ui.Model;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
