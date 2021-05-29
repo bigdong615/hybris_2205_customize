@@ -49,6 +49,9 @@ public class BlGlobalFacetValueResolver extends
 
   }
 
+  /**
+   * This method created to get the super categories for product
+   */
   public Collection<CategoryModel> getCategoriesForProduct(final Collection<CategoryModel> categories , final BlProductModel blProductModel) {
     for (final CategoryModel category : blProductModel.getSupercategories()) {
       categories.add(category);
