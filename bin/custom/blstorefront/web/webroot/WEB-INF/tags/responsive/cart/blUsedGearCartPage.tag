@@ -13,7 +13,7 @@
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
 <c:set value="buy/category/usedgear" var="usedGearPlpUrl" />
-
+<c:url value="/" var="homePageUrl" />
 <div class="screen"></div>
      <section id="cartProcess" class="cart cart-rental">
           <div class="container">
@@ -35,7 +35,7 @@
                                  <cart:blUsedGearCartItem entry="${entry}" cartData="${cartData}" />
                               </c:forEach>
                               <div class="cart-actions">
-                                 <a href="/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                 <a href="${homePageUrl}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                  <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
                                  <spring:theme code="general.continue.button" /></a>
                               </div>

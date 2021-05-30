@@ -11,7 +11,6 @@ import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
-
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -23,16 +22,13 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -338,6 +334,25 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			return isAvailable.get();
 		}
 		return isAvailable.get();
+	}
+
+	/**
+	 * @{InheritDoc }
+	 */
+	@Override
+	public String identifyCartType() {
+		final CartModel cartModel = blCartService.getSessionCart();
+		if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
+			return BlFacadesConstants.RENTAL_CART;
+		} else if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
+			return BlFacadesConstants.USED_GEAR_CART;
+		} else if (CollectionUtils
+				.isEmpty(cartModel.getEntries())) {
+			return BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED;
+		}
+		return null;
 	}
 	
   /**
