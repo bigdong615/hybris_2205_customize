@@ -4,6 +4,7 @@ import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
@@ -25,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * It is used to assign serial products to sourcing results in context.
@@ -32,6 +35,8 @@ import org.apache.commons.collections.MapUtils;
  * @author Sunil
  */
 public class DefaultBlAssignSerialService implements BlAssignSerialService {
+  private static final Logger LOG = Logger
+      .getLogger(DefaultBlAssignSerialService.class);
   private BlProductDao blProductDao;
   private ModelService modelService;
 
@@ -41,6 +46,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         .getAvailabilityMap();
     Set<SourcingResult> results = context.getResult().getResults();
     WarehouseModel warehouse = sourcingLocation.getWarehouse();
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Assigning serials from warehouse {}",
+          warehouse.getCode());
     SourcingResult result = new SourcingResult();
     AtomicBoolean sourceComplete = new AtomicBoolean(false);
     List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
@@ -51,6 +58,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         List<String> serialProductCodes = stocks.stream().map(stock -> stock.getSerialProductCode())
             .collect(
                 Collectors.toList());
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} for product code {}",
+            stocks.size(), entry.getProduct().getCode());
 
         Collection<BlSerialProductModel> allSerialProducts = blProductDao
             .getBlSerialProductsForCodes(new HashSet<>(serialProductCodes));
@@ -62,29 +71,25 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
         if (sizeEqualToQuantity(context, result, results, entry, warehouse, blConsignerSerials,
             fulfilledQuantity, assignedSerials)) {
-         // sourceComplete.set(true);
           allEntrySourceComplete.add(new AtomicBoolean(true));
         } else {
           Set<BlSerialProductModel> forSaleFalseSerials = getAllForSaleSerials(
               blConsignerSerials, false);
           if (sizeEqualToQuantity(context, result, results, entry, warehouse, forSaleFalseSerials,
               fulfilledQuantity, assignedSerials)) {
-            //sourceComplete.set(true);
             allEntrySourceComplete.add(new AtomicBoolean(true));
           } else {
             Set<BlSerialProductModel> forSaleTrueSerials = getAllForSaleSerials(
                 blConsignerSerials, true);
             if (sizeEqualToQuantity(context, result, results, entry, warehouse, forSaleTrueSerials,
                 fulfilledQuantity, assignedSerials) && fulfilledQuantity == entry.getQuantity()) {
-              //sourceComplete.set(true);
-              allEntrySourceComplete.add(new AtomicBoolean(true));
+               allEntrySourceComplete.add(new AtomicBoolean(true));
             } else {
               Set<BlSerialProductModel> nonSaleAndNonBLSerials = getAllNonSaleAndNonBLConsignerSerials(
                   allSerialProducts);
               if (sizeEqualToQuantity(context, result, results, entry, warehouse,
                   nonSaleAndNonBLSerials,
                   fulfilledQuantity, assignedSerials) && fulfilledQuantity == entry.getQuantity()) {
-                //sourceComplete.set(true);
                 allEntrySourceComplete.add(new AtomicBoolean(true));
               } else {
                 List<BlSerialProductModel> unAssignedSerials = new ArrayList<BlSerialProductModel>(
@@ -118,6 +123,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     } else {
       entry.getOrder().setStatus(OrderStatus.SUSPENDED);
       modelService.save(entry.getOrder());
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced.");
       throw new BlSourcingException("All products can not be sourced.");
     }
   }
@@ -139,6 +145,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
     Map<Integer, Set<String>> serialProductMap = MapUtils.isNotEmpty(result.getSerialProductMap()) ? result.getSerialProductMap() : new HashMap<Integer, Set<String>>();
     serialProductMap.put(entry.getEntryNumber(), serialProductCodes);
+
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Serial products {} are assigned for product code {}",
+        serialProductMap.get(entry.getEntryNumber()), entry.getProduct().getCode());
 
     result.setSerialProductMap(serialProductMap);
     result.setAllocation(allocation);
@@ -180,6 +189,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       }
     });
     Collections.sort(serialProducts, Comparator.comparing(BlSerialProductModel::getNoDaysRented));
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Sorted serial products with oldest no of days rented {}",
+        serialProducts.stream().map(p -> p.getCode()).collect(Collectors.toList()));
     return serialProducts;
   }
 

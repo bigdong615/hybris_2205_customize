@@ -1,14 +1,19 @@
 package com.bl.Ordermanagement.filters;
 
 import com.bl.core.dao.warehouse.BlStateWarehouseMappingDao;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.sourcing.filter.SourcingFilterResultOperator;
 import de.hybris.platform.warehousing.sourcing.filter.impl.AbstractBaseSourcingLocationFilter;
 import java.util.Collection;
 import java.util.Set;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingLocationFilter {
+  private static final Logger LOG = Logger
+      .getLogger(BlDeliveryStateSourcingLocationFilter.class);
   private BlStateWarehouseMappingDao blStateWarehouseMappingDao;
 
   @Override
@@ -16,7 +21,10 @@ public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingL
       Set<WarehouseModel> locations) {
 
     String stateCode = order.getDeliveryAddress().getRegion().getIsocodeShort();
-    locations.add(blStateWarehouseMappingDao.getStateWarehouseForStateCode(stateCode).getWarehouse());
+    WarehouseModel foundLocation = blStateWarehouseMappingDao.getStateWarehouseForStateCode(stateCode).getWarehouse();
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location found for state iso code {} is warehouse {}",
+        stateCode, foundLocation.getCode());
+    locations.add(foundLocation);
 
     return locations;
   }

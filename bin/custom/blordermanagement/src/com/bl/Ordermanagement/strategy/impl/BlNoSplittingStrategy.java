@@ -1,7 +1,9 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
+import com.bl.Ordermanagement.services.impl.DefaultBlAssignSerialService;
 import com.bl.core.stock.BlCommerceStockService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -17,13 +19,26 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
+/**
+ * It is a strategy to find out if order splitting is possible or not, sourcing can be possible from single warehouse.
+ *
+ * @author Sunil
+ */
 public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
-
+  private static final Logger LOG = Logger
+      .getLogger(BlNoSplittingStrategy.class);
   private BlCommerceStockService blCommerceStockService;
   private BlSourcingLocationService blSourcingLocationService;
   private BaseStoreService baseStoreService;
 
+  /**
+   * This is to source the order
+   *
+   * @param sourcingContext the sourcingContext
+   */
   public void source(SourcingContext sourcingContext) {
     ServicesUtil.validateParameterNotNullStandardMessage("sourcingContext", sourcingContext);
 
@@ -32,7 +47,8 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     populateContextWithUnAllocatedMap(sourcingContext);
     if (isSourcingNoSplittingPossible(sourcingContext, sourcingLocation)) {
        sourcingLocation.setCompleteSourcePossible(true);
-     // sourcingContext.getResult().setComplete(sourcingComplete);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
+          sourcingLocation.getWarehouse().getCode());
     } else {
       final BaseStoreModel baseStore = baseStoreService.getBaseStoreForUid("bl");
      /* Collection<WarehouseModel> warehouseModels = baseStoreService.getCurrentBaseStore()
@@ -47,13 +63,14 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
           if (isSourcingNoSplittingPossible(sourcingContext,
               otherSourcingLocation)) {
             otherSourcingLocation.setCompleteSourcePossible(true);
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
+                otherSourcingLocation.getWarehouse().getCode());
             break;
           }
         }
       }
 
     }
-    // LOGGER.debug("Total order entries sourceable using No Splitting Strategy: {}", sourcingContext.getResult().getResults().size());
   }
 
   private void populateContextWithUnAllocatedMap(SourcingContext sourcingContext) {
@@ -104,6 +121,8 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
       stockLevel = Long
           .valueOf(sourcingLocation.getAvailabilityMap().get(productModel.getCode()).size());
     }
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} found for product code {} from warehouse {} ",
+        stockLevel.intValue(), productModel.getCode(), sourcingLocation.getWarehouse().getCode());
     return stockLevel;
   }
 

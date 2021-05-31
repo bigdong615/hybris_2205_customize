@@ -2,6 +2,8 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.base.Strings;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -14,7 +16,6 @@ import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import de.hybris.platform.warehousing.allocation.impl.DefaultAllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,17 +24,16 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
+
 
 public class DefaultBlAllocationService extends DefaultAllocationService implements
     BlAllocationService {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBlAllocationService.class);
+  private static final Logger LOG = Logger
+      .getLogger(DefaultBlAllocationService.class);
   private BlStockLevelDao blStockLevelDao;
 
 
@@ -42,7 +42,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     ServicesUtil.validateParameterNotNullStandardMessage("result", result);
     ServicesUtil.validateParameterNotNullStandardMessage("order", order);
     Assert.isTrue(!Strings.isNullOrEmpty(code), "Parameter code cannot be null or empty");
-    LOGGER.debug("Creating consignment for Location: '{}'", result.getWarehouse().getCode());
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating consignment for Location: '{}'",
+        result.getWarehouse().getCode());
     ConsignmentModel consignment = (ConsignmentModel)this.getModelService().create(ConsignmentModel.class);
     consignment.setCode(code);
     consignment.setOrder(order);
@@ -79,7 +80,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       }
     } catch (AmbiguousIdentifierException var8) {
       consignment.setStatus(ConsignmentStatus.CANCELLED);
-      LOGGER.warn("Cancelling consignment with code " + consignment.getCode() + " since only one fulfillment system configuration is allowed per consignment.");
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),"Cancelling consignment with code {}  since only one fulfillment system configuration is allowed per consignment.",
+          consignment.getCode(), var8);
     }
     List<String> assignedSerialProducts = new ArrayList<>();
         for(Set<String> aSet : result.getSerialProductMap().values()) {
@@ -101,7 +103,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   }
 
   protected ConsignmentEntryModel createConsignmentEntry(AbstractOrderEntryModel orderEntry, Long quantity, ConsignmentModel consignment, SourcingResult result) {
-    LOGGER.debug("ConsignmentEntry :: Product [{}]: \tQuantity: '{}'", orderEntry.getProduct().getCode(), quantity);
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "ConsignmentEntry :: Product [{}]: \tQuantity: '{}'",
+        orderEntry.getProduct().getCode(), quantity);
     ConsignmentEntryModel entry = (ConsignmentEntryModel)this.getModelService().create(ConsignmentEntryModel.class);
     entry.setOrderEntry(orderEntry);
     entry.setQuantity(quantity);

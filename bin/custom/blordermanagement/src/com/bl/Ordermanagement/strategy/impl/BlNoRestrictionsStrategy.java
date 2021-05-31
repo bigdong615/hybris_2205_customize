@@ -2,33 +2,40 @@ package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
-import com.bl.Ordermanagement.services.BlSourcingLocationService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
-import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
 import java.util.List;
 
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
-
+/**
+ * It is a strategy to source from multiple warehouses without any restriction.
+ *
+ * @author Sunil
+ */
 public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
+  private static final Logger LOG = Logger
+      .getLogger(BlNoRestrictionsStrategy.class);
 
-  private static Logger LOGGER = LoggerFactory.getLogger(BlNoRestrictionsStrategy.class);
-  private BlSourcingLocationService blSourcingLocationService;
-  private BaseStoreService baseStoreService;
   private ModelService modelService;
   private BlAssignSerialService blAssignSerialService;
 
   public BlNoRestrictionsStrategy() {
   }
 
+  /**
+   * This is to source the order
+   *
+   * @param sourcingContext the sourcingContext
+   */
   public void source(SourcingContext sourcingContext)  throws BlSourcingException {
     ServicesUtil.validateParameterNotNullStandardMessage("sourcingContext", sourcingContext);
 
@@ -47,6 +54,8 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
 
     boolean sourcingComplete = false;
     if (null != completeSourcingLocation) { //sourcing possible from single location
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing is possible from warehouse {}",
+          completeSourcingLocation.getWarehouse().getCode());
       sourcingComplete = blAssignSerialService
           .assignSerialsFromLocation(context, completeSourcingLocation);
     } else {  //sourcing from multiple locations
@@ -55,6 +64,8 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
           .filter(sl -> !sl.getWarehouse().equals(primarySourcingLocation.getWarehouse())).collect(
               Collectors.toList());
 
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Sourcing from multiple locations, starting with primary location/warehouse {}",
+          primarySourcingLocation.getWarehouse().getCode());
       sourcingComplete = blAssignSerialService
           .assignSerialsFromLocation(context, primarySourcingLocation);
       if (!sourcingComplete) {
@@ -75,27 +86,12 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
         AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
         order.setStatus(OrderStatus.SUSPENDED);
         modelService.save(order);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. Suspending the order {}",
+            order.getCode());
         throw new BlSourcingException("All products can not be sourced.");
       }
     }
     return canBeSourcedCompletely;
-  }
-
-  public BlSourcingLocationService getBlSourcingLocationService() {
-    return blSourcingLocationService;
-  }
-
-  public void setBlSourcingLocationService(
-      BlSourcingLocationService blSourcingLocationService) {
-    this.blSourcingLocationService = blSourcingLocationService;
-  }
-
-  public BaseStoreService getBaseStoreService() {
-    return baseStoreService;
-  }
-
-  public void setBaseStoreService(BaseStoreService baseStoreService) {
-    this.baseStoreService = baseStoreService;
   }
 
   public BlAssignSerialService getBlAssignSerialService() {
