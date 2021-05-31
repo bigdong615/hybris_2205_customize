@@ -180,8 +180,8 @@
                 arrows :false,
                 pagination:false,
                 breakpoints: {
-                '480': {
-                    perPage: 2, 
+                '540': {
+                    perPage: 3, 
                   pagination:true
                 },
               }
@@ -204,8 +204,8 @@
                     perPage: 4,
                    
                 },
-                '480': {
-                    perPage: 2,
+                '540': {
+                    perPage: 3,
                      
                     
                 },
@@ -215,7 +215,7 @@
            } ).mount();
          }
 
-        if(cat_slider_image_qty<=2 && screen.width<=480){
+        if(cat_slider_image_qty<=3 && screen.width<=540){
            document.querySelector("#cat-slider .splide__pagination").classList.add("d-none");
          }
 
