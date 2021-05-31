@@ -411,8 +411,8 @@
       <itemtype code="BannerComponent" autocreate="false" generate="false">
         <attributes>
           <attribute type="MediasList" qualifier="medias">
-            <modifiers read="true" write="true" optional="true" />
-            <persistence type="property" />
+            <modifiers read="true" write="true" optional="true"/>
+            <persistence type="property"/>
           </attribute>
         </attributes>
       </itemtype>
