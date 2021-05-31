@@ -30,7 +30,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
                               ; BreadcrumbSection                 ;                                                                        ;                           ;wide
                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
-                             ; UsedGearComponentsectionslot ;                                                                             ;                           ; wide
+                             ; buyingUsedGearEasySectionSlot ;                                                                             ;                           ; wide
 
 
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
@@ -59,7 +59,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                     ;                         ; MobileHeaderBottomInfo-productDetails              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
                                    ;                         ; MobileHeaderLinkForShipOrPickupSlot-productDetails ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
                                    ;                         ; MobileMiniCartSlot-productDetails                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
-                                   ;                         ; UsedGearComponentsectionslot-productDetails ; BuyingUsedGearComponentsectionslot ;                                                       ; UsedGearComponentsectionslot  ; true
+                                   ;                         ; BuyingUsedGearComponentsectionslot-productDetails ; BuyingUsedGearComponentsectionslot ;                                                       ; buyingUsedGearEasySectionSlot  ; true
 
 
 # Product Details Page
@@ -71,5 +71,5 @@ INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]   ; n
                               ;                         ; buyingUsedGearEasySection ; Buying UsedGear Easy Section ; buyingUsedGearEasySection ;icon-used-inspected111.png,icon-used-guarantee111.png,icon-used-condition111.png,icon-used-returns111.png ;"Buying used gear is easy"
 
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 ; cmsComponents(uid,$contentCV)
-                          ;                         ; UsedGearComponentsectionslot     ; buyingUsedGearEasySection
+                          ;                         ; buyingUsedGearEasySectionSlot     ; buyingUsedGearEasySection
 
