@@ -234,7 +234,36 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	{
 		return getBlStockLevelDao().findStockLevelsForProductCodesAndDate(productCodes, warehouses, startDate, endDate);
 	}
-	
+
+	/**
+	 * This is to get the stock details for a collection of SKUs for the given date range with availability (reserved status as false).
+	 *
+	 * @param productCodes the product codes
+	 * @param warehouse    the warehouse
+	 * @param startDate    the start date
+	 * @param endDate      the end date
+	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKUs
+	 */
+	@Override
+	public Collection<StockLevelModel> getStockForProductCodesAndDate(Set<String> productCodes,
+			WarehouseModel warehouse, Date startDate, Date endDate) {
+		return getBlStockLevelDao().findStockLevelsForProductCodesAndDate(productCodes, warehouse, startDate, endDate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Map<String, List<StockLevelModel>> groupByProductsAvailability(
+			final Collection<StockLevelModel> stockLevels) {
+		Map<String, List<StockLevelModel>> stockLevelsProductWise = new HashMap<>();
+		if (CollectionUtils.isNotEmpty(stockLevels)) {
+			stockLevelsProductWise = stockLevels.stream()
+					.collect(Collectors.groupingBy(stockLevel -> stockLevel.getProductCode()));
+		}
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for grouping");
+		return stockLevelsProductWise;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

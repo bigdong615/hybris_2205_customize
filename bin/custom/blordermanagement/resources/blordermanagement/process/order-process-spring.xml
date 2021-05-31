@@ -38,6 +38,12 @@
 		<property name="allocationService" ref="allocationService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
+
+	<bean id="blSourceOrderAction" class="com.bl.Ordermanagement.actions.order.BlSourceOrderAction" parent="abstractAction">
+		<property name="blSourcingService" ref="blSourcingService"/>
+		<property name="allocationService" ref="allocationService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
 	
 	<bean id="completeOrderAction" class="com.bl.Ordermanagement.actions.order.CompleteOrderAction" parent="abstractAction" />
 

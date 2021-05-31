@@ -6,6 +6,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -77,5 +78,33 @@ public interface BlStockLevelDao
 	 */
 	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(List<String> productCodes,
 			List<WarehouseModel> warehouses, Date startDate, Date endDate);
-	
+
+	/**
+	 * It finds the stock levels for the given product codes and date range.
+	 *
+	 * @param productCodes
+	 *           the product codes
+	 * @param warehouse
+	 *            the warehouse
+	 * @param startDate
+	 *            the start date
+	 * @param endDate
+	 * 	            the end date
+	 * @return list of stock levels
+	 */
+	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(Set<String> productCodes, WarehouseModel warehouse, Date startDate, Date endDate);
+
+	/**
+	 * It finds the stocks for the given serials and serial from start date to end date
+	 *
+	 * @param serialProductCodes
+	 * @param startDay
+	 *           the rental start date
+	 * @param endDay
+	 *           the rental end date
+	 * @return list of stock levels
+	 */
+	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodes(final Set<String> serialProductCodes,
+			final Date startDay, final Date endDay);
+
 }
