@@ -349,7 +349,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
 			return BlFacadesConstants.USED_GEAR_CART;
 		} else if (CollectionUtils
-				.isEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
+				.isEmpty(cartModel.getEntries())) {
 			return BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED;
 		}
 		return null;

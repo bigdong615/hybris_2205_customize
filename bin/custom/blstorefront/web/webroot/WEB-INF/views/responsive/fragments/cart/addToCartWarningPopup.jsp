@@ -5,8 +5,6 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 
-<%-- ToDo - Need to add Interception pop-up for Rental product Add to Cart once provided, as of now used sample html. --%>
-
 {
 "addToCartLayer":"<spring:escapeBody javaScriptEscape="true" htmlEscape="false">
 	<spring:htmlEscape defaultHtmlEscape="true">
