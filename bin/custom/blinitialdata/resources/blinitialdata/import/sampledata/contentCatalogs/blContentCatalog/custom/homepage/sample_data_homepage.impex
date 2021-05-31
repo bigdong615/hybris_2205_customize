@@ -122,7 +122,6 @@ INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]
                                     ;                         ; CategoriesTitleComponent        ; Categories Title Component          ; CategoriesTitleComponent        ; "Categories"           
                                     ;                         ; TheyBorrowFromUsTitleComponent  ; They BorrowFromUs Title Component   ; TheyBorrowFromUsTitleComponent  ; "They Borrow From Us"
 
-
 #Mobile device navigation link component for ship or pickup, support and Account nav link                                    
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url  ; target(code)[default='sameWindow'] 
 								;						; MobilePickUpAndDeliveryLink; Mobile PickUp And Delivery Link; "/shiporpickup";
@@ -163,7 +162,6 @@ INSERT_UPDATE ProductCarouselComponent;$contentCV[unique=true];uid[unique=true]	
                                  
 INSERT_UPDATE SearchBoxComponent; $contentCV[unique = true]; uid[unique = true]; name       ; &componentRef
                                 ;                          ; BlSearchBox       ; Search Box ; BlSearchBox
-
 
 ###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; cmsComponents(uid,$contentCV)                                                                                                                                                                                                 

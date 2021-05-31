@@ -59,7 +59,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                     ;                         ; MobileHeaderBottomInfo-productDetails              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
                                    ;                         ; MobileHeaderLinkForShipOrPickupSlot-productDetails ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
                                    ;                         ; MobileMiniCartSlot-productDetails                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
-                                   ;                         ; UsedGearComponentsectionslot-productDetails ; UsedGearComponentsectionslot ;                                                       ; UsedGearComponentsectionslot  ; true
+                                   ;                         ; UsedGearComponentssectionslot-productDetails ; UsedGearComponentsectionslot ;                                                       ; UsedGearComponentsectionslot  ; true
 
 
 # Product Details Page
