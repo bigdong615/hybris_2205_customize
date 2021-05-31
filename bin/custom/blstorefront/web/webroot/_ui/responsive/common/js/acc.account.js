@@ -31,11 +31,6 @@ ACC.account = {
 			})
 		});
 
-		$(document).on("click", ".js-forgot-password", function (e) {
-			e.preventDefault();
-					setTimeout(function(){$("#forgotPass").modal('show');},500)
-		});
-
 		/** Added for BL-31 to make validation for registration **/
 		$(document).on("click", ".js-signUp-popup-validation", function (e) {
 			e.preventDefault();
