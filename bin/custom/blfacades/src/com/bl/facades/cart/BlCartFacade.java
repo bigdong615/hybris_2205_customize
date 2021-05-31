@@ -7,6 +7,8 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 
 import java.util.Date;
 
+import com.bl.facades.product.data.RentalDateDto;
+
 /**
  * It is responsible for getting all necessary information for cart.
  *
@@ -88,4 +90,20 @@ public interface BlCartFacade extends CartFacade {
 	 *            the commerce cart modification exception
 	 */
 	CartModificationData updateCartEntryFromPopup(long entryNumber, long quantity) throws CommerceCartModificationException;
+	
+	/**
+	 * Check availability in cart page on continue button to go to next checkout step
+	 *
+	 * @param sessionRentalDate
+	 *           the session rental date
+	 * @return true, if stock is available for cart
+	 */
+	boolean checkAvailabilityOnCartContinue(final RentalDateDto sessionRentalDate);
+
+	/**
+	 * It identifies type of cart, whether it is rental or used gear cart.
+	 * @return String
+	 */
+	String identifyCartType();
+	
 }

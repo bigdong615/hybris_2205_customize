@@ -38,6 +38,8 @@
 
  //ShipIt
  $("input[id='ship-it']").click(function() {
+    $('#ship-it-am-notification').html('');
+    $('#ship-it-am-notification').hide();
     hideErrorForInputValidation();
     $("#ship-it-savedAddresses option[value='newAddress']").removeAttr("selected");
     defaultShipIt();
@@ -57,6 +59,7 @@
  function onChangeOfShipItShippingMethod() {
     hideErrorForInputValidation();
     $('#ship-it-notification').html("");
+    $('#ship-it-am-notification').html("");
     var shippingMethod = $('#ship-it-select-box').val();
     if(shippingMethod == 'SHIP_HOME_HOTEL_BUSINESS') {
         resetSelectBox('ship-it-savedAddresses');
@@ -88,7 +91,7 @@
                                         'onchange="onChangeOfShipItShipToHome(this)">';
                  let numberSelected = 0;
                  for (let i = 0; i < data.length; i++) {
-                     shippingModes += '<option value="' + data[i].code + '">' + data[i].name;
+                     shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '">' + data[i].name;
                      if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
                          shippingModes += '<span class="float-end">' + data[i].deliveryCost.formattedValue + '</span>';
                      }
@@ -96,6 +99,11 @@
                      if(i == 0) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
                         calculateCartTotal();
+                        if(data[i].businessTypeDelivery == true) {
+                            let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
+                            $('#ship-it-am-notification').html(notification);
+                            $('#ship-it-am-notification').show();
+                        }
                      }
                  }
                  shippingModes += '</select>';
@@ -118,10 +126,11 @@
       hideErrorForInputValidation();
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
+      var businessType = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype');
       if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
-              saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null);
+              saveSelectedAddress($('select[id="ship-it-savedAddresses"]').val(), 'SHIP_HOME_HOTEL_BUSINESS', deliveryMode, null, businessType);
           } else {
               var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
               var lastName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
@@ -135,7 +144,7 @@
               if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone)) {
                   addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
-                                                                     phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP');
+                                                                     phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
               } else {
                   showErrorForInputValidation('Ship');
               }
@@ -168,7 +177,7 @@
                                     'onchange="onChangeOfShipItShipToUPS()">';
                 let numberSelected = 0;
                 for (let i = 0; i < data.length; i++) {
-                    shippingModes += '<option value="' + data[i].code + '">' + data[i].name;
+                    shippingModes += '<option value="' + data[i].code + '" businesstype="'+ data[i].businessTypeDelivery +'">' + data[i].name;
                     if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
                         shippingModes += '<span class="float-end">' + data[i].deliveryCost.formattedValue + '</span>';
                     }
@@ -176,6 +185,11 @@
                     if(i == 0) {
                         $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
                         calculateCartTotal();
+                        if(data[i].businessTypeDelivery == true) {
+                            let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
+                            $('#ship-it-am-notification').html(notification);
+                            $('#ship-it-am-notification').show();
+                        }
                     }
                 }
                 shippingModes += '</select>';
@@ -259,15 +273,21 @@
                                            if(data.result[i].distance != null) {
                                                upsStores +=  data.result[i].contactNumber;
                                            }
-                                           upsStores += '</p>' +
-                                                  '</div>' +
-                                                  '<div class="col-11 offset-1 col-md-4 offset-md-0">';
+                                           upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0">';
                                                   if(data.result[i].latestGroundDropOffTime != null && data.result[i].latestGroundDropOffTime.length != 0) {
-                                         upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' +
-                                                      '<p class="mb-0"><span class="gray80">' +data.result[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;&nbsp;' +
-                                                                 data.result[i].latestGroundDropOffTime[1].split(': ')[1] + '</p>' +
-                                                      '<p class="mb-0"><span class="gray80">' + data.result[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
-                                                                 data.result[i].latestGroundDropOffTime[2].split(': ')[1] + '</p>';
+                                                        if(data.result[i].latestGroundDropOffTime[0] != null && data.result[i].latestGroundDropOffTime[0].split(': ')[0] == 'Mon-Fri') {
+                                         upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                        } else {
+                                         upsStores += '<p class="mb-0"><span class="gray80">M-S</span>&emsp;' + data.result[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                        }
+                                                      if(data.result[i].latestGroundDropOffTime[1] != null) {
+                                         upsStores += '<p class="mb-0"><span class="gray80">' +data.result[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;&nbsp;' +
+                                                                                 data.result[i].latestGroundDropOffTime[1].split(': ')[1] + '</p>' ;
+                                                      }
+                                                      if(data.result[i].latestGroundDropOffTime[2] != null) {
+                                         upsStores += '<p class="mb-0"><span class="gray80">' + data.result[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
+                                                                                 data.result[i].latestGroundDropOffTime[2].split(': ')[1] + '</p>';
+                                                      }
                                                   }
                                     upsStores += '</div>' +
                                              '</div>';
@@ -305,7 +325,10 @@
                                   '</div>' +
                                   '<div class="col-11 col-md-7">' +
                                       '<p>' + stores[i].consigneeName + '<br>' +
-                                         '<a href="#" target="_blank">' +
+                                      '<a href="https://maps.google.com/maps?q='+
+                                          stores[i].addressLine + ',' + stores[i].politicalDivision1 + ' ' +
+                                          stores[i].politicalDivision2 + ' ' + stores[i].postcodePrimaryLow +
+                                         '" target="_blank">' +
                                              stores[i].addressLine + ',' + stores[i].politicalDivision1 + ' ' +
                                              stores[i].politicalDivision2 + ' ' + stores[i].postcodePrimaryLow +
                                          '</a><br>' ;
@@ -315,15 +338,21 @@
                                          if(stores[i].distance != null) {
                                              upsStores += stores[i].contactNumber;
                                          }
-                        upsStores += '</p>' +
-                                  '</div>' +
-                                  '<div class="col-11 offset-1 col-md-4 offset-md-0">';
+                        upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0">';
                                   if(stores[i].latestGroundDropOffTime != null && stores[i].latestGroundDropOffTime.length != 0) {
-                         upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' +
-                                      '<p class="mb-0"><span class="gray80">' +stores[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;' +
-                                                 stores[i].latestGroundDropOffTime[1].split(':')[1] + '</p>' +
-                                      '<p class="mb-0"><span class="gray80">' + stores[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
-                                                 stores[i].latestGroundDropOffTime[2].split(':')[1] + '</p>';
+                                                      if(stores[i].latestGroundDropOffTime[0] != null && stores[i].latestGroundDropOffTime[0].split(': ')[0] == 'Mon-Fri') {
+                                       upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                      } else {
+                                       upsStores += '<p class="mb-0"><span class="gray80">M-S</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
+                                                      }
+                                                    if(stores[i].latestGroundDropOffTime[1] != null) {
+                                       upsStores += '<p class="mb-0"><span class="gray80">' +stores[i].latestGroundDropOffTime[1].split(':')[0] + '</span>&emsp;&nbsp;' +
+                                                                               stores[i].latestGroundDropOffTime[1].split(': ')[1] + '</p>' ;
+                                                    }
+                                                    if(stores[i].latestGroundDropOffTime[2] != null) {
+                                       upsStores += '<p class="mb-0"><span class="gray80">' + stores[i].latestGroundDropOffTime[2].split(':')[0] + '</span>&emsp;' +
+                                                                               stores[i].latestGroundDropOffTime[2].split(': ')[1] + '</p>';
+                                                    }
                                   }
                     upsStores += '</div>' +
                              '</div>';
@@ -369,6 +398,10 @@
      $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
      $('#ship-it-notification').val('');
      $('#ship-it-notification').hide();
+     if($('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').attr('businesstype') == "false") {
+        $('#ship-it-am-notification').html('');
+        $('#ship-it-am-notification').hide();
+     }
  }
 
  function createPickUPFormObject(firstName, lastName, email, phone) {
@@ -610,6 +643,15 @@
        $('#sameDayZipCheckText').val('');
   }
 
+  $("#sameDayZipCheckText").on('change keydown paste input', function(){
+    hideErrorForInputValidation();
+    $('#same-day-notification').val('');
+    $('#same-day-notification').hide();
+    $('#same-day-address-div').hide();
+    $('#sameDayShippingMethodsNotification').hide();
+    $('#sameDayShippingMethods').html('');
+  });
+
   function sameDayZipCheck() {
     hideErrorForInputValidation();
     $('#same-day-notification').val('');
@@ -728,7 +770,7 @@
                },
                success: function (data) {
                     if(data == 'SUCCESS') {
-                        saveSelectedAddress(savedAddress, $('#same-day-select-box').val(), deliveryMode, $('#sameDayZipCheckText').val());
+                        saveSelectedAddress(savedAddress, $('#same-day-select-box').val(), deliveryMode, $('#sameDayZipCheckText').val(), null);
                     }
                },
                error: function (data) {
@@ -762,7 +804,7 @@
                             addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(),
                                                         townCity.val(),regionIso.val(), 'US', postcode.val(),
                                                         $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
-                                                        phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH');
+                                                        phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
                         }
                    },
                    complete: function() {
@@ -849,9 +891,6 @@
     let notification = '<div class="notification notification-error">' + msg + '</div>';
     $('#ship-it-notification').html(notification);
     $('#ship-it-notification').show();
-    if(status) {
-        $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')[0].scrollIntoView(true);
-    }
  }
 
  function showErrorNotificationPickUp(msg) {
@@ -864,9 +903,6 @@
     let notification = '<div class="notification notification-error">' + msg + '</div>';
     $('#same-day-notification').html(notification);
     $('#same-day-notification').show();
-    if(status) {
-        $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')[0].scrollIntoView(true);
-    }
  }
 
  //Methods
@@ -953,9 +989,18 @@
  }
 
  function createAddressFormObject(firstName, lastName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
-    upsStoreAddress, openingDaysDetails, addressType) {
-    if(openingDaysDetails != null) {
-        openingDaysDetails = openingDaysDetails[0] + ';' + openingDaysDetails[1].trim() + ';' + openingDaysDetails[2].trim();
+    upsStoreAddress, openingDays, addressType) {
+    let openingDaysDetails = '';
+    if(openingDays != null) {
+        if(openingDays[0] != null) {
+            openingDaysDetails += openingDays[0].trim();
+        }
+        if(openingDays[1] != null) {
+            openingDaysDetails += ';' + openingDays[1].trim();
+        }
+        if(openingDays[2] != null) {
+            openingDaysDetails += ';' + openingDays[2].trim();
+        }
     }
     if(regionIso.includes('-')) {
         regionIso = regionIso;
@@ -1014,7 +1059,7 @@
  }
 
  //AJAX
- function addressValidationService(addressForm, deliveryMode, section) {
+ function addressValidationService(addressForm, deliveryMode, section, businessType) {
     sessionStorage.setItem("enteredAddressForm", JSON.stringify(addressForm));
     sessionStorage.setItem("section", JSON.stringify(section));
     $.ajax({
@@ -1029,8 +1074,9 @@
         },
         success: function (data) {
             let addressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
-            if(data != null && data.statusMessage == 'Success' && data.result.length > 0) {
+            if(data != null && data.statusMessage == 'Success' && data.result != null && data.result.length > 0) {
                  sessionStorage.setItem("avsFlowDeliveryMode", JSON.stringify(deliveryMode));
+                 sessionStorage.setItem("businessType", JSON.stringify(businessType));
                  let whatYouEntered = addressForm.line1 + '<br/>' + addressForm.townCity + ', ' + addressForm.regionIso.split('-')[1] + ' ' +
                                          addressForm.postcode ;
                  $('#whatYouEntered').html(whatYouEntered);
@@ -1071,21 +1117,17 @@
      let addressForm = JSON.parse(sessionStorage.getItem("suggestedAddressForm"));
      let enteredAddressForm = JSON.parse(sessionStorage.getItem("enteredAddressForm"));
      let deliveryMode = JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode"));
+     let businessType = JSON.parse(sessionStorage.getItem("businessType"));
      let section = JSON.parse(sessionStorage.getItem("section"));
      if(section == 'SHIP') {
-        if(deliveryMode.includes('AM') && addressForm.addressType != 'BUSINESS') {
+        if(businessType && addressForm.addressType != 'BUSINESS') {
             showAMDeliveryErrorMessage(section);
             $('#avsCheck').modal('hide');
         } else {
             callAddNewAddress(enteredAddressForm, addressForm, deliveryMode);
         }
      } else {
-        if((deliveryMode.includes('AM') || deliveryMode.includes('SAVER')) && addressForm.addressType != 'BUSINESS') {
-            showAMDeliveryErrorMessage(section);
-            $('#avsCheck').modal('hide');
-        } else {
-            callAddNewAddress(enteredAddressForm, addressForm, deliveryMode);
-        }
+        callAddNewAddress(enteredAddressForm, addressForm, deliveryMode);
      }
  }
 
@@ -1098,10 +1140,12 @@
                   sessionStorage.removeItem("suggestedAddressForm");
                   sessionStorage.removeItem("enteredAddressForm");
                   sessionStorage.removeItem("avsFlowDeliveryMode");
+                  sessionStorage.removeItem("businessType");
                   sessionStorage.removeItem("rushStatus");
                   saveDeliveryMode(deliveryMode, false)
                        .then((data) => {
                            $('.page-loader-new-layout').hide();
+                           $('#avsCheck').modal('hide');
                            window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                        })
                        .catch((error) => {
@@ -1117,20 +1161,16 @@
     let deliveryMode = JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode"));
     let addressForm = JSON.parse(sessionStorage.getItem("suggestedAddressForm"));
     let section = JSON.parse(sessionStorage.getItem("section"));
+    let businessType = JSON.parse(sessionStorage.getItem("businessType"));
     if(section == 'SHIP') {
-        if(deliveryMode.includes('AM') && addressForm.addressType != 'BUSINESS') {
+        if(businessType && addressForm.addressType != 'BUSINESS') {
             showAMDeliveryErrorMessage(section);
             $('#avsCheck').modal('hide');
         } else {
             callEnteredAddNewAddress(addressForm, deliveryMode);
         }
     } else {
-        if((deliveryMode.includes('AM') || deliveryMode.includes('SAVER')) && addressForm.addressType != 'BUSINESS') {
-            showAMDeliveryErrorMessage(section);
-            $('#avsCheck').modal('hide');
-        } else {
-            callEnteredAddNewAddress(addressForm, deliveryMode);
-        }
+        callEnteredAddNewAddress(addressForm, deliveryMode);
     }
  }
 
@@ -1146,6 +1186,7 @@
               saveDeliveryMode(deliveryMode, false)
                  .then((data) => {
                      $('.page-loader-new-layout').hide();
+                     $('#avsCheck').modal('hide');
                      window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
                  })
                  .catch((error) => {
@@ -1158,21 +1199,27 @@
  }
 
  function showAMDeliveryErrorMessage(section) {
-    if(section == 'RUSH') {
-        showErrorNotificationSameDay('AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!', false);
-    } else {
-        showErrorNotification('AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!', false);
-    }
+    showErrorNotificationSHIP('AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!', false);
  }
 
- function saveSelectedAddress(selectedAddress, shippingGroup, deliveryMode, rushZip) {
+ function showErrorNotificationSHIP(msg) {
+    $('#ship-it-am-notification').html('');
+    $('#ship-it-am-notification').hide();
+    let notification = '<div class="notification notification-error">' + msg + '</div>';
+    $('#ship-it-notification').html(notification);
+    $('#ship-it-notification').show();
+    document.getElementById('ship-it-am-notification').scrollIntoView();
+ }
+
+ function saveSelectedAddress(selectedAddress, shippingGroup, deliveryMode, rushZip, businessType) {
      $.ajax({
          url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/selectAddress',
          data: {
              selectedAddressCode: selectedAddress,
              shippingGroup: shippingGroup,
              deliveryMode: deliveryMode,
-             rushZip: rushZip
+             rushZip: rushZip,
+             businessType: businessType
          },
          type: "GET",
          beforeSend: function(){
@@ -1315,12 +1362,30 @@
       $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]')
         .val() + '"]').text().split('$')[1]);
       calculateCartTotal();
+      if($('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype') == "true") {
+          let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
+          $('#ship-it-am-notification').html(notification);
+          $('#ship-it-am-notification').show();
+      } else {
+        $('#ship-it-am-notification').html('');
+        $('#ship-it-am-notification').hide();
+      }
+      $('#ship-it-notification').html('');
+      $('#ship-it-notification').hide();
   }
 
   function onChangeOfShipItShipToUPS() {
      $('#cart-shipping-cost').text('$'+ $('option[value="' + $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box')
             .val()+ '"]').text().split('$')[1]);
      calculateCartTotal();
+     if($('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').attr('businesstype') == "true") {
+        let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
+        $('#ship-it-am-notification').html(notification);
+        $('#ship-it-am-notification').show();
+     } else {
+        $('#ship-it-am-notification').html('');
+        $('#ship-it-am-notification').hide();
+     }
   }
 
   function onSelectOfPartnerAddress(event) {

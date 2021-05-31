@@ -19,7 +19,7 @@
           <a href="${fn:escapeXml(productUrl)}"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
          </div>
          <div class="col-md-7 mt-3">
-           <b>${entry.product.name}</b>
+           <a href="${fn:escapeXml(productUrl)}"><b>${entry.product.name}</b></a>
            <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                       modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />

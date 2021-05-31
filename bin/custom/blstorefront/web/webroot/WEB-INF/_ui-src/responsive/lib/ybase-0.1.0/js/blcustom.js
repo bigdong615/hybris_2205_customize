@@ -75,6 +75,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode, popUpRecognisePost:recognise},
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                         ACC.minicart.updateMiniCartDisplay();
+                                      }
                                       updateQuantity();
                                       addToCartFromModal();
                                       addId();
@@ -106,7 +109,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                              $('.page-loader-new-layout').show();
                           },
                           success: function (response) {
-                             console.log("Quantity updated");
+                             if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                  ACC.minicart.updateMiniCartDisplay();
+                             }
                           },
                           complete: function() {
                              $('.page-loader-new-layout').hide();
@@ -134,7 +139,7 @@ $('#cart-continue').on("click", function (e) {
 			} else if (response == 'rentalDateNotSelected') {
 				$('#cart-warning').css('display', 'block');
 			}else{
-			  $('#cart-warning').css('display', 'none');
+			  window.location.href = ACC.config.encodedContextPath + "/cart";
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {

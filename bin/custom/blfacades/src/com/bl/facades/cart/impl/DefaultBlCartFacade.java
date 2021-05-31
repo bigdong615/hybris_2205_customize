@@ -5,12 +5,12 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
-
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -22,14 +22,13 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -305,6 +304,55 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		final CommerceCartModification modification = getCommerceCartService().updateQuantityForCartEntry(parameter);
 
 		return getCartModificationConverter().convert(modification);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean checkAvailabilityOnCartContinue(final RentalDateDto sessionRentalDate)
+	{
+		final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
+		final CartModel cartModel = getBlCartService().getSessionCart();
+		if (Objects.nonNull(sessionRentalDate) && Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries()))
+		{
+			final Date startDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedFromDate(), BlFacadesConstants.DATE_FORMAT);
+			final Date endDay = BlDateTimeUtils.getDate(sessionRentalDate.getSelectedToDate(), BlFacadesConstants.DATE_FORMAT);
+			final List<String> listOfProductCodes = cartModel.getEntries().stream()
+					.map(cartEntry -> cartEntry.getProduct().getCode()).collect(Collectors.toList());
+			final Map<String, Long> groupByProductsAvailability = getBlCommerceStockService().groupByProductsAvailability(startDay,
+					endDay, listOfProductCodes, getBaseStoreService().getCurrentBaseStore().getWarehouses());
+			cartModel.getEntries().forEach(cartEntry -> {
+				final int cartQuantity = cartEntry.getQuantity().intValue();
+				final int availableStockQuantity = groupByProductsAvailability.get(cartEntry.getProduct().getCode()).intValue();
+				if (availableStockQuantity < cartQuantity)
+				{
+					isAvailable.set(Boolean.FALSE);
+					return;
+				}
+			});
+			return isAvailable.get();
+		}
+		return isAvailable.get();
+	}
+
+	/**
+	 * @{InheritDoc }
+	 */
+	@Override
+	public String identifyCartType() {
+		final CartModel cartModel = blCartService.getSessionCart();
+		if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && Boolean.TRUE.equals(cartModel.getIsRentalCart())) {
+			return BlFacadesConstants.RENTAL_CART;
+		} else if (CollectionUtils
+				.isNotEmpty(cartModel.getEntries()) && Boolean.FALSE.equals(cartModel.getIsRentalCart())) {
+			return BlFacadesConstants.USED_GEAR_CART;
+		} else if (CollectionUtils
+				.isEmpty(cartModel.getEntries())) {
+			return BlFacadesConstants.RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED;
+		}
+		return null;
 	}
 	
   /**

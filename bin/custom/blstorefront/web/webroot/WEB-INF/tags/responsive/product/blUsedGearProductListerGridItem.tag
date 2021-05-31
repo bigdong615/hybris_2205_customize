@@ -31,7 +31,10 @@
                     <c:if test ="${mediaLi.format eq 'product'}">
                        <c:url value="${mediaLi.url}" var="primaryImageUrl" />
                        <c:set value="this is alternate" var="altTextHtml"/>
-                       <li class="splide__slide""><img src="${fn:escapeXml(primaryImageUrl)}"/></li>
+                       <li class="splide__slide"">
+					   <!-- BL-534: Added Url or <a> tag as per requirement --> 
+					   <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
+                       <a href="${usedGearUrl}"><img src="${fn:escapeXml(primaryImageUrl)}"/></a></li>
                     </c:if>
                  </c:forEach>
               </ul>
