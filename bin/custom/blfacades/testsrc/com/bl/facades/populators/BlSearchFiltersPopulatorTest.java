@@ -59,6 +59,10 @@ public class BlSearchFiltersPopulatorTest {
   private static final String SORT_CODE_PRICE_ASC = "price-asc";
   private static final String SORT_CODE_PRICE_DESC = "price-desc";
   private static final String SORT_CODE_NEWEST = "newest";
+  public static final String MIN_SERIAL_PRICE = "minSerialfinalSalePrice";
+  public static final String PRICE_VALUE = "priceValue";
+
+
 
 
   private BlSearchFiltersPopulator<FacetSearchConfig, IndexedTypeSort> blSearchFiltersPopulator;
@@ -227,6 +231,12 @@ public class BlSearchFiltersPopulatorTest {
       }
 
     }
+
+    for(IndexedTypeSort sort :target.getSearchQuery().getIndexedType().getSorts()) {
+      Assert.assertEquals(SORT_CODE_PRICE_ASC , sort.getCode());
+      Assert.assertEquals(PRICE_VALUE , sort.getFields().get(0).getFieldName());
+      Assert.assertTrue(sort.getFields().get(0).isAscending());
+    }
   }
 
 
@@ -275,6 +285,13 @@ public class BlSearchFiltersPopulatorTest {
       }
 
     }
+
+    for(IndexedTypeSort sort :target.getSearchQuery().getIndexedType().getSorts()) {
+      Assert.assertEquals(SORT_CODE_PRICE_DESC , sort.getCode());
+      Assert.assertEquals(MIN_SERIAL_PRICE , sort.getFields().get(0).getFieldName());
+      Assert.assertFalse(sort.getFields().get(0).isAscending());
+    }
+
   }
 
 
