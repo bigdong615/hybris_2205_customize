@@ -121,7 +121,6 @@ INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]
                                     ;                         ; RentingGearIsEasyTitleComponent ; Renting Gear IsEasy Title Component ; RentingGearIsEasyTitleComponent ; "Renting gear is easy" 
                                     ;                         ; CategoriesTitleComponent        ; Categories Title Component          ; CategoriesTitleComponent        ; "Categories"           
                                     ;                         ; TheyBorrowFromUsTitleComponent  ; They BorrowFromUs Title Component   ; TheyBorrowFromUsTitleComponent  ; "They Borrow From Us"
-                                    ;                         ; BuyingUsedGearIsEasyTitleComponent ; Buying Used Gear Is Easy Title Component ; BuyingUsedGearIsEasyTitleComponent ; "Buying used gear is easy"
 
 
 #Mobile device navigation link component for ship or pickup, support and Account nav link                                    

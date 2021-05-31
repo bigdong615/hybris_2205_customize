@@ -30,12 +30,12 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
                               ; BreadcrumbSection                 ;                                                                        ;                           ;wide
                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
-                             ; 1UsedGearComponentsectionslot ;                                                                             ;                           ; wide
+                             ; UsedGearComponentsectionslot ;                                                                             ;                           ; wide
 
 
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
                           ;                         ;BreadcrumbSlot                      ;Breadcrumb slot
-                          ;                         ; 1UsedGearComponentsectionslot     ; UsedGearComponentslot1
+                          ;                         ; UsedGearComponentsectionslot     ; UsedGearComponentslot1
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='ProductDetailsPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
@@ -60,7 +60,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                     ;                         ; MobileHeaderBottomInfo-productDetails              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
                                    ;                         ; MobileHeaderLinkForShipOrPickupSlot-productDetails ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
                                    ;                         ; MobileMiniCartSlot-productDetails                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
-                                   ;                         ; UsedGearComponentsectionslot-productDetails ; UsedGearComponentsectionslot ;                                                       ; 1UsedGearComponentsectionslot  ; true
+                                   ;                         ; UsedGearComponentsectionslot-productDetails ; UsedGearComponentsectionslot ;                                                       ; UsedGearComponentsectionslot  ; true
 
 
 # Product Details Page
