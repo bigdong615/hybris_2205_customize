@@ -408,14 +408,14 @@
 				<description>Custom Navigation component for Support navigation node on header.</description>
 			</itemtype>
 
-      <itemtype code="BannerComponent" autocreate="false" generate="false">
-        <attributes>
-          <attribute type="MediasList" qualifier="medias">
-            <modifiers read="true" write="true" optional="true"/>
-            <persistence type="property"/>
-          </attribute>
-        </attributes>
-      </itemtype>
+            <itemtype code="BannerComponent" autocreate="false" generate="false">
+              <attributes>
+                    <attribute type="MediasList" qualifier="medias">
+                         <modifiers read="true" write="true" optional="true"/>
+                         <persistence type="property"/>
+                     </attribute>
+               </attributes>
+            </itemtype>
 		</typegroup>
 
         <typegroup name="borrowLenses">
