@@ -537,15 +537,8 @@
                                                  type       : 'fade',
                                                  pagination : false,
                                                  arrows     : false,
-                                                 keyboard: false,
-                                                  fixedWidth  : 380,
-                                                 fixedHeight : 380,
-                                                 breakpoints : {
-                                                     '600': {
-                                                         fixedWidth  : 250,
-                                                         fixedHeight : 250,
-                                                          }
-                                                 },
+                                                 keyboard   : false,
+                                                 fixedHeight  : 380,
                                              } );
 
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
@@ -581,15 +574,8 @@
                                                  type       : 'fade',
                                                  pagination : false,
                                                  arrows     : false,
-                                                 keyboard: false,
-                                                  fixedWidth  : 380,
+                                                 keyboard   : false,
                                                  fixedHeight : 380,
-                                                 breakpoints : {
-                                                     '600': {
-                                                         fixedWidth  : 250,
-                                                         fixedHeight : 250,
-                                                     }   
-                                                     },
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
@@ -827,23 +813,15 @@
                  type       : 'fade',
                  pagination : false,
                  arrows     : false,
-                 keyboard: false,
-                  fixedWidth  : 380,
-                  fixedHeight : 380,
-                  breakpoints : {
-                  '600': {
-                          fixedWidth  : 250,
-                          fixedHeight : 250,
-                                                         
-                         } 
-                  },                                
+                 keyboard   : false,
+                 fixedHeight : 380,
              } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
 
               var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
-                            console.log(image_qty);
-                 if(image_qty>4){
+
+              if(image_qty>4){
                          var secondarySlider = new Splide( '#product-thumbnails', {
                                                  rewind      : true,
                                                  fixedWidth  : 115,
@@ -868,17 +846,8 @@
                                                  type       : 'fade',
                                                  pagination : false,
                                                  arrows     : false,
-                                                 keyboard: false,
-                                                  fixedWidth  : 380,
+                                                 keyboard   : false,
                                                  fixedHeight : 380,
-                                                 breakpoints :{
-                                                  '600': {
-                                                         fixedWidth  : 250,
-                                                         fixedHeight : 250,
-                                                         
-                                                     }
-                                             },
-                                             
                                              } );
                                              primarySlider.sync( secondarySlider ).mount();
                                               }
