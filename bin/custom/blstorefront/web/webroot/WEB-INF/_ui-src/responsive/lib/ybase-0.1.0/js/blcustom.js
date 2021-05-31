@@ -71,6 +71,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                         ACC.minicart.updateMiniCartDisplay();
+                                      }
                                       updateQuantity();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
@@ -101,7 +104,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                              $('.page-loader-new-layout').show();
                           },
                           success: function (response) {
-                             console.log("Quantity updated");
+                             if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                  ACC.minicart.updateMiniCartDisplay();
+                             }
                           },
                           complete: function() {
                              $('.page-loader-new-layout').hide();
