@@ -90,7 +90,7 @@
                <div class="container">
                    <div class="row justify-content-center">
                        <div class="col-lg-11 col-xl-9">
-                          <cms:pageSlot position="BuyingUsedGearComponentsectionslot"
+                          <cms:pageSlot position="buyingUsedGearEasySection"
                        							var="feature">
                        							<cms:component component="${feature}" />
                        		</cms:pageSlot>
