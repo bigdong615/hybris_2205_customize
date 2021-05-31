@@ -138,6 +138,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_THREE = 3;
 	public static final int CONDITION_RATING_TWO = 2;
 
+	public static final String PRICE_ASC = "price-asc";
+	public static final String PRICE_DESC = "price-desc";
+	public static final String MIN_SERIAL_PRICE = "minSerialfinalSalePrice";
+	public static final String PRICE_VALUE = "priceValue";
+
 	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
 	public static final String FAILURE_STRING = "Failure";
 	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
