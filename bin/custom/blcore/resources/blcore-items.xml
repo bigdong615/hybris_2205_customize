@@ -731,6 +731,28 @@
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <persistence type="property"/>
                    </attribute>
+                   <attribute qualifier="productStatus" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Defines Status of SKU</description>
+                   </attribute>
+                   <attribute qualifier="createdDate" type="java.util.Date">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Date on which the SKU is created</description>
+                   </attribute>
+                   <attribute qualifier="isAccounting" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is Accounting</description>
+                   </attribute>
+                   <attribute qualifier="discounted" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is discounted</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
