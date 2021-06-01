@@ -1,0 +1,677 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Categories
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs categories_en.impex =========================");
+
+# Macros / Replacement Parameter definitions
+
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+
+
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+# Language
+$lang=en
+
+# Create Categories
+UPDATE Category;code[unique=true];$catalogVersion;name[lang=$lang]
+               ;cameras;;Cameras
+               ;lenses;;Lenses
+               ;production;;Production
+               ;subparts;;Subparts
+               ;newgear;;New Gear
+               ;usedgear;;Used Gear
+               ;audio;;Audio
+               ;lighting;;Lighting
+               ;camcorders;;Camcorders
+               ;dslr-cameras;;DSLR
+               ;mirrorless-cameras;;Mirrorless
+               ;medium-format-cameras;;Medium Format
+               ;point-and-shoot-cameras;;Point and Shoot
+               ;action-and-pov-cameras;;Action
+               ;professional;;Cinema
+               ;vr-video-cameras;;360
+               ;webcams;;Webcams
+               ;camera_packages;;Camera Packages
+               ;macro;;Macro
+               ;wide_angle;;Wide Angle
+               ;super-telephoto;;Telephoto
+               ;normal;;Standard
+               ;lens_adapters;;Lens Adapters
+               ;tilt-shift;;Tilt Shift
+               ;fisheye;;Fisheye
+               ;teleconverters;;Lens Extenders
+               ;cine-lenses;;Cinema Lenses
+               ;telescopes;;Telescopes
+               ;lens_packages;;Lens Packages
+               ;filters;;Filters
+               ;batteries_power;;Batteries/Power
+               ;tripods_heads;;Tripods/Heads
+               ;dollies_sliders;;Dollies & Sliders
+               ;cables_adapters;;Cables/Adapters
+               ;monitors_video_recorders;;Monitors/Video Recorders
+               ;follow_focus;;Follow Focus and Matte Boxes
+               ;camera-bags;;Camera Bags / Cases
+               ;memory_cards_storage;;Memory Cards & Storage
+               ;projectors;;Projectors
+               ;underwater-housing;;Underwater Housings
+               ;streaming;;Streaming;true
+               ;viewfinders;;Viewfinders
+               ;gimbals-stabilizers;;Gimbals and Stabilizers
+               ;flashes-and-on-camera;;Flashes
+               ;backdrops;;Backdrops
+               ;audio-accessories;;Audio Accessories
+               ;headphones;;Headphones
+               ;video-lighting-batteries;;Lighting Batteries
+
+## BL-80 Added for Used Gear Categories
+INSERT_UPDATE Category; code[unique = true]    ; $catalogVersion; name[lang = $lang]
+                      ; Used-Lenses            ;                ; Used Lenses
+                      ; Used-Cameras           ;                ; Used Cameras
+                      ; Used-Lighting          ;                ; Used Lighting
+                      ; Used-Video             ;                ; Used Video
+                      ; Used-Accessories       ;                ; Used Accessories
+                      ; Used-NewArrivals       ;                ; Used NewArrivals
+###### BL -331 Added for rental gear PLP
+                      ; NewArrivals-Cameras    ;                ; New Cameras
+                      ; NewArrivals-Lenses     ;                ; New Lenses
+                      ; NewArrivals-Production ;                ; New Production
+               ;rentalgear;;Rental Gear
+
+
+
+# Insert Category Description
+UPDATE Category;$catalogVersion;code[unique=true];description[lang=en]
+               ;;cameras;"<h1>Camera Rental</h1>
+
+<p>Rent camera bodies from Canon, Sony, Nikon, Panasonic, RED, & more at BorrowLenses.</p>
+<p>Many photography enthusiasts love pursuing the fleeting opportunities for the perfect image. The moment when the light strikes a surface perfectly, letting you see a new side of a familiar setting is part of what makes photography so rewarding. Video also presents artists with a new way of looking at the world. BorrowLenses makes renting cameras a breeze, with leading equipment options that give you access to the same items used by the pros. This is a great way to train on equipment considered standard for the photography, video, and film industries. Not sure what gear to rent?  Expand your personal horizons with the help of our team BL gear experts who can help you choose the right gear for your shoot.</p>
+
+<h2>Why Rent a Camera?</h2>
+
+<p>Turn your creative vision into reality with online photo and video equipment rentals. Order from your desk, have gear delivered to your door, and take on your next project. It's that simple. Plan your rental online with real-time availability and pricing on gear from all the top brands. We ship right to your door or pick up at over 3,000 US locations.</p>
+
+<h2>Diverse Selection</h2>
+
+<p>Camera gear selection includes:</p>
+
+<ul>
+    <li>Medium Format</li>
+    <li>8K Video Cameras</li>
+    <li>Amateur to Enthusiast to Professional DSLRs</li>
+    <li>Point and Shoots for Travel</li>
+    <li>Action Cameras</li>
+    <li>VR 360 Cameras</li>
+    <li>and more from brands like Canon, Blackmagic, Leica, and Sony to name a few.</li>
+</ul>
+
+<p>
+
+<h2>How it Works</h2>
+
+<p>Receive your rental, open the box, dial everything in to your liking, and put our gear to use. Do what you do best equipped with the right gear to get the perfect shot. When you√¢‚Ç¨‚Ñ¢re done with your rental, just put everything back in the box, attach the included shipping label and drop it off at your local UPS store. Learn more <a href='https://www.borrowlenses.com/content/How_BorrowLenses_Works' target='_blank'>here</a>."
+
+               ;;lenses;"<h1>Lens Rental</h1>
+
+<p>BorrowLenses offers lens rentals for all major brands from major manufactures including Canon, Sony, and Nikon, as well as 3rd parties such as Sigma and Zeiss. You can sort by specific lens types to help you figure which will fit your needs, or sort by things such as brand, camera mount, max aperture, focal range, and more. If you are new to renting lenses, key considerations are generally:</p>
+
+<ul>
+    <li>Lens Selection √¢‚Ç¨‚Äú Wide range of rental lenses to choose from.</li>
+        <li>Rental Dates √¢‚Ç¨‚Äú Lenses available for rent when you need them.</li>
+<li>Convenience √¢‚Ç¨‚Äú Prompt delivery/pickup and returns.</li>
+</ul>
+
+<p>At BorrowLenses, you get all of the above, plus the peace of mind that all lenses are professionally inspected and cleaned after every use.</p>
+
+<h2>What is included in a Camera Lens Rental?</h2>
+
+<p>At BorrowLenses, you can rent a wide assortment of lenses from wide angle cine lenses to super telephoto lenses. Most camera lens rentals come with front and rear lens caps, a lens hood, and a lens filter to help ensure everything goes right. </p>
+
+<h2>Types of Camera Lens Rentals</h2>
+
+<p>BorrowLenses rents an assortment of lenses from 3 to 90 days to help creators access the right tool for every job, including:</p>
+
+<ul>
+    <li>Standard Lenses</li>
+    <li>Cine Lenses</li>
+    <li>Telephoto Lenses</li>
+    <li>Wide Angle Lenses</li>
+    <li>PL Mount Lenses</li>
+    <li>Macro Lenses</li>
+    <li>Lens Adapters</li>
+</ul>
+
+<p>We have many, many more lens types to meet your diverse needs. If you are not sure what you want, we have knowledgeable folks on staff who are happy to help. You can contact us for help via phone or email Monday through Friday from 9 a.m. to 6 p.m., and on Saturdays from 10 a.m. to 4 p.m.</p>
+
+<h2>Convenient Lens Rentals</h2>
+<p>BorrowLenses is a great place to rent lenses. We offer convenience, quality, great selection and much more. </p>
+<p>There is no reason you should have to wait long for gear to arrive. BorrowLenses offers an overnight shipping option, although if you are shipping to Hawaii or Alaska, plan for an extra day. BL Rush shipping is also available in select locations for expedited delivery. Gear can be shipped to 4,000+ UPS stores nationwide, and if you√¢‚Ç¨‚Ñ¢re looking to rent lenses in SF Bay Area, Boston, LA, or New York City additional pickup options are available. We do recommend that you build in a cushion of one to three days if possible to ensure that all of the equipment you need is where you want it at the right time.</p>
+</div>"
+
+               ;;production;
+               ;;subparts;"Parts included with catalog items.  Not rented separately.  Products in this category should have Active set to false."
+               ;;newgear;
+               ;;audio;"Save on camera microphones and audio mixers. Borrow Lenses rents audio mixers, camera microphones, and UHF Lavaliers. Order now!"
+               ;;lighting;
+               ;;camcorders;"<h1>Camcorder Rentals</h1>
+
+<h2>Fixed-Lens Camcorders for News Gathering and Documentaries</h2>
+
+<p>Camcorders are built for practicality and convenience, with everything being fixed in one package: lens, sensor, and recorder. They are ideal for when you need to get shooting immediately without the fuss of all the ancillaries required of most <a href='https://www.borrowlenses.com/camera-type/professional' target='_blank'>cinema cameras</a>. While they tend to have smaller sensors and one-size-fits-all features, there are specific advantages to camcorders:</p>
+
+<ul>
+    <li>√¢‚Ç¨¬¢ Camcorder lenses often have huge zoom ranges.</li>
+    <li>√¢‚Ç¨¬¢ Unlimited recording (limited only by your media or battery life).</li>
+    <li>√¢‚Ç¨¬¢√Ç¬†Frequently have the ability to mount long-lasting broadcast-style batteries.</li>
+    <li>√¢‚Ç¨¬¢ Designed specifically for long shooting days and are often more comfortable to handle out in the field.
+    <li>√¢‚Ç¨¬¢ Many camcorders have pro-level audio inputs and the built-in mics tend to be pretty great.</li>
+</ul>
+
+<h2>Rent a Camcorder for Your Next Project or Assignment</h2>
+
+<p>At BorrowLenses, you can rent all manner of video equipment at outstanding rates. Have gear shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. BorrowLenses ships to all 50 states. Experience the advantages and convenience of renting gear today. Learn how <a href=""https://www.borrowlenses.com/content/How_BorrowLenses_Works"" target=""_blank"">here</a>."
+               ;;dslr-cameras;"<h1>A Fast and Easy Way to Rent DSLR Cameras</h1>
+<p>Professional photographers, serious hobbyists, and those who value high quality images, proven performance, and the broadest selection of native lenses choose DSLR cameras. These Digital Single-Lens Reflex (DSLR) systems are tried and true performers that deliver great image quality, especially in challenging, low-light conditions. DSLRs are known for durability, quick focusing, high shutter speeds, long battery life, 4K recording, and adaptability to a wide range of lenses. They allow creative professionals to capture the perfect picture.</p>
+<p>Do DSLRs have any drawbacks? Sure. DSLR camera bodies tend to be physically larger than comparable mirrorless camera bodies and have a higher up-front cost versus most point and shoot cameras. With a plethora of options for equipment, expenses can quickly add up. If there&rsquo;s a camera you have your sights on purchasing, with BorrowLenses you can try out all kinds of cameras and other equipment before you buy, ensuring you&rsquo;re thrilled with the gear you add to your kit. DSLRs, mirrorless cameras, and professional cinema cameras &ndash; check out all the&nbsp;<a href=""https://www.borrowlenses.com/category/cameras"" target=""_blank"">camera rentals</a> BorrowLenses has to offer.</p>
+<h2>Rent the DSLR Camera That&rsquo;s Right for You</h2>
+<p>Canon and Nikon DSLR cameras are the big names in the industry. BorrowLenses carries plenty of these popular DSLRs. Our DSLR camera rental options include:</p>
+<p>- <strong>Canon 5D Mark IV </strong>This Canon DSLR is loaded with features including a 30.4 MP full frame sensor, 4K video with Dual Pixel CMOS AF, a touchscreen LCD, and dual card slots. The built-in GPS and weather sealing makes this a great tool for travel and lifestyle vlogging. It&rsquo;s a powerhouse that&rsquo;s suitable for just about every kind of shooter. It&rsquo;s fast enough for wildlife and high enough resolution for portraits, all while having great video features.</p>
+<p>- <strong>Nikon D850 </strong>With a 45.7 MP full frame sensor, the ability to capture 4K video, 153 AF points, a big 3.2&rdquo; LCD screen, and the same ultra-fast AF system found in the flagship D5, the D850 is a robust multimedia machine that allows artists to incorporate video into their workflows. The high megapixel sensor is an amazing choice for landscapes, portraits, and fine art.</p>
+<p>- <strong>Canon 1D X Mark III</strong> Canon&rsquo;s flagship DSLR is a king in the sports world, shooting up to 20 (frames per second) FPS. Featuring a new processor that can read data up to 380x faster and process images 3x quicker than the Canon 1DX Mark II, the 1DX Mark III is the leader in a new era of speed performance. The full frame sensor uses an enhanced Dual Pixel CMOS AF system, which provides smooth, quick, and continuous autofocusing in Live View during video shooting. Record in 5.5K Raw or capture slow motion up to 120 FPS. The 1D X Mark III is a truly remarkable system for professionals and serious hobbyists.&nbsp;</p>
+<p>- <strong>Canon 6D Mark II </strong>With a variety of high-quality, approachable features, the 6D Mark II is a practical choice for most subjects. It features a fully-adjustable touchscreen LCD, fast and accurate continuous autofocusing for both video and photo, and Digital IS with 5-axis image stabilization to minimize the appearance of camera shake. The 26.2 MP full frame sensor offers a good signal-to-noise ratio, making it suitable for darker scenes. It also has a fast enough shooting speed for most action sequences. The 6D Mark II is ideal for event shooters, especially those who need to shoot both stills and video footage. It&rsquo;s also a great choice for vlogging.</p>
+<p>- <strong>Nikon D780</strong> This 24.5 MP full frame Nikon DSLR is as agile as it is advanced. Offering shooting speeds up to 12 FPS, dual card slots, a tilting touchscreen LCD, and ISOs up to 204800, the D780 covers anything from wildlife to children&rsquo;s portraits, afternoon weddings to night sky landscapes. The 4K recording capability also makes it a good b-roll camera for videographers. Packed with tons of automated features, including time-lapse, multiple exposure, and focus stacking, the D780 helps artists really capture the world creatively.&nbsp;</p>
+<h2>Can I Rent a DSLR?&nbsp;</h2>
+<p>Absolutely! You can rent a DSLR for as little as $7 a day, for 3-90 days.</p>
+<h2>Get the Most from Your DSLR Camera Rental with All The Right Gear for the Job</h2>
+<p>Once you&rsquo;ve chosen the DSLR that fits your precise purpose, check out our selection of DSLR lenses and <a title=""rental camera equipment"" href=""https://www.borrowlenses.com/photo"" target=""_blank"">rental&nbsp;</a><a title=""rental camera equipment' href='https://www.borrowlenses.com/photo' target='_blank'>camera equipment</a> such as tripods, lights, extra batteries, and memory cards to help you have the perfect shoot without breaking the bank.</p>"
+               ;;mirrorless-cameras;"<h1>Reasons to Rent a Mirrorless Camera</h1>
+<p>Why rent a mirrorless camera instead of buying? Some people rent to try out different cameras before they buy. Others only have a short-term need and prefer the low rental price to a larger equipment investment. For many, the speed at which technology advances makes renting more practical; you don&rsquo;t have to keep chasing the latest thing while paying full retail price.</p>
+<p>With BorrowLenses, you&rsquo;ll be getting the latest mirrorless cameras with incredible functionality without a big upfront investment.</p>
+<h2>Take On-the-Go Photos and Run-N-Gun Video with Mirrorless Digital Cameras</h2>
+<p>Professionals, consumers, and amateur photographers find a lot of uses for mirrorless digital cameras. Their mirrorless construction makes them smaller and lightweight, making them easier to carry around. They also have excellent autofocus, so anyone can line up a photograph and get a great shot.</p>
+<p>Many mirrorless digital cameras can also record high-quality video. This makes it great for vacations, street use, travel shoots, and anywhere you want to capture good quality stills and video. BorrowLenses makes using the latest mirrorless camera technology simple with our mirrorless camera rental.</p>
+<h2>Dozens of Mirrorless Digital Cameras to Choose From</h2>
+<p>Have a favorite brand or are you looking for specific functionality? Search through a selection of mirrorless digital cameras from top brands like Sony, Fuji, Canon, and Nikon or filter to quickly hone in on the brand and feature you seek. Here are some of the most popular models you&rsquo;ll find at BorrowLenses:</p>
+<ul>
+<li>The <strong>Sony Alpha a7R IV Mirrorless Digital Camera</strong> combines many stellar features into 1 powerful multimedia machine. It offers an astounding 61 megapixels, 15 stops of dynamic range, and real-time Eye EF and Tracking AF technologies up to 10 FPS or while shooting UHD 4K. It is ideal for portrait, lifestyle, and commercial photographers but it is also an amazing tool for travelers, multimedia creatives, and documentarians.<br /><br /></li>
+<li>The <strong>Canon EOS R Mirrorless Digital Camera</strong> is one of the most popular mirrorless cameras today. Work in super dark conditions thanks to a native ISO range that goes up to 102,400. The large 30.3MP full frame CMOS sensor balances speed with high resolution. It shoots UHD 4K up to 30 FPS and still frames up to 8 FPS. Integrated Canon Log enables the capturing of flat footage with 800% improved dynamic range. It is a unique multimedia tool that is ideal for events, vlogging, travel, portraits, wildlife, and more. <br /><br /></li>
+<li>The <strong>Fuji X-T4 Mirrorless Digital Camera</strong>is a cutting-edge hybrid system designed for personal and professional projects that require both high-quality stills and video footage. Boasting the fastest current AF in an APS-C mirrorless camera, the X-T4 is great for outdoor adventures and sports &ndash; benefitted further by its robust weather sealing. With digital stabilization and image stabilization, high-speed recording, 10-bit internal recording, and the new ETERNA style, the X-T4 is also movie-ready. It has speed enough for sports and wildlife and color control enough for even the most demanding landscape and fine art shooters, making it a truly well-rounded system.<br /><br /></li>
+<li>The <strong>Nikon Z7 Mirrorless Digital Camera</strong> has it all &ndash; a 45.7 megapixel full frame sensor, image stabilization, UHD 4K video without any cropping, a large 3.2&rdquo; tilting touchscreen, a massive ISO range, and 493 AF points that cover 90% of the frame. You get all of this in a form factor that is 26% lighter than typical Nikon DSLRs. This is a unique multimedia tool that is ideal for events, vlogging, travel, portraits, and more. <br /><br /></li>
+<li>The <strong>Blackmagic Pocket Cinema Camera 4K</strong> is loaded with features including a Micro Four Thirds HDR CMOS Sensor, 4K video with Dual ISO, a 5&rdquo; touchscreen LCD, and CFast and SD card slots. The <a href='https://www.borrowlenses.com/product/Blackmagic-Pocket-Cinema-Camera-4K'>Blackmagic Pocket Cinema Camera</a> is a great tool for feature films, commercials, television and documentary work. It&rsquo;s a powerhouse that&rsquo;s suitable for just about every kind of shooter. <br /><br /></li>
+<li>The <strong>Sony a6600 Mirrorless Digital Camera</strong> packs a lot of versatility into a small frame and includes many features found on much larger DSLRs. Enjoy unlimited video recording, image stabilization, continuous AF shooting up to 11 FPS, and slow motion recording up to 120 FPS. At only 2.74' deep, under 5' wide, and just barely over 1 lb, the a6600 is the ideal travel camera that doesn't sacrifice pro-level settings and features. It is also a great choice for events and vlogging.</li>
+</ul>
+<p>After you choose from our selection of dozens of mirrorless cameras, checkout the rest of BorrowLenses&rsquo; professional photography gear and <a href='https://www.borrowlenses.com/category/brand'>filmmaking equipment for rent</a> to get everything you need for the perfect shoot.</p>
+<h2>How Much Does it Cost to Rent a Mirrorless Camera?</h2>
+<p>Our most popular mirrorless camera is the Canon EOS R, which rents for less than $13 a day as part of a 7 day rental. At BorrowLenses, you can rent the Canon EOS R for 3-90 days with no (or low) deposit. Check gear availability now.</p>"
+               ;;medium-format-cameras;"<h2>Renting Medium Format Cameras</h2>
+
+<p>Unsurpassed image resolving performance makes medium format the perfect rental for aspiring shooters and pros alike. The benefits include amazing bokeh, ample file sizes for large-scale printing, and extreme post-production cropping options. You'll also enjoy high dynamic range and compatibility with a large collection of high-end lenses made just for this larger format. Rent these cameras for high-resolution commercial work, portrait sessions, landscape, real estate, fine art, and more.</p>
+
+<h2>Equipment Rental Advantages</h2>
+
+<p>If you need to use something one time, you can keep money in your wallet by renting the item at an affordable rate rather that purchasing it at full price. In fact, in some cases, you may be able to rent the same item numerous times without even spending the amount of the purchase price. Renting allows you to see if you like a product before you buy it. It is much easier to spend a smaller amount on a rental, only to realize you don't like the item, than to buy it at a higher price and realize the same.</p>
+
+<h2>The BorrowLenses Advantage</h2>
+
+<p>At BorrowLenses, you can rent all manner of medium format camera and other professional gear at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting camera gear today.</p>"
+;;point-and-shoot-cameras;"<h2>High Quality with Portability</h2>
+
+<p>Point and shoot cameras are ideal for vacations and events. They come in a variety of sensor sizes and zoom ranges. They also tend to be less expensive that large systems.</p>
+
+<h2>How to Rent a Point and Shoot Camera from BorrowLenses</h2>
+
+<p>Turn your creative vision into reality with online photo and video equipment rentals. Order from your desk, have gear delivered to your door, and take on your next project. It's that simple. Plan your rental online with real-time availability and pricing on gear from all the top brands. We ship right to your door or pick up at over 3,000 US locations.</p>
+
+<h2>Diverse Selection</h2>
+
+<p>Our camera gear selection includes more than just point and shoots. We rent...</p>
+
+<ul>
+    <li>Medium Format</li>
+    <li>8K Video Cameras</li>
+    <li>DSLRs</li>
+    <li>Action Cameras</li>
+    <li>360 Cameras</li>
+    <li>and more from brands like Canon, Nikon, Leica, and Sony to name a few.</li>
+</ul>
+
+<p>
+
+<h2>How it Works</h2>
+
+<p>Receive your rental, open the box, and get shooting! Do what you do best equipped with the right gear to get the perfect shot or film the perfect scene. When you√¢‚Ç¨‚Ñ¢re done with your rental, just put everything back in the box, attach the included shipping label and drop it off at your local UPS store. Learn more <a href='https://www.borrowlenses.com/content/How_BorrowLenses_Works' target='_blank'>here</a>. "
+
+               ;;action-and-pov-cameras;"<h2>Getting to Know the Action Camera</h2>
+
+<p>Action cameras have so many different uses. They are ideal for sports and adventurous activities and are very popular among vloggers. Many can be taken underwater!</p>
+
+<h2>Renting from BorrowLenses</h2>
+
+<p>When it comes to action camera rentals, BorrowLenses is your go-to company. Explore your options and choose your favorite action camera. No matter what the reason is for your rental, you can find quality cameras here that get the job done. All you have to do is select your camera have it delivered to your home. When you are done, simply return it to the pickup location or send it back in the box it came in using a prepaid label.</p>"
+
+               ;;professional;"<h2>How to Rent a Professional Cinema Camera from BorrowLenses</h2>
+
+<p>Turn your creative vision into reality with online video equipment rentals. Order from your desk, have gear delivered to your door, and take on your next project. It's that simple. Plan your rental online with real-time availability and pricing on gear from all the top brands. We ship right to your door or pick up at over 3,000 US locations.</p>
+
+<h2>Diverse Selection</h2>
+
+<p>Our camera gear selection includes more than just cinema cameras. We rent...</p>
+
+<ul>
+    <li><a href='https://www.borrowlenses.com/video-lighting' target='_blank'>Pro Lighting Equipment</a></li>
+    <li><a href='https://www.borrowlenses.com/category/vr-video-cameras' target='_blank'>360 Cameras</a></li>
+    <li><a href='https://www.borrowlenses.com/video-supports/rigs-stabilizers' target='_blank'>Gimbals and Stabilizers</a></li>
+    <li><a href='https://www.borrowlenses.com/category/video-recorders' target='_blank'>Video Recorders</a></li>
+    <li><a href='https://www.borrowlenses.com/category/shoulder-rigs' target='_blank'>Shoulder Rigs</a></li>
+    <li>and more from brands like Blackmagic, ARRI, Panasonic, and Sony to name a few.</li>
+</ul>
+
+<p>
+
+<h2>How it Works</h2>
+
+<p>Receive your rental, open the box, and get shooting! Do what you do best equipped with the right gear to get the perfect shot or film the perfect scene. When you√¢‚Ç¨‚Ñ¢re done with your rental, just put everything back in the box, attach the included shipping label and drop it off at your local UPS store. Learn more <a href='https://www.borrowlenses.com/content/How_BorrowLenses_Works' target='_blank'>here</a>. "
+
+               ;;vr-video-cameras;"<p>Capture 360√Ç¬∞ footage for immersive video. Record in the moment in all directions from any single location and create seamless VR content.</p>
+
+<h2>Endless 360 Camera Possibilities</h2>
+
+<p>360 cameras have so many different uses. They are ideal for gaming, sports, and adventurous activities. They are also popular among vloggers.</p>
+
+<h2>The BorrowLenses Benefit</h2>
+
+<p>When it comes to 360 camera rentals, BorrowLenses is your go-to company. Explore your options and choose your favorite action camera. No matter what the reason is for your rental, you can find quality cameras here that get the job done. All you have to do is select your camera have it delivered to your home. When you are done, simply return it to the pickup location or send it back in the box it came in using a prepaid label.</p>"
+               ;;webcams
+               ;;camera_packages
+               ;;macro;"<h1>Rent Macro Lenses to Take Incredible Close-Ups</h1>
+<p>The right macro lens gives photographers a way to capture amazing close-ups. With an ability to shoot 1:2 or 1:1 magnification ratios, macro lenses offer great flexibility to shoot amazing imagery not only up close but also from a distance for portrait photography. Some even work for time lapse and video projects, too.</p>
+<h2>How Macro Works</h2>
+<p>When you&rsquo;re looking at the specs of one of our rental macro lenses, you may notice a magnification factor, such as 1:1. You&rsquo;ll also sometimes see it written as 1x. This is because some manufacturers show the magnification factor as a ratio (1:1, 1:2) while some use decimals (.25x, .22x). A ratio of, say, 1:4 is the same as 0.25x &ndash; you can think of ratios as fractions (instead of 1:4, think &frac14;).&nbsp;</p>
+<p>Want to convert one to another? Say a lens is listed at 0.19x. Take 1 divided by 0.19 and get 5.26. That lens has a magnification ratio of 1:5.26, which means the objects it photographs are approximately 5 times larger in real life than what will be projected on the sensor. This is a simplification, as other factors are involved such as sensor size, object distance, and overall object size but this at least gets you started in thinking in macro terms. Conversely, a lens with a 5:1 ratio can project an image five times the size of the object.&nbsp;</p>
+<p>Generally speaking, if it&rsquo;s a true macro lens you&rsquo;ll see a magnification ratio of 1:1 or higher. For standard lenses, you&rsquo;ll more often see this spec written as a decimal. This is what sets macro lenses apart from regular lenses: a macro lens has the ability to focus from infinity to 1:1 magnification.&nbsp;</p>
+<p>Like regular lenses, macro lenses come in a wide variety of focal lengths. The longer your focal length, the further you need to be from your subject. A 100mm macro lens will be at twice the working distance of a 50mm macro lens, meaning you have to be twice as far from your subject. Why this matters is that some subjects, especially when shooting insects and other animals, are more skittish than others and may be frightened away by you. The further you can be from them when shooting, the better.</p>
+<p>At BorrowLenses, we rent an extensive variety of lenses in the macro category, including Sony macro lenses, Canon macro lenses, Nikon micro lenses (their version of &ldquo;macro&rdquo;), and so many more.</p>
+<h2>Find the Best Macro Lens for Your Camera</h2>
+<p>Great macro photography relies on the best macro lens for your camera. From weddings to wildlife, photographic art and architectural shots to really any project where magnification is needed and/or desired, BorrowLenses has a wide range of macro lenses for Canon, Nikon, Sony cameras and more &ndash; to meet every need.</p>
+<h2>Macro Lens Options</h2>
+<p>Our most popular macro lenses available to rent from BorrowLenses:</p>
+<p style='padding-left: 30px;'>- The <strong>Canon EF 100mm f/2.8L IS Macro USM Lens</strong> is a true 1:1 macro lens, which means it can reproduce items at life-size magnification. It also offers image stabilization that produces sharper images for both macro and portrait shooting.</p>
+<p style='padding-left: 30px;'>- The <strong>Sony FE 90mm f/2.8 G OSS Macro Lens </strong>is also a 1:1 macro lens with image stabilization. It has a quiet linear motor for near-silence autofocusing.</p>
+<p style='padding-left: 30px;'>- The <strong>Nikon 105mm f/2.8G IF-ED AF-S VR Micro Lens </strong>supports a 1:1 reproduction ratio and image stabilization. It has an internal focus system allowing for a very balanced body.</p>
+<p style='padding-left: 30px;'>- The <strong>Fuji XF 80mm f/2.8 R LM OIS WR Macro Lens </strong>has a 1:1 reproduction ratio, image stabilization, and a linear motor for quick and silent autofocus. Like many Fuji XF lenses, it is also weather-sealed.</p>
+<p style='padding-left: 30px;'>- The <strong>Tokina Cinema AT-X 100mm T2.9 Macro E Mount Lens</strong> brings true macro to the filmmaking world. This lens has 0.8 pitch gears and a de-clicked aperture for smooth depth of field transitions.</p>
+<h2>Macro Lens Resources</h2>
+<p>Learn more about this incredibly rewarding speciality lens type:</p>
+<p style='padding-left: 30px;'>-&nbsp;<a href='https://www.borrowlenses.com/blog/what-is-a-macro-lens/'>What is a Macro Lens? Everything You Need to Know as a Beginner</a></p>
+<p style='padding-left: 30px;'>-&nbsp;<a href='https://www.borrowlenses.com/blog/getting-started-macro-photography/'>What Meditation and Macro Photography Have in Common</a></p>
+<p style='padding-left: 30px;'>-&nbsp;<a href='https://www.borrowlenses.com/blog/macro-lens-photography/'>A Photographer&rsquo;s Guide to Macro Lens Photography</a></p>
+<p style='padding-left: 30px;'>-&nbsp;<a href='https://www.borrowlenses.com/blog/trouble-shooting-macro-photography-beginners-tricks/'>Macro Photography Tricks for Beginners</a></p>
+<h2>How Much Does it Cost for a Canon EF 100mm f/2.8L Macro USM Lens Rental?</h2>
+<p>Our most popular Canon macro lens rentals rent for as low as $6 a day as part of a 7 day rental. To rent Sony macro lenses, our most popular lens, the Sony FE 90mm f/2.8 G OSS Macro Lens would rent for as low as $10 a day as part of a 7 day rental. At BorrowLenses, you can rent macro lenses for 3-90 days with no or low deposit. Check gear availability now.</p>"
+
+               ;;wide_angle;"<p>Lenses can be expensive √¢‚Ç¨‚Äú so why not rent them? At BorrowLenses, you can rent wide angle camera lenses at great rates without having to make an investment.</p>
+
+<h2>Enjoy the Advantages of BorrowLenses</h2>
+
+<p>As you no doubt know, wide angle camera lenses give the feel of being right in the middle of the action. They can be tricky to use and master, but the rewards are great. Playing with distortions and straight lines can be even more fun when you rent wide angle camera lenses from BorrowLenses. This is because you can:&nbsp;<ul><li>Experiment with many types of wide angle lenses.&nbsp;</li><li>Keep the lenses as long as you need (3 - 14+ days).&nbsp;</li><li>Extend the time period of your rental (as long as no one is on the wait list).&nbsp;</li><li>Have the lenses arrive as soon as possible.
+Book very early in advance.&nbsp;</li><li>Return them easily once you are finished with free return shipping. <br><br>We carry lenses for camera brands such as Canon, Sony, Nikon, Olympuis, Panasonic, Rokinon and more, so you should never lack for selection.</li></ul></p>
+
+<h2>Budget-Friendly</h2>
+
+<p>Budget-friendliness is another reason to rent lens, whether you are a photography hobbyist or a professional with many years under your belt. When you are a hobbyist, rentals help you test different types of cameras and lenses, including wide angle lenses, until you find something that matches your personality and style. When you are a professional, you enjoy the advantage of being able to offer your clients a wide selection of camera equipment and features at minimal cost. No expensive upfront purchases necessary.
+</p>
+
+<h2>Helpful Staff</h2>
+
+<p>Not sure what type of wide angle lens you should get? Just email or call our helpful staff, and we√¢‚Ç¨‚Ñ¢ll try to help! We also have live chat during certain hours.
+
+Whether you are shooting weddings, family events, wildlife, sports or something else entirely, wide angle lenses can be just the thing to add distinction to your photographs or video. Rent wide angle camera lenses through BorrowLenses, and you can reserve them more than a year in advance√¢‚Ç¨‚Äùor as √¢‚Ç¨≈ìlate√¢‚Ç¨¬ù as a few days before an event.
+</p>"
+
+               ;;super-telephoto;"<h1>Take Super Close-Up Shots with a Super Telephoto Lens Rental</h1>
+<p>When you need to get close to subjects far away or very small, you need a super telephoto lens. Today&rsquo;s lenses from top manufacturers like Canon, Nikon, Sony, and more produce the highest-quality images, capturing amazing detail with many delivering astounding images even for subjects in motion. Great for wildlife and sporting events, the only downside to these lenses for many professionals and amateurs alike is their cost. BorrowLenses eliminates this barrier, making it possible to rent a telephoto lens without a big investment.</p>
+<h2>Rent the Super Telephoto Lens You Need Here</h2>
+<p>Regardless of whether photography is your hobby or career, a standard telephoto lens is often the second lens purchased. With some zoom capability often up to 200 mm, it gives adequate zoom for most regular use. The super telephoto lens, which zooms to 300mm, 400mm, or higher, however, may only be needed occasionally. This sometimes makes the investment impractical, especially at the rate new lens models continue to evolve today!</p>
+<p>At BorrowLenses, photographers and videographers of every skill level and need can find top quality super telephoto lenses for their favorite camera brands. Some of our most popular super telephoto lens rentals are:</p>
+<ul>
+<li><strong>Canon EF 100-400mm f/4.5-5.6L IS II USM Lens</strong>. Made for full- and crop-frame sensors with a weather-resistant barrel, this lens is a highly popular choice for photographers shooting outdoors. For crop-frame sensor cameras, the focal length runs from 160 to 640 mm. This lens offers compatibility with select Canon extenders to get even closer with every shot.</li>
+<li><strong>Nikon AF-S 200-500mm f/5.6E ED VR Lens</strong>. Nikon&rsquo;s new Vibration Reduction (VR) system limits image blur due to camera shake. The Silent Wave AF feature delivers quiet focusing, making it an ideal lens for shooting video or in nature where silence is essential.</li>
+<li><strong>Sony FE 100-400mm f/4.5-5.6 GM OSS Lens</strong>. Another excellent lens for photo and video, it offers a Focus Range Limiter feature for the capture of moving subjects and a Direct Drive Super Sonic Wave Motor AF for fast, precise &ndash; and quiet! &ndash; autofocus.</li>
+</ul>
+<p>In addition to these three popular lenses, photographers can find super telephoto lenses from Tamron, Fuji, Panasonic and Sigma. Astrophotographers can also find the zoom they need with the Celestron NexStar 6SE 1500mm Telescope.</p>
+<h2>Need a Camera or Other Equipment?</h2>
+<p>Although &ldquo;lenses&rdquo; is in our name, photographers, videographers and cinematographers can find equipment for every need. From popular cameras to <a href='https://www.borrowlenses.com/camera-type/professional'>cinema camera rentals</a>, lighting equipment and more, BorrowLenses has the equipment and customer service available to supply every project, shoot and film.</p>
+
+<h2>Capture Superior Quality Images </h2>
+
+<p>Super telephoto lenses have the capability of capturing subjects that are far away with magnificent speed and clarity. These high-quality lenses are top of the line, and are designed to incorporate the high-tech features necessary to produce optimal images. Super telephoto lenses are the best in their category when it comes to focal length. They allow for the photography of people, objects, scenes and animals from a very long distance. They are great for capturing moments where you cannot move too close, making them ideal for photographing wildlife and sporting events. If you need a super telephoto lens rental, there is an excellent selection for you to to choose from. </p>
+
+<h2>Working with BorrowLenses </h2>
+
+<p>BorrowLenses makes it possible for photographers to access high-quality super telephoto lenses. Renting can save you money and allows you to try equipment before you buy it. This is especially beneficial with this type of lens because they are high end and can be expensive. BorrowLenses additionally makes renting very convenient. You can have your lens shipped to your office or home, or you can come pick it up at one of the various locations in the country. This is your go to place if you need a super telephoto lens rental. </p>"
+
+               ;;normal
+               ;;lens_adapters
+               ;;tilt-shift;"<p>Do you need a tilt-shift lens? Photographers can use special perspective-control tools to achieve the most lifelike imagery of buildings and other open spaces. Tilt-shift lenses are ideal for architectural, portrait and landscape photography. Of course, they have other uses as well. If you need to rent tilt-shift lenses, BorrowLenses has a great selection to check out. Canon and Nikon produce the most common tilt-shift lenses. All tilt-shift lenses have the same basic controls and functions. You can tilt and/or shift the lens relative to the fixed plane of the camera√¢‚Ç¨‚Ñ¢s sensor. Learn more in <a href='https://www.borrowlenses.com/blog/tiltshift-working-with-perspective-control-lenses-part-1/' target='_blank'>Tilt-Shift Lenses for Beginners</a>.</p>
+
+<h2>Tilt-Shift Photography </h2>
+
+<p>Tilt-shift lenses have the ability to make tall buildings appear straight with a shift. The shift function allows the lens to be moved (shifted) left or right and always remain parallel to the camera√¢‚Ç¨‚Ñ¢s sensor plane. Tilt-shift photography additionally has the ability to produce the miniature effect, which is making a real-life scene such as a stadium or city street appear as if it were a small toy model. The reason a scene can look like a miniature with tilt-shift lenses is because the plane of focus is so narrow and both the foreground and the background are out of focus. That√¢‚Ç¨‚Ñ¢s not something the human eye is used to seeing and we interpret images like this differently. This is known as the √¢‚Ç¨≈ìdiorama effect√¢‚Ç¨≈ì. This effect is truly extraordinary. If this sounds like fun to you or if you need such a lens for a project, you can rent tilt-shift lenses from BorrowLenses easily and conveniently. Additionally, renting allows you to try a lens at an affordable rate before you go to the store and purchase it.</p>
+
+<h2>Endless Possibilities </h2>
+
+<p>Renting is a great way to have the opportunity to try a variety of different lenses that are high tech and up to date. Renting a lens when you need it instead of buying can save you money. If you want to give tilt-shift photography a try or if you are looking to rent tilt-shift lenses, BorrowLenses offers a variety of rentals just for you.  </p>"
+
+               ;;fisheye;"<h2>What is a Fisheye Lens?</h2>
+
+<p>Fisheye lenses, also called a curvilinear lenses, are generally only found at the shortest focal lengths (typically less than 15mm) and create an almost circular image with a field of view that can reach 180 degrees. Pictures taken with fisheye lenses often look like everything is getting pulled into the middle of the frame. Fisheye lenses were originally created to photograph the sky and they still excel at that. Similarly, fisheye lenses do a great job of capturing underwater scenes (will require <a href='https://www.borrowlenses.com/category/underwater' target='_blank'>underwater housings</a> to do so). Shooting up or down tall buildings with a fisheye can create a feeling of vertigo. The curved edges of a frame can create a sense of motion in the right image. Ordinary scenes and objects will look new and interesting with a fisheye lens!</p>
+
+<h2>Diverse Selection at BorrowLenses</h2>
+
+<p>Turn your creative vision into reality with online photo and video equipment rentals. Order from your desk, have gear delivered to your door, and take on your next project. It's that simple. Plan your rental online with real-time availability and pricing on gear from all the top brands. We ship right to your door or pick up at over 3,000 US locations.</p>
+
+<p>Our camera gear selection includes:</p>
+
+<ul>
+    <li>Medium Format</li>
+    <li>8K Video Cameras</li>
+    <li>Amateur to Enthusiast to Professional DSLRs</li>
+    <li>Point and Shoots for Travel</li>
+    <li>Action Cameras</li>
+    <li>VR 360 Cameras</li>
+    <li>and more from brands like Canon, Blackmagic, Leica, and Sony to name a few.</li>
+</ul>
+
+<p>
+
+<h2>How it Works</h2>
+
+<p>Receive your rental, open the box, dial everything in to your liking, and put our gear to use. Do what you do best equipped with the right gear to get the perfect shot. When you√¢‚Ç¨‚Ñ¢re done with your rental, just put everything back in the box, attach the included shipping label and drop it off at your local UPS store. Learn more <a href='https://www.borrowlenses.com/content/How_BorrowLenses_Works' target='_blank'>here</a>. "
+
+               ;;teleconverters;
+               ;;cine-lenses;"<p>No matter what your film project is, cinema lens rentals put the lenses you need within reach, without breaking your budget. The ability to rent cine lenses means you do not have to compromise when you need multiple lenses, because instead of an expensive equipment purchase, BorrowLenses allows you to get just what you need for just the right number of shooting days, so your film project looks right without unbalancing your production budget.</p>
+
+<h2>Efficient Cost-Saving Strategies</h2>
+
+<p>Both student filmmakers and small production companies will find that their range of possibilities opens right up with rental lens options. Planning out shooting days can expedite things even further by reducing the number of simultaneous rentals, and all it takes is the right shooting schedule for your script. By grouping scenes according to the cinema lens sizes and specs needed, your production can:</p>
+
+<ul>
+    <li>Streamline shooting by reducing the need for camera reconfiguration</li>
+    <li>Maximize effective shooting time while minimizing simultaneous rentals</li>
+    <li>Set up overlapping delivery/return dates to ensure you are always holding the lenses you need for a day's shooting</li>
+<ul>
+
+<p>When you have the right schedule and plan to make sure your lenses are there on time, Borrowlenses takes care of the equipment so you are able to focus on filming.</p>
+
+<h2>Perfection in Every Shot</h2>
+
+<p>Shooting quality motion pictures on your DSLR is a matter of technique and proper support from the equipment. Current-generation cameras are limited only by the constraints of your lens set, and with cinema lens rentals becoming more accessible and affordable, there is no reason to let yourself be constrained. The more pro-active choice is to rent cine lenses, so your best work moves forward, no matter what stage your equipment development is currently in. That way, you are able to film on a level that reflects your skill, not your budget.</p>"
+
+               ;;telescopes
+               ;;lens_packages
+               ;;filters;"<h2>Different Kinds of Filters </h2>
+
+<p>What do you need in a filter for photography? There are a few different varieties available, which we help define below.</p>
+
+<ul>
+    <li>Polarizing: Available in both round screw-on type and square or round drop-in type, linear polarizing and circular polarizing filters help darken skies, manage reflections, and suppress glare from water surfaces.</li>
+    <li>Neutral Density: Available in both round screw-on type and square or round drop-in type, ND filters reduce the amount of light entering your lens. This allows you to do things like shoot at slow shutters speeds in bright light to get smooth waterfalls.</li>
+    <li>Hot Mirror: Available as square drop-ins, hot mirror filters allow visible light to pass through the lens while reflecting infrared light back to the source. These filters help protect color fidelity in certain situations and can be helpful when photographing or filming fire.</li>
+   <li>Pro-Mist: Available as square drop-ins, pro-mist filters create a pastel-like effect that acts as a kind of diffuser for smoother skin and decreased contrast.</li>
+</ul>
+
+
+<p>BorrowLenses makes it easy for you to rent filters and other camera gear accessories. This is because you can experiment with many filter types to see which best matches your needs.</p>
+
+<h2>Renting from BorrowLenses</h2>
+
+<p>At BorrowLenses, you can rent all manner of camera gear equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting photo gear today.</p>"
+
+               ;;batteries_power;"<h2>Power Your Gear</h2>
+
+<p>Give yourself freedom to shoot your scene or subject longer with spare batteries. BorrowLenses has you covered! Our equipment ships directly to you in a safe and environmentally friendly way, with a prepaid label inside the box for easy returns.
+
+<h2>Keep Things Charged</h2>
+
+<p>It's important to have a backup battery, ready to go when your main battery runs out. We have batteries for major brands like Anton Bauer, Core SWX, and from all your favorite major camera brands. Need battery chargers, plates, and adapters? Check out our <a href='https://www.borrowlenses.com/category/video-battery-accessories' target='_blank'>Battery Grips & Accessories</a> section!
+
+<h2>The BorrowLenses Advantage</h2>
+
+<p>At BorrowLenses, you can rent all manner of equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting video and photo gear today.</p>"
+
+               ;;tripods_heads;"<h2>Different Kinds of Tripod Heads</h2>
+
+<p>What do you need in a tripod head for photography? There are a few different varieties available, which we help define below.</p>
+
+<ul>
+    <li>Fluid: A fluid head has a chamber of sealed fluid that is designed to enable smooth movements while dampening vibrations. This type of head is often sought after by videographers who want the ability to pan smoothly but are also useful to photographers.</li>
+    <li>Ball: As the name suggests, a ball head gets its movement capability thanks to the ball used in its design. This tripod head typically gives 360 degrees of movement, but certain products may have limits.</li>
+    <li>Pistol Grip: A pistol grip head is a different kind of ball head that has a handle the photographer can squeeze in order to reposition the camera. This tripod head usually has the same movement as the ball head.</li>
+</ul>
+
+<p>BorrowLenses makes it easy for you to rent photo tripod heads and other camera support equipment. This is because you can experiment with many tripod head types to see which best matches your needs.</p>
+
+<h2>Renting from BorrowLenses</h2>
+
+<p>At BorrowLenses, you can rent all manner of <a href='https://www.borrowlenses.com/camera-supports/tripods' target='_blank'>tripods</a> and other photo support equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting photo gear today.</p>"
+
+               ;;dollies_sliders;"<h1>Rent Camera Sliders</h1>
+<p>Sliders have been such essential tools to create beautiful moves from side to side or in and out without needing a huge track and a heavy dolly for a fraction of the cost. You can easily recreate very similar moves as dollies and come in various sizes for any production need.</p>
+<p>A drawback from most sliders is that they are only 2-4&rsquo; long which can be difficult to use on long shots. Works great for short clips though. A premium feature found on many cameras sliders is an integrated motor. Motorized sliders guarantee precision and smoothness when sliding your camera.&nbsp;</p>
+<p>If there&rsquo;s a camera slider you have your sights on purchasing, with BorrowLenses you can try out all kinds of sliders, before you buy, ensuring you&rsquo;re thrilled with the gear you add to your kit. In additional to sliders, BorrowLenses also provides <a href='https://www.borrowlenses.com/category/cameras'>camera rentals</a>, lens rentals, and support gear.&nbsp;</p>
+<h2>Renting Dollies and Sliders for Photography</h2>
+<p>Though most often used for videography, some sliders are essential for unique time lapse - as well as motion lapse - photography projects. Create dynamic 2 and 3-axis movements, whether it's for stars, people, or clouds &ndash;&nbsp;you can get stunning motion and time-lapse footage immediately.</p>
+<h2>Rent the Slider That&rsquo;s Right for You</h2>
+<p>Syrp and Rhino are the big names in the industry. BorrowLenses carries plenty of these popular sliders. Our sliders rental options include:</p>
+<p>- <strong>Rhino EVO Pro Slider Bundle 42-Inch </strong>The Rhino EVO Pro Slider Bundle 42' is a stainless steel rails and motorized pan head kit that includes shutter release cables for Canon, Nikon, Panasonic, and Sony. With the motion controller, you can quickly program a move with in and out points, time of travel, ramping, and looping. This bundle is ideal for time-lapse shooters, interviews, narrative films, and documentary crews.</p>
+<p>- <strong>Syrp Magic Carpet PRO 3&rsquo; Slider Kit </strong>The Syrp Magic Carpet PRO 3' Slider Kit is a professional, portable slider system for smooth tracking shots. A weighted flywheel and breaking carriage allows complete control over your sliding motion.With a payload of up to 70 lbs, this slider can handle a wide variety of cinema cameras and camcorders. The Syrp Magic Carpet PRO 3' Slider Kit is ideal for both narrative and documentary filmmaking, as well as for time lapse photography.</p>
+<p>- <strong>Syrp Genie II Motion Control Time Lapse Kit </strong>The Syrp Genie II Motion Control Time Lapse Kit is the ultimate creative movement tool that consists of a Genie II motorized pan/tilt head and a Genie II Linear slider attachment with a 10' Genie rope. Together, you can slide, pan, and tilt for unique tracking shots or time-lapses. The pan/tilt head as built-in software for basic shots. For more complex moves, connect and control everything via the Syrp app.</p>
+<h2>Can I Rent a Camera Slider?&nbsp;</h2>
+<p>Absolutely! You can rent a Kessler 3&rsquo; Cineslider for as little as $8 a day, for 3-90 days. Most camera sliders are very easy to assemble and operate. The main purpose of a slider is to create some movement to your shot instead of leaving it still. Having your shot still can make your shot boring and stale. Adding motion to your shots can elevate your production value.</p>
+<h2>Get the Most from Your Slider Rental with All The Right Gear for the Job</h2>
+<p>Once you&rsquo;ve chosen the Slider that fits your precise purpose, check out our selection <a href='https://www.borrowlenses.com/camera-accessories'>camera accessories</a> such as attachments, extra batteries, and kits to help you have the perfect shoot without breaking the bank.</p>
+<h2>Equipment Rental Advantages</h2>
+<p>If you need to use something one time, you can keep money in your wallet by renting the item at an affordable rate rather that purchasing it at full price. In fact, in some cases, you may be able to rent the same item numerous times without even spending the amount of the purchase price. Renting allows you to see if you like a product before you buy it. It is much easier to spend a smaller amount on a rental, only to realize you don't like the item, than to buy it at a higher price and realize the same.</p>
+<p><h2>What are Sliders and Dollies Used For?</h2></p>
+<p>Having a slider or dolly will add so much production value and emotion to your films. Sliders and dollies create motion from side to side and back forth to add emotion to your footage. When a character is talking about something serious on camera, add a sliding move going forward to really feel what the character is going through. When establishing a scene, add a motion from left to right to introduce the scene.</p>"
+
+               ;;cables_adapters;"<h2>Keep Your Production Connected</h2>
+
+<p>The right cable can make a project go much more smoothly. Our equipment ships directly to you in a safe and environmentally friendly way, with a prepaid label inside the box for easy returns.</p>
+
+<h2>Get All You Need and More</h2>
+
+<p>At BorrowLenses, you can rent all manner of accessories and other photo equipment at outstanding rates. Have gear shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting photo gear today.</p>"
+
+               ;;monitors_video_recorders;"<h2>Setting Up Your Scene</h2>
+
+<p>When you rent camera monitors from BorrowLenses, you have the ability to choose from a wide range of devices in order to frame great scenes. Whether you are a professional working in a portrait studio or a wedding photographer, such accessibility is critical. You get incredible selection and recent technology, all without costly upfront investment.</p>
+
+<h2>What to Look for in a Monitor</h2>
+
+<p>Here is a summary of the different monitor types:</p>
+
+<ul>
+    <li>On-Camera Monitors: Typically the size of a smartphone and designed to mount easily on a DSLR or mirrorless camera, usually via the hot shoe.
+    <li>Production Monitors: These larger monitors act as a reference monitor in studios to help you ensure framing and focusing. They are also great for classrooms and workshops.
+    <li>Field Monitors: Typically larger than on-camera monitors but often smaller than production monitors, field monitors allow you to easily view imagery anywhere and have a variety of inputs.
+    <li>Recording Monitors: Typically reserved for videography but not always. See our whole monitor collection <a href='https://www.borrowlenses.com/video-accessories/monitors-and-viewfinders' target='_blank'>here</a>.
+
+<h2>The BorrowLenses Advantage</h2>
+
+<p>At BorrowLenses, you can rent all manner of production equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting gear today.</p>"
+
+               ;;follow_focus;"<h2>Get Lens Support</h2>
+
+<p>One of the most important factors of a successful photograph is its focus. While amateur photographers may be happy with their camera's autofocus feature, professionals and perfectionists need to manually set up their lens for optimum focus. Manually focusing on your subject gives you much more control and variety in your frame. It does, however, require more practice, more skill and support for your high powered lenses. At BorrowLenses, you can find lens support rentals, such as follow focus, that can help you achieve the results you need.</p>
+
+<h2>Have Greater Control</h2>
+
+<p>The more you maintain control of the parts of your camera, the more satisfied you can be with the outcome. Taking the time to use a specific lens, set up a shutter speed and narrow in on an intricate scene can help you get a better picture. Those who are working with macro photography have an even greater task ahead of them. Maintaining ideal focus control is essential to capturing small creatures or details. A focusing rack can help you get the conditions that are needed with this specialized photography. </p>
+
+<h2>Maintain Clarity</h2>
+
+<p>In video, focus support is even more essential to avoid jumpy footage or fuzzy images. You may want to try a follow focus kit to help you maintain clarity and quality during your production. Then, you can be more satisfied with the day's work and not worry so much about reshooting footage and falling behind schedule. The end result is a crisp and clear shot that you could be proud to attach your name to.</p>
+
+<p>Whether you're a still photographer or a videographer, supporting your lenses is a good idea to get a precise look. BorrowLenses offers various devices to help you get exactly what you're looking for.</p>"
+
+               ;;camera-bags;"<h2>What to Look For in a Bag</h2>
+
+<p>The right bag can make traveling with camera safer and smoother. BorrowLenses makes it easy for you to rent bags and other gear accessories. This is because you can experiment with many bag types to see which best matches your needs. Certain applications require specific types of bags and our selection has a lot to offer.</p>
+
+<h2>Bag Options</h2>
+
+<p>Having the right bag is a necessity for photographers. Our selection includes:</p>
+
+<ul>
+    <li>Pelican-Style Hard Cases</li>
+    <li>TSA-Approved Rollers</li>
+    <li>Messenger Bags</li>
+    <li>And more!</li>
+</ul>
+
+<p>Pair these bags with a professional all-weather shield or lens skin for extra protection.</p>
+
+<h2>The BorrowLenses Advantage</h2>
+
+<p>At BorrowLenses, you can rent all manner of accessories from brands like Lowepro, Peak Design, and more at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting gear today.</p>"
+
+               ;;memory_cards_storage;"<h2>Different Kinds of Storage </h2>
+
+<p>What do you need in a memory card? There are a few different varieties available, which we help define below.</p>
+
+<ul>
+    <li>SD: Secure Digital cards are probably the most common type of memory card. The two most common varieties are the older SDHC, which support capacities up to 32GB, and SDXC which support capacities up to 2TB. Both can be found in UHS-I with speeds up to 104 MB/s. Newer cards will often be UHS-II with speeds up to 312 MB/s. Video Speed Class SD cards will have write speeds no slower than 90 MB/s. Learn more about this in <a href='https://www.borrowlenses.com/blog/memory-card-basics-choosing-right-memory-card-video-time-lapse/' target='_blank'>Memory Card Basics: Choosing the Right Memory Card for Video and Time-Lapse</a>.</li>
+    <li>microSD: These are miniaturized versions of SD cards. They can be used in regular SD card slots and readers if you use an adapter. They can be found in capacities up to 128 MB/s and are common in phones and action cameras.</li>
+    <li>CF: CompactFlash cards bigger than SD cards. They used to be the standard for high capacity requirements but increasingly SSDs are being used for this purpose. CF cards support capacities up to 128 GB.</li>
+    <li>CFast: CompactFast cards are a variant of CompactFlash cards but the two are not interchangeable. CFast cards are found in some video cameras and professional DSLRs. They support higher max transfer rates (up to 600 MB/s vs 167 MB/s). They also can better handle fast frame rate shooting.</li>
+   <li>SSDs: We're used to thinking of Solid State Drives in reference to things like laptops but they are increasingly useful in the video recording industry. They support high capacities and high speeds. A 2.5' form factor is the most common, though you'll find SSDs in a variety of chassis types.</li>
+</ul>
+<p>BorrowLenses makes it easy for you to rent memory cards and other camera gear accessories. This is because you can experiment with many card types to see which best matches your needs.</p>
+
+<h2>Renting from BorrowLenses</h2>
+
+<p>At BorrowLenses, you can rent all manner of camera gear equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting photography gear today.</p>"
+
+               ;;projectors;"<h2>What to Look For in a Projector</h2>
+
+<p>We carry projectors and screens for classrooms, meetings, and demonstrations. These are also great for parties and events. Photographers and videographers will use these tools for workshops, weddings, and more.</p>
+
+<h2>The BorrowLenses Advantage</h2>
+
+<p>At BorrowLenses, you can rent all manner of shooting accessories at outstanding rates. Have cameras, lighting, lenses, and more shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting video and photo gear today.</p>"
+
+               ;;underwater-housing;"<p>AquaTech underwater equipment is never available for same-day pickup or for overnight shipping. It always needs at least a 2-day lead time for order preparation.<p>
+
+<h2>Renting Camera Housings for Underwater Shooting</h2>
+
+<p>When it comes to quality camera gear, BorrowLenses is the place to go. The opportunity to rent cameras and lenses is excellent for anyone who wants to give a device a test run before they go and buy it at full price. If you are into taking pictures underwater, you will want to take a look at our selection of underwater sport housings.</p>
+
+<p>Underwater housings are durable devices that you can take with you underwater or anywhere you would not want a regular camera and lens getting wet. These housings are easy to use and are great for traveling. Photograph sea creatures, surfers, beautiful underwater scenery, and much more. You can use a housing unit no matter what the weather is without worrying about damaging your gear.
+<p>
+BorrowLenses offers you the ability to rent underwater housings. By renting, you can save plenty of money if you only plan on using the housing once. Additionally, renting allows you to experiment with the latest technology without hurting your wallet. </p>
+
+<h2>Quality Gear Rentals with Convenience</h2>
+
+<p>You can choose from a variety of housing types for your underwater shooting needs. Check out the selection before your next trip to the beach or pool to find the best unit for you. Learn all about compatibility in our <a href='https://www.borrowlenses.com/blog/all-new-underwater-housing-for-rent/' target='_blank'>Ultimate AquaTech Underwater Compatibility Guide for Camera and Lens Rentals</a>.</p>"
+
+               ;;streaming;"<h1>Rent Live Streaming Equipment for Events, Gaming, and More </h1>
+
+<p>Live recording is bigger than ever. Be prepared with the right streaming hub or transmission tools. Connect your video source and live stream to popular platforms like YouTube Live, Facebook Live, Twitch, and more. Video transmitters are also essential on film sets so that different crew members can see what's being shot in real time.</p>
+
+<h2>Renting from BorrowLenses</h2>
+
+<p>At BorrowLenses, you can rent all manner of camera gear equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting video gear today.</p>"
+
+               ;;viewfinders;"<h2>Keep an Eye on Your Footage </h2>
+
+<p>What do you need in a viewfinder for video? Viewfinders are mini displays with eyepieces that allow you to actually see what you're shooting even in the harshest lighting conditions. They show more than just your scene, too. You can view important information about settings and effects without taking your eyes away from your camera or rig.</p>
+
+<p>BorrowLenses makes it easy for you to rent viewfinders and other camera gear accessories. This is because you can experiment with many viewfinder types to see which best matches your needs.</p>
+
+<h2>Renting from BorrowLenses</h2>
+
+<p>At BorrowLenses, you can rent all manner of camera gear equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting video gear today.</p>"
+
+               ;;gimbals-stabilizers
+               ;;flashes-and-on-camera;"<p>If you are just starting out in the world of flash photography, knowing where to start may seem a little confusing, but once you know exactly what the flash does, you will be able to make more informed decisions about your equipment.</p>
+
+<h2>Flash Efficiency Depends on Your Distance From Your Subject</h2>
+
+<p>If you stand too far from your subject, the flash simply won't work. Of course, 'too far' is dependent solely on the type of flash you're using. Some are made only for very short distances, but others are created to work from much further away.</p>
+
+<h2>The Guide Number Is Important</h2>
+
+<p>The electronic flash you use with your camera will come with its own guide number. This number provides information about the flash's maximum output in relation to aperture and distance. In its most basic form, the higher the flash's guide number, the further you can be from your subject and still have good flash photography.</p>
+
+<h2>Using a Flash Bracket Has Advantages</h2>
+
+<p>When you use a flash bracket, the flash is further from the lens, which gets rid of nearly any chance of red-eye when you are photographing people. Most flash brackets also pivot, which allows them to rotate when you shoot vertically. This creates a better shadow for your pictures.</p>
+
+<h2>Determining Which Kind of Flash You Need</h2>
+
+<p>When it comes to the type of flash you need, it depends not only on your camera, but the type of photographs you hope to shoot. It may take a few tries to find what works for you. Instead of purchasing a flash you may not light, use lighting equipment rental from BorrowLenses. You can rent camera flash options for Nikon, Canon and several other brands. </p>"
+
+               ;;backdrops;"<h1>Photo Backdrop Rental</h1>
+<p>A professional quality photo backdrop rental is a cost-effective way to meet every occasional or specialized need. It enables corporate marketing and training departments, photographers just getting started and anyone else who needs to shoot high-quality photos or video to turn any space into a studio.</p>
+
+<h2>Equip Your Photo Studio </h2>
+
+<p>As you design your professional portrait or wedding studio for your photography hobby or business, don't forget a vital tool, a backdrop. Instead of crafting your own backdrop from fabric or a bed sheet, you can instantly get credibility for your talents by having a photo booth backdrop that looks professional. Not only does it help make your studio feel more legitimate, it can make your portraits or photo booth pictures shine even more. If you're not ready to purchase one, you can spend less on a photo backdrop rental from BorrowLenses. </p>
+
+<h2>Quick and Easy Setup</h2>
+
+<p>There are many different options with photo backdrop rental for photographers on the go. The Impact Collapsible Backdrop can be easily stored in a small space when not in use. If you're working on a variety of photo backgrounds for a project, you can effortlessly capture both studio portraits and action shots in specific settings on the same location with this product. For photographers who need to set up a photo booth style shoot for an important event, a themed backdrop may be exactly what is needed, such as the MODERN Peacock Backdrop.</p>
+
+<h2>Think Beyond Portraits </h2>
+
+<p>You can go even further than your typical studio portraits with some other offerings at BorrowLenses. If you're planning a video or photography project that needs a green screen, you can choose the Chroma Key MATT Screen for optimal results. Amaze your customers by customizing the background in this fun process. Don't forget to properly light the frame, with something like an LED light kit, so your pictures turn out their best.</p>
+
+<p>Watch your photography business reach the next level with professional backdrops to help your subjects stand out more. Rent what you need without a hassle at BorrowLenses, and send it back when you've completed your work.</p>"
+
+               ;;audio-accessories;"<h1>Rent Professional Grade Audio Visual Equipment</h1>
+
+<p>When you're in need of additional audio equipment to help your video production, presentation or recording go smoothly, consider choosing some of the top products offered at BorrowLenses. You can rent AV equipment, no matter what the event or purpose is. When it's time to equip your film crew with additional audio visual rentals for extra sound support, conduct a post screening question and answer session about your film or even celebrate a project's success, you can find what you need. </p>
+
+<h2>A Variety of Audio Equipment Options</h2>
+
+<p>Whether you're in the middle of filming or wrapping things up, you can get a variety of products for all audio visual needs at BorrowLenses. During the height of production, you may want to get an instant playback view of your footage. That's why many producers rent <a href='https://www.borrowlenses.com/product/SmallHD-AC7-OLED-HDSI-Field-Monitor'>a field monitor</a> to get quick feedback. Having the right cables and microphones can make things go even smoother during shooting, and there are plenty to choose from here. After things have been completed, you can even equip any type of presentation with items such as <a href='https://www.borrowlenses.com/product/rode_mic_stand'>microphone stands</a>, audio cords and additional tools to enhance your staging. </p>
+
+<h2>Effortless and On the Fly </h2>
+
+<p>With quick shipping and convenient delivery, you can get exactly what you need, even if you're constantly on the move. Traveling for video shoots or going from place to place for trade shows, events or promotions can be stressful. Your AV equipment rentals can be a breeze if you make the choice to rent with BorrowLenses. By renting from one of the experts in the industry, you can get top service and the professional tools you need in order to make an impact.</p>
+
+<p>Renting AV equipment doesn't have to be complicated. Select what you need, and reserve your borrowing period for all of your audio visual rentals online.</p>"
+
+               ;;headphones;"<h2>High-Quality Headphones for Your Production</h2>
+
+<p>In film production, lining up your picture and audio must be done precisely and perfectly. Without this attention to detail, you run the risk of confusing the audience with something that is not in sync. You can help prevent this type of disaster from happening by focusing on the specifics. One big factor in your sound recording concerns the specifics of listening, your headphones. Relying on a cheap pair of earbuds could cost your production the audio quality it needs. That's why it's important to rent audio headphones that are up to the task. With a headphones rental from BorrowLenses, you can get the best pair of listening headphones for your sound recording and mixing, without paying a premium price.</p>
+
+<h2>Get the Best Listening Experience</h2>
+
+<p>The sound recorder's role on a film shoot requires an extreme focus on what is being heard. The best way to ensure that the truest sound is captured is to use monitoring headphones like Audio-Technica. Comfortable around your ears and heavy-duty, professional headphones can help you maintain the ideal listening environment for your recording. It's also important to make sure you are able to record the sound at the highest level with quality microphones and a field mixer.</p>
+
+<h2>Make Better Decisions About Your Sound </h2>
+
+<p>When you've finished the stage of production, and you're piecing your video together, you can continue to utilize professional headphones to ensure your project stays on track. Give yourself the best method to hear as much as possible of your recording. This can help you make more informed decisions about the sounds you include in your finished product.</p>
+
+<p>Your project's sound quality is dependent on many different factors. Help keep the quality at the highest level by equipping your sound mixer with great headphones. Give yourself more freedom when editing to choose from the best recordings when you rent from BorrowLenses.</p>"
+
+               ;;video-lighting-batteries;"<h2>Power Your Light</h2>
+
+<p>Continuous lighting is power intensive. Give yourself freedom to light your scene or subject longer with spare batteries, lighting-specific broadcast battery mounts, and necessary cables. BorrowLenses has you covered! Our equipment ships directly to you in a safe and environmentally friendly way, with a prepaid label inside the box for easy returns.
+
+<h2>Keep Things Charged</h2>
+
+<p>When your battery suddenly runs out, you could potentially miss amazing scenes. That's why it's important to have a backup battery, ready to go when your main battery runs out. We have batteries for major brands like Aputure, Litepanels, Hive, and more.
+
+<h2>The BorrowLenses Advantage</h2>
+
+<p>At BorrowLenses, you can rent all manner of lighting equipment at outstanding rates. Have it shipped right to your home or even on set! If you live near one of our our many pickup locations, head on over and pick up your item. When you are done with it, use the prepaid shipping label to send it right back. Experience the advantages and convenience of renting gear today.</p>"
+
+
+
+

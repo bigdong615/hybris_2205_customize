@@ -88,7 +88,7 @@ public class CancelOrderPageController extends AbstractSearchPageController
 	 * Display the cancel order page
 	 */
 	@RequireHardLogIn
-	@RequestMapping(value = "/{orderCode:.*}/cancel", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/{orderCode:.*}/cancel", method = { RequestMethod.POST, RequestMethod.GET })//NOSONAR
 	public String showCancelOrderPage(@PathVariable(value = "orderCode") final String orderCode, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException // NOSONAR
 	{

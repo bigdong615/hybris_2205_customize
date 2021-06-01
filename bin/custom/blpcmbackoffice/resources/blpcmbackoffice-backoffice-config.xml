@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved
+-->
+<config xmlns="http://www.hybris.com/cockpit/config"
+	  xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
+		xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+
+	<!--Category editor Area Specific to Blpcmbackoffice -->
+<context merge-by="type" parent="GenericItem" type="Category" component="editor-area" module="blpcmbackoffice">
+		<ea:editorArea name="">
+			<ea:essentials>
+				<ea:essentialSection name="hmc.essential">
+					<ea:attribute qualifier="code"/>
+					<ea:attribute qualifier="categoryId"/>
+					<ea:attribute qualifier="name"/>
+					<ea:attribute qualifier="displayName"/>
+					<ea:attribute qualifier="catalogVersion"/>
+					<ea:attribute qualifier="active"/>
+					<ea:attribute qualifier="onCategoryTree"/>
+				</ea:essentialSection>
+			</ea:essentials>
+			<ea:tab name="hmc.tab.category.common">
+				<ea:section name="hmc.section.category.visibility">
+					<ea:attribute qualifier="allowedPrincipals"/>
+				</ea:section>
+				<ea:section name="hmc.section.category.description">
+					<ea:attribute editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
+						qualifier="description"/>
+					<ea:attribute qualifier="headerContent"/>
+					<ea:attribute qualifier="footerContent" editor="com.hybris.cockpitng.editor.wysiwyg" />
+					<ea:attribute qualifier="titleTag"/>
+					<ea:attribute qualifier="keywords"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.structure">
+				<ea:section name="hmc.section.supercategories">
+					<ea:attribute qualifier="supercategories"/>
+				</ea:section>
+				<ea:section name="hmc.section.subcategoriesandproducts">
+					<ea:attribute qualifier="categories"/>
+					<ea:attribute qualifier="products"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.multimedia">
+				<ea:section name="hmc.pictures">
+					<ea:attribute qualifier="picture"/>
+					<ea:attribute qualifier="thumbnail"/>
+				</ea:section>
+				<ea:section name="hmc.section.additionalmedias">
+					<ea:attribute qualifier="medias"/>
+					<ea:attribute qualifier="data_sheet"/>
+					<ea:attribute qualifier="detail"/>
+					<ea:attribute qualifier="logo"/>
+					<ea:attribute qualifier="normal"/>
+					<ea:attribute qualifier="others"/>
+					<ea:attribute qualifier="thumbnails"/>
+				</ea:section>
+			</ea:tab>
+		</ea:editorArea>
+	</context>
+
+	<!--Bl Product Create wizard Specific to Blpcmbackoffice -->
+		<context component="create-wizard" type="BlProduct"  extends="Product" merge-by="replace" module="blpcmbackoffice">
+			<wz:flow id="BlProductWizard" title="create.title(ctx.TYPE_CODE)" show-breadcrumb="false">
+				<wz:prepare id="blProductPrepare">
+					<wz:initialize property="newBlProduct" type="ctx.TYPE_CODE"/>
+					<wz:assign property="newBlProduct.code" value="ctx.code"/>
+					<wz:assign property="newBlProduct.catalogVersion" value="ctx.catalogVersion"/>
+					<wz:assign property="newBlProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
+					<wz:assign property="newBlProduct.supercategories" value="T(com.hybris.cockpitng.util.ListJoiner).join(newBlProduct.supercategories, ctx?.actionContext?.supercategories)"/>
+					<wz:assign property="newBlProduct.procurementCost" value="0.0"/>
+				</wz:prepare>
+				<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+					<wz:content id="step1.content">
+						<wz:property-list root="newBlProduct">
+							<wz:property qualifier="code"/>
+							<wz:property qualifier="displayName"/>
+							<wz:property qualifier="name"/>
+							<wz:property qualifier="catalogVersion"/>
+							<wz:property qualifier="supercategories"/>
+							<wz:property qualifier="approvalStatus"/>
+							<wz:property qualifier="productType"/>
+							<wz:property qualifier="procurementCost"/>
+							<wz:property qualifier="retailPrice"/>
+							<wz:property qualifier="procurementSource"/>
+							<wz:property qualifier="mpn"/>
+							<wz:property qualifier="upc"/>
+							<wz:property qualifier="manufacturerAID"/>
+							<wz:property qualifier="numberSystem"/>
+						</wz:property-list>
+					</wz:content>
+					<wz:navigation id="step1.navigation">
+						<wz:cancel/>
+						<wz:done>
+							<wz:save property="newBlProduct"/>
+						</wz:done>
+					</wz:navigation>
+				</wz:step>
+			</wz:flow>
+		</context>
+
+	<!--BlProduct editor Area Specific to Blpcmbackoffice -->
+	<context merge-by="replace" parent="Product" type="BlProduct" component="editor-area" module="pcmbackoffice"
+		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
+		<ea:editorArea name="">
+			<ea:essentials>
+				<ea:essentialSection name="hmc.essential">
+					<ea:attribute qualifier="code"/>
+					<ea:attribute qualifier="productId"/>
+					<ea:attribute qualifier="name"/>
+					<ea:attribute qualifier="displayName"/>
+					<ea:attribute qualifier="catalogVersion"/>
+					<ea:attribute qualifier="approvalStatus"/>
+					<ea:attribute qualifier="isNew"/>
+					<ea:attribute qualifier="constrained"/>
+					<ea:attribute qualifier="forSale"/>
+					<ea:attribute qualifier="forRent"/>
+				</ea:essentialSection>
+			</ea:essentials>
+			<ea:tab name="hmc.tab.product.properties" position="2">
+				<ea:section name="hmc.product.descriptions">
+					<ea:panel colspan="2" name="panel.proddescription" rowspan="2">
+						<ea:attribute
+							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
+							qualifier="description"/>
+						<ea:attribute qualifier="rentalVideosLink" />
+						<ea:attribute qualifier="summary"/>
+						<ea:attribute qualifier="data_sheet"/>
+						<ea:attribute qualifier="rentalIncludes"/>
+						<ea:attribute qualifier="displayNotes"/>
+						<ea:attribute qualifier="purchaseNotes"/>
+						<ea:attribute qualifier="shortDescription"/>
+						<ea:attribute qualifier="usedDescription"/>
+						<ea:attribute qualifier="usedGearVideosLink" />
+						<ea:attribute qualifier="usedIncludes"/>
+						<ea:attribute qualifier="techEngNotes"/>
+					</ea:panel>
+				</ea:section>
+				<ea:section name="hmc.section.catalog_and_validity">
+					<ea:attribute qualifier="onlineDate"/>
+					<ea:attribute qualifier="offlineDate"/>
+				</ea:section>
+			</ea:tab>
+			<ea:customTab name="hmc.tab.attribute" position="6"
+				spring-bean="classificationTabEditorAreaRenderer">
+				<ea:section name="hmc.section.product.untypedfeatures">
+					<ea:attribute description="hmc.text.product.untypedfeatures" qualifier="untypedFeatures"/>
+				</ea:section>
+			</ea:customTab>
+			<ea:tab name="hmc.tab.product.categorysystem" position="10">
+				<ea:section name="hmc.section.product.productincategory">
+					<ea:attribute qualifier="supercategories"/>
+					<ea:attribute qualifier="classificationClasses"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.productreferences">
+					<ea:attribute qualifier="productReferences"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.prices" position="14">
+				<ea:section name="hmc.section.product.pricesdiscounts">
+					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
+						<ea:attribute qualifier="procurementCost"/>
+						<ea:attribute qualifier="retailPrice"/>
+						<ea:attribute description="hmc.text.product.pg"
+							editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+							qualifier="europe1Prices">
+							<ea:editor-parameter>
+								<ea:name>listConfigContext</ea:name>
+								<ea:value>europe1PricesListView</ea:value>
+							</ea:editor-parameter>
+							<ea:editor-parameter>
+								<ea:name>configurableFlowConfigCtx</ea:name>
+								<ea:value>create-wizard-no-save</ea:value>
+							</ea:editor-parameter>
+							<ea:editor-parameter>
+								<ea:name>inlineEditing</ea:name>
+								<ea:value>true</ea:value>
+							</ea:editor-parameter>
+						</ea:attribute>
+					</ea:panel>
+					<ea:attribute qualifier="minOrderQuantity"/>
+					<ea:attribute qualifier="maxOrderQuantity"/>
+					<ea:attribute qualifier="priceQuantity"/>
+					<ea:attribute description="hmc.text.product.pg" qualifier="Europe1PriceFactory_PPG"/>
+					<ea:attribute qualifier="unit"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.discounts">
+					<ea:panel colspan="2" name="panel.europe1Discounts" rowspan="2">
+						<ea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+							qualifier="europe1Discounts">
+							<ea:editor-parameter>
+								<ea:name>listConfigContext</ea:name>
+								<ea:value>europe1DiscountsListView</ea:value>
+							</ea:editor-parameter>
+							<ea:editor-parameter>
+								<ea:name>inlineEditing</ea:name>
+								<ea:value>true</ea:value>
+							</ea:editor-parameter>
+						</ea:attribute>
+					</ea:panel>
+					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PDG"/>
+					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PTG"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.multimedia" position="18">
+				<ea:section name="hmc.section.product.pictures">
+					<ea:attribute qualifier="picture"/>
+					<ea:attribute qualifier="thumbnail"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.additionalmedias">
+					<ea:attribute qualifier="data_sheet"/>
+					<ea:attribute qualifier="detail"/>
+					<ea:attribute qualifier="logo"/>
+					<ea:attribute qualifier="normal"/>
+					<ea:attribute qualifier="others"/>
+					<ea:attribute qualifier="thumbnails"/>
+					<ea:attribute qualifier="galleryImages"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.serials" position="22">
+				<ea:section description="hmc.text.serials" name="hmc.section.product.serials">
+					<ea:attribute qualifier="serialProducts">
+						<ea:editor-parameter>
+							<ea:name>configurableFlowConfigCtx</ea:name>
+							<ea:value>create-wizard-no-save</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
+				<ea:section name="hmc.section.product.extendedattributes">
+					<ea:attribute qualifier="numberSystem"/>
+					<ea:attribute qualifier="productType"/>
+					<ea:attribute qualifier="level1required"/>
+					<ea:attribute qualifier="level2required"/>
+					<ea:attribute qualifier="scheduled"/>
+					<ea:attribute qualifier="video"/>
+					<ea:attribute qualifier="reserveRatio"/>
+					<ea:attribute qualifier="firmwareVersion"/>
+					<ea:attribute qualifier="lrLink"/>
+					<ea:attribute qualifier="discontinued"/>
+					<ea:attribute qualifier="alternativeProduct"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.ids">
+				 <ea:attribute qualifier="procurementSource"/>
+					<ea:attribute qualifier="mpn"/>
+					<ea:attribute qualifier="upc"/>
+					<ea:attribute qualifier="manufacturerAID"/>
+					<ea:attribute qualifier="manufacturerName"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.keywords">
+					<ea:attribute description="hmc.text.product.keywords" qualifier="keywords"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.shipping" position="30">
+				<ea:section name="hmc.product.shipping">
+					<ea:attribute qualifier="weight"/>
+					<ea:attribute qualifier="height"/>
+					<ea:attribute qualifier="length"/>
+					<ea:attribute qualifier="width"/>
+
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.community" position="34">
+				<ea:section name="hmc.product.sections.customerreviews">
+					<ea:attribute qualifier="averageRating"/>
+					<ea:attribute qualifier="numberOfReviews"/>
+					<ea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+						qualifier="productReviews">
+						<ea:editor-parameter>
+							<ea:name>inlineEditing</ea:name>
+							<ea:value>true</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+				</ea:section>
+			</ea:tab>
+		</ea:editorArea>
+	</context>
+
+
+	<!--BlSerialProduct Create wizard for Blpcmbackoffice-->
+	<context component="create-wizard" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace" module="blpcmbackoffice">
+		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="blSerialProductPrepare">
+				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newBlSerialProduct.code" value="ctx.code"/>
+				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.catalogVersion"/>
+				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
+				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlSerialProduct">
+						<wz:property qualifier="code"/>
+						<wz:property qualifier="barcode"/>
+						<wz:property qualifier="displayName"/>
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="approvalStatus"/>
+						<wz:property qualifier="serialStatus"/>
+						<wz:property qualifier="catalogVersion"/>
+						<wz:property qualifier="blProduct"/>
+						<wz:property qualifier="procurementCost"/>
+						<wz:property qualifier="mpn"/>
+						<wz:property qualifier="upc"/>
+						<wz:property qualifier="productType"/>
+						<wz:property qualifier="numberSystem"/>
+						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="forSaleBasePrice"/>
+						<wz:property qualifier="forSale"/>
+						<wz:property qualifier="procurementSource"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newBlSerialProduct"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<!-- Bl Serial Product Create wizard accessed from the BL Product Serials Tab-->
+	<context component="create-wizard-no-save" type="BlSerialProduct"  extends="BlSerialProduct" merge-by="replace" module="blpcmbackoffice">
+		<wz:flow id="BlSerialProductWizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="blSerialProductPrepare">
+				<wz:initialize property="newBlSerialProduct" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newBlSerialProduct.blProduct" value="ctx.parentObject"/>
+				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.parentObject.catalogVersion"/>
+				<wz:assign property="newBlSerialProduct.mpn" value="ctx.parentObject.mpn"/>
+				<wz:assign property="newBlSerialProduct.upc" value="ctx.parentObject.upc"/>
+				<wz:assign property="newBlSerialProduct.numberSystem" value="ctx.parentObject.numberSystem"/>
+				<wz:assign property="newBlSerialProduct.productType" value="ctx.parentObject.productType"/>
+				<wz:assign property="newBlSerialProduct.manufacturerAID" value="ctx.parentObject.manufacturerAID"/>
+				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
+				<wz:content id="step1.content">
+					<wz:property-list root="newBlSerialProduct">
+						<wz:property qualifier="code"/>
+						<wz:property qualifier="barcode"/>
+						<wz:property qualifier="displayName"/>
+						<wz:property qualifier="name"/>
+						<wz:property qualifier="approvalStatus"/>
+						<wz:property qualifier="serialStatus"/>
+						<wz:property qualifier="catalogVersion"/>
+						<wz:property qualifier="blProduct"/>
+						<wz:property qualifier="procurementCost"/>
+						<wz:property qualifier="mpn"/>
+						<wz:property qualifier="upc"/>
+						<wz:property qualifier="productType"/>
+						<wz:property qualifier="numberSystem"/>
+						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="forSaleBasePrice"/>
+						<wz:property qualifier="forSale"/>
+						<wz:property qualifier="procurementSource"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done/>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
+	<!--BlSerialProduct  editor Area Specific to Blpcmbackoffice -->
+	<context merge-by="replace" parent="BlProduct" type="BlSerialProduct" component="editor-area" module="blpcmbackoffice"
+		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
+		<ea:editorArea name="">
+			<ea:essentials>
+				<ea:essentialSection name="hmc.essential">
+					<ea:attribute qualifier="code"/>
+					<ea:attribute qualifier="productId"/>
+					<ea:attribute qualifier="barcode"/>
+					<ea:attribute qualifier="name"/>
+					<ea:attribute qualifier="displayName"/>
+					<ea:attribute qualifier="catalogVersion"/>
+					<ea:attribute qualifier="serialStatus"/>
+					<ea:attribute qualifier="approvalStatus"/>
+					<ea:attribute qualifier="blProduct"/>
+					<ea:attribute qualifier="forSale"/>
+				</ea:essentialSection>
+			</ea:essentials>
+			<ea:tab name="hmc.tab.product.properties" position="2">
+				<ea:section name="hmc.product.descriptions">
+					<ea:panel colspan="2" name="panel.proddescription" rowspan="2">
+						<ea:attribute
+							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
+							qualifier="description"/>
+						<ea:attribute qualifier="condition"/>
+						<ea:attribute qualifier="notes"/>
+						<ea:attribute qualifier="forSaleNotes"/>
+						<ea:attribute qualifier="ownedBy"/>
+					</ea:panel>
+				</ea:section>
+				<ea:section name="hmc.section.catalog_and_validity">
+					<ea:attribute qualifier="dateFirstActive"/>
+					<ea:attribute qualifier="onlineDate"/>
+					<ea:attribute qualifier="offlineDate"/>
+				</ea:section>
+			</ea:tab>
+			<ea:customTab name="hmc.tab.attribute" position="6"
+				spring-bean="classificationTabEditorAreaRenderer">
+				<ea:section name="hmc.section.product.untypedfeatures">
+					<ea:attribute description="hmc.text.product.untypedfeatures" qualifier="untypedFeatures"/>
+				</ea:section>
+			</ea:customTab>
+			<ea:tab name="hmc.tab.product.categorysystem" position="10">
+				<ea:section name="hmc.section.product.productincategory">
+					<ea:attribute qualifier="supercategories"/>
+					<ea:attribute qualifier="classificationClasses"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.productreferences">
+					<ea:attribute qualifier="productReferences"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.prices" position="14">
+				<ea:section name="hmc.section.product.pricesdiscounts">
+					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
+						<ea:attribute qualifier="procurementCost"/>
+						<ea:attribute qualifier="forSaleBasePrice"/>
+						<ea:attribute qualifier="incentivizedPrice"/>
+						<ea:attribute qualifier="finalSalePrice"/>
+						<ea:attribute qualifier="totalRepairSpend"/>
+					</ea:panel>
+					<ea:attribute qualifier="minOrderQuantity"/>
+					<ea:attribute qualifier="maxOrderQuantity"/>
+					<ea:attribute qualifier="priceQuantity"/>
+					<ea:attribute description="hmc.text.product.pg" qualifier="Europe1PriceFactory_PPG"/>
+					<ea:attribute qualifier="unit"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.discounts">
+					<ea:panel colspan="2" name="panel.europe1Discounts" rowspan="2">
+						<ea:attribute qualifier="forSaleDiscount"/>
+					</ea:panel>
+					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PDG"/>
+					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PTG"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.multimedia" position="18">
+				<ea:section name="hmc.section.product.pictures">
+					<ea:attribute qualifier="picture"/>
+					<ea:attribute qualifier="thumbnail"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.additionalmedias">
+					<ea:attribute qualifier="logo"/>
+					<ea:attribute qualifier="thumbnails"/>
+					<ea:attribute qualifier="galleryImages"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.supbparts" position="22">
+				<ea:section description="hmc.text.supbparts" name="hmc.section.product.subparts">
+					<ea:attribute qualifier="blSubParts">
+						<ea:editor-parameter>
+							<ea:name>configurableFlowConfigCtx</ea:name>
+							<ea:value>create-wizard-no-save</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
+				<ea:section name="hmc.section.product.extendedattributes">
+					<ea:attribute qualifier="inventoryLocationId"/>
+					<ea:attribute qualifier="isArchived"/>
+					<ea:attribute qualifier="ocLocation"/>
+					<ea:attribute qualifier="noDaysRented"/>
+					<ea:attribute qualifier="noDaysInTransit"/>
+					<ea:attribute qualifier="noDaysNotInService"/>
+					<ea:attribute qualifier="lastLocationScanParent"/>
+					<ea:attribute qualifier="firmwareVersion"/>
+					<ea:attribute qualifier="withOrderID"/>
+					<ea:attribute qualifier="assetNumber"/>
+					<ea:attribute qualifier="assetStatus"/>
+				</ea:section>
+				<ea:section name="hmc.section.product.ids">
+					<ea:attribute qualifier="procurementSource"/>
+					<ea:attribute qualifier="mpn"/>
+					<ea:attribute qualifier="upc"/>
+					<ea:attribute qualifier="manufacturerAID"/>
+					<ea:attribute qualifier="numberSystem"/>
+					<ea:attribute qualifier="productType"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.order.invoice" position="30">
+				<ea:section name="hmc.product.order.invoice">
+					<ea:attribute qualifier="dateOfSale"/>
+					<ea:attribute qualifier="purchaseOrder"/>
+					<ea:attribute qualifier="orderNumberRecord"/>
+					<ea:attribute qualifier="invoiceNumberRecord"/>
+					<ea:attribute qualifier="trackingNumber"/>
+					<ea:attribute qualifier="invoiceNumber"/>
+					<ea:attribute qualifier="invoiceDate"/>
+				</ea:section>
+			</ea:tab>
+			<ea:tab name="hmc.tab.community" position="34">
+				<ea:section name="hmc.product.sections.customerreviews">
+					<ea:attribute qualifier="averageRating"/>
+					<ea:attribute qualifier="conditionRatingOverallScore"/>
+					<ea:attribute qualifier="numberOfReviews"/>
+					<ea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+						qualifier="productReviews">
+						<ea:editor-parameter>
+							<ea:name>inlineEditing</ea:name>
+							<ea:value>true</ea:value>
+						</ea:editor-parameter>
+					</ea:attribute>
+				</ea:section>
+			</ea:tab>
+		</ea:editorArea>
+	</context>
+
+
+</config>

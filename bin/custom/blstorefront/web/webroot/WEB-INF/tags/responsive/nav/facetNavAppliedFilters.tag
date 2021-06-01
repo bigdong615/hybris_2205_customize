@@ -8,22 +8,42 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<c:if test="${not empty pageData.breadcrumbs}">
-
+<c:if test="${not empty pageData.breadcrumbs && pageData.pagination.totalNumberOfResults > 0}">
 	<div class="facet js-facet">
-
-	<div class="facet__name js-facet-name">
+	<div class="js-facet-name">
 		<span class="glyphicon facet__arrow"></span>
-		<spring:theme code="search.nav.applied.facets"/>
 	</div>
 		<div class="facet__values js-facet-values">
-			<ul class="facet__list">
-				<c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
-					<li>
-						<c:url value="${breadcrumb.removeQuery.url}" var="removeQueryUrl"/>
-						${fn:escapeXml(breadcrumb.facetValueName)}&nbsp;<a href="${fn:escapeXml(removeQueryUrl)}" ><span class="glyphicon glyphicon-remove"></span></a>
-					</li>
-				</c:forEach>
+				<c:choose>
+              <c:when test="${pageType == 'PRODUCTSEARCH'}">
+              <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
+              						<c:url value="${breadcrumb.removeQuery.url}" var="removeQueryUrl"/>
+              						    <a href="${fn:escapeXml(removeQueryUrl)}&blPageType=${blPageType}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
+              				</c:forEach>
+              </c:when>
+              <c:otherwise>
+              <c:choose>
+              <c:when test="${pageData.breadcrumbs.size()<2 && superCategory ne null}">
+              <c:url var= "clearUrl" value ="${brandClear}"/>
+                <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
+                             						    <a href="${fn:escapeXml(clearUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
+                 </c:forEach>
+              </c:when>
+              <c:when test="${pageData.breadcrumbs.size()<2 && usedsuperCategory ne null}">
+                            <c:url var= "clearUrl" value ="${usedClear}"/>
+                              <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
+                                           						    <a href="${fn:escapeXml(clearUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
+                               </c:forEach>
+                            </c:when>
+              <c:otherwise>
+               <c:forEach items="${pageData.breadcrumbs}" var="breadcrumb">
+               						<c:url value="${breadcrumb.removeQuery.url}" var="removeQueryUrl"/>
+               						    <a href="${fn:escapeXml(removeQueryUrl)}" class="btn btn-filter">${fn:escapeXml(breadcrumb.facetValueName)}</a>
+               				</c:forEach>
+              </c:otherwise>
+              </c:choose>
+              </c:otherwise>
+              </c:choose>
 			</ul>
 		</div>
 	</div>

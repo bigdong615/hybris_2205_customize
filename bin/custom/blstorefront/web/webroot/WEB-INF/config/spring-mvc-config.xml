@@ -364,4 +364,8 @@
 		<property name="defaultTheme" value="blue"/>
 	</bean>
 
+	<!--BL-542 Shipping-->
+	<alias name="blAddressDataUtil" alias="addressDataUtil"/>
+	<bean id="blAddressDataUtil" class="com.bl.storefront.util.BlAddressDataUtil"/>
+
 </beans>

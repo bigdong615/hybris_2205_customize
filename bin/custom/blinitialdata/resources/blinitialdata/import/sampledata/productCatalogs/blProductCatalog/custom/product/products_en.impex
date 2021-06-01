@@ -1,0 +1,515 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Product Localisations
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs products_en.impex =========================");
+
+# Macros / Replacement Parameter definitions
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+# Language
+$lang=en
+
+# Update allProducts with localisations
+UPDATE BlProduct;$catalogVersion;code[unique=true];shortDescription;displayNotes;rentalIncludes;summary[lang=$lang];description[lang=$lang];alternativeProduct
+#nikon Description
+;;Nikon_17-55mm_f2.8_AF-S_ED_DX;"<li>Ã¢â‚¬Â¢ Compatible with Nikon F Mount <li>Ã¢â‚¬Â¢ Designed for APS-C/Crop Sensors <li>Ã¢â‚¬Â¢ Silent Wave Motor <li>Ã¢â‚¬Â¢ Good Zoom Range for Events, Travel";"<li>Ã¢â‚¬Â¢ This is a DX format lens, which is compatible with crop frame/APS-C sensor cameras only. It is not recommended for full frame sensor cameras unless they have a crop mode.";"<li>Ã¢â‚¬Â¢ Front Cap
+<li>Ã¢â‚¬Â¢ Rear Cap
+<li>Ã¢â‚¬Â¢ Lens Hood
+<li>Ã¢â‚¬Â¢ 77mm Filter";"<li>Ã¢â‚¬Â¢ Focal Length: 17-55mm (25.5-82.5mm Equivalent in 35mm Terms)</li>
+<li>Ã¢â‚¬Â¢ Aperture Range: f/2.8-f/22<li>
+<li>Ã¢â‚¬Â¢ Nikon F Mount</li>
+<li>Ã¢â‚¬Â¢ Format Coverage: Crop Sensor/APS-C (DX)
+<li>Ã¢â‚¬Â¢ 1.2' Minimum Focusing Distance</li>
+<li>Ã¢â‚¬Â¢ 79Ã‚Â°-28Ã‚Â°50' Angle of View</li>
+<li>Ã¢â‚¬Â¢ 0.20x Magnification</li>
+<li>Ã¢â‚¬Â¢ AF/MF</li>
+<li>Ã¢â‚¬Â¢ Filter Size: 77mm<li>
+<li>Ã¢â‚¬Â¢ Length: 4.4'</li>
+<li>Ã¢â‚¬Â¢ Weight: 1.66 lbs</li>";;;
+
+;;Nikon_10.5mm_f2.8_Fisheye;"Rent a Nikon 10.5mm f/2.8G DX ED Fisheye Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>Ã¢â‚¬Â¢ Not recommended for full frame (FX) DSLR cameras (unless your DSLR supports DX 'crop mode') nor 35mm film SLR cameras.
+<li>Ã¢â‚¬Â¢ Autofocus is not supported by D40, D60, D3000, D3100, D3200, D5100, and D5000 cameras.
+<li>Ã¢â‚¬Â¢ Accepts rear gelatin filters (filters not included).;<li>Ã¢â‚¬Â¢ Front Cap
+<li>Ã¢â‚¬Â¢ Rear Cap;<li>Ã¢â‚¬Â¢ Focal Length: 10mm (15.75mm Equivalent in 35mm Terms)</li>
+<li>Ã¢â‚¬Â¢ Aperture Range: f/2.8-f/22<li>
+<li>Ã¢â‚¬Â¢ Nikon F Mount</li>
+<li>Ã¢â‚¬Â¢ Format Coverage: Crop Sensor/APS-C (DX)
+<li>Ã¢â‚¬Â¢ 1.5' Minimum Focusing Distance</li>
+<li>Ã¢â‚¬Â¢ 180&deg Angle of View</li>
+<li>Ã¢â‚¬Â¢ 0.2x Magnification</li>
+<li>Ã¢â‚¬Â¢ AF/MF</li>
+<li>Ã¢â‚¬Â¢ Filter Size: N/A<li>
+<li>Ã¢â‚¬Â¢ Length: 2.5'</li>
+<li>Ã¢â‚¬Â¢ Weight: 10.8 oz</li>";;;
+
+;;Nikon_80-400mm_f4.5-5.6D_ED_VR;"Rent a Nikon 80-400mm f/4.5-5.6D ED VR Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";;"<li>Ã¢â‚¬Â¢ Front Cap
+<li>Ã¢â‚¬Â¢ Rear Cap
+<li>Ã¢â‚¬Â¢ 77mm Filter
+<li>Ã¢â‚¬Â¢ Lens Hood
+<li>Ã¢â‚¬Â¢ Tripod Collar;<li>Ã¢â‚¬Â¢ Focal Length: 80-400mm (120-600mm Equivalent for Crop Sensors)
+<li>Ã¢â‚¬Â¢ Aperture Range: f/4.5-5.6 Ã¢â‚¬â€œ f/32
+<li>Ã¢â‚¬Â¢ F Mount
+<li>Ã¢â‚¬Â¢ Format Coverage: Full Frame (FX)
+<li>Ã¢â‚¬Â¢ 7.5' Minimum Focusing Distance
+<li>Ã¢â‚¬Â¢ 30Ã‚Â°10'-6Ã‚Â°10' Angle of View
+<li>Ã¢â‚¬Â¢ 0.42x Magnification
+<li>Ã¢â‚¬Â¢ AF/MF
+<li>Ã¢â‚¬Â¢ Vibration Reduction
+<li>Ã¢â‚¬Â¢ Removable Tripod Collar
+<li>Ã¢â‚¬Â¢ Filter Size: 77mm</li>
+<li>Ã¢â‚¬Â¢ Length: 6.7'
+<li>Ã¢â‚¬Â¢ Weight: 2.9 lbs";;;
+
+;;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon;"Rent a Sigma 10-20mm f/4-5.6D EX DC HSM Lens for Nikon. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>Ã¢â‚¬Â¢ This lens is compatible with crop frame sensor F mount cameras only. Pairing this lens with full frame sensors will result in vignetting, unless the camera has a crop mode you can use. The focal length equivalent on crop frame sensors is 15-30mm.";"<li>Ã¢â‚¬Â¢ Front Cap
+<li>Ã¢â‚¬Â¢ Rear Cap
+<li>Ã¢â‚¬Â¢ 77mm Filter
+<li>Ã¢â‚¬Â¢ Lens Hood;<li>Ã¢â‚¬Â¢ Focal Length: 10-20mm (15-30mm Equivalent for Crop Sensors)
+<li>Ã¢â‚¬Â¢ Maximum Aperture: f/4-5.6
+<li>Ã¢â‚¬Â¢ Aperture Range: f/4-5.6Ã¢â‚¬â€œf/22
+<li>Ã¢â‚¬Â¢ Nikon F Mount
+<li>Ã¢â‚¬Â¢ Crop Mode: DX
+<li>Ã¢â‚¬Â¢ 9.4' Minimum Focusing Distance
+<li>Ã¢â‚¬Â¢ 102.4Ã‚Â°-63.8Ã‚Â° Angle of View
+<li>Ã¢â‚¬Â¢ 1.15x Magnification
+<li>Ã¢â‚¬Â¢ AF/MF
+<li>Ã¢â‚¬Â¢ <a href='https://www.borrowlenses.com/products/Accessories+Type/Filters/Store/Photo' target='_blank'>Filter Size</a>: 77mm<li>
+<li>Ã¢â‚¬Â¢ Length: 3.5'
+<li>Ã¢â‚¬Â¢ Weight: 1.14 lbs";;;
+
+;;Nikon_18-200_f3.5-5.6_AF-S_VR;"Rent a Nikon 18-200mm f/3.5-5.6 AF-S VR and save money! Borrow Lenses offers rents Nikon professional lenses online. Reserve now!";;;;"<div>
+<p style='margin-bottom:0px;padding:0px;'><strong>Specifications</strong></p>
+<ul style='margin-top:0px;padding-left:30px;'>
+<li style='margin:0px;padding:0px;'>Focal Length: 18-200mm</li>
+<li style='margin:0px;padding:0px;'>Maximum Aperture: f/3.5</li>
+<li style='margin:0px;padding:0px;'>Minimum Focusing Distance: 19.2'</li>
+<li style='margin:0px;padding:0px;'>Angle of View: 76-8&deg;</li>
+<li style='margin:0px;padding:0px;'>Filter Size: 72mm</li>
+<li style='margin:0px;padding:0px;'>Length: 3.8'</li>
+<li style='margin:0px;padding:0px;'>Weight: 1.2 lbs</li>
+</ul>
+</div>
+
+<div>
+<p>
+<strong>Note:</strong> Not recommended for use on full-frame (FX) digital cameras, 35mm film cameras, or APS SLR cameras.
+</p>
+</div>
+
+<div>
+<p>
+<strong>Lens rental package includes:</strong> Front cap, rear cap, UV filter, and lens hood.
+</p>
+</div>
+
+<div>
+<p>
+<strong>Description</strong><br/>
+This is an all-in-one 11.1x zoom lens, ideal for dedicated amateurs and semi-professionals shooting landscapes, portraits, weddings, wildlife, photojournalism, and travel. This lens features an improved VR  (Vibration Reduction) system that allows handheld telephoto zoom shooting even in poorly lit conditions. The VR system minimizes image blur caused by camera shake, and offers the equivalent of shooting at a shutter speed 4 stops faster.
+</p>
+</div>";;
+
+;;Nikon_14mm_f2.8_AF_ED;"Rent a Nikon 14mm f/2.8D ED Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>Ã¢â‚¬Â¢ This lens will mount on Nikon F mount crop sensor cameras in both full frame and crop frame sensors. The focal length equivalent on crop frame sensors is 21mm.
+<li>Ã¢â‚¬Â¢ This lens is <strong>not</strong> compatible with <a href='https://www.borrowlenses.com/product/Nikon_TC_20EIII' target='_blank'>2X</a> and <a href='https://www.borrowlenses.com/product/Nikon-TC14E-III-14x-AFS-Teleconverter' target='_blank'>1.4X</a> Nikon teleconverters.
+<li>Ã¢â‚¬Â¢Ã‚Â For programmed auto (aka 'P Mode') or shutter priority exposure shooting (or for cameras capable of setting the aperture on the camera), use the minimum aperture lock lever to lock the lens aperture at f/22.
+<li>Ã¢â‚¬Â¢ This fisheye accepts rear gelatin filters, which are <strong>not</strong> included. It does <strong>not</strong> accept front filters.";"<li>Ã¢â‚¬Â¢ Front Cap</li>
+<li>Ã¢â‚¬Â¢ Rear Cap</li>";"<li>Ã¢â‚¬Â¢ Focal Length: 14mm (21mm Equivalent for Crop Sensors)</li>
+<li>Ã¢â‚¬Â¢ Aperture Range: f/2.8-f/22<li>
+<li>Ã¢â‚¬Â¢ Nikon F Mount</li>
+<li>Ã¢â‚¬Â¢ Format Coverage: FX</li>
+<li>Ã¢â‚¬Â¢ 7.87' Minimum Focusing Distance</li>
+<li>Ã¢â‚¬Â¢ 114Ã‚Âº Angle of View</li>
+<li>Ã¢â‚¬Â¢ 0.15x Magnification<li>
+<li>Ã¢â‚¬Â¢ AF/MF</li>
+<li>Ã¢â‚¬Â¢ Filter Size: Accepts Rear Gelatin Filters<li>
+<li>Ã¢â‚¬Â¢ Length: 3.34'</li>
+<li>Ã¢â‚¬Â¢ Weight: 1.47 lbs</li>";;;
+
+;;Nikon_70-200_f2.8_VR;"Nikon 70-200mm f/2.8 VR AF-S. BorrowLenses.com offers online photo camera and lens rentals by mail. Reservations are accepted." ;;;;"<div>
+<p style='margin-bottom:0px;padding:0px;'><strong>Specifications</strong></p>
+<ul style='margin-top:0px;padding-left:30px;'>
+<li style='margin:0px;padding:0px;'>Focal Length: 70-200mm</li>
+<li style='margin:0px;padding:0px;'>Maximum Aperture: f/2.8</li>
+<li style='margin:0px;padding:0px;'>Minimum Focusing Distance: 5'</li>
+<li style='margin:0px;padding:0px;'>Angle of View: 34-12&deg;</li>
+<li style='margin:0px;padding:0px;'>Filter Size: 77mm</li>
+<li style='margin:0px;padding:0px;'>Length: 8.5'</li>
+<li style='margin:0px;padding:0px;'>Weight: 3.2 lbs</li>
+</ul>
+</div>
+
+<div>
+<p>
+<strong>Lens rental package includes:</strong> Front cap, rear cap, UV filter, tripod collar, lens hood.
+</p>
+</div>
+
+<div>
+<p>
+<strong>Description</strong><br/>
+This is the orignal Nikon 70-200mm f/2.8 ED VR, not the <a href='http://www.borrowlenses.com/product/nikon_telephoto/Nikon_70-200_f2.8_VR_II'>newer VR II</a> model that is optimized for full-frame cameras like the D3, D700, etc. If you're using a crop-sensor cameras, like the D300, D90 or similar, this is *the* go-to lens for a huge variety of shooting environments, and the one you will want to trade a kidney to own it. It's sharp, has very fast and Silent Wave Motor (SWM) auto-focus and offers Vibration Reduction  to compensate for camera shake. Like a cherry on top of a sundae, it also includes several Extra Low Dispersion glass elements, earning it the noble &quot;ED&quot; badge on its barrel. </p>
+</div>";;
+
+;;Nikon_17-35mm_f2.8 AF-S_IF_ED;;;;;;
+;;Nikon_85mm_f1.4_AF;"Rent a Nikon 85mm f/1.4D IF Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.;<li>Ã¢â‚¬Â¢ This lens is compatible with Nikon F mount cameras in both full frame and crop frame sensors. The focal length equivalent on crop frame sensors is 127.5mm.
+<li>Ã¢â‚¬Â¢ This lens is <strong>not</strong> compatible with <a href='https://www.borrowlenses.com/product/Nikon_TC_20EIII' target='_blank'>2X</a> and <a href='https://www.borrowlenses.com/product/Nikon-TC14E-III-14x-AFS-Teleconverter' target='_blank'>1.4X</a> Nikon teleconverters.
+<li>Ã¢â‚¬Â¢ When shooting in Programmed Auto ('P') or Shutter Priority modes, use the minimum aperture lock lever to lock the lens aperture at f/16.
+<li>Ã¢â‚¬Â¢ Autofocus is <strong>not</strong> supported on the following cameras (not a comprehensive list):
+<p>
+<li>D40, D40x
+<li>D60
+<li>D3000, D3100, D3200, D3300
+<li>D5000, D5100, D5200, D5300" ;"<li>Ã¢â‚¬Â¢ Front Cap</li>
+<li>Ã¢â‚¬Â¢ Rear Cap</li>
+<li>Ã¢â‚¬Â¢ 77mm Filter</li>
+<li>Ã¢â‚¬Â¢Ã‚Â Lens Hood";"<li>Ã¢â‚¬Â¢ Focal Length: 85mm (127.5mm Equivalent for Crop Sensors)</li>
+<li>Ã¢â‚¬Â¢ Aperture Range: f/1.4-f/16<li>
+<li>Ã¢â‚¬Â¢ Nikon F Mount</li>
+<li>Ã¢â‚¬Â¢ Format Coverage: FX
+<li>Ã¢â‚¬Â¢ 2.8' Minimum Focusing Distance</li>
+<li>Ã¢â‚¬Â¢ 28&deg30' Angle of View</li>
+<li>Ã¢â‚¬Â¢ 0.11x Magnification<li>
+<li>Ã¢â‚¬Â¢ AF/MF</li>
+<li>Ã¢â‚¬Â¢ Filter Size: 77mm<li>
+<li>Ã¢â‚¬Â¢ Length: 2.85'</li>
+<li>Ã¢â‚¬Â¢ Weight: 1.21 lbs</li>";;;
+
+;;Nikkor_105mm_f2.8_Micro_AF-S_VR;"Rent a Nikon 105mm f/2.8G IF-ED AF-S VR Micro Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";;"<li>Ã¢â‚¬Â¢ Front Cap</li>
+<li>Ã¢â‚¬Â¢ Rear Cap</li>
+<li>Ã¢â‚¬Â¢ 62mm Filter</li>
+<li>Ã¢â‚¬Â¢ Lens Hood</li>";"<li>Ã¢â‚¬Â¢ Focal Length: 105mm (157.5mm Equivalent for Crop Sensors)</li>
+<li>Ã¢â‚¬Â¢ Aperture Range: f/2.8-f/32<li>
+<li>Ã¢â‚¬Â¢ Nikon F Mount</li>
+<li>Ã¢â‚¬Â¢ Format Coverage: Full Frame Sensor (FX)
+<li>Ã¢â‚¬Â¢ 12' Minimum Focusing Distance</li>
+<li>Ã¢â‚¬Â¢ 23&deg20' Angle of View</li>
+<li>Ã¢â‚¬Â¢ 1.0x Magnification<li>
+<li>Ã¢â‚¬Â¢ AF/MF</li>
+<li>Ã¢â‚¬Â¢ Filter Size: 62mm<li>
+<li>Ã¢â‚¬Â¢ Length: 4.6'</li>
+<li>Ã¢â‚¬Â¢ Weight: 1.6 lbs</li>";;;
+
+;;Canon-EF-100-400mm-f4556L-IS-USM;"This lens is an older version and has been updated by the <a href='https://www.borrowlenses.com/product/Canon-EF-100400mm-f4556L-IS-II-USM-Lens' target='_blank'>Canon 100-400mm f/4.5-5.6L IS II</a>, which has an improved optical design.";"<li>?｢どｨｬ｢ This lens has a push/pull design for changing the focal length. For more information on how to operate, see <a href='https://cdn.static-bl.com/images/manual/canon-ef-100-400-original.pdf' target='_blank'>this manual</a>.
+";"<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 77mm Filter</li>
+<li>?｢どｨｬ｢ Tripod Collar</li>
+<li>?｢どｨｬ｢ Lens Hood</li>";;
+
+;;Canon_24-105mm_f4_IS;"This lens is an older version and has been updated by the <a href='https://www.borrowlenses.com/product/Canon-24-105-f4L-II' target='_blank'>Canon 24-105mm f/4L IS II</a>, which has a new optical design and better ergonomics. ";"<li>?｢どｨｬ｢ This lens is compatible with Canon EF mount cameras in both full frame and crop frame sensors. The focal length equivalent on crop frame sensors is 38.4-168mm.
+<li>?｢どｨｬ｢ This lens is <strong>not</strong> compatible with <a href='http://www.borrowlenses.com/product/Canon_2x_III_Teleconverter' target='_blank'>2X</a> and <a href='http://www.borrowlenses.com/product/Canon_1.4x_III' target='_blank'>1.4X</a> Canon extenders.
+<li>?｢どｨｬ｢ This lens has built-in image stabilization. However, if you need STM stabilization in this range, please see the <a href='http://www.borrowlenses.com/product/Canon-EF-24105mm-f3556-IS-STM-Lens' target='_blank'>Canon EF 24-105mm f/3.5-5.6 IS STM Lens</a>.";"<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 77mm Filter</li>
+<li>?｢どｨｬ｢ Hood</li>";;
+
+;;Canon_17-55_f2.8_IS_EF-S;"Rent a Canon EF-S 17-55mm f/2.8 IS Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ This is an EF-S lens, which is compatible with crop frame/APS-C sensor cameras only. It is not recommended for full frame sensor cameras.";"<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 77mm Filter</li>";;
+
+;;Canon_50mm_f1.2_L;"<li>?｢どｨｬ｢ Compatible with Canon EF Mount Cameras <li>?｢どｨｬ｢ Fast Portrait Prime Lens <li>?｢どｨｬ｢ Super Spectra Coating <li>?｢どｨｬ｢?ﾇｬ・mong BL's Most Popular Lenses";"<li>?｢どｨｬ｢ This lens is compatible with Canon EF mount cameras in both full frame and crop frame sensors. The focal length equivalent on crop frame sensors is 80mm.
+<li>?｢どｨｬ｢ EF mount lenses are compatible with the new <a href='https://www.borrowlenses.com/product/Canon-EOS-R-Mirrorless-Digital-Camera' target='_blank'>Canon EOS R Mirrorless Digital Camera</a>. You just need to also use an adapter, such as the <a href='https://www.borrowlenses.com/product/Canon-EF-to-EOS-R-Mount-Adapter' target='_blank'>Canon EF/EF-S Lens to Canon EOS R Camera Adapter</a> or the <a href='https://www.borrowlenses.com/product/Canon-EF-to-EOS-R-Mount-Control-Ring-Adapter' target='_blank'>Canon EF/EF-S Lens to Canon EOS R Camera Control Ring Adapter</a>. These adapters provide direct mechanical and electrical coupling between the lens and the camera with no loss in control or quality. They allow you to take full advantage of the EOS R's new full frame, high megapixel sensor while using Canon's vast collection of L series EF mount lenses.";"<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 72mm Filter</li>
+<li>?｢どｨｬ｢ Lens Hood</li>";;
+
+;;Canon_EF_135mm_f2.0L_USM;"Rent a Canon EF 135mm f/2L USM Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";<li>?｢どｨｬ｢ This lens is compatible with Canon EF mount cameras in both full frame and crop frame sensors. The focal length equivalent on crop frame sensors is 216mm.";"<li>?｢どｨｬ｢ Front Cap
+<li>?｢どｨｬ｢ Rear Cap
+<li>?｢どｨｬ｢ 72mm Filter
+<li>?｢どｨｬ｢ Lens Hood";;
+;;Canon_EF_70-200mm_f2.8L_USM;"Rent a Canon EF 70-200mm f/2.8L Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ For teleconverter compatibility, please refer to individual <a href='https://www.borrowlenses.com/products/Canon+EF+Mount/Photo/Teleconverters?sortBy=numOrders' target='_blank'>Canon teleconverters</a>.
+<li>?｢どｨｬ｢ This lens does not come with stabilization. Please see the <a href='http://www.borrowlenses.com/product/Canon_70-200mm_f2.8_IS_II' target='_blank'>Canon EF 70-200mm f/2.8L IS USM II Lens</a> for this same lens but with stabilization.";"<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 77mm Filter</li>
+<li>?｢どｨｬ｢ Lens Hood</li>
+<li>?｢どｨｬ｢ Tripod Collar</li>";;
+;;Canon_16_35mm_f2.8_II;"This lens is an older version and has been updated by the <a href='https://www.borrowlenses.com/product/Canon-16-35mm-III-Lens' target='_blank'>Canon 16-35mm f/2.8L III</a>, which has a new optical design and less distortion.";"<li>?｢どｨｬ｢ This lens is compatible with Canon EF mount cameras in both full frame and crop frame sensors. The focal length equivalent on crop frame sensors is 25.6-56mm.
+<li>?｢どｨｬ｢ This lens is NOT compatible with <a href='http://www.borrowlenses.com/product/Canon_2x_III_Teleconverter' target='_blank'>2X</a> and <a href='http://www.borrowlenses.com/product/Canon_1.4x_III' target='_blank'>1.4X</a> Canon extenders.
+<li>?｢どｨｬ｢ This lens does not have built-in image stabilization. If you need image stabilization in this range, please see the <a href='http://www.borrowlenses.com/product/Canon-EF-1635mm-f4L-IS-USM-Lens' target='_blank'>Canon EF 16-35mm f/4L IS USM Lens</a>.";"<ul>
+<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 82mm Filter</li>
+<li>?｢どｨｬ｢ Lens Hood</li>
+</ul>"; ,
+;;Canon_85mm_f1.8;"Rent a Canon EF 85mm f/1.8 USM Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";<li>?｢どｨｬ｢ This lens is compatible with Canon EF mount cameras in both full frame and crop frame sensors. The focal length equivalent on crop frame sensors is 136mm.";"<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 58mm Filter</li>";;
+
+;;Canon_180mm_f3.5_Macro;"Canon EF 180mm f/3.5L Macro USM Lens. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<p>
+<strong>Notes:</strong> Compatible with both full frame and crop frame sensor Canon DSLR cameras.
+</p>";"<ul>
+<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 72mm UV Filter</li>
+<li>?｢どｨｬ｢ Lens Hood</li>
+</ul>";"<p><strong>Notes:</strong> Compatible with both full frame and crop frame sensor Canon DSLR cameras.
+</p>
+<p style='margin-bottom:0px;padding:0px;'><strong>Rental Includes:</strong></p>
+<ul style='margin-top:0px;padding-left:10px;'>
+<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 72mm UV Filter</li>
+<li>?｢どｨｬ｢ Lens Hood</li>
+</ul>
+<p style='margin-bottom:0px;padding:0px;'><strong>Specifications:</strong></p>
+<ul style='margin-top:0px;padding-left:10px;'>
+<li>?｢どｨｬ｢ Focal Length: 180mm (288mm Equivalent for 35mm Format)</li>
+<li>?｢どｨｬ｢ Maximum Aperture: f/3.5</li>
+<li>?｢どｨｬ｢ <b>EF Mount</b></li>
+<li>?｢どｨｬ｢ 18.8?｢どｨｬ・Minimum Focusing Distance</li>
+<li>?｢どｨｬ｢ 11?ﾇｬ? Angle of View</li>
+<li>?｢どｨｬ｢ AF/MF</li>
+<li>?｢どｨｬ｢ Length: 7.4'</li>
+<li>?｢どｨｬ｢ Weight: 2.36 lbs</li>
+</ul>
+<p>
+The <b>Canon EF 180mm f/3.5L Macro USM</b> is a prime telephoto lens that produces high quality images throughout the focusing distance range from 1x to infinity and also sports 1:1 macro capability for close-up photography. An internal focusing feature keeps the lens portable and the autofocus is quick, quiet, and precise. This is a great lens choice for shooting macro subjects that require distance like bugs or birds with 1:1 life size magnification. This lens is also compatible with Canon 1.4x and 2x extenders and suitable for portrait work and general wildlife use.
+</p><br>";
+
+;;Canon_EF_28mm_f1.8_USM;"<li>?｢どｨｬ｢ Compatible with Canon EF Mount Cameras <li>?｢どｨｬ｢ Wide Angle Prime <li>?｢どｨｬ｢ Bright f/1.8 Max Aperture <li>?｢どｨｬ｢?ﾇｬ・uper Spectra Coating";"<li>?｢どｨｬ｢ Compatible with both full frame and crop frame sensor Canon DSLR cameras.
+";"<li>?｢どｨｬ｢ Front Cap</li>
+<li>?｢どｨｬ｢ Rear Cap</li>
+<li>?｢どｨｬ｢ 58mm Filter</li>";;
+
+;;67mm_CP_Filter;"67mm Circular Polarizing Filter. BorrowLenses.com offers online photo camera and lens rentals by mail. Reservations are accepted. No deposit required.";"<p><strong>Product Description:</strong><br>
+A circular polarizing filter can be used to darken the sky (making it more saturated and deep blue), remove reflections from water and to cut down glare in bright sunlight. The polarization is most effective when at a 90 degree angle to the sun. It can be spun around on the lens mount to increase or decrease the effect. ";
+
+;;72mm_CP_Filter;"72mm Circular Polarizing Filter. BorrowLenses.com offers online photo camera and lens rentals by mail. Reservations are accepted. No deposit required.";"<p><strong>Product Description:</strong><br>
+A circular polarizing filter can be used to darken the sky (making it more saturated and deep blue), remove reflections from water and to cut down glare in bright sunlight. The polarization is most effective when at a 90 degree angle to the sun. It can be spun around on the lens mount to increase or decrease the effect. ";
+                ;;77mm_CP_Filter;"Rent a Circular Polarizing 77mm Filter. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";<li>?｢どｨｬ｢ The exact brand of filter you receive varies but the quality and specs are consistent.";;
+;;58mm_CP_Filter;"58mm Circular Polarizing Filter. BorrowLenses.com offers online photo camera and lens rentals by mail. Reservations are accepted. No deposit required.";"<strong>Product Description</strong>
+A circular polarizing filter can be used to darken the sky (making it more saturated and deep blue), remove reflections from water and to cut down glare in bright sunlight. The polarization is most effective when at a 90 degree angle to the sun. It can be spun around on the lens mount to increase or decrease the effect. ";
+;;Canon_drop_in_CP;"52mm drop-in circular polarizing filter is specifically for the following IS (Image Stabilizer) Super Telephoto  Lens Series: EF 300/2.8L IS USM, EF 400/2.8L IS USM, EF 500/4L IS USM  and EF 600/4L IS USM. It can be rotated from the outside.";;;"<div>
+<p>
+<strong>Description</strong><br>
+Light rays which are reflected become polarized. Polarizing filters are used to select which light rays enter your camera lens. They can remove unwanted reflections from non-metallic surfaces such as water or glass and also saturate colors providing better contrast. The effect can be seen through the viewfinder and changed by rotating the filter. The filter factor varies according to how the filter is rotated and its orientation to the sun. Filter factor is between 2.3 and 2.8 (approx. +1.3 stops). This 52mm drop-in circular polarizing filter is specifically for the following IS (Image Stabilizer) Super Telephoto Lens Series: EF 300/2.8L IS USM, EF 400/2.8L IS USM, EF 500/4L IS USM, and EF 600/4L IS USM.<br? <='' br=''></br?></p><br><br><br><br><br><span>&nbsp;</span><br>";
+;;82mm_CP;"82mm Circular Polarizing Filter. BorrowLenses.com offers online photo camera and lens rentals by mail. Reservations are accepted. No deposit required.";"<p><strong>Product Description:</strong><br>
+A circular polarizing filter can be used to darken the sky (making it more saturated and deep blue), remove reflections from water and to cut down glare in bright sunlight. The polarization is most effective when at a 90 degree angle to the sun. It can be spun around on the lens mount to increase or decrease the effect. ";
+;;Nikon_52mm_CPL;"Rent a Nikon 52mm C-PL1L Drop-In Circular Polarizer Filter. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ This drop-in style filter is compatible with, but not limited to, the following:
+<p>
+<li>Nikon 200-400mm f/4G IF-ED VR Lens
+<li><a href='https://www.borrowlenses.com/product/Nikon_200-400VRII' target='_blank'>Nikon 200-400mm f/4G IF-ED VR II Lens</a>
+<li>Nikon 300mm f/2.8G IF-ED VR Lens
+<li><a href='https://www.borrowlenses.com/product/Nikon_300mm_f2.8_VR_II' target='_blank'>Nikon 300mm f/2.8G IF-ED VR II Lens</a>
+<li>Nikon 400mm f/2.8G ED VR Lens
+<li><a href='https://www.borrowlenses.com/product/Nikon_500mm_f4_VR' target='_blank'>Nikon 500mm f/4G ED VR Lens</a>
+<li><a href='https://www.borrowlenses.com/product/Nikon_600mm' target='_blank'>Nikon 600mm f/4G ED VR Lens</a>";<li>?｢どｨｬ｢ (1) Filter";;
+
+;;Nikon_d3s;"Rent a Nikon D3s Digital SLR Camera. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ This Nikon D3s accepts dual CF cards which are not included with this rental and are <a href='https://www.borrowlenses.com/products/Accessories+Type/Media+and+Storage/Store/Photo' target='_blank'>rentable separately</a>.
+<li>?｢どｨｬ｢ Lenses are not included with this rental and are <a href='https://www.borrowlenses.com/products/Category/Lenses/Mount+Type/Nikon+F+Mount/Store/Photo' target='_blank'>rentable separately</a>.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged <a href='https://www.borrowlenses.com/product/extra-en-el18-battery-for-nikon-d4' target='_blank'>battery</a> for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes.
+<li>?｢どｨｬ｢?ﾇｬ・here is limited video capability with this camera. If you want a similar camera that can shoot higher quality video, please see the <a href='https://www.borrowlenses.com/product/Nikon_d4' target='_blank'>Nikon D4</a>, <a href='https://www.borrowlenses.com/product/Nikon-D4s-Digital-SLR-Camera' target='_blank'>Nikon D4s</a>, or the <a href='https://www.borrowlenses.com/product/Nikon-D5-DSLR-Camera-Body-Dual-CF-Slots' target='_blank'>Nikon D5</a>.";"<li>?｢どｨｬ｢ Body Cap</li>
+<li>?｢どｨｬ｢ Camera Strap</li>
+<li>?｢どｨｬ｢ <a href='http://www.borrowlenses.com/product/Nikon_EN-EL4a' target=?｢どｨｬlank?｢どｨｬ・EN-EL4a Battery</a></li>
+<li>?｢どｨｬ｢ Charger</li>";;
+                ;;Nikon_d4;"<li>?｢どｨｬ｢ 50-204,800 Expanded ISO <li>?｢どｨｬ｢ 11 FPS Shooting Speed <li>?｢どｨｬ｢ Dual Card Slots ?｢どｨて・CF, XQD <li>?｢どｨｬ｢ EXPEED 6 Image Processor";"<li>?｢どｨｬ｢ Lenses are <strong>not</strong> included with this rental and are rentable separately.
+<li>?｢どｨｬ｢ Memory cards are <strong>not</strong> included with this rental and are rentable separately.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged battery for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes. Please note that sometimes batteries drain a little during the shipping process.";"<li>?｢どｨｬ｢ Body Cap</li>
+<li>?｢どｨｬ｢ Camera Strap</li>
+<li>?｢どｨｬ｢ EN-EL18 Battery</li>
+<li>?｢どｨｬ｢ Charger</li>";;
+
+;;Canon_5DIII;"This camera is an older version and has been updated by the <a href='https://www.borrowlenses.com/product/Canon-EOS-5D-Mark-IV-Digital-SLR' target='_blank'>Canon 5D Mark IV</a>, which has 4K video, more megapixels, and better ISO.";"<li>?｢どｨｬ｢ Memory cards are <strong>not</strong> included.
+<li>?｢どｨｬ｢ Lenses are <strong>not</strong> included.
+<li>?｢どｨｬ｢ EF-M and EF-S lenses are <strong>not</strong> compatible with this camera.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged <a href='https://www.borrowlenses.com/product/Extra-LPE6n-Battery' target='_blank'>battery</a> for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes. Please note that sometimes batteries drain during the shipping process.
+<li>?｢どｨｬ｢ This camera is compatible with the <a href='https://www.borrowlenses.com/product/Canon_BGE11_Battery_Grip_for_Canon_5D_III' target='_blank'>Canon BG-E11 Battery Grip</a>, which is <strong>not</strong> included.
+<li>?｢どｨｬ｢ Continuous video shooting is possible for approximately 30 minutes (limited by product specifications, default setting).";"<li>?｢どｨｬ｢ Body Cap
+<li>?｢どｨｬ｢ Camera Strap
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Extra-LPE6n-Battery' target='_blank'>LP-E6N Battery</a>
+<li>?｢どｨｬ｢ Charger";;
+
+;;Nikon_d800;"<li>?｢どｨｬ｢ 36.3MP Full Frame Sensor <li>?｢どｨｬ｢ Great Low Light Sensitivity <li>?｢どｨｬ｢ Fast 51-Point AF Coverage <li>?｢どｨｬ｢ Dual Card Slots";"<li>?｢どｨｬ｢ Memory cards are <strong>not</strong> included with this rental and are rentable separately.
+<li>?｢どｨｬ｢ Lenses are <strong>not</strong> included with this rental and are rentable separately.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged <a href='https://www.borrowlenses.com/product/Extra-Nikon-EN-EL15b-Battery' target='_blank'>battery</a> for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes. Please note that sometimes batteries drain a little during the shipping process. Battery lasts approximately 900 frames.
+<li>?｢どｨｬ｢ Continuous video shooting is possible for approximately 20 minutes when movie recording is set to High. Otherwise, it's approximately 30 minutes.";"<li>?｢どｨｬ｢ Body Cap</li>
+<li>?｢どｨｬ｢ Camera Strap</li>
+<li>?｢どｨｬ｢ <a href='http://www.borrowlenses.com/product/EN-EL15' target=?｢どｨｬlank?｢どｨｬ・Battery</a></li>
+<li>?｢どｨｬ｢ Charger</li>";;
+;;Canon_EOS_6D_Digital_SLR;"This camera is an older version and has been updated by the <a href='https://www.borrowlenses.com/product/Canon-EOS-6D-Mark-II-Digital-SLR' target='_blank'>Canon 6D Mark II</a>, which has Dual Pixel CMOS AF and Digital IS.";"<li>?｢どｨｬ｢ UHS-I SD memory cards are <strong>not</strong> included with this rental and are rentable separately.
+<li>?｢どｨｬ｢ Lenses are <strong>not</strong> included with this rental and are <a href='http://www.borrowlenses.com/products/Category/Lenses/Mount+Type/Canon+EF+Mount/Store/Photo?sortBy=numOrders' target='_blank'>rentable separately</a>.
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/products/Lenses/Canon+EF-M+Mount/Photo?sortBy=numOrders' target='_blank'>EF-M</a> and <a href='http://www.borrowlenses.com/products/Category/Lenses/Mount+Type/Canon+EF-S+Mount/Store/Photo?sortBy=numOrders' target='_blank'>EF-S</a> lenses are <strong>not</strong> compatible with this camera.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged <a href='https://www.borrowlenses.com/product/Extra-LPE6n-Battery' target='_blank'>battery</a> for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes.
+<li>?｢どｨｬ｢ This camera is compatible with the <a href='https://www.borrowlenses.com/product/Canon_BGE13_Battery_Grip_for_Canon_EOS_6D' target='_blank'>Canon BG-E13 Battery Grip</a>, which is <strong>not</strong> included.
+<li>?｢どｨｬ｢ Continuous video shooting is possible for approximately 30 minutes (limited by product specifications, default setting).";"<li>?｢どｨｬ｢ Body Cap
+<li>?｢どｨｬ｢ Camera Strap
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Extra-LPE6n-Battery' target='_blank'>LP-E6N Battery</a>
+<li>?｢どｨｬ｢ Charger";;
+;;Hasselblad_H5D40_Medium_Format_DSLR_Camera;"Rent a Hasselblad H5D-40 Medium Format DSLR Camera. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ Hasselblad HVD 90x Viewfinder for H5D
+<li>?｢どｨｬ｢ Hasselblad 40MP Digital Back
+<li>?｢どｨｬ｢ Hasselblad H5D Battery
+<li>?｢どｨｬ｢ Hasselblad Battery Charger
+<li>?｢どｨｬ｢ Hasselblad Phocus Software CD
+<li>?｢どｨｬ｢ Hasselblad Firewire 800 Cable
+<li>?｢どｨｬ｢ Carrying Case";;
+;;Nikon_D7100_Digital_SLR;"This camera is an older version and has been updated by the <a href='https://www.borrowlenses.com/product/Nikon-D7500-Digital-SLR-Camera' target='_blank'>Nikon D7500</a>, which has 4K video, better ISO, and faster FPS. ";"<li>?｢どｨｬ｢ Memory cards are <strong>not</strong> included.
+<li>?｢どｨｬ｢ Lenses are <strong>not</strong> included.
+<li>?｢どｨｬ｢ Full frame and crop frame format F mount lenses are compatible with this camera. It is designed for crop frame (DX) format lenses. When using full frame (FX) format lenses, your effective focal length is multiplied by 1.5x.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged battery for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes. Please note that sometimes batteries drain during the shipping process.
+<li>?｢どｨｬ｢ This camera is compatible with the <a href='https://www.borrowlenses.com/product/Nikon-MBD15-Battery-Grip' target='_blank'>MB-D15 Battery Grip</a>, which is <strong>not</strong> included.
+<li>?｢どｨｬ｢ Continuous video shooting is possible for approximately 20 minutes (limited by product specifications, default setting).";"<li>?｢どｨｬ｢ Body Cap</li>
+<li>?｢どｨｬ｢ Camera Strap</li>
+<li>?｢どｨｬ｢ EN-EL 15 Battery</li>
+<li>?｢どｨｬ｢ Charger</li>";;
+;;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back;"Rent a Hasselblad H4X Medium Format Camera with 80MP IQ280 Digital Back. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ This rental is for a Hasselblad viewfinder and body paired with a Phase One sensor digital back. To learn more about the body, refer to this <a href='https://cdn.static-bl.com/images/manual/Hasselblad-H4X-Body.pdf' target='_blank'>Hasselblad H4X manual</a>. To learn more about the sensor, refer to this <a href='https://cdn.static-bl.com/images/manual/Phase-One-IQ2-Series-Guide.pdf' target='_blank'>Phase One IQ2 series manual</a>.
+<li>?｢どｨｬ｢ This is an H mount series Hasselblad. If you are looking for X mount, please see our collection of <a href='https://www.borrowlenses.com/products/Hasselblad/Hasselblad+X+Mount/Photo' target='_blank'>Hasselblad X mount cameras and lenses</a>.
+<li>?｢どｨｬ｢ About the file format: Phase One's IIQ RAW file format speeds up image capture and
+file transfer. It increases storage capacity by turning the full 16-bit image data into a compact RAW file format. The default IIQ RAW-large format (80MP) is completely lossless. Capture One software is recommended and can be <a href='https://www.phaseone.com/en/Products/Software/Capture-One-Pro/Highlights.aspx' target='_blank'>downloaded here</a>.";"<li>?｢どｨｬ｢ Hasselblad H4X Medium Format DSLR Camera Body
+<li>?｢どｨｬ｢ Hasselblad 90X-II Viewfinder (90&deg Eye Level, Optimized for 53.7x40.2mm Format)</li>
+<li>?｢どｨｬ｢ Phase One IQ280 80MP Digital Back with Mount for Hasselblad H Series</li>
+<li>?｢どｨｬ｢ Rechargeable H5D Battery (Integrated Into Grip)</li>
+<li>?｢どｨｬ｢ BP-915 for the Phase One Digital Back
+<li>?｢どｨｬ｢ Hahnel Twin V Pro Charger</li>
+<li>?｢どｨｬ｢ Hasselblad Battery Charger</li>
+<li>?｢どｨｬ｢ Body Cap</li>
+<li>?｢どｨｬ｢ Hard Case</li>";;
+;;Nikon-D610-Digital-SLR-Camera;"Rent a Nikon D610 Digital SLR Camera. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ Memory cards are not included with this rental.
+<li>?｢どｨｬ｢ Lenses are not included with this rental.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged <a href='https://www.borrowlenses.com/product/EN-EL15' target='_blank'>battery</a> for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes.
+<li>?｢どｨｬ｢?ﾇｬ・ompatible with the <a href='https://www.borrowlenses.com/product/Nikon_MBD14_Multi_Battery_Power_Pack' target='_blank'>MB-D14 Battery Grip</a>.";"<li >?｢どｨｬ｢ Body Cap</li>
+<li >?｢どｨｬ｢ Camera Strap</li>
+<li >?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/EN-EL15' target='_blank'>EN-EL15 Battery</a></li>
+<li >?｢どｨｬ｢ Charger</li>";;
+;;Nikon-D5300-Digital-SLR-Camera;"Rent a Nikon D5300 Digital SLR Camera. BorrowLenses provides rentals for professional photographers, videographers, and photography/videography hobbyists.";"<li>?｢どｨｬ｢ Memory cards are not included with this rental and are <a href='https://www.borrowlenses.com/products/Accessories+Type/Media+and+Storage/Store/Photo' target='_blank'>rentable separately</a>.
+<li>?｢どｨｬ｢ Lenses are not included with this rental and are <a href='https://www.borrowlenses.com/products/Category/Lenses/Mount+Type/Nikon+F+Mount/Store/Photo' target='_blank'>rentable separately</a>.
+<li>?｢どｨｬ｢ We make every attempt to have a fully charged <a href='https://www.borrowlenses.com/product/Extra-Nikon-ENEL14A-Battery' target='_blank'>battery</a> for you but we can?｢どｨび｢t guarantee it 100%. If you need a fully charged battery, please request it via the order notes.
+<li>?｢どｨｬ｢ Continuous video shooting at 60 FPS is possible for approximately 20 minutes (limited by product specifications, default setting).
+<li>?｢どｨｬ｢ As of this writing, we do not have a <a href='https://www.borrowlenses.com/products/Accessories+Type/Batteries+and+Power/Brand/Nikon/Store/Photo' target='_blank'>battery grip</a> compatible with this camera.";"<li >?｢どｨｬ｢ Body Cap</li>
+<li >?｢どｨｬ｢ Camera Strap</li>
+<li >?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Extra-Nikon-ENEL14A-Battery' target='_blank'>EN-EL14a Battery</a></li>
+<li >?｢どｨｬ｢ Charger</li>";;
+;;EN-EL3e;"<strong>Compatible Cameras:</strong>
+<ul>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Nikon_d700' target='_blank'> Nikon D700</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Nikon_d300s' target='_blank'> Nikon D300s</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Nikon_d300' target='_blank'> Nikon D300</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/MB-D10_D300_grip' target='_blank'> Nikon MB-D10 Battery Grip</a></li>
+<li>?｢どｨｬ｢ Nikon D200</li>
+<li>?｢どｨｬ｢ Nikon D100</li>
+<li>?｢どｨｬ｢ Nikon D90</li>
+<li>?｢どｨｬ｢ Nikon D80</li>
+<li>?｢どｨｬ｢ Nikon D70s</li>
+<li>?｢どｨｬ｢ Nikon D70</li>
+<li>?｢どｨｬ｢ Nikon D50</li>
+</ul>
+";<li>?｢どｨｬ｢ (1) Battery";;
+;;Nikon_EN-EL4a;"<b>Compatible with:</b>
+<br>
+<ul>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Nikon_d3s' target='_blank'> Nikon D3s</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Nikon_D3X' target='_blank'> Nikon D3X</a></li>
+<li>?｢どｨｬ｢ Nikon D3</li>
+<li>?｢どｨｬ｢ Nikon D2H</li>
+<li>?｢どｨｬ｢ Nikon D2X</li>
+<li>?｢どｨｬ｢ Nikon D2Xs</li>
+</ul>
+</br>";<li>?｢どｨｬ｢ (1) Battery;"<strong>Compatible Cameras:</strong>
+<ul style='margin-top:0px;padding-left:10px;'>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Nikon_d3s' target='_blank'> Nikon D3s</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Nikon_D3X' target='_blank'> Nikon D3X</a></li>
+<li>?｢どｨｬ｢ Nikon D3</li>
+<li>?｢どｨｬ｢ Nikon D2H</li>
+<li>?｢どｨｬ｢ Nikon D2X</li>
+<li>?｢どｨｬ｢ Nikon D2Xs</li>
+</ul>
+</br>
+
+<div>
+<p>
+<strong>Description</strong><br/>
+This high-capacity battery works for the cameras listed above and features lithium technology, which ensures maximum battery life and maximum power as well as no memory effect so you can recharge partially drained batteries without reducing performance.
+</p>
+</div>";
+;;lp-e8;"We make every attempt to have a fully charged battery for you but we can't guarantee it 100%. If you need a fully charged camera body, please request it via order notes. Extra batteries do not come with a spare charger. Plan accordingly.
+<p>
+<strong>Compatible Cameras:</strong>
+<p>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Canon-EOS-Rebel-T5i-Digital-SLR' target='_blank'>Canon T5i</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Canon_EOS_Rebel_T4i_Digital_SLR' target='_blank'> Canon T4i</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Canon_T3i' target='_blank'> Canon T3i</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Canon_BG_E8' target='_blank'> Canon BG-E8 Battery Grip</a></li>
+<li>?｢どｨｬ｢ Canon T2i</li>
+<p>
+Note that this battery is not compatible with the Canon T5.";<li>?｢どｨｬ｢ (1) LP-E8 Battery";;
+;;EN-EL15;"<li>?｢どｨｬ｢ This battery is for the Nikon D7200, D7100, D7000, D810, D800/E, D750, D610, D600, and Nikon 1 V1 cameras. A spare charger is <strong>not</strong> included.";"<ul>
+<li>?｢どｨｬ｢ Battery</li></ul>";;
+;;sony-battery;"<strong>Compatible Cameras:</strong>
+<ul style='margin-top:0px;padding-left:10px;'>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A900' target='_blank'> Sony A900</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A850' target='_blank'> Sony A850</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A77' target='_blank'> Sony A77</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Sony_A57' target='_blank'> Sony A57</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Sony-Alpha-SLT-A58-Digital-SLR' target='_blank'> Sony A58</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Sony_SLTA99_Digital_Camera' target='_blank'> Sony A99</a></li></ul>
+";"<strong>Compatible Cameras:</strong>
+<ul style='margin-top:0px;padding-left:10px;'>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A900' target='_blank'> Sony A900</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A850' target='_blank'> Sony A850</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A77' target='_blank'> Sony A77</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Sony_A57' target='_blank'> Sony A57</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Sony-Alpha-SLT-A58-Digital-SLR' target='_blank'> Sony A58</a></li>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Sony_SLTA99_Digital_Camera' target='_blank'> Sony A99</a></li>
+
+
+</ul>
+
+<p style='margin-bottom:0px;padding:0px;'><strong>Description</strong><br>
+ <br>
+ This is an extra battery for both the <a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A850'>Sony Alpha A850</a>,&nbsp;<a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A900'>Alpha A900</a>,&nbsp;<a></a><a href='https://www.borrowlenses.com/product/sony_cameras/Sony_A77'>Alpha A77</a>,&nbsp;<a></a><a href='https://www.borrowlenses.com/product/Sony_A57' style='line-height: 1.22;'>Alpha A57</a>,<span style='line-height: 1.22;'>&nbsp;</span><a></a><a href='https://www.borrowlenses.com/product/Sony-Alpha-SLT-A58-Digital-SLR' style='line-height: 1.22;'>Alpha A58</a>, and&nbsp;<a></a><a href='https://www.borrowlenses.com/product/Sony_SLTA99_Digital_Camera' style='line-height: 1.22;'>SLT-A99</a><span style='line-height: 1.22;'>&nbsp;</span><span style='line-height: 1.22;'>camera bodies.</span></p><p style='margin-bottom:0px;padding:0px;'>
+<br>
+</p>";
+
+;;olympus_ep2_extra_battery;"<strong>Compatible Cameras:</strong>
+<ul style='margin-top:0px;padding-left:10px;'>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/olympus_ep2' target='_blank'> Olympus E-P2 Pen Digital Camera</a></li>
+</ul>";"<strong>Compatible Cameras:</strong>
+<ul style='margin-top:0px;padding-left:10px;'>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/olympus_ep2' target='_blank'> Olympus E-P2 Pen Digital Camera</a></li>
+</ul>
+</br>
+
+<p>
+The <strong>Olympus E-P2 Pen</strong> is the camera that answers the prayers of folks who want a small, light camera with advanced DSLR-like features such as interchangeable lenses. Despite its small size it's still able to shoot both stills and video, has in-camera stabilization, integrated sensor cleaning, shoots up to ISO 6400, and offers a 3&quot; LCD too. Given the size of its micro four-thirds sensor lens focal length is double by 2x, so a 25mm lens becomes 50mm effectively.</p>";
+
+;;VW-VBG6PPK;"<li>?｢どｨｬ｢ This spare battery does <strong>not</strong> include a spare charger. Please use the charger that comes with your camera or camera rental.
+<li>?｢どｨｬ｢ Compatible with, but not limited to, the following cameras:
+<p>
+<li>HDC-TM300S
+<li>HDC-TM10S
+<li>SDR-H80K
+<li>HDC-TM700K
+<li>HDC-SDT750K
+<li>HDC-SD10K
+<li>HDC-HS700K
+<li>HDC-HS250K
+<li>SDR-H80A
+<li>SDR-H80R
+<li>SDR-H80S
+<li>HDC-SD600K
+<li>HDC-HS300K";<li>?｢どｨｬ｢ (1) Battery";;
+;;sony_battery_a55;"<li>?｢どｨｬ｢ A spare charger is <a href='https://www.borrowlenses.com/product/ProCube-Charger-Sony' target='_blank'>rentable separately</a>.
+<li>?｢どｨｬ｢ This battery is <strong>not</strong> compatible with the <a href='https://www.borrowlenses.com/product/Sony-a6600' target='_blank'>Sony a6600</a>. Please see the <a href='https://www.borrowlenses.com/product/Extra-NP-FZ100-Battery' target='_blank'>NP-FZ100 battery</a> instead.";"<li>?｢どｨｬ｢ Battery
+<p>
+Spare Charger <a href='https://www.borrowlenses.com/product/ProCube-Charger-Sony' target='_blank'>Rentable Separately</a>";;
+;;Sony_NP-FV70;"<li>?｢どｨｬ｢ Compatible with, but not limited to, the following cameras:
+<p>
+<li><a href='https://www.borrowlenses.com/product/Sony-PXWX70-Professional-XDCAM-Compact-Camcorder' target='_blank'>Sony PXW-X70 XDCAM Camcorder</a>
+<li><a href='https://www.borrowlenses.com/product/Sony-PXWX70-4K-Ready-XDCAM-Camcorder' target='_blank'>Sony PXW-X70 4K Ready XDCAM Camcorder</a>
+<li><a href='https://www.borrowlenses.com/product/Sony-FDRAX53-4K-Ultra-HD-Camcorder' target='_blank'>Sony FDR-AX53 4K Ultra HD Camcorder</a>
+<li><a href='https://www.borrowlenses.com/product/Sony_NEXVG30_Camcorder_with_18200mm_f3563_Power_Zoom_Lens' target='_blank'>Sony NEX-VG30 Camcorder</a>";<li>?｢どｨｬ｢ (1) NP-FV70 Battery (Charger <strong>Not</strong> Included),Phased out in favor of the NP-FV70A.";"Battery no longer available. For an updated version, please see the <a href=""https://www.borrowlenses.com/product/Extra-Sony-NP-FV70A-Battery"" target=""_blank"">Sony NP-FV70A Battery</a>."
+
+;;Panasonic_Battery_DMW-BLC12;"<li>?｢どｨｬ｢ A spare charger is <strong>not</strong> included with this rental.
+<li>?｢どｨｬ｢ The exact model of battery you may receive will be the BLC12PP or the BLC12E. They are interchangeable but the mAh rating is slightly higher on the E versions.
+<p>
+<strong>Compatible Cameras:</strong>
+<p>
+<li>?｢どｨｬ｢ Lumix DMC-GH2
+<li>?｢どｨｬ｢ Lumix DMC-G5
+<li>?｢どｨｬ｢ Lumix DMC-G6
+<li>?｢どｨｬ｢ Lumix DMC-FZ200
+<li>?｢どｨｬ｢ Lumix DMC-FZ300
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Panasonic-Lumix-DMCGX8-Mirrorless-Micro-43-Camera' target='_blank'>Lumix DMC-GX8</a>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Panasonic-Lumix-DMCFZ1000-Digital-Camera' target='_blank'>Lumix DMC-FZ1000</a>
+<li>?｢どｨｬ｢ <a href='https://www.borrowlenses.com/product/Panasonic-Lumix-DMC-FZ2500-Digital-Camera' target='_blank'>Lumix DMC-FZ2500</a>";"<li>?｢どｨｬ｢ (1) Battery";

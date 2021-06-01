@@ -1,0 +1,120 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Categories into BL Store
+ #% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs header_category_navigation_cameras.impex =========================");
+# Macros / Replacement Parameter definitions
+$contentCatalog=blContentCatalog
+ 
+$productCatalog=blProductCatalog
+#$productCatalogName=BL Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+ 
+$supercategories=source(code, $catalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+$contentCatalogName=BL Content Catalog
+$productCV=catalogVersion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$picture=media(code, $contentCV); 
+$siteResource=jar:com.bl.initialdata.constants.blInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
+$lang=en
+ 
+ 
+ 
+######################  All Navigation Data #####################
+######################  Level 1 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####
+#####################################################################
+ 
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name             ; &nodeRef       ; children(uid,$contentCV) ; links(&linkRef) ;  
+                                ; CamerasNavNode   ;                         ; Cameras Nav Node ; CamerasNavNode ;                          
+#####################################################################
+#### Navigation Node ENtry #### 
+#####################################################################
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]    ; $contentCV[unique=true] ; name               ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; CamerasNavNodeEntry ;                         ; Cameras Node Entry ; CamerasNavNode           ; CamerasLink                                            ;  
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name              ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
+                               ;                         ; CamerasLink      ; Cameras Node Link ; "/Cameras/c/cameras" ; cameras                                      ;          ;               ; Cameras              ;
+                               
+                               
+                               
+#####################################################################
+######################  Level 2 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####     
+#####################################################################
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]           ; $contentCV[unique=true] ; name                 ; &nodeRef                   ; links(&linkRef) ;  
+# Cameras -- all brands         
+                                ; AllCamerasNavNode          ;                         ; All Cameras Link     ; AllCamerasNavNode          
+                                ; NewArrivalsNavNode_Cameras ;                         ; New Arrivals Link    ; NewArrivalsNavNode_Cameras 
+                                ; MirrorlessNavNode          ;                         ; Mirrorless Link      ; MirrorlessNavNode          
+                                ; DSLRCamerasNavNode         ;                         ; DSLR Cameras Link    ; DSLRCamerasNavNode         
+                                ; CinemaCamerasNavNode       ;                         ; CinemaCameras Link   ; CinemaCamerasNavNode       
+                                ; CamcordersNavNode          ;                         ; Camcorders Link      ; CamcordersNavNode          
+                                ; PointShootNavNode          ;                         ; Point And Shoot Link ; PointShootNavNode          
+                                ; ActionNavNode              ;                         ; Action Link          ; ActionNavNode              
+                                ; 360NavNode                 ;                         ; 360 Link             ; 360NavNode                 
+                                ; WebcamsNavNode             ;                         ; Webcams Link         ; WebcamsNavNode             
+                                ; CameraPackagesNavNode      ;                         ; Camera Packages Link ; CameraPackagesNavNode      
+                                
+                                
+                                
+#####################################################################
+#####################################################################
+#### Navigation Node  ####      
+#####################################################################
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name        ; parent(uid, $contentCV) ; &nodeRef       ; children(uid,$contentCV)                                                                                                                                                                                 
+                         ; CamerasNavNode   ;                         ; CamersLinks ; BLCategoryNavNode       ; CamerasNavNode ; AllCamerasNavNode,NewArrivalsNavNode_Cameras,DSLRCamerasNavNode,MirrorlessNavNode,CinemaCamerasNavNode,CamcordersNavNode,PointShootNavNode,ActionNavNode,360NavNode,WebcamsNavNode,CameraPackagesNavNode 
+                         
+#####################################################################
+#### Navigation Node ENtry ####
+#####################################################################
+                         
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                ; $contentCV[unique=true] ; name                                  ; navigationNode(&nodeRef)   ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+# Cameras -- all cameras         
+                                 ; AllCamerasNavNodeEntry          ;                         ; All Cameras Navigation Node Entry     ; AllCamerasNavNode          ; AllCamerasLink                                         
+                                 ; NewArrivalsNavNodeEntry_Cameras ;                         ; New Arrivals Navigation Node Entry    ; NewArrivalsNavNode_Cameras ; NewArrivalsLink_Cameras                                
+                                 ; DSLRCamerasNavNodeEntry         ;                         ; DSLR Cameras Navigation Node Entry    ; DSLRCamerasNavNode         ; DSLRCamerasLink                                        
+                                 ; MirrorlessNavNodeEntry          ;                         ; Mirrorless Navigation Node Entry      ; MirrorlessNavNode          ; MirrorlessLink                                         
+                                 ; CinemaCamerasNavNodeEntry       ;                         ; CinemaCameras Navigation Node Entry   ; CinemaCamerasNavNode       ; CinemaCamerasLink                                      
+                                 ; CamcordersNavNodeEntry          ;                         ; Camcorders Navigation Node Entry      ; CamcordersNavNode          ; CamcordersLink                                         
+                                 ; PointShootNavNodeEntry          ;                         ; PointShoot Navigation Node Entry      ; PointShootNavNode          ; PointShootLink                                         
+                                 ; ActionNavNodeEntry              ;                         ; Action Navigation Node Entry          ; ActionNavNode              ; ActionLink                                             
+                                 ; 360NavNodeEntry                 ;                         ; 360 Navigation Node Entry             ; 360NavNode                 ; 360Link                                                
+                                 ; WebcamsNavNodeEntry             ;                         ; Webcams Navigation Node Entry         ; WebcamsNavNode             ; WebcamsLink                                            
+                                 ; CameraPackagesNavNodeEntry      ;                         ; Camera Packages Navigation Node Entry ; CameraPackagesNavNode      ; CameraPackagesLink                                     
+                                 
+                                 
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]        ; name                 ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=en]  ;  
+# Cameras -- all cameras
+;                         ; AllCamerasLink          ; AllCameras Link      ; "/rent/category/cameras" ;                            ;                                    ; All Cameras        ;
+;                         ; NewArrivalsLink_Cameras ; NewArrivals Link     ; "/rent/category/cameras/NewArrivals-Cameras" ;                            ;                                    ; New Arrivals       ;
+;                         ; DSLRCamerasLink         ; DSLRCameras Link     ; "/rent/category/cameras/dslr-cameras" ; dslr-cameras               ;                                    ; DSLR Cameras       ;
+;                         ; MirrorlessLink          ; Mirrorless Link      ; "/rent/category/cameras/mirrorless-cameras" ; mirrorless-cameras         ;                                    ; Mirrorless Cameras ;
+;                         ; CinemaCamerasLink       ; CinemaCameras Link   ; "/rent/category/cameras/professional" ; professional               ;                                    ; Cinema Cameras     ;
+;                         ; CamcordersLink          ; Camcorders Link      ; "/rent/category/cameras/camcorders" ; camcorders                 ;                                    ; Camcorders         ;
+;                         ; PointShootLink          ; Point Shoot Link     ; "/rent/category/cameras/point-and-shoot-cameras" ; point-and-shoot-cameras    ;                                    ; Point & Shoot      ;
+;                         ; ActionLink              ; Action Link          ; "/rent/category/cameras/action-and-pov-cameras" ; action-and-pov-cameras     ;                                    ; Action             ;
+;                         ; 360Link                 ; 360 Link             ; "/rent/category/cameras/vr-video-cameras" ; vr-video-cameras           ;                                    ; 360                ;
+;                         ; WebcamsLink             ; Webcams Link         ; "/rent/category/cameras/webcams" ; webcams                    ;                                    ; Webcams            ;
+;                         ; CameraPackagesLink      ; Camera Packages Link ; "/rent/category/cameras/camera_packages" ; camera_packages            ;                                    ; Camera Packages    ;
+
+                               
+#                              ; BLCategoryNavNode       ;                         ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode

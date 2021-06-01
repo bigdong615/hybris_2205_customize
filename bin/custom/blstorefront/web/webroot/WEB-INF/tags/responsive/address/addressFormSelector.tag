@@ -27,21 +27,12 @@
 			status="${not empty suggestedAddresses ? 'hasSuggestedAddresses' : ''}" />
 		<input type="hidden" name="bill_state" id="address.billstate" />
 	
-		<div id="countrySelector" data-address-code="${fn:escapeXml(addressData.id)}"
-			data-country-iso-code="${fn:escapeXml(addressData.country.isocode)}"
-			class="form-group">
-			<formElement:formSelectBox idKey="address.country"
-				labelKey="address.country" path="countryIso" mandatory="true"
-				skipBlank="false" skipBlankMessageKey="address.country"
-				items="${supportedCountries}" itemValue="isocode"
-				selectedValue="${addressForm.countryIso}"
-				selectCSSClass="form-control" />
-		</div>
+
 		<div id="i18nAddressForm" class="i18nAddressForm">
-			<c:if test="${not empty country}">
+
 				<address:addressFormElements regions="${regions}"
 					country="${country}" />
-			</c:if>
+
 		</div>
 		<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 			<div class="checkbox">
@@ -63,7 +54,7 @@
 				</c:choose>
 			</div>
 		</sec:authorize>
-		<div id="addressform_button_panel" class="form-actions">
+		<div id="addressform_button_panel show" class="form-actions">
 			<c:choose>
 				<c:when test="${edit eq true && not addressBook}">
 					<ycommerce:testId code="multicheckout_saveAddress_button">

@@ -1,0 +1,50 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Category Classifications
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs categories-classifications_en.impex =========================");
+
+# Macros / Replacement Parameter definitions
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$classificationCatalog=blClassification
+
+$classCatalogVersion=catalogversion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true,default='$classificationCatalog:1.0']
+$classSystemVersion=systemVersion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true]
+
+# Language
+$lang=en
+
+# Insert Classifications
+UPDATE ClassificationClass;code[unique=true];$classCatalogVersion;name[lang=$lang]
+                          ;CameraAttributes;;Camera Attributes
+                          ;LensAttributes;;Lens Attributes
+                          ;MemoryCardAttributes;;Memory Card Attributes
+                          ;Monitors_VideoAttributes;; Monitors/Video Attributes
+                          ;ProductionAttributes;;Production Attributes
+                          ;AudioAttributes;;Audio Attributes
+                          ;LightingAttributes;;Lighting Attributes
+                          ;Batteries_PowerAttributes;;Batteries & Power Attributes
+                          ;MountAttribute;;Mount Attribute
+
+
+# Insert Classification Attributes
+UPDATE ClassificationAttribute;code[unique=true];$classSystemVersion;name[lang=$lang]
+                                ;Format Coverage;;Format Coverage
+                                ;Max Aperture;;Max Aperture
+                                ;Sensor Size;;Sensor Size
+                                ;Video Resolution;;Video Resolution
+                                ;Megapixels;;Megapixels
+                                ;Prime/Zoom;;Prime/Zoom
+                                ;AF/MF;;AF/MF
+                                ;Media & Storage Type;;Media & Storage Type
+                                ;Accessories Type;;Accessories Type
+                                ;Cameras Type;;Cameras Type
+                                ;Lenses Type;;Lenses Type
+                                ;Audio Type;;Audio Type
+                                ;Battery Type;;Battery Type
+                                ;Support Type;;Support Type
+                                ;Microphone Type;;Microphone Type
+                                ;Lighting Type;;Lighting Type
+                                ;Mount Type;;Mount Type

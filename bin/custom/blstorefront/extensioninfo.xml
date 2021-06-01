@@ -5,9 +5,7 @@
 <extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
                                                                                                                                                                                                                                                                                                                                                                                                                                                 	
    <extension abstractclassprefix="Generated" classprefix="BlStorefront" name="blstorefront" usemaven="false"> 
-    
-	   <requires-extension name="selectivecartsplitlistaddon"/>
-	   <requires-extension name="profiletagaddon"/>                
+
 	   <requires-extension name="personalizationaddon"/>
 	   <requires-extension name="smarteditaddon"/>
 	   <requires-extension name="promotionenginesamplesaddon"/>
@@ -21,7 +19,6 @@
 	   <requires-extension name="personalizationsampledataaddon"/>
 	   <requires-extension name="pcmbackofficesamplesaddon"/>
 	   <requires-extension name="notificationaddon"/>
-	   <requires-extension name="customerinterestsaddon"/>
 	   <requires-extension name="customercouponsamplesaddon"/>
 	   <requires-extension name="customercouponaddon"/>
 	   <requires-extension name="consignmenttrackingaddon"/>

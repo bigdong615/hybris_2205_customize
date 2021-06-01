@@ -11,175 +11,148 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<cms:pageSlot position="TopHeaderSlot" var="component" element="div" >
-	<cms:component component="${component}" />
-</cms:pageSlot>
+      <cms:pageSlot position="PromoBannerSlot" var="component" element="div" > 
+         <cms:component component="${component}" />
+    </cms:pageSlot>
 
-<header class="js-mainHeader">
-	<nav class="navigation navigation--top hidden-xs hidden-sm">
-		<div class="row">
-			<div class="col-sm-12 col-md-4">
-				<div class="nav__left js-site-logo">
-					<cms:pageSlot position="SiteLogo" var="logo" limit="1">
-						<cms:component component="${logo}" element="div" class="yComponentWrapper"/>
+<nav class="navbar navbar-expand-lg">
+<div class="container">
+<a class="mobileNavToggle d-inline-block d-lg-none" href="#my-menu"><span></span></a>
+<cms:pageSlot position="SiteLogoHeaderSlot" var="logo" limit="1">
+						<cms:component component="${logo}"/>
 					</cms:pageSlot>
-				</div>
-			</div>
-			<div class="col-sm-12 col-md-8">
-				<div class="nav__right">
-					<ul class="nav__links nav__links--account">
-						<c:if test="${empty hideHeaderLinks}">
-							<c:if test="${uiExperienceOverride}">
-								<li class="backToMobileLink">
-									<c:url value="/_s/ui-experience?level=" var="backToMobileStoreUrl" />
-									<a href="${fn:escapeXml(backToMobileStoreUrl)}">
-										<spring:theme code="text.backToMobileStore" />
-									</a>
-								</li>
-							</c:if>
+ <div class="mobile-right d-inline-block d-lg-none">  
+            <li class="nav-item dropdown  nav-account">
+                 <a class="nav-link dropdown-toggle" href="#" id="accountdropdown" data-bs-toggle="dropdown" aria-expanded="false"><spring:theme code="text.account.yourAccount"/></a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountdropdown">
+                   <h5><spring:theme code="text.account.yourAccount"/></h5>
+                    <ul>
+                      <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                        <li><a class="dropdown-item js-signUp-popup"  data-link="<c:url value='/login/register'/>" href="#" data-bs-toggle="modal"
+                         data-bs-target="#signUp"><spring:theme code="text.header.account.create.account" /></a></li>
+           	            <li><a class="dropdown-item js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#" data-bs-toggle="modal"
+           	             data-bs-target="#signIn"><spring:theme code="text.header.account.sign.in" /></a></li>
+                      </sec:authorize>
+                      <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                      <c:url value="/logout" var="signoutUrl" />
+                        <li><a class="dropdown-item" href="${signoutUrl}"><spring:theme code="text.header.account.sign.out" /></a></li>
+                      </sec:authorize>
+                      </ul>
+                  </div>
 
-							<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-								<c:set var="maxNumberChars" value="25" />
-								<c:if test="${fn:length(user.firstName) gt maxNumberChars}">
-									<c:set target="${user}" property="firstName"
-										value="${fn:substring(user.firstName, 0, maxNumberChars)}..." />
-								</c:if>
+            </li>
+            <!-- BL-380 : Mini Cart Section for Mobile Device -->
+            <div class="nav-cart">
+	            <cms:pageSlot position="MobileMiniCartSlot" var="component">
+					<cms:component component="${component}"/>
+			    </cms:pageSlot>
+	   		</div>
+  </div>	
+  <!-- Mobile Menu -->	
+  <nav id="my-menu">	
+  	<ul>
+  		<!-- BL-377 Mobile Navigation bar -->
+  		 <cms:pageSlot position="NavigationBarMobileSlot" var="component">
+			<cms:component component="${component}" />	
+         </cms:pageSlot>
+         <!-- BL-388 Mobile device - Header - Ship or PickUp section -->
+         <li>
+			<cms:pageSlot position="MobileHeaderLinkForShipOrPickupSlot" var="component" class="">
+				<cms:component component="${component}" />
+			</cms:pageSlot>
+		</li>
+		<!-- BL-385 Mobile device - Header - Support section -->
+		<li>
+			<cms:pageSlot position="MobileHeaderLinkForSupportSlot" var="component" class="">
+				<cms:component component="${component}" />
+		   </cms:pageSlot>
+		</li>
+		
+		<li>
+			<cms:pageSlot position="MobileHeaderLinkForAccountSlot" var="component" class="">
+				<cms:component component="${component}" />
+		   </cms:pageSlot>
+		</li>
+		<li>
+			<span>
+				<cms:pageSlot position="MobileHeaderBottomInfo" var="component" class="">
+				<cms:component component="${component}" element="div" class="mnav-third"/>
+		   </cms:pageSlot>
+			</span>
+		</li>
+  	</ul>
+  </nav>
+  <div class="collapse navbar-collapse" id="blnav">
+  	<ul class="navbar-nav me-auto mb-2 mb-md-0" role="menu">
+	  	<cms:pageSlot position="NavigationBarSlot" var="component" class="">
+			<cms:component component="${component}" />
+		</cms:pageSlot>
+	</ul>
+	<ul class="navbar-nav navbar-right ms-auto mb-2 mb-md-0">
+		<li class="nav-item dropdown menu-large">
+       <cms:pageSlot position="HeaderLinkForShipOrPickupSlot" var="component" class="">
+			<cms:component component="${component}" />
+	   </cms:pageSlot>
+	   </li>
+	   <li class="nav-item dropdown menu-large">
+       <cms:pageSlot position="HeaderLinkForSupportSlot" var="component" class="">
+			<cms:component component="${component}" />
+	   </cms:pageSlot>
+	   </li>
+	   <li class="nav-item dropdown nav-account">
+	   	<cms:pageSlot position="MyAccountSlot" var="component" class="">
+			<cms:component component="${component}" />
+	   </cms:pageSlot>
+	   </li>
+	   <li class="nav-item nav-cart">
+	   <cms:pageSlot position="MiniCartSlot" var="component" class="">
+			<cms:component component="${component}" />
+	   </cms:pageSlot>      
+	   </li>
+    </ul>
+  </div>			
+					
+</div>
+</nav>
 
-								<li class="logged_in js-logged_in">
-									<ycommerce:testId code="header_LoggedUser">
-										<spring:theme code="header.welcome" arguments="${user.firstName},${user.lastName}" />
-									</ycommerce:testId>
-								</li>
-							</sec:authorize>
+<!-- modal for sign in -->
+   <div class="modal fade signinbox" id="signIn" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+      </div>
+   </div>
+    <!-- modal for sign up -->
+    <div class="modal fade signinbox" id="signUp" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+       <div class="modal-dialog modal-dialog-centered modal-sm">
+       </div>
+    </div>
 
-							 <cms:pageSlot position="HeaderLinks" var="link">
-								 <cms:component component="${link}" element="li" />
-							 </cms:pageSlot>
-
-							<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')" >
-								<li class="liOffcanvas">
-									<ycommerce:testId code="header_Login_link">
-										<c:url value="/login" var="loginUrl" />
-										<a href="${fn:escapeXml(loginUrl)}">
-											<spring:theme code="header.link.login" />
-										</a>
-									</ycommerce:testId>
-								</li>
-							</sec:authorize>
-
-							<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')" >
-								<li class="liOffcanvas">
-									<ycommerce:testId code="header_signOut">
-										<c:url value="/logout" var="logoutUrl"/>
-										<a href="${fn:escapeXml(logoutUrl)}">
-											<spring:theme code="header.link.logout" />
-										</a>
-									</ycommerce:testId>
-								</li>
-							</sec:authorize>
-
-						</c:if>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</nav>
-	<%-- a hook for the my account links in desktop/wide desktop--%>
-	<div class="hidden-xs hidden-sm js-secondaryNavAccount collapse" id="accNavComponentDesktopOne">
-		<ul class="nav__links">
-
-		</ul>
-	</div>
-	<div class="hidden-xs hidden-sm js-secondaryNavCompany collapse" id="accNavComponentDesktopTwo">
-		<ul class="nav__links js-nav__links">
-
-		</ul>
-	</div>
-	<nav class="navigation navigation--middle js-navigation--middle">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="mobile__nav__row mobile__nav__row--table">
-					<div class="mobile__nav__row--table-group">
-						<div class="mobile__nav__row--table-row">
-							<div class="mobile__nav__row--table-cell visible-xs hidden-sm">
-								<button class="mobile__nav__row--btn btn mobile__nav__row--btn-menu js-toggle-sm-navigation"
-										type="button">
-									<span class="glyphicon glyphicon-align-justify"></span>
-								</button>
-							</div>
-
-							<div class="mobile__nav__row--table-cell visible-xs mobile__nav__row--seperator">
-								<ycommerce:testId code="header_search_activation_button">
-									<button	class="mobile__nav__row--btn btn mobile__nav__row--btn-search js-toggle-xs-search hidden-sm hidden-md hidden-lg" type="button">
-										<span class="glyphicon glyphicon-search"></span>
-									</button>
-								</ycommerce:testId>
-							</div>
-
-							<c:if test="${empty hideHeaderLinks}">
-								<ycommerce:testId code="header_StoreFinder_link">
-									<div class="mobile__nav__row--table-cell hidden-sm hidden-md hidden-lg mobile__nav__row--seperator">
-										<c:url value="/store-finder" var="storeFinderUrl"/>
-										<a href="${fn:escapeXml(storeFinderUrl)}" class="mobile__nav__row--btn mobile__nav__row--btn-location btn">
-											<span class="glyphicon glyphicon-map-marker"></span>
-										</a>
-									</div>
-								</ycommerce:testId>
-							</c:if>
-
-							<cms:pageSlot position="MiniCart" var="cart" element="div" class="miniCartSlot componentContainer mobile__nav__row--table hidden-sm hidden-md hidden-lg">
-								<cms:component component="${cart}" element="div" class="mobile__nav__row--table-cell" />
-							</cms:pageSlot>
-
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row desktop__nav">
-				<div class="nav__left col-xs-12 col-sm-6">
-					<div class="row">
-						<div class="col-sm-2 hidden-xs visible-sm mobile-menu">
-							<button class="btn js-toggle-sm-navigation" type="button">
-								<span class="glyphicon glyphicon-align-justify"></span>
-							</button>
-						</div>
-						<div class="col-sm-10">
-							<div class="site-search">
-								<cms:pageSlot position="SearchBox" var="component">
-									<cms:component component="${component}" element="div"/>
-								</cms:pageSlot>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="nav__right col-xs-6 col-xs-6 hidden-xs">
-					<ul class="nav__links nav__links--shop_info">
-						<li>
-							<c:if test="${empty hideHeaderLinks}">
-								<ycommerce:testId code="header_StoreFinder_link">
-									<div class="nav-location hidden-xs">
-										<c:url value="/store-finder" var="storeFinderUrl"/>
-										<a href="${fn:escapeXml(storeFinderUrl)}" class="btn">
-											<span class="glyphicon glyphicon-map-marker"></span>
-										</a>
-									</div>
-								</ycommerce:testId>
-							</c:if>
-						</li>
-						<li>
-							<cms:pageSlot position="MiniCart" var="cart" element="div" class="componentContainer">
-								<cms:component component="${cart}" element="div"/>
-							</cms:pageSlot>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</nav>
-	<a id="skiptonavigation"></a>
-	<nav:topNavigation />
-</header>
-
-<cms:pageSlot position="BottomHeaderSlot" var="component" element="div"	class="container-fluid">
-	<cms:component component="${component}" />
-</cms:pageSlot>
+    <!-- modal for forgot password -->
+        <div class="modal fade signinbox" id="forgotPass" tabindex="-1" aria-hidden="true">
+           <div class="modal-dialog modal-dialog-centered modal-sm">
+              <div class="modal-content">
+                 <div class="modal-header">
+                    <h5 class="modal-title text-center"><img class="logo" src="${themeResourcePath}/assets/bl-logo@2x.png"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+                 <div class="modal-body">
+                    <h5>
+                       <spring:theme code="forgottenPwd.header"/>
+                    </h5>
+                    <p class="body14">
+                       <spring:theme code="forgottenPwd.description"/>
+                    </p>
+                    <form>
+                       <input type="text" class="form-control mb-3" placeholder="register.email">
+                       <button type="submit" class="btn btn-block btn-primary mt-4">
+                          <spring:theme code="forgottenPwd.title"/>
+                       </button>
+                       <p class="body14 text-center mb-0 mt-4">
+                           <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>" data-bs-dismiss="modal">
+                                   <spring:theme code="login.login" />
+                            </a>
+                       </p>
+                    </form>
+                 </div>
+              </div>
+           </div>
+        </div>

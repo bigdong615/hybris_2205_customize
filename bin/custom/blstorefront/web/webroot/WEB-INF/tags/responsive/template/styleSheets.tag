@@ -13,7 +13,23 @@
 	</c:when>
 	<c:otherwise>
 		<%-- Theme CSS files --%>
-		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/style.css"/>
+		<!-- Bootstrap core CSS -->
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/splide-core.min.css"/>
+		<!-- Mobile Nav -->
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/mmenu.css"/>
+		<!-- Favicons -->
+		<link rel="apple-touch-icon" href="#" sizes="180x180">
+    	<link rel="icon" href="#" sizes="32x32" type="image/png">
+    	<link rel="icon" href="#" sizes="16x16" type="image/png">
+    	<!-- Custom styles for this template -->
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/mburger.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/mmenu-light.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/cart.css"/>
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/blstyle.css"/>
+		<%--  BL Custom CSS file--%>
+		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/blcustom.css"/>
 		<%--  AddOn Common CSS files --%>
 		<c:forEach items="${addOnCommonCssPaths}" var="addOnCommonCss">
 			<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(addOnCommonCss)}"/>

@@ -1,0 +1,67 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs core_data_accountpage.impex =========================");
+
+$contentCatalog=blContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+# Language
+$lang=en
+
+# Import config properties into impex macros
+UPDATE GenericItem[processor=de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor] ; pk[unique=true]
+$jarResourceCms=$config-jarResourceCmsValue
+
+
+INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]             ; name                    ; frontendTemplateName              ; restrictedPageTypes(code) ; active[default=true]
+                           ;                    ; AccountPageTemplate     ; Account Page Template   ; account/accountLayoutPage         ; ContentPage           ; false
+
+UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true]                     ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
+                    ;                         ; AccountPageTemplate        ; $jarResourceCms/structure-view/structure_accountPageTemplate.vm
+
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='AccountPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
+                              ; PromoBannerSlot                    ;                                                                       ;                           ; wide
+                              ; SiteLogoHeaderSlot                 ;                                                                       ;                           ; logo
+                              ; HeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; HeaderLinkForShipOrPickupSlot      ;                                                                       ;                           ; headerlink
+                              ; NavigationPromoSlot                ;                                                                       ;                           ; logo
+                              ; NavigationBarSlot                  ;                                                                       ;                           ; navigation
+                              ; NavigationBarMobileSlot            ;                                                                       ;                           ; navigation
+                              ; MiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; FooterSlot                         ;                                                                       ;                           ; footer
+                              ; FooterSubscriptionSlot             ;                                                                       ;                           ; wide
+                              ; FooterCopyRightslot                ;                                                                       ;                           ; wide
+                              ; MyAccountSlot     ;                                                                       ;                           ; navigation
+                              ; HomePageRentingGearIsEasyTitleSlot ;                                                                       ;                           ; wide
+                              ; HomePageRentingGearSectionSlot     ;                                                                       ;                           ; wide
+                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
+                              ; BodyContent                        ;                                                                         ;                           ;wide
+
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='AccountPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
+                                     ;                         ; PromoBannerSlot-AccountPage               ; PromoBannerSlot               ;                                                                           ; PromoBannerSlot                          ; true
+                                     ;                         ; SiteLogoHeaderSlot-AccountPage            ; SiteLogoHeaderSlot            ;                                                                           ; SiteLogoHeaderSlot                       ; true
+                                     ;                         ; NavigationPromoSlot-AccountPage           ; NavigationPromoSlot           ;                                                                           ; NavigationPromoSlot                      ; true
+                                     ;                         ; NavigationBarSlot-AccountPage             ; NavigationBarSlot             ;                                                                           ; NavigationBarSlot                        ; true
+                                     ;                         ; NavigationBarMobileSlot-AccountPage       ; NavigationBarMobileSlot       ;                                                                           ; NavigationBarMobileSlot                  ; true
+                                     ;                         ; HeaderLinkForSupportSlot-AccountPage      ; HeaderLinkForSupportSlot      ;                                                                           ; HeaderLinkForSupportSlot                 ; true
+                                     ;                         ; HeaderLinkForShipOrPickupSlot-AccountPage ; HeaderLinkForShipOrPickupSlot ;                                                                           ; HeaderLinkForShipOrPickupSlot            ; true
+                                     ;                         ; MiniCartSlot-AccountPage                  ; MiniCartSlot                  ;                                                                           ; MiniCartSlot                             ; true
+                                     ;                         ; FooterSlot-AccountPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true
+                                     ;                         ; FooterSubscriptionSlot-AccountPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true
+                                     ;                         ; FooterCopyRightslot-AccountPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true
+                                     ;                         ; MyAccountSlot-AccountPage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                     ;                         ; HomePageRentingGearIsEasyTitleSlot-AccountPage ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true
+                                     ;                         ; HomePageRentingGearSectionSlot-AccountPage     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
+
+# Functional Content Pages
+INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; name                           ; masterTemplate(uid,$contentCV)       ; label                    ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false'] ; 
+                          ;                         ; address-book                 ; Address Book Page              ; AccountPageTemplate                  ; address-book
+                          ;                         ; add-edit-address             ; Add Edit Address Page          ; AccountPageTemplate                  ; add-edit-address
+                          ;                         ; orders                       ; Order History Page             ; AccountPageTemplate                  ; orders
+                          ;                         ; updatePassword               ; Update Forgotten Password Page ; AccountPageTemplate                  ; updatePassword
+                          ;                         ;saved-carts                  ;Saved Carts Page                 ;AccountPageTemplate                   ;saved-carts
+                          ;                         ; bookmarks                    ; Book Marks Page                 ;AccountPageTemplate                  ;bookmarks
+                          ;                         ; verificationImages           ; Verification Images Page        ; AccountPageTemplate                  ;verificationImages
+                          ;                         ; creditCarts                  ; Credit Carts Pages              ; AccountPageTemplate                 ; creditCarts
+

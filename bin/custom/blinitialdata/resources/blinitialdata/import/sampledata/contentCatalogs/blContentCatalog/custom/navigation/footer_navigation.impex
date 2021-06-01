@@ -1,0 +1,95 @@
+
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs footer_navigation.impex =========================");
+$contentCatalog=blContentCatalog
+$contentCatalogName=bl Content Catalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$productCatalog=blProductCatalog
+$productCatalogName=bl Product Catalog
+$productCV=catalogVersion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$picture=media(code, $contentCV); 
+$image=image(code, $contentCV); 
+$media=media(code, $contentCV); 
+$page=page(uid, $contentCV); 
+$contentPage=contentPage(uid, $contentCV); 
+$product=product(code, $productCV)
+$category=category(code, $productCV)
+$siteResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
+$productResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/productCatalogs/$productCatalog
+$jarResourceCms=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/cockpits/cmscockpit
+$medias=medias(code, $contentCV); 
+$mediaContainer=media(qualifier, $contentCV); 
+$siteUid=bl
+$lang=en
+ 
+ 
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]      ; $contentCV[unique=true] ; name                     ; title[lang=$lang] ; parent(uid, $contentCV) ; &nodeRef              ; children(uid,$contentCV) 
+                                ; FooterNavNode         ;                         ; Footer Pages             ; Footer            ; BLNavNode               ; FooterNavNode         ;                          
+                                ; AboutNavNode          ;                         ; About Nav Node           ; About             ; FooterNavNode           ; AboutNavNode          ;                          
+                                ; SupportNavNode        ;                         ; Support Nav Node         ; Support           ; FooterNavNode           ; SupportNavNode        ;                          
+#                               ; BorrowLensesNavNode   ;                         ; Borrow Lenses Nav Node   ; FooterNavNode     ; BorrowLensesNavNode     ;                       
+                                ; WhyBLNavNode          ;                         ; Why BL Nav Node          ; Why BL?           ; AboutNavNode            ; WhyBLNavNode          ;                          
+                                ; TestimonialsNavNode   ;                         ; Testimonials Nav Node    ; Testimonials      ; AboutNavNode            ; TestimonialsNavNode   ;                          
+                                ; BLPartnernersNavNode  ;                         ; BLPartnerners Nav Node   ; BL Partners       ; AboutNavNode            ; BLPartnernersNavNode  ;                          
+                                ; AffiliatesNavNode     ;                         ; Affiliates Nav Node      ; Affiliates        ; AboutNavNode            ; AffiliatesNavNode     ;                          
+                                ; PressNavNode          ;                         ; Press Nav Node           ; Press             ; AboutNavNode            ; PressNavNode          ;                          
+                                ; CareersNavNode        ;                         ; Careers Nav Node         ; Careers           ; AboutNavNode            ; CareersNavNode        ;                          
+                                ; HelpNavNode           ;                         ; Help Nav Node            ; Help              ; SupportNavNode          ; HelpNavNode           ;                          
+                                ; HowItWorksNavNode     ;                         ; How It Works Nav Node    ; How it works      ; SupportNavNode          ; HowItWorksNavNode     ;                          
+                                ; PickUpLocationNavNode ;                         ; PickUp Location Nav Node ; Pickup Locations  ; SupportNavNode          ; PickUpLocationNavNode ;                          
+                                ; LeaseAggrementNavNode ;                         ; Lease Aggrement Nav Node ; Lease Agreement   ; SupportNavNode          ; LeaseAggrementNavNode ;                          
+                                ; DamageWaiverNavNode   ;                         ; Damage Waiver Nav Node   ; Damage Waiver     ; SupportNavNode          ; DamageWaiverNavNode   ;                          
+                                ; ContactUsNavNode      ;                         ; ContactUs Nav Node       ; Contact us        ; SupportNavNode          ; ContactUsNavNode      ;                          
+                                
+## entries of the above navigation nodes ##
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]           ; $contentCV[unique=true] ; name                           ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; AboutNavNodeEntry          ;                         ; About Nav Node Entry           ; AboutNavNode             ; AboutNavLink                                           
+                                 ; SupportNavNodeEntry        ;                         ; Support Nav Node Entry         ; SupportNavNode           ; SupportNavLink                                         
+#                                ; BorrowLensesNavNodeEntry   ;                         ; Borrow Lenses  Nav Node Entry  ; BorrowLensesNavNode      ; BorrowLensesNavLink                                    
+                                 ; WhyBLNavNodeEntry          ;                         ; Why BL Nav Node Entry          ; WhyBLNavNode             ; WhyBLNavLink                                           
+                                 ; TestimonialsNavNodeEntry   ;                         ; Testimonials Nav Node Entry    ; TestimonialsNavNode      ; TestimonialsNavLink                                    
+                                 ; BLPartnernersNavNodeEntry  ;                         ; BL Partnerners Nav Node Entry  ; BLPartnernersNavNode     ; BLPartnernersNavLink                                   
+                                 ; AffiliatesNavNodeEntry     ;                         ; Affiliates Nav Node Entry      ; AffiliatesNavNode        ; AffiliatesNavLink                                      
+                                 ; PressNavNodeEntry          ;                         ; Press Nav Node Entry           ; PressNavNode             ; PressNavLink                                           
+                                 ; CareersNavNodeEntry        ;                         ; Careers Nav Node Entry         ; CareersNavNode           ; CareersNavLink                                         
+                                 ; HelpNavNodeEntry           ;                         ; Help Nav Node Entry            ; HelpNavNode              ; HelpNavLink                                            
+                                 ; HowItWorksNavNodeEntry     ;                         ; HowIt Works Nav Node Entry     ; HowItWorksNavNode        ; HowItWorksNavLink                                      
+                                 ; PickUpLocationNavNodeEntry ;                         ; PickUp Location Nav Node Entry ; PickUpLocationNavNode    ; PickUpLocationNavLink                                  
+                                 ; LeaseAggrementNavNodeEntry ;                         ; Lease Aggrement Nav Node Entry ; LeaseAggrementNavNode    ; LeaseAggrementNavLink                                  
+                                 ; DamageWaiverNavNodeEntry   ;                         ; Damage Waiver Nav Node Entry   ; DamageWaiverNavNode      ; DamageWaiverNavLink                                    
+                                 ; ContactUsNavNodeEntry      ;                         ; ContactUs Nav Node Entry       ; ContactUsNavNode         ; ContactUsNavLink                                       
+                                 
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]      ; name                     ; url ; &linkRef              ; &componentRef         ; target(code)[default='sameWindow'] 
+                               ;                         ; AboutNavLink          ; About Nav Link           ; "#" ; AboutNavLink          ; AboutNavLink          
+                               ;                         ; SupportNavLink        ; Support Nav Link         ; "#" ; SupportNavLink        ; SupportNavLink        
+#                              ;                         ; BorrowLensesNavLink   ; Borrow Lenses Nav Link   ; "#" ; BorrowLensesNavLink   ; BorrowLensesNavLink   
+                               ;                         ; WhyBLNavLink          ; Why BL Nav Link          ; "#" ; WhyBLNavLink          ; WhyBLNavLink          
+                               ;                         ; TestimonialsNavLink   ; Testimonials Nav Link    ; "#" ; TestimonialsNavLink   ; TestimonialsNavLink   
+                               ;                         ; BLPartnernersNavLink  ; BL Partnerners Nav Link  ; "#" ; BLPartnernersNavLink  ; BLPartnernersNavLink  
+                               ;                         ; AffiliatesNavLink     ; Affiliates Nav Link      ; "#" ; AffiliatesNavLink     ; AffiliatesNavLink     
+                               ;                         ; PressNavLink          ; Press Nav Link           ; "#" ; PressNavLink          ; PressNavLink          
+                               ;                         ; CareersNavLink        ; Careers Nav Link         ; "#" ; CareersNavLink        ; CareersNavLink        
+                               ;                         ; HelpNavLink           ; Help Nav Link            ; "#" ; HelpNavLink           ; HelpNavLink           
+                               ;                         ; HowItWorksNavLink     ; HowIt Works Nav Link     ; "#" ; HowItWorksNavLink     ; HowItWorksNavLink     
+                               ;                         ; PickUpLocationNavLink ; PickUp Location Nav Link ; "#" ; PickUpLocationNavLink ; PickUpLocationNavLink 
+                               ;                         ; LeaseAggrementNavLink ; Lease Aggrement Nav Link ; "#" ; LeaseAggrementNavLink ; LeaseAggrementNavLink 
+                               ;                         ; DamageWaiverNavLink   ; Damage Waiver Nav Link   ; "#" ; DamageWaiverNavLink   ; DamageWaiverNavLink   
+                               ;                         ; ContactUsNavLink      ; ContactUs Nav Link       ; "#" ; ContactUsNavLink      ; ContactUsNavLink      
+                               
+                               
+INSERT_UPDATE FooterNavigationComponent ; $contentCV[unique=true] ; uid[unique=true]          ; wrapAfter ; &componentRef             ; showLanguageCurrency ; navigationNode(&nodeRef) 
+                                        ;                         ; FooterNavigationComponent ; 6         ; FooterNavigationComponent ; false                ; FooterNavNode            ;  
+                                        
+INSERT_UPDATE CustomFooterCopyRightComponent ; $contentCV[unique=true] ; uid[unique=true]             ; name                                       ; &componentRef                ; footerCopyRight                                             ; footerLinks                                                                                      
+                                             ;                         ; CopyRightParagraphComponent1 ; Copy Right Paragraph Component for footer1 ; CopyRightParagraphComponent1 ; "<p class=""body14 text-start"">©2021 BorrowLenses.com</p>" ; "<p class=""body14 text-end""><a href=""#"">Terms</a>&emsp;•&emsp;<a href=""#"">Privacy</a></p>" 
+                                             
+                                             
+                                             
+                                             
+INSERT_UPDATE CustomFooterSubscriptionComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                          ; &componentRef               ; placeHolder         ; footerAddress                                                                                                                                                                                                              
+                                                ;                         ; FooterSubscriptionComponent ; Footer Subscription Component ; FooterSubscriptionComponent ; "Get email updates" ; "<p><b>BorrowLenses</b>San Francisco, CA<br>Boston, MA</p><p class=""links""><a href=""tel:844.853.6737"">844.853.6737</a><br><a href=""mailto:info@borrowlenses.com"" class=""email-link"">info@borrowlenses.com</a></p>" 
+                                                
+###  Assign Components to the Slots  ###        
+UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; cmsComponents(uid,$contentCV) 
+                   ;                         ; FooterSlot             ; FooterNavigationComponent     
+                   ;                         ; FooterCopyRightslot    ; CopyRightParagraphComponent1  
+                   ;                         ; FooterSubscriptionSlot ; FooterSubscriptionComponent   

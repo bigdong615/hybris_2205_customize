@@ -1,0 +1,225 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Suppliers
+# English Localisation
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs suppliers_en.impex =========================");
+
+# Macros / Replacement Parameter definitions
+
+
+$productCatalog=blProductCatalog
+
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+# Language
+$lang=en
+
+# Create Categories
+UPDATE Category;$catalogVersion;code[unique=true];name[lang=$lang]
+               ;;brands;Brands
+               ;;nikon;Nikon
+               ;;canon;Canon
+               ;;Leica;Leica
+               ;;Mamiya;Mamiya
+               ;;Profoto;Profoto
+               ;;Lensbaby;Lensbaby
+               ;;Zeiss;Zeiss
+               ;;redrock_micro;Redrock Micro
+               ;;aquatech;Aquatech
+               ;;Olympus;Olympus
+               ;;Pentax;Pentax
+               ;;Panasonic;Panasonic
+               ;;Sony;Sony
+               ;;RED;RED
+               ;;Sigma;Sigma
+               ;;Fuji;Fuji
+               ;;GoPro;GoPro
+               ;;Tamron;Tamron
+               ;;Manfrotto;Manfrotto
+               ;;Rokinon;Rokinon
+               ;;Tokina;Tokina
+               ;;pocket_wizard;Pocket Wizard
+               ;;Hasselblad;Hasselblad
+               ;;Metabones;Metabones
+               ;;paul_buff;Paul Buff
+               ;;Samsung;Samsung
+               ;;Schneider;Schneider
+               ;;Lowepro;Lowepro
+               ;;Quantum;Quantum
+               ;;Sandisk;SanDisk
+               ;;ARRI;ARRI
+               ;;Elinchrom;Elinchrom
+               ;;Kessler;Kessler
+               ;;Litepanels;Litepanels
+               ;;Matthews;Matthews
+               ;;Bowens;Bowens
+               ;;Cinevate;Cinevate
+               ;;Fiilex;Fiilex
+               ;;Gura_Gear;Gura Gear
+               ;;Induro;Induro
+               ;;Photoflex;Photoflex
+               ;;Veydra;Veydra
+               ;;Westcott;Westcott
+               ;;Zacuto;Zacuto
+               ;;Broncolor;Broncolor
+               ;;Gary_Fong;Gary Fong
+               ;;Kino_Flo;Kino Flo
+               ;;Voigtlander;Voigtlander
+               ;;Lowel;Lowel
+               ;;Marshall;Marshall
+               ;;Lexar;Lexar
+               ;;Lytro;Lytro
+               ;;Peleng;Peleng
+               ;;Transcend;Transcend
+               ;;Anton_Bauer;Anton Bauer
+               ;;Blackmagic;Blackmagic
+               ;;Cooke;Cooke
+               ;;DJI;DJI
+               ;;Glidecam;Glidecam
+               ;;SmallHD;SmallHD
+               ;;AJA;AJA
+               ;;Atomos;Atomos
+               ;;Wooden_Camera;Wooden Camera
+               ;;OConnor;OConnor
+               ;;Sachtler;Sachtler
+               ;;IKAN;Ikan
+               ;;Lectrosonics;Lectrosonics
+               ;;Steadicam;Steadicam
+               ;;Zoom;Zoom
+               ;;Paralinx;Paralinx
+               ;;Porta_Brace;Porta Brace
+               ;;Shure;Shure
+               ;;Sound_Devices;Sound Devices
+               ;;Tascam;Tascam
+               ;;Teradek;Teradek
+               ;;Freefly;Freefly
+               ;;Bolex;Bolex
+               ;;SLR_Magic;SLR Magic
+               ;;Think_Tank;Think Tank
+               ;;Tiffen;Tiffen
+               ;;EasyRig;Easyrig
+               ;;Sekonic;Sekonic
+               ;;CameraSlingers;CameraSlingers
+               ;;Beachtek;Beachtek
+               ;;Casio;Casio
+               ;;Sennheiser;Sennheiser
+               ;;SunBounce;Sunbounce
+               ;;Drop_It_Modern;Drop It Modern
+               ;;Lastolite;Lastolite
+               ;;Switronix;Switronix
+               ;;Adaptimax;Adaptimax
+               ;;BW;B+W
+               ;;Bower;Bower
+               ;;Heden;Heden
+               ;;Rode;Rode
+               ;;Video_Devices;Video Devices
+               ;;kodak;Kodak
+               ;;impact;Impact
+               ;;wimberley;Wimberley
+               ;;360fly;360fly
+               ;;voyager;Voyager
+               ;;blue;Blue
+               ;;kenko;Kenko
+               ;;joby;Joby
+               ;;giottos;Giottos
+               ;;kirk;Kirk
+               ;;epson;Epson
+               ;;creative_light;Creative Light
+               ;;custom_brackets;Custom Brackets
+               ;;crumpler;Crumpler
+               ;;nodal_ninja;Nodal Ninja
+               ;;gitzo;Gitzo
+               ;;black_rapid;Black Rapid
+               ;;datacolor;Datacolor
+               ;;omni_tracker;Omni-Tracker
+               ;;singh_ray;Singh-Ray
+               ;;novoflex;Novoflex
+               ;;plustek;Plustek
+               ;;wendt;Wendt
+               ;;audio_technica;Audio-Technica
+               ;;skimmer_sack;SkimmerSack
+               ;;apple;Apple
+               ;;ray_flash;Ray Flash
+               ;;x_rite;X-Rite
+               ;;miller;Miller
+               ;;chimera;Chimera
+               ;;stackshot;StackShot
+               ;;gigapan;Giga Pan
+               ;;ktek;K-Tek
+               ;;heliopan;Heliopan
+               ;;lumapro;LumaPro
+               ;;lenscoat;LensCoat
+               ;;mtf_services;MTF Services
+               ;;genaray;Genaray
+               ;;vello;Vello
+               ;;fotodiox;Fotodiox
+               ;;noga;Noga
+               ;;countryman;Countryman
+               ;;cinemilled;CineMilled
+               ;;hive;Hive
+               ;;delkin;Delkin
+               ;;convergent_design;Convergent Design
+               ;;timbuk2;Timbuk2
+               ;;exf_series;EXF Series
+               ;;pearstone;Pearstone
+               ;;boommate;BoomMate
+               ;;atomic;Atomic
+               ;;inside_line_equipment;Inside Line Equipment
+               ;;bolt;Bolt
+               ;;denecke;Denecke
+               ;;cinebags;CineBags
+               ;;rogue;Rogue
+               ;;lumedyne;Lumedyne
+               ;;genus;Genus
+               ;;moment;Moment
+               ;;pixelstick;Pixelstick
+               ;;syrp;Syrp
+               ;;modern_studio;Modern Studio
+               ;;benro;Benro
+               ;;mophie_juice;Mophie Juice
+               ;;cineroid;Cineroid
+               ;;letus35;Letus35
+               ;;pelican;Pelican
+               ;;celestron;Celestron
+               ;;velbon;Velbon
+               ;;angenieux;Angenieux
+               ;;hoya;Hoya
+               ;;peak design;Peak Design
+               ;;digital_sputnik;Digital Sputnik
+               ;;orah;Orah
+               ;;videostitch;VideoStitch
+               ;;360rize;360RIZE
+               ;;rhino;Rhino
+               ;;borrowlenses;Borrowlenses
+               ;;really_right_stuff;Really Right Stuff
+               ;;bright_tangerine;Bright Tangerine
+               ;;other;Other
+               ;;hahnel;Hahnel
+               ;;canare;Canare
+               ;;sling-studio;SlingStudio
+               ;;livestream;Livestream
+               ;;ready_rig;Ready Rig
+               ;;insta360;Insta360
+               ;;core-swx;Core SWX
+               ;;aputure;Aputure
+               ;;intellytech;Intellytech
+               ;;zhiyun-tech;Zhiyun-Tech
+               ;;da-lite;Da-Lite
+               ;;quasar_science;Quasar Science
+               ;;angelbird;Angelbird
+               ;;tilta;Tilta
+               ;;venus_optics;Venus Optics
+               ;;eartec;Eartec
+               ;;deity;Deity
+               ;;kupo;Kupo
+               ;;inovativ;Inovativ
+               ;;smallrig;SmallRig
+               ;;litegear;LiteGear
+               ;;avenger;Avenger
+               ;;watson;Watson
+               ;;godox;Godox
+               ;;pacific_image;Pacific Image
+               ;;flashery;Flashery
+               ;;zillow;Zillow
+               ;;edelkrone;Edelkrone

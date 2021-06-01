@@ -95,7 +95,7 @@ public class CancelReturnPageController extends AbstractSearchPageController
 	 * 		if the CMS content is not found
 	 */
 	@RequireHardLogIn
-	@RequestMapping(value = "{returnCode:.*}/cancel", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "{returnCode:.*}/cancel", method = { RequestMethod.POST, RequestMethod.GET })//NOSONAR
 	public String showCancelReturnPage(@PathVariable(value = "returnCode") final String returnCode, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException // NOSONAR
 	{

@@ -5,12 +5,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-		
-	<context:annotation-config/> 
+
+	<context:annotation-config/>
 
 	<alias alias="simpleSuggestionFacade" name="defaultSimpleSuggestionFacade"/>
 	<bean id="defaultSimpleSuggestionFacade" class="com.bl.facades.suggestion.impl.DefaultSimpleSuggestionFacade" >
@@ -68,16 +69,6 @@
 	<alias name="defaultGenderDataPopulator" alias="genderDataPopulator"/>
 	<bean id="defaultGenderDataPopulator" class="com.bl.facades.populators.GenderDataPopulator" >
 		<property name="typeService" ref="typeService"/>
-	</bean>
-
-	<bean id="apparelProductPopulator" class="com.bl.facades.populators.ApparelProductPopulator" >
-		<property name="genderConverter" ref="genderConverter"/>
-	</bean>
-
-	<!-- Add the apparelProductPopulator to the productConverter -->
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="productConverter"/>
-		<property name="add" ref="apparelProductPopulator"/>
 	</bean>
 
 	<!-- accelerator Image Format Mappings -->
@@ -182,4 +173,294 @@
 	</bean>
 
 	<bean id="genderData" class="com.bl.facades.product.data.GenderData" scope="prototype"/>
+
+
+	<!--BL-30 : This is created to override register method to perform bl specific registration. -->
+	<alias name="defaultBlCustomerFacade" alias="customerFacade"/>
+	<bean id="defaultBlCustomerFacade" class="com.bl.facades.customer.impl.DefaultBlCustomerFacade"
+		parent="defaultCustomerFacade">
+	</bean>
+
+
+	<!--This is created to Override OOB Populator to use custom logic for Price and Images which retrieving from solr-->
+
+	<bean id="blSearchResultProductPopulator"
+		class="com.bl.facades.populators.BlSearchResultProductPopulator">
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="imageFormatMapping" ref="imageFormatMapping"/>
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="productDataUrlResolver" ref="productDataUrlResolver"/>
+		<property name="productFeatureListPopulator" ref="productFeatureListPopulator"/>
+		<property name="productService" ref="productService"/>
+		<property name="stockConverter" ref="stockConverter"/>
+		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
+		<property name="commercePriceService" ref="commercePriceService"/>
+	</bean>
+
+
+	<alias name="blSearchResultVariantProductPopulator" alias="blSearchResultVariantProductPopulator"/>
+	<bean id="blSearchResultVariantProductPopulator"
+		class="com.bl.facades.populators.BlSearchResultVariantProductPopulator"
+		parent="blSearchResultProductPopulator">
+		<property name="categoryManager" ref="solrFirstVariantCategoryManager"/>
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+	</bean>
+
+
+
+	<alias name="blDefaultCommerceSearchResultProductConverter" alias="commerceSearchResultProductConverter"/>
+	<bean id="blDefaultCommerceSearchResultProductConverter" parent="defaultCommerceSearchResultProductConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.product.data.ProductData"/>
+		<property name="populators">
+			<list>
+				<ref bean="blCommerceSearchResultProductPopulator"/>
+				<ref bean="searchResultPickupAvailabilityPopulator"/>
+			</list>
+		</property>
+	</bean>
+
+
+	<alias name="blSearchResultVariantOptionsProductPopulator" alias="blCommerceSearchResultProductPopulator"/>
+	<bean id="blSearchResultVariantOptionsProductPopulator"
+		class="com.bl.facades.populators.BlSearchResultVariantOptionsProductPopulator"
+		parent="blSearchResultVariantProductPopulator">
+		<property name="variantsService" ref="variantsService"/>
+		<property name="configurationService" ref="configurationService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+	</bean>
+
+	<!--Added for BL-75-->
+	<bean class="de.hybris.platform.cmsfacades.types.service.impl.DefaultComponentTypeAttributeStructure" p:typecode="Category" p:qualifier="footerContent">
+		<property name="populators">
+			<set>
+				<ref bean="richTextComponentTypeAttributePopulator" />
+			</set>
+		</property>
+	</bean>
+
+
+
+	<!--BL-80 Added for BlSearchFilterPopulator to add the parameters to solr query-->
+	<alias name="blSearchFiltersPopulator" alias="commerceSearchFiltersPopulator" />
+	<bean id="blSearchFiltersPopulator" class="com.bl.facades.populators.BlSearchFiltersPopulator" parent="defaultCommerceSearchFiltersPopulator" >
+		<property name="commerceCategoryService" ref="commerceCategoryService"/>
+	</bean>
+
+	<alias name="blSolrSearchQueryDecoderPopulator" alias="solrSearchQueryDecoderPopulator"/>
+	<bean id="blSolrSearchQueryDecoderPopulator"
+		class="com.bl.facades.populators.BlSolrSearchQueryDecoderPopulator" parent="defaultSolrSearchQueryDecoderPopulator"/>
+
+	<!-- BL-174:This populator is created for populating product flags-->
+	<bean id="blProductTagPopulator" class="com.bl.facades.populators.BlProductTagPopulator">
+	</bean>
+
+	<alias name="abstractBlProductPopulator" alias="commonBlProductPopulator"/>
+	<bean id="abstractBlProductPopulator" class="com.bl.facades.populators.AbstractBlProductPopulator"/>
+	
+	<!-- BL-166 :This populator is created for populating bl related specific product attribute-->
+	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator" parent="abstractBlProductPopulator">
+		<property name="imageConverter" ref="imageConverter"/>
+		<property name="modelService" ref="modelService"/>
+	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
+	</bean>
+
+	<alias name="defaultBlSerialProductDataPopulator" alias="blSerialProductDataPopulator"/>
+	<bean id="defaultBlSerialProductDataPopulator" class="com.bl.facades.populators.BlSerialProductPopulator"
+		parent="abstractBlProductPopulator">
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+	</bean>
+	
+	<!-- BL-166:This bean is override to configure bl related populator-->
+	<alias name="defaultProductConfiguredPopulator" alias="productConfiguredPopulator"/>
+	<bean id="productVariantConfiguredPopulator" parent="defaultProductConfiguredPopulator">
+		<property name="populators">
+			<map key-type="de.hybris.platform.commercefacades.product.ProductOption" merge="true">
+				<entry key="REQUIRED_DATA" value-ref="blProductPopulator"/>
+				<entry key="REQUIRED_SERIAL_DATA" value-ref="blSerialProductDataPopulator"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- BL-166 :This bean is override to resolve redirection url-->
+	<alias name="defaultBlProductDataUrlResolver" alias="productDataUrlResolver"/>
+	<bean id="defaultBlProductDataUrlResolver"
+		class="com.bl.facades.resolver.DefaultBlProductDataUrlResolver"
+		parent="defaultProductDataUrlResolver">
+	</bean>
+
+	<!--<BL-467 entry for clear cart>-->
+	<alias name="defaultBlCartFacade" alias="cartFacade" />
+	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
+		<property name="blCartService" ref="cartService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+	</bean>
+
+	<!--BL-80 entry for Used Gear Category Model Resolver-->
+	<alias name="defaultBlUsedGearAndRentalGearCategoryModelUrlResolver" alias="categoryModelUrlResolver"/>
+	<bean id="defaultBlUsedGearAndRentalGearCategoryModelUrlResolver"
+		class="com.bl.facades.resolver.DefaultBlUsedGearAndRentalGearCategoryModelUrlResolver" parent="defaultCategoryModelUrlResolver">
+		<property name="usedGearPattern" value="/buy/category/{category-code}"/>
+		<property name="rentalGearPattern" value="/rent/category/{parentcategory}/{category-code}"/>
+		<property name="defaultPattern" value="/rent/category/{category-code}"/>
+	</bean>
+
+	<!-- BL-52 : Overrided OOTB Product Carousel Facade to add extra ProductOptions to populate Product Data. -->
+	<alias name="defaultblProductCarouselFacade" alias="productCarouselFacade"/>
+	<bean id="defaultblProductCarouselFacade" class="com.bl.facades.product.carousel.DefaultBlProductCarouselFacade" parent="defaultProductCarouselFacade"/>
+	
+	<!-- BL-52 : Added Existing Populator to populate Products required data in Carousel Component -->
+	<bean parent="configurablePopulatorModification">
+		<property name="target" ref="productConfiguredPopulator" />
+		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
+		<property name="key" value="REQUIRED_DATA" />
+		<property name="add" ref="blProductPopulator" />
+	</bean>
+	
+	<bean parent="configurablePopulatorModification">
+		<property name="target" ref="productConfiguredPopulator" />
+		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
+		<property name="key" value="REQUIRED_SERIAL_DATA" />
+		<property name="add" ref="blSerialProductDataPopulator" />
+	</bean>
+	
+	<!-- To populate the stock data -->
+	<alias name="defaultBlStockPopulator" alias="blStockPopulator"/>
+    <bean id="defaultBlStockPopulator" parent="abstractPopulatingConverter"
+          class="com.bl.facades.populators.BlStockPopulator">
+        <property name="baseStoreService" ref="baseStoreService"/>
+        <property name="blCommerceStockService" ref="blCommerceStockService"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
+    </bean>
+	
+	<alias name="defaultStockConverter" alias="stockConverter"/>
+    <bean id="defaultStockConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="de.hybris.platform.commercefacades.product.data.StockData"/>
+        <property name="populators">
+            <list>
+                <ref bean="blStockPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
+    <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
+    <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
+    
+    <!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
+    <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
+    <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
+
+	<!--Shipping-->
+	<!--BlShippingGroupDataPopulatorConverter-->
+	<alias name="defaultBlShippingGroupDataPopulator" alias="blShippingGroupPopulator"/>
+	<bean id="defaultBlShippingGroupDataPopulator" class="com.bl.facades.populators.BlShippingGroupPopulator"/>
+
+	<alias name="defaultBlShippingGroupDataConverter" alias="blShippingGroupConverter"/>
+	<bean id="defaultBlShippingGroupDataConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlShippingGroupData" />
+		<property name="populators">
+			<list>
+				<ref bean="blShippingGroupPopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<!--BlPartnerPickUpStorePopulatorConverter-->
+	<alias name="defaultBlPartnerPickUpStorePopulator" alias="blPartnerPickUpStorePopulator"/>
+	<bean id="defaultBlPartnerPickUpStorePopulator" class="com.bl.facades.populators.BlPartnerPickUpStorePopulator"/>
+
+	<alias name="defaultBlPartnerPickUpStoreConverter" alias="blPartnerPickUpStoreConverter"/>
+	<bean id="defaultBlPartnerPickUpStoreConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlPartnerPickUpStoreData" />
+		<property name="populators">
+			<list>
+				<ref bean="blPartnerPickUpStorePopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- BlZoneDeliveryModePopulatorConverter-->
+	<alias name="defaultBlZoneDeliveryModePopulator" alias="zoneDeliveryModePopulator"/>
+	<bean id="defaultBlZoneDeliveryModePopulator" class="com.bl.facades.populators.BlZoneDeliveryModePopulator"/>
+
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="defaultZoneDeliveryModeConverter"/>
+		<property name="add"  ref="defaultBlZoneDeliveryModePopulator"/>
+	</bean>
+
+	<!--BlPickUpZoneDeliveryModePopulatorConverter-->
+	<alias name="defaultBlPickUpZoneDeliveryModePopulator" alias="defaultBlZoneDeliveryModePopulator"/>
+	<bean id="defaultBlPickUpZoneDeliveryModePopulator" class="com.bl.facades.populators.BlPickUpZoneDeliveryModePopulator">
+			<property name="addressConverter" ref="addressConverter"/>
+	</bean>
+
+	<alias name="defaultBlPickUpZoneDeliveryModeConverter" alias="blPickUpZoneDeliveryModeConverter"/>
+	<bean id="defaultBlPickUpZoneDeliveryModeConverter" parent="defaultZoneDeliveryModeConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData" />
+		<property name="populators">
+			<list>
+				<ref bean="defaultBlPickUpZoneDeliveryModePopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<!--BlRushDeliveryModePopulatorConverter-->
+	<alias name="defaultBlRushDeliveryModePopulator" alias="defaultBlZoneDeliveryModePopulator"/>
+	<bean id="defaultBlRushDeliveryModePopulator" class="com.bl.facades.populators.BlRushDeliveryModePopulator"/>
+
+	<alias name="defaultBlRushDeliveryModeConverter" alias="blRushDeliveryModeConverter"/>
+	<bean id="defaultBlRushDeliveryModeConverter" parent="defaultZoneDeliveryModeConverter">
+		<property name="targetClass" value="com.bl.facades.shipping.data.BlRushDeliveryModeData" />
+		<property name="populators">
+			<list>
+				<ref bean="defaultBlRushDeliveryModePopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<!--Cart Calculation Strategy for calculating delivery cost-->
+	<alias name="checkoutFacade" alias="checkoutFacade"/>
+	<bean id="checkoutFacade" class="com.bl.facades.shipping.impl.DefaultBlCheckoutFacade" parent="defaultCheckoutFacade">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blZoneDeliveryModeConverter" ref="defaultZoneDeliveryModeConverter"/>
+		<property name="blPickUpZoneDeliveryModeConverter" ref="blPickUpZoneDeliveryModeConverter"/>
+		<property name="blRushDeliveryModeConverter" ref="blRushDeliveryModeConverter"/>
+		<property name="blShippingGroupConverter" ref="blShippingGroupConverter"/>
+		<property name="blPartnerPickUpStoreConverter" ref="blPartnerPickUpStoreConverter"/>
+	</bean>
+
+	<alias name="defaultBlFindDeliveryCostStrategy" alias="findDeliveryCostStrategy"/>
+	<bean id="defaultBlFindDeliveryCostStrategy"
+		  class="com.bl.facades.strategy.DefaultBlFindDeliveryCostStrategy"
+		  parent="defaultFindDeliveryCostStrategy"/>
+
+	<alias name="defaultBlAddressPopulator" alias="addressPopulator"/>
+	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
+
+	<alias name="defaultBlAddressReversePopulator" alias="addressReversePopulator"/>
+	<bean id="defaultBlAddressReversePopulator" class="com.bl.facades.populators.BlAddressReversePopulator" parent="defaultAddressReversePopulator"/>
+	<!-- ENd Shipping-->
+	
+	<!-- BL-542 : Adding cart populator in the converter list to populate total damage waiver price on checkout step 2. -->
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="extendedCartConverter"/>
+		<property name="add" ref="cartPopulator"/>
+	</bean>
+
+
+	<!--Added these populators to segregate the Rental and Used Gear code on PLP and SLP to improve performance-->
+
+	<alias name="blProductCategorySearchPagePopulator" alias="productCategorySearchPagePopulator"/>
+	<bean id="blProductCategorySearchPagePopulator"
+		class="com.bl.facades.populators.BlProductCategorySearchPagePopulator" parent="defaultProductCategorySearchPagePopulator">
+	</bean>
+
+	<alias name="blSearchResponseQueryPopulator" alias="commerceSearchResponseQueryPopulator" />
+	<bean id="blSearchResponseQueryPopulator" class="com.bl.facades.populators.BlSearchResponseQueryPopulator" parent="defaultCommerceSearchResponseQueryPopulator"/>
+
+
+
 </beans>

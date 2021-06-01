@@ -29,7 +29,7 @@
                             <div class="headline"><spring:theme code="checkout.multi.paymentMethod"/></div>
 
 							    <ycommerce:testId code="paymentDetailsForm">
-							
+
 								<form:form id="silentOrderPostForm" name="silentOrderPostForm" modelAttribute="sopPaymentDetailsForm" action="${paymentFormUrl}" method="POST">
 									<input type="hidden" name="orderPage_receiptResponseURL" value="${fn:escapeXml(silentOrderPageData.parameters['orderPage_receiptResponseURL'])}"/>
 									<input type="hidden" name="orderPage_declineResponseURL" value="${fn:escapeXml(silentOrderPageData.parameters['orderPage_declineResponseURL'])}"/>
@@ -41,25 +41,25 @@
 										<input type="hidden" id="${fn:escapeXml(entry.key)}" name="${fn:escapeXml(entry.key)}" value="${fn:escapeXml(entry.value)}"/>
 									</c:forEach>
 									<input type="hidden" value="${fn:escapeXml(silentOrderPageData.parameters['billTo_email'])}" name="billTo_email" id="billTo_email">
-						
+
 									<div class="form-group">
 										<c:if test="${not empty paymentInfos}">
 											<button type="button" class="btn btn-default btn-block js-saved-payments"><spring:theme code="checkout.multi.paymentMethod.addPaymentDetails.useSavedCard"/></button>
-										</c:if>	
+										</c:if>
 									</div>
 
 									<div class="form-group">
 										<formElement:formSelectBox idKey="card_cardType" labelKey="payment.cardType" path="card_cardType" selectCSSClass="form-control" mandatory="true" skipBlank="false" skipBlankMessageKey="payment.cardType.pleaseSelect" items="${sopCardTypes}" tabindex="1"/>
 									</div>
-	
+
 									<div class="form-group">
 										<formElement:formInputBox idKey="card_nameOnCard" labelKey="payment.nameOnCard" path="card_nameOnCard" inputCSS="form-control" tabindex="2" mandatory="false" />
 									</div>
-	 
+
 									<div class="form-group">
 										<formElement:formInputBox idKey="card_accountNumber" labelKey="payment.cardNumber" path="card_accountNumber" inputCSS="form-control" mandatory="true" tabindex="3" autocomplete="off" />
 									</div>
-	
+
 									<fieldset id="startDate">
 										<label for="" class="control-label"><spring:theme code="payment.startDate"/></label>
 										<div class="row">
@@ -90,7 +90,7 @@
 											<formElement:formInputBox idKey="card_cvNumber" labelKey="payment.cvn" path="card_cvNumber" inputCSS="form-control" mandatory="true" tabindex="8" />
 										</div>
 									</div>
-									
+
 									<div class="row">
 										<div class="col-xs-6">
 											<div id="issueNum">
@@ -103,7 +103,7 @@
 										<formElement:formCheckbox idKey="savePaymentMethod" labelKey="checkout.multi.sop.savePaymentInfo" path="savePaymentInfo"
 					                          inputCSS="" labelCSS="" mandatory="false" tabindex="10"/>
 									</sec:authorize>
-									
+
                                     <hr/>
                                     <div class="headline">
                                         <spring:theme code="checkout.multi.paymentMethod.addPaymentDetails.billingAddress"/>
@@ -129,12 +129,12 @@
                                             labelKey="checkout.multi.sop.useMyDeliveryAddress"
                                             tabindex="11"/>
                                     </c:if>
-				  
+
                                     <input type="hidden" value="${fn:escapeXml(silentOrderPageData.parameters['billTo_email'])}" class="text" name="billTo_email" id="billTo_email">
                                     <address:billAddressFormSelector supportedCountries="${supportedBillingCountries}" regions="${regions}" tabindex="12"/>
-				
-									<p class="help-block"><spring:theme code="checkout.multi.paymentMethod.seeOrderSummaryForMoreInformation"/></p>							
-								
+
+									<p class="help-block"><spring:theme code="checkout.multi.paymentMethod.seeOrderSummaryForMoreInformation"/></p>
+
 									</form:form>
 							</ycommerce:testId>
                          </div>
@@ -173,7 +173,7 @@
 							</c:forEach>
 						</div>
 					</div>
-				</c:if>	
+				</c:if>
 
 		   </jsp:body>
 		</multiCheckout:checkoutSteps>
@@ -189,5 +189,4 @@
         </cms:pageSlot>
     </div>
 </div>
-
 </template:page>

@@ -15,7 +15,7 @@ public final class BlLogger
     private static final String CODE_DELIMITER = "-";
     private static final String CODE_PREFIX = "HYB";
     private static final String INVALID_CHAR = "%";
-    private static final String ARGS_REGEX = "\\{\\d*\\}";
+    private static final String ARGS_PATTERN = "\\{\\d*\\}";
     private static final String ARGS_PLACE_HOLDER = "%s";
 
     private BlLogger()
@@ -95,9 +95,9 @@ public final class BlLogger
         // Replace null message with Empty string
         String parsedMessage = StringUtils.defaultString(message);
         // Replace % Characters with Empty string. Because it's causing the String.format() to throw an exception
-        parsedMessage = parsedMessage.replaceAll(INVALID_CHAR, StringUtils.EMPTY);
+        parsedMessage = parsedMessage.replace(INVALID_CHAR, StringUtils.EMPTY);
         // Convert all valid {} into %s
-        parsedMessage = parsedMessage.replaceAll(ARGS_REGEX, ARGS_PLACE_HOLDER);
+        parsedMessage = parsedMessage.replaceAll(ARGS_PATTERN, ARGS_PLACE_HOLDER);//NOSONAR
         // Fill %s place holder(s) with value(s) from the <code>args</code>  parameter.
         return String.format(parsedMessage, args);
     }

@@ -4,60 +4,77 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="component" tagdir="/WEB-INF/tags/shared/component" %>
+<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <c:choose>
 	<c:when test="${not empty productData}">
-		<div class="carousel__component">
-			<div class="carousel__component--headline">${fn:escapeXml(title)}</div>
-
-			<c:choose>
-				<c:when test="${component.popup}">
-					<div class="carousel__component--carousel js-owl-carousel js-owl-lazy-reference js-owl-carousel-reference">
-						<div id="quickViewTitle" class="quickView-header display-none">
-							<div class="headline">
-								<span class="headline-text"><spring:theme code="popup.quick.view.select"/></span>
-							</div>
-						</div>
-						<c:forEach items="${productData}" var="product">
-
-							<c:url value="${product.url}/quickView" var="productQuickViewUrl"/>
-							<div class="carousel__item">
-								<a href="${productQuickViewUrl}" class="js-reference-item">
-									<div class="carousel__item--thumb">
-										<product:productPrimaryReferenceImage product="${product}" format="product"/>
+		<h5>${title}</h5>
+		<div id="gear-slider" class="splide mt-4">
+			<div class="splide__track">
+				<ul class="splide__list">
+					<c:forEach items="${productData}" var="product">
+						<li class="splide__slide">
+							<div class="card">
+							<c:choose>
+									<c:when	test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
+										<span class="badge badge-limited-stock"><spring:theme
+												code="text.product.tile.flag.only.left"
+												arguments="${product.stock.stockLevel}" /></span>
+									</c:when>
+									<c:when	test="${product.stock.stockLevelStatus.code eq 'outOfStock'}">
+										<span class="badge badge-out-of-stock"><spring:theme
+												code="text.product.tile.flag.outOfStock"
+												arguments="${product.stock.stockLevel}" /></span>
+									</c:when>
+									<c:otherwise>
+										<c:if test="${product.productTagValues ne null}">
+											<span class="badge badge-new">${product.productTagValues}</span>
+										</c:if>
+									</c:otherwise>
+								</c:choose>
+								
+								<span class="bookmark"></span>
+								<div class="card-slider splide">
+									<div class="splide__track">
+										<ul class="splide__list">
+											<c:forEach items="${product.images}" var="productImage">
+												<c:if test="${productImage.format eq 'product' and productImage.imageType eq 'GALLERY'}">
+													<c:url value="${productImage.url}" var="primaryImageUrl" />
+	                       							<c:set value="this is alternate" var="altTextHtml"/>
+	                       							<c:url var="rentUrl" value="/rent/product/${product.code}"/>
+													<li class="splide__slide"><a href="${rentUrl}"><img src="${primaryImageUrl}"></a></li>
+												</c:if>
+											</c:forEach>
+										</ul>
 									</div>
-									<div class="carousel__item--name">${fn:escapeXml(product.name)}</div>
-									<div class="carousel__item--price"><format:fromPrice priceData="${product.price}"/></div>
-								</a>
+								</div>
+								<p class="overline"><a href="#">${product.manufacturer}</a></p>
+								<c:url var="rentalPDPUrl" value="/rent/product/${product.code}"/>
+								<h6 class="product"><a href="${rentalPDPUrl}"><c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a></h6>
+                                <h6 class="price"><format:price priceData="${product.price}"/> <span class="period">
+                                <c:choose>
+                                	<c:when test="${not empty rentalDate.selectedFromDate and not empty rentalDate.selectedToDate}">
+                                	${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}
+                                	</c:when>
+                                	<c:otherwise>
+                                		<spring:theme code="text.product.tile.rental.days" arguments="${rentalDate.numberOfDays}"/>    
+                                	</c:otherwise>
+                                </c:choose>              
+                                </span></h6>
+                                <cart:blRentalGearAddToRental productData="${product}"/>
 							</div>
-						</c:forEach>
-					</div>
-				</c:when>
-				<c:otherwise>
-					<div class="carousel__component--carousel js-owl-carousel js-owl-default">
-						<c:forEach items="${productData}" var="product">
-
-							<c:url value="${product.url}" var="productUrl"/>
-
-							<div class="carousel__item">
-								<a href="${productUrl}">
-									<div class="carousel__item--thumb">
-										<product:productPrimaryImage product="${product}" format="product"/>
-									</div>
-									<div class="carousel__item--name">${fn:escapeXml(product.name)}</div>
-									<div class="carousel__item--price"><format:fromPrice priceData="${product.price}"/></div>
-								</a>
-							</div>
-						</c:forEach>
-					</div>
-				</c:otherwise>
-			</c:choose>
+						</li>
+					</c:forEach>
+				</ul>
+			</div>
 		</div>
 	</c:when>
-
 	<c:otherwise>
 		<component:emptyComponent/>
 	</c:otherwise>

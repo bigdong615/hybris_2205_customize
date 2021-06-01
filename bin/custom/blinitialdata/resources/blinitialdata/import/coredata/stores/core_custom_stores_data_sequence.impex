@@ -2,12 +2,27 @@
 #% impex.enableExternalImpExSyntaxParsing(true)
 #% impex.enableExternalDataCodeExecution(true)
 
-#% impex.info("=============================== Importing content from BLInitialData core_custom_stores_data_sequence =========================");
+#% impex.info("=============================== Importing content from BLInitialData coredata/stores core_custom_stores_data_sequence =========================");
 
 #mention custom paths here 
-$storesCustomPath = /blinitialdata/import/coredata/stores/bl/custom
+$storesCustomPath = /blinitialdata/import/coredata/stores/bl/custom/solr
+$storesCustomSitePath = /blinitialdata/import/coredata/stores/bl/custom/site
+$storesCustomStorePath = /blinitialdata/import/coredata/stores/bl/custom/store
 
- 
-#Mention here store related custom impexes in sequence
- 
+# Solr Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomPath/solr.impex"), "utf-8", 0, 0);
 
+# Solr Localization Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomPath/solr_en.impex"), "utf-8", 0, 0);
+
+# Store Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomStorePath/store.impex"), "utf-8", 0, 0);
+
+# Store Localization Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomStorePath/store_en.impex"), "utf-8", 0, 0);
+
+# Site Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomSitePath/site.impex"), "utf-8", 0, 0);
+
+# Site Localization Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomSitePath/site_en.impex"), "utf-8", 0, 0);

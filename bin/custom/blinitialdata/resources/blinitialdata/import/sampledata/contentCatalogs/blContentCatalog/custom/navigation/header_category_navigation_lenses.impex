@@ -1,0 +1,122 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Categories into BL Store
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs header_category_navigation_lenses.impex =========================");
+# Macros / Replacement Parameter definitions
+$contentCatalog=blContentCatalog
+ 
+$productCatalog=blProductCatalog
+#$productCatalogName=BL Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+ 
+$supercategories=source(code, $catalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+#$contentCatalogName=BL Content Catalog
+$productCV=catalogVersion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$picture=media(code, $contentCV); 
+$siteResource=jar:com.bl.initialdata.constants.blInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
+$lang=en
+ 
+######################  All Navigation Data #####################
+######################  Level 1 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####
+#####################################################################
+ 
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name            ; &nodeRef      ; children(uid,$contentCV) ; links(&linkRef) ;  
+                                ; LensesNavNode    ;                         ; Lenses Nav Node ; LensesNavNode ;                          
+#####################################################################
+#### Navigation Node ENtry #### 
+#####################################################################
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]   ; $contentCV[unique=true] ; name              ; navigationNode(&nodeRef) ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+                                 ; LensesNavNodeEntry ;                         ; Lenses Node Entry ; LensesNavNode            ; LensesLink                                             ;  
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name             ; url ; category(Category.code, Category.$productCV) ; &linkRef ; &componentRef ; linkName[lang=$lang] ; target(code)[default='sameWindow'] 
+                               ;                         ; LensesLink       ; Lenses Node Link ; "/Lenses/c/lenses" ; lenses                                       ;          ;               ; Lenses               ;
+                               
+                               
+                               
+#####################################################################
+######################  Level 2 Navigation Data #####################
+#####################################################################
+#####################################################################
+#### Navigation Node  ####     
+#####################################################################
+INSERT_UPDATE CMSNavigationNode ; uid[unique=true]          ; $contentCV[unique=true] ; name                   ; &nodeRef                  ; links(&linkRef) ;  
+# Cameras -- all brands         
+                                ; AllLensesNavNode          ;                         ; All Cameras Link       ; AllLensesNavNode          
+                                ; NewArrivalsNavNode_Lenses ;                         ; New Arrivals Link      ; NewArrivalsNavNode_Lenses 
+                                ; WideAngleLensesNavNode    ;                         ; Wide Angle Lenses Link ; WideAngleLensesNavNode    
+                                ; StandardLensesNavNode     ;                         ; Standard Lenses Link   ; StandardLensesNavNode     
+                                ; TelephotoLensesNavNode    ;                         ; Telephoto Lenses Link  ; TelephotoLensesNavNode    
+                                ; CineLensesNavNode         ;                         ; Cine Lenses Link       ; CineLensesNavNode         
+                                ; MacroNavNode              ;                         ; Macro Link             ; MacroNavNode              
+                                ; FisheyeNavNode            ;                         ; Fisheye Link           ; FisheyeNavNode            
+                                ; TiltShiftNavNode          ;                         ; Tilt Shift Link        ; TiltShiftNavNode          
+                                ; TelescopesNavNode         ;                         ; Telescopes Link        ; TelescopesNavNode         
+                                ; LensAdaptersNavNode       ;                         ; LensAdapters Link      ; LensAdaptersNavNode       
+                                ; LensExtendersNavNode      ;                         ; LensExtenders Link     ; LensExtendersNavNode      
+                                ; LensPackagesNavNode       ;                         ; LensPackages Link      ; LensPackagesNavNode       
+                                
+#####################################################################
+#####################################################################
+#### Navigation Node  ####      
+#####################################################################
+UPDATE CMSNavigationNode ; uid[unique=true] ; $contentCV[unique=true] ; name        ; parent(uid, $contentCV) ; &nodeRef      ; children(uid,$contentCV)                                                                                                                                                                                                                                     
+                         ; LensesNavNode    ;                         ; LensesLinks ; BLCategoryNavNode       ; LensesNavNode ; AllLensesNavNode,NewArrivalsNavNode_Lenses,WideAngleLensesNavNode,StandardLensesNavNode,TelephotoLensesNavNode,CineLensesNavNode,MacroNavNode,FisheyeNavNode,TiltShiftNavNode,TelescopesNavNode,LensAdaptersNavNode,LensExtendersNavNode,LensPackagesNavNode 
+                         
+                         
+#####################################################################
+#### Navigation Node ENtry ####
+#####################################################################
+                         
+INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]               ; $contentCV[unique=true] ; name                               ; navigationNode(&nodeRef)  ; item(CMSLinkComponent.uid,CMSLinkComponent.$contentCV) ;  
+# Cameras -- all cameras         
+                                 ; AllLensesNavNodeEntry          ;                         ; All Lenses Navigation Node Entry   ; AllLensesNavNode          ; AllLensesLink                                          
+                                 ; NewArrivalsNavNodeEntry_Lenses ;                         ; New Arrivals Navigation Node Entry ; NewArrivalsNavNode_Lenses ; NewArrivalsLink_Lenses                                 
+                                 ; WideAngleLensesNavNodeEntry    ;                         ; Wide Angle Lenses Nav Node Entry   ; WideAngleLensesNavNode    ; WideAngleLensesLink                                    
+                                 ; StandardLensesNavNodeEntry     ;                         ; Standard Lenses Nav Node Entry     ; StandardLensesNavNode     ; StandardLensesLink                                     
+                                 ; TelephotoLensesNavNodeEntry    ;                         ; Telephoto Lenses Nav Node Entry    ; TelephotoLensesNavNode    ; TelephotoLensesLink                                    
+                                 ; CineLensesNavNodeEntry         ;                         ; Cine Lenses Nav Node Entry         ; CineLensesNavNode         ; CineLensesLink                                         
+                                 ; MacroNavNodeEntry              ;                         ; Macro Nav Node Entry               ; MacroNavNode              ; MacroLink                                              
+                                 ; FisheyeNavNodeEntry            ;                         ; Fisheye Nav Node Entry             ; FisheyeNavNode            ; FisheyeLink                                            
+                                 ; TiltShiftNavNodeEntry          ;                         ; TiltShift Nav Node Entry           ; TiltShiftNavNode          ; TiltShiftLink                                          
+                                 ; TelescopesNavNodeEntry         ;                         ; Telescopes Nav Node Entry          ; TelescopesNavNode         ; TelescopesLink                                         
+                                 ; LensAdaptersNavNodeEntry       ;                         ; Lens Adapters Nav Node Entry       ; LensAdaptersNavNode       ; LensAdaptersLink                                       
+                                 ; LensExtendersNavNodeEntry      ;                         ; Lens Extenders Nav Node Entry      ; LensExtendersNavNode      ; LensExtendersLink                                      
+                                 ; LensPackagesNavNodeEntry       ;                         ; Lens Packages Nav Node Entry       ; LensPackagesNavNode       ; LensPackagesLink                                       
+                                 
+#####################################################################
+#### Navigation Node Link  ####  
+#####################################################################
+INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true]       ; name                  ; url ; category(code, $productCV) ; target(code)[default='sameWindow'] ; linkName[lang=$lang] ;  
+# Cameras -- all cameras
+;                         ; AllLensesLink          ; AllLenses Link        ; "/rent/category/lenses" ;                            ;                                    ; All Lenses           ;
+;                         ; NewArrivalsLink_Lenses ; NewArrivals Link      ; "/rent/category/lenses/NewArrivals-Lenses" ;                            ;                                    ; New Arrivals         ;
+;                         ; WideAngleLensesLink    ; WideAngle Lenses Link ; "/rent/category/lenses/wide_angle" ; wide_angle                 ;                                    ; Wide Angle Lenses    ;
+;                         ; StandardLensesLink     ; Standard Lenses Link  ; "/rent/category/lenses/normal" ; normal                     ;                                    ; Standard Lenses      ;
+;                         ; TelephotoLensesLink    ; Telephoto Lenses Link ; "/rent/category/lenses/super-telephoto" ; super-telephoto            ;                                    ; Telephoto Lenses     ;
+;                         ; CineLensesLink         ; Cine Lenses Link      ; "/rent/category/lenses/cine-lenses" ; cine-lenses                ;                                    ; Cine Lenses          ;
+;                         ; MacroLink              ; Macro Link            ; "/rent/category/lenses/macro" ; macro                      ;                                    ; Macro                ;
+;                         ; FisheyeLink            ; Fisheye Link          ; "/rent/category/lenses/fisheye" ; fisheye                    ;                                    ; Fisheye              ;
+;                         ; TiltShiftLink          ; TiltShift Link        ; "/rent/category/lenses/tilt-shift" ; tilt-shift                 ;                                    ; Tilt Shift           ;
+;                         ; TelescopesLink         ; Tele scopes Link      ; "/rent/category/lenses/telescopes" ; telescopes                 ;                                    ; Telescopes           ;
+;                         ; LensAdaptersLink       ; Lens Adapters Link    ; "/rent/category/lenses/lens_adapters" ; lens_adapters              ;                                    ; Lens Adapters        ;
+;                         ; LensExtendersLink      ; Lens Extenders Link   ; "/rent/category/lenses/teleconverters" ; teleconverters             ;                                    ; Lens Extenders       ;
+;                         ; LensPackagesLink       ; Lens Packages Link    ; "/rent/category/lenses/lens_packages" ; lens_packages              ;                                    ; Lens Packages        ;
+
+
+#                              ; BLCategoryNavNode       ;                        ; BL Category Navigation Node; BLNavNode; BLCategoryNavNode          ; BrandsNavNode,CamerasNavNode,LensesNavNode,EqupmentNavNode,UsedGearNavNode

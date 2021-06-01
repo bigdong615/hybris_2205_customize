@@ -1,0 +1,216 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Category Classifications
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs categories-classifications.impex =========================");
+
+# Macros / Replacement Parameter definitions
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$classificationCatalog=blClassification
+
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$classCatalogVersion=catalogversion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true,default='$classificationCatalog:1.0']
+$classSystemVersion=systemVersion(catalog(id[default='$classificationCatalog']),version[default='1.0'])[unique=true]
+$class=classificationClass(ClassificationClass.code,$classCatalogVersion)[unique=true]
+$supercategories=source(code, $classCatalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+$attribute=classificationAttribute(code,$classSystemVersion)[unique=true]
+$unit=unit(code,$classSystemVersion)
+
+# Insert Classifications
+INSERT_UPDATE ClassificationClass;$classCatalogVersion;code[unique=true];displayName;allowedPrincipals(uid)[default='customergroup']
+                                 ;;CameraAttributes;Camera Attributes
+                                 ;;LensAttributes;Lens Attributes
+                                 ;;MemoryCardAttributes;MemoryCard Attributes
+                                 ;;ProductionAttributes;Production Attributes
+                                 ;;Monitors_VideoAttributes;Monitors/Video Attributes
+                                 ;;AudioAttributes;Audio Attributes
+                                 ;;LightingAttributes;Lighting Attributes
+                                 ;;Batteries_PowerAttributes;Batteries & Power Attributes
+                                 ;;MountAttribute;Mount Attribute
+# Insert Classification Attributes
+INSERT_UPDATE ClassificationAttribute;$classSystemVersion;code[unique=true]
+                                     ;;Format Coverage
+                                     ;;Max Aperture
+                                     ;;Sensor Size
+                                     ;;Video Resolution
+                                     ;;Megapixels
+                                     ;;Prime/Zoom
+                                     ;;AF/MF
+                                     ;;Media & Storage Type
+                                     ;;Accessories Type
+                                     ;;Cameras Type
+                                     ;;Lenses Type
+                                     ;;Audio Type
+                                     ;;Battery Type
+                                     ;;Support Type
+                                     ;;Microphone Type
+                                     ;;Lighting Type
+                                     ;;Mount Type
+
+
+
+# Links ClassificationClasses to Categories
+INSERT_UPDATE CategoryCategoryRelation;$categories;$supercategories
+                                      ;cameras;CameraAttributes
+                                      ;lenses;LensAttributes
+                                      ;memory_cards_storage  ;MemoryCardAttributes
+                                      ;monitors_video_recorders ;Monitors_VideoAttributes
+                                      ;production;ProductionAttributes
+                                      ;audio;AudioAttributes
+                                      ;lighting;LightingAttributes
+                                      ;batteries_power;Batteries_PowerAttributes
+                                      ;cameras;MountAttribute
+                                      ;lenses;MountAttribute
+
+
+INSERT_UPDATE ClassificationAttributeValue;$classSystemVersion; code[unique = true]; name
+                                          ;;APS-C;APS-C
+                                          ;;APS-H;APS-H
+                                          ;;Full Frame;Full Frame
+                                          ;;Medium Format;Medium Format
+                                          ;;Micro Four Thirds;Micro Four Thirds
+                                          ;;Super 16;Super 16
+                                          ;;Super 35;Super 35
+                                          ;;f0.95;f0.95
+                                          ;;f1;f1
+                                          ;;f1.2;f1.2
+                                          ;;f1.4;f1.4
+                                          ;;f1.8;f1.8
+                                          ;;f2;f2
+                                          ;;f2.2;f2.2
+                                          ;;f2.8;f2.8
+                                          ;;f3.5;f3.5
+                                          ;;f4;f4
+                                          ;;T1.2;T1.2
+                                          ;;T1.3;T1.3
+                                          ;;T1.5;T1.5
+                                          ;;T2;T2
+                                          ;;T2.8;T2.8
+                                          ;;T3;T3
+                                          ;;1 Inch Type;1 Inch Type
+                                          ;;APS-C Sensor;APS-C Sensor
+                                          ;;Full Frame Sensor;Full Frame Sensor
+                                          ;;Medium Format Sensor;Medium Format Sensor
+                                          ;;Micro Four Thirds Sensor;Micro Four Thirds Sensor
+                                          ;;Other;Other
+                                          ;;Super 35 Sensor;Super 35 Sensor
+                                          ;;Super 16 Sensor;Super 16 Sensor
+                                          ;;1080p;1080p
+                                          ;;4K;4K
+                                          ;;5K;5K
+                                          ;;6K;6K
+                                          ;;8K;8K
+                                          ;;Raw Video;Raw Video
+                                          ;;60+;60+
+                                          ;;50-59;50-59
+                                          ;;40-49;40-49
+                                          ;;30-39;30-39
+                                          ;;20-29;20-29
+                                          ;;Prime;Prime
+                                          ;;Zoom;Zoom
+                                          ;;Autofocus;Autofocus
+                                          ;;Manual Focus Only;Manual Focus Only
+                                          ;;CF;CF
+                                          ;;CFast;CFast
+                                          ;;CFexpress A;CFexpress A
+                                          ;;CFexpress B;CFexpress B
+                                          ;;microSD;microSD
+                                          ;;SD;SD
+                                          ;;SSD;SSD
+                                          ;;XQD;XQD
+                                          ;;Card Readers;Card Readers
+                                          ;;Sliders/Dollies;Sliders/Dollies
+                                          ;;Follow Focus/Matte Boxes;Follow Focus/Matte Boxes
+                                          ;;Stabilizers/Gimbals;Stabilizers/Gimbals
+                                          ;;Camera Rigs;Camera Rigs
+                                          ;;Tripods/Heads;Tripods/Heads
+                                          ;;Audio;Audio
+                                          ;;Lighting;Lighting
+                                          ;;Lavalier Mics;Lavalier Mics
+                                          ;;Shotgun Mics;Shotgun Mics
+                                          ;;USB Mics;USB Mics
+                                          ;;Lens Adapters;Lens Adapters
+                                          ;;Cine Lenses;Cine Lenses
+                                          ;;Fisheye;Fisheye
+                                          ;;Telephoto;Telephoto
+                                          ;;Macro;Macro
+                                          ;;Standard;Standard
+                                          ;;Lens Extenders;Lens Extenders
+                                          ;;Telescopes;Telescopes
+                                          ;;Tilt Shift;Tilt Shift
+                                          ;;Wide Angle;Wide Angle
+                                          ;;Lens Packages;Lens Packages
+                                          ;;Softboxes/Modifiers;Softboxes/Modifiers
+                                          ;;Backdrops/Green Screens;Backdrops/Green Screens
+                                          ;;Continuous/LED Lighting;Continuous/LED Lighting
+                                          ;;Flashes/Strobes;Flashes/Strobes
+                                          ;;Light Stands/ Lighting Support;Light Stands/ Lighting Support
+                                          ;;Lighting Accessories;Lighting Accessories
+                                          ;;360;360
+                                          ;;Action;Action
+                                          ;;Camcorders;Camcorders
+                                          ;;Cinema;Cinema
+                                          ;;DSLR;DSLR
+                                          ;;Mirrorless;Mirrorless
+                                          ;;Point & Shoot;Point & Shoot
+                                          ;;Webcams;Webcams
+                                          ;;Camera Packages;Camera Packages
+                                          ;;Underwater Housings;Underwater Housings
+                                          ;;Camera Bags/Cases;Camera Bags/Cases
+                                          ;;Batteries/Power;Batteries/Power
+                                          ;;Cables/Adapters;Cables/Adapters
+                                          ;;Filters;Filters
+                                          ;;Memory Cards/Storage;Memory Cards/Storage
+                                          ;;Monitors/Video Recorders;Monitors/Video Recorders
+                                          ;;Projectors/Scanners;Projectors/Scanners
+                                          ;;Streaming;Streaming
+                                          ;;Viewfinders;Viewfinders
+                                          ;;CANON_EF_MOUNT;CANON_EF_MOUNT
+                                          ;;CANON_EF_S_MOUNT;CANON_EF_S_MOUNT
+                                          ;;CANON_RF_MOUNT;CANON_RF_MOUNT
+                                          ;;FUJI_G_MOUNT;FUJI_G_MOUNT
+                                          ;;FUJI_X_MOUNT;FUJI_X_MOUNT
+                                          ;;HASSELBLAD_H_MOUNT;HASSELBLAD_H_MOUNT
+                                          ;;HASSELBLAD_X_MOUNT;HASSELBLAD_X_MOUNT
+                                          ;;L_MOUNT;L_MOUNT
+                                          ;;MICRO_FOUR_THIRDS_MOUNT;MICRO_FOUR_THIRDS_MOUNT
+                                          ;;NIKON_F_MOUNT;NIKON_F_MOUNT
+                                          ;;NIKON_Z_MOUNT;NIKON_Z_MOUNT
+                                          ;;PL_MOUNT;PL_MOUNT
+                                          ;;SONY_E_MOUNT;SONY_E_MOUNT
+                                          ;;Audio Accessories;Audio Accessories
+                                          ;;Headphones;Headphones
+                                          ;;Microphones;Microphones
+                                          ;;Mixers;Mixers
+                                          ;;Recorders;Recorders
+                                          ;;Gimbal Batteries;Gimbal Batteries
+                                          ;;Gold Mount Batteries;Gold Mount Batteries
+                                          ;;V-Mount Batteries;V-Mount Batteries
+                                          ;;Camera Batteries;Camera Batteries
+                                          ;;Lighting Batteries;Lighting Batteries
+                                          ;;Audio Batteries;Audio Batteries
+
+
+
+INSERT_UPDATE ClassAttributeAssignment;$class;$attribute;position;$unit;attributeType(code[default=string]);multiValued[default=false];range[default=false];localized[default=true];attributeValues(code, $classSystemVersion)
+                                      ;LensAttributes;Format Coverage;1;;enum;false;false;;APS-C,APS-H,Full Frame,Medium Format,Micro Four Thirds,Super 16,Super 35
+                                      ;LensAttributes;Max Aperture;2;;enum;false;false;;f0.95,f1,f1.2,f1.4,f1.8,f2,f2.2,f2.8,f3.5,f4,T1.2,T1.3,T1.5,T2,T2.8,T3
+                                      ;LensAttributes;Prime/Zoom;3;;enum;false;false;;Prime,Zoom
+                                      ;LensAttributes;AF/MF;4;;enum;false;false;;Autofocus,Manual Focus Only
+                                      ;LensAttributes;Lenses Type;5;;enum;false;false;;Lens Adapters,Cine Lenses,Fisheye,Telephoto,Macro,Standard,Lens Extenders,Telescopes,Tilt Shift,Wide Angle,Lens Packages
+                                      ;CameraAttributes;Sensor Size;1;;enum;true;false;;1 Inch Type,APS-C Sensor,Full Frame Sensor,Medium Format Sensor,Micro Four Thirds Sensor,Other,Super 35 Sensor,Super 16 Sensor
+                                      ;CameraAttributes;Video Resolution;2;;enum;false;false;;1080p,4K,5K,6K,8K,Raw Video
+                                      ;CameraAttributes;Megapixels;3;;enum;false;false;false;20-29,30-39,40-49,50-59,60+
+                                      ;CameraAttributes;Media & Storage Type;4;;enum;false;false;;CF,CFast,CFexpress A,CFexpress B,microSD;SD;SSD;XQD;Card Readers
+                                      ;CameraAttributes;Cameras Type;5;;enum;false;false;;360,4K,6K,8K,Action,Camcorders,Cinema,DSLR,Medium Format,Mirrorless,Point & Shoot,Raw Video,Webcams,Camera Packages,Underwater Housings
+                                      ;Monitors_VideoAttributes;Video Resolution;1;;enum;false;false;;1080p,4K,5K,6K,8K,Raw Video
+                                      ;MemoryCardAttributes;Media & Storage Type;1;;enum;false;false;;CF,CFast,CFexpress A,CFexpress B,microSD;SD;SSD;XQD;Card Readers
+                                      ;AudioAttributes;Audio Type;1;;enum;false;false;;Audio Accessories,Headphones,Microphones,Mixers,Recorders
+                                      ;AudioAttributes;Microphone Type;2;;enum;false;false;;Lavalier Mics,Shotgun Mics,USB Mics
+                                      ;LightingAttributes;Lighting Type;1;;enum;false;false;;Softboxes/Modifiers,Backdrops/Green Screens,Continuous/LED Lighting,Flashes/Strobes,Light Stands/ Lighting Support,Lighting Accessories
+                                      ;ProductionAttributes;Accessories Type;1;;enum;false;false;;Camera Bags/Cases,Batteries/Power,Cables/Adapters,Filters,Memory Cards/Storage,Monitors/Video Recorders,Projectors/Scanners,Streaming,Viewfinders
+                                      ;ProductionAttributes;Support Type;2;;enum;false;false;;Sliders/Dollies,Follow Focus/Matte Boxes,Stabilizers/Gimbals,Camera Rigs,Tripods/Heads,Audio,Lighting
+                                      ;Batteries_PowerAttributes;Battery Type;1;;enum;false;false;;Gimbal Batteries,Gold Mount Batteries,V-Mount Batteries,Camera Batteries,Lighting Batteries,Audio Batteries
+                                      ;MountAttribute;Mount Type;1;;enum;false;false;;CANON_EF_MOUNT,CANON_EF_S_MOUNT,CANON_RF_MOUNT,FUJI_G_MOUNT,FUJI_X_MOUNT,HASSELBLAD_H_MOUNT,HASSELBLAD_X_MOUNT,L_MOUNT,MICRO_FOUR_THIRDS_MOUNT,NIKON_F_MOUNT,NIKON_Z_MOUNT,PL_MOUNT,SONY_E_MOUNT

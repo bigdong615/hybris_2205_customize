@@ -1,12 +1,12 @@
 #% import com.bl.initialdata.setup.InitialDataSystemSetup
 #% impex.enableExternalImpExSyntaxParsing(true)
 #% impex.enableExternalDataCodeExecution(true)
-#% impex.info("=============================== Importing content from BLInitialData sampledata_custom_stores_data_sequence =========================");
+#% impex.info("=============================== Importing content from BLInitialData sampledata/stores sampledata_custom_stores_data_sequence =========================");
 
 #mention custom paths here  
-$storesCustomPath = /blinitialdata/import/sampledata/stores/bl/custom
+$storesCustomPath = /blinitialdata/import/sampledata/stores/bl/custom/solr
 
 
 #Mention here store related custom impexes in sequence
- 
 
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomPath/solr.impex"), "utf-8", 0, 0);

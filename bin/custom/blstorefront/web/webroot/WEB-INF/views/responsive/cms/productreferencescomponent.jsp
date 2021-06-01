@@ -6,46 +6,87 @@
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="component" tagdir="/WEB-INF/tags/shared/component"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<c:url value="/cart/add" var="addToCartUrl"/>
 
 <c:choose>
 	<c:when test="${not empty productReferences and component.maximumNumberProducts > 0}">
-		<div class="carousel-component">
-
-			<div class="headline">${fn:escapeXml(component.title)}</div>
-
-			<div class="carousel js-owl-carousel js-owl-lazy-reference js-owl-carousel-reference">
-				
-				<div id="quickViewTitle" class="quickView-header display-none">
-					<div class="headline">		
-						<span class="headline-text"><spring:theme code="popup.quick.view.select"/></span>
-					</div>
-				</div>
-				
-				<c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
-					<c:url value="${productReference.target.url}/quickView" var="productUrl"/>
-					<div class="item">
-						<a href="${fn:escapeXml(productUrl)}" class="js-reference-item" data-quickview-title="<spring:theme code="popup.quick.view.select"/></span>">
-                            <div class="thumb">
-                                <product:productPrimaryReferenceImage product="${productReference.target}" format="product" />
-                            </div>
-						 
-                            <c:if test="${component.displayProductTitles}">
-                                <div class="item-name">${fn:escapeXml(productReference.target.name)}</div>
-                            </c:if>
-                            <c:if test="${component.displayProductPrices}">
-                                <div class="priceContainer">
-                                    <format:fromPrice priceData="${productReference.target.price}" />
-                                </div>
-                            </c:if>
-						</a>
-
-					</div>
-				</c:forEach>
-			</div>
-		</div>
-	</c:when>
+    		<div class="splide__track">
+                  <ul class="splide__list">
+                                <c:forEach end="${component.maximumNumberProducts}" items="${productReferences}" var="productReference">
+            				        	<li class="splide__slide">
+                                            <div class="card">
+                                         <c:choose>
+                                                  <c:when test="${productReference.target.stock.stockLevelStatus.code eq 'lowStock'}">
+                                            				<span class="badge badge-limited-stock"><spring:theme
+                                            						code="text.product.tile.flag.only.left"
+                                            						arguments="${productReference.target.stock.stockLevel}" /></span>
+                                            			</c:when>
+                                            			<c:when test="${productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                            				<span class="badge badge-out-of-stock"><spring:theme
+                                            						code="text.product.tile.flag.outOfStock"
+                                            						arguments="${productReference.target.stock.stockLevel}" /></span>
+                                            			</c:when>
+                                                  <c:otherwise>
+                                                      <c:if test ="${productReference.target.productTagValues ne null}">
+                                                             <span class="badge badge-new">${productReference.target.productTagValues}</span>
+                                                      </c:if>
+                                                  </c:otherwise>
+                                         </c:choose>
+                                               <span class="bookmark"></span>
+                                                   <div class="card-slider splide">
+                                                     <div class="splide__track">
+                                                       <ul class="splide__list">
+                                                       <c:forEach items="${productReference.target.images}" var="productImagePdp">
+                                                          <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY'}">
+                                                                <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
+                                                                <c:set value="this is alternate" var="altTextHtml"/>
+                                                                <!--BL-534: added <a> tag-->
+                                                                    <li class="splide__slide">
+                                                                      <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                       <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}"></a</li> 
+                                                          </c:if>
+                                                       </c:forEach>
+                                                       </ul>
+                                                     </div>
+                                                   </div>
+                                                   <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
+                                                   <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                   <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
+                                                   <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
+                                                   <h6 class="price"><product:productListerItemPrice product="${productReference.target}"/>
+                                                   <c:choose>
+                                                        <c:when test="${rentalDate.selectedFromDate ne null and rentalDate.selectedToDate ne null}">
+                                                            <span class="period">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span></h6>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                             <span class="period">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span></h6>
+                                                        </c:otherwise>
+                                                   </c:choose>
+                                                    <c:choose>
+                                                          <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                                                <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
+                                                          </c:when>
+                                                          <c:when test="${productReference.target.isUpcoming}">
+                                                               <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
+                                                          </c:when>
+                                                           <c:otherwise>
+                                                                <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                                                    <button type="button" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal"
+                                                                       data-bs-target="#addToCart" data-product-code="${product.code}">
+                                                                      <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
+                                                                    </button>
+                                                                </form>
+                                                            </c:otherwise>
+                                                    </c:choose>
+                                            </div>
+                                        </li>
+                                </c:forEach>
+                  </ul>
+            </div>
+    	</c:when>
 
 	<c:otherwise>
 		<component:emptyComponent />

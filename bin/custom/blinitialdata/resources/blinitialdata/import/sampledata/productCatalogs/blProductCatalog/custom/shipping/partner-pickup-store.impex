@@ -1,0 +1,9 @@
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs partner-pickup-store.impex =========================");
+
+
+INSERT_UPDATE PartnerPickUpStore; code[unique = 'true']      ; name                         
+								; PENNSYLVANIA_PICKUP        ; Pennsylvania Pick Up        
+								; BOSTON_PICKUP              ; Boston Pick Up               
+								; WASHINGTON_PICKUP          ; Washington Pick Up          
+								; BAY_AREA_PICKUP            ; Bay Area Pick Up             
+								; SOUTHERN_CALIFORNIA_PICKUP ; Southern California Pick Up 

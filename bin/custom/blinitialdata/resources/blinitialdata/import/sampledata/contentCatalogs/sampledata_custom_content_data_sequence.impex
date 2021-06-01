@@ -2,44 +2,61 @@
 #% impex.enableExternalImpExSyntaxParsing(true)
 #% impex.enableExternalDataCodeExecution(true)
  
-#% impex.info("=============================== Importing content from BLInitialData sampledata_custom_content_data_sequence ========================="); 
+#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs sampledata_custom_content_data_sequence =========================");
 
 #mention custom paths here
 $contentCatalogsCustomPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom
+$contentCatalogsCustomHomepagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/homepage
 $contentCatalogsCustomContentPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/content
 $contentCatalogsCustomCategoryPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/category
 $contentCatalogsCustomMyAccountPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/myaccount
 $contentCatalogsCustomCheckoutPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/checkout
 $contentCatalogsCustomEmailsPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/emails
+$contentCatalogsProductGridPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/productgridpage
+$contentCatalogsCustomSearchPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/searchpage
+$contentCatalogsCustomNavigationPath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/navigation
+$contentCatalogsCustomProductPagePath = /blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/productpage
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/sampledata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
-#Mention here homepage related impexes in sequence
 
+# Homepage Header and Footer Navigation Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_navigation.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/sample_data_homepage.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/footer_navigation.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomHomepagePath/sample_data_homepage_en.impex"), "utf-8", 0, 0);
 
-#Mention here Content page related impexes in sequence 
+# Homepage Category Navigation Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_brands.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_cameras.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_lenses.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_production.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_category_navigation_usedgear.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomNavigationPath/header_navigation_myaccount.impex"), "utf-8", 0, 0);
 
+#Mention here Content page related impexes in sequence
 
 #Mention here Category Page related impexes in sequence
 
+# Search Page Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomSearchPath/cms_content_searchpage.impex"), "utf-8", 0, 0);
 
-#Mention here Search Listing Page related impexes in sequence
+# Product Grid Page Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsProductGridPagePath/cms-content_productgridpage.impex"), "utf-8", 0, 0);
 
+# Product Details Page Breadcrumb Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productpage_breadcrumb.impex"), "utf-8", 0, 0);
 
-#Mention here Product Listing Page related impexes in sequence
-
-
-#Mention here Product Details Page related impexes in sequence
+# Product Details Page Video Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomProductPagePath/cms_content_productVideo.impex"), "utf-8", 0, 0);
 
 
 #Mention here MyAccount Page related impexes in sequence
-
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomMyAccountPagePath/sample_data_accountpage.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomMyAccountPagePath/sample_data_accountpage_en.impex"), "utf-8", 0, 0);
 
 #Mention here Cart Page related impexes in sequence
 
-
 #Mention here Checkout Page related impexes in sequence
 
-
-#Mention here Email Page related impexes in sequence
-
-
+# Forgot Password Email Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-forgotpassword.impex"), "utf-8", 0, 0);

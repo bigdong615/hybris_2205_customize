@@ -28,6 +28,8 @@ import de.hybris.platform.jalo.c2l.LocalizableItem;
 import de.hybris.platform.servicelayer.model.AbstractItemModel;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.type.TypeService;
+
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.filters.cms.CMSSiteFilter;
 
 import java.util.Collection;
@@ -204,6 +206,17 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 
 		final String regEx = "[^a-zA-Z0-9-]";
 		final StringBuilder cssClasses = new StringBuilder();
+		// Adding css class if it is homepage on body tag
+		if (BlControllerConstants.HOMEPAGE.equals(page.getUid()))
+		{
+			cssClasses.append(BlControllerConstants.HOME_CSS);
+		}
+		// BL-457 if it is cart page then adding css class on body tag.
+		if (BlControllerConstants.CARTPAGE.equals(page.getUid()))
+		{
+			cssClasses.append(BlControllerConstants.CARTPAGE_CSS);
+		}
+
 		cssClasses.append(CSS_CODE_PREFIX).append(page.getUid().replaceAll(regEx, "-"));
 		cssClasses.append(' ');
 		cssClasses.append(CSS_TYPE_PREFIX).append(page.getItemtype().replaceAll(regEx, "-"));

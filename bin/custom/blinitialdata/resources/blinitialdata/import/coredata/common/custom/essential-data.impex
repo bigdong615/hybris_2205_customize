@@ -1,0 +1,173 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# Import essential data for the Accelerator
+#
+# Includes:
+# * Languages
+# * Currencies
+# * Titles
+# * Vendors
+# * Warehouses
+# * Supported Credit/Debit cards
+# * User Groups
+# * DistanceUnits for Storelocator
+# * MediaFolders
+# * MediaFormats
+# * Tax & Tax Groups
+# * Jobs
+#% impex.info("=============================== Importing content from BLInitialData coredata/common essential-data.impex =========================");
+ 
+# Languages
+INSERT_UPDATE Language ; isocode[unique=true] ; fallbackLanguages(isocode) ; active[default=true] 
+                       ; en                   ;                            ;                      ;  
+                       
+# Currencies           
+INSERT_UPDATE Currency ; isocode[unique=true] ; conversion ; digits ; symbol 
+                       ; USD                  ; 1,4        ; 2      ; $      
+                       
+                       
+# SiteMap Language Currencies
+INSERT_UPDATE SiteMapLanguageCurrency ; &siteMapLanguageCurrency ; language(isoCode)[unique=true] ; currency(isocode)[unique=true] ;  
+                                      ; enUsd                    ; en                             ; USD                            
+                                      
+# Vendor                              
+INSERT_UPDATE Vendor ; code[unique=true] ; name           
+                     ; default           ; Default Vendor 
+                     
+# Warehouse          
+INSERT_UPDATE Warehouse ; code[unique=true] ; name ; vendor(code)[default=default] ; default[default=false] 
+                        ; warehouse_ca      ; CA   ;                               
+                        ; warehouse_ma      ; MA   ;                               
+                                                 
+# Disable preview for email pages
+UPDATE CMSPageType ; code[unique=true] ; previewDisabled 
+                   ; EmailPage         ; true            
+                   
+# Titles           
+INSERT_UPDATE Title ; code[unique=true] 
+                    ; mr                
+                    ; mrs               
+                    ; miss              
+                    ; ms                
+                    ; dr                
+                    ; rev               
+                    
+# Media Folders     
+INSERT_UPDATE MediaFolder ; qualifier[unique=true] ; path[unique=true] 
+                          ; images                 ; images            
+                          ; email-body             ; email-body        
+                          ; email-attachments      ; email-attachments 
+                          
+# Media formats           
+INSERT_UPDATE MediaFormat ; qualifier[unique=true] 
+                          ; 1200Wx1200H            
+                          ; 515Wx515H              
+                          ; 365Wx246H              
+                          ; 300Wx300H              
+                          ; 96Wx96H                
+                          ; 65Wx65H                
+                          ; 30Wx30H                
+                          
+# Tax & Tax Groups        
+INSERT_UPDATE UserTaxGroup ; code[unique=true] 
+                           ; us-taxes          
+                           
+INSERT_UPDATE ProductTaxGroup ; code[unique=true] 
+                              ; us-sales-tax-full 
+                              
+                              
+INSERT_UPDATE Tax ; code[unique=true] ; value ; currency(isocode) 
+                  ; us-sales-tax-full ; 0     
+                  
+INSERT_UPDATE ServicelayerJob ; code[unique=true] ; springId[unique=true] 
+                              ; cartRemovalJob    ; cartRemovalJob        
+                              ; siteMapMediaJob   ; siteMapMediaJob
+
+INSERT_UPDATE DurationEnum;code[unique=true];name[lang=en]
+                          ;RETAIL;Retail Price
+                          ;3;1,2 and 3 days
+                          ;7;1 Week
+                          ;10;10 days
+                          ;14;2 Weeks
+                          ;21;3 Weeks
+                          ;28;4 Weeks
+                          ;90;90 days
+
+INSERT_UPDATE PricingTierEnum;code[unique=true];name[lang=en]
+                             ;ONE;1
+                             ;TWO;2
+                             ;THREE;3
+
+INSERT_UPDATE BlPricingLogic ; productType(code)[unique=true];tier(code);greaterThan[allowNull=true];lessThan;pctOfRetail[unique=true]
+                             ;BATTERIES;ONE;;100;40
+                             ;BATTERIES;TWO;100;1000;15
+                             ;BATTERIES;THREE;1000;;10
+                             ;MEDIA_STORAGE;ONE;;300;20
+                             ;MEDIA_STORAGE;TWO;300;1000;10
+                             ;MEDIA_STORAGE;THREE;1000;;7
+                             ;FILTERS;ONE;;400;25
+                             ;FILTERS;TWO;400;1000;18
+                             ;FILTERS;THREE;1000;;12
+                             ;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;ONE;;100;40
+                             ;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;TWO;100;500;15
+                             ;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS;THREE;500;;7
+                             ;AUDIO;ONE;;100;40
+                             ;AUDIO;TWO;100;500;15
+                             ;AUDIO;THREE;500;;10
+                             ;LIGHTING;ONE;;100;30
+                             ;LIGHTING;TWO;100;1000;11
+                             ;LIGHTING;THREE;1000;;7
+                             ;SUPPORTOTHERTHANSTABLIZERS;ONE;;100;30
+                             ;SUPPORTOTHERTHANSTABLIZERS;TWO;100;1000;12
+                             ;SUPPORTOTHERTHANSTABLIZERS;THREE;1000;;7
+                             ;CAMERAS;ONE;;600;10
+                             ;CAMERAS;TWO;600;1200;6
+                             ;CAMERAS;THREE;1200;;5
+                             ;LENSES;ONE;;100;10
+                             ;LENSES;TWO;100;1000;7
+                             ;LENSES;THREE;1000;;5
+                             ;STABLIZERS;ONE;;1000;13
+                             ;STABLIZERS;TWO;1000;3000;11
+                             ;STABLIZERS;THREE;3000;;5
+                             ;MONITORS;ONE;;1000;12
+                             ;MONITORS;TWO;1000;3000;6
+                             ;MONITORS;THREE;3000;;5
+
+INSERT_UPDATE BlStandardPricingRatio ;duration(code)[unique=true];pricingRatio
+                                     ;3;0.69
+                                     ;7;1.00
+                                     ;10;1.36
+                                     ;14;1.76
+                                     ;21;2.37
+                                     ;28;2.95
+                                     ;90;6.20
+INSERT_UPDATE BlConstrainedPricingRatio ;duration(code)[unique=true];pricingRatio
+                                        ;3;0.69
+                                        ;7;1.00
+                                        ;10;1.36
+                                        ;14;1.85
+                                        ;21;2.90
+                                        ;28;4.00
+                                        ;90;12.86
+                                        
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
+;blStockCreationJob;blStockCreationJob
+;blAutomatedStockCreationJob;blAutomatedStockCreationJob
+
+INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
+;blStockCreationCronJob ;blStockCreationJob ; ;true;;
+
+INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
+;blAutomatedStockCreationCronJob ;blAutomatedStockCreationJob ; ;true;;
+
+INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
+;blAutomatedStockCreationCronJob; 0 0 0 * * ?
+ 
+INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
+                                    ; VIDEO                                   ; 28               
+                                    ; PHOTO                                   ; 26               
+                                    ; GEAR_GUARD_PRO                          ; 155              
+
+
+

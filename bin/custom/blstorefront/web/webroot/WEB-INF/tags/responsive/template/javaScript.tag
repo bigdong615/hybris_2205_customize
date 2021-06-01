@@ -37,8 +37,7 @@
 		<script src="${commonResourcePathHtml}/js/jquery.slideviewer.custom.1.2.js"></script>
 		
 		<%-- Custom ACC JS --%>
-		
-		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+    <script src="${commonResourcePathHtml}/js/acc.address.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.autocomplete.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.carousel.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.cart.js"></script>
@@ -49,6 +48,7 @@
 		<script src="${commonResourcePathHtml}/js/acc.colorbox.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.common.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.forgottenpassword.js"></script>
+		<script src="${commonResourcePathHtml}/js/acc.account.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.global.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.hopdebug.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.imagegallery.js"></script>
@@ -84,7 +84,11 @@
 		<script src="${commonResourcePathHtml}/js/acc.csv-import.js"></script>
 
 		<script src="${commonResourcePathHtml}/js/_autoload.js"></script>
-		
+
+		<%-- custom js file --%>
+        <script src="${commonResourcePathHtml}/js/blcustom.js"></script>
+
+
 		<%-- Cms Action JavaScript files --%>
 		<c:forEach items="${cmsActionsJsFiles}" var="actionJsFile">
 		    <script src="${commonResourcePathHtml}/js/cms/${fn:escapeXml(actionJsFile)}"></script>
@@ -95,6 +99,1104 @@
 		    <script src="${fn:escapeXml(addOnJavaScript)}"></script>
 		</c:forEach>
 		
+		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
+		<script src="${commonResourcePathHtml}/js/splide.min.js"></script>
+		<script src="${commonResourcePathHtml}/js/mmenu-light.js"></script>
+    	<script src="${commonResourcePathHtml}/js/mburger.js"></script>
+
+		<script>
+			$(document).ready(function(){
+				 if('${rentalDate.selectedFromDate}' != '' && '${rentalDate.selectedToDate}' != '')
+				 {
+					 $("#litepicker").val('');
+					 $("#litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-litepicker").val('');
+					 $("#mobile-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#product-litepicker").val('');
+					 $("#product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#mobile-product-litepicker").val('');
+					 $("#mobile-product-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+					 $("#summary-litepicker").val('');
+					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
+				 }
+			});
+		</script>
+		
+        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+            <script src="${commonResourcePathHtml}/js/blcustomshipping.js"></script>
+        </c:if>
+
+		<c:if test="${cmsPage.uid eq 'homepage'}">
+		<script>
+        document.addEventListener(
+            "DOMContentLoaded", () => {
+                 new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],          
+                } ); 
+            }
+        );
+        $('.menu-large').hover(
+               function(){ $('.screen').addClass('show') },
+               function(){ $('.screen').removeClass('show') }
+        );
+         var splide = new Splide( '#hero-slider', {
+            perPage: 1,
+            type: 'fade',
+            gap: 0,
+            keyboard: false,
+        } ).mount();
+
+        //  BL-450 adding removing pagination and arrow dynamically on homepage
+        new Splide( '#cat-slider', {
+            perPage: 4,
+             arrows :false,
+            pagination:false,
+            breakpoints: {
+                //'991': {
+                //    perPage: 3,
+                //},
+                '640': {
+                    perPage: 3,
+                },
+               /* BL-536 - A.1. */
+            },
+            rewind : true,
+            gap: 30,
+            keyboard: false,
+        } ).mount();
+            
+           var cat_slider_image_qty = document.getElementById("cat-slider-list").getElementsByTagName("li").length;
+           
+            if(cat_slider_image_qty<=4){
+                 new Splide( '#cat-slider', {
+                perPage: 4,
+                arrows :false,
+                pagination:false,
+                breakpoints: {
+                '540': {
+                    perPage: 3, 
+                  pagination:true
+                },
+              }
+               } ).mount();
+
+            }
+
+         if(cat_slider_image_qty>4){
+       
+          new Splide( '#cat-slider', {
+            perPage: 4,
+            arrows :true,
+            pagination:true,
+            breakpoints: {
+                '991': {
+                    perPage: 4,
+                },
+                '640': {
+                    
+                    perPage: 4,
+                   
+                },
+                '540': {
+                    perPage: 3,
+                     
+                    
+                },
+            },
+            rewind : true,
+            gap: 30,
+           } ).mount();
+         }
+
+        if(cat_slider_image_qty<=3 && screen.width<=540){
+           document.querySelector("#cat-slider .splide__pagination").classList.add("d-none");
+         }
+
+ // code end here for BL-450 --end--
+         new Splide( '#gear-slider', {
+            perPage: 3,
+            breakpoints: {
+                '991': {
+                    perPage: 2,
+                    gap: 10,
+                    padding: 0
+                },
+                /* BL-536 - A.2. */
+            },
+            rewind : true,
+            gap: 20,
+            padding: 10,
+            keyboard: false,
+        } ).mount();  
+        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+            type   : 'loop',
+            perPage: 1,
+            drag   : false,
+            breakpoints: {
+                '991': {
+                    pagination: false,
+                },
+            },
+            keyboard: false,
+          } ).mount());
+        document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
+            type   : 'loop',
+            perPage: 3,
+            gap: 20,
+            //drag   : true,
+            keyboard: false,
+        } ).mount());
+         new Splide( '#testimonials-slider', {
+            perPage: 1,
+            type: 'fade',
+            arrows: false,
+            keyboard: false,
+        } ).mount(); 
+        new Splide( '#blog-slider', {
+            perPage: 3,
+            breakpoints: {
+                '991': {
+                    perPage: 2,
+                },
+               /* BL-536 - A. 3 */
+            },
+            rewind : true,
+            gap: 20,
+            padding: 10,
+            keyboard: false,
+        } ).mount();
+
+         // Added code to remove same name and id on search text box specific to device
+         if ($(window).width() < 480 ) {
+ 		      	$("input.d-desk").attr("id","");
+ 		        $("input.d-desk").attr("name","");
+ 		}
+ 		else {
+ 			$("input.d-mob").attr("id","");
+ 			$("input.d-mob").attr("name","");
+ 		}
+    </script>
+	</c:if>
+
+
+	<c:if test="${cmsPage.uid eq 'productGrid' || cmsPage.uid eq 'search' || cmsPage.uid eq 'searchEmpty'}">
+  	  <script>
+          // Mobile Menu styles - #my-menu is required for ALL pages
+          // The second menu #filter-menu is required for ANY page with filtering - it is the mobile filter menu
+          document.addEventListener(
+              "DOMContentLoaded", () => {
+                   new Mmenu( "#my-menu", {
+                      extensions: ["fullscreen","position-front"],
+                      navbars		: [{
+                          position: "top",
+                          content : [ "close", "logo" ]
+                      }],
+                  } );
+                  new Mmenu( "#filter-menu", {
+                      extensions: ["position-front","fullscreen"],
+                      navbar: {
+                        title: "Filters",
+                      },
+                      navbars		: [{
+                          position: "top",
+                          content : [ "close", "logo" ],
+                      }],
+                  } );
+              }
+          );
+          // Initialize Mega menu rollover - required for ALL pages
+          $('.menu-large').hover(
+              function(){ $('.screen').addClass('show') },
+              function(){ $('.screen').removeClass('show') }
+          );
+          // Initialize the "Sort By" dropdown menu above the product grid
+          $(".dropdown-menu li a").click(function(){
+            $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
+          });
+          // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+          document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+              type   : 'loop',
+              perPage: 1,
+              drag   : false,
+              breakpoints: {
+                  '991': {
+                      pagination: false,
+                  },
+              },
+              keyboard: false,
+          } ).mount());
+      </script>
+  	</c:if>
+
+  	<!-- This js is used for rental search box component-->
+  	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear')}">
+  	<script type="text/javascript">
+
+            if ($(window).width() < 400 ) {
+                $("input#litepicker").attr("placeholder","Dates...");
+            }
+            else { $("input#litepicker").attr("placeholder","Select dates...");}
+            //BL-520 - disable previous dates
+             let date = new Date();
+             let dd = String(date.getDate() - 1).padStart(2, '0');
+             let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+             let yyyy = date.getFullYear();
+             let today = mm + '/' + dd + '/' + yyyy;
+
+             //BL-520 - disable dates after one year from today's date
+                 let oneYearFromNow = new Date();
+                 let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                 const disallowedDates = [['2001-01-01', today]];
+            const picker = new Litepicker({
+                element: document.getElementById('litepicker'),
+                //plugins: ['mobilefriendly'],
+                singleMode: false,
+                numberOfMonths: 2,
+                numberOfColumns: 2,
+                autoApply: false,
+                format: "MMM D, YYYY",
+                resetButton: () => {
+  					 let btn = document.createElement('button');
+  					 btn.innerText = 'Reset Dates';
+  					 btn.className = 'reset-button';
+  					 btn.addEventListener('click', (evt) => {
+  					 evt.preventDefault();
+  					 $.ajax({
+                        url: ACC.config.encodedContextPath + '/resetDatepicker',
+                        type: "GET",
+                        success: function (data) {
+                        	if(data=='success')
+                            window.location.reload();
+                        },
+                        error: function (xhr, textStatus, error) {
+                           
+                        }
+                    });
+  					});
+  					return btn;
+  					},
+                setup: (picker) => {
+        			picker.on('button:apply', (date1, date2) => {
+        				var searchText = document.getElementById('js-site-search-input').value;
+          				var rentalGear = 'rentalGear';
+          				var contextPath = ACC.config.contextPath;
+          				$.ajax({
+      	                    url: ACC.config.encodedContextPath + '/datepicker',
+      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+      	                    type: "GET",
+      	                    success: function (data) {
+      	                    	if(searchText == '' && data=='success'){
+      	                    		window.location.reload();
+      	                    	}
+      	                    	else{
+      	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+      	                    	}
+      	                    },
+      	                    error: function (xhr, textStatus, error) {
+      	                       
+      	                    }
+      	                }); 
+        			
+        			});
+        			},
+        			 //BL-520 - disable weekends in the calendar
+                         lockDaysFilter: (day) => {
+                             const d = day.getDay();
+                             return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                         maxDays: 90,
+                      //Disable dates after one year from today
+                         maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                         firstDay: 0,
+                     //Change the defaul button values
+                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+            });
+            const mpicker = new Litepicker({
+                element: document.getElementById('mobile-litepicker'),
+                plugins: ['mobilefriendly'],
+                singleMode: false,
+                numberOfMonths: 1,
+                numberOfColumns: 1,
+                autoApply: false,
+                format: "MMM D, YYYY",
+                resetButton: () => {
+    				 let btn = document.createElement('button');
+    				 btn.innerText = 'Reset';
+    				 btn.className = 'reset-button';
+    				 btn.addEventListener('click', (evt) => {
+    				 evt.preventDefault();
+    				 $.ajax({
+                        url: ACC.config.encodedContextPath + '/resetDatepicker',
+                        type: "GET",
+                        success: function (data) {
+                        	if(data=='success')
+                            window.location.reload();
+                        },
+                        error: function (xhr, textStatus, error) {
+                           
+                        }
+                    });
+    				});
+    				return btn;
+    				},
+                setup: (picker) => {
+          			picker.on('button:apply', (date1, date2) => {
+          				var searchText = document.getElementById('js-site-search-input-mob').value;
+          				var rentalGear = 'rentalGear';
+          				var contextPath = ACC.config.contextPath;
+          				$.ajax({
+      	                    url: ACC.config.encodedContextPath + '/datepicker',
+      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+      	                    type: "GET",
+      	                    success: function (data) {
+      	                    	if(searchText == '' && data=='success'){
+      	                    		window.location.reload();
+      	                    	}
+      	                    	else{
+      	                    		document.location.href=contextPath+"/search/?text="+searchText+"&blPageType="+rentalGear;
+      	                    	}
+      	                    },
+                        error: function (xhr, textStatus, error) {
+                           
+                        }
+                    });
+          			});
+          			},
+          			 //BL-520 - disable weekends in the calendar
+                        lockDaysFilter: (day) => {
+                              const d = day.getDay();
+                               return [6, 0].includes(d);
+                            },
+                         lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                         maxDays: 90,
+                      //Disable dates after one year from today
+                         maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                         firstDay: 0,
+                      //Change the defaul button values
+                         buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+            });
+        </script>
+  	</c:if>
+
+  <!-- This js will load on rental PDP  and it is required for all rental pdp component to make it work -->
+	<c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'true' && product.forRent eq 'true'}">
+                                		 <script>
+                                        // Mobile Menu styles - #my-menu is required for ALL pages
+                                             document.addEventListener(
+                                                 "DOMContentLoaded", () => {
+                                              new Mmenu( "#my-menu", {
+                                                                 extensions: ["fullscreen","position-front"],
+                                                                 navbars		: [{
+                                                                     position: "top",
+                                                                     content : [ "close", "logo" ]
+                                                                 }],
+                                                             } );
+                                                 }
+                                             );
+                                             // Initialize Mega menu rollover - required for ALL pages
+                                             $('.menu-large').hover(
+                                                 function(){ $('.screen').addClass('show') },
+                                                 function(){ $('.screen').removeClass('show') }
+                                             );
+                                             // Create and mount the product thumbnail slider - Required for Single Product Page
+
+                                             //     BL-574:code edited for product-thumbnail start here
+
+                                             var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : false,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard   : false,
+                                                 fixedHeight  : 380,
+                                             } );
+
+                                             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+                                             primarySlider.sync( secondarySlider ).mount();
+
+                                              var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+                                             
+                                             
+                                               if(image_qty>4)
+                                               {
+                                                
+                                             var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 focus       : 'center',
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : true,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard   : false,
+                                                 fixedHeight : 380,
+                                             } );
+                                             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+                                             primarySlider.sync( secondarySlider ).mount();
+                                               }
+                                              // BL:574 code ends here
+
+                                             // Initialize Overview Video Slider - required for Single Product Page
+                                             new Splide( '#overview-slider', {
+                                                 perPage: 2,
+                                                 breakpoints: {
+                                                     '767': {
+                                                         perPage: 1,
+                                                         arrows: false,
+                                                     },
+                                                 },
+                                                 gap: 30,
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Initialize Additional Gear Slider - required for Single Product Page
+                                             new Splide( '#gear-slider', {
+                                                 perPage: 4,
+                                                 breakpoints: {
+                                                     '991': {
+                                                         perPage: 3,
+                                                     },
+                                                     '767': {
+                                                         perPage: 2,
+                                                         arrows: false,
+                                                     },
+                                                     '640': {
+                                                         perPage: 1,
+                                                         arrows: false,
+                                                     },
+                                                 },
+                                                 rewind : true,
+                                                 gap: 20,
+                                                 padding: 10,
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+
+                                             // Initialize PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
+                                             const prodpicker = new Litepicker({
+                                                 element: document.getElementById('product-litepicker'),
+                                                 singleMode: false,
+                                                 numberOfMonths: 2,
+                                                 numberOfColumns: 2,
+                                                 autoApply: false,
+                                                 format: "MMM D, YYYY",
+                                                 resetButton: () => {
+												 let btn = document.createElement('button');
+												 btn.innerText = 'Reset Dates';
+												 btn.className = 'reset-button';
+												 btn.addEventListener('click', (evt) => {
+												 evt.preventDefault();
+												 $.ajax({
+                                                     url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                                     type: "GET",
+                                                     success: function (data) {
+                                                     	if(data=='success')
+                                                         window.location.reload();
+                                                     },
+                                                     error: function (xhr, textStatus, error) {
+                                                        
+                                                     }
+                                                 });
+												});
+												return btn;
+												},
+                                                 setup: (picker) => {
+                                           			picker.on('button:apply', (date1, date2) => {
+                                          				$.ajax({
+                                      	                    url: ACC.config.encodedContextPath + '/datepicker',
+                                      	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                      	                    type: "GET",
+                                      	                    success: function (data) {
+                                      	                    	window.location.reload();
+                                      	                    },
+                                      	                    error: function (xhr, textStatus, error) {
+                                      	                       
+                                      	                    }
+                                      	                }); 
+                                           			
+                                           			});
+                                           			},
+
+                                           	//BL-520 - disable weekends in the calendar
+                                                    lockDaysFilter: (day) => {
+                                                         const d = day.getDay();
+                                                         return [6, 0].includes(d);
+                                                       },
+                                                    lockDays: disallowedDates,
+                                            //Limit days selection to 90 days
+                                                    maxDays: 90,
+                                            //Disable dates after one year from today
+                                                    maxDate: disableDatesOneYearFomNow,
+                                            //Set Sunday to be the first day in the calendar's header
+                                                    firstDay: 0,
+                                            //Change the defaul button values
+                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                             });
+
+                                             // Initialize MOBILE PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
+                                             const mprodpicker = new Litepicker({
+                                                 element: document.getElementById('mobile-product-litepicker'),
+                                                 plugins: ['mobilefriendly'],
+                                                 singleMode: false,
+                                                 numberOfMonths: 1,
+                                                 numberOfColumns: 1,
+                                                 autoApply: false,
+                                                 format: "MMM D, YYYY",
+                                                 resetButton: () => {
+                                     				 let btn = document.createElement('button');
+                                     				 btn.innerText = 'Reset';
+                                     				 btn.className = 'reset-button';
+                                     				 btn.addEventListener('click', (evt) => {
+                                     				 evt.preventDefault();
+                                     				 $.ajax({
+                                                         url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                                         type: "GET",
+                                                         success: function (data) {
+                                                         	if(data=='success')
+                                                             window.location.reload();
+                                                         },
+                                                         error: function (xhr, textStatus, error) {
+                                                            
+                                                         }
+                                                     });
+                                     				});
+                                     				return btn;
+                                     				},
+                                                 setup: (picker) => {
+                                           			picker.on('button:apply', (date1, date2) => {
+                                           			$.ajax({
+                                                         url: ACC.config.encodedContextPath + '/datepicker',
+                                                         data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                                         type: "GET",
+                                                         success: function (data) {
+                                                         	if(data=='success')
+                                                             window.location.reload();
+                                                         },
+                                                         error: function (xhr, textStatus, error) {
+                                                            
+                                                         }
+                                                     });
+                                           			});
+                                           			},
+                                           //BL-520 - disable weekends in the calendar
+                                                    lockDaysFilter: (day) => {
+                                                         const d = day.getDay();
+                                                         return [6, 0].includes(d);
+                                                       },
+                                                    lockDays: disallowedDates,
+                                          //Limit days selection to 90 days
+                                                    maxDays: 90,
+                                          //Disable dates after one year from today
+                                                    maxDate: disableDatesOneYearFomNow,
+                                          //Set Sunday to be the first day in the calendar's header
+                                                    firstDay: 0,
+                                          //Change the defaul button values
+                                                    buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                             });
+                                         // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+                                                 document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+                                                     type   : 'loop',
+                                                     perPage: 1,
+                                                     drag   : false,
+                                                     breakpoints: {
+                                                         '991': {
+                                                             pagination: false,
+                                                         },
+                                                     },
+                                                     keyboard: false,
+                                                 } ).mount());
+
+                                         </script>
+
+                                		</c:if>
+
+<!-- This js will load on usedGear PDP  and it is required for all usedGear pdp component to make it work -->
+<c:if test="${cmsPage.uid eq 'productDetails' && IsRentalPage eq 'false' && product.forSale eq 'true'}">
+		 <script>
+		  // Expand Used Gear Items
+          var swap = document.getElementById("showmore");
+           $(swap).click(function (event) {
+            event.preventDefault();
+              $('.hide-product-row').toggle('slow');
+              //BL-573 and BL-572 : added + icon and html code for + and _
+                if(swap.innerHTML === "Show More +") {
+                   swap.innerHTML = "Show Less &#8722;";
+                    } else {
+                  swap.innerHTML = "Show More &#43;";
+                   }
+                });
+             // Mobile Menu styles - #my-menu is required for ALL pages
+             document.addEventListener(
+                 "DOMContentLoaded", () => {
+                    new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],
+                } );
+                 }
+             );
+             // Initialize Mega menu rollover - required for ALL pages
+             $('.menu-large').hover(
+                 function(){ $('.screen').addClass('show') },
+                 function(){ $('.screen').removeClass('show') }
+             );
+             // Create and mount the product thumbnail slider - Required for Single Product Page
+           // BL-574 : product thumbnail center code start here
+
+             var secondarySlider = new Splide( '#product-thumbnails', {
+                 rewind      : true,
+                 fixedWidth  : 115,
+                 fixedHeight : 115,
+                 isNavigation: true,
+                 gap         : 10,
+                 pagination  : false,
+                 cover       : true,
+                 arrows      : false,
+                 breakpoints : {
+                     '600': {
+                         fixedWidth  : 80,
+                         fixedHeight : 80,
+                         arrows: false,
+                     }
+                 },
+                 keyboard: false,
+             } ).mount();
+             // Create the product slider - Required for Single Product Page
+             var primarySlider = new Splide( '#product-slider', {
+                 type       : 'fade',
+                 pagination : false,
+                 arrows     : false,
+                 keyboard   : false,
+                 fixedHeight : 380,
+             } );
+             // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
+             primarySlider.sync( secondarySlider ).mount();
+
+              var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
+
+              if(image_qty>4){
+                         var secondarySlider = new Splide( '#product-thumbnails', {
+                                                 rewind      : true,
+                                                 fixedWidth  : 115,
+                                                 fixedHeight : 115,
+                                                 isNavigation: true,
+                                                 gap         : 10,
+                                                 focus       : 'center',
+                                                 pagination  : false,
+                                                 cover       : true,
+                                                 arrows      : true,
+                                                 breakpoints : {
+                                                     '600': {
+                                                         fixedWidth  : 80,
+                                                         fixedHeight : 80,
+                                                         arrows: false,
+                                                     }
+                                                 },
+                                                 keyboard: false,
+                                             } ).mount();
+                                             // Create the product slider - Required for Single Product Page
+                                             var primarySlider = new Splide( '#product-slider', {
+                                                 type       : 'fade',
+                                                 pagination : false,
+                                                 arrows     : false,
+                                                 keyboard   : false,
+                                                 fixedHeight : 380,
+                                             } );
+                                             primarySlider.sync( secondarySlider ).mount();
+                                              }
+         // BL:574 code ends here part2
+
+             // Initialize Overview Video Slider - required for Single Product Page
+             new Splide( '#overview-slider', {
+                 perPage: 2,
+                 breakpoints: {
+                     '767': {
+                         perPage: 1,
+                         arrows: false,
+                     },
+                 },
+                 gap: 30,
+                 keyboard: false,
+             } ).mount();
+             // Initialize Additional Gear Slider - required for Single Product Page
+             new Splide( '#gear-slider', {
+                 perPage: 4,
+                 breakpoints: {
+                     '991': {
+                         perPage: 3,
+                     },
+                     '767': {
+                         perPage: 2,
+                         arrows: false,
+                     },
+                     '640': {
+                         perPage: 1,
+                         arrows: false,
+                     },
+                 },
+                 rewind : true,
+                 gap: 20,
+                 padding: 10,
+                 keyboard: false,
+             } ).mount();
+             // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+
+// Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+        document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+            type   : 'loop',
+            perPage: 1,
+            drag   : false,
+            breakpoints: {
+                '991': {
+                    pagination: false,
+                },
+            },
+            keyboard: false,
+        } ).mount());
+
+         </script>
+
+		</c:if>
+
+
+		<%-- BL-457 added JS for rental cart page --%>
+		<c:if test="${cmsPage.uid eq 'cartpage'}">
+            <script>
+                // Mobile Menu styles - #my-menu is required for ALL pages
+                document.addEventListener(
+                    "DOMContentLoaded", () => {
+                        new Mmenu( "#my-menu", {
+                            extensions: ["fullscreen","position-front"],
+                            navbars		: [{
+                                position: "top",
+                                content : [ "close", "logo" ]
+                            }],
+                        } );
+                    }
+                );
+                // Initialize Mega menu rollover - required for ALL pages
+                $('.menu-large').hover(
+                    function(){ $('.screen').addClass('show') },
+                    function(){ $('.screen').removeClass('show') }
+                );
+
+            </script>
+        </c:if>
+
+        <%-- BL-466 added JS for empty cart page --%>
+        <c:if test="${cmsPage.uid eq 'emptyCartPage'}">
+              <script>
+                      // Mobile Menu styles - #my-menu is required for ALL pages
+                      document.addEventListener(
+                          "DOMContentLoaded", () => {
+                              new Mmenu( "#my-menu", {
+                                  extensions: ["fullscreen","position-front"],
+                                  navbars		: [{
+                                      position: "top",
+                                      content : [ "close", "logo" ]
+                                  }],
+                              } );
+                          }
+                      );
+                      // Initialize Mega menu rollover - required for ALL pages
+                      $('.menu-large').hover(
+                          function(){ $('.screen').addClass('show') },
+                          function(){ $('.screen').removeClass('show') }
+                      );
+
+                      // Initialize Featured Slider - required for ANY page with Featured Gear slider
+                      new Splide( '#gear-slider', {
+                          perPage: 3,
+                          breakpoints: {
+                              '991': {
+                                  perPage: 2,
+                              },
+                              '640': {
+                                  perPage: 1,
+                              },
+                          },
+                          rewind : true,
+                          gap: 20,
+                          padding: 10,
+                          keyboard: false,
+                      } ).mount();
+                      // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+                      document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
+                          type   : 'loop',
+                          perPage: 1,
+                          drag   : false,
+                          breakpoints: {
+                              '991': {
+                                  pagination: false,
+                              },
+                          },
+                          keyboard: false,
+                      } ).mount());
+                  </script>
+        </c:if>
+
+        <c:if test="${cmsPage.uid eq 'DeliveryOrPickupCartpage'}">
+         <input type="hidden" id="isFromSummaryPage" value="true">
+            <script>
+                //Replace button text
+                $(".dropdown-menu li button").click(function(){
+                  $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+                  $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+                });
+                // Mobile Menu styles - #my-menu is required for ALL pages
+                document.addEventListener(
+                    "DOMContentLoaded", () => {
+                        new Mmenu( "#my-menu", {
+                            extensions: ["fullscreen","position-front"],
+                            navbars		: [{
+                                position: "top",
+                                content : [ "close", "logo" ]
+                            }],
+                        } );
+                    }
+                );
+                // Initialize Mega menu rollover - required for ALL pages
+                $('.menu-large').hover(
+                    function(){ $('.screen').addClass('show') },
+                    function(){ $('.screen').removeClass('show') }
+                );
+
+                $(document).ready(function() {
+                    $("#shippingChangeRentalDate").click(function(e) {
+                    	e.preventDefault();
+                    	var rentalStartDate = $("#rentalStartDate").val();
+                    	var rentalEndDate = $("#rentalEndDate").val();
+                    	$.ajax({
+                        url: ACC.config.encodedContextPath + '/datepicker',
+                        data: {selectedFromDate: rentalStartDate, selectedToDate: rentalEndDate},
+                        type: "GET",
+                        success: function (data) {
+                            if(data=='success')
+                            window.location.href = ACC.config.encodedContextPath + '/cart';
+                        },
+                        error: function (xhr, textStatus, error) {
+
+                        }
+                    }); 
+                    });
+                    
+                    $("#shippingCloseModal").click(function(e) {
+                    	resetDateValues(e);
+                    });
+                    
+                    $("#shippingCloseIconModal").click(function(e) {
+                    	resetDateValues(e);
+                    });
+                }); 
+                
+                function resetDateValues(e)
+                {
+                	e.preventDefault();
+                	$("#litepicker").val('');
+                	$("#summary-litepicker").val('');
+                	$("#rentalStartDate").val("");
+                	$("#rentalEndDate").val("");
+                	$('#editWarning').modal('hide');
+                }
+            </script>
+        </c:if>
+          <c:if test="${fn:containsIgnoreCase(blPageType, 'rentalSummary')}">
+        		<script>
+                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                        //BL-520 - disable previous dates
+                           let date = new Date();
+                           let dd = String(date.getDate() - 1).padStart(2, '0');
+                           let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                           let yyyy = date.getFullYear();
+                           let today = mm + '/' + dd + '/' + yyyy;
+
+                        //BL-520 - disable dates after one year from today's date
+                           let oneYearFromNow = new Date();
+                           let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                           const disallowedDates = [['2001-01-01', today]];
+                        const picker = new Litepicker({
+                            element: document.getElementById('litepicker'),
+                            plugins: ['mobilefriendly'],
+                            singleMode: false,
+                            numberOfMonths: 2,
+                            numberOfColumns: 2,
+                            autoApply: false,
+                            format: "MMM D, YYYY",
+                            resetButton: () => {
+                				 let btn = document.createElement('button');
+                				 btn.innerText = 'Reset Dates';
+                				 btn.className = 'reset-button';
+                				 btn.addEventListener('click', (evt) => {
+                				 evt.preventDefault();
+                				 $.ajax({
+                                    url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                    type: "GET",
+                                    success: function (data) {
+                                    	if(data=='success')
+                                        window.location.reload();
+                                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                				});
+                				return btn;
+                				},
+                            setup: (picker) => {
+                      			picker.on('button:apply', (date1, date2) => {
+                                  //var isFromSummaryPage = $("#isFromSummaryPage").val();
+                                  //alert(isFromSummaryPage);
+                                  if($("#isFromSummaryPage").val() === 'true'){
+                      			      $("#rentalStartDate").val(date1.toDateString());
+                                      $("#rentalEndDate").val(date2.toDateString());
+                                      $('#editWarning').modal('show');
+                                   }else{
+                      				$.ajax({
+                  	                    url: ACC.config.encodedContextPath + '/datepicker',
+                  	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                  	                    type: "GET",
+                  	                    success: function (data) {
+                  	                    	window.location.reload();
+                  	                    },
+                  	                    error: function (xhr, textStatus, error) {
+
+                  	                    }
+                  	                });
+        }
+                      			});
+                      			},
+                      		 //BL-520 - disable weekends in the calendar
+                                lockDaysFilter: (day) => {
+                                    const d = day.getDay();
+                                    return [6, 0].includes(d);
+                                  },
+                                lockDays: disallowedDates,
+                             //Limit days selection to 90 days
+                                maxDays: 90,
+                            //Disable dates after one year from today
+                                maxDate: disableDatesOneYearFomNow,
+                           //Set Sunday to be the first day in the calendar's header
+                                firstDay: 0,
+                           //Change the defaul button values
+                                buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                        });
+                        // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                        const summarypicker = new Litepicker({
+                            element: document.getElementById('summary-litepicker'),
+                            plugins: ['mobilefriendly'],
+                            singleMode: false,
+                            numberOfMonths: 2,
+                            numberOfColumns: 2,
+                            autoApply: false,
+                            format: "MMM D, YYYY",
+                            resetButton: () => {
+                				 let btn = document.createElement('button');
+                				 btn.innerText = 'Reset Dates';
+                				 btn.className = 'reset-button';
+                				 btn.addEventListener('click', (evt) => {
+                				 evt.preventDefault();
+                				 $.ajax({
+                                    url: ACC.config.encodedContextPath + '/resetDatepicker',
+                                    type: "GET",
+                                    success: function (data) {
+                                    	if(data=='success')
+                                        window.location.reload();
+                                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                				});
+                				return btn;
+                				},
+                            setup: (picker) => {
+                      			picker.on('button:apply', (date1, date2) => {
+                      			// var isFromSummaryPage = $("#isFromSummaryPage").val();
+                                    if($("#isFromSummaryPage").val() === 'true'){
+                      			      $("#rentalStartDate").val(date1.toDateString());
+                                      $("#rentalEndDate").val(date2.toDateString());
+                                      $('#editWarning').modal('show');
+                                      }else{
+                      			$.ajax({
+                                    url: ACC.config.encodedContextPath + '/datepicker',
+                                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+                                    type: "GET",
+                                    success: function (data) {
+                                    	if(data=='success')
+                                        window.location.reload();
+                                    },
+                                    error: function (xhr, textStatus, error) {
+
+                                    }
+                                });
+                                }
+                      			});
+                      			},
+                      //BL-520 - disable weekends in the calendar
+                               lockDaysFilter: (day) => {
+                                       const d = day.getDay();
+                                       return [6, 0].includes(d);
+                                     },
+                               lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                              maxDays: 90,
+                      //Disable dates after one year from today
+                              maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                              firstDay: 0,
+                      //Change the defaul button values
+                              buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                        });
+                  </script>
+        		</c:if>
+
 	</c:otherwise>
 </c:choose>
 

@@ -1,0 +1,399 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImPex for Importing Product Media
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs products-media.impex =========================");
+
+# Macros / Replacement Parameter definitions
+
+$productCatalog=blProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog]
+$media=@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator]
+$thumbnail=thumbnail(code, $catalogVersion)
+$picture=picture(code, $catalogVersion)
+$thumbnails=thumbnails(code, $catalogVersion)
+$detail=detail(code, $catalogVersion)
+$normal=normal(code, $catalogVersion)
+$others=others(code, $catalogVersion)
+$data_sheet=data_sheet(code, $catalogVersion)
+$medias=medias(code, $catalogVersion)
+$galleryImages=galleryImages(qualifier, $catalogVersion)
+$siteResource=jar:com.bl.initialdata.setup.InitialDataSystemSetup&/blinitialdata/import/productCatalogs/$productCatalog
+
+# Create Media
+INSERT_UPDATE Media;mediaFormat(qualifier);code[unique=true];URL;mime[default='image/jpeg'];$catalogVersion;folder(qualifier)
+                   ;515Wx515H;1Ds_MkIII_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LGe578ef58-f961-4e78-b59c-f6394523338a.jpg;;;images
+                   ;96Wx96H;Canon-EOS-1DMark-II_Small;https://cdn.static-bl.com/images/bodies/Canon_1dII_small.jpg;;;images
+                   ;96Wx96H;Canon_1Ds_Mark_II_Small;https://cdn.static-bl.com/images/store/Canon_EOS_1DS_MKII_small.jpg;;;images
+                   ;96Wx96H;Canon_EOS_1D_Mk_III_Small;https://cdn.static-bl.com/images/bodies/1DIII_small.jpg;;;images
+                   ;96Wx96H;1DmkIIN_Small;https://cdn.static-bl.com/images/bodies/canon_1DIIN_small.jpg;;;images
+                   ;96Wx96H;Canon_EOS_40D_Small;https://cdn.static-bl.com/images/store/000024_eos_40d_canon_small.jpg;;;images
+                   ;96Wx96H;Nikon_D70_Small;https://cdn.static-bl.com/images/store/nikon_d70_sm.jpg;;;images
+                   ;96Wx96H;Nikon_d300_Small;https://cdn.static-bl.com/images/store/Nikon_d300_sm.jpg;;;images
+                   ;96Wx96H;1Ds_MkIII_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMea650fbb-01c5-4610-b802-17b869613d6b.jpg;;;images
+                   ;96Wx96H;Canon_EOS_5D_Small;https://cdn.static-bl.com/images/store/EOS_DIGITAL_5D_small.jpg;;;images
+                   ;300Wx300H;Canon_1Ds_Mark_II_Medium;https://cdn.static-bl.com/images/store/Canon_EOS_1DS_MKII.jpg;;;images
+                   ;300Wx300H;Canon_EOS_1D_Mk_III_Medium;https://cdn.static-bl.com/images/bodies/1DIII_medium.jpg;;;images
+                   ;300Wx300H;Canon_EOS_40D_Medium;https://cdn.static-bl.com/images/store/000024_eos_40d_canon.jpg;;;images
+                   ;300Wx300H;Nikon_D70_Medium;https://cdn.static-bl.com/images/store/nikon_d70_medium2.jpg;;;images
+                   ;300Wx300H;Nikon_d300_Medium;https://cdn.static-bl.com/images/store/Nikon_d300_medium2.jpg;;;images
+                   ;300Wx300H;1Ds_MkIII_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD2aea06da-bf61-47fc-af83-5f48cd553a48.jpg;;;images
+                   ;300Wx300H;Canon_EOS_5D_Medium;https://cdn.static-bl.com/images/store/EOS_DIGITAL_5D.jpg;;;images
+                   ;96Wx96H;Canon-EF-100-400mm-f4556L-IS-USM_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM7bc09e98-13a2-4808-9305-1c389c45c4c5.jpg;;;images
+                   ;515Wx515H;Canon-EF-100-400mm-f4556L-IS-Large;	https://d2ieyhi8galmxj.cloudfront.net/product/LGf993e093-3a8e-43a7-bcfc-486c06a88768.jpg;;;images
+                   ;96Wx96H;Canon_EF_17-40mm_f4L_USM_Small;	https://cdn.static-bl.com/images/store/canon_17_40mm_zoom_small.jpg	;;;images
+                   ;300Wx300H;Canon_EF_17-40mm_f4L_USM_Medium; https://cdn.static-bl.com/images/store/canon_17_40mm_zoom_lens.jpg	;;;images
+                   ;96Wx96H;Canon_EF_300mm_F_4_IS_Small;https://cdn.static-bl.com/product/SMcefd1fa9-d0d4-425c-a999-3164cd11c273.jpg;;;images
+                   ;300Wx300H;Canon_EF_300mm_F_4_IS_Medium;https://cdn.static-bl.com/product/MD28982d76-db8d-4c4b-9c79-4a4cc7a3d626.jpg;;;images
+                   ;515Wx515H;Canon_EF_300mm_F_4_IS_Large;https://cdn.static-bl.com/product/LG07c84e1f-b207-4516-b381-74e0833eac14.jpg;;;images
+                   ;96Wx96H;Canon_EF_70-200mm_f4_IS_Small;	https://d2ieyhi8galmxj.cloudfront.net/product/SM183e70ac-6bc3-4587-a643-e3c14459572b.jpg;;;images
+                   ;300Wx300H;Canon_EF_70-200mm_f4_IS_Medium;	https://d2ieyhi8galmxj.cloudfront.net/product/MD9b374dc4-9b19-408f-b967-e2525ac8e0ce.jpg;;;images
+                   ;515Wx515H;Canon_EF_70-200mm_f4_IS_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG5830b180-727b-4684-8ac3-0a37c99e8129.jpg;;;images
+                   ;96Wx96H;Canon_16-35_F2.8_L_Small;https://cdn.static-bl.com/images/wide/canon-16-35-f2.8_small.jpg	;;;images
+                   ;300Wx300H;Canon_16-35_F2.8_L_Medium;https://cdn.static-bl.com/images/store/51SPNYT747L__SS400_.jpg	;;;images
+                   ;96Wx96H;Canon_24-70mm_f2.8_L_Small;	https://d2ieyhi8galmxj.cloudfront.net/product/SMeb69c33a-738c-4e6e-84f3-36768324eeda.jpg	;;;images
+                   ;300Wx300H;Canon_24-70mm_f2.8_L_Medium;	https://d2ieyhi8galmxj.cloudfront.net/product/MD7f938f6a-2144-45b3-a365-403eacafa348.jpg	;;;images
+                   ;515Wx515H;Canon_24-70mm_f2.8_L_Large;	https://d2ieyhi8galmxj.cloudfront.net/product/LG0c729f57-9b80-4046-81e7-91ad389367a9.jpg;;;images
+                   ;96Wx96H;Canon_100mm_f2.8_Macro_Small;https://cdn.static-bl.com/images/store/100mm_small.jpg	;;;images
+                   ;300Wx300H;Canon_100mm_f2.8_Macro_Medium;	https://cdn.static-bl.com/images/store/194451.jpg	;;;images
+                   ;96Wx96H;Canon_24-105mm_f4_IS_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMc849dbb8-66a5-4c42-8464-6339c47fe35d.jpg	;;;images
+                   ;515Wx515H;Canon_24-105mm_f4_IS_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG339d68db-5e27-41b3-8fd0-c289d4050e50.jpg;;;images
+                   ;96Wx96H;Canon_17-55_f2.8_IS_EF-S_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM10e17e2e-865c-4fec-962e-cec0791ea9e7.jpg	;;;images
+                   ;515Wx515H;Canon_17-55_f2.8_IS_EF-S_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG5239d5ef-9097-4597-a094-3726ace61fe9.jpg;;;images
+                   ;96Wx96H;Canon_50mm_f1.2_L_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMd4a9a42c-a4db-4502-b684-5e03633cf6c1.jpg	;;;images
+                   ;515Wx515H;Canon_50mm_f1.2_L_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG7006a549-32ca-44b3-a225-fe94989ce891.jpg;;;images
+                   ;96Wx96H   ;Nikon_17-55mm_f2.8_AF-S_ED_DX_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM49fc7977-db69-40da-a1fb-9df7c258cbf9.jpg;;;images
+                   ;300Wx300H ;Nikon_17-55mm_f2.8_AF-S_ED_DX_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD93116d8e-f9bf-4f45-b734-8867d68ca080.jpg;;;images
+                   ;515Wx515H ;Nikon_17-55mm_f2.8_AF-S_ED_DX_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG94be10e3-7fb2-414c-8bf7-64950f79c422.jpg;;;images
+                   ;96Wx96H   ;Nikon_10.5mm_f2.8_Fisheye_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMb46503fc-c906-423d-b0d3-00487587c77c.jpg;;;images
+                   ;300Wx300H ;Nikon_10.5mm_f2.8_Fisheye_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD686c1318-961f-4db9-a140-f152d7dfbd72.jpg;;;images
+                   ;515Wx515H ;Nikon_10.5mm_f2.8_Fisheye_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LGf2e33346-ee74-4a1c-97cb-080d9e52d03a.jpg;;;images
+                   ;96Wx96H   ;Nikon_80-400mm_f4.5-5.6D_ED_VR_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMcb0d7d3b-0d10-471e-8882-3a7e770eb018.jpg;;;images
+                   ;300Wx300H ;Nikon_80-400mm_f4.5-5.6D_ED_VR_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD0a349219-64ca-4d39-ad3c-8647b1e3a092.jpg;;;images
+                   ;515Wx515H ;Nikon_80-400mm_f4.5-5.6D_ED_VR_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG42146608-d1ce-48e9-beb0-f4e42f059991.jpg;;;images
+                   ;96Wx96H  ;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Small;https://cdn.static-bl.com/images/store/381611_small.jpg	;;;images
+                   ;300Wx300H;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Medium;https://cdn.static-bl.com/images/store/381611.jpg;;;images
+                   ;96Wx96H  ;Nikon_18-200_f3.5-5.6_AF-S_VR_Small;https://cdn.static-bl.com/images/Nikon/nikon_18-200_f3.5-5.6_af-s_vr_small.jpg;;;images
+                   ;300Wx300H;Nikon_18-200_f3.5-5.6_AF-S_VR_Medium;https://cdn.static-bl.com/images/Nikon/nikon_18-200_f3.5-5.6_af-s_vr_medium.jpg;;;images
+                   ;96Wx96H  ;Nikon_14mm_f2.8_AF_ED_Small;https://cdn.static-bl.com/images/store/Nikon_14mm_f2_8_AF_ED_sm.jpg;;;images
+                   ;300Wx300H;Nikon_14mm_f2.8_AF_ED_Medium;	https://cdn.static-bl.com/images/store/Nikon_14mm_f2_8_AF_ED_medium.jpg	;;;images
+                   ;96Wx96H  ;Nikon_70-200_f2.8_VR_Small;https://cdn.static-bl.com/images/store/Nikon_70_200_f2_8_VR_sm.jpg;;;images
+                   ;300Wx300H;Nikon_70-200_f2.8_VR_Medium;https://cdn.static-bl.com/images/store/Nikon_70_200_f2_8_VR_medium2.jpg;;;images
+# ;Nikon_17-35mm_f2.8 AF-S_IF_ED_Small;https://cdn.static-bl.com/images/Nikon/Nikon_17-35mm_f2.8_AF-S_IF_ED_small.jpg	;;;images
+                   ;96Wx96H   ;Nikon_85mm_f1.4_AF_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMba5ec9bc-df26-41ab-b0e2-07d1c0bad217.jpg;;;images
+                   ;300Wx300H ;Nikon_85mm_f1.4_AF_Medium;	https://d2ieyhi8galmxj.cloudfront.net/product/MD00e299bf-3ca8-4e64-91db-548ea6d617c9.jpg;;;images
+                   ;515Wx515H ;Nikon_85mm_f1.4_AF_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LGc7a6710b-9cec-4a6b-a136-e9cf2d5add9a.jpg;;;images
+                   ;96Wx96H   ;Nikkor_105mm_f2.8_Micro_AF-S_VR_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM1a62565c-c5f9-4f60-8d33-5770ff1ace1e.jpg;;;images
+                   ;300Wx300H ;Nikkor_105mm_f2.8_Micro_AF-S_VR_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD983b7ede-dfb1-477b-a30a-f6fc2439df38.jpg	;;;images
+                   ;515Wx515H ;Nikkor_105mm_f2.8_Micro_AF-S_VR_Large;	https://d2ieyhi8galmxj.cloudfront.net/product/LG98812684-a4b1-469b-98d7-78e83e045630.jpg;;;images
+                   ;300Wx300H;Canon-EF-100-400mm-f4556L-IS-USM_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD061e6359-a89d-4290-87cf-dca5b93f707f.jpg;;;images
+                   ;300Wx300H;Canon_24-105mm_f4_IS_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDcab0e473-db44-4b3a-bf9b-f27cdb8b9386.jpg;;;images
+                   ;300Wx300H;Canon_17-55_f2.8_IS_EF-S_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD7d425f77-5e6f-4081-8d33-23cd39a5e464.jpg;;;images
+                   ;300Wx300H;Canon_50mm_f1.2_L_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD59485dc1-4b27-4021-9d23-530d16ee3449.jpg;;;images
+                   ;300Wx300H;Canon_EF_135mm_f2.0L_USM_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDa718898b-22e7-4e9a-9650-42a924572619.jpg;;;images
+                   ;300Wx300H;Canon_EF_70-200mm_f2.8L_USM_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD4d7650cf-dafc-4497-9567-ef8d9a6bcab6.jpg;;;images
+                   ;300Wx300H;Canon_16_35mm_f2.8_II_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDef51109a-9b0b-4559-896c-b5907e227c43.jpg;;;images
+                   ;300Wx300H;Canon_85mm_f1.8_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD7e49a034-d647-4bef-9604-ae497b7f39c5.jpg;;;images
+                   ;300Wx300H;Canon_180mm_f3.5_Macro_Medium;https://cdn.static-bl.com/images/store/canon_180mm_f3_5_macro_medium2.jpg;;;images
+                   ;300Wx300H;Canon_EF_28mm_f1.8_USM_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD59594d9f-2b26-4eac-96c9-0b233bd9c5ba.jpg;;;images
+                   ;300Wx300H;67mm_CP_Filter_Medium;https://cdn.static-bl.com/images/store/vf67cpam_en_1.jpg;;;images
+                   ;300Wx300H;72mm_CP_Filter_Medium;https://cdn.static-bl.com/images/store/vf67cpam_en_1.jpg;;;images
+                   ;300Wx300H;77mm_CP_Filter_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD1acd043a-0e25-4798-936d-a9761087a8f6.jpg;;;images
+                   ;300Wx300H;58mm_CP_Filter_Medium;https://cdn.static-bl.com/images/store/vf67cpam_en_1.jpg;;;images
+                   ;300Wx300H;Canon_drop_in_CP_Medium;https://cdn.static-bl.com/images/store/52mm_frop_filter_medium.jpg;;;images
+                   ;300Wx300H;82mm_CP_Medium;https://cdn.static-bl.com/images/store/vf67cpam_en_1.jpg;;;images
+#;300Wx300H;lowepro_flipside_300_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDacfba2d2-97a3-4654-bcbe-31e9f95382c6.jpg;;;images
+#;300Wx300H;CZ_Cable_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDc6cf581a-ae76-4c72-ba63-4164a3f5229a.jpg;;;images
+                   ;300Wx300H;Nikon_52mm_CPL_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD0256c306-4576-4450-9a54-620320c3472e.jpg;;;images
+#;300Wx300H;Canon_TC-80N3_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD8a5f4e92-4c43-4da3-a33b-ddd6cc9d04f0.jpg;;;images
+                   ;300Wx300H;Nikon_d3s_Medium;https://cdn.static-bl.com/images/store/Nikon_D3s_lg.jpg;;;images
+                   ;300Wx300H;Nikon_d4_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD39bca551-af01-4431-bbfd-601752b7f37a.jpg;;;images
+                   ;300Wx300H;Canon_5DIII_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDe88ea883-f8b6-4c0e-9daf-8dc8e7a0506e.jpg;;;images
+                   ;300Wx300H;Nikon_d800_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD63dde97f-0431-40f5-902c-1472fbd3ff9f.jpg;;;images
+                   ;300Wx300H;Canon_EOS_6D_Digital_SLR_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD7be4146e-0b17-43b1-bfc6-2d5dc7a3b2d0.jpg;;;images
+                   ;300Wx300H;Hasselblad_H5D40_Medium_Format_DSLR_Camera_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD84f683a5-17d9-43b6-858e-521ddda39916.jpg;;;images
+                   ;300Wx300H;Nikon_D7100_Digital_SLR_Medium;https://cdn.static-bl.com/product/MDc175545c-147b-4641-afdc-c2896700f739.jpg;;;images
+                   ;300Wx300H;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD43d977aa-b2b5-4498-8cdf-45fc1d598913.jpg;;;images
+                   ;300Wx300H;Nikon-D610-Digital-SLR-Camera_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD2065ee98-07d3-4f5c-804e-c741aaef93d4.jpg;;;images
+                   ;300Wx300H;Nikon-D5300-Digital-SLR-Camera_Medium;https://cdn.static-bl.com/product/MDddcf457d-7412-40a6-9536-72081fa823da.jpg;;;images
+                   ;300Wx300H;EN-EL3e_Medium;https://cdn.static-bl.com/images/store/EN_EL3e_medium.jpg;;;images
+                   ;300Wx300H;Nikon_EN-EL4a_Medium;https://cdn.static-bl.com/images/store/1015767.jpg;;;images
+                   ;300Wx300H;lp-e8_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDb9f83c68-f4f0-45a7-a81b-aee58baa2cdc.jpg;;;images
+                   ;300Wx300H;EN-EL15_Medium;https://cdn.static-bl.com/images/store/Nikon_EN_EL15_RECHARGEABLE_LI_ION_BATTERY.jpg;;;images
+                   ;300Wx300H;sony-battery_Medium;https://cdn.static-bl.com/images/store/Sony_NP_FM500H_InfoLithium_Rechargeable_Lithium_Ion_Battery.jpg;;;images
+                   ;300Wx300H;olympus_ep2_extra_battery_Medium;https://cdn.static-bl.com/images/store/psbls1__Custom_.jpg;;;images
+                   ;300Wx300H;VW-VBG6PPK_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD46cb9511-a5ed-4988-bc64-c2bcd0a7f76b.jpg;;;images
+                   ;300Wx300H;sony_battery_a55_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDc7b2cfc1-fbfa-43b7-afe5-88398b25d920.jpg;;;images
+                   ;300Wx300H;Sony_NP-FV70_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDb22a657f-de36-43a5-9c06-2431eeb73161.jpg;;;images
+                   ;300Wx300H;Panasonic_Battery_DMW-BLC12_Medium;https://cdn.static-bl.com/images/store/Panasonic_DMW_BLC12_Battery___main.jpg;;;images
+                   ;96Wx96H;Rode_videomic_Small;https://cdn.static-bl.com/images/store/rode_videomic_sm.jpg;;;images
+                   ;96Wx96H;Sennheiser_MKE_Small;https://cdn.static-bl.com/images/store/534023_sm.jpg;;;images
+                   ;96Wx96H;Tascam_DR100_Small;https://cdn.static-bl.com/images/store/599285_sm.jpg;;;images
+                   ;96Wx96H;Rode_videomic_stereo_Small;https://cdn.static-bl.com/images/store/450170_sm.jpg;;;images
+                   ;96Wx96H;Azden_lav_Small;https://cdn.static-bl.com/images/store/3656_sm.jpg;;;images
+                   ;96Wx96H;Sennheiser_ME66_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM7014a5c1-7821-4136-a935-ac23d0e8e60e.jpg;;;images
+                   ;96Wx96H;sennheiser_lav_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM9c4f2933-1d2b-4c91-a162-79b78fdb553d.jpg;;;images
+                   ;96Wx96H;beachtek_DXA_Small;https://cdn.static-bl.com/product/SMfadef34e-ab15-49eb-84f8-86fc325db458.jpg;;;images
+                   ;96Wx96H;female_XLR_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SMfbda9b47-51b9-4964-b446-4d2e55554ad1.jpg;;;images
+                   ;96Wx96H;boom_pole_Small;https://d2ieyhi8galmxj.cloudfront.net/product/SM14702470-ea2f-4e65-b33a-3c95125dc22b.jpg;;;images
+                   ;300Wx300H;Rode_videomic_Medium;https://cdn.static-bl.com/images/store/rode_videomic.jpg;;;images
+                   ;300Wx300H;Sennheiser_MKE_Medium;https://cdn.static-bl.com/images/store/534023.jpg;;;images
+                   ;300Wx300H;Tascam_DR100_Medium;https://cdn.static-bl.com/images/store/599285.jpg;;;images
+                   ;300Wx300H;Rode_videomic_stereo_Medium;https://cdn.static-bl.com/images/store/450170.jpg;;;images
+                   ;300Wx300H;Azden_lav_Medium;https://cdn.static-bl.com/images/store/3656.jpg;;;images
+                   ;300Wx300H;Sennheiser_ME66_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD9d0a1542-bd1d-4457-a5e9-b96709102b84.jpg;;;images
+                   ;300Wx300H;sennheiser_lav_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD6bddb7cb-39a1-4ab8-ac29-837f2d87a423.jpg;;;images
+                   ;300Wx300H;beachtek_DXA_Medium;https://cdn.static-bl.com/product/MD7903a52a-a53a-4487-b622-7938ca81cc21.jpg;;;images
+                   ;300Wx300H;female_XLR_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MD3eada0bb-a935-4afd-8a92-aea5b1d78c8c.jpg;;;images
+                   ;300Wx300H;boom_pole_Medium;https://d2ieyhi8galmxj.cloudfront.net/product/MDc7fd3b2e-02ab-4db6-ae4b-1c1d64a78dff.jpg;;;images
+                   ;515Wx515H;Sennheiser_ME66_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG0118bee2-1fb8-480a-b5ca-3a7cbe1b4b80.jpg;;;images
+                   ;515Wx515H;sennheiser_lav_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LG74db6f17-348a-41e2-b4a1-d7f47297b570.jpg;;;images
+                   ;515Wx515H;beachtek_DXA_Large;https://cdn.static-bl.com/product/LGa7d9e46d-3d04-4a0f-aac9-9dc86ad3d76f.jpg;;;images
+                   ;515Wx515H;female_XLR_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LGeb08fff2-04c7-4a07-b0ec-af6c9b76654f.jpg;;;images
+                   ;515Wx515H;boom_pole_Large;https://d2ieyhi8galmxj.cloudfront.net/product/LGdbe0aaf5-d33c-46da-b42f-ced30bcf1da1.jpg;;;images
+
+
+
+
+# Create Media Containers
+INSERT_UPDATE MediaContainer;qualifier[unique=true];$medias;$catalogVersion
+                            ;Canon-EOS-1D-Mark-II_Container;Canon-EOS-1DMark-II_Small;
+                            ;Canon_1Ds_Mark_II_Container;Canon_1Ds_Mark_II_Small,Canon_1Ds_Mark_II_Medium
+                            ;Canon_EOS_1D_Mk_III_Container;Canon_EOS_1D_Mk_III_Medium,Canon_EOS_1D_Mk_III_Small
+                            ;1DmkIIN_Container;1DmkIIN_Small
+                            ;Canon_EOS_40D_Container;Canon_EOS_40D_Small,Canon_EOS_40D_Medium
+                            ;Nikon_D70_Container;Nikon_D70_Medium,Nikon_D70_Small
+                            ;Nikon_d300_Container;Nikon_d300_Medium,Nikon_d300_Small
+                            ;1Ds_MkIII_Container;1Ds_MkIII_Small,1Ds_MkIII_Medium,1Ds_MkIII_Large
+                            ;Canon_EOS_5D_Container;Canon_EOS_5D_Small,Canon_EOS_5D_Medium
+                            ;Canon-EF-100-400mm-f4556L-IS-USM_Container;Canon-EF-100-400mm-f4556L-IS-USM_Small,Canon-EF-100-400mm-f4556L-IS-USM_Medium
+                            ;Canon_EF_17-40mm_f4L_USM_Container;Canon_EF_17-40mm_f4L_USM_Medium,Canon_EF_17-40mm_f4L_USM_Small
+                            ;Canon_EF_300mm_F_4_IS_Container;Canon_EF_300mm_F_4_IS_Large,Canon_EF_300mm_F_4_IS_Medium,Canon_EF_300mm_F_4_IS_Small
+                            ;Canon_EF_70-200mm_f4_IS_Container;Canon_EF_70-200mm_f4_IS_Small,Canon_EF_70-200mm_f4_IS_Medium,Canon_EF_70-200mm_f4_IS_Large
+                            ;Canon_16-35_F2.8_L_Container;Canon_16-35_F2.8_L_Medium,Canon_16-35_F2.8_L_Small
+                            ;Canon_24-70mm_f2.8_L_Container;Canon_24-70mm_f2.8_L_Small,Canon_24-70mm_f2.8_L_Medium,Canon_24-70mm_f2.8_L_Large
+                            ;Canon_100mm_f2.8_Macro_Container;Canon_100mm_f2.8_Macro_Medium,Canon_100mm_f2.8_Macro_Small
+                            ;Canon_24-105mm_f4_IS_Container;Canon_24-105mm_f4_IS_Small,Canon_24-105mm_f4_IS_Medium,Canon_24-105mm_f4_IS_Large
+                            ;Canon_17-55_f2.8_IS_EF-S_Container;Canon_17-55_f2.8_IS_EF-S_Small,Canon_17-55_f2.8_IS_EF-S_Medium,Canon_17-55_f2.8_IS_EF-S_Large
+                            ;Canon_50mm_f1.2_L_Container;Canon_50mm_f1.2_L_Small,Canon_50mm_f1.2_L_Medium,Canon_50mm_f1.2_L_Large
+                            ;Nikon_17-55mm_f2.8_AF-S_ED_DX_Container;Nikon_17-55mm_f2.8_AF-S_ED_DX_Small,Nikon_17-55mm_f2.8_AF-S_ED_DX_Medium,Nikon_17-55mm_f2.8_AF-S_ED_DX_Large
+                            ;Nikon_10.5mm_f2.8_Fisheye_Container;Nikon_10.5mm_f2.8_Fisheye_Small,Nikon_10.5mm_f2.8_Fisheye_Medium,Nikon_10.5mm_f2.8_Fisheye_Large
+                            ;Nikon_80-400mm_f4.5-5.6D_ED_VR_Container;Nikon_80-400mm_f4.5-5.6D_ED_VR_Small,Nikon_80-400mm_f4.5-5.6D_ED_VR_Medium,Nikon_80-400mm_f4.5-5.6D_ED_VR_Large
+                            ;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Container;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Medium,Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Small
+                            ;Nikon_18-200_f3.5-5.6_AF-S_VR_Container;Nikon_18-200_f3.5-5.6_AF-S_VR_Small,Nikon_18-200_f3.5-5.6_AF-S_VR_Medium
+                            ;Nikon_14mm_f2.8_AF_ED_Container;Nikon_14mm_f2.8_AF_ED_Medium,Nikon_14mm_f2.8_AF_ED_Small
+                            ;Nikon_70-200_f2.8_VR_Container;Nikon_70-200_f2.8_VR_Small,Nikon_70-200_f2.8_VR_Medium
+#                    ;Nikon_17-35mm_f2.8 AF-S_IF_ED_Container;Nikon_17-35mm_f2.8 AF-S_IF_ED_Small
+                            ;Nikon_85mm_f1.4_AF_Container;Nikon_85mm_f1.4_AF_Small,Nikon_85mm_f1.4_AF_Medium,Nikon_85mm_f1.4_AF_Large
+                            ;Nikkor_105mm_f2.8_Micro_AF-S_VR_Container;Nikkor_105mm_f2.8_Micro_AF-S_VR_Small,Nikkor_105mm_f2.8_Micro_AF-S_VR_Medium,Nikkor_105mm_f2.8_Micro_AF-S_VR_Large
+                            ;Canon_EF_135mm_f2.0L_USM_Container;Canon_EF_135mm_f2.0L_USM_Medium
+                            ;Canon_EF_70-200mm_f2.8L_USM_Container;Canon_EF_70-200mm_f2.8L_USM_Medium
+                            ;Canon_16_35mm_f2.8_II_Container;Canon_16_35mm_f2.8_II_Medium
+                            ;Canon_85mm_f1.8_Container;Canon_85mm_f1.8_Medium
+                            ;Canon_180mm_f3.5_Macro_Container;Canon_180mm_f3.5_Macro_Medium
+                            ;Canon_EF_28mm_f1.8_USM_Container;Canon_EF_28mm_f1.8_USM_Medium
+                            ;67mm_CP_Filter_Container;67mm_CP_Filter_Medium
+                            ;72mm_CP_Filter_Container;72mm_CP_Filter_Medium
+                            ;77mm_CP_Filter_Container;77mm_CP_Filter_Medium
+                            ;58mm_CP_Filter_Container;58mm_CP_Filter_Medium
+                            ;Canon_drop_in_CP_Container;Canon_drop_in_CP_Medium
+                            ;82mm_CP_Container;82mm_CP_Medium
+#;lowepro_flipside_300_Container;lowepro_flipside_300_Medium
+#;CZ_Cable_Container;CZ_Cable_Medium
+                            ;Nikon_52mm_CPL_Container;Nikon_52mm_CPL_Medium
+#;Canon_TC-80N3_Container;Canon_TC-80N3_Medium
+                            ;Nikon_d3s_Container;Nikon_d3s_Medium
+                            ;Nikon_d4_Container;Nikon_d4_Medium
+                            ;Canon_5DIII_Container;Canon_5DIII_Medium
+                            ;Nikon_d800_Container;Nikon_d800_Medium
+                            ;Canon_EOS_6D_Digital_SLR_Container;Canon_EOS_6D_Digital_SLR_Medium
+                            ;Hasselblad_H5D40_Medium_Format_DSLR_Camera_Container;Hasselblad_H5D40_Medium_Format_DSLR_Camera_Medium
+                            ;Nikon_D7100_Digital_SLR_Container;Nikon_D7100_Digital_SLR_Medium
+                            ;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back_Container;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back_Medium
+                            ;Nikon-D610-Digital-SLR-Camera_Container;Nikon-D610-Digital-SLR-Camera_Medium
+                            ;Nikon-D5300-Digital-SLR-Camera_Container;Nikon-D5300-Digital-SLR-Camera_Medium
+                            ;EN-EL3e_Container;EN-EL3e_Medium
+                            ;Nikon_EN-EL4a_Container;Nikon_EN-EL4a_Medium
+                            ;lp-e8_Container;lp-e8_Medium
+                            ;EN-EL15_Container;EN-EL15_Medium
+                            ;sony-battery_Container;sony-battery_Medium
+                            ;olympus_ep2_extra_battery_Container;olympus_ep2_extra_battery_Medium
+                            ;VW-VBG6PPK_Container;VW-VBG6PPK_Medium
+                            ;sony_battery_a55_Container;sony_battery_a55_Medium
+                            ;Sony_NP-FV70_Container;Sony_NP-FV70_Medium
+                            ;Panasonic_Battery_DMW-BLC12_Container;Panasonic_Battery_DMW-BLC12_Medium
+                            ;Rode_videomic_Container;Rode_videomic_Small,Rode_videomic_Medium
+                            ;Sennheiser_MKE_Container;Sennheiser_MKE_Small,Sennheiser_MKE_Medium
+                            ;Tascam_DR100_Container;Tascam_DR100_Small,Tascam_DR100_Medium
+                            ;Rode_videomic_stereo_Container;Rode_videomic_stereo_Small,Rode_videomic_stereo_Medium
+                            ;Azden_lav_Container;Azden_lav_Small,Azden_lav_Medium
+                            ;Sennheiser_ME66_Container;Sennheiser_ME66_Small,Sennheiser_ME66_Medium,Sennheiser_ME66_Large
+                            ;sennheiser_lav_Container;sennheiser_lav_Small,sennheiser_lav_Medium,sennheiser_lav_Large
+                            ;beachtek_DXA_Container;beachtek_DXA_Small,beachtek_DXA_Medium,beachtek_DXA_Large
+                            ;female_XLR_Container;female_XLR_Small,female_XLR_Medium,female_XLR_Large
+                            ;boom_pole_Container;boom_pole_Small,boom_pole_Medium,boom_pole_Large
+
+
+
+# Update Products with Media and Media Containers
+UPDATE Product;code[unique=true];$picture;$thumbnail;$galleryImages;$catalogVersion
+              ;Canon_Rebel_XTi;;;;;;
+              ;Canon-EOS-1D-Mark-II;Canon-EOS-1DMark-II_Small;;Canon-EOS-1D-Mark-II_Container
+              ;Canon_1Ds_Mark_II;Canon_1Ds_Mark_II_Small;Canon_1Ds_Mark_II_Medium;Canon_1Ds_Mark_II_Container
+              ;Canon_EOS_1D_Mk_III;Canon_EOS_1D_Mk_III_Medium;Canon_EOS_1D_Mk_III_Small;Canon_EOS_1D_Mk_III_Container
+              ;1DmkIIN;;1DmkIIN_Small;1DmkIIN_Container
+              ;Canon_EOS_40D;Canon_EOS_40D_Medium;Canon_EOS_40D_Small;Canon_EOS_40D_Container
+              ;Nikon_D70;Nikon_D70_Medium;Nikon_D70_Small;Nikon_D70_Container
+              ;Nikon_d300;Nikon_d300_Medium;Nikon_d300_Small;Nikon_d300_Container
+              ;1Ds_MkIII;1Ds_MkIII_Medium;1Ds_MkIII_Small;1Ds_MkIII_Container
+
+              ;Canon_EOS_5D;Canon_EOS_5D_Medium;Canon_EOS_5D_Small;Canon_EOS_5D_Container
+              ;Canon-EF-100-400mm-f4556L-IS-USM;Canon-EF-100-400mm-f4556L-IS-USM_Medium;Canon-EF-100-400mm-f4556L-IS-USM_Small;Canon-EF-100-400mm-f4556L-IS-USM_Container
+              ;Canon_EF_17-40mm_f4L_USM;Canon_EF_17-40mm_f4L_USM_Medium;Canon_EF_17-40mm_f4L_USM_Small;Canon_EF_17-40mm_f4L_USM_Container
+              ;Canon_EF_300mm_F_4_IS;Canon_EF_300mm_F_4_IS_Medium;Canon_EF_300mm_F_4_IS_Small;Canon_EF_300mm_F_4_IS_Container
+              ;Canon_EF_70-200mm_f4_IS;Canon_EF_70-200mm_f4_IS_Medium;Canon_EF_70-200mm_f4_IS_Small;Canon_EF_70-200mm_f4_IS_Container
+              ;Canon_16-35_F2.8_L;Canon_16-35_F2.8_L_Medium;Canon_16-35_F2.8_L_Small;Canon_16-35_F2.8_L_Container
+              ;Canon_24-70mm_f2.8_L;Canon_24-70mm_f2.8_L_Medium;Canon_24-70mm_f2.8_L_Small;Canon_24-70mm_f2.8_L_Container
+              ;Canon_100mm_f2.8_Macro;Canon_100mm_f2.8_Macro_Medium;Canon_100mm_f2.8_Macro_Small;Canon_100mm_f2.8_Macro_Container
+              ;Canon_24-105mm_f4_IS;Canon_24-105mm_f4_IS_Medium;Canon_24-105mm_f4_IS_Small;Canon_24-105mm_f4_IS_Container
+              ;Canon_17-55_f2.8_IS_EF-S;Canon_17-55_f2.8_IS_EF-S_Medium;Canon_17-55_f2.8_IS_EF-S_Small;Canon_17-55_f2.8_IS_EF-S_Container
+              ;Canon_50mm_f1.2_L;Canon_50mm_f1.2_L_Medium;Canon_50mm_f1.2_L_Small;Canon_50mm_f1.2_L_Container
+
+              ;Nikon_17-55mm_f2.8_AF-S_ED_DX;Nikon_17-55mm_f2.8_AF-S_ED_DX_Medium;Nikon_17-55mm_f2.8_AF-S_ED_DX_Small;Nikon_17-55mm_f2.8_AF-S_ED_DX_Container
+              ;Nikon_10.5mm_f2.8_Fisheye;Nikon_10.5mm_f2.8_Fisheye_Medium;Nikon_10.5mm_f2.8_Fisheye_Small;Nikon_10.5mm_f2.8_Fisheye_Container
+              ;Nikon_80-400mm_f4.5-5.6D_ED_VR;Nikon_80-400mm_f4.5-5.6D_ED_VR_Medium;Nikon_80-400mm_f4.5-5.6D_ED_VR_Small;Nikon_80-400mm_f4.5-5.6D_ED_VR_Container
+              ;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Medium;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Small;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Container
+              ;Nikon_18-200_f3.5-5.6_AF-S_VR;Nikon_18-200_f3.5-5.6_AF-S_VR_Medium;Nikon_18-200_f3.5-5.6_AF-S_VR_Small;Nikon_18-200_f3.5-5.6_AF-S_VR_Container
+              ;Nikon_14mm_f2.8_AF_ED;Nikon_14mm_f2.8_AF_ED_Medium;Nikon_14mm_f2.8_AF_ED_Small;Nikon_14mm_f2.8_AF_ED_Container
+              ;Nikon_70-200_f2.8_VR;Nikon_70-200_f2.8_VR_Medium;Nikon_70-200_f2.8_VR_Small;Nikon_70-200_f2.8_VR_Container
+# ;Nikon_17-35mm_f2.8 AF-S_IF_ED;;Nikon_17-35mm_f2.8 AF-S_IF_ED_Small;Nikon_17-35mm_f2.8 AF-S_IF_ED_Container
+              ;Nikon_85mm_f1.4_AF;Nikon_85mm_f1.4_AF_Medium;Nikon_85mm_f1.4_AF_Small;Nikon_85mm_f1.4_AF_Container
+              ;Nikkor_105mm_f2.8_Micro_AF-S_VR;Nikkor_105mm_f2.8_Micro_AF-S_VR_Medium;Nikkor_105mm_f2.8_Micro_AF-S_VR_Small;Nikkor_105mm_f2.8_Micro_AF-S_VR_Container
+
+              ;Canon_EF_135mm_f2.0L_USM;Canon_EF_135mm_f2.0L_USM_Medium;;Canon_EF_135mm_f2.0L_USM_Container
+              ;Canon_EF_70-200mm_f2.8L_USM;Canon_EF_70-200mm_f2.8L_USM_Medium;;Canon_EF_70-200mm_f2.8L_USM_Container
+              ;Canon_16_35mm_f2.8_II;Canon_16_35mm_f2.8_II_Medium;;Canon_16_35mm_f2.8_II_Container
+
+              ;Canon_85mm_f1.8;Canon_85mm_f1.8_Medium;;Canon_85mm_f1.8_Container
+              ;Canon_180mm_f3.5_Macro;Canon_180mm_f3.5_Macro_Medium;;Canon_180mm_f3.5_Macro_Container
+              ;Canon_EF_28mm_f1.8_USM;Canon_EF_28mm_f1.8_USM_Medium;;Canon_EF_28mm_f1.8_USM_Container
+              ;67mm_CP_Filter;67mm_CP_Filter_Medium;;67mm_CP_Filter_Container
+              ;72mm_CP_Filter;72mm_CP_Filter_Medium;;72mm_CP_Filter_Container
+              ;77mm_CP_Filter;77mm_CP_Filter_Medium;;77mm_CP_Filter_Container
+              ;58mm_CP_Filter;58mm_CP_Filter_Medium;;58mm_CP_Filter_Container
+              ;Canon_drop_in_CP;Canon_drop_in_CP_Medium;;Canon_drop_in_CP_Container
+              ;82mm_CP;82mm_CP_Medium;;82mm_CP_Container
+#;lowepro_flipside_300;lowepro_flipside_300_Medium;;lowepro_flipside_300_Container
+#;CZ_Cable;CZ_Cable_Medium;;CZ_Cable_Container
+              ;Nikon_52mm_CPL;Nikon_52mm_CPL_Medium;;Nikon_52mm_CPL_Container
+#;Canon_TC-80N3;Canon_TC-80N3_Medium;;Canon_TC-80N3_Container
+              ;Nikon_d3s;Nikon_d3s_Medium;;Nikon_d3s_Container
+              ;Nikon_d4;Nikon_d4_Medium;;Nikon_d4_Container
+              ;Canon_5DIII;Canon_5DIII_Medium;;Canon_5DIII_Container
+              ;Nikon_d800;Nikon_d800_Medium;;Nikon_d800_Container
+              ;Canon_EOS_6D_Digital_SLR;Canon_EOS_6D_Digital_SLR_Medium;;Canon_EOS_6D_Digital_SLR_Container
+              ;Hasselblad_H5D40_Medium_Format_DSLR_Camera;Hasselblad_H5D40_Medium_Format_DSLR_Camera_Medium;;Hasselblad_H5D40_Medium_Format_DSLR_Camera_Container
+              ;Nikon_D7100_Digital_SLR;Nikon_D7100_Digital_SLR_Medium;;Nikon_D7100_Digital_SLR_Container
+              ;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back_Medium;;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back_Container
+              ;Nikon-D610-Digital-SLR-Camera;Nikon-D610-Digital-SLR-Camera_Medium;;Nikon-D610-Digital-SLR-Camera_Container
+              ;Nikon-D5300-Digital-SLR-Camera;Nikon-D5300-Digital-SLR-Camera_Medium;;Nikon-D5300-Digital-SLR-Camera_Container
+              ;EN-EL3e;EN-EL3e_Medium;;EN-EL3e_Container
+              ;Nikon_EN-EL4a;Nikon_EN-EL4a_Medium;;Nikon_EN-EL4a_Container
+              ;lp-e8;lp-e8_Medium;;lp-e8_Container
+              ;EN-EL15;EN-EL15_Medium;;EN-EL15_Container
+              ;sony-battery;sony-battery_Medium;;sony-battery_Container
+              ;olympus_ep2_extra_battery;olympus_ep2_extra_battery_Medium;;olympus_ep2_extra_battery_Container
+              ;VW-VBG6PPK;VW-VBG6PPK_Medium;;VW-VBG6PPK_Container
+              ;sony_battery_a55;sony_battery_a55_Medium;;sony_battery_a55_Container
+              ;Sony_NP-FV70;Sony_NP-FV70_Medium;;Sony_NP-FV70_Container
+              ;Panasonic_Battery_DMW-BLC12;Panasonic_Battery_DMW-BLC12_Medium;;Panasonic_Battery_DMW-BLC12_Container
+              ;Rode_videomic;Rode_videomic_Medium;Rode_videomic_Small;Rode_videomic_Container;
+              ;Sennheiser_MKE;Sennheiser_MKE_Medium;Sennheiser_MKE_Small;Sennheiser_MKE_Container;
+              ;Tascam_DR100;Tascam_DR100_Medium;Tascam_DR100_Small;Tascam_DR100_Container;
+              ;Rode_videomic_stereo;Rode_videomic_stereo_Medium;Rode_videomic_stereo_Small;Rode_videomic_stereo_Container;
+              ;Azden_lav;Azden_lav_Medium;Azden_lav_Small;Azden_lav_Container;
+              ;Sennheiser_ME66;Sennheiser_ME66_Medium;Sennheiser_ME66_Small;Sennheiser_ME66_Container;
+              ;sennheiser_lav;sennheiser_lav_Medium;sennheiser_lav_Small;sennheiser_lav_Container;
+              ;beachtek_DXA;beachtek_DXA_Medium;beachtek_DXA_Small;beachtek_DXA_Container;
+              ;female_XLR;female_XLR_Medium;female_XLR_Small;female_XLR_Container;
+              ;boom_pole;boom_pole_Medium;boom_pole_Small;boom_pole_Container;
+
+
+# Update Products with Media and Media Containers
+UPDATE Product;code[unique=true];$picture;$thumbnail;$galleryImages;$catalogVersion
+                ;Canon_Rebel_XTi;;;;;;
+                ;Canon-EOS-1D-Mark-II;Canon-EOS-1DMark-II_Small;;Canon-EOS-1D-Mark-II_Container
+                ;Canon_1Ds_Mark_II;Canon_1Ds_Mark_II_Small;Canon_1Ds_Mark_II_Medium;Canon_1Ds_Mark_II_Container
+                ;Canon_EOS_1D_Mk_III;Canon_EOS_1D_Mk_III_Medium;Canon_EOS_1D_Mk_III_Small;Canon_EOS_1D_Mk_III_Container
+                ;1DmkIIN;;1DmkIIN_Small;1DmkIIN_Container
+                ;Canon_EOS_40D;Canon_EOS_40D_Medium;Canon_EOS_40D_Small;Canon_EOS_40D_Container
+                ;Nikon_D70;Nikon_D70_Medium;Nikon_D70_Small;Nikon_D70_Container
+                ;Nikon_d300;Nikon_d300_Medium;Nikon_d300_Small;Nikon_d300_Container
+                ;1Ds_MkIII;1Ds_MkIII_Medium;1Ds_MkIII_Small;1Ds_MkIII_Container
+                ;Canon_EOS_5D;Canon_EOS_5D_Medium;Canon_EOS_5D_Small;Canon_EOS_5D_Container
+                ;Canon-EF-100-400mm-f4556L-IS-USM;Canon-EF-100-400mm-f4556L-IS-USM_Medium;Canon-EF-100-400mm-f4556L-IS-USM_Small;Canon-EF-100-400mm-f4556L-IS-USM_Container
+                ;Canon_EF_17-40mm_f4L_USM;Canon_EF_17-40mm_f4L_USM_Medium;Canon_EF_17-40mm_f4L_USM_Small;Canon_EF_17-40mm_f4L_USM_Container
+                ;Canon_EF_300mm_F_4_IS;Canon_EF_300mm_F_4_IS_Medium;Canon_EF_300mm_F_4_IS_Small;Canon_EF_300mm_F_4_IS_Container
+                ;Canon_EF_70-200mm_f4_IS;Canon_EF_70-200mm_f4_IS_Medium;Canon_EF_70-200mm_f4_IS_Small;Canon_EF_70-200mm_f4_IS_Container
+                ;Canon_16-35_F2.8_L;Canon_16-35_F2.8_L_Medium;Canon_16-35_F2.8_L_Small;Canon_16-35_F2.8_L_Container
+                ;Canon_24-70mm_f2.8_L;Canon_24-70mm_f2.8_L_Medium;Canon_24-70mm_f2.8_L_Small;Canon_24-70mm_f2.8_L_Container
+                ;Canon_100mm_f2.8_Macro;Canon_100mm_f2.8_Macro_Medium;Canon_100mm_f2.8_Macro_Small;Canon_100mm_f2.8_Macro_Container
+                ;Canon_24-105mm_f4_IS;Canon_24-105mm_f4_IS_Medium;Canon_24-105mm_f4_IS_Small;Canon_24-105mm_f4_IS_Container
+                ;Canon_17-55_f2.8_IS_EF-S;Canon_17-55_f2.8_IS_EF-S_Medium;Canon_17-55_f2.8_IS_EF-S_Small;Canon_17-55_f2.8_IS_EF-S_Container
+                ;Canon_50mm_f1.2_L;Canon_50mm_f1.2_L_Medium;Canon_50mm_f1.2_L_Small;Canon_50mm_f1.2_L_Container
+                ;Nikon_17-55mm_f2.8_AF-S_ED_DX;Nikon_17-55mm_f2.8_AF-S_ED_DX_Medium;Nikon_17-55mm_f2.8_AF-S_ED_DX_Small;Nikon_17-55mm_f2.8_AF-S_ED_DX_Container
+                ;Nikon_10.5mm_f2.8_Fisheye;Nikon_10.5mm_f2.8_Fisheye_Medium;Nikon_10.5mm_f2.8_Fisheye_Small;Nikon_10.5mm_f2.8_Fisheye_Container
+                ;Nikon_80-400mm_f4.5-5.6D_ED_VR;Nikon_80-400mm_f4.5-5.6D_ED_VR_Medium;Nikon_80-400mm_f4.5-5.6D_ED_VR_Small;Nikon_80-400mm_f4.5-5.6D_ED_VR_Container
+                ;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Medium;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Small;Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon_Container
+                ;Nikon_18-200_f3.5-5.6_AF-S_VR;Nikon_18-200_f3.5-5.6_AF-S_VR_Medium;Nikon_18-200_f3.5-5.6_AF-S_VR_Small;Nikon_18-200_f3.5-5.6_AF-S_VR_Container
+                ;Nikon_14mm_f2.8_AF_ED;Nikon_14mm_f2.8_AF_ED_Medium;Nikon_14mm_f2.8_AF_ED_Small;Nikon_14mm_f2.8_AF_ED_Container
+                ;Nikon_70-200_f2.8_VR;Nikon_70-200_f2.8_VR_Medium;Nikon_70-200_f2.8_VR_Small;Nikon_70-200_f2.8_VR_Container
+               # ;Nikon_17-35mm_f2.8 AF-S_IF_ED;;Nikon_17-35mm_f2.8 AF-S_IF_ED_Small;Nikon_17-35mm_f2.8 AF-S_IF_ED_Container
+                ;Nikon_85mm_f1.4_AF;Nikon_85mm_f1.4_AF_Medium;Nikon_85mm_f1.4_AF_Small;Nikon_85mm_f1.4_AF_Container
+                ;Nikkor_105mm_f2.8_Micro_AF-S_VR;Nikkor_105mm_f2.8_Micro_AF-S_VR_Medium;Nikkor_105mm_f2.8_Micro_AF-S_VR_Small;Nikkor_105mm_f2.8_Micro_AF-S_VR_Container
+                ;Canon_EF_135mm_f2.0L_USM;Canon_EF_135mm_f2.0L_USM_Medium;;Canon_EF_135mm_f2.0L_USM_Container
+                ;Canon_EF_70-200mm_f2.8L_USM;Canon_EF_70-200mm_f2.8L_USM_Medium;;Canon_EF_70-200mm_f2.8L_USM_Container
+                ;Canon_16_35mm_f2.8_II;Canon_16_35mm_f2.8_II_Medium;;Canon_16_35mm_f2.8_II_Container
+                ;Canon_85mm_f1.8;Canon_85mm_f1.8_Medium;;Canon_85mm_f1.8_Container
+                ;Canon_180mm_f3.5_Macro;Canon_180mm_f3.5_Macro_Medium;;Canon_180mm_f3.5_Macro_Container
+                ;Canon_EF_28mm_f1.8_USM;Canon_EF_28mm_f1.8_USM_Medium;;Canon_EF_28mm_f1.8_USM_Container
+                ;67mm_CP_Filter;67mm_CP_Filter_Medium;;67mm_CP_Filter_Container
+                ;72mm_CP_Filter;72mm_CP_Filter_Medium;;72mm_CP_Filter_Container
+                ;77mm_CP_Filter;77mm_CP_Filter_Medium;;77mm_CP_Filter_Container
+                ;58mm_CP_Filter;58mm_CP_Filter_Medium;;58mm_CP_Filter_Container
+                ;Canon_drop_in_CP;Canon_drop_in_CP_Medium;;Canon_drop_in_CP_Container
+                ;82mm_CP;82mm_CP_Medium;;82mm_CP_Container
+                #;lowepro_flipside_300;lowepro_flipside_300_Medium;;lowepro_flipside_300_Container
+                #;CZ_Cable;CZ_Cable_Medium;;CZ_Cable_Container
+                ;Nikon_52mm_CPL;Nikon_52mm_CPL_Medium;;Nikon_52mm_CPL_Container
+                #;Canon_TC-80N3;Canon_TC-80N3_Medium;;Canon_TC-80N3_Container
+                ;Nikon_d3s;Nikon_d3s_Medium;;Nikon_d3s_Container
+                ;Nikon_d4;Nikon_d4_Medium;;Nikon_d4_Container
+                ;Canon_5DIII;Canon_5DIII_Medium;;Canon_5DIII_Container
+                ;Nikon_d800;Nikon_d800_Medium;;Nikon_d800_Container
+                ;Canon_EOS_6D_Digital_SLR;Canon_EOS_6D_Digital_SLR_Medium;;Canon_EOS_6D_Digital_SLR_Container
+                ;Hasselblad_H5D40_Medium_Format_DSLR_Camera;Hasselblad_H5D40_Medium_Format_DSLR_Camera_Medium;;Hasselblad_H5D40_Medium_Format_DSLR_Camera_Container
+                ;Nikon_D7100_Digital_SLR;Nikon_D7100_Digital_SLR_Medium;;Nikon_D7100_Digital_SLR_Container
+                ;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back_Medium;;Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back_Container
+                ;Nikon-D610-Digital-SLR-Camera;Nikon-D610-Digital-SLR-Camera_Medium;;Nikon-D610-Digital-SLR-Camera_Container
+                ;Nikon-D5300-Digital-SLR-Camera;Nikon-D5300-Digital-SLR-Camera_Medium;;Nikon-D5300-Digital-SLR-Camera_Container
+                ;EN-EL3e;EN-EL3e_Medium;;EN-EL3e_Container
+                ;Nikon_EN-EL4a;Nikon_EN-EL4a_Medium;;Nikon_EN-EL4a_Container
+                ;lp-e8;lp-e8_Medium;;lp-e8_Container
+                ;EN-EL15;EN-EL15_Medium;;EN-EL15_Container
+                ;sony-battery;sony-battery_Medium;;sony-battery_Container
+                ;olympus_ep2_extra_battery;olympus_ep2_extra_battery_Medium;;olympus_ep2_extra_battery_Container
+                ;VW-VBG6PPK;VW-VBG6PPK_Medium;;VW-VBG6PPK_Container
+                ;sony_battery_a55;sony_battery_a55_Medium;;sony_battery_a55_Container
+                ;Sony_NP-FV70;Sony_NP-FV70_Medium;;Sony_NP-FV70_Container
+                ;Panasonic_Battery_DMW-BLC12;Panasonic_Battery_DMW-BLC12_Medium;;Panasonic_Battery_DMW-BLC12_Container
+                ;Rode_videomic;Rode_videomic_Medium;Rode_videomic_Small;Rode_videomic_Container;
+                ;Sennheiser_MKE;Sennheiser_MKE_Medium;Sennheiser_MKE_Small;Sennheiser_MKE_Container;
+                ;Tascam_DR100;Tascam_DR100_Medium;Tascam_DR100_Small;Tascam_DR100_Container;
+                ;Rode_videomic_stereo;Rode_videomic_stereo_Medium;Rode_videomic_stereo_Small;Rode_videomic_stereo_Container;
+                ;Azden_lav;Azden_lav_Medium;Azden_lav_Small;Azden_lav_Container;
+                ;Sennheiser_ME66;Sennheiser_ME66_Medium;Sennheiser_ME66_Small;Sennheiser_ME66_Container;
+                ;sennheiser_lav;sennheiser_lav_Medium;sennheiser_lav_Small;sennheiser_lav_Container;
+                ;beachtek_DXA;beachtek_DXA_Medium;beachtek_DXA_Small;beachtek_DXA_Container;
+                ;female_XLR;female_XLR_Medium;female_XLR_Small;female_XLR_Container;
+                ;boom_pole;boom_pole_Medium;boom_pole_Small;boom_pole_Container;
