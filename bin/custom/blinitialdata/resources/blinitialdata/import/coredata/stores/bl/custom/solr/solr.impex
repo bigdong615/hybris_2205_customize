@@ -114,8 +114,7 @@ INSERT_UPDATE SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ;
 INSERT_UPDATE SolrIndexedProperty ; solrIndexedType(identifier)[unique = true] ; name[unique = true] ; type(code) ; sortableType(code) ; currency[default = false] ; localized[default = false] ; multiValue[default = false] ; facet[default = true] ; facetType(code) ; facetSort(code) ; priority ; visible ; useForSpellchecking[default = false] ; useForAutocomplete[default = false] ; fieldValueProvider             ; facetDisplayNameProvider                          ; customFacetSortProvider       ; topValuesProvider        ; rangeSets(name)                                   
                                   ; $solrIndexedType                           ; price               ; double     ;                    ; true                      ;                            ;                             ;                       ; MultiSelectOr   ; Alpha           ; 4000     ; true    ;                                      ;                                     ; productPriceValueProvider      ;                                                   ;                               ; defaultTopValuesProvider ;
                                   ; $solrIndexedType                           ; allPromotions       ; string     ;                    ;                           ;                            ; true                        ;                       ; MultiSelectOr   ; Alpha           ; 0        ; false   ;                                      ;                                     ; promotionCodeValueProvider     ; promotionFacetDisplayNameProvider                 ;                               ;                          
-                                  ; $solrIndexedType                           ; availableInStores   ; string     ;                    ;                           ;                            ; true                        ;                       ; MultiSelectOr   ; Custom          ; 10000    ; true    ;                                      ;                                     ; productStoreStockValueProvider ; electronicsPointOfServiceFacetDisplayNameProvider ; distanceAttributeSortProvider 
-                                  
+
                                   
                                   
 # Create the queries that will be used to extract data for Solr  And Excluding Product while going for Indexing Based on some restriction
@@ -160,7 +159,11 @@ INSERT_UPDATE SolrSort ; &sortRefID ; indexedType(identifier)[unique = true] ; c
 INSERT_UPDATE SolrSortField ; sort(indexedType(identifier), code)[unique = true] ; fieldName[unique = true] ; ascending[unique = true] 
                             ; $solrIndexedType:newest                            ; isNew                    ; false                    
                             ; $solrIndexedType:mostPopular                       ; mostPopular              ; false                    
-                            
+                            ; $solrIndexedType:price-asc                       ; priceValue              ; true
+                            ; $solrIndexedType:price-desc                       ; priceValue             ; false
+                             ; $solrIndexedType:price-asc                       ; minSerialfinalSalePrice              ; true
+                            ; $solrIndexedType:price-desc                       ; minSerialfinalSalePrice             ; false
+
                             
                             
 # Non-facet search query properties
@@ -206,8 +209,7 @@ INSERT_UPDATE SolrSearchQueryProperty ; indexedProperty(name, solrIndexedType(id
 INSERT_UPDATE SolrSearchQueryProperty ; indexedProperty(name, solrIndexedType(identifier))[unique = true] ; facet[default = true] ; facetType(code) ; priority ; facetDisplayNameProvider                          ; facetSortProvider             ; facetTopValuesProvider   ; includeInResponse[default = true] ; searchQueryTemplate(name, indexedType(identifier))[unique = true][default = DEFAULT:$solrIndexedType] 
                                       ; price:$solrIndexedType                                            ;                       ; MultiSelectOr   ; 4000     ;                                                   ;                               ; defaultTopValuesProvider ;                                   ;                                                                                                       
                                       ; allPromotions:$solrIndexedType                                    ;                       ; MultiSelectOr   ; 0        ; promotionFacetDisplayNameProvider                 ;                               ;                          ;                                   ;                                                                                                       
-                                      ; availableInStores:$solrIndexedType                                ;                       ; MultiSelectOr   ; 10000    ; electronicsPointOfServiceFacetDisplayNameProvider ; distanceAttributeSortProvider ;                          ;                                   ;                                                                                                       
-                                      
+
                                       
                                       
 ### BL Product Attribues For Search #######
