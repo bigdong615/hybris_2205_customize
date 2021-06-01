@@ -3,7 +3,7 @@ package com.bl.core.services.gitfcard.impl;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.cart.BlCartService;
-import com.bl.core.services.dao.BLGiftCardDao;
+import com.bl.core.services.dao.BlGiftCardDao;
 import com.bl.core.services.gitfcard.BlGiftCardService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
@@ -30,7 +30,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
 
   private static final Logger LOGGER = Logger.getLogger(DefaultBlGiftCardService.class);
 
-  private BLGiftCardDao giftCardDao;
+  private BlGiftCardDao giftCardDao;
   private BlCartService blCartService;
   private ModelService modelService;
   private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
@@ -332,11 +332,11 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     return null;
   }
 
-    public BLGiftCardDao getGiftCardDao() {
+    public BlGiftCardDao getGiftCardDao() {
         return giftCardDao;
     }
 
-    public void setGiftCardDao(BLGiftCardDao giftCardDao) {
+    public void setGiftCardDao(BlGiftCardDao giftCardDao) {
         this.giftCardDao = giftCardDao;
     }
 

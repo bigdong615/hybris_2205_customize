@@ -764,7 +764,7 @@
 
 	<!--Gift card Start-->
 	<alias name="blGiftCardDaoImpl" alias="giftCardDao" />
-	<bean id="blGiftCardDaoImpl" class="com.bl.core.services.dao.impl.BlGiftCardDaoImpl">
+	<bean id="blGiftCardDaoImpl" class="com.bl.core.services.dao.impl.DefaultBlGiftCardDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService" />
 	</bean>
 
