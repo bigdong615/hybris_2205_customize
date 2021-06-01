@@ -532,7 +532,6 @@
 	<alias name="defaultBlCartService" alias="cartService" />
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
 		<property name="commerceCartService" ref="commerceCartService" />
-		<!--<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />-->
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
