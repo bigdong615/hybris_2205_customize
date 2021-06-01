@@ -1724,7 +1724,7 @@
       <itemtype code="Consignment" autocreate="false" generate="false">
         <description>Extending Consignment type with additional attributes.</description>
         <attributes>
-          <attribute qualifier="shippingDate" type="java.util.Date">
+          <attribute qualifier="optimizedShippingDate" type="java.util.Date">
             <description>The point of service to deliver to/collect from.</description>
             <modifiers read="true" write="true"/>
             <persistence type="property"/>
