@@ -7,7 +7,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -58,120 +57,6 @@
 			</span>
 		</div>
 	</c:if>
-
-
-
-	<%-- <c:if test="${cartData1.grandTotal.value > 0}">
-    		<div class="totals">
-    		<spring:theme code="basket.page.totals.total" text="Order Total"/>
-    			<span>
-    			<ycommerce:testId code="cart_totalPrice_label">
-    		<c:set var="extractCurrencySymbol" value = "${cartData.totalPrice.formattedValue}"/>
-    		<c:set var="firstCharacter" value ="${fn:substring(extractCurrencySymbol, 0, 1)}"/>
-
-    		<c:choose>
-    			<c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store ne 'corsair-us') && cartData.net && cartData.totalTax.value > 0 && showTax && (cartData.totalPrice.value eq '0.0' ||(cartData.totalPrice.value - (cartData.rawSubTotal.value - cartData.orderDiscounts.value + cartData.totalDeliveryWithFreeShipping.value - cartData.discountDelivery.value  + cartData.totalTax.value - cartData.giftCardDiscount.value)) eq '0.00')}">
-    				<c:choose>
-    					<c:when test="${firstCharacter.matches('[0-9]+')}">
-    						<fmt:formatNumber value="${otherGrandTotal + cartData.totalTax.value}" maxFractionDigits="2" minFractionDigits="2"/>${fn:substring(extractCurrencySymbol, fn:length(extractCurrencySymbol)-1, fn:length(extractCurrencySymbol))}
-
-    					</c:when>
-
-    					<c:otherwise>
-    						${fn:substring(extractCurrencySymbol,0, 1)}<fmt:formatNumber value="${otherGrandTotal + cartData.totalTax.value}" maxFractionDigits="2" minFractionDigits="2"/>
-
-    					</c:otherwise>
-    				</c:choose>
-    			</c:when>
-
-    			<c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store ne 'corsair-us') && !(cartData.net && cartData.totalTax.value > 0 && showTax) && (cartData.totalPrice.value eq '0.0' || (cartData.totalPrice.value - (cartData.rawSubTotal.value - cartData.orderDiscounts.value + cartData.totalDeliveryWithFreeShipping.value - cartData.discountDelivery.value - cartData.giftCardDiscount.value)) eq '0.00')}">
-    				<c:choose>
-    					<c:when test="${firstCharacter.matches('[0-9]+')}">
-    							<fmt:formatNumber value="${otherGrandTotal}" maxFractionDigits="2" minFractionDigits="2"/>${fn:substring(extractCurrencySymbol, fn:length(extractCurrencySymbol)-1, fn:length(extractCurrencySymbol))}
-
-    					</c:when>
-
-    					<c:otherwise>
-    							${fn:substring(extractCurrencySymbol,0, 1)}<fmt:formatNumber value="${otherGrandTotal}" maxFractionDigits="2" minFractionDigits="2"/>
-
-    					</c:otherwise>
-    				</c:choose>
-    			</c:when>
-
-    			<c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store eq 'corsair-us') && cartData.net && cartData.totalTax.value > 0 && showTax}">
-    			 	${fn:substring(extractCurrencySymbol,0, 1)} <fmt:formatNumber value="${usGrandTotal + cartData.totalTax.value}" maxFractionDigits="2" minFractionDigits="2"/>
-
-    			</c:when>
-
-    			<c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store eq 'corsair-us') && !(cartData.net && cartData.totalTax.value > 0 && showTax)}">
-    				${fn:substring(extractCurrencySymbol,0, 1)}<fmt:formatNumber value="${usGrandTotal}" maxFractionDigits="2" minFractionDigits="2"/>
-
-    			</c:when>
-
-    			<c:otherwise>
-    				<format:price priceData="${cartData.grandTotal}"/>
-    			</c:otherwise>
-    			</c:choose>
-    			</ycommerce:testId>
-    		</span>
-    		</div>
-    	</c:if>  --%>
-     	<c:if test="${cartData1.giftCardDiscount.value > 0}">
-    		<div class="shipping">
-    		<c:set var = "giftValueForStepFirst" value ="${cartData1.giftCardDiscount.value-(cartData.giftCardDiscount.value)}"/>
-    		<spring:theme code="basket.page.totals.gcamount" text="Gift Card Amount :"/>
-    			<span>
-    			<ycommerce:testId code="Order_Totals_Delivery">
-    			<%-- <c:choose>
-    				 <c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store ne 'corsair-us') && !(cartData.net && cartData.totalTax.value > 0 && showTax) && cartData.giftCardDiscount.value gt (cartData.rawSubTotal.value - cartData.orderDiscounts.value)}">
-    			 		<c:choose>
-    						<c:when test="${firstCharacter.matches('[0-9]+')}">
-    							 -<fmt:formatNumber value="${cartData1.giftCardDiscount.value - (cartData1.giftCardDiscount.value -(cartData.rawSubTotal.value - cartData.orderDiscounts.value))}" maxFractionDigits="2" minFractionDigits="2"/>${fn:substring(extractCurrencySymbol, fn:length(extractCurrencySymbol)-1, fn:length(extractCurrencySymbol))}
-
-    						</c:when>
-
-    						<c:otherwise>
-    							-${fn:substring(extractCurrencySymbol,0, 1)}<fmt:formatNumber value="${cartData1.giftCardDiscount.value - (cartData1.giftCardDiscount.value -(cartData1.rawSubTotal.value - cartData1.orderDiscounts.value))}" maxFractionDigits="2" minFractionDigits="2"/>
-
-    						</c:otherwise>
-    					</c:choose>
-    			 	</c:when>
-
-    			  	<c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store ne 'corsair-us') && !(cartData.net && cartData.totalTax.value > 0 && showTax) && cartData.giftCardDiscount.value le (cartData.rawSubTotal.value - cartData.orderDiscounts.value)}">
-    			 			-${cartData.giftCardDiscount.formattedValue}
-    			 	</c:when>
-
-    			 	<c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store ne 'corsair-us') && cartData.net && cartData.totalTax.value > 0 && showTax && cartData.giftCardDiscount.value gt (otherGrandTotalWithTax)}">
-    			 		<c:choose>
-    						<c:when test="${firstCharacter.matches('[0-9]+')}">
-    						 	-<fmt:formatNumber value="${(giftValueForStepFirst)}" maxFractionDigits="2" minFractionDigits="2"/>${fn:substring(extractCurrencySymbol, fn:length(extractCurrencySymbol)-1, fn:length(extractCurrencySymbol))}
-
-    						</c:when>
-
-    						<c:otherwise>
-    						-${fn:substring(extractCurrencySymbol,0, 1)}<fmt:formatNumber value="${giftValueForStepFirst}" maxFractionDigits="2" minFractionDigits="2"/>
-
-    						</c:otherwise>
-    					</c:choose>
-    			 	</c:when>
-
-    			  	<c:when test = "${progressBarId == 'deliveryAddress' && (cartData.store ne 'corsair-us') && cartData.net && cartData.totalTax.value > 0 && showTax && cartData.giftCardDiscount.value le (otherGrandTotalWithTax)}">
-    			 		-<format:price priceData="${cartData1.giftCardDiscount}"/>
-    			 	</c:when>
-    			<spring:theme code="basket.page.totals.delivery"/>
-    			 <c:otherwise>
-    					-<format:price priceData="${cartData1.giftCardDiscount}"/>
-    			</c:otherwise>
-    		</c:choose> --%>
-    			-<format:price priceData="${cartData1.giftCardDiscount}"/>
-    				</ycommerce:testId>
-    			</span>
-    		</div>
-    </c:if>
-
-
-
-
 	<div class="totals">
 		<spring:theme code="basket.page.totals.total"/>
 		<span>

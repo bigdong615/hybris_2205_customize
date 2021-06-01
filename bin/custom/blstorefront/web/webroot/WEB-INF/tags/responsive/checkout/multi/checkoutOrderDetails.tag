@@ -23,8 +23,6 @@
 
     <order:appliedVouchers order="${cartData}" />
 
-    <order:giftcard order="${cartData}" />
-
     <multi-checkout:paymentInfo cartData="${cartData}" paymentInfo="${cartData.paymentInfo}" showPaymentInfo="${showPaymentInfo}" />
 
     <multi-checkout:orderTotals cartData="${cartData}" showTaxEstimate="${showTaxEstimate}" showTax="${showTax}" />
