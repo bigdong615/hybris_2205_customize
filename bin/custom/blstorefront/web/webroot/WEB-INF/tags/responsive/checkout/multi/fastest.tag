@@ -26,7 +26,14 @@
                     <select id="same-day-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfSameDayShippingMethod()">
                         <c:forEach items="${shippingGroup}" var="entry" varStatus="loop">
                             <c:if test="${entry.shippingType eq 'FASTEST'}">
-                                <option value="${entry.code}"> ${entry.name} </option>
+                                <c:choose>
+                                    <c:when test="${entry.defaultShippingGroup}">
+                                        <option value="${entry.code}" selected="selected"> ${entry.name} </option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${entry.code}"> ${entry.name} </option>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:if>
                         </c:forEach>
                     </select>
@@ -65,13 +72,13 @@
                     <textarea class="form-control mt-2 mb-4" id="sameDayDeliveryNote" placeholder="Optional (i.e. deliver to back door.)"></textarea>
                     <checkout:addressForm />
                     <div id="same-day-save-address-div">
-                        <input type="checkbox" id="same-day-save-address" checked>
+                        <input type="checkbox" id="same-day-save-address">
                         <label for="same-day-save-address">
                             <span class="gray80"><spring:theme code="text.add.new.shipping.save.address"/></span>
                         </label>
                     </div>
                     <div id="same-day-status-updates-div">
-                        <input type="checkbox" id="same-day-status-updates">
+                        <input type="checkbox" id="same-day-status-updates" onChange="onChangeOfStatusUpdate()">
                         <label for="same-day-status-updates">
                             <span class="gray80"><spring:theme code="text.checkout.multi.order.same.day.delivery.get.text.msg.status"/></span>
                         </label>

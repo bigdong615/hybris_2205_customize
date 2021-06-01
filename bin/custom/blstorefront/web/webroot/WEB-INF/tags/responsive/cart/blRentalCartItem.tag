@@ -19,13 +19,14 @@
           <a href="${fn:escapeXml(productUrl)}"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
          </div>
          <div class="col-md-7 mt-3">
-           <b>${entry.product.name}</b>
+           <a href="${fn:escapeXml(productUrl)}"><b>${entry.product.name}</b></a>
            <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                       modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
                <input type="hidden" name="productCode" value="${entry.product.code}" />
                <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                <input type="hidden" name="quantity" value=0 />
+               <input type="hidden" name="removeEntry" value="true" />
                <a href="" class="shopping-cart__item-remove" id="removeEntry_${entry.entryNumber}"><small>Remove Item</small></a>
            </form:form>
          </div>
@@ -38,6 +39,7 @@
                  <input type="hidden" name="productCode" value="${entry.product.code}" />
                  <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                  <input type="hidden" name="quantity" value="${entry.quantity}" />
+                 <input type="hidden" name="removeEntry" value="false" />
                 <spring:theme code="text.rental.cart.qty" />
              <select class="mt-3 select js-select js-component-init update" id="shopping-cart-qty_${entry.entryNumber}" name="shopping-cart-qty">
                <c:forEach var="item" begin="1" end="10">
@@ -109,9 +111,17 @@
          <div class="col-12">
              <%-- This div is commented and can be used for product level warning as per requirement--%>
              <%--<div class="notification notification-warning">This is a product warning.</div>--%>
-             <c:if test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
-              <div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>
-             </c:if>
+             <c:choose>
+             	<c:when test="${not empty entryNumber and not empty entryMessage and entryNumber == entry.entryNumber}">
+             		<div class="notification notification-error"><spring:theme code="${entryMessage.messageCode}" arguments="${entryMessage.arguments}"/></div>
+             	</c:when>
+             	<c:when test="${not empty entry.availabilityMessage }">
+             		<div class="notification notification-error"><spring:theme code="${entry.availabilityMessage.messageCode}" arguments="${entry.availabilityMessage.arguments}"/></div>
+             	</c:when>
+             	<c:when test="${entry.product.stock.stockLevelStatus eq 'outOfStock'}">
+             		<div class="notification notification-error"><spring:theme code="text.stock.not.available"/></div>
+             	</c:when>
+             </c:choose>
          </div>
      </div>
 </div>

@@ -71,16 +71,6 @@
 		<property name="typeService" ref="typeService"/>
 	</bean>
 
-	<bean id="apparelProductPopulator" class="com.bl.facades.populators.ApparelProductPopulator" >
-		<property name="genderConverter" ref="genderConverter"/>
-	</bean>
-
-	<!-- Add the apparelProductPopulator to the productConverter -->
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="productConverter"/>
-		<property name="add" ref="apparelProductPopulator"/>
-	</bean>
-
 	<!-- accelerator Image Format Mappings -->
 	<alias name="acceleratorImageFormatMapping" alias="imageFormatMapping"/>
 	<bean id="acceleratorImageFormatMapping" parent="defaultImageFormatMapping">
@@ -311,6 +301,9 @@
 	<alias name="defaultBlCartFacade" alias="cartFacade" />
 	<bean id="defaultBlCartFacade" class="com.bl.facades.cart.impl.DefaultBlCartFacade" parent="defaultCartFacade">
 		<property name="blCartService" ref="cartService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
 	</bean>
 
 	<!--BL-80 entry for Used Gear Category Model Resolver-->

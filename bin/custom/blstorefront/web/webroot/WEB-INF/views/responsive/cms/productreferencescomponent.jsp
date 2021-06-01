@@ -57,7 +57,10 @@
                                                           <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY'}">
                                                                 <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
                                                                 <c:set value="this is alternate" var="altTextHtml"/>
-                                                                     <li class="splide__slide"><img src="${primaryImagePdpUrl}"></li>
+                                                                <!--BL-534: added <a> tag-->
+                                                                    <li class="splide__slide">
+                                                                      <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                       <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}"></a</li> 
                                                           </c:if>
                                                        </c:forEach>
                                                        </ul>

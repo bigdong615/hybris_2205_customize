@@ -15,5 +15,6 @@ public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
         target.setNumberOfDaysToSkip(String.valueOf(source.getNumberOfDaysToSkip()));
         target.setShippingMethodId(String.valueOf(source.getShippingMethodId()));
         target.setShippingMethodType(String.valueOf(source.getShippingMethodType()));
+        target.setBusinessTypeDelivery(source.isBusinessTypeDelivery());
     }
 }

@@ -71,6 +71,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                         ACC.minicart.updateMiniCartDisplay();
+                                      }
                                       updateQuantity();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
@@ -97,10 +100,19 @@ $('.shopping-cart__item-remove').on("click", function (e){
                           url: ACC.config.encodedContextPath + "/cart/updateQuantity",
                           type: 'POST',
                           data: form.serialize(),
+                          beforeSend: function(){
+                             $('.page-loader-new-layout').show();
+                          },
                           success: function (response) {
-                             console.log("Quantity updated");
+                             if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                  ACC.minicart.updateMiniCartDisplay();
+                             }
+                          },
+                          complete: function() {
+                             $('.page-loader-new-layout').hide();
                           },
                           error: function (jqXHR, textStatus, errorThrown) {
+                            $('.page-loader-new-layout').hide();
                             console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
                           }
                 });
@@ -121,8 +133,10 @@ $('#cart-continue').on("click", function (e) {
 			if (response == 'success') {
 				var url = ACC.config.encodedContextPath + "/checkout/multi/delivery-method/chooseShipping";
 				window.location.href = url;
-			} else {
+			} else if (response == 'rentalDateNotSelected') {
 				$('#cart-warning').css('display', 'block');
+			}else{
+			  window.location.href = ACC.config.encodedContextPath + "/cart";
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {

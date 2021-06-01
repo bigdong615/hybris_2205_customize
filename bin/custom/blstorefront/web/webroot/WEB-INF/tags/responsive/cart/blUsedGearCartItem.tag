@@ -27,6 +27,7 @@
             <input type="hidden" name="productCode" value="${entry.product.code}" />
             <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
             <input type="hidden" name="quantity" value=0 />
+            <input type="hidden" name="removeEntry" value="true" />
             <a href="" class="shopping-cart__item-remove" id="removeEntry_${entry.entryNumber}"><small>Remove Item</small></a>
            </form:form>
          </div>

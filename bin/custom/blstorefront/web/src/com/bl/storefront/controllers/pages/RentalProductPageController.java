@@ -3,6 +3,7 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
+
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
@@ -10,10 +11,15 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +63,15 @@ public class RentalProductPageController extends AbstractBlProductPageController
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
       model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
-      
+    final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
+    if(Objects.nonNull(rentalDatesFromSession))
+    {
+   	 final String nextAvailableDate = getBlCommerceStockService().getNextAvailabilityDateInPDP(productCode, rentalDatesFromSession);
+   	 if(StringUtils.isNotBlank(nextAvailableDate))
+   	 {
+   		 model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
+   	 }
+    }
       final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
 				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
 				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
@@ -66,4 +80,5 @@ public class RentalProductPageController extends AbstractBlProductPageController
     model.addAttribute("productData" , productData);
       return productDetail(encodedProductCode, options, productData, model, request, response);
   }
+  
 }

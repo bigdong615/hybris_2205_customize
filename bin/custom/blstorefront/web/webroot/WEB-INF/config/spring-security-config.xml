@@ -97,6 +97,9 @@
 				login-processing-url="/j_spring_security_check"
 				  />
 
+		<!--Added for logout-->
+		<security:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler" />
+
 		<security:port-mappings>
 			<security:port-mapping http="#{configurationService.configuration.getProperty('tomcat.http.port')}"
 			                       https="#{configurationService.configuration.getProperty('tomcat.ssl.port')}" />
@@ -271,7 +274,7 @@
 
 	<alias name="defaultLogoutSuccessHandler" alias="logoutSuccessHandler"/>
 	<bean id="defaultLogoutSuccessHandler" class="de.hybris.platform.acceleratorstorefrontcommons.security.StorefrontLogoutSuccessHandler" >
-		<property name="defaultTargetUrl" value="/"/>
+		<property name="defaultTargetUrl" value="/?logout=true"/>
 		<property name="guidCookieStrategy" ref="guidCookieStrategy"/>
 		<property name="useReferer" value="true"/>
 		<property name="restrictedPages" ref="logoutRestrictedPages"/>

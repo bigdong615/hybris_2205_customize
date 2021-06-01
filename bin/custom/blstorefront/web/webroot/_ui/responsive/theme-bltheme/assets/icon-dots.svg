@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="6px" viewBox="0 0 24 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/dots</title>
+    <g id="Designs" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Account-Orders" transform="translate(-1185.000000, -379.000000)" fill="#858585">
+            <g id="right-column" transform="translate(384.625199, 220.000000)">
+                <g id="order" transform="translate(7.374801, 144.000000)">
+                    <g id="tasks" transform="translate(591.000000, 0.000000)">
+                        <g id="icon/dots" transform="translate(196.000000, 0.000000)">
+                            <path d="M24,18 C24,16.3431458 25.3431458,15 27,15 C28.6568542,15 30,16.3431458 30,18 C30,19.6568542 28.6568542,21 27,21 C25.3431458,21 24,19.6568542 24,18 M15,18 C15,16.3431458 16.3431458,15 18,15 C19.6568542,15 21,16.3431458 21,18 C21,19.6568542 19.6568542,21 18,21 C16.3431458,21 15,19.6568542 15,18 M6,18 C6,16.3431458 7.34314575,15 9,15 C10.6568542,15 12,16.3431458 12,18 C12,19.6568542 10.6568542,21 9,21 C7.34314575,21 6,19.6568542 6,18 Z" id="Shape"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
