@@ -1553,11 +1553,6 @@
             <itemtype code="AbstractOrder" autocreate="false" generate="false">
                 <description>Extending AbstractOrder type with additional attributes.</description>
                 <attributes>
-                    <attribute qualifier="rentalStartDate" type="java.util.Date">
-                        <description>BL Rental Strat Date</description>
-                        <persistence type="property"/>
-                        <modifiers read="true" write="true" search="true"/>
-                    </attribute>
                     <attribute qualifier="rentalReturnDate" type="java.util.Date">
                         <description>BL Rental Return Date</description>
                         <persistence type="property"/>
