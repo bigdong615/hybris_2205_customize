@@ -42,6 +42,9 @@ ACC.account = {
 			var formValues = $('#signUppopup-validation').serialize();
 			var targetUrl = $(this).val();
 			if ($('#register-form-id').val() !== '' && $('#password').val() !== '' && $('#checkPwd-form-id').val() !== '') {
+			if(!$("#errorMessages_sigin_errorbox").hasClass("d-none")){
+            	$("#errorMessages_sigin_errorbox").addClass("d-none");
+            	}
 				$.ajax({
 					type: "POST",
 					data: formValues,
@@ -52,6 +55,9 @@ ACC.account = {
 						if (response.startsWith("Error:")) {
 							splitValue = response.split(":");
 							if (splitValue.includes('register.email.invalid')) {
+							if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
+                                  $("#errorMessages_sigin_errorbox").removeClass("d-none");
+                                  }
 								$("#errorMessages_sigin_email").html("Please enter a valid email");
 							}
 							if (splitValue.includes('register.pwd.invalid')) {
@@ -103,7 +109,6 @@ ACC.account = {
 				}
 				$("#errorMessages_sigin_chkPwd").html("Be sure to provide your password confirmation");
 			} else {
-				$("#errorMessages_sigin_errorbox").addClass("d-none");
 				$("#errorMessages_sigin_chkPwd").html("");
 			}
 		});

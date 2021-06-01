@@ -12,6 +12,9 @@
  				<cms:component component="${component}"/>
  </cms:pageSlot>
     <section id="theProduct">
+        <div class="page-loader-new-layout">
+          <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+        </div>
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-12">
@@ -59,7 +62,17 @@
                                        </div>
                                  </div>
                                  <div id="pickupDelivery">
-                                   <p><span class="arrival">Get it on Jan 31</span> <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a></p>
+                                 <p>
+	                                 <c:choose>
+	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
+	                                 		<span class="arrival"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 	</c:when>
+	                                 	<c:when test="${not empty nextAvailabilityDate }">
+	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span> 
+	                                 	</c:when>
+	                                 </c:choose>
+	                                 <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a>
+                                 </p>
                                   </div>
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
@@ -87,9 +100,18 @@
                                       		</button>
                                   		</c:when>
                                       <c:otherwise>
-                                        <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                                           <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-                                        </div>
+                                      <c:choose>
+                                        <c:when test="${allowAddToCart || isRentalCart}">
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                                              </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                                              </div>
+                                        </c:otherwise>
+                                      </c:choose>
                                         <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                           <button type="button"
                                   			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">

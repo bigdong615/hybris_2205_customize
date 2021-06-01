@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -41,6 +42,9 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 	@Value("${blintegration.fedex.api.key}")
 	private String apiKey;
 
+	@Value("${blintegration.fedex.samedaycity.mock.enable}")
+	private Boolean mockEnable;
+
 
 	@Override
 	public SameDayCityResData getAvailability(final SameDayCityReqData sameDayCityReqData)
@@ -69,27 +73,33 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 			final String result = EntityUtils.toString(response.getEntity());
 
 			// This condtion will get remove once proxy server issue get resolved
-			if (sameDayCityReqData.getDeliveryAddressZipCode().equals("95054")
-					|| sameDayCityReqData.getDeliveryAddressZipCode().equals("10109"))
+			if (BooleanUtils.isTrue(mockEnable))
 			{
-				sameDayCityResData.setServiceApplicable(true);
-				return sameDayCityResData;
-			}
-
-			if (response.getStatusLine().getStatusCode() == 200 || response.getStatusLine().getStatusCode() == 201)
-			{
-				final JSONObject jsonObj = new JSONObject(result);
-				sameDayCityResData.setServiceApplicable(jsonObj.getBoolean("available"));
-				return sameDayCityResData;
+				if (sameDayCityReqData.getDeliveryAddressZipCode().equals("95054")
+						|| sameDayCityReqData.getDeliveryAddressZipCode().equals("10109"))
+				{
+					sameDayCityResData.setServiceApplicable(true);
+					return sameDayCityResData;
+				}
 			}
 			else
 			{
-				sameDayCityResData.setErrorCode(response.getStatusLine().getStatusCode());
-				sameDayCityResData.setErrorResponse(response.getStatusLine().getReasonPhrase());
-				sameDayCityResData.setServiceApplicable(null);
-				BlLogger.logMessage(LOG, Level.ERROR, "*************** Error Occured *************** "
-						+ response.getStatusLine().getStatusCode() + " : " + response.getStatusLine().getReasonPhrase());
-				return sameDayCityResData;
+				if (response.getStatusLine().getStatusCode() == 200 || response.getStatusLine().getStatusCode() == 201)
+				{
+					final JSONObject jsonObj = new JSONObject(result);
+					sameDayCityResData.setServiceApplicable(jsonObj.getBoolean("available"));
+					return sameDayCityResData;
+				}
+
+				else
+				{
+					sameDayCityResData.setErrorCode(response.getStatusLine().getStatusCode());
+					sameDayCityResData.setErrorResponse(response.getStatusLine().getReasonPhrase());
+					sameDayCityResData.setServiceApplicable(null);
+					BlLogger.logMessage(LOG, Level.ERROR, "*************** Error Occured *************** "
+							+ response.getStatusLine().getStatusCode() + " : " + response.getStatusLine().getReasonPhrase());
+					return sameDayCityResData;
+				}
 			}
 
 		}

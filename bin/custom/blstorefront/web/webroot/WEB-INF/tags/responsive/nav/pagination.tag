@@ -26,7 +26,8 @@
       <c:choose>
       <c:when test="${pageType == 'PRODUCTSEARCH'}">
       <c:if test="${hasPreviousPage}">
-       <a href="${previousPageUrl}&blPageType=${blPageType}" class="btn-arrow-left disabled"></a>
+       <!-- BL-451:removed disabled class -->
+       <a href="${previousPageUrl}&blPageType=${blPageType}" class="btn-arrow-left"></a>
        </c:if>
         <c:if test="${!hasPreviousPage}">
               <a href="javascript:void(0)" class="btn-arrow-left disabled"></a>
@@ -35,14 +36,17 @@
       <c:if test="${hasNextPage}">
       <a href="${nextPageUrl}&blPageType=${blPageType}" class="btn-arrow-right"></a>
       </c:if>
+       <!-- BL-451:fixing pagination  added disabled class -->
        <c:if test="${!hasNextPage}">
-            <a href="javascript:void(0)" class="btn-arrow-right"></a>
+            <a href="javascript:void(0)" class="btn-arrow-right disabled"></a>
             </c:if>
       </c:when>
       <c:otherwise>
+       <!-- BL-451:removed disabled class -->
       <c:if test="${hasPreviousPage}">
-       <a href="${previousPageUrl}" class="btn-arrow-left disabled"></a>
+       <a href="${previousPageUrl}" class="btn-arrow-left"></a>
       </c:if>
+       <!-- BL-451:fixing pagination  added disabled class -->
        <c:if test="${!hasPreviousPage}">
                      <a href="javascript:void(0)" class="btn-arrow-left disabled"></a>
         </c:if>
@@ -51,7 +55,7 @@
             <a href="${nextPageUrl}" class="btn-arrow-right"></a>
            </c:if>
             <c:if test="${!hasNextPage}">
-                       <a href="javascript:void(0)" class="btn-arrow-right"></a>
+                       <a href="javascript:void(0)" class="btn-arrow-right disabled"></a>
             </c:if>
       </c:otherwise>
       </c:choose>

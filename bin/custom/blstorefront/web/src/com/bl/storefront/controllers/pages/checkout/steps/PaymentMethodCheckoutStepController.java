@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
@@ -137,7 +138,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		getCheckoutFacade().setDeliveryModeIfAvailable();
-		//setupAddPaymentPage(model);
+		setupAddPaymentPage(model);
 
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
@@ -188,7 +189,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		model.addAttribute(CART_DATA_ATTR, cartData);
-
+		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
+		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
 	}
 

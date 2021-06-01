@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.enums.AddressTypeEnum;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
@@ -37,6 +38,7 @@ import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,7 +79,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
-        model.addAttribute(CART_DATA, getCheckoutFacade().getCheckoutCart());
+        final CartData cartData = getCheckoutFacade().getCheckoutCart();
+        model.addAttribute(CART_DATA, cartData);
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
         model.addAttribute("deliveryAddresses", getUserFacade().getAddressBook());
         model.addAttribute("partnerPickUpLocation", getCheckoutFacade().getAllPartnerPickUpStore());
@@ -91,6 +94,9 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         final ContentPageModel deliveryOrPickUpPage = getContentPageForLabelOrId(DELIVERY_OR_PICKUP);
         storeCmsPageInModel(model, deliveryOrPickUpPage);
         setUpMetaDataForContentPage(model, deliveryOrPickUpPage);
+        if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+            model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
+        }
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
 
@@ -176,11 +182,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
      */
     @GetMapping(value = "/select")
     @RequireHardLogIn
+    @ResponseBody
     public String doSelectDeliveryMode(@RequestParam("delivery_method") final String selectedDeliveryMethod,
                                        @RequestParam("internalStoreAddress") final boolean internalStoreAddress) {
    	 if (StringUtils.isNotEmpty(selectedDeliveryMethod)) {
      	  return getCheckoutFacade().setDeliveryMode(selectedDeliveryMethod, internalStoreAddress)
-     			  ? getCheckoutStep().nextStep() : BlControllerConstants.ERROR;
+     			  ? BlControllerConstants.SUCCESS : BlControllerConstants.ERROR;
        }
        return BlControllerConstants.ERROR;
     }
@@ -240,6 +247,11 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if (addressRequiresReview) {
             return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
         }
+
+        if(BlDeliveryModeLoggingConstants.UPS.equals(newAddress.getLastName())) {
+            getCheckoutFacade().setUPSAddressOnCartForIam(newAddress);
+        }
+
         getUserFacade().addAddress(newAddress);
         final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
         // Set the new address as the selected checkout delivery address
@@ -247,6 +259,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if (previousSelectedAddress != null && !previousSelectedAddress.isVisibleInAddressBook()) { // temporary address should be removed
             getUserFacade().removeAddress(previousSelectedAddress);
         }
+
         return SUCCESS;
     }
 
@@ -264,6 +277,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                                           @RequestParam("shippingGroup") final String shippingGroup,
                                           @RequestParam("deliveryMode") final String deliveryMode,
                                           @RequestParam("rushZip") final String rushZip,
+                                          @RequestParam("businessType") final boolean businessType,
                                           final RedirectAttributes redirectAttributes) {
         final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
         if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
@@ -275,7 +289,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             if (selectedAddressData != null) {
                 final String addressType = selectedAddressData.getAddressType();
                 final String pinCode = selectedAddressData.getPostalCode();
-                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, deliveryMode, rushZip, addressType, pinCode);
+                String pinError = checkErrorIfAnyBeforeSavingAddress(shippingGroup, businessType, rushZip, addressType, pinCode);
                 if (pinError != null) {
                     return pinError;
                 }
@@ -285,15 +299,24 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         return SUCCESS;
     }
 
-    private String checkErrorIfAnyBeforeSavingAddress(String shippingGroup, String deliveryMode, String rushZip, String addressType, String pinCode) {
+    /**
+     *
+     * @param shippingGroup name
+     * @param businessType yes/no
+     * @param rushZip if rush delivery
+     * @param addressType business/not
+     * @param pinCode if rush
+     * @return
+     */
+    private String checkErrorIfAnyBeforeSavingAddress(final String shippingGroup, final boolean businessType,
+                                                      final String rushZip, final String addressType, final String pinCode) {
         if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup) ||
                 BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
             if(!(StringUtils.isNotEmpty(pinCode) && pinCode.equals(rushZip))) {
                return BlDeliveryModeLoggingConstants.PIN_ERROR;
             }
         } else {
-            if(StringUtils.isNotEmpty(addressType) && deliveryMode.contains(BlDeliveryModeLoggingConstants.AM) &&
-                    !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+            if(StringUtils.isNotEmpty(addressType) && businessType && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
                 return BlDeliveryModeLoggingConstants.AM_ERROR;
             }
         }

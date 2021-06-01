@@ -3,25 +3,27 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
+  <!---BL-607:remove extra space from h6 tag -->
 <c:choose>
    <c:when test="${not empty searchPageData.freeTextSearch && searchPageData.freeTextSearch ne null}">
-      <h6 class="search-term mb-4">&quot;${searchPageData.freeTextSearch} &quot;<span class="search-count"> &#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span></h6>
+      <h6 class="search-term mb-4">&quot;${searchPageData.freeTextSearch}&quot;<span class="search-count"> &#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span></h6>
    </c:when>
    <c:otherwise>
    
-    <!-- Added condition for BL-85  -->   
+    <!-- Added condition for BL-85  -->
+  
      <c:choose>
 		<c:when
 			test="${pageType == 'PRODUCTSEARCH' && blPageType == 'rentalGear'}">
 			<h6 class="search-term mb-4">
-				&quot;<spring:theme code="text.rental.gear.slp"/> &quot;<span class="search-count">
+				&quot;<spring:theme code="text.rental.gear.slp"/>&quot;<span class="search-count">
 					&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
 			</h6>
 		</c:when>		
 		<c:when
 			test="${pageType == 'PRODUCTSEARCH' && blPageType == 'usedGear'}">
 			<h6 class="search-term mb-4">
-				&quot;<spring:theme code="text.used.gear.slp"/> &quot;<span class="search-count">
+				&quot;<spring:theme code="text.used.gear.slp"/>&quot;<span class="search-count">
 					&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
 			</h6>
 		</c:when>		
@@ -36,7 +38,7 @@
 		      <spring:theme code="text.used.gear.slp" var="usedText"/>
     			<c:set var="displayText" value="${usedText}"/>
     		</c:if>
-			&quot;${displayText} &quot;<span class="search-count">
+			&quot;${displayText}&quot;<span class="search-count">
 				&#040;${searchPageData.pagination.totalNumberOfResults}&#041;</span>
 		</h6>
 		</c:otherwise>	

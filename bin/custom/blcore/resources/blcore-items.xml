@@ -8,6 +8,7 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
+        <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -729,6 +730,28 @@
                      <description>It defines the buffered inventory percentage</description>
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <persistence type="property"/>
+                   </attribute>
+                   <attribute qualifier="productStatus" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Defines Status of SKU</description>
+                   </attribute>
+                   <attribute qualifier="createdDate" type="java.util.Date">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Date on which the SKU is created</description>
+                   </attribute>
+                   <attribute qualifier="isAccounting" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is Accounting</description>
+                   </attribute>
+                   <attribute qualifier="discounted" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is discounted</description>
                    </attribute>
                  </attributes>
              </itemtype>
@@ -1536,7 +1559,12 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                </attributes>
+                    <attribute type="BlackOutDates" qualifier="blackOutDates">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <description>List of BlackOut Dates</description>
+                    </attribute>
+                </attributes>                
             </itemtype>
         </typegroup>
         <!-- BL-542 End-->
