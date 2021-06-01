@@ -39,7 +39,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultBlGiftCardServiceTest {
 
-
   @Mock
   private CartService cartService;
 

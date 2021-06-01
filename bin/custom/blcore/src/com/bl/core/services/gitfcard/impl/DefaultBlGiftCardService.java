@@ -182,10 +182,8 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
       return false;
     }
 
-    if (calculateGiftCardBalance(giftCardModel) <= 0) {
-      return false;
-    }
-    return true;
+    return (calculateGiftCardBalance(giftCardModel) > 0);
+
   }
 
     /**
