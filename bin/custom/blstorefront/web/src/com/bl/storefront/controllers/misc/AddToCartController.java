@@ -162,7 +162,7 @@ public class AddToCartController extends AbstractController
 						PRODUCT_OPTIONS, Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50)));
 
 		model.addAttribute("productReferences", productReferences);
-		model.addAttribute("dataChange", recognise);
+		model.addAttribute("maxlimit" , Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50)));
 		return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 	}
 

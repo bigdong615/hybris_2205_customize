@@ -62,52 +62,96 @@
               </div>
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
-              <h5 class="d-none d-md-block">Dont forget</h5>
-              <div class="row d-none d-md-flex mt-4">
-                  <div class="col-md-4">
-                       <c:forEach  items="${productReferences}" var="productReference">
-                                                        <div class="card">
-                                                            <c:choose>
-                                                                 <c:when test="${productReference.target.stock.stockLevelStatus.code eq 'lowStock'}">
-                                                              				<span class="badge badge-limited-stock"><spring:theme
-                                                              						code="text.product.tile.flag.only.left"
-                                                            					arguments="${productReference.target.stock.stockLevel}" /></span>
-                                                              	 </c:when>
-                                                                 <c:when test="${productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
-                                                                 			<span class="badge badge-out-of-stock"><spring:theme
-                                                                 					code="text.product.tile.flag.outOfStock"
-                                                                 		arguments="${productReference.target.stock.stockLevel}" /></span>
-                                                            			</c:when>
-                                                                 <c:otherwise>
-                                                                        <c:if test ="${productReference.target.productTagValues ne null}">
-                                                                          <span class="badge badge-new">${productReference.target.productTagValues}</span>
-                                                                        </c:if>
-                                                                 </c:otherwise>
-                                                            </c:choose>
-                                                            <span class="bookmark"></span>
-                                                            <c:set value="true" var="continueLoop"/>
-                                                            <c:forEach items="${productReference.target.images}" var="productImagePdp">
-                                                              <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY' and continueLoop}">
-                                                                <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
-                                                                <c:set value="this is alternate" var="altTextHtml"/>
-                                                                <img src="${primaryImagePdpUrl}">
-                                                                 <c:set value="false" var="continueLoop"/>
-                                                              </c:if>
-                                                             </c:forEach>
-                                                            <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
-                                                            <h6 class="product"><a href="#">${fn:escapeXml(productReference.target.name)}</a></h6>
-                                                            <h6 class="price"><format:price priceData="${productReference.target.price}"/></h6>
-                                                           <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
-                                                                 <button type="button"
-                                                                      class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart1 SeeMore2" data-bs-toggle="modal" data-bs-target="#addToCart"
-                                                                      data-popup="dataToPopUp" data-product-code="${productReference.target.code}">
-                                                           <spring:theme code="basket.add.to.rental.cart.button.text" />
-                                                           </button>
-                                                           </form>
-                                                        </div>
-                                                    </c:forEach>
-                  </div>
-              </div>
+              <h5 class="d-none d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
+              ${productReferences}oooooo
+              ${maxlimit}iiiiiiii
+              ${entry.entryNumber}ssssssss
+              <c:choose>
+                            	<c:when test="${not empty productReferences and maxlimit > 0}">
+                            	<div id="gear-sliders" class="splide mt-4">
+                                		<div class="splide__track">
+                                              <ul class="splide__list">
+                                                            <c:forEach end="${maxlimit}" items="${productReferences}" var="productReference">
+                                        				        	<li class="splide__slide">
+                                                                        <div class="card">
+                                                                     <c:choose>
+                                                                              <c:when test="${productReference.target.stock.stockLevelStatus.code eq 'lowStock'}">
+                                                                        				<span class="badge badge-limited-stock"><spring:theme
+                                                                        						code="text.product.tile.flag.only.left"
+                                                                        						arguments="${productReference.target.stock.stockLevel}" /></span>
+                                                                        			</c:when>
+                                                                        			<c:when test="${productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                                                        				<span class="badge badge-out-of-stock"><spring:theme
+                                                                        						code="text.product.tile.flag.outOfStock"
+                                                                        						arguments="${productReference.target.stock.stockLevel}" /></span>
+                                                                        			</c:when>
+                                                                              <c:otherwise>
+                                                                                  <c:if test ="${productReference.target.productTagValues ne null}">
+                                                                                         <span class="badge badge-new">${productReference.target.productTagValues}</span>
+                                                                                  </c:if>
+                                                                              </c:otherwise>
+                                                                     </c:choose>
+                                                                           <span class="bookmark"></span>
+                                                                               <div class="card-sliders splide">
+                                                                                 <div class="splide__track">
+                                                                                   <ul class="splide__list">
+                                                                                   <c:forEach items="${productReference.target.images}" var="productImagePdp">
+                                                                                      <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY'}">
+                                                                                            <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
+                                                                                            <c:set value="this is alternate" var="altTextHtml"/>
+                                                                                            <!--BL-534: added <a> tag-->
+                                                                                                <li class="splide__slide">
+                                                                                                  <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                                                   <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}"></a</li>
+                                                                                      </c:if>
+                                                                                   </c:forEach>
+                                                                                   </ul>
+                                                                                 </div>
+                                                                               </div>
+                                                                               <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
+                                                                               <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                               <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
+                                                                               <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
+                                                                               <h6 class="price"><format:price priceData="${productReference.target.price}"/>
+                                                                               <c:choose>
+                                                                                    <c:when test="${rentalDate.selectedFromDate ne null and rentalDate.selectedToDate ne null}">
+                                                                                        <span class="period">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span></h6>
+                                                                                    </c:when>
+                                                                                    <c:otherwise>
+                                                                                         <span class="period">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span></h6>
+                                                                                    </c:otherwise>
+                                                                               </c:choose>
+                                                                                <c:choose>
+                                                                                      <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                                                                            <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
+                                                                                      </c:when>
+                                                                                      <c:when test="${productReference.target.isUpcoming}">
+                                                                                           <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
+                                                                                      </c:when>
+                                                                                       <c:otherwise>
+                                                                                       <div class="page-loader-new-layout">
+                                                                                                  <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+                                                                                             </div>
+                                                                                            <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                                                                                <button type="button" class="btn btn-primary btn-block js-add-to-cart1 SeeMore2" data-bs-toggle="modal"
+                                                                                                   data-bs-target="#addToCart" data-product-code="${productReference.target.code}">
+                                                                                                  <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
+                                                                                                </button>
+                                                                                            </form>
+                                                                                        </c:otherwise>
+                                                                                </c:choose>
+                                                                        </div>
+                                                                    </li>
+                                                            </c:forEach>
+                                              </ul>
+                                        </div>
+                                        </div>
+                                	</c:when>
+
+                            	<c:otherwise>
+                            		<component:emptyComponent />
+                            	</c:otherwise>
+              </c:choose>
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>
