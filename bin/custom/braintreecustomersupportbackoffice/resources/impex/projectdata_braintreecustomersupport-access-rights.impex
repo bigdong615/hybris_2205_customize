@@ -1,0 +1,34 @@
+#
+# Import Access Rights for Customer Support Backoffice
+#
+
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+# Access Rights for Customer Support Administrator;;;;;;;;;
+UserGroup;customersupportadministratorgroup;;;;;;;;
+;;;;BraintreeCustomerDetails;+;+;+;+;+
+;;;;BrainTreeBackofficeTransactionCustomer;+;+;+;+;+
+;;;;BrainTreeBackofficeTransactionDetail;+;+;+;+;+
+;;;;BrainTreeTransactionDetail;+;+;+;+;+
+;;;;TransactionPayPalInfo;+;+;+;+;+
+;;;;TransactionCustomer;+;+;+;+;+
+;;;;TransactionCreditCardInfo;+;+;+;+;+
+# Access Rights for Customer Support Manager;;;;;;;;;
+UserGroup;customersupportmanagergroup;;;;;;;;
+;;;;BraintreeCustomerDetails;+;+;+;+;+
+;;;;BrainTreeBackofficeTransactionCustomer;+;+;+;+;+
+;;;;BrainTreeBackofficeTransactionDetail;+;+;+;+;+
+;;;;BrainTreeTransactionDetail;+;+;+;+;+
+;;;;TransactionPayPalInfo;+;+;+;+;+
+;;;;TransactionCustomer;+;+;+;+;+
+;;;;TransactionCreditCardInfo;+;+;+;+;+
+# Access Rights for Customer Support Agent;;;;;;;;;
+UserGroup;customersupportagentgroup;;;;;;;;
+;;;;BraintreeCustomerDetails;+;+;+;+;+
+;;;;BrainTreeBackofficeTransactionCustomer;+;+;+;+;+
+;;;;BrainTreeBackofficeTransactionDetail;+;+;+;+;+
+;;;;BrainTreeTransactionDetail;+;+;+;+;+
+;;;;TransactionPayPalInfo;+;+;+;+;+
+;;;;TransactionCustomer;+;+;+;+;+
+;;;;TransactionCreditCardInfo;+;+;+;+;+
+$END_USERRIGHTS;;;;;;;;;

@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- [y] hybris Platform Copyright (c) 2000-2013 hybris AG All rights reserved. This software is the confidential and proprietary information 
+	of hybris ("Confidential Information"). You shall not disclose such Confidential Information and shall use it only in accordance with 
+	the terms of the license agreement you entered into with hybris. -->
+<!-- ATTENTION: This is just an example file. You have to edit it according to your needs. -->
+
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
+
+    <collectiontypes>
+        <collectiontype code="addressTypeList" elementtype="Address" autocreate="true" generate="true" type="list"/>
+        <collectiontype code="paymentMethodList" elementtype="BrainTreePaymentInfo" autocreate="true" generate="true" type="list"/>
+    </collectiontypes>
+
+	<enumtypes>
+		<enumtype code="BrainTreeCardType" autocreate="true" generate="true" dynamic="true">
+			<value code="American_Express" />
+			<value code="Carte_Blanche" />
+			<value code="China_UnionPay" />
+			<value code="Diners_Club" />
+			<value code="Discover" />
+			<value code="JCB" />
+			<value code="Laser" />
+			<value code="Maestro" />
+			<value code="MasterCard" />
+			<value code="Solo" />
+			<value code="Switch" />
+			<value code="Visa" />
+			<value code="Unknown" />
+		</enumtype>
+		
+		<enumtype code="BrainTreePaymentMethod" autocreate="true" generate="true" dynamic="true">
+			<value code="CreditCard" />
+			<value code="PayPal" />
+			<value code="ApplePayCard" />
+			<value code="LocalPayment"/>
+			<value code="VenmoAccount"/>
+			<value code="AndroidPayCard" />
+			<value code="AmexExpressCheckoutCard" />
+		</enumtype>
+		<enumtype code="StoreInVault" autocreate="true" generate="true" dynamic="true">
+			<value code="Do_not_Vault" />
+			<value code="Vault_always" />
+			<value code="Vault_on_Success" />
+		</enumtype>
+        <enumtype code="OrderStatus" autocreate="false" generate="true"
+                  dynamic="true">
+            <value code="PARTIAL_CAPTURE" />
+        </enumtype>
+        <enumtype code="PaymentTransactionType" autocreate="false"
+                  generate="true">
+            <value code="REFUND_PARTIAL"/>
+			<value code="ORDER"/>
+        </enumtype>
+        
+        <enumtype code="BraintreeTransactionRiskDecision"  generate="true" dynamic="true">
+        	<value code="NOTEVALUATED"/>
+        	<value code="APPROVE"/>
+        	<value code="REVIEW"/>
+        	<value code="DECLINE"/>
+        </enumtype>
+	</enumtypes>
+
+	<maptypes>
+		<maptype code="BrainTreeStringMap" argumenttype="java.lang.String" returntype="java.lang.String" generate="true" autocreate="true" />
+	</maptypes>
+
+	<itemtypes>
+		<itemtype code="BrainTreePaymentInfo" extends="PaymentInfo" autocreate="true" generate="true">
+			<attributes>
+				<attribute qualifier="cardType" type="BrainTreeCardType">
+					<description>Card type</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="cardNumber" type="java.lang.String">
+					<description>Card number</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="paymentProvider" type="java.lang.String">
+					<description>Payment provider</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="nonce" type="java.lang.String">
+					<description>Nonce for authorization client credit card</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="customerId" type="java.lang.String">
+					<description>Customer Id in BrainTree Vault</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="deviceData" type="java.lang.String">
+					<description>Device Data</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="liabilityShifted" type="java.lang.Boolean">
+					<description>Liability shifted on 3D Secure</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="paymentMethodToken" type="java.lang.String">
+					<description>Payment Method Token</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="usePaymentMethodToken" type="java.lang.Boolean">
+					<description>Parameter responsible for decision what type of authorization will be choose</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="expirationMonth" type="java.lang.String">
+					<description>Expires date</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="expirationYear" type="java.lang.String">
+					<description>Expires date</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="imageSource" type="java.lang.String">
+					<description>Image card url</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="threeDSecureConfiguration" type="java.lang.Boolean">
+					<description>3D Secure</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="advancedFraudTools" type="java.lang.Boolean">
+					<description>Advanced Fraud Tools</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="isSkip3dSecureLiabilityResult" type="java.lang.Boolean">
+					<description>skip 3D Secure</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="creditCardStatementName" type="java.lang.String">
+					<description>CreditCard Statement Name</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="brainTreeChannel" type="java.lang.String">
+					<description>BrainTree Channel</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="merchantAccountIdForCurrentSite" type="java.lang.String">
+					<description>Merchant Account Id For Current Site</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="paymentInfo" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="createdAt" type="java.util.Date">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="updatedAt" type="java.util.Date">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="cardholderName" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="isDefault" type="boolean">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="customerLocation" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="payPalIntent" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="shouldBeSaved" type="boolean">
+					<persistence type="property" />
+					<defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+					<modifiers read="true" write="true" optional="true"/>
+				</attribute>
+				<attribute qualifier="customFields" type="BrainTreeStringMap">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="payer" type="java.lang.String">
+					<description>Payer for payment information display</description>
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="shipsFromPostalCode" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="paymentId" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+			</attributes>
+		</itemtype>
+
+		<itemtype code="Customer" autocreate="false" generate="false">
+			<description>Extending Customer type with additional attribute.</description>
+			<attributes>
+				<attribute type="java.lang.String" qualifier="braintreeCustomerId">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property">
+					</persistence>
+					<description>Attribute is used for mapping customer to Brain Tree vault
+                    </description>
+				</attribute>
+			</attributes>
+		</itemtype>
+		
+		<itemtype code="Address" autocreate="false" generate="false">
+			<description>Extending Address type with additional attribute.</description>
+			<attributes>
+				<attribute type="java.lang.String" qualifier="brainTreeAddressId">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property">
+					</persistence>
+					<description>Attribute is used for mapping hybris address to braintree address
+                    </description>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="zone">
+					<modifiers read="true" write="true" optional="true" />
+					<persistence type="property">
+					</persistence>
+					<description>Attribute is used for custom region name
+					</description>
+				</attribute>
+			</attributes>
+		</itemtype>
+
+		<!-- Models for cscockpit -->
+
+		<itemtype code="BrainTreeTransactionDetail" autocreate="true" generate="true">
+
+		
+			<deployment table="btTransactionDetail" typecode="11001"/>
+			<attributes>
+				<attribute qualifier="id" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="merchant" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="merchantAccount" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="amount" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="transactionDate" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="status" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="type" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="settlementBatch" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="processorAuthorizationCode" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="cvvResponse" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="avsResponse" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="customer" type="TransactionCustomer">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="paymentType" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="creditCartInfo" type="TransactionCreditCardInfo">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="payPalInfo" type="TransactionPayPalInfo">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="linkedOrder" type="Order">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="refund" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="riskDecision" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+			</attributes>
+		</itemtype>
+
+		<itemtype code="TransactionCustomer" autocreate="true" generate="true">
+			<description>Customer Information attributes</description>
+
+		
+			<deployment table="btTransactionCustomer" typecode="11002"/>
+			<attributes>
+				<attribute qualifier="customerID" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="name" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="email" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+			</attributes>
+		</itemtype>
+
+        <itemtype code="TransactionCreditCardInfo" autocreate="true" generate="true">
+			<description>Payment Information attributes</description>
+
+		
+			<deployment table="btTransactionCCInfo" typecode="11003"/>
+            <attributes>
+                <attribute qualifier="cardType" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="cardholderName" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="creditCardNumber" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="expirationDate" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="uniqueNumberIdentifier" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="token" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="TransactionPayPalInfo" autocreate="true" generate="true">
+		    <description>PayPal Payment Information attributes</description>
+
+		
+			<deployment table="btTransactionPayPal" typecode="11004"/>
+            <attributes>
+                <attribute qualifier="payerEmail" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payerID" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payerFirstName" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payerLastName" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payeeEmail" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="paymentID" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="authorizationUniqueTransactionID" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payPalDebugID" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payPalCustomField" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payPalSellerProtection" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payPalCaptureID" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="payPalRefundID" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="token" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+
+        <itemtype code="BraintreeCustomerDetails" autocreate="true" generate="true">
+
+			<deployment table="btCustomerDetails" typecode="11007"/>
+            <attributes>
+                <attribute qualifier="createdAt" type="java.util.Date">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="updatedAt" type="java.util.Date">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="company" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="email" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="fax" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="firstName" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="id" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="lastName" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="phone" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="website" type="java.lang.String">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="customFields" type="BrainTreeStringMap">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="addresses" type="addressTypeList">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+                <attribute qualifier="paymentMethods" type="paymentMethodList">
+                    <persistence type="property"></persistence>
+                    <modifiers read="true" write="true" optional="true"/>
+                </attribute>
+            </attributes>
+        </itemtype>
+        <itemtype code="PaymentTransactionEntry" autocreate="false" generate="true">
+            <attributes>
+                <attribute qualifier="refundedAmount" type="java.math.BigDecimal">
+                    <persistence type="property"></persistence>
+                </attribute>
+				<attribute qualifier="submittedForSettlementAmount" type="java.math.BigDecimal">
+					<persistence type="property"/>
+				</attribute>
+            </attributes>
+        </itemtype>
+        <!-- Models for cscockpit end-->
+		<itemtype code="BraintreeLocalPaymentMethods" autocreate="true" generate="true">
+			<description>Local Payment Methods</description>
+			<deployment table="btLocalPaymentMethods" typecode="11013"/>
+			<attributes>
+				<attribute qualifier="code" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" unique="true"/>
+				</attribute>
+				<attribute qualifier="name" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true"/>
+				</attribute>
+				<attribute qualifier="isEnabled" type="boolean">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true"/>
+				</attribute>
+				<attribute qualifier="image" type="Media">
+					<description>Image</description>
+					<modifiers read="true" write="true" search="true" optional="true"/>
+					<persistence type="property"/>
+				</attribute>
+			</attributes>
+		</itemtype>
+
+	</itemtypes>
+</items>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<widget-definition id="com.braintreecustomerbackoffice.widgets.prepareTransactionWidget"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+	<name>Prepare transaction widget</name>
+	<description>Prepare transaction widget.</description>
+	<defaultTitle>Prepare transaction widget</defaultTitle>
+	<author>braintree</author>
+	<version>0.1</version>
+
+	<view src="prepareTransactionWidget.zul" />
+	<controller class="com.braintree.customersupportbackoffice.widgets.PrepareTransactionWidgetController" />
+
+	<sockets>
+		<input type="java.lang.String" id="incomingMsg"/>
+		<output type="java.lang.String" id="outgoingMsg"/>
+	</sockets>
+
+
+</widget-definition>
