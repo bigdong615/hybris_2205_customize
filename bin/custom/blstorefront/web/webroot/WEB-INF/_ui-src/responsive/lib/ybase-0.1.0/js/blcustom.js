@@ -144,3 +144,86 @@ $('#cart-continue').on("click", function (e) {
 		}
 	});
 });
+
+//BL-563 Gift Card Apply
+$(".gc-message input").focus(function () {
+	$(this).siblings(".gc-message").hide();
+});
+
+$('#applyGcCode').click(function (e) {
+	e.preventDefault();
+  var giftCardForm = $("#giftCardForm");
+  if (!giftCardForm.valid()) {
+		return false
+	}
+	var $form = $(this);
+	var gcCode = $("#gift-card-apply-gift-card-number").val();
+	var formBtnSubmit = $(this).find('[type="submit"]');
+	formBtnSubmit.prop("disabled", true).attr("disabled", "disabled");
+  $.ajax({
+		url: giftCardForm.attr('action'),
+		type: giftCardForm.attr("method"),
+		data: {
+			code: gcCode
+		},
+    success: function (data) {
+			formBtnSubmit.prop("disabled", false).removeAttr("disabled");
+			window.location.reload();
+    }
+	});
+});
+
+$("#giftCardForm").validate({
+	errorClass: "error",
+	errorElement: "span",
+	focusInvalid: false,
+	rules: {
+		giftCardNumber: {
+			required: true
+    },
+  },
+	messages: {
+		giftCardNumber: {
+			required: "Uh-oh, please enter a gift card code"
+    },
+  },
+	errorPlacement: function (error,
+		element) {
+		if ($(element).is('select')) {
+			element.parent().after(error);
+		} else {
+			error.insertAfter(element);
+		}
+	},
+	highlight: function (element) {
+		$(element).parent().addClass(
+			"form-error");
+	},
+	unhighlight: function (element) {
+		$(element).parent().removeClass(
+			"form-error");
+	}
+});
+
+//BL-563 Remove Gift Card
+$('.js-release-voucher-remove-btn').on("click", function(e) {
+     e.preventDefault();
+     var method = "POST";
+     var voucherForm = {};
+     var code = $(this).attr('id');
+          voucherForm["voucherCode"] = $(this).attr('id');
+          $.ajax({
+              url: ACC.config.encodedContextPath + '/checkout/remove',
+              data: {
+                  code: code
+              },
+              async: false,
+              type: method,
+              success: function(data, status, xhr) {
+                  window.location.reload();
+              },
+              error: function(error) {
+                  console.log("voucher error");
+              }
+          });
+});

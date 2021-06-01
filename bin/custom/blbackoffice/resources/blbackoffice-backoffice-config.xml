@@ -147,6 +147,10 @@
 					<editorArea:attribute qualifier="email" />
 					<editorArea:attribute qualifier="issuer"
 										  readonly="true" />
+					<editorArea:attribute qualifier="name" />
+					<editorArea:attribute qualifier="customerEmail" />
+					<editorArea:attribute qualifier="isPurchased" />
+					<editorArea:attribute qualifier="message" />
 				</editorArea:section>
 			</editorArea:tab>
 

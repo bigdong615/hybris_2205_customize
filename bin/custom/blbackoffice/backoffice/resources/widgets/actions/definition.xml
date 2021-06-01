@@ -6,8 +6,8 @@
 				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
 
-	<name>Send Email</name>
-	<description>Send email to customers</description>
+	<name>Create Movements</name>
+	<description>Create movements for Gift Card</description>
 	<author>Me</author>
 	<version>0.1</version>
 

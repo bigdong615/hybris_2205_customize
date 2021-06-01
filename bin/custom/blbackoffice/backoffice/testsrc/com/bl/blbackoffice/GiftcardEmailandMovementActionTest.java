@@ -1,7 +1,7 @@
 package com.bl.blbackoffice;
 
 import com.bl.blbackoffice.actions.GiftcardEmailandMovementAction;
-import com.bl.core.event.BLGiftCardEmailEvent;
+import com.bl.core.event.BlGiftCardEmailEvent;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.hybris.cockpitng.actions.ActionContext;
@@ -16,12 +16,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -54,7 +52,7 @@ public class GiftcardEmailandMovementActionTest {
     private GiftCardModel giftCardModel;
 
     @Mock
-    BLGiftCardEmailEvent event;
+    BlGiftCardEmailEvent event;
 
 
     private static final String GIFTCARD_CODE = "test";
@@ -69,7 +67,7 @@ public class GiftcardEmailandMovementActionTest {
 
         giftCardModel.setCode(GIFTCARD_CODE);
         giftCardModel.setActive(Boolean.TRUE);
-        giftCardModel.setCustomer(customerModel);
+        //giftCardModel.setCustomer(customerModel);
         giftCardModel.setAmount(100d);
         giftCardModel.setCurrency(currencyModel);
         giftCardModel.setEmail(Boolean.TRUE);
