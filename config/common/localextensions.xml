@@ -116,7 +116,7 @@
 
     <!-- Extension to enable Warehouses -->
     <extension name='warehousing'/>
-    <extension name='warehousingbackoffice'/>
+    <!-- <extension name='warehousingbackoffice'/>  -->
     <extension name='warehousingfacades'/>
     <extension name='warehousingwebservices'/>
 
