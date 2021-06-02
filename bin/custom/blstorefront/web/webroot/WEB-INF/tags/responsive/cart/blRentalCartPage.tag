@@ -11,8 +11,6 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<spring:url value="/cart/voucher/remove" var="removeVoucherAction" htmlEscape="false"/>
-
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
