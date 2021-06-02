@@ -8,6 +8,7 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
+        <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
     </collectiontypes>
 
@@ -406,6 +407,15 @@
 				jaloclass="de.hybris.platform.acceleratorcms.jalo.components.SupportNavigationComponent">
 				<description>Custom Navigation component for Support navigation node on header.</description>
 			</itemtype>
+
+            <itemtype code="BannerComponent" autocreate="false" generate="false">
+              <attributes>
+                    <attribute type="MediasList" qualifier="medias">
+                         <modifiers read="true" write="true" optional="true"/>
+                         <persistence type="property"/>
+                     </attribute>
+               </attributes>
+            </itemtype>
 		</typegroup>
 
         <typegroup name="borrowLenses">
