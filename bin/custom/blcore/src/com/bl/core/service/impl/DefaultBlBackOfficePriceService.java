@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 
 public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService {
 
-  private BlProductDynamicPriceStrategy blProductDynamicPriceStrategy;
+  private BlProductDynamicPriceStrategy blCustomProductDynamicPriceStrategy;
   private BlPriceRatioUtil blProductPriceRatioUtil;
   private static final Logger LOG = Logger.getLogger(DefaultBlBackOfficePriceService.class);
 
@@ -50,21 +50,12 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
         if (priceList.containsKey((int) d)) {
           return priceList.get((int) d);
         } else {
-          return getBlProductDynamicPriceStrategy().getDynamicPrice(priceList, d);
+          return getBlCustomProductDynamicPriceStrategy().getDynamicPrice(priceList, d);
         }
       }
     }
     BlLogger.logMessage(LOG, Level.WARN, "!Rental Price not found");
     return null;
-  }
-
-  public BlProductDynamicPriceStrategy getBlProductDynamicPriceStrategy() {
-    return blProductDynamicPriceStrategy;
-  }
-
-  public void setBlProductDynamicPriceStrategy(
-      BlProductDynamicPriceStrategy blProductDynamicPriceStrategy) {
-    this.blProductDynamicPriceStrategy = blProductDynamicPriceStrategy;
   }
 
   public BlPriceRatioUtil getBlProductPriceRatioUtil() {
@@ -74,5 +65,21 @@ public class DefaultBlBackOfficePriceService implements BlBackOfficePriceService
   public void setBlProductPriceRatioUtil(BlPriceRatioUtil blProductPriceRatioUtil) {
     this.blProductPriceRatioUtil = blProductPriceRatioUtil;
   }
+
+/**
+ * @return the blCustomProductDynamicPriceStrategy
+ */
+public BlProductDynamicPriceStrategy getBlCustomProductDynamicPriceStrategy()
+{
+	return blCustomProductDynamicPriceStrategy;
+}
+
+/**
+ * @param blCustomProductDynamicPriceStrategy the blCustomProductDynamicPriceStrategy to set
+ */
+public void setBlCustomProductDynamicPriceStrategy(BlProductDynamicPriceStrategy blCustomProductDynamicPriceStrategy)
+{
+	this.blCustomProductDynamicPriceStrategy = blCustomProductDynamicPriceStrategy;
+}
 
 }

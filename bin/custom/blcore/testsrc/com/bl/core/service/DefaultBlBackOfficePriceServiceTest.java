@@ -42,7 +42,7 @@ public class DefaultBlBackOfficePriceServiceTest
   public void setup()
   {
     defaultBlBackOfficePriceService.setBlProductPriceRatioUtil(blProductPriceRatioUtil);
-    defaultBlBackOfficePriceService.setBlProductDynamicPriceStrategy(blProductDynamicPriceStrategy);
+    defaultBlBackOfficePriceService.setBlCustomProductDynamicPriceStrategy(blProductDynamicPriceStrategy);
   }
 
   @Test

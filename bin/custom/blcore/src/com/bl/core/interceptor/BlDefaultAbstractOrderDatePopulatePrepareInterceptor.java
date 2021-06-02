@@ -20,7 +20,7 @@ public class BlDefaultAbstractOrderDatePopulatePrepareInterceptor implements
   public void onPrepare(AbstractOrderModel abstractOrderModel,
       InterceptorContext interceptorContext) throws InterceptorException {
     Date rentalStartDate = abstractOrderModel.getRentalStartDate();
-    Date rentalReturnDate = abstractOrderModel.getRentalReturnDate();
+    Date rentalReturnDate = abstractOrderModel.getRentalEndDate();
     if (CollectionUtils.isNotEmpty(abstractOrderModel.getEntries())) {
       for (AbstractOrderEntryModel orderEntry : abstractOrderModel.getEntries()) {
         //update rental date based on order dates

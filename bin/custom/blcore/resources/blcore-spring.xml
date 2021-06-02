@@ -441,15 +441,15 @@
 
 	<alias name="defaultBLBackOfficePriceService" alias="blBackOfficePriceService"/>
 	<bean id="defaultBLBackOfficePriceService" class="com.bl.core.service.impl.DefaultBlBackOfficePriceService">
-		<property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
+		<property name="blCustomProductDynamicPriceStrategy" ref="blCustomProductDynamicPriceStrategy"/>
 		<property name="blProductPriceRatioUtil" ref="blProductPriceRatioUtil"/>
 	</bean>
 
 
 	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlDefaultProductDynamicPriceStrategy is used to get the dynamic rental price for product -->
 
-	<alias name="defaultBLProductDynamicPriceStrategy" alias="blProductDynamicPriceStrategy"/>
-	<bean id="defaultBLProductDynamicPriceStrategy" class="com.bl.core.strategies.impl.BlDefaultProductDynamicPriceStrategy">
+	<alias name="defaultBLCustomProductDynamicPriceStrategy" alias="blCustomProductDynamicPriceStrategy"/>
+	<bean id="defaultBLCustomProductDynamicPriceStrategy" class="com.bl.core.strategies.impl.BlDefaultProductDynamicPriceStrategy">
 	</bean>
 
 	<!-- feature/custom_extensions_blcustomersupportbackoffice_blwarehousingbackoffice : BlPriceRatioUtil class used to calculate rental price based on price-ratio and no of days-->
