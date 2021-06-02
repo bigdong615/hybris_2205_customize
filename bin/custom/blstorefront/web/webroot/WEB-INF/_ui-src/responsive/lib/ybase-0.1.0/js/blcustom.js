@@ -213,7 +213,7 @@ $('.js-release-voucher-remove-btn').on("click", function(e) {
      var code = $(this).attr('id');
           voucherForm["voucherCode"] = $(this).attr('id');
           $.ajax({
-              url: ACC.config.encodedContextPath + '/checkout/remove',
+              url: ACC.config.encodedContextPath + '/checkout/removeGiftCard',
               data: {
                   code: code
               },

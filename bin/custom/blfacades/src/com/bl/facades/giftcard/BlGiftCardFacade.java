@@ -1,6 +1,7 @@
 package com.bl.facades.giftcard;
 
 import com.bl.core.model.GiftCardModel;
+import de.hybris.platform.core.model.order.CartModel;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -16,7 +17,7 @@ public interface BlGiftCardFacade {
      *  This method is to remove applied gift card from cart.
      * @param giftCardCode
      */
-    void removeGiftCard(final String giftCardCode);
+    void removeGiftCard(final String giftCardCode, final CartModel cartModel);
 
     /**
      * This method is used to apply gift card.
@@ -36,7 +37,7 @@ public interface BlGiftCardFacade {
     // String placeOrder(Model model, HttpServletRequest request, RedirectAttributes redirectModel);
 
     /**
-     * It checks that applied  gift card exist in the system or not.
+     * It fetches the GiftCardModel
      * @param giftCardCode
      * @return giftCardModel
      */

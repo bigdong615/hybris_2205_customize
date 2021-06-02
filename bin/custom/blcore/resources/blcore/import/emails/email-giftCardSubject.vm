@@ -1,1 +1,1 @@
-You've got a rental credit from BorrowLenses
+${ctx.messages.getMessage('giftCardEmailSubject')}

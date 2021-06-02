@@ -11,7 +11,7 @@
 	<author>Me</author>
 	<version>0.1</version>
 
-	<actionClassName>com.bl.blbackoffice.actions.GiftcardEmailandMovementAction</actionClassName>
+	<actionClassName>com.bl.blbackoffice.actions.BlGiftCardEmailAndMovementAction</actionClassName>
 
 	<inputType>java.lang.Object</inputType>
 	<outputType>java.lang.Object</outputType>

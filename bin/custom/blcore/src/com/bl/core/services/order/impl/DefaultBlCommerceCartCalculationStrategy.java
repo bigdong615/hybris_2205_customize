@@ -14,6 +14,9 @@ public class DefaultBlCommerceCartCalculationStrategy extends
 
   private BlGiftCardService giftCardService;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public boolean calculateCart(final CommerceCartParameter parameter) {
 
@@ -39,4 +42,3 @@ public class DefaultBlCommerceCartCalculationStrategy extends
     this.giftCardService = giftCardService;
   }
 }
-

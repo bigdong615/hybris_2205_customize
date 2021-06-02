@@ -14,12 +14,12 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * It is a custom implementation of OOTB class {@link AbstractEmailContext}.
+ * It is a custom implementation of OOTB class {@link AbstractEmailContext} for gift card email.
  * @author Neeraj Singh
  */
-public class GiftCardEmailContext extends AbstractEmailContext<GiftCardEmailProcessModel> {
+public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailProcessModel> {
 
-  private static final Logger LOGGER = Logger.getLogger(GiftCardEmailContext.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(BlGiftCardEmailContext.class.getName());
 
   private GiftCardModel giftcard;
   private String customerEmail;

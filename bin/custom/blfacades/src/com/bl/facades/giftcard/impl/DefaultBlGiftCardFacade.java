@@ -9,6 +9,7 @@ import de.hybris.platform.commercefacades.order.CheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Level;
@@ -38,19 +39,15 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
    * {@inheritDoc}
    */
   @Override
-  public void removeGiftCard(String giftCardCode) {
-    try {
-      giftCardService.removeGiftCard(giftCardCode);
-    } catch (Exception exception) {
-      BlLogger.logMessage(LOGGER, Level.ERROR, "Unable to remove gift Card {} from cart", giftCardCode, exception);
-    }
+  public void removeGiftCard(final String giftCardCode, final CartModel cartModel) {
+    giftCardService.removeGiftCard(giftCardCode, cartModel);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public boolean applyGiftCard(String giftCardCode) {
+  public boolean applyGiftCard(final String giftCardCode) {
     return giftCardService.applyGiftCard(giftCardCode);
   }
 
@@ -64,7 +61,7 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
 
     CartData cartData = null;
     cartData = getBlCartFacade().getSessionCart();
-    if (!validateAppliedGiftcard(cartData)) {
+    if (Boolean.FALSE.equals(validateAppliedGiftcard(cartData))) {
         return REDIRECT_PREFIX + "/cart";
     }
     OrderData orderData = null;

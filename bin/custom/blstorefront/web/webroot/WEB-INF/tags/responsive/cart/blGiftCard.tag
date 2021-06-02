@@ -9,7 +9,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ attribute name="cartData" required="true" type="de.hybris.platform.commercefacades.order.data.CartData" %>
 
-<c:url value="/checkout/apply" var="giftCardUrl" />
+<c:url value="/checkout/applyGiftCard" var="giftCardUrl" />
 <spring:htmlEscape defaultHtmlEscape="true" />
 <div class="paymentOption">
 	<div class="row">

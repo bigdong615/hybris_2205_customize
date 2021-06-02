@@ -43,40 +43,44 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
      */
   public void calculateGiftCard(final AbstractOrderModel order, double totalplustax) {
     final List<GiftCardModel> giftCards = order.getGiftCard();
-    if (!CollectionUtils.isEmpty(giftCards)) {
+    if (CollectionUtils.isNotEmpty(giftCards)) {
       order.setGrandTotal(totalplustax);
       int transactionId = 0;
       double giftCardAmount = 0;
       for (final GiftCardModel giftCardModel : giftCards) {
-        // refresh the uncommited giftcards before recreate movements
-        clearUncommitedMovements(giftCardModel);
-        final double giftCardBalanceAmount = calculateGiftCardBalance(giftCardModel);
-        // balance is less than total
-        if (giftCardBalanceAmount > 0 && giftCardBalanceAmount <= totalplustax && totalplustax > 0) {
-          // create movement of balance amount and reduce the amount of total
-          totalplustax -= giftCardBalanceAmount;
-          final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
-          movement.setCommited(Boolean.FALSE);
-          movement.setAmount((-1 * giftCardBalanceAmount));
-          movement.setCurrency(order.getCurrency());
-          movement.setGiftCard(giftCardModel);
-          movement.setTransactionId(order.getCode() + "_" + ++transactionId);
-          getModelService().save(movement);
-          giftCardAmount += giftCardBalanceAmount;
+        try{
+          // refresh the uncommitted giftcards before recreate movements
+          clearUncommittedMovements(giftCardModel);
+          final double giftCardBalanceAmount = calculateGiftCardBalance(giftCardModel);
+          // balance is less than total
+          if (giftCardBalanceAmount > 0 && giftCardBalanceAmount <= totalplustax && totalplustax > 0) {
+            // create movement of balance amount and reduce the amount of total
+            totalplustax -= giftCardBalanceAmount;
+            final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
+            movement.setCommitted(Boolean.FALSE);
+            movement.setAmount((-1 * giftCardBalanceAmount));
+            movement.setCurrency(order.getCurrency());
+            movement.setGiftCard(giftCardModel);
+            movement.setTransactionId(order.getCode() + "_" + ++transactionId);
+            getModelService().save(movement);
+            giftCardAmount += giftCardBalanceAmount;
+          }
+          // user full amount
+          else if (giftCardBalanceAmount > totalplustax && totalplustax > 0) {
+            final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
+            movement.setCommitted(Boolean.FALSE);
+            movement.setAmount((-1 * totalplustax));
+            movement.setCurrency(order.getCurrency());
+            movement.setGiftCard(giftCardModel);
+            movement.setTransactionId(order.getCode() + "_" + ++transactionId);
+            getModelService().save(movement);
+            giftCardAmount += totalplustax;
+            totalplustax = 0;
+          }
+            getModelService().refresh(giftCardModel);
+        }catch(final Exception exception){
+            BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Exception occurred while doing calculation for a gift card for the cart: {}", order.getCode(), exception);
         }
-        // user full amount
-        else if (giftCardBalanceAmount > totalplustax && totalplustax > 0) {
-          final GiftCardMovementModel movement = getModelService().create(GiftCardMovementModel.class);
-          movement.setCommited(Boolean.FALSE);
-          movement.setAmount((-1 * totalplustax));
-          movement.setCurrency(order.getCurrency());
-          movement.setGiftCard(giftCardModel);
-          movement.setTransactionId(order.getCode() + "_" + ++transactionId);
-          getModelService().save(movement);
-          giftCardAmount += totalplustax;
-          totalplustax = 0;
-        }
-        getModelService().refresh(giftCardModel);
       }
       order.setGiftCardAmount(giftCardAmount);
       order.setTotalPrice(totalplustax);
@@ -101,13 +105,12 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     try{
     final GiftCardModel giftCardModel = getGiftCardDao().getGiftCard(giftCardCode);
     if (giftCardModel != null) {
-      this.clearUncommitedMovements(giftCardModel);
+      this.clearUncommittedMovements(giftCardModel);
       clearInactiveCarts(giftCardModel, cartModel);
-      if (giftCardModel.getActive() != null) {
-        return validateGiftCardAndApply(giftCardModel, cartModel);
-      }
+      return validateGiftCardAndApply(giftCardModel, cartModel);
+
     }
-  }catch(Exception exception){
+  }catch(final Exception exception){
       BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,"Error while applying gift card code {}", giftCardCode, exception);
   }
     return false;
@@ -153,7 +156,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
      */
   private boolean validateGiftCardAndApply(final GiftCardModel giftCardModel, final CartModel cartModel) {
 
-    if (!Boolean.FALSE.equals(giftCardModel.getActive()) && giftCardModel.getCurrency() != null
+    if (Boolean.FALSE.equals(giftCardModel.getActive()) && giftCardModel.getCurrency() != null
         && giftCardModel.getCurrency() != commonI18NService.getCurrentCurrency()) {
       return false;
     }
@@ -235,30 +238,33 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     /**
      *{@inheritDoc}
      */
-  public void clearUncommitedMovements(final GiftCardModel giftCardModel) {
+  @Override
+  public void clearUncommittedMovements(final GiftCardModel giftCardModel) {
     final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
-    if (!CollectionUtils.isEmpty(giftCardMovementModelList)) {
-      for (final GiftCardMovementModel giftCardMovementModel : giftCardMovementModelList) {
-        if (Boolean.FALSE.equals(giftCardMovementModel.getCommited())) {
-          getModelService().remove(giftCardMovementModel);
+    try {
+      if (CollectionUtils.isNotEmpty(giftCardMovementModelList)) {
+        for (final GiftCardMovementModel giftCardMovementModel : giftCardMovementModelList) {
+          if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted())) {
+            getModelService().remove(giftCardMovementModel);
+          }
         }
       }
+      getModelService().refresh(giftCardModel);
+    }catch (final Exception exception){
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Exception while removing uncommitted movements for gift card: {}", giftCardModel.getCode(), exception);
     }
-    getModelService().refresh(giftCardModel);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public void removeGiftCard(final String giftCardCode) {
+  public void removeGiftCard(final String giftCardCode, final CartModel cartModel) {
     List<GiftCardModel> giftCardModelList = new ArrayList<>();
-    try {
-      final GiftCardModel giftCard = getGiftCardDao().getGiftCard(giftCardCode);
-      final CartModel cartModel = getBlCartService().getSessionCart();
-      if (giftCard != null) {
+    final GiftCardModel giftCard = getGiftCardDao().getGiftCard(giftCardCode);
+    if (giftCard != null) {
         final List<GiftCardModel> giftCardPresentInCart = cartModel.getGiftCard();
-        this.clearUncommitedMovements(giftCard);
+        this.clearUncommittedMovements(giftCard);
         Collection<String> appliedGiftCardCodes = new ArrayList<>(
             cartModel.getAppliedCouponCodes());
         for (GiftCardModel giftCardModel : giftCardPresentInCart) {
@@ -272,18 +278,16 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
         }
         cartModel.setGiftCard(giftCardModelList);
         cartModel.setAppliedCouponCodes(appliedGiftCardCodes);
-      }
-      cartModel.setCalculated(Boolean.FALSE);
-      getModelService().save(cartModel);
-      final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
-      commerceCartParameter.setCart(cartModel);
-      commerceCartParameter.setBaseSite(cartModel.getSite());
-      commerceCartParameter.setEnableHooks(true);
-      commerceCartParameter.setRecalculate(true);
-      getBlCheckoutCartCalculationStrategy().calculateCart(commerceCartParameter);
-      getModelService().refresh(cartModel);
-    }catch (Exception exception){
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Error while removing applied gift card code {}", giftCardCode, exception);
+
+        cartModel.setCalculated(Boolean.FALSE);
+        getModelService().save(cartModel);
+        final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
+        commerceCartParameter.setCart(cartModel);
+        commerceCartParameter.setBaseSite(cartModel.getSite());
+        commerceCartParameter.setEnableHooks(true);
+        commerceCartParameter.setRecalculate(true);
+        getBlCheckoutCartCalculationStrategy().calculateCart(commerceCartParameter);
+        getModelService().refresh(cartModel);
     }
   }
 
@@ -291,12 +295,9 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
    *{@inheritDoc}
    */
   @Override
-  public boolean validateGiftPlaceOrder(final OrderModel order) {
-    if (CollectionUtils.isEmpty(order.getGiftCard())) {
-      return false;
-    } else {
-        return order.getGiftCardAmount().equals(order.getGrandTotal());
-    }
+  public boolean validateGiftCardBeforePlaceOrder(final OrderModel order) {
+    return CollectionUtils.isNotEmpty(order.getGiftCard()) && order.getGiftCardAmount()
+        .equals(order.getGrandTotal());
   }
 
   /**
@@ -326,7 +327,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
   public GiftCardModel getGiftCard(final String giftCardCode) {
     try {
       return getGiftCardDao().getGiftCard(giftCardCode);
-    }catch (Exception exception){
+    }catch (final Exception exception){
       BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Error while fetching gift card code {} from backend", giftCardCode, exception);
     }
     return null;

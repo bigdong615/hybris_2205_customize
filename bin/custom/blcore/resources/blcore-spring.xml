@@ -763,13 +763,11 @@
 
 	<!--Gift card Start-->
 	<alias name="blGiftCardDaoImpl" alias="giftCardDao" />
-	<bean id="blGiftCardDaoImpl" class="com.bl.core.services.dao.impl.DefaultBlGiftCardDao">
-		<property name="flexibleSearchService" ref="flexibleSearchService" />
-	</bean>
+	<bean id="blGiftCardDaoImpl" class="com.bl.core.services.dao.impl.DefaultBlGiftCardDao"/>
 
 	<alias name="defaultGiftCardOrderMethodHook" alias="giftCardOrderMethodHook" />
 	<bean id="defaultGiftCardOrderMethodHook"
-		class="com.bl.core.order.hook.impl.GiftCardOrderMethodHook">
+		class="com.bl.core.order.hook.impl.BlGiftCardOrderMethodHook">
 		<property name="eventService" ref="eventService" />
 		<property name="modelService" ref="modelService" />
 	</bean>
@@ -789,7 +787,7 @@
 		<property name="commonI18NService" ref="commonI18NService" />
 	</bean>
 
-	<bean id="giftCardbalance" class="com.bl.core.attributes.GiftCardBalanceHandler" />
+	<bean id="giftCardbalance" class="com.bl.core.attributes.BlGiftCardBalanceHandler" />
 
 	<alias alias="commerceCartCalculationStrategy" name="defaultBlCheckoutCartCalculationStrategy" />
 	<bean id="defaultBlCheckoutCartCalculationStrategy"

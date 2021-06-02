@@ -1,5 +1,5 @@
 <body bgcolor="#ffffff" text="#000000" style="background-color: #ffffff; color: #000000; padding: 15px; -webkit-text-size-adjust:none; font-size: 16px; font-family:arial,helvetica,sans-serif;">
-  <span class="mcnPreview Text" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;">You've got a rental credit from BorrowLenses</span>
+  <span class="mcnPreview Text" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;"></span>
     <div style="font-size:0; line-height:0;"><custom name="opencounter" type="tracking"><custom name="usermatch" type="tracking" /></div>
     <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
       <tr>
@@ -43,28 +43,28 @@
 <hr noshade />
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 16px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-Hello ${ctx.custname},</p>
+${ctx.messages.getMessage('giftEmailSalutation')} ${ctx.custname},</p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-You’ve been issued ${ctx.amount} in rental credit to use at <a href="${ctx.secureBaseUrl}">BorrowLenses</a> for %%REASON%%.
+${ctx.messages.getMessage('giftEmailParagraph1', ${ctx.amount})} <a href="${ctx.secureBaseUrl}">${ctx.messages.getMessage('giftEmailSiteName')}</a> ${ctx.messages.getMessage('giftEmailFor')} %%REASON%%.
 </p>
 
-<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 600; font-style : normal; text-align: center">Code: ${ctx.code}</p>
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 600; font-style : normal; text-align: center">${ctx.messages.getMessage('giftEmailCode')} ${ctx.code}</p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-Be sure to hang on to your rental credit code until you’ve had a chance to use it.
+${ctx.messages.getMessage('giftEmailParagraph2')}
 </p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 12px; color : #000; line-height : 1.3em; font-weight : 300; font-style : italic; ">
-To redeem your rental credit, enter the code ${ctx.code} in the Gift Certificate section of the Payment Page as you checkout for your next rental order. Your rental credits may be combined with any eligible promotions or special offers.
+${ctx.messages.getMessage('giftEmailParagraph3', ${ctx.code})}
 </p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 12px; color : #000; line-height : 1.3em; font-weight : 300; font-style : italic; ">
-Heads up: A valid Credit Card or PayPal account is required on all orders as part of our verification process.
+${ctx.messages.getMessage('giftEmailParagraph4')}
 </p>
 
 <p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
-The BorrowLenses Team<br/>
+${ctx.messages.getMessage('giftEmailBorrowLensesTeam')}<br/>
 <a href="${ctx.secureBaseUrl}">www.borrowlenses.com</a><br/>
 </p></td></tr></table></td></tr></table></td></tr></table></td></tr></table>
 
@@ -101,8 +101,8 @@ The BorrowLenses Team<br/>
 <hr noshade />
 
 <div style="margin-top: 10px; padding: 4px 8px; font-family: helvetica,arial,sans-serif; text-align: center; background-color: #ededf0;">
-  <a href="${ctx.secureBaseUrl}/content/contact_info" style="font-family: sans-serif;text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;">Expert Help</a> |
-  <a href="${ctx.secureBaseUrl}/AccountHistory.do" style="text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;">My Account</a>
+  <a href="${ctx.secureBaseUrl}/content/contact_info" style="font-family: sans-serif;text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;">${ctx.messages.getMessage('giftEmailHelp')}</a> |
+  <a href="${ctx.secureBaseUrl}/AccountHistory.do" style="text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;">${ctx.messages.getMessage('giftEmailMyAccount')}</a>
 </div>
 
 <div style="margin-top: 10px; padding: 4px 8px; font-family: helvetica,arial,sans-serif; text-align: center;">
@@ -110,16 +110,16 @@ The BorrowLenses Team<br/>
 
 <span style="font-family: helvetica,arial,sans-serif; text-align: center; font-size: 12px; color: #000; display: block; margin-bottom: 25px;">
 
-	This message is being sent to you because you were sent a rental credit code.
+${ctx.messages.getMessage('giftEmailFooter1')}
 	<br /><br />
 
-	Copyright (C) 2021 BorrowLenses. All rights reserved.
+${ctx.messages.getMessage('giftEmailFooter2')}
 
 	<br /><br />
-	Our mailing address is:<br />
+	${ctx.messages.getMessage('giftEmailFooter3')}<br />
 	BorrowLenses.com<br />
-	1664 Industrial Road<br />
-	San Carlos, CA 94070<br />
+	${ctx.messages.getMessage('giftEmailFooter4')}<br />
+	${ctx.messages.getMessage('giftEmailFooter5')}<br />
 
 </span>
 </p>

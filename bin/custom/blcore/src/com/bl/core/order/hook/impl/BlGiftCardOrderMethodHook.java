@@ -15,16 +15,13 @@ import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Required;
 
 
 /**
- * It is a custom implementation of OOTB class {@link CommercePlaceOrderMethodHook}.
- *
- * @author Neeraj Singh This class is not required right now, It might be useful while implementing
- * order placement functionality. If not required then we can remove this class later on.
+ * It is a custom implementation of OOTB class {@link CommercePlaceOrderMethodHook} for gift card place order
+ * @author Neeraj Singh
  */
-public class GiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
+public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
 
   private EventService eventService;
   private ModelService modelService;
@@ -51,59 +48,58 @@ public class GiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
 
     // add tax to total only if order is NET
     double totalplustax = order.getTotalPrice().doubleValue();
-    if (order.getNet() != null && order.getNet().booleanValue()) {
+    if (Boolean.TRUE.equals(order.getNet())) {
       totalplustax += order.getTotalTax().doubleValue();
-      //			for (final AbstractOrderEntryModel abstractOrderEntryModel : order.getEntries())
-      //			{
-      //				final Double oraclePrice = (abstractOrderEntryModel.getTotalPrice() / abstractOrderEntryModel.getQuantity());
-      //				BigDecimal rounded = new BigDecimal(oraclePrice);
-      //				rounded = rounded.setScale(2, RoundingMode.HALF_UP);
-      //				abstractOrderEntryModel.setOraclePrice(rounded.doubleValue());
-      //				getModelService().save(abstractOrderEntryModel);
-      //			}
+      //commented code can be used while implementing place order using gift card. If not required remove it later on.
+      			/*for (final AbstractOrderEntryModel abstractOrderEntryModel : order.getEntries())
+      			{
+      				final Double oraclePrice = (abstractOrderEntryModel.getTotalPrice() / abstractOrderEntryModel.getQuantity());
+      				BigDecimal rounded = new BigDecimal(oraclePrice);
+      				rounded = rounded.setScale(2, RoundingMode.HALF_UP);
+      				abstractOrderEntryModel.setOraclePrice(rounded.doubleValue());
+      				getModelService().save(abstractOrderEntryModel);
+      			}
     } else {
-      //			try
-      //			{
-      //				final double total = order.getTotalPrice().doubleValue();
-      //				final double totalTax = order.getTotalTax().doubleValue();
-      //				//Calculating discount tax SUS-1210
-      //				final double discountTax = (discountValue * order.getTaxRate()) / 100.0;
-      //				final double tax = totalTax - discountTax;
-      //				double taxRate = tax / (total - tax);
-      //				BigDecimal bd = new BigDecimal(taxRate);
-      //				bd = bd.setScale(2, RoundingMode.HALF_UP);
-      //				taxRate = bd.doubleValue() * 100;
-      //				               order.setTaxRate(taxRate);
-      //				order.setTotalTax(tax);
+      			try
+      			{
+      				final double total = order.getTotalPrice().doubleValue();
+      				final double totalTax = order.getTotalTax().doubleValue();
+      				//Calculating discount tax SUS-1210
+      				final double discountTax = (discountValue * order.getTaxRate()) / 100.0;
+      				final double tax = totalTax - discountTax;
+      				double taxRate = tax / (total - tax);
+      				BigDecimal bd = new BigDecimal(taxRate);
+      				bd = bd.setScale(2, RoundingMode.HALF_UP);
+      				taxRate = bd.doubleValue() * 100;
+      				               order.setTaxRate(taxRate);
+      				order.setTotalTax(tax);
 
-      //				for (final AbstractOrderEntryModel abstractOrderEntryModel : order.getEntries())
-      //				{
-      //					final Double oraclePrice = (abstractOrderEntryModel.getTotalPrice() / abstractOrderEntryModel.getQuantity())
-      //							/ (1 + (order.getTaxRate().doubleValue() / 100));
-      //					BigDecimal rounded = new BigDecimal(oraclePrice);
-      //					rounded = rounded.setScale(2, RoundingMode.HALF_UP);
-      //					abstractOrderEntryModel.setOraclePrice(rounded.doubleValue());
-      //					getModelService().save(abstractOrderEntryModel);
-      //				}
-      //			}
-      //			catch (final Exception e)
-      //			{
-      //				//               LOG.error("Error calculating taxrate", e);
-      //			}
+      				for (final AbstractOrderEntryModel abstractOrderEntryModel : order.getEntries())
+      				{
+      					final Double oraclePrice = (abstractOrderEntryModel.getTotalPrice() / abstractOrderEntryModel.getQuantity())
+      							/ (1 + (order.getTaxRate().doubleValue() / 100));
+      					BigDecimal rounded = new BigDecimal(oraclePrice);
+      					rounded = rounded.setScale(2, RoundingMode.HALF_UP);
+      					abstractOrderEntryModel.setOraclePrice(rounded.doubleValue());
+      					getModelService().save(abstractOrderEntryModel);
+      				}
+      			}
+      			catch (final Exception e)
+      			{
+                     LOG.error("Error calculating taxrate", e);
+      			}
+     }*/
     }
-
     giftCardService.calculateGiftCard(order, totalplustax);
 
     final List<GiftCardModel> giftCards = order.getGiftCard();
     if (giftCards != null) {
-      for (int i = 0; i < giftCards.size(); i++) {
-        final GiftCardModel giftCard = giftCards.get(i);
+      for (final GiftCardModel giftCard : giftCards) {
         getModelService().refresh(giftCard);
         final List<GiftCardMovementModel> movements = giftCard.getMovements();
-        for (int j = 0; j < movements.size(); j++) {
-          final GiftCardMovementModel giftCardMovementModel = movements.get(j);
-          if (giftCardMovementModel.getCommited() != null && !giftCardMovementModel.getCommited()) {
-            giftCardMovementModel.setCommited(Boolean.TRUE);
+        for (final GiftCardMovementModel giftCardMovementModel : movements) {
+          if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted())) {
+            giftCardMovementModel.setCommitted(Boolean.TRUE);
             giftCardMovementModel.setOrder(order);
             giftCardMovementModel.setRedeemDate(new Date());
             getModelService().save(giftCardMovementModel);
@@ -134,7 +130,6 @@ public class GiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     return eventService;
   }
 
-  @Required
   public void setEventService(final EventService eventService) {
     this.eventService = eventService;
   }
@@ -143,7 +138,6 @@ public class GiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     return modelService;
   }
 
-  @Required
   public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
   }

@@ -472,7 +472,7 @@
 	</bean>
 
 	<bean id="giftCardEmailContext"
-		class="com.bl.facades.process.email.context.GiftCardEmailContext"
+		class="com.bl.facades.process.email.context.BlGiftCardEmailContext"
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
 
