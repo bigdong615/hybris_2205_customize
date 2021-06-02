@@ -90,25 +90,10 @@
                <div class="container">
                    <div class="row justify-content-center">
                        <div class="col-lg-11 col-xl-9">
-                           <h5>Buying used gear is easy</h5>
-                           <div class="row mt-5">
-                               <div class="col-6 col-md-3 text-center">
-                                   <img src="${themeResourcePath}/assets/icon-used-inspected.webp" alt="used inspected" />
-                                   <h6>Inspected & cleaned by our experts</h6>
-                               </div>
-                               <div class="col-6 col-md-3 text-center">
-                                   <img src="${themeResourcePath}/assets/icon-used-guarantee.webp" alt="guarantee" />
-                                   <h6>We guarantee your gear will work perfectly</h6>
-                               </div>
-                               <div class="col-6 col-md-3 text-center">
-                                   <img src="${themeResourcePath}/assets/icon-used-condition.webp" alt="condition" />
-                                   <h6>Know what to expect with condition details</h6>
-                               </div>
-                               <div class="col-6 col-md-3 text-center">
-                                   <img src="${themeResourcePath}/assets/icon-used-returns.webp" alt="returns" />
-                                   <h6>Try it yourself with easy returns</h6>
-                               </div>
-                           </div>
+                          <cms:pageSlot position="buyingUsedGearEasySection"
+                       							var="feature">
+                       							<cms:component component="${feature}" />
+                       		</cms:pageSlot>
                        </div>
                    </div>
                </div>
