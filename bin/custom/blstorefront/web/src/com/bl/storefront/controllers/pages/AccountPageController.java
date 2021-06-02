@@ -3,7 +3,9 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.populators.BlWishListPopulator;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.impl.DefaultBlWishListFacade;
 import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
@@ -52,7 +54,6 @@ import de.hybris.platform.commerceservices.enums.CountryType;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
-import de.hybris.platform.selectivecartfacades.data.Wishlist2Data;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
@@ -217,8 +218,8 @@ public class AccountPageController extends AbstractSearchPageController {
   @Resource(name = "wishlistFacade")
   private DefaultBlWishListFacade wishlistFacade;
 
-  @Resource(name = "wishlistConverter")
-  private Converter<Wishlist2Model, Wishlist2Data> wishlistConverter;
+//  @Resource(name = "wishlistConverter")
+//  private Converter<Wishlist2Model, Wishlist2Data> wishlistConverter;
 
   @Resource(name = "wishlistPopulator")
   private BlWishListPopulator wishListPopulator;
@@ -270,6 +271,11 @@ public class AccountPageController extends AbstractSearchPageController {
     return countryDataMap;
   }
 
+  @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+  private RentalDateDto getRentalsDuration()
+  {
+    return BlRentalDateUtils.getRentalsDuration();
+  }
 
   @RequestMapping(value = "/addressform", method = RequestMethod.GET)
   public String getCountryAddressForm(@RequestParam("addressCode") final String addressCode,
@@ -1008,20 +1014,25 @@ public class AccountPageController extends AbstractSearchPageController {
     final ContentPageModel bookmarksPage = getContentPageForLabelOrId(BOOKMARKS_CMS_PAGE);
 
     List<ProductData> wishlistData = new ArrayList<>();
-    Wishlist2Model wishlist = wishlistFacade.getWishlist();
+    try {
+      Wishlist2Model wishlist = wishlistFacade.getWishlist();
+      for (Wishlist2EntryModel wishlistModel : wishlist.getEntries()) {
+        ProductData productData = new ProductData();
+        wishListPopulator.populate(wishlistModel, productData);
+        wishlistData.add(productData);
+      }
 
-    for (Wishlist2EntryModel wishlistModel : wishlist.getEntries()) {
-      ProductData productData = new ProductData();
-      wishListPopulator.populate(wishlistModel, productData);
-      wishlistData.add(productData);
+      storeCmsPageInModel(model, bookmarksPage);
+      setUpMetaDataForContentPage(model, bookmarksPage);
+      model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+          ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+      model.addAttribute("entry" , wishlist.getEntries());
+      model.addAttribute("wishlistData", wishlistData);
+      return getViewForPage(model);
+    } catch (Exception e) {
+      LOG.error("No default Wishlist is present");
+      return ControllerConstants.Views.Pages.Account.AccountBookMarkPage;
     }
-
-    storeCmsPageInModel(model, bookmarksPage);
-    setUpMetaDataForContentPage(model, bookmarksPage);
-    model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
-        ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-    model.addAttribute("wishlistData", wishlistData);
-    return getViewForPage(model);
   }
 
   @GetMapping(value = "/verificationImages")

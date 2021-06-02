@@ -262,7 +262,7 @@
 		<property name="imageConverter" ref="imageConverter"/>
 		<property name="modelService" ref="modelService"/>
 	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
-		  <property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator" />
+<!--		  <property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator" />-->
 	</bean>
 
 	<alias name="defaultBlSerialProductDataPopulator" alias="blSerialProductDataPopulator"/>

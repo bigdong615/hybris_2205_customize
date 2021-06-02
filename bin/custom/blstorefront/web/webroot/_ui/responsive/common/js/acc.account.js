@@ -146,12 +146,13 @@ ACC.account = {
                console.log(bookmarkicons.length);
                   for(var i=0;i<bookmarkicons.length;i++){
                          bookmarkicons[i].id ="bookmarkicons-"+(i+1);
-                         alert("for loop is running");
+                        // alert("for loop is running");
                           }
 
 
               $(document).on('click',".js-add-to-wishlist", function(e) {
-              alert("inside wishlist");
+              // window.location.reload();
+             // alert("inside wishlist");
                                       e.preventDefault();
                                        var bookmarkId =this.getAttribute("id");
                                         var productCode = $(this).attr('data-product-code');
@@ -159,8 +160,13 @@ ACC.account = {
                                         var targetAddUrl    = ACC.config.encodedContextPath + "/wishlist/add"
                                         var targetRemoveUrl = ACC.config.encodedContextPath + "/removewishlist"
                                         var bookmarkValue = $(this).attr('data-bookmark-value');
-                                        if(document.getElementById(bookmarkId).classList.contains("bookmark-checked"))
+                                        var removeFromBook = $(this).attr('data-remove-code');
+
+                                      //  var removeFromBook = form.find('input[name=removeEntry]');
+                                        if((document.getElementById(bookmarkId).classList.contains("bookmark-checked")) || (removeFromBook === "removeProduct"))
                                         {
+                                        if(removeFromBook === "removeProduct"){
+                                         window.location.reload();}
                                         $.ajax({
                                                        url: targetRemoveUrl,
                                                        type: 'POST',
@@ -168,9 +174,12 @@ ACC.account = {
                                                        success: function (response) {
                                                      //  alert(success);
                                                        if(response === 'Success'){
-                                                        alert("product removed from wishlist");
+                                                       // alert("product removed from wishlist");
                                                         document.getElementById(bookmarkId).classList.remove("bookmark-checked");
                                                        }
+//                                                       if(removeFromBook === "removeProduct" ){
+//                                                       window.location.reload();
+//                                                       }
                                                        else{
                                                        alert("found error while removing the product");
                                                        }

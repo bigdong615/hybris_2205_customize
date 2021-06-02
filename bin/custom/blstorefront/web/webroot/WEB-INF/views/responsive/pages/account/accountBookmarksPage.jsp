@@ -7,16 +7,20 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-<c:url value="/removewishlist" var="removeProduct" />
+<c:url value="/removewishlistentry" var="removeProduct" />
 
 
-
+${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}pppppppp
+${rentalDate.numberOfDays}ooooooo
 This is bookmarks page
-<c:forEach items="${wishlistData}" var="wishlistDatas">
+<c:forEach items="${wishlistData}" var="wishlistDatas" varStatus="loopindex">
+
 <div>${wishlistDatas.displayName}</div>
 <div>${wishlistDatas.code}</div>
- <form:form id="removewishlistForm" action="${removeProduct}" method="post">
- <input type="hidden" name="initialQuantity" value="1" />
-     <a href="" class="wishlist_entry-remove bookmarkicons" data-productcode ="${wishlistDatas.code}">REMOVE</a>
- </form:form>
+ <form id="removewishlistForm_${loopindex.index}" action="${removeProduct}" method="post" >
+ <input type="hidden" name="removeProductEntry" value="${wishlistDatas.code}" id="removeProductEntry{loopindex.index}" />
+ <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
+ <button type="submit" name="REMOVE">REMOVE</button>
+ </form>
 </c:forEach>
+

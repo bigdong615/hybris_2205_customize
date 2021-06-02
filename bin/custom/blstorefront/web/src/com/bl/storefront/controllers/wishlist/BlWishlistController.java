@@ -1,11 +1,13 @@
 package com.bl.storefront.controllers.wishlist;
 
+import static de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController.REDIRECT_PREFIX;
+
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.populators.BlWishListPopulator;
 import com.bl.facades.wishlist.impl.DefaultBlWishListFacade;
+import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.commercefacades.product.data.ProductData;
-import de.hybris.platform.selectivecartfacades.data.Wishlist2Data;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
 import java.util.List;
@@ -29,8 +31,11 @@ public class BlWishlistController {
   @Resource(name = "wishlistPopulator")
   private BlWishListPopulator wishListPopulator;
 
-  @Resource(name = "wishlistConverter")
-  private Converter<Wishlist2Model, Wishlist2Data> wishlistConverter;
+//  @Resource(name = "wishlistConverter")
+//  private Converter<Wishlist2Model, Wishlist2Data> wishlistConverter;
+
+  private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE =
+      REDIRECT_PREFIX + "/my-account/bookmarks";
 
   @RequireHardLogIn
   @RequestMapping(value = "/wishlist/add", method = RequestMethod.POST)
@@ -45,31 +50,29 @@ public class BlWishlistController {
     }
   }
 
-//  @RequireHardLogIn
-//  @RequestMapping(value = "/bookmarks", method = RequestMethod.GET)
-//  public List<ProductData> getWishlist(final Model model) {
-//
-//    //ProductData productData = new ProductData();
-//    List<ProductData> wishlistData = null;
-//    List<Wishlist2Model> wishlist = wishlistFacade.getWishlist();
-//
-//    for (Wishlist2Model wishlistModel : wishlist) {
-//      ProductData productData = new ProductData();
-//      wishListPopulator.populate(wishlistModel, productData);
-//      wishlistData.add(productData);
-//    }
-//
-//    model.addAttribute("wishlistData", wishlistData);
-//    return wishlistData;
-//  }
-
   @RequireHardLogIn
   @RequestMapping(value = "/removewishlist", method = RequestMethod.POST)
   @ResponseBody
-  public String removeWishlist(@RequestParam("removeproductCode") final String code) {
+  public String removeWishlistFromCards(@RequestParam("removeproductCode") final String code) {
     try {
       wishlistFacade.removeWishlist(code);
-      return BlCoreConstants.SUCCESS;
+      //return BlCoreConstants.SUCCESS;
+      return ControllerConstants.Views.Pages.Account.AccountBookMarkPage;
+    } catch (Exception e) {
+      LOG.error("in default wishlist " + code + "not found OR" + code
+          + "found more than one entry in default wish list entry");
+      return BlCoreConstants.ERROR;
+    }
+  }
+
+  @RequireHardLogIn
+  @RequestMapping(value = "/removewishlistentry", method = RequestMethod.POST)
+  public String removeWishlistEntry(@RequestParam("removeProductEntry") final String code) {
+    try {
+      re
+      wishlistFacade.removeWishlist(code);
+      return REDIRECT_TO_PASSWORD_UPDATE_PAGE;
+      //  return ControllerConstants.Views.Pages.Account.AccountBookMarkPage;
     } catch (Exception e) {
       LOG.error("in default wishlist " + code + "not found OR" + code
           + "found more than one entry in default wish list entry");
