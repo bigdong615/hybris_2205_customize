@@ -1290,6 +1290,7 @@
                 if(data == 'success') {
                     resolve(data);
                     //TODO: Handle for payment method for checkout
+                    window.location = ACC.config.encodedContextPath + '/checkout/multi/payment-method/add';
                 } else {
                     reject(data);
                 }
