@@ -37,6 +37,7 @@ import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -72,6 +73,12 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     private BlCartService blCartService;
     
     private BaseStoreService baseStoreService;
+
+    @Value("${shipping.sf.zip.code}")
+    private String sf;
+
+    @Value("${shipping.nyc.zip.code}")
+    private String nyc;
 
     /**
      * {@inheritDoc}
@@ -285,11 +292,8 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
  	public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost,
  			final ZoneDeliveryModeModel deliveryMethod)
  	{
- 		return deliveryMethod.isPayByCustomer()
- 				? getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
- 						deliveryMethod.getShippingCostCode().getCode(), true)
- 				: getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
- 						deliveryMethod.getShippingCostCode().getCode(), false);
+ 		return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
+                deliveryMethod.getShippingCostCode().getCode());
  	}
 
     /**
@@ -297,6 +301,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public double getShippingCostAmount(final AbstractOrderModel order, final DeliveryModeModel deliveryMode) {
+   	 BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getShippingCostAmount", deliveryMode.getCode());
         if(deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
             final BlPickUpZoneDeliveryModeModel zoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) deliveryMode;
             return getAmountForAppropriateZoneModel(order, zoneDeliveryModeModel);
@@ -316,8 +321,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
-   	 if (zoneDeliveryModeModel.isPayByCustomer())
-   	 {
+   	    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getAmountForAppropriateZoneModel", zoneDeliveryModeModel.getCode());
+   	    if (zoneDeliveryModeModel.isPayByCustomer())
+   	    {
             return getPayByCustomerShippingCost(order, zoneDeliveryModeModel);
         }
         return BlInventoryScanLoggingConstants.ZERO;
@@ -332,7 +338,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private double getPayByCustomerShippingCost(AbstractOrderModel order, ZoneDeliveryModeModel zoneDeliveryModeModel) {
         for(ZoneDeliveryModeValueModel valueModel : zoneDeliveryModeModel.getValues()) {
+      	  BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost", valueModel.getPk());
             if(!valueModel.isFixedAmount()) {
+           BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost : Inside", valueModel.getPk());
                 final Map<String, Double> calculatedValueMap;
                 try {
                     calculatedValueMap = getCalculatedWeightForDelivery(order);
@@ -427,7 +435,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private BigDecimal getBigDecimal(final BigDecimal totalWeight, final BlProductModel blSerialProduct) {
         return blSerialProduct.getWeight() != null ? (totalWeight.add(blSerialProduct.getWeight())) :
-                (totalWeight.add(BigDecimal.valueOf(BlInventoryScanLoggingConstants.ZERO_FIVE)));
+                (totalWeight.add(BigDecimal.valueOf(BlInventoryScanLoggingConstants.ZERO)));
     }
 
     /**
@@ -512,7 +520,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         if(validateZip(pinCode)) {
             try {
                 final SameDayCityResData sameDayCityResData = getBlFedExSameDayService().getAvailability(getSameDayCityReqData(pinCode,
-                        getWarehouseZipCode(deliveryType, true)));
+                        BlDeliveryModeLoggingConstants.SF.equals(deliveryType) ? sf : nyc));
                 BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day fedex integration pinCode validity");
                 return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable(): Boolean.FALSE;
             } catch (URISyntaxException e) {
@@ -521,22 +529,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
         }
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWarehouseZipCode(final String deliveryType, final boolean payByCustomer) {
-        final BlRushDeliveryModeModel blRushDeliveryModeModel = getBlZoneDeliveryModeDao().getBlRushDeliveryModeForWarehouseZipCode(
-                deliveryType, payByCustomer);
-        if(blRushDeliveryModeModel != null) {
-            final WarehouseModel warehouseModel = blRushDeliveryModeModel.getWarehouse();
-            if(warehouseModel != null) {
-                return getPOSAddress(warehouseModel.getPointsOfService());
-            }
-        }
-        return null;
     }
 
     /**

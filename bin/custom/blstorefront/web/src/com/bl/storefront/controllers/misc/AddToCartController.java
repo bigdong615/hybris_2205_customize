@@ -5,7 +5,10 @@ package com.bl.storefront.controllers.misc;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import de.hybris.platform.acceleratorfacades.product.data.ProductWrapperData;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartForm;
@@ -45,6 +48,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,6 +66,7 @@ public class AddToCartController extends AbstractController
 	private static final String ERROR_MSG_TYPE = "errorMsg";
 	private static final String QUANTITY_INVALID_BINDING_MESSAGE_KEY = "basket.error.quantity.invalid.binding";
 	private static final String SHOWN_PRODUCT_COUNT = "blstorefront.storefront.minicart.shownProductCount";
+	private static final String PRODUCT_LIMIT = "addtocart.dontforget.product.limit";
 
 	private static final Logger LOG = Logger.getLogger(AddToCartController.class);
 
@@ -81,6 +86,12 @@ public class AddToCartController extends AbstractController
 
 	@Resource(name = "enumerationService")
 	private EnumerationService enumerationService;
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration()
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
 	@RequestMapping(value = "/cart/add", method = RequestMethod.POST, produces = "application/json")
 	public String addToCart(@RequestParam("productCodePost") final String code, @RequestParam("serialProductCodePost") final String serialCode,
@@ -148,10 +159,10 @@ public class AddToCartController extends AbstractController
 		final List<ProductReferenceData> productReferences = productFacade
 				.getProductReferencesForCode(code, getEnumerationService().getEnumerationValues(
 						ProductReferenceTypeEnum._TYPECODE),
-						PRODUCT_OPTIONS, 50);
+						PRODUCT_OPTIONS, Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50)));
 
 		model.addAttribute("productReferences", productReferences);
-		model.addAttribute("dataChange", recognise);
+		model.addAttribute("maxlimit" , Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50)));
 		return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 	}
 

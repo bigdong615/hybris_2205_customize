@@ -75,6 +75,10 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                       updateQuantity();
+                                      addToCartFromModal();
+                                      addId();
+                                      setTimeout(myfunc,100);
+
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -84,6 +88,37 @@ $('.shopping-cart__item-remove').on("click", function (e){
                         });
 
  });
+
+  function myfunc() {
+           new Splide( '#gear-sliders', {
+                           perPage: 3,
+                           breakpoints: {
+                               '991': {
+                                   perPage: 2,
+                               },
+                               '640': {
+                                   perPage: 1,
+                               },
+                           },
+                           rewind : true,
+                           gap: 20,
+                           padding: 10,
+                           arrows : true,
+                           keyboard: false,
+                       } ).mount();
+                        document.querySelectorAll('.card-sliders').forEach(carousel => new Splide( carousel, {
+                           type   : 'loop',
+                           perPage: 1,
+                           pagination: true,
+                           drag   : false,
+                           breakpoints: {
+                               '991': {
+                                   pagination: false,
+                               },
+                           },
+                           keyboard: false,
+                       } ).mount());
+  }
 
  // BL-454 update quantity from rental add to cart popup.
  function updateQuantity() {
@@ -143,4 +178,64 @@ $('#cart-continue').on("click", function (e) {
 			console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
 		}
 	});
+<<<<<<< HEAD
 });
+=======
+});
+
+
+function addId(){
+let seemore = document.querySelectorAll(".SeeMore2");
+   for(var i=0;i<seemore.length;i++){
+          seemore[i].id ="abc-"+i;
+          alert("for loop is running")
+           }
+}
+
+let seemore = document.querySelectorAll(".SeeMore2");
+for(var i=0;i<seemore.length;i++){
+seemore[i].id ="abc-"+i;
+}
+
+  //BL-454 add to cart
+function addToCartFromModal(){
+  $('.js-add-to-cart1').on('click',function(e) {
+                        e.preventDefault();
+                         let z= this.getAttribute("id");
+                            var index = $( ".js-add-to-cart1" ).index( this );
+                            document.getElementById(z).innerHTML= "Added";
+
+                         var productCode = $(this).attr('data-product-code');
+                         var serialCode = $(this).attr('data-serial');
+                        // var recognise = $(this).attr('data-popup');
+                         if(serialCode == '' || serialCode == undefined){
+                        serialCode = "serialCodeNotPresent";
+                        }
+//                         if(recognise == '' || recognise == undefined){
+//                         recognise = "notClickedFromModal";
+//                         }
+                         $.ajax({
+                                    url: ACC.config.encodedContextPath + "/cart/add",
+                                    type: 'POST',
+                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                     beforeSend: function(){
+                                        $('.page-loader-new-layout').show();
+                                     },
+                                    success: function (response) {
+                                    alert("product added to cart");
+                                      //addToCartToAdded();
+                                    },
+                                     complete: function() {
+                                     $('.page-loader-new-layout').hide();
+                                     },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                     $('.page-loader-new-layout').hide();
+                                          $('.modal-backdrop').addClass('remove-popup-background');
+                                          // log the error to the console
+                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                                    }
+                         });
+
+  });
+  }
+

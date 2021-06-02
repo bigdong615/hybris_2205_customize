@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="21px" viewBox="0 0 17 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/lock</title>
+    <g id="Designs" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Account-CreditCard-AddCard" transform="translate(-881.000000, -359.000000)" fill="#B4B4B4">
+            <g id="Group" transform="translate(383.000000, 348.000000)">
+                <g id="Text-Field" transform="translate(10.000000, 0.000000)">
+                    <g id="icon/lock" transform="translate(484.267606, 10.000000)">
+                        <path d="M18,8 L17,8 L17,6 C17,3.24 14.76,1 12,1 C9.24,1 7,3.24 7,6 L7,8 L6,8 C4.9,8 4,8.9 4,10 L4,20 C4,21.1 4.9,22 6,22 L18,22 C19.1,22 20,21.1 20,20 L20,10 C20,8.9 19.1,8 18,8 Z M9,6 C9,4.34 10.34,3 12,3 C13.66,3 15,4.34 15,6 L15,8 L9,8 L9,6 Z M18,20 L6,20 L6,10 L18,10 L18,20 Z M12,17 C13.1,17 14,16.1 14,15 C14,13.9 13.1,13 12,13 C10.9,13 10,13.9 10,15 C10,16.1 10.9,17 12,17 Z" id="-↳Color"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

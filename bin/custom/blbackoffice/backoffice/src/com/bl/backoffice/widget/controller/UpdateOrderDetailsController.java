@@ -289,7 +289,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				deliveryAddress = pickupDeliveryAddress;
 			}
 
-			if ("SHIP_HOLD_UPS_OFFICE".equals(zonedeliveryMode.getShippingGroup().getCode()))
+			if ("SHIP_UPS_OFFICE".equals(zonedeliveryMode.getShippingGroup().getCode()))
 			{
 				deliveryAddress.setPickStoreAddress(false);
 				deliveryAddress.setUpsStoreAddress(true);
@@ -301,10 +301,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 			isDeliveryModeChange = true;
 			deliveryAddress.setPickStoreAddress(false);
 			deliveryAddress.setUpsStoreAddress(false);
-			this.pickupPersonFName.setValue("");
-			this.pickupPersonLName.setValue("");
-			this.pickUpPersonEmail.setValue("");
-			this.pickUpPersonPhone.setValue("");
 		}
 
 		populateAddressData(deliveryAddress);

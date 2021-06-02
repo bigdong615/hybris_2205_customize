@@ -533,6 +533,9 @@
 	<bean id="defaultBlCartService" class="com.bl.core.services.cart.impl.DefaultBlCartService" parent="defaultCartService">
 		<property name="commerceCartService" ref="commerceCartService" />
 		<property name="commerceCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
+		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="blDatePickerService" ref="blDatePickerService" />
 	</bean>
 
 
@@ -591,6 +594,8 @@
 	
 	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blDatePickerService" ref="blDatePickerService" />
 	</bean>
 	
 	<!-- BL-73 Created bean for discontinued product -->	
@@ -629,6 +634,7 @@
 
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 
@@ -661,17 +667,10 @@
     <property name="rootCategory" value="brands"/>
   </bean>
 
-  <bean id="abstractBlGlobalFacetValueResolver" abstract="true" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
+  <bean id="blGlobalValueResolver" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
     <property name="modelService" ref="modelService"/>
   </bean>
 
-  <bean id="blGlobalValueResolver" parent="abstractBlGlobalFacetValueResolver">
-    <property name="categorySource" ref="blGlobalCategorySource"/>
-  </bean>
-
-  <bean id="blGlobalCategorySource" parent="abstractCategorySource">
-    <property name="rootCategory" value="brands"/>
-  </bean>
 
   <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
     <property name="mediaFormat" value="300Wx300H"/>

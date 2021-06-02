@@ -8,6 +8,8 @@
 
 <div id="productFilter" class="d-none d-lg-block col-lg-3 sticky-lg-top">
    <h6 class="mb-4">Filters</h6>
+<!--   BL-581 : added hr tag   -->
+   <hr>
    <c:choose>
       <c:when test="${pageType == 'CATEGORY'}">
            <c:if test="${clearAllQuery ne null}">

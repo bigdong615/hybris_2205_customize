@@ -33,9 +33,12 @@ public class BlAddressDataUtil extends AddressDataUtil {
             final java.lang.String openingDays = blAddressForm.getOpeningDaysDetails();
             if(StringUtils.isNotEmpty(openingDays)) {
                 Map<String, String> openingDaysMap = new HashMap<>();
-                openingDaysMap.put(openingDays.split(";")[0].split(": ")[0], openingDays.split(";")[0].split(": ")[1]);
-                openingDaysMap.put(openingDays.split(";")[1].split(": ")[0], openingDays.split(";")[1].split(": ")[1]);
-                openingDaysMap.put(openingDays.split(";")[2].split(": ")[0], openingDays.split(";")[2].split(": ")[1]);
+                final String[] openingDD = openingDays.split(";");
+                int i=0;
+                for(String day : openingDD) {
+                    openingDaysMap.put(openingDays.split(";")[i].split(": ")[0], openingDays.split(";")[i].split(": ")[1]);
+                    i++;
+                }
                 addressData.setOpeningDaysDetails(openingDaysMap);
             }
             addressData.setPickStoreAddress(blAddressForm.isPickStoreAddress());

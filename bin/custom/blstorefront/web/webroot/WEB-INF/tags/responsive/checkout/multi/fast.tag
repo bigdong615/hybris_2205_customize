@@ -49,7 +49,7 @@
                     <b class="mt-4"><spring:theme code="text.ship.it.available.delivery.methods"/></b>
                     <div id="shipToHomeShippingMethods"></div>
                 </div>
-                <div id="tab-SHIP_HOLD_UPS_OFFICE" class="ship-it-tab-content">
+                <div id="tab-SHIP_UPS_OFFICE" class="ship-it-tab-content">
                     <div id="shipToUPSShippingMethods">
 
                     </div>
@@ -64,7 +64,7 @@
                           </div>
                         </div>
                     </div>
-                    <div id="ship-it-SHIP_HOLD_UPS_OFFICE">
+                    <div id="ship-it-SHIP_UPS_OFFICE">
 
                     </div>
                     <div id="changeUPSStoreButton" class="text-end mb-4">
@@ -99,6 +99,7 @@
                     </div>
                 </div>
                 <div id="ship-it-notification"></div>
+                <div id="ship-it-am-notification"></div>
             </div>
         </div>
     </div>
