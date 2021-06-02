@@ -25,12 +25,6 @@ public class DefaultBlGiftCardDao extends DefaultGenericDao<GiftCardModel> imple
    * {@inheritDoc}
    */
   public GiftCardModel getGiftCard(final String giftCardCode) {
-    /*final StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append(GIFTCARD);
-    final FlexibleSearchQuery query = new FlexibleSearchQuery(stringBuilder.toString());
-    query.addQueryParameter("giftId", giftCardCode);
-    final List<GiftCardModel> result = flexibleSearchService.<GiftCardModel>search(query).getResult();*/
-
     final FlexibleSearchQuery query = new FlexibleSearchQuery(GIFTCARD);
     query.addQueryParameter("giftId", giftCardCode);
     final List<GiftCardModel> result = getFlexibleSearchService().<GiftCardModel> search(query).getResult();

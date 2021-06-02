@@ -361,21 +361,25 @@ public class CheckoutController extends AbstractCheckoutController
 	@ResponseBody
 	public String apply(final String code, final HttpServletRequest request, final Model model) {
 		final CartModel cartModel = blCartService.getSessionCart();
-		final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
-		final Locale locale = getI18nService().getCurrentLocale();
-		final List<BLGiftCardData> blGiftCardDataList = blCartFacade.getSessionCart().getGiftCardData();
-		final List<String> giftCardDataList = new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(blGiftCardDataList)) {
-			for (BLGiftCardData giftCardData : blGiftCardDataList) {
-				giftCardDataList.add(giftCardData.getCode());
+		if(cartModel != null) {
+			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
+			final Locale locale = getI18nService().getCurrentLocale();
+			final List<BLGiftCardData> blGiftCardDataList = blCartFacade.getSessionCart()
+					.getGiftCardData();
+			final List<String> giftCardDataList = new ArrayList<>();
+			if (CollectionUtils.isNotEmpty(blGiftCardDataList)) {
+				for (BLGiftCardData giftCardData : blGiftCardDataList) {
+					giftCardDataList.add(giftCardData.getCode());
+				}
 			}
-		}
-		try {
-			return handleGiftCardStatus(code, locale, giftCardDataList, cartModel, giftCardModel);
-		} catch (final Exception exception) {
-			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-					"Error occurred while applying gift card code: {} on cart: {} for the customer: {}", code,
-					cartModel.getCode(), cartModel.getUser().getUid(), exception);
+			try {
+				return handleGiftCardStatus(code, locale, giftCardDataList, cartModel, giftCardModel);
+			} catch (final Exception exception) {
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+						"Error occurred while applying gift card code: {} on cart: {} for the customer: {}",
+						code,
+						cartModel.getCode(), cartModel.getUser().getUid(), exception);
+			}
 		}
 		return BlControllerConstants.ERROR;
 	}

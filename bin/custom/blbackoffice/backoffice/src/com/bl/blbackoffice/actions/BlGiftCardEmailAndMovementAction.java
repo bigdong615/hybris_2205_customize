@@ -15,11 +15,11 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import javax.annotation.Resource;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Messagebox;
-
 
 /**
  * This class creates gift card movement and triggers email event.
@@ -45,7 +45,7 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
   private BaseSiteService baseSiteService;
 
   /**
-   * {@inheritDoc}
+   * It creates gift card movement and sends an email.
    */
   @Override
   public ActionResult<String> perform(final ActionContext<GiftCardModel> actionContext) {
@@ -72,22 +72,23 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
   private void createGiftCardMovement(final GiftCardModel giftCardModel) {
     GiftCardMovementModel movement;
     try {
-      if (giftCardModel.getAmount().doubleValue() != 0 && giftCardModel.getMovements()
-          .isEmpty()) {
+      if (giftCardModel.getAmount() != null && giftCardModel.getAmount().doubleValue()  != 0 && CollectionUtils.isEmpty(giftCardModel.getMovements())) {
         movement = modelService.create(GiftCardMovementModel.class);
         movement.setAmount(giftCardModel.getAmount());
         movement.setCommitted(Boolean.TRUE);
         movement.setCurrency(giftCardModel.getCurrency());
         movement.setGiftCard(giftCardModel);
         movement.setTransactionId(giftCardModel.getCode());
-        final String user = JaloSession.getCurrentSession().getUser().getUid();
-        giftCardModel.setIssuer(user);
+        if(JaloSession.getCurrentSession() != null) {
+          final String user = JaloSession.getCurrentSession().getUser().getUid();
+          giftCardModel.setIssuer(user);
+        }
         modelService.save(movement);
         modelService.save(giftCardModel);
         modelService.refresh(giftCardModel);
         modelService.refresh(movement);
       }
-    } catch (Exception exception) {
+    } catch (final Exception exception) {
       BlLogger
           .logMessage(LOGGER, Level.ERROR, "Unable to create gift card movement for gift card {}",
               giftCardModel.getCode(), exception);
@@ -133,23 +134,17 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
   }
 
   /**
-   * {@inheritDoc}
+   * It enables create movement icon to create the gift card movement, when Active attribute is true .
    */
   @Override
   public boolean canPerform(final ActionContext<GiftCardModel> ctx) {
     final GiftCardModel giftCardModel = ctx.getData();
-    if (giftCardModel != null) {
-      boolean canPerform = false;
-      if (giftCardModel.getActive() != null && giftCardModel.getActive()) {
-        canPerform = true;
-      }
-      return canPerform;
-    }
-    return false;
+
+    return (giftCardModel != null && giftCardModel.getActive() != null && giftCardModel.getActive());
   }
 
   /**
-   * {@inheritDoc}
+   * It gets called when we click on the create movement icon.
    */
   @Override
   public boolean needsConfirmation(final ActionContext<GiftCardModel> ctx) {
@@ -157,15 +152,17 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
   }
 
   /**
-   * {@inheritDoc}
+   * It opens create movement confirmation model.
+   * @param giftCardModelActionContext
+   * @return String
    */
   @Override
-  public String getConfirmationMessage(final ActionContext<GiftCardModel> ctx) {
-    return ctx.getLabel("action.send.registration.invite.confirm");
+  public String getConfirmationMessage(final ActionContext<GiftCardModel> giftCardModelActionContext) {
+    return giftCardModelActionContext.getLabel("action.send.registration.invite.confirm");
   }
 
   /**
-   * {@inheritDoc}
+   * It sets the required value to BlGiftCardEmailEvent.
    */
   private AbstractCommerceUserEvent initializeEvent(final BlGiftCardEmailEvent event,
       final GiftCardModel giftCardModel) {

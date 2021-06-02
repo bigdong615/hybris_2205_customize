@@ -18,7 +18,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 
 /**
- * It is a custom implementation of OOTB class {@link CommercePlaceOrderMethodHook} for gift card place order
+ * It is a custom implementation of OOTB class {@link CommercePlaceOrderMethodHook} to do the adjustments in case of gift card is applied on the order.
  * @author Neeraj Singh
  */
 public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {

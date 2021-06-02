@@ -43,7 +43,9 @@ public class BlGiftCardEmailEventListener extends
   }
 
   /**
-   * {@inheritDoc}
+   * It returns site channel.
+   * @param event
+   * @return SiteChannel
    */
   @Override
   protected SiteChannel getSiteChannelForEvent(BlGiftCardEmailEvent event) {
@@ -54,7 +56,6 @@ public class BlGiftCardEmailEventListener extends
 
   /**
    * It creates giftCardEmailProcess and starts it.
-   *
    * @param event
    */
   @Override

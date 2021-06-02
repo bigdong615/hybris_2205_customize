@@ -15,7 +15,7 @@ public class DefaultBlCommerceCartCalculationStrategy extends
   private BlGiftCardService giftCardService;
 
   /**
-   * {@inheritDoc}
+   * It does calculation on cart.
    */
   @Override
   public boolean calculateCart(final CommerceCartParameter parameter) {

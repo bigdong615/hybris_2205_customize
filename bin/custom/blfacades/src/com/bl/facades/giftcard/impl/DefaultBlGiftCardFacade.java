@@ -4,18 +4,10 @@ import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.gitfcard.BlGiftCardService;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.CheckoutFacade;
-import de.hybris.platform.commercefacades.order.data.CartData;
-import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-import javax.servlet.http.HttpServletRequest;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * It is a default implementation of {@link BlGiftCardFacade}.
@@ -23,8 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author Neeraj Singh
  */
 public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
-
-  private static final Logger LOGGER = Logger.getLogger(DefaultBlGiftCardFacade.class);
 
   private ModelService modelService;
   private CheckoutFacade checkoutFacade;

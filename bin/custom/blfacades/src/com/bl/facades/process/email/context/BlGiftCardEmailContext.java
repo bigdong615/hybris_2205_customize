@@ -41,9 +41,14 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
       setCustname(giftCardEmailProcessModel.getGiftcard().getName());
       setCode(giftCardEmailProcessModel.getGiftcard().getCode());
       DecimalFormat decimalFormat = new DecimalFormat("0.00");
-      final String giftCardAmount = giftCardEmailProcessModel.getGiftcard().getCurrency().getSymbol()
-          + decimalFormat.format(giftCardEmailProcessModel.getGiftcard().getAmount().doubleValue());
-      setAmount(giftCardAmount);
+      if (giftCardEmailProcessModel.getGiftcard().getCurrency() != null
+          && giftCardEmailProcessModel.getGiftcard().getAmount() != null) {
+        final String giftCardAmount =
+            giftCardEmailProcessModel.getGiftcard().getCurrency().getSymbol()
+                + decimalFormat
+                .format(giftCardEmailProcessModel.getGiftcard().getAmount().doubleValue());
+        setAmount(giftCardAmount);
+      }
     }
   }
 

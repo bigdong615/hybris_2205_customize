@@ -17,6 +17,11 @@ import java.math.BigDecimal;
 public class BlOrderPopulator extends OrderPopulator
 {
 
+  /**
+   * It populates data.
+   * @param source
+   * @param target
+   */
   @Override
   public void populate(final OrderModel source, final OrderData target)
   {

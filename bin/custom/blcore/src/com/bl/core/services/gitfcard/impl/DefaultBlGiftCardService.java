@@ -11,6 +11,7 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.servicelayer.exceptions.ModelRemovalException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
@@ -102,17 +103,17 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
       return false;
     }
     final CartModel cartModel = getBlCartService().getSessionCart();
-    try{
-    final GiftCardModel giftCardModel = getGiftCardDao().getGiftCard(giftCardCode);
-    if (giftCardModel != null) {
-      this.clearUncommittedMovements(giftCardModel);
-      clearInactiveCarts(giftCardModel, cartModel);
-      return validateGiftCardAndApply(giftCardModel, cartModel);
-
+    try {
+      final GiftCardModel giftCardModel = getGiftCardDao().getGiftCard(giftCardCode);
+      if (giftCardModel != null && cartModel != null) {
+        this.clearUncommittedMovements(giftCardModel);
+        clearInactiveCarts(giftCardModel, cartModel);
+        return validateGiftCardAndApply(giftCardModel, cartModel);
+      }
+    } catch (final Exception exception) {
+      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR, "Error while applying gift card code {}",
+          giftCardCode, exception);
     }
-  }catch(final Exception exception){
-      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,"Error while applying gift card code {}", giftCardCode, exception);
-  }
     return false;
   }
 
@@ -176,12 +177,12 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
   private boolean isGiftCardNotEligibleToApply(final GiftCardModel giftCardModel, final CartModel cartModel) {
 
     if (isGiftCardApplied(giftCardModel, cartModel)) {
-      // this gift card is applied already do not apply twice
+      // this gift card is already applied, it can't be applied twice.
       return false;
     }
 
     if (isOrderFullyPaid(cartModel)) {
-      // order is fully paid do not apply this gift card
+      // order is fully paid, this gift card can't be applied.
       return false;
     }
 
@@ -239,7 +240,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
      *{@inheritDoc}
      */
   @Override
-  public void clearUncommittedMovements(final GiftCardModel giftCardModel) {
+  public void clearUncommittedMovements(final GiftCardModel giftCardModel) throws ModelRemovalException {
     final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
     try {
       if (CollectionUtils.isNotEmpty(giftCardMovementModelList)) {
@@ -251,7 +252,8 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
       }
       getModelService().refresh(giftCardModel);
     }catch (final Exception exception){
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Exception while removing uncommitted movements for gift card: {}", giftCardModel.getCode(), exception);
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Exception while removing uncommitted movements for gift card: {}", giftCardModel.getCode());
+      throw new ModelRemovalException("Unable to remove uncommitted movement",exception);
     }
   }
 
@@ -269,11 +271,11 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
             cartModel.getAppliedCouponCodes());
         for (GiftCardModel giftCardModel : giftCardPresentInCart) {
           GiftCardModel gift = null;
-          if (!giftCardModel.getCode().equals(giftCardCode)) {
+          if (giftCardModel.getCode().equals(giftCardCode)) {
+            appliedGiftCardCodes.removeIf(gcCode -> gcCode.equals(giftCardModel.getCode()));
+          } else {
             gift = giftCardModel;
             giftCardModelList.add(gift);
-          } else {
-            appliedGiftCardCodes.removeIf(gcCode -> gcCode.equals(giftCardModel.getCode()));
           }
         }
         cartModel.setGiftCard(giftCardModelList);
@@ -296,8 +298,8 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
    */
   @Override
   public boolean validateGiftCardBeforePlaceOrder(final OrderModel order) {
-    return CollectionUtils.isNotEmpty(order.getGiftCard()) && order.getGiftCardAmount()
-        .equals(order.getGrandTotal());
+    return CollectionUtils.isNotEmpty(order.getGiftCard()) && order.getGiftCardAmount() != null &&
+        order.getGiftCardAmount().equals(order.getGrandTotal());
   }
 
   /**
