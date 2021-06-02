@@ -8,11 +8,8 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.promotionengineservices.model.RuleBasedOrderAdjustTotalActionModel;
 import de.hybris.platform.promotions.model.PromotionResultModel;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -65,12 +62,12 @@ public class BlCartPopulator extends CartPopulator<CartData>
    * This method created to add coupon price
 	 */
   private void populatePromotionAmount(final CartModel source, final CartData target) {
-		Map<String, BigDecimal> amountMap = new HashMap<>();
-		for(PromotionResultModel promotionResultModel : source.getAllPromotionResults()){
-			RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel.getActions().iterator().next();
-			for(String name : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes())
+		final Map<String, BigDecimal> amountMap = new HashMap<>();
+		for(final PromotionResultModel promotionResultModel : source.getAllPromotionResults()){
+			final RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel.getActions().iterator().next();
+			for(final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes())
 			{
-				amountMap.put(name , ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(2));
+				amountMap.put(couponCode , ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(2));
 			}
 		}
 		target.setPromotionAmountMap(amountMap);
