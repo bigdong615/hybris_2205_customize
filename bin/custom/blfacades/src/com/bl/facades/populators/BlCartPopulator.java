@@ -5,6 +5,14 @@ import de.hybris.platform.commercefacades.order.converters.populator.CartPopulat
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.promotionengineservices.model.RuleBasedOrderAdjustTotalActionModel;
+import de.hybris.platform.promotions.model.PromotionResultModel;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -35,6 +43,8 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
 		target.setIsRentalCart(source.getIsRentalCart());
+		populatePromotionAmount(source,target);
+
 	}
 
 	/**
@@ -50,4 +60,19 @@ public class BlCartPopulator extends CartPopulator<CartData>
     // Since we have already calculated the total with Tax , so returning cart total as total price with tax
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
+
+	/**
+   * This method created to add coupon price
+	 */
+  private void populatePromotionAmount(final CartModel source, final CartData target) {
+		Map<String, BigDecimal> amountMap = new HashMap<>();
+		for(PromotionResultModel promotionResultModel : source.getAllPromotionResults()){
+			RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel.getActions().iterator().next();
+			for(String name : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes())
+			{
+				amountMap.put(name , ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(2));
+			}
+		}
+		target.setPromotionAmountMap(amountMap);
+	}
 }
