@@ -78,6 +78,8 @@ public class BlControllerConstants
 
 	public static final int SKIP_TWO_DAYS = 2;
 
+	public static final String VOUCHER_FORM = "voucherForm";
+	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";
 	private BlControllerConstants()
 	{
 		//empty
