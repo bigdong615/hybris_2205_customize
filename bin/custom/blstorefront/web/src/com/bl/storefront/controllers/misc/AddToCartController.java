@@ -94,13 +94,12 @@ public class AddToCartController extends AbstractController
 	}
 
 	@RequestMapping(value = "/cart/add", method = RequestMethod.POST, produces = "application/json")
-	public String addToCart(@RequestParam("productCodePost") final String code, @RequestParam("serialProductCodePost") final String serialCode,
-			@RequestParam("popUpRecognisePost") final String recognise, final Model model,
+	public String addToCart(@RequestParam("productCodePost") final String code, @RequestParam("serialProductCodePost") final String serialCode, final Model model,
 			@Valid final AddToCartForm form, final BindingResult bindingErrors)
 	{
 		validateParameterNotNull(code, "Product code must not be null");
 		validateParameterNotNull(serialCode, "Serial code must not be null");
-		validateParameterNotNull(recognise, "recognise data must not be null");
+	//	validateParameterNotNull(recognise, "recognise data must not be null");
 
 		if (bindingErrors.hasErrors())
 		{
