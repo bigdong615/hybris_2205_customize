@@ -93,29 +93,7 @@
 															<div class="control-group cardForm"
 																style="dispaly: none;" id="cardForn">
 																
-																<c:if test="${not empty braintreePaymentInfos}">
 																
-                                                                                                                  
-                                         <c:forEach items="${braintreePaymentInfos}" var="paymentInfo" varStatus="status" begin="0" end="0">                                                                                               
-										<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="assets/cc-mastercard.png" style="max-width: 33px; height: auto;">${fn:escapeXml(paymentInfo.cardType)}  ${fn:escapeXml(paymentInfo.cardNumber)}  exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
-                                        </button>
-                                        </c:forEach>
-                                        <ul class="dropdown-menu" aria-labelledby="savedCards">
-                                        <c:forEach items="${braintreePaymentInfos}" var="paymentInfo" varStatus="status">
-																<form id="savedPaymentInfoForm${paymentInfo.id}" action="${savedPaymentInfoFormURL}"  method="GET">
-        																<input type="hidden" name="selectedPaymentMethodId" value="${paymentInfo.id}" />
-         																<input type="hidden" name="selectedPaymentMethodNonce" value="${paymentInfo.paymentMethodNonce}">					 
-                                        <li><button class="dropdown-item"><img src="assets/cc-mastercard.png" style="max-width: 33px; height: auto;"> ${fn:escapeXml(paymentInfo.cardType)}  ${fn:escapeXml(paymentInfo.cardNumber)}  exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}</button></li>
-                                        </form>
-                                       	</c:forEach>
-                                        <!-- <li><button class="dropdown-item"><img src="assets/cc-visa.png" style="max-width: 33px; height: auto;"> Visa **** 1234 exp 6/23</button></li> -->
-                                        </ul>
-                                        
-                                        
-                                       	
-                                       	<a href="#" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a>
-                                       	</c:if>
                                        	
 																<div id="number"
 																	class="controls form-control secure testing">
@@ -152,14 +130,7 @@
                                                                             mandatory="false"/>
                                                                       </sec:authorize>
                                                              </div>	
-                                                             <script>
-                                                     if (document.getElementById("savePaymentInfo")) 
-                                                     {
-                                                        
-                                                         document.getElementById("savePaymentInfo").checked = true;
-                                                               
-                                                    }
-                                                        </script>
+                                                             
                                 </c:if>
 															</div>
 														</div>
