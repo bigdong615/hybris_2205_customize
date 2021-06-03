@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
@@ -42,6 +43,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -69,9 +71,12 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@Resource(name = "addressDataUtil")
 	private AddressDataUtil addressDataUtil;
-
+	
+	@Resource(name = "customerFacade")
+	private BlCustomerFacade blCustomerFacade;
+	
 	@Resource(name = "sessionService")
-	private SessionService sessionService;
+	public SessionService sessionService;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -175,6 +180,31 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			try
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
+				
+				final CartData cartData = getCheckoutFacade().getCheckoutCart();
+				final String userSelectedPaymentId = (String) sessionService.getAttribute("userSelectedPaymentId");
+
+				if (StringUtils.isNotBlank(userSelectedPaymentId))
+				{
+					model.addAttribute("userSelectedPaymentInfo", cartData.getPaymentInfo());
+					model.addAttribute("userSelectedPaymentId", userSelectedPaymentId);
+					model.addAttribute("isSavedCardOrder", Boolean.TRUE);
+					model.addAttribute("selectedPaymentMethodNonce", sessionService.getAttribute("selectedPaymentMethodNonce"));
+					sessionService.removeAttribute("userSelectedPaymentId");
+					sessionService.removeAttribute("selectedPaymentMethodNonce");
+				}
+
+				model.addAttribute("selectedcard", "false");
+				final CCPaymentInfoData payInfo = cartData.getPaymentInfo();
+				if (payInfo != null)
+				{
+					final String subid = payInfo.getSubscriptionId();
+					if (StringUtils.isNotEmpty(subid))
+					{
+						model.addAttribute("selectedcard", "true");
+					}
+				}
+				
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)
@@ -384,9 +414,12 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		model.addAttribute("sopPaymentDetailsForm", sopPaymentDetailsForm);
 		model.addAttribute("paymentInfos", getUserFacade().getCCPaymentInfos(true));
 		model.addAttribute("sopCardTypes", getSopCardTypes());
-		if (StringUtils.isNotBlank(sopPaymentDetailsForm.getBillTo_country()))
+		model.addAttribute("billingAddresses", getBlCustomerFacade().getAllVisibleBillingAddressesOnUser());
+		if (MapUtils.isNotEmpty(sopPaymentDetailsForm.getParameters())
+				&& sopPaymentDetailsForm.getParameters().containsKey("billTo_country")
+				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get("billTo_country")))
 		{
-			model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getBillTo_country()));
+			model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get("billTo_country")));
 			model.addAttribute("country", sopPaymentDetailsForm.getBillTo_country());
 		}
 		if(sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null) {
@@ -434,6 +467,22 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
 		this.checkoutFacade = checkoutFacade;
+	}
+
+	/**
+	 * @return the blCustomerFacade
+	 */
+	public BlCustomerFacade getBlCustomerFacade()
+	{
+		return blCustomerFacade;
+	}
+
+	/**
+	 * @param blCustomerFacade the blCustomerFacade to set
+	 */
+	public void setBlCustomerFacade(BlCustomerFacade blCustomerFacade)
+	{
+		this.blCustomerFacade = blCustomerFacade;
 	}
 
 }

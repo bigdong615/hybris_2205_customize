@@ -74,7 +74,8 @@ var CONST = {
     EXPIRATION_YEAR: "#expiration-year",
     CVV_ID: "#cvv",
     PAYMENT_METHOD_BT_ID: '#paymentMethodBT',
-    USE_DELIVERY_ADDRESS_ID: '#contactChoice1',
+    /*USE_DELIVERY_ADDRESS_ID: '#contactChoice1',*/
+    USE_DELIVERY_ADDRESS_ID: '#useDeliveryAddress',
     PAYPAL_EXPRESS_FORM_NAME: "payPalExpress",
     CUSTOM_SINGLE_USE_CHECKBOX_ID: '#customSingleUseCheckbox',
     PAYPAL_IS_VALID_ID: '#paypal_is_valid',
@@ -113,7 +114,10 @@ jQuery(document).ready(function ($) {
     var deviceData;
     var client;
     var paymentMethodResponse;
-
+	if($("#paymentAddNewAddress").length <= 0)
+	{
+		$("#billing-address-form-expand").toggle();
+	}
     // add payment method images to footer section for all pages
     addPaymentMethodImagesToFooter();
 
@@ -164,7 +168,7 @@ jQuery(document).ready(function ($) {
 
 
 $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
-    initializeBTclientSDK();
+	 initializeBTclientSDK();
 });
 
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
@@ -279,94 +283,94 @@ function receiveNewAddressData(selectedAddressID) {
 
 
 function initializeBTclientSDK() {
-   /* var isIntentValid = checkIntentOption(paypalIntent);
-    payPalMarkButtonConfigObj = eval("({" + payPalMarkButtonConfig.replace('\"', '"') + "})");
+    var isIntentValid = checkIntentOption(paypalIntent);
+    /*  payPalMarkButtonConfigObj = eval("({" + payPalMarkButtonConfig.replace('\"', '"') + "})");
 
-    if (!isAvailableApplePay()) {
-        $(CONST.APPLEPAY_SELECTOR).remove();
-    } else {
-        $(CONST.APPLEPAY_SELECTOR).removeClass("hide");
-    }*/
+     if (!isAvailableApplePay()) {
+         $(CONST.APPLEPAY_SELECTOR).remove();
+     } else {
+         $(CONST.APPLEPAY_SELECTOR).removeClass("hide");
+     }*/
 
     var checkout;
     var paypalOptions;
 
     // reset hosted fields in case repeated initialization
     resetHostedFields();
-var dataCollector = {};
-   /* var paypalFlow = getPaypalFlow();
-
-    var paypalOptions = {
-        flow: paypalFlow,
-        enableShippingAddress: JSON.parse(enableShippingAddress),
-        enableBillingAddress: true,
-        locale: braintreeLocale,
-        shippingAddressEditable: false
-    };
-
-    if (userAction === 'true' && paypalIntent === CONST.INTENT_SALE) {
-        // paypalOptions.useraction='commit';
-    }
-
-    // configure advance fraud tools
     var dataCollector = {};
+    /* var paypalFlow = getPaypalFlow();
 
-    //add payment method page
-    if ((typeof addPaymentMethodsPage != 'undefined')) {
+     var paypalOptions = {
+         flow: paypalFlow,
+         enableShippingAddress: JSON.parse(enableShippingAddress),
+         enableBillingAddress: true,
+         locale: braintreeLocale,
+         shippingAddressEditable: false
+     };
 
-        dataCollector.paypal = true;
-        paypalOptions.billingAgreementDescription = billingAgreementDescription;
+     if (userAction === 'true' && paypalIntent === CONST.INTENT_SALE) {
+         // paypalOptions.useraction='commit';
+     }
 
-    } else {
-        // configure paypal connections
-        if (paypalFlow == CONST.CHECKOUT_FLOW) {
-            if (paypalIntent != undefined && paypalIntent !== "") {
-                paypalOptions.intent = paypalIntent;
-            }
-            paypalOptions.amount = amount;
-            paypalOptions.currency = currency;
-            paypalOptions.shippingAddressOverride = {
-                recipientName: recipientName,
-                line1: streetAddress,
-                line2: extendedAddress,
-                city: locality,
-                countryCode: countryCodeAlpha2,
-                postalCode: postalCode,
-                state: region,
-                phone: phone
-            }
-        } else if (paypalFlow == CONST.VAULT_FLOW) {
-            if (paypalIntent != undefined && paypalIntent !== "") {
-                paypalOptions.intent = paypalIntent;
-            }
-            paypalOptions.amount = amount;
-            paypalOptions.currency = currency;
-            paypalOptions.shippingAddressOverride = {
-                recipientName: recipientName,
-                line1: streetAddress,
-                line2: extendedAddress,
-                city: locality,
-                countryCode: countryCodeAlpha2,
-                postalCode: postalCode,
-                state: region,
-                phone: phone
-            }
+     // configure advance fraud tools
+     var dataCollector = {};
 
-            paypalOptions.billingAgreementDescription = billingAgreementDescription;
+     //add payment method page
+     if ((typeof addPaymentMethodsPage != 'undefined')) {
 
-            // configure advanced fraud tools only for vaulted PayPal
-            if (JSON.parse(advancedFraudToolsEnabled)) {
-                dataCollector.paypal = true;
-            }
+         dataCollector.paypal = true;
+         paypalOptions.billingAgreementDescription = billingAgreementDescription;
 
-            // configure display name for paypal connection
-            if (typeof dbaName != 'undefined' && dbaName != '') {
-                if (dbaName.indexOf('*') > -1) {
-                    paypalOptions.displayName = dbaName.substr(0, dbaName.indexOf('*'));
-                }
-            }
-        }
-    }*/
+     } else {
+         // configure paypal connections
+         if (paypalFlow == CONST.CHECKOUT_FLOW) {
+             if (paypalIntent != undefined && paypalIntent !== "") {
+                 paypalOptions.intent = paypalIntent;
+             }
+             paypalOptions.amount = amount;
+             paypalOptions.currency = currency;
+             paypalOptions.shippingAddressOverride = {
+                 recipientName: recipientName,
+                 line1: streetAddress,
+                 line2: extendedAddress,
+                 city: locality,
+                 countryCode: countryCodeAlpha2,
+                 postalCode: postalCode,
+                 state: region,
+                 phone: phone
+             }
+         } else if (paypalFlow == CONST.VAULT_FLOW) {
+             if (paypalIntent != undefined && paypalIntent !== "") {
+                 paypalOptions.intent = paypalIntent;
+             }
+             paypalOptions.amount = amount;
+             paypalOptions.currency = currency;
+             paypalOptions.shippingAddressOverride = {
+                 recipientName: recipientName,
+                 line1: streetAddress,
+                 line2: extendedAddress,
+                 city: locality,
+                 countryCode: countryCodeAlpha2,
+                 postalCode: postalCode,
+                 state: region,
+                 phone: phone
+             }
+
+             paypalOptions.billingAgreementDescription = billingAgreementDescription;
+
+             // configure advanced fraud tools only for vaulted PayPal
+             if (JSON.parse(advancedFraudToolsEnabled)) {
+                 dataCollector.paypal = true;
+             }
+
+             // configure display name for paypal connection
+             if (typeof dbaName != 'undefined' && dbaName != '') {
+                 if (dbaName.indexOf('*') > -1) {
+                     paypalOptions.displayName = dbaName.substr(0, dbaName.indexOf('*'));
+                 }
+             }
+         }
+     }*/
 
     // Configure braintree client SDK
     if ((typeof clientToken != 'undefined' && clientToken != '')
@@ -469,12 +473,37 @@ var dataCollector = {};
     } else {
         var globalErrorsComponent = $(CONST.GLOBAL_MESSAGES);
         globalErrorsComponent.empty();
-      /*  globalErrorsComponent.append(createErrorDiv(ACC.addons.braintree1811addon['braintree.message.use.saved.payments']));*/
+        /*  globalErrorsComponent.append(createErrorDiv(ACC.addons.braintree1811addon['braintree.message.use.saved.payments']));*/
     }
 }
 function isBrainTreeMethodSelected() {
     var abc =  $('input[name=paymentMethodSelection]:radio:checked').val() == CONST.BT_VAL;
     return $('input[name=paymentMethodSelection]:radio:checked').val() == CONST.BT_VAL;
+}
+
+function creditCardValidation(errorMessage){
+	
+	 var validationDiv = $('<div class="notification notification-warning mb-4" />').text(errorMessage);
+	  $('#validationMessage').append(validationDiv);
+}
+
+//Error Notifications
+function showErrorForInputValidation(section) {
+   let notification = '';
+   if(section == 'Ship') {
+       notification += '<div class="notification notification-error"> You are missing ' +
+                           $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error').length +
+                           ' required fields.' +
+                           '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
+   } else {
+       notification += '<div class="notification notification-error"> You are missing ' +
+                           $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error').length +
+                           ' required fields.' +
+                           '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
+   }
+   notification += '</div>';
+   $('#showErrorForInputValidation').html(notification);
+   $('#showErrorForInputValidation').show();
 }
 
 function createHostedFields(clientInstance) {
@@ -500,26 +529,73 @@ function createHostedFields(clientInstance) {
             styles: {
                 // Styling element state
                 ":focus": {
-                    "color": "black"
+                    "color": "black",
+                    "color": "#212529",
+                    "border-color": "#86b7fe",
+                    "outline": "0",
+                    "box-shadow": "0px 0px 6px -1px #86b7fe",                    	 
+                    "padding-left": "13px",
+                    "border": "1px solid #86b7fe",
+                    "border-radius": "3px",
+                    "height":"45px"  
                 },
                 ".valid": {
                     "color": "black"
                 },
                 ".invalid": {
                     "color": "red"
+                },
+                "input": {
+                    "font-size": "1rem",
+                    "padding-left": "13px",	
+                },
+                "select": {
+                    "font-size": "1rem",
+                    "color": "#565656"
                 }
+                
 
             },
             fields: {
                 number: {
-                    selector: "#number"
+                    selector: "#number",
+                    	placeholder: "Card Number"	
                 },
-                expirationDate: {
-                    selector: '#expiration-date',
-                    placeholder: "MM/YY"
-                },
-                cvv: {
-                    selector: '#cvv'
+                
+                expirationMonth: {
+                    selector: '#expirationMonth',
+                  
+                    prefill: expiryMonth,
+                    placeholder : 'Month',
+                    select: {
+                      options: [
+                        '01 - January',
+                        '02 - February',
+                        '03 - March',
+                        '04 - April',
+                        '05 - May',
+                        '06 - June',
+                        '07 - July',
+                        '08 - August',
+                        '09 - September',
+                        '10 - October',
+                        '11 - November',
+                        '12 - December'
+                      ]
+                    }
+                  },
+                  expirationYear: {
+                      selector: '#expirationYear',
+                      prefill: expiryYear,
+                     placeholder : 'Year',
+                      select: {
+
+                        }                 
+                  },
+                
+                  cvv: {
+                    selector: '#cvv',
+                    placeholder : 'CVV'	
                 }
             }
         },
@@ -528,11 +604,12 @@ function createHostedFields(clientInstance) {
         function (hostedFieldsErr, hostedFieldsInstance) {
 
             if (hostedFieldsErr) {
+            //	alert(hostedFieldsErr);
                 handleClientError(hostedFieldsErr);
                 return;
             }
 
-            /*var state =  hostedFieldsInstance.getState();
+            var state =  hostedFieldsInstance.getState();
             var fields = Object.keys(state.fields);
 
 
@@ -656,7 +733,7 @@ function createHostedFields(clientInstance) {
 
 
 
-            });*/
+            });
 
 
             $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).unbind(EVENTS.CLICK);
@@ -664,59 +741,253 @@ function createHostedFields(clientInstance) {
 
             // Add a click event listener to PayPal image
             $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).click(function () {
-                alert("first" + hostedFieldsInstance);
-                hostedFieldsInstance.tokenize(function (tokenizeErr, payload) {
-                alert("second" + tokenizeErr);
-                alert("third" + payload);
-                    if (tokenizeErr) {
-                        $('#submit_silentOrderPostForm').removeAttr("disabled");
-                        $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-                        handleClientError(tokenizeErr)
-                    } else {
-                        //processResponce(payload);
-                            var submitForm = $('#' + CONST.BRAINTREE_PAYMENT_FORM_ID);
-
-                            var useDelivery = createHiddenParameter("use_delivery_address", $(CONST.USE_DELIVERY_ADDRESS_ID).is(HTML.CHECKED));
-                            var paymentType = createHiddenParameter(CONST.PAYMENT_TYPE, payload.type);
-                            var cardType = createHiddenParameter(CONST.CARD_TYPE, payload.details.cardType);
-                            alert("cart type" + cardType);
-                            var cardDetails = createHiddenParameter(CONST.CARD_DETAILS,
-                                payload.details.lastTwo);
-                            alert("cart details" + cardDetails);
-                            var isLiabilityShifted = '';
-
-                            var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE,
-                                payload.nonce);
-                            submitForm.append($(paymentNonce));
-                            if (typeof payload.liabilityShifted != 'undefined') {
-                                isLiabilityShifted = payload.liabilityShifted;
-                            }
-
-                            var liabilityShifted = createHiddenParameter(CONST.LIABILITY_SHIFTED,
-                                isLiabilityShifted);
-                            submitForm.append($(liabilityShifted));
-
-                            // collect device data for advanced fraud tools
-                            var deviceData = createHiddenParameter("device_data", this.deviceData);
-                            var cardholder = createHiddenParameter(CONST.CARDHOLDER, $(CONST.CARD_HOLDER_ID).val());
-
-                            submitForm.append($(deviceData));
-                            submitForm.append($(useDelivery));
-                            submitForm.append($(paymentType));
-                            submitForm.append($(cardType));
-                            submitForm.append($(cardDetails));
-                            submitForm.append($(cardholder));
-                            alert("before submit");
-                            submitForm.submit();
-                    }
-
-                });
-
-
+				$('.global-alerts').hide();
+				$('#validationMessage').empty();
+				$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).addClass("disbleButtonColor");
+				var hasNoError = true;
+				var state =  hostedFieldsInstance.getState();
+				var fields = Object.keys(state.fields);
+           
+				if(state.fields.number.isEmpty && state.fields.expirationMonth.isEmpty && state.fields.expirationYear.isEmpty && state.fields.cvv.isEmpty)
+				{
+					hasNoError = false;
+					$('.errorMessage4').show();
+					$("#number").addClass("crs-error-field");
+					$("#expirationMonth").addClass("crs-error-field");
+					$("#expirationYear").addClass("crs-error-field");
+					$("#cvv").addClass("crs-error-field");
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					//scrollErrorMessage();
+          		}
+				if(state.fields.number.isEmpty) 
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardNumber);
+					$("#number").addClass("crs-error-field");
+				}
+	
+				if(state.fields.expirationMonth.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardMonth);
+					$("#expirationMonth").addClass("crs-error-field");
+				}
+				
+				if(state.fields.expirationYear.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardYear);
+					$("#expirationYear").addClass("crs-error-field");
+				}
+	
+				if(state.fields.cvv.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardCVV);
+					$("#cvv").addClass("crs-error-field");
+				}
+          	
+				if(!state.fields.number.isPotentiallyValid)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardNumberInValid);
+					$("#number").addClass("crs-error-field");					
+				}
+				
+				var billingFormErrorCounts = validateBillingAddressFields();
+				if(billingFormErrorCounts > 0)
+				{
+					hasNoError = false;
+					var validationDiv = $('<div class="notification notification-warning mb-4" />').text("You are missing " + billingFormErrorCounts + " required fields.");
+					$('#validationMessage').append(validationDiv);
+				}
+				
+				function scrollErrorMessage() {
+					$('html, body').animate({
+						scrollTop: $(".payment-method-container").offset().top
+						}, 500);
+					} 
+                
+				if(hasNoError)
+				{
+					hostedFieldsInstance.tokenize(function (tokenizeErr, payload) 
+					{
+						if (tokenizeErr) 
+						{
+							$('#submit_silentOrderPostForm').removeAttr("disabled");
+							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+							handleClientError(tokenizeErr)
+						} 
+						else 
+						{
+							var submitForm = $('#' + CONST.BRAINTREE_PAYMENT_FORM_ID);						
+							var useDelivery = createHiddenParameter("use_delivery_address", $(CONST.USE_DELIVERY_ADDRESS_ID).is(HTML.CHECKED));
+							var saveBillingAddress = createHiddenParameter("save_billing_address",  $('#billingAddressForm').find('input[id="save-address"]').prop("checked"));
+							var savedBillingAddressId = createHiddenParameter("selected_Billing_Address_Id", $("#savedBillingAddressId").val());
+							var paymentType = createHiddenParameter(CONST.PAYMENT_TYPE, payload.type);
+							var cardType = createHiddenParameter(CONST.CARD_TYPE, payload.details.cardType);
+							var cardDetails = createHiddenParameter(CONST.CARD_DETAILS, payload.details.lastTwo);
+							var isLiabilityShifted = '';
+							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
+							
+							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
+							submitForm.find("input[name='billTo_country']").val("US");
+							submitForm.append($(paymentNonce));
+							
+							if (typeof payload.liabilityShifted != 'undefined') {
+								isLiabilityShifted = payload.liabilityShifted;
+							}
+	
+							var liabilityShifted = createHiddenParameter(CONST.LIABILITY_SHIFTED, isLiabilityShifted);
+							submitForm.append($(liabilityShifted));
+	
+							// collect device data for advanced fraud tools
+							var deviceData = createHiddenParameter("device_data", this.deviceData);
+							var cardholder = createHiddenParameter(CONST.CARDHOLDER, $(CONST.CARD_HOLDER_ID).val());
+	
+							submitForm.append($(deviceData));
+							submitForm.append($(useDelivery));
+							submitForm.append($(saveBillingAddress));
+							submitForm.append($(savedBillingAddressId));
+							submitForm.append($(paymentType));
+							submitForm.append($(cardType));
+							submitForm.append($(cardDetails));
+							submitForm.append($(cardholder));
+							submitForm.submit();
+						}
+					});
+				}
             });
-
         }
     );
-
 }
 
+function validateBillingAddressFields()
+{
+	var errorCounts = 0;
+	var savedAddressesId = $("#savedBillingAddressId").val();
+	if(savedAddressesId != undefined && savedAddressesId != '' && savedAddressesId != null)
+	{
+		return errorCounts;
+	}
+	var formToValidate = $('#' + CONST.BRAINTREE_PAYMENT_FORM_ID);
+	var firstName =	formToValidate.find('input[name="billTo_firstName"]');
+	var lastName = formToValidate.find('input[name="billTo_lastName"]');
+	var line1 = formToValidate.find('input[name="billTo_street1"]');
+	//var line2 = formToValidate.find('input[name="billTo_street2"]');
+	var townCity = formToValidate.find('input[name="billTo_city"]');
+	var postcode = formToValidate.find('input[name="billTo_postalCode"]');
+	var regionIso =	formToValidate.find('select[name="billTo_state"]');
+	var email = formToValidate.find('input[name="billTo_email"]');
+	var phone = formToValidate.find('input[name="billTo_phoneNumber"]');
+	
+	if(validateField(firstName.val(),firstName) == false)
+	{
+		++errorCounts;
+	}
+	if(validateField(lastName.val(),lastName) == false)
+	{
+		++errorCounts;
+	}
+	if(validateField(line1.val(),line1) == false)
+	{
+		++errorCounts;
+	}
+	/*if(validateField(line2.val(),line2) == false)
+	{
+		++errorCounts;
+	}*/
+	if(validateField(townCity.val(),townCity) == false)
+	{
+		++errorCounts;
+	}
+	if(validateZip(postcode.val()) == false)
+	{
+		postcode.addClass('error');
+		++errorCounts;
+	}
+	if(validateField(regionIso.val(),regionIso) == false)
+	{
+		++errorCounts;
+	}
+	if(validateEmail(email.val(),email) == false)
+	{
+		++errorCounts;
+	}
+	if(validatePhone(phone.val(),phone) == false)
+	{
+		++errorCounts;
+	}
+	return errorCounts;
+}
+
+function validateZip(zipCode) 
+{
+    let zipRegex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+	return zipRegex.test(zipCode);
+}
+
+function validateField(attribute, fieldName) 
+{
+	if(attribute && attribute.trim() != '' && attribute.length < 255) 
+	{
+        fieldName.removeClass('error');
+        return true;
+    }
+    fieldName.addClass('error');
+    return false;
+}
+
+ function validateEmail(email, fieldName)
+ {
+	if(email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/))
+	{
+        fieldName.removeClass('error');
+        return true;
+    }
+    fieldName.addClass('error');
+    return false;
+}
+
+function validatePhone(phone, fieldName)
+{
+	if(phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im))
+	{
+        fieldName.removeClass('error');
+        return true;
+    }
+    fieldName.addClass('error');
+    return false;
+}
+
+$("#paymentAddNewAddress").on("click",function(e)
+{
+	e.preventDefault();
+	$("#savedAddresses").html("Enter New Address");
+	$("#savedBillingAddressId").val('');
+	$("#paymentAddNewAddress").hide();
+});
+
+$('ul.selectSavedBillingAddress').on('click','li',function(e){
+ 	e.preventDefault();
+	var selectedBillingAddressId = $(this).find("a").data('id');
+ 	var selectedBillingAddressFormattedData = $(this).find("a").data('address');	
+	$("#savedAddresses").html(selectedBillingAddressFormattedData);
+	$("#savedBillingAddressId").val(selectedBillingAddressId);
+	if($( "#billing-address-form-expand" ).hasClass( "show" ))
+	{
+		$( "#billing-address-form-expand" ).removeClass("show");
+	}
+	$("#paymentAddNewAddress").show();
+});
