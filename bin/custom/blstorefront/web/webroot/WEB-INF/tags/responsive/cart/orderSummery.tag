@@ -112,7 +112,8 @@
       <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
       <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
       		<form:form id="removeVoucherForm${loop.index}"
-      			action="${removeVoucherAction}" method="post">
+      			action="${removeVoucherAction}" method="post"
+      			commandName="voucherForm">
       			<p class="body14">
       				<span class="gray60">${gift.code}</span> <a href="#"
       					class="js-release-voucher-remove-btn" id="${gift.code}"><spring:theme
