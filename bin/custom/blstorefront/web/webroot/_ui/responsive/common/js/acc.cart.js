@@ -402,8 +402,8 @@ ACC.cart = {
         });
     }*/
 };
-// BL-657 added for Remove coupon code
-       $('.js-release-voucher-remove-btn').on("click", function(e) {
+// BL-657 added for remove coupon code
+       $('.js-cart-release-voucher-remove-btn').on("click", function(e) {
             e.preventDefault();
             var entryNumber = $(this).attr('id');
             var form = $('#'+ entryNumber);

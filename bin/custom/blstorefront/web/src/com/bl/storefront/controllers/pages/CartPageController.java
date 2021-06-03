@@ -681,7 +681,7 @@ public class CartPageController extends AbstractCartPageController
 		{
 			if (bindingResult.hasErrors())
 			{
-				redirectAttributes.addFlashAttribute("errorMsg",
+				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
 						getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
 			}
 			else
@@ -690,7 +690,7 @@ public class CartPageController extends AbstractCartPageController
 				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
 				{
 					redirectAttributes.addFlashAttribute("disableUpdate", Boolean.valueOf(true));
-					redirectAttributes.addFlashAttribute("errorMsg",
+					redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
 							getMessageSource().getMessage("text.voucher.apply.bruteforce.error", null, getI18nService().getCurrentLocale()));
 				}
 				else
@@ -705,7 +705,7 @@ public class CartPageController extends AbstractCartPageController
 		catch (final VoucherOperationException e)
 		{
 			redirectAttributes.addFlashAttribute(BlControllerConstants.VOUCHER_FORM, form);
-			redirectAttributes.addFlashAttribute("errorMsg",
+			redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
 					getMessageSource().getMessage(e.getMessage(), null,
 							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
 							getI18nService().getCurrentLocale()));
@@ -716,14 +716,7 @@ public class CartPageController extends AbstractCartPageController
 
 		}
 
-		final String referer = request.getHeader(BlControllerConstants.REFERER);
-
-		if (referer.contains(BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL))
-		{
-			return REDIRECT_PREFIX + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
-		}
-
-		return REDIRECT_CART_URL;
+		return getRedirectUrlForCoupon(request);
 	}
 
 	@RequestMapping(value = "/voucher/remove", method = RequestMethod.POST)
@@ -745,13 +738,7 @@ public class CartPageController extends AbstractCartPageController
 
 		}
 
-		final String referer = request.getHeader(BlControllerConstants.REFERER);
-		if (referer.contains(BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL))
-		{
-			return REDIRECT_PREFIX + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
-		}
-
-		return REDIRECT_CART_URL;
+		return getRedirectUrlForCoupon(request);
 	}
 
 	@Override
@@ -953,6 +940,21 @@ public class CartPageController extends AbstractCartPageController
 			}
 		}
 		return BlControllerConstants.SUCCESS;
+	}
+
+	/**
+	 * This method created for Coupon URL
+	 */
+	private String getRedirectUrlForCoupon(final HttpServletRequest request) {
+
+		final String referer = request.getHeader(BlControllerConstants.REFERER);
+
+		if (referer.contains(BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL))
+		{
+			return REDIRECT_PREFIX + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
+		}
+
+		return REDIRECT_CART_URL;
 	}
 
 	/**

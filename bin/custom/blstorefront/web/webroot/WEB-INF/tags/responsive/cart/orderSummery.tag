@@ -98,7 +98,7 @@
     <p class="body14">
        <span class="gray60">${fn:escapeXml(voucher)}</span>
        <form:input hidden="hidden" value="${fn:escapeXml(voucher)}" path="voucherCode" name="voucherCode"/>
-       <a href="#" class="js-release-voucher-remove-btn" id="removeVoucherForm${loop.index}"><small>Remove Item</small></a>
+       <a href="#" class="js-cart-release-voucher-remove-btn" id="removeVoucherForm${loop.index}"><small>Remove Item</small></a>
        <c:forEach items ="${cartData.promotionAmountMap}" var="amountMap">
           <c:if test ="${amountMap.key eq voucher}">
              <span class="float-end">-${amountMap.value}</span>
@@ -107,18 +107,12 @@
     </p>
  </form:form>
     </c:forEach>
-        <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
-      <div class="input-group my-3">
-        <input type="text" class="form-control" placeholder="<spring:theme code="text.checkout.multi.order.summary.promocode.placeholder"/>">
-        <div class="input-group-append">
-          <button class="btn btn-secondary" type="button"><spring:theme code="text.voucher.apply.button.label"/></button>
-        </div>
-      </div>
+
+
       <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
       <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
       		<form:form id="removeVoucherForm${loop.index}"
-      			action="${removeVoucherAction}" method="post"
-      			commandName="voucherForm">
+      			action="${removeVoucherAction}" method="post">
       			<p class="body14">
       				<span class="gray60">${gift.code}</span> <a href="#"
       					class="js-release-voucher-remove-btn" id="${gift.code}"><spring:theme

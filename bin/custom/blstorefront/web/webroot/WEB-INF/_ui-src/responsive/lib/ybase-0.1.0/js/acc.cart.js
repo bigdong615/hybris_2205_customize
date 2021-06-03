@@ -403,7 +403,7 @@ ACC.cart = {
     }*/
 };
 // BL-657 added for remove coupon code
-       $('.js-release-voucher-remove-btn').on("click", function(e) {
+       $('.js-cart-release-voucher-remove-btn').on("click", function(e) {
             e.preventDefault();
             var entryNumber = $(this).attr('id');
             var form = $('#'+ entryNumber);
