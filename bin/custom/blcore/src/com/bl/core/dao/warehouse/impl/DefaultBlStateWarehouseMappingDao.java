@@ -29,10 +29,10 @@ public class DefaultBlStateWarehouseMappingDao implements BlStateWarehouseMappin
         final FlexibleSearchQuery query = new FlexibleSearchQuery(
             FIND_BL_STATE_WAREHOUSE_BY_STATE_CODE);
         query.addQueryParameter("isoCodeShort", isoCodeShort);
-        final SearchResult result = getFlexibleSearchService().search(query);
-        BlStateWarehouseMappingModel model = (BlStateWarehouseMappingModel) result.getResult()
+        final SearchResult<BlStateWarehouseMappingModel> result = getFlexibleSearchService()
+            .search(query);
+        return result.getResult()
             .get(0);
-        return model;
     }
 
     public FlexibleSearchService getFlexibleSearchService() {

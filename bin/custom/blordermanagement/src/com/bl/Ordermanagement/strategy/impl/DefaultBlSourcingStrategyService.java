@@ -4,29 +4,41 @@ import com.bl.Ordermanagement.strategy.BlSourcingStrategyService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.sourcing.strategy.SourcingStrategy;
 import de.hybris.platform.warehousing.sourcing.strategy.SourcingStrategyMapper;
-import de.hybris.platform.warehousing.sourcing.strategy.SourcingStrategyService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Required;
 
+/**
+ * It is used to get strategies.
+ *
+ * @author Sunil
+ */
 public class DefaultBlSourcingStrategyService implements BlSourcingStrategyService, InitializingBean {
   private List<SourcingStrategy> defaultStrategies;
 
   public DefaultBlSourcingStrategyService() {
+    //default constructor
   }
 
+  /**
+   * To get list of sourcing strategies.
+   *
+   * @param context  -  the SourcingContext
+   * @param mappers   -  the list of SourcingStrategyMapper
+   * @return SourcingStrategy list
+   */
   public List<SourcingStrategy> getStrategies(
       SourcingContext context, Collection<SourcingStrategyMapper> mappers) {
-    List<SourcingStrategy> strategies = new ArrayList();
-    Iterator var5 = mappers.iterator();
+    List<SourcingStrategy> strategies = new ArrayList<>();
+    Iterator<SourcingStrategyMapper> var5 = mappers.iterator();
 
     while(var5.hasNext()) {
-      SourcingStrategyMapper mapper = (SourcingStrategyMapper)var5.next();
-      if (mapper.isMatch(context)) {
+      SourcingStrategyMapper mapper = var5.next();
+      Boolean isMatching = mapper.isMatch(context);
+      if (Boolean.TRUE.equals(isMatching)) {
         strategies.add(mapper.getStrategy());
       }
     }
@@ -44,7 +56,6 @@ public class DefaultBlSourcingStrategyService implements BlSourcingStrategyServi
     }
   }
 
-  @Required
   public void setDefaultStrategies(List<SourcingStrategy> defaultStrategies) {
     this.defaultStrategies = defaultStrategies;
   }

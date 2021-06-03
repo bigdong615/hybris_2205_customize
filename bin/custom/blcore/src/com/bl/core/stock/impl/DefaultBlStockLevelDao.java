@@ -53,7 +53,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
       SELECT + ItemModel.PK + FROM
           + StockLevelModel._TYPECODE + WHERE + StockLevelModel.PRODUCTCODE
           + "} IN (?productCodes) " +
-          AND + StockLevelModel.DATE + "} BETWEEN ?startDate AND ?endDate " +
+          AND + StockLevelModel.DATE + DATE_PARAM +
           AND + StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {"
           + SerialStatusEnum._TYPECODE +
           " as sse} WHERE {sse:CODE} = (?active)}}) " +
@@ -259,7 +259,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
   public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(Set<String> productCodes,
       WarehouseModel warehouse, Date startDate, Date endDate) {
     if (null == warehouse) {
-      throw new IllegalArgumentException("warehouses cannot be null.");
+      throw new IllegalArgumentException("warehouse cannot be null.");
     } else {
 
       final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
@@ -273,8 +273,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
       fQuery.addQueryParameter("reservedStatus", Boolean.FALSE);
       fQuery.addQueryParameter("warehouse", warehouse);
 
-      final SearchResult result = getFlexibleSearchService().search(fQuery);
-      final List<StockLevelModel> stockLevels = result.getResult();
+      final List<StockLevelModel> stockLevels = (List<StockLevelModel>)(List<?>)getFlexibleSearchService().search(fQuery).getResult();
       if (CollectionUtils.isEmpty(stockLevels)) {
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
             "No Stock Levels found for product codes : {} and date between : {} and {}",

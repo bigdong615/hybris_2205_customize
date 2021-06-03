@@ -8,7 +8,6 @@ import de.hybris.platform.warehousing.sourcing.context.populator.SourcingLocatio
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Sourcing Location Service to create the sourcing location from warehouse.
@@ -27,16 +26,16 @@ public class DefaultBlSourcingLocationService implements BlSourcingLocationServi
     SourcingLocation sourcingLocation = new SourcingLocation();
     sourcingLocation.setWarehouse(location);
     sourcingLocation.setContext(context);
-    this.getSourcingLocationPopulators().forEach((populator) -> {
-      populator.populate(location, sourcingLocation);
-    });
+    this.getSourcingLocationPopulators().forEach(populator ->
+      populator.populate(location, sourcingLocation)
+    );
 
     Set<SourcingLocation> sourcingLocations = (Set) context.getSourcingLocations();
     if (CollectionUtils.isNotEmpty(sourcingLocations)) {
       sourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(sourcingLocations);
     } else {
-      Set<SourcingLocation> newSourcingLocations = new HashSet<SourcingLocation>();
+      Set<SourcingLocation> newSourcingLocations = new HashSet<>();
       newSourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(newSourcingLocations);
     }
@@ -48,7 +47,6 @@ public class DefaultBlSourcingLocationService implements BlSourcingLocationServi
     return this.sourcingLocationPopulators;
   }
 
-  @Required
   public void setSourcingLocationPopulators(Set<SourcingLocationPopulator> populators) {
     this.sourcingLocationPopulators = populators;
   }

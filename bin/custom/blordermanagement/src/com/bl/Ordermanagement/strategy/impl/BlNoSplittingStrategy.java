@@ -51,8 +51,6 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
           sourcingLocation.getWarehouse().getCode());
     } else {
       final BaseStoreModel baseStore = baseStoreService.getBaseStoreForUid("bl");
-     /* Collection<WarehouseModel> warehouseModels = baseStoreService.getCurrentBaseStore()
-          .getWarehouses();*/
       Collection<WarehouseModel> warehouseModels = baseStore.getWarehouses();
       for (WarehouseModel warehouse : warehouseModels) {
         if (!StringUtils
@@ -91,7 +89,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
             availableQty);
       }
     });
-    return sourcingContext.getOrderEntries().stream().allMatch((entry) -> {
+    return sourcingContext.getOrderEntries().stream().allMatch(entry -> {
       Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
       return ((OrderEntryModel) entry).getQuantity() <= availableQty;
     });
@@ -104,8 +102,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
 
     Long oldUnAllocatedQty = unAllocatedMap.get(entry.getProduct().getCode()+"_"+entry.getEntryNumber());
     Map<String, Long> allocatedMap = new HashMap<>();
-    Long allocatableQty = 0L;
-    allocatableQty = (oldUnAllocatedQty > 0) && (oldUnAllocatedQty > availableQty) ? availableQty : oldUnAllocatedQty;
+    Long allocatableQty = (oldUnAllocatedQty > 0) && (oldUnAllocatedQty > availableQty) ? availableQty : oldUnAllocatedQty;
 
     allocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), allocatableQty);
     sourcingLocation.setAllocatedMap(allocatedMap);
@@ -113,6 +110,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     sourcingContext.setUnAllocatedMap(unAllocatedMap);
   }
 
+  @Override
   protected Long getAvailabilityForProduct(ProductModel productModel,
       SourcingLocation sourcingLocation) {
     Long stockLevel = 0L;

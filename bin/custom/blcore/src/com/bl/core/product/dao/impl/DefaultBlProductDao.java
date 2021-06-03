@@ -1,6 +1,5 @@
 package com.bl.core.product.dao.impl;
 
-import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.catalog.model.CatalogModel;
@@ -9,12 +8,10 @@ import de.hybris.platform.product.daos.impl.DefaultProductDao;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import java.util.stream.Collectors;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
@@ -48,7 +45,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
           + CatalogModel._TYPECODE +
           " as c} WHERE {c:id} = ?catalog}})}})";
   private static final String GET_BLSERIALPRODUCTS_FOR_CODES_QUERY =
-      "SELECT {" + BlSerialProductModel.PK + "} from {"
+      "SELECT {pk} from {"
           + BlSerialProductModel._TYPECODE
           + " as p} WHERE {p:code} IN (?codes)"
           + " AND {p:approvalStatus} IN ({{SELECT {aas:PK} FROM {" + ArticleApprovalStatus._TYPECODE
@@ -97,7 +94,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
     fQuery.addQueryParameter(BlCoreConstants.APPROVED, ArticleApprovalStatus.APPROVED.getCode());
     fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
     fQuery.addQueryParameter(BlCoreConstants.VERSION, "Online");
-    final SearchResult result = getFlexibleSearchService().search(fQuery);
+    final SearchResult<BlSerialProductModel> result = getFlexibleSearchService().search(fQuery);
     final List<BlSerialProductModel> serialProducts = result.getResult();
     if (CollectionUtils.isEmpty(serialProducts)) {
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No serial products found for codes: {}",

@@ -28,6 +28,7 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
   private BlCommerceStockService blCommerceStockService;
 
   public BlAvailabilitySourcingLocationPopulator() {
+    //default constructor
   }
 
   /**
@@ -49,7 +50,7 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
     if (CollectionUtils.isNotEmpty(stockLevels)) {
       availabilityMap = blCommerceStockService.groupByProductsAvailability(stockLevels);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Populating availability map, serial products {} found for product codes {} from date {} to date {}",
-          stockLevels.stream().map(stock-> stock.getSerialProductCode()).collect(Collectors.toList()),  productCodes, order.getRentalStartDate(), order.getRentalEndDate());
+          stockLevels.stream().map(StockLevelModel :: getSerialProductCode).collect(Collectors.toList()),  productCodes, order.getRentalStartDate(), order.getRentalEndDate());
       target.setAvailabilityMap(availabilityMap);
     }
 

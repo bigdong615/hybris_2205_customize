@@ -29,6 +29,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
   private BlAssignSerialService blAssignSerialService;
 
   public BlNoRestrictionsStrategy() {
+    //default constructor
   }
 
   /**
@@ -39,12 +40,18 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
   public void source(SourcingContext sourcingContext)  throws BlSourcingException {
     ServicesUtil.validateParameterNotNullStandardMessage("sourcingContext", sourcingContext);
 
-    boolean canBeSourcedCompletely = canBeSourcedCompletely(sourcingContext);
-    if (canBeSourcedCompletely) {
+    if (canBeSourcedCompletely(sourcingContext)) {
       boolean sourcingComplete = assignSerials(sourcingContext);
       sourcingContext.getResult().setComplete(sourcingComplete);
-    } else { //can not be sourced all the products from all warehouses
+    } else {
+      //can not be sourced all the products from all warehouses
       sourcingContext.getResult().setComplete(false);
+      AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
+      order.setStatus(OrderStatus.SUSPENDED);
+      modelService.save(order);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. Suspending the order {}",
+          order.getCode());
+      throw new BlSourcingException("All products can not be sourced.");
     }
   }
 
@@ -81,14 +88,9 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     for (Long unAllocatedValue : sourcingContext.getUnAllocatedMap().values()) {
       if (unAllocatedValue > 0) {
         // source was incomplete from all warehouses
-        canBeSourcedCompletely = false;
         // mark the order status as error
-        AbstractOrderModel order = sourcingContext.getOrderEntries().iterator().next().getOrder();
-        order.setStatus(OrderStatus.SUSPENDED);
-        modelService.save(order);
-        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "All products can not be sourced. Suspending the order {}",
-            order.getCode());
-        throw new BlSourcingException("All products can not be sourced.");
+        canBeSourcedCompletely = false;
+        break;
       }
     }
     return canBeSourcedCompletely;
