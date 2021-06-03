@@ -16,7 +16,7 @@
 	<c:otherwise>
 		<%-- jquery --%>
 		<script src="${commonResourcePathHtml}/js/jquery-3.5.1.min.js"></script>
-		
+		<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 		<%-- plugins --%>
 		<script src="${commonResourcePathHtml}/js/enquire.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/Imager.min.js"></script>
@@ -37,7 +37,13 @@
 		<script src="${commonResourcePathHtml}/js/jquery.slideviewer.custom.1.2.js"></script>
 		
 		<%-- Custom ACC JS --%>
+
+		<%-- added custom js bl-custom.js for gift card --%>
+		<script src="${commonResourcePathHtml}/js/bl-custom.js"></script>
+		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+
     <script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+
 		<script src="${commonResourcePathHtml}/js/acc.autocomplete.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.carousel.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.cart.js"></script>
@@ -180,8 +186,8 @@
                 arrows :false,
                 pagination:false,
                 breakpoints: {
-                '480': {
-                    perPage: 2, 
+                '540': {
+                    perPage: 3, 
                   pagination:true
                 },
               }
@@ -204,8 +210,8 @@
                     perPage: 4,
                    
                 },
-                '480': {
-                    perPage: 2,
+                '540': {
+                    perPage: 3,
                      
                     
                 },
@@ -215,7 +221,7 @@
            } ).mount();
          }
 
-        if(cat_slider_image_qty<=2 && screen.width<=480){
+        if(cat_slider_image_qty<=3 && screen.width<=540){
            document.querySelector("#cat-slider .splide__pagination").classList.add("d-none");
          }
 
@@ -537,15 +543,8 @@
                                                  type       : 'fade',
                                                  pagination : false,
                                                  arrows     : false,
-                                                 keyboard: false,
-                                                  fixedWidth  : 380,
-                                                 fixedHeight : 380,
-                                                 breakpoints : {
-                                                     '600': {
-                                                         fixedWidth  : 250,
-                                                         fixedHeight : 250,
-                                                          }
-                                                 },
+                                                 keyboard   : false,
+                                                 fixedHeight  : 380,
                                              } );
 
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
@@ -581,15 +580,8 @@
                                                  type       : 'fade',
                                                  pagination : false,
                                                  arrows     : false,
-                                                 keyboard: false,
-                                                  fixedWidth  : 380,
+                                                 keyboard   : false,
                                                  fixedHeight : 380,
-                                                 breakpoints : {
-                                                     '600': {
-                                                         fixedWidth  : 250,
-                                                         fixedHeight : 250,
-                                                     }   
-                                                     },
                                              } );
                                              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
                                              primarySlider.sync( secondarySlider ).mount();
@@ -827,23 +819,15 @@
                  type       : 'fade',
                  pagination : false,
                  arrows     : false,
-                 keyboard: false,
-                  fixedWidth  : 380,
-                  fixedHeight : 380,
-                  breakpoints : {
-                  '600': {
-                          fixedWidth  : 250,
-                          fixedHeight : 250,
-                                                         
-                         } 
-                  },                                
+                 keyboard   : false,
+                 fixedHeight : 380,
              } );
              // Set the thumbnails slider as a sync target and then call mount - Required for Single Product Page
              primarySlider.sync( secondarySlider ).mount();
 
               var image_qty =   document.getElementById("product-thumbnails-list").getElementsByTagName("li").length;
-                            console.log(image_qty);
-                 if(image_qty>4){
+
+              if(image_qty>4){
                          var secondarySlider = new Splide( '#product-thumbnails', {
                                                  rewind      : true,
                                                  fixedWidth  : 115,
@@ -868,17 +852,8 @@
                                                  type       : 'fade',
                                                  pagination : false,
                                                  arrows     : false,
-                                                 keyboard: false,
-                                                  fixedWidth  : 380,
+                                                 keyboard   : false,
                                                  fixedHeight : 380,
-                                                 breakpoints :{
-                                                  '600': {
-                                                         fixedWidth  : 250,
-                                                         fixedHeight : 250,
-                                                         
-                                                     }
-                                             },
-                                             
                                              } );
                                              primarySlider.sync( secondarySlider ).mount();
                                               }
