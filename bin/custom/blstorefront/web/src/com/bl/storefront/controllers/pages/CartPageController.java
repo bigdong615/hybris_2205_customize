@@ -953,6 +953,10 @@ public class CartPageController extends AbstractCartPageController
 		{
 			return REDIRECT_PREFIX + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
 		}
+		else if(referer.contains(BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL)) {
+
+			return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
+		}
 
 		return REDIRECT_CART_URL;
 	}

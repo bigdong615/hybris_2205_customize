@@ -68,7 +68,6 @@
                                       ${fn:escapeXml(errorMsg)}
                                </div>
                              </c:if>
-                                      ${fn:escapeXml(successMsg)}
                              <div class="notification notification-error d-none"id="errorMessages_voucher" />
 
                               <div id="cart-warning" class="notification notification-warning" style="display:none"><spring:theme code="text.date.range.not.available" /></div>

@@ -71,7 +71,6 @@
                                                                   ${fn:escapeXml(errorMsg)}
                                                            </div>
                                                          </c:if>
-                                                                  ${fn:escapeXml(successMsg)}
                                                          <div class="notification notification-error d-none"id="errorMessages_voucher" />
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>
                             <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>

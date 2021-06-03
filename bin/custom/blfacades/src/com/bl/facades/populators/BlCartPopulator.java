@@ -5,6 +5,7 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
@@ -12,6 +13,7 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.promotionengineservices.model.RuleBasedOrderAdjustTotalActionModel;
 import de.hybris.platform.promotions.model.PromotionResultModel;
+import de.hybris.platform.promotions.result.PromotionOrderResults;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -88,6 +90,15 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			}
 			target.setGiftCardData(blGiftCardDataList);
 		}
+
+		// Added for showing Promotion discount and Gift Card Discounts on Cart page and checkout page
+		Double giftCartAmount = 0.0;
+		if(null != source.getGiftCardAmount()) {
+			giftCartAmount = source.getGiftCardAmount();
+		}
+		Double totalPromotion = giftCartAmount + source.getTotalDiscounts();
+
+		target.setTotalDiscounts(createPrice(source ,totalPromotion));
 	}
 
 	/**
@@ -118,4 +129,5 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		}
 		target.setPromotionAmountMap(amountMap);
 	}
+
 }
