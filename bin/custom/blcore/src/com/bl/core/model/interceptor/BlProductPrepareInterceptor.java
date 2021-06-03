@@ -3,16 +3,23 @@ package com.bl.core.model.interceptor;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.DurationEnum;
 import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.calculation.BlPricingService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This class is for setting the auto generated product Id on BlProduct when it is created and has
@@ -22,21 +29,77 @@ import org.apache.commons.lang.StringUtils;
  */
 public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProductModel> {
 
+  private static final Logger LOG = Logger.getLogger(BlProductPrepareInterceptor.class);
+
   private KeyGenerator keyGenerator;
   private EnumerationService enumerationService;
   private BlPricingService blPricingService;
 
   @Override
-  public void onPrepare(final BlProductModel blProductModel,
-      final InterceptorContext interceptorContext)
-      throws InterceptorException {
+  public void onPrepare(final BlProductModel blProductModel,final InterceptorContext interceptorContext) throws InterceptorException {
 
-    if (interceptorContext.isNew(blProductModel) && StringUtils
-        .isBlank(blProductModel.getProductId())) {
+    Collection<BlSerialProductModel> serialProducts = blProductModel.getSerialProducts();
+
+    if (interceptorContext.isNew(blProductModel) && StringUtils.isBlank(blProductModel.getProductId())) {
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
     createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
+
+    if(CollectionUtils.isNotEmpty(serialProducts) && (interceptorContext.isModified(blProductModel,BlProductModel.FORSALEBASEPRICE) || interceptorContext
+        .isModified(blProductModel,BlProductModel.FORSALEDISCOUNT))){
+      calculateFinalSalePriceForSerialProducts(blProductModel, serialProducts,interceptorContext);
+      calculateIncentivizedPriceForSerialProducts(blProductModel,serialProducts, interceptorContext);
+    }
   }
+
+  /**
+   * Calculate final sale base prices for all serial products
+   * @param blProductModel
+   * @param serialProducts
+   * @param interceptorContext
+   */
+  private void calculateFinalSalePriceForSerialProducts(final BlProductModel blProductModel,final Collection<BlSerialProductModel> serialProducts,final InterceptorContext interceptorContext) {
+    if(interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)  && blProductModel.getForSaleBasePrice().compareTo(BigDecimal.ZERO) > 0){
+      serialProducts.forEach(serialProduct-> {
+        if(serialProduct.getConditionRatingOverallScore() > 0.0D) {
+          serialProduct.setFinalSalePrice(getBlPricingService()
+              .calculateFinalSalePriceForSerial(blProductModel.getForSaleBasePrice(),
+                  serialProduct.getConditionRatingOverallScore()));
+        }
+        interceptorContext.getModelService().save(serialProduct);
+
+      });
+    }
+  }
+
+  /**
+   * Calculate incentivized price for all serial products
+   * @param blProductModel
+   * @param serialProducts
+   * @param interceptorContext
+   */
+  private void calculateIncentivizedPriceForSerialProducts(final BlProductModel blProductModel,final Collection<BlSerialProductModel> serialProducts,final InterceptorContext interceptorContext) {
+    final Integer forSaleDiscount = blProductModel.getForSaleDiscount();
+    if(interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)  && forSaleDiscount > 0){
+      serialProducts.stream().forEach( serialProduct -> {
+        BigDecimal calculatedIncentivizedPrice = null;
+        if(serialProduct.getFinalSalePrice().compareTo(BigDecimal.ZERO) > 0) {
+          final BigDecimal finalSalePrice = serialProduct.getFinalSalePrice()
+              .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+         calculatedIncentivizedPrice = finalSalePrice.subtract(
+              finalSalePrice.multiply(BigDecimal.valueOf(forSaleDiscount))
+                  .divide(BigDecimal.valueOf(BlCoreConstants.DIVIDE_BY_HUNDRED))
+                  .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+              "Calculated Incentivized Price is {} for Serial Product {} with For Sale Discount {} and For Sale Final Price {}",
+              calculatedIncentivizedPrice, serialProduct.getProductId(), forSaleDiscount.intValue(),
+              finalSalePrice.doubleValue());
+          serialProduct.setIncentivizedPrice(calculatedIncentivizedPrice);
+        }
+        interceptorContext.getModelService().save(serialProduct);
+      });
+   }
+ }
 
   /**
    * Create or update rental prices for BlProduct based on the available retail price

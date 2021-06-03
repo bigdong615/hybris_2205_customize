@@ -63,7 +63,7 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFi
                       ;;220232 ;;;;;;;;800000000000;;;
 
 
-UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;forSaleNotes;withOrderID;finalSalePrice;dateOfSale;conditionRatingOverallScore
+UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;notes;withOrderID;finalSalePrice;dateOfSale;conditionRatingOverallScore
                       ;;5122541 ;2586;1Z87099FNW99827320;;;;;;;;;;2.55
                       ;;6051076 ;2586;1Z87099FNY95392357;;;;;;;9109749;;;3
                       ;;6128205 ;2430;CAR016 S04;;;;;;;;;;2.55
