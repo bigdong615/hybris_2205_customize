@@ -84,6 +84,7 @@ public class PasswordResetPageController extends AbstractPageController
 			{
 				LOG.warn("Email: " + form.getEmail() + " does not exist in the database.");
 			}
+			model.addAttribute("userEmail",form.getEmail());
 			return ControllerConstants.Views.Fragments.Password.ForgotPasswordValidationMessage;
 		}
 	}
