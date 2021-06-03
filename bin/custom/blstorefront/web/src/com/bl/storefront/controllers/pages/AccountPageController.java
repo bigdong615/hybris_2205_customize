@@ -38,6 +38,7 @@ import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
+import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.user.UserFacade;
@@ -168,6 +169,8 @@ public class AccountPageController extends AbstractSearchPageController {
   private static final String VERIFICATION_IMAGES_CMS_PAGE = "verificationImages";
   private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
 
+  protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK);
+
   private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
   @Resource(name = "orderFacade")
@@ -223,6 +226,9 @@ public class AccountPageController extends AbstractSearchPageController {
 
   @Resource(name = "wishlistPopulator")
   private BlWishListPopulator wishListPopulator;
+
+  @Resource(name = "productVariantFacade")
+  private ProductFacade productFacade;
 
   protected PasswordValidator getPasswordValidator() {
     return passwordValidator;
@@ -1017,11 +1023,10 @@ public class AccountPageController extends AbstractSearchPageController {
     try {
       Wishlist2Model wishlist = wishlistFacade.getWishlist();
       for (Wishlist2EntryModel wishlistModel : wishlist.getEntries()) {
-        ProductData productData = new ProductData();
-        wishListPopulator.populate(wishlistModel, productData);
+        String productCode = wishlistModel.getProduct().getCode();
+        final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, PRODUCT_OPTIONS);
         wishlistData.add(productData);
       }
-
       storeCmsPageInModel(model, bookmarksPage);
       setUpMetaDataForContentPage(model, bookmarksPage);
       model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,

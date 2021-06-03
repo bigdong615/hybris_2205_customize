@@ -34,7 +34,7 @@ public class BlWishlistController {
 //  @Resource(name = "wishlistConverter")
 //  private Converter<Wishlist2Model, Wishlist2Data> wishlistConverter;
 
-  private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE =
+  private static final String REDIRECT_TO_BOOKMARKS_PAGE =
       REDIRECT_PREFIX + "/my-account/bookmarks";
 
   @RequireHardLogIn
@@ -56,11 +56,9 @@ public class BlWishlistController {
   public String removeWishlistFromCards(@RequestParam("removeproductCode") final String code) {
     try {
       wishlistFacade.removeWishlist(code);
-      //return BlCoreConstants.SUCCESS;
-      return ControllerConstants.Views.Pages.Account.AccountBookMarkPage;
+      return BlCoreConstants.SUCCESS;
     } catch (Exception e) {
-      LOG.error("in default wishlist " + code + "not found OR" + code
-          + "found more than one entry in default wish list entry");
+      LOG.error("in default wishlist " + code + "not found OR" + code + "found more than one entry in default wish list entry");
       return BlCoreConstants.ERROR;
     }
   }
@@ -69,14 +67,23 @@ public class BlWishlistController {
   @RequestMapping(value = "/removewishlistentry", method = RequestMethod.POST)
   public String removeWishlistEntry(@RequestParam("removeProductEntry") final String code) {
     try {
-      re
       wishlistFacade.removeWishlist(code);
-      return REDIRECT_TO_PASSWORD_UPDATE_PAGE;
-      //  return ControllerConstants.Views.Pages.Account.AccountBookMarkPage;
+      return REDIRECT_TO_BOOKMARKS_PAGE;
     } catch (Exception e) {
-      LOG.error("in default wishlist " + code + "not found OR" + code
-          + "found more than one entry in default wish list entry");
-      return BlCoreConstants.ERROR;
+      LOG.error("in default wishlist " + code + "not found OR" + code + "found more than one entry in default wish list entry");
+      return REDIRECT_TO_BOOKMARKS_PAGE;
     }
   }
+
+//  private String remove(String code)
+//  {
+//    try {
+//      wishlistFacade.removeWishlist(code);
+//      return "value";
+//    } catch (Exception e) {
+//      LOG.error("in default wishlist " + code + "not found OR" + code
+//          + "found more than one entry in default wish list entry");
+//      return BlCoreConstants.ERROR;
+//    }
+//  }
 }
