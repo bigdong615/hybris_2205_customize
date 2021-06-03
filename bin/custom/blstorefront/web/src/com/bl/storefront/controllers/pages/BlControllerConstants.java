@@ -77,6 +77,8 @@ public class BlControllerConstants
 	public static final String NEXT_AVAILABLE_DATE = "nextAvailabilityDate";
 
 	public static final int SKIP_TWO_DAYS = 2;
+	public static final String TRUE_STRING = "true";
+	public static final String FALSE_STRING = "false";
 
 	public static final String VOUCHER_FORM = "voucherForm";
 	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";

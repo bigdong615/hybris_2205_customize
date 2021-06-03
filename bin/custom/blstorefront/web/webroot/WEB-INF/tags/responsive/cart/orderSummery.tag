@@ -54,21 +54,29 @@
                   </c:choose>
                 </td>
               </tr>
+
             <tr class="discount">
               <c:if test ="${cartData.totalDiscounts.value > 0}">
-                  <td ><spring:theme code="cart.text.discount"/></td>
+                  <td ><spring:theme code="text.discount"/></td>
                <td class="text-end" id="cart-shipping-tax">
                - <format:blPrice priceData="${cartData.totalDiscounts}"/>
                </td>
               </c:if>
             </tr>
 
+              <c:if test="${not empty cartData.appliedVouchers}">
+              <tr class="discount">
+              		  <td><spring:theme code="text.discount" /></td>
+              			<td class="text-end">-<format:blPrice priceData="${cartData.giftCardDiscount}" /></td>
+              </tr>
+              </c:if>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
                   <td class="text-end" id="cart-shipping-total"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
               </tr>
           </tbody>
       </table>
+
  <c:if test ="${not empty fn:escapeXml(errorMsg)}">
     <c:set var="errormsgvalid" value="error"/>
  </c:if>
@@ -100,4 +108,23 @@
  </form:form>
     </c:forEach>
         <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
+      <div class="input-group my-3">
+        <input type="text" class="form-control" placeholder="<spring:theme code="text.checkout.multi.order.summary.promocode.placeholder"/>">
+        <div class="input-group-append">
+          <button class="btn btn-secondary" type="button"><spring:theme code="text.voucher.apply.button.label"/></button>
+        </div>
+      </div>
+      <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
+      <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
+      		<form:form id="removeVoucherForm${loop.index}"
+      			action="${removeVoucherAction}" method="post"
+      			commandName="voucherForm">
+      			<p class="body14">
+      				<span class="gray60">${gift.code}</span> <a href="#"
+      					class="js-release-voucher-remove-btn" id="${gift.code}"><spring:theme
+      						code="text.remove"/></a><span class="float-end">${gift.redeemamount}</span>
+      			</p>
+      			<form:input id="${gift.code}" value="${gift.code}" path="voucherCode" />
+      		</form:form>
+      	</c:forEach>
 </div>

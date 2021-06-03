@@ -1,0 +1,277 @@
+## messageSource=classpath:/blcore/messages/email-giftCard_$lang.properties
+<body bgcolor="#ffffff" text="#000000"
+	style="background-color: #ffffff; color: #000000; padding: 15px; -webkit-text-size-adjust: none; font-size: 16px; font-family: arial, helvetica, sans-serif;">
+	<span class="mcnPreview Text"
+		style="display: none; font-size: 0px; line-height: 0px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; visibility: hidden; mso-hide: all;"></span>
+	<div style="font-size: 0; line-height: 0;">
+		<custom name="opencounter" type="tracking"> <custom
+			name="usermatch" type="tracking" />
+	</div>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0"
+		align="center">
+		<tr>
+			<td align="center" valign="top"><custom type="header" /></td>
+		</tr>
+		<tr>
+			<td align="center">
+				<table cellspacing="0" cellpadding="0" border="0" width="600"
+					class="container" align="center">
+					<tr>
+						<td>
+							<table class="tb_properties border_style"
+								style="background-color: #FFFFFF;" cellspacing="0"
+								cellpadding="0" bgcolor="#ffffff" width="100%">
+								<tr>
+									<td align="center" valign="top">
+										<table align="left" border="0" cellpadding="0" cellspacing="0"
+											width="100%">
+											<tr>
+												<!-- added padding here -->
+												<td class="content_padding" style="">
+													<!-- end of comment -->
+													<table border="0" cellpadding="0" cellspacing="0"
+														width="100%">
+														<tr>
+															<!-- top slot -->
+															<td align="center" class="header" valign="top">
+																<table align="left" border="0" cellpadding="0"
+																	cellspacing="0" width="100%">
+																	<tbody>
+																		<tr>
+																			<td align="left" valign="top">
+																				<table cellspacing="0" cellpadding="0"
+																					style="width: 100%">
+																					<tbody>
+																						<tr>
+																							<td class="responsive-td" valign="top"
+																								style="width: 100%;">
+																								<table cellpadding="0" cellspacing="0"
+																									width="100%" style="min-width: 100%;"
+																									class="stylingblock-content-wrapper">
+																									<tr>
+																										<td
+																											class="stylingblock-content-wrapper camarker-inner"><table
+																												width="100%" colspan="0" cellpadding="0"
+																												border="0">
+																												<tr style="valign: bottom;">
+																													<td width="50%" rowspan="2"><a
+																														href="${ctx.secureBaseUrl}"><img
+																															border="0" width="100%"
+																															alt="Borrow Lenses"
+																															src="https://cdn.static-bl.com/images/newsletter/logo.png"
+																															style="display: block; width: 100%;"
+																															border="0"></a></td>
+																													<td width="50%"><img
+																														src="https://cdn.static-bl.com/images/newsletter/spc.png"
+																														height="40"></td>
+																												</tr>
+																												<tr>
+																													<td
+																														style="font-family: Tahoma, Arial, sans-serif; font-size: 10px; text-align: right; display: block; width: 100%; valign: bottom;">&nbsp;</td>
+																												</tr>
+
+																											</table></td>
+																									</tr>
+																								</table>
+																								<table cellpadding="0" cellspacing="0"
+																									width="100%" style="min-width: 100%;"
+																									class="stylingblock-content-wrapper">
+																									<tr>
+																										<td
+																											style="padding-top: 10px; padding-right: 10px; padding-left: 10px;"
+																											class="stylingblock-content-wrapper camarker-inner"><table
+																												cellspacing="0" cellpadding="0"
+																												style="width: 100%;">
+																												<tr>
+																													<td><table cellspacing="0"
+																															cellpadding="0" style="width: 100%;">
+																															<tr>
+																																<td class="responsive-td" valign="top"
+																																	style="width: 100%;"><table
+																																		cellpadding="0" cellspacing="0"
+																																		width="100%" style="min-width: 100%;"
+																																		class="stylingblock-content-wrapper">
+																																		<tr>
+																																			<td style="padding-bottom: 10px;"
+																																				class="stylingblock-content-wrapper camarker-inner">
+
+																																				<hr noshade />
+
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 16px; color: #000; line-height: 1.3em; font-weight: 300; font-style: normal;">
+																																					${ctx.messages.getMessage('giftEmailSalutation')}
+																																					${ctx.custname},</p>
+
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 300; font-style: normal;">
+																																					${ctx.messages.getMessage('giftEmailParagraph1', ${ctx.amount})}
+																																					<a href="${ctx.secureBaseUrl}">${ctx.messages.getMessage('giftEmailSiteName')}</a>
+																																					${ctx.messages.getMessage('giftEmailFor')}
+																																					%%REASON%%.
+																																				</p>
+
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 600; font-style: normal; text-align: center">${ctx.messages.getMessage('giftEmailCode')}
+																																					${ctx.code}</p>
+
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 300; font-style: normal;">
+																																					${ctx.messages.getMessage('giftEmailParagraph2')}
+																																				</p>
+
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 12px; color: #000; line-height: 1.3em; font-weight: 300; font-style: italic;">
+																																					${ctx.messages.getMessage('giftEmailParagraph3', ${ctx.code})}
+																																				</p>
+
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 12px; color: #000; line-height: 1.3em; font-weight: 300; font-style: italic;">
+																																					${ctx.messages.getMessage('giftEmailParagraph4')}
+																																				</p>
+
+																																				<p
+																																					style="font-family: helvetica, arial, sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
+																																					${ctx.messages.getMessage('giftEmailBorrowLensesTeam')}<br />
+																																					<a href="${ctx.secureBaseUrl}">${ctx.messages.getMessage('blSite.smallcase')}</a><br />
+																																				</p>
+																																			</td>
+																																		</tr>
+																																	</table></td>
+																															</tr>
+																														</table></td>
+																												</tr>
+																											</table></td>
+																									</tr>
+																								</table>
+
+																								<table cellpadding="0" cellspacing="0"
+																									width="100%" style="min-width: 100%;"
+																									class="stylingblock-content-wrapper">
+																									<tr>
+																										<td
+																											class="stylingblock-content-wrapper camarker-inner"><style>
+@import
+	url('https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,800')
+	;
+
+@media only screen and (max-width: 479px) {
+	.hidden-xs {
+		display: none;
+	}
+}
+</style>
+
+																											<hr noshade />
+
+																											<table width="100%">
+																												<tr>
+																													<td align="center">
+																														<table>
+																															<tr>
+																																<td width="16" align="center"><a
+																																	style="font-weight: normal; color: #000000; text-decoration: none; line-height: 100%;"
+																																	href="https://facebook.com/Borrowlenses">
+																																		<img
+																																		style="height: 16px; padding: 10px 15px;"
+																																		src="https://cdn.static-bl.com/images/newsletter/ico_fb.png"
+																																		alt="Facebook" height="16" width="16">
+																																</a></td>
+																																<td width="16" align="center"><a
+																																	style="font-weight: normal; color: #000000; text-decoration: none; line-height: 100%;"
+																																	href="https://www.youtube.com/user/BorrowLenses/featured">
+																																		<img
+																																		style="height: 16px; padding: 10px 15px;"
+																																		src="https://cdn.static-bl.com/images/newsletter/ico_yt.png"
+																																		alt="YouTube" height="16" width="16">
+																																</a></td>
+																																</td>
+																																<td width="16" align="center"><a
+																																	style="font-weight: normal; color: #000000; text-decoration: none; line-height: 100%;"
+																																	href="https://instagram.com/borrowlenses">
+																																		<img
+																																		style="height: 16px; padding: 10px 15px;"
+																																		src="https://cdn.static-bl.com/images/newsletter/ico_ig.png"
+																																		alt="Instagram" height="16" width="16">
+																																</a></td>
+																																<td width="16" align="center"><a
+																																	style="font-weight: normal; color: #000000; text-decoration: none; line-height: 100%;"
+																																	href="https://www.borrowlenses.com/blog">
+																																		<img
+																																		style="height: 16px; padding: 10px 15px;"
+																																		src="https://cdn.static-bl.com/images/newsletter/ico_rss.png"
+																																		alt="RSS Blog" height="16" width="16">
+																																</a></td>
+																															</tr>
+																														</table>
+																													</td>
+																												</tr>
+																											</table>
+
+																											<hr noshade />
+
+																											<div
+																												style="margin-top: 10px; padding: 4px 8px; font-family: helvetica, arial, sans-serif; text-align: center; background-color: #ededf0;">
+																												<a
+																													href="${ctx.secureBaseUrl}/content/contact_info"
+																													style="font-family: sans-serif; text-decoration: none; color: #000000; padding: 0 5px; display: inline-block; font-weight: normal; line-height: 100%;">${ctx.messages.getMessage('giftEmailHelp')}</a>
+																												| <a
+																													href="${ctx.secureBaseUrl}/AccountHistory.do"
+																													style="text-decoration: none; color: #000000; padding: 0 5px; display: inline-block; font-weight: normal; line-height: 100%;">${ctx.messages.getMessage('giftEmailMyAccount')}</a>
+																											</div>
+
+																											<div
+																												style="margin-top: 10px; padding: 4px 8px; font-family: helvetica, arial, sans-serif; text-align: center;">
+																												<a href="${ctx.secureBaseUrl}"
+																													style="font-size: 18px; color: #000000; display: block; text-decoration: none; font-weight: normal; line-height: 100%;">${ctx.messages.getMessage('blSite.smallcase')}</a><br />
+
+																												<span
+																													style="font-family: helvetica, arial, sans-serif; text-align: center; font-size: 12px; color: #000; display: block; margin-bottom: 25px;">
+
+																													${ctx.messages.getMessage('giftEmailFooter1')}
+																													<br /> <br />
+
+																													${ctx.messages.getMessage('giftEmailFooter2')}
+
+																													<br /> <br />
+																													${ctx.messages.getMessage('giftEmailFooter3')}<br />
+																													${ctx.messages.getMessage('blSite.uppercase')}<br />
+																													${ctx.messages.getMessage('giftEmailFooter4')}<br />
+																													${ctx.messages.getMessage('giftEmailFooter5')}<br />
+
+																												</span>
+																												</p>
+
+																												<p></p>
+																												<a href="#"
+																													style="color: #000000; font-weight: normal; text-decoration: none; line-height: 100%;">
+																												</a>
+																											</div></td>
+																									</tr>
+																								</table>
+																							</td>
+																						</tr>
+																					</tbody>
+																				</table>
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top"><custom type="footer" /></td>
+		</tr>
+	</table>
+</body>
