@@ -57,3 +57,4 @@ $contentCatalogsCustomShippingPagePath = /blinitialdata/import/coredata/contentC
 #Mention here Checkout Page related impexes in sequence
 
 #Mention here Email Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/giftCardEmail_content.impex"), "utf-8", 0, 0);
