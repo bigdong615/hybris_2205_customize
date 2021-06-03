@@ -174,7 +174,7 @@ ACC.account = {
                                                        success: function (response) {
                                                      //  alert(success);
                                                        if(response === 'Success'){
-                                                       // alert("product removed from wishlist");
+                                                        alert("product removed from wishlist");
                                                         document.getElementById(bookmarkId).classList.remove("bookmark-checked");
                                                        }
 //                                                       if(removeFromBook === "removeProduct" ){
