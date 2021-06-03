@@ -52,8 +52,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
           + BlSerialProductModel._TYPECODE
           + " as p} WHERE {p:code} IN (?codes)"
           + " AND {p:approvalStatus} IN ({{SELECT {aas:PK} FROM {" + ArticleApprovalStatus._TYPECODE
-          +
-          " as aas} WHERE {aas:CODE} = (?approved)}}) "
+          + " as aas} WHERE {aas:CODE} = (?approved)}}) "
           + " AND {p:catalogVersion} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE +
           " as cv} WHERE {cv:VERSION} = ?version AND {cv:catalog} in ({{SELECT {c:pk} FROM {"
           + CatalogModel._TYPECODE +
@@ -87,15 +86,11 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   }
 
   /**
-   * It fetches all the serial products for given set of codes, need to pass single code as set, so
-   * it will work for single code also,
-   *
-   * @param serialProductCodes the product codes.
-   * @return Collection<BlSerialProductModel> the list of serial products
+   * {@inheritDoc}
    */
   @Override
   public Collection<BlSerialProductModel> getBlSerialProductsForCodes(
-      Set<String> serialProductCodes) {
+      final Set<String> serialProductCodes) {
     final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
         GET_BLSERIALPRODUCTS_FOR_CODES_QUERY);
     fQuery.addQueryParameter("codes", serialProductCodes);

@@ -29,14 +29,25 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
-
+/**
+ * It is used to allocate the order in consignments.
+ *
+ * @author Sunil
+ */
 public class DefaultBlAllocationService extends DefaultAllocationService implements
     BlAllocationService {
   private static final Logger LOG = Logger
       .getLogger(DefaultBlAllocationService.class);
   private BlStockLevelDao blStockLevelDao;
 
-
+  /**
+   * Create consignment.
+   *
+   * @param order  -  the order
+   * @param code   -  the consignment code
+   * @param result -  the SourcingResults
+   * @return ConsignmentModel
+   */
   @Override
   public ConsignmentModel createConsignment(AbstractOrderModel order, String code, SourcingResult result) {
     ServicesUtil.validateParameterNotNullStandardMessage("result", result);

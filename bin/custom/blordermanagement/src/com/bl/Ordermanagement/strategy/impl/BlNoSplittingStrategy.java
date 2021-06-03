@@ -1,7 +1,6 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
-import com.bl.Ordermanagement.services.impl.DefaultBlAssignSerialService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -23,7 +22,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * It is a strategy to find out if order splitting is possible or not, sourcing can be possible from single warehouse.
+ * It is a strategy to find out if order splitting is possible or not, sourcing can be possible from
+ * single warehouse.
  *
  * @author Sunil
  */

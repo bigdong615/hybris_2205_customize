@@ -5,13 +5,16 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.sourcing.context.populator.SourcingLocationPopulator;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Required;
 
+/**
+ * Sourcing Location Service to create the sourcing location from warehouse.
+ *
+ * @author Sunil
+ */
 public class DefaultBlSourcingLocationService implements BlSourcingLocationService {
 
   private Set<SourcingLocationPopulator> sourcingLocationPopulators;
@@ -33,7 +36,7 @@ public class DefaultBlSourcingLocationService implements BlSourcingLocationServi
       sourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(sourcingLocations);
     } else {
-      Set<SourcingLocation> newSourcingLocations =  new HashSet<SourcingLocation>();
+      Set<SourcingLocation> newSourcingLocations = new HashSet<SourcingLocation>();
       newSourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(newSourcingLocations);
     }

@@ -11,11 +11,19 @@ import java.util.Set;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * Filter to find out exact warehouse matching with delivery address.
+ *
+ * @author Sunil
+ */
 public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingLocationFilter {
   private static final Logger LOG = Logger
       .getLogger(BlDeliveryStateSourcingLocationFilter.class);
   private BlStateWarehouseMappingDao blStateWarehouseMappingDao;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Collection<WarehouseModel> applyFilter(AbstractOrderModel order,
       Set<WarehouseModel> locations) {
@@ -29,6 +37,9 @@ public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingL
     return locations;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void filterLocations(AbstractOrderModel order, Set<WarehouseModel> locations) {
     this.filterResultOperator = SourcingFilterResultOperator.AND;

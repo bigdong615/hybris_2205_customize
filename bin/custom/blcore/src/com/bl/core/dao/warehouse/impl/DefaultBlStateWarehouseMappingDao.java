@@ -16,21 +16,23 @@ import de.hybris.platform.servicelayer.search.SearchResult;
 public class DefaultBlStateWarehouseMappingDao implements BlStateWarehouseMappingDao {
 
     private FlexibleSearchService flexibleSearchService;
-    private static final String FIND_BL_STATE_WAREHOUSE_BY_STATE_CODE = "SELECT {pk} FROM {" + BlStateWarehouseMappingModel._TYPECODE + "} WHERE {" + BlStateWarehouseMappingModel.CODE + "} IN ({{SELECT {reg:PK} FROM {Region as reg} WHERE {reg:isoCodeShort} =  ?isoCodeShort }})";
+    private static final String FIND_BL_STATE_WAREHOUSE_BY_STATE_CODE =
+        "SELECT {pk} FROM {" + BlStateWarehouseMappingModel._TYPECODE + "} WHERE {"
+            + BlStateWarehouseMappingModel.CODE
+            + "} IN ({{SELECT {reg:PK} FROM {Region as reg} WHERE {reg:isoCodeShort} =  ?isoCodeShort }})";
 
     /**
-     * Get StateWarehouse for given state isocode short.
-     *
-     * @param isoCodeShort -   Region isocodeshort.
-     * @return StateWarehouseMapping object.
+     * {@inheritDoc}
      */
     @Override
-    public BlStateWarehouseMappingModel getStateWarehouseForStateCode(String isoCodeShort) {
-        final FlexibleSearchQuery query = new FlexibleSearchQuery(FIND_BL_STATE_WAREHOUSE_BY_STATE_CODE);
+    public BlStateWarehouseMappingModel getStateWarehouseForStateCode(final String isoCodeShort) {
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(
+            FIND_BL_STATE_WAREHOUSE_BY_STATE_CODE);
         query.addQueryParameter("isoCodeShort", isoCodeShort);
         final SearchResult result = getFlexibleSearchService().search(query);
-        BlStateWarehouseMappingModel  model = (BlStateWarehouseMappingModel)result.getResult().get(0);
-        return  model;
+        BlStateWarehouseMappingModel model = (BlStateWarehouseMappingModel) result.getResult()
+            .get(0);
+        return model;
     }
 
     public FlexibleSearchService getFlexibleSearchService() {
