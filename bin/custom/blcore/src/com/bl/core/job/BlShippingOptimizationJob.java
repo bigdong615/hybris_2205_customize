@@ -1,9 +1,6 @@
 package com.bl.core.job;
 
 
-import com.bl.constants.BlInventoryScanLoggingConstants;
-import com.bl.core.constants.GeneratedBlCoreConstants;
-import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.logging.BlLogger;
@@ -31,25 +28,20 @@ public class BlShippingOptimizationJob extends AbstractJobPerformable<CronJobMod
      */
     @Override
     public PerformResult perform(final CronJobModel cronJobModel) {
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlShippingOptimizationJob for ThreeDayGround...");
-        changeGroundStatus(getZoneDeliveryModeService().getAllGroundedConsignments(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode()),
-                OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode());
-
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlShippingOptimizationJob for TwoDayGround...");
-        changeGroundStatus(getZoneDeliveryModeService().getAllGroundedConsignments(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode()),
-                OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode());
-
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlShippingOptimizationJob for OvernightGround...");
-        changeGroundStatus(getZoneDeliveryModeService().getAllGroundedConsignments(OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()),
-                null);
-
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlShippingOptimizationJob...");
+        changeGroundStatus(getZoneDeliveryModeService().getAllGroundedConsignments());
         return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
     }
 
-    private void changeGroundStatus(final Collection<ConsignmentModel> groundConsignments, final String newStatus) {
+    /**
+     * This method will iterate over the consignments of call strategy
+     *
+     * @param groundConsignments models
+     */
+    private void changeGroundStatus(final Collection<ConsignmentModel> groundConsignments) {
         if(CollectionUtils.isNotEmpty(groundConsignments)) {
             for(ConsignmentModel model : groundConsignments) {
-                getBlShippingOptimizationStrategy().getOptimizedShippingMethodForOrder(model, Boolean.TRUE);
+                getBlShippingOptimizationStrategy().generateShipmentLabelForConsignment(model);
             }
         }
     }

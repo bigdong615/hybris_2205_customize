@@ -234,8 +234,7 @@ public interface BlDeliveryModeService {
     /**
      * This method will return Collection of Consignment models with input
      *
-     * @param optimizedShippingMethodEnum 3 or 2 or overnight
      * @return Collection<ConsignmentModel>
      */
-    Collection<ConsignmentModel> getAllGroundedConsignments(final String optimizedShippingMethodEnum);
+    Collection<ConsignmentModel> getAllGroundedConsignments();
 }

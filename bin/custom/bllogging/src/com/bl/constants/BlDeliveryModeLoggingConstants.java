@@ -68,7 +68,7 @@ public class BlDeliveryModeLoggingConstants {
     public static final String BASE_STORE_DIMENSIONAL_FACTOR = "Fetching dimensional factor from base store : ";
 
     public static final String SHIPPING_OPTIMIZATION = "Fetching shipping optimization record!!";
-    public static final String CONSIGNMENT_FETCHING = "Fetching Consignments for : ";
+    public static final String CONSIGNMENT_FETCHING = "Fetching Consignments for yesterday and today!!";
 
 
     public static final String PAY_BY_CUSTOMER = "payByCustomer";

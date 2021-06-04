@@ -4,6 +4,7 @@ import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.*;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao implements BlDeliveryModeDao {
 
@@ -276,14 +278,16 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Collection<ConsignmentModel> getAllGroundedConsignments(final String optimizedShippingMethodEnum) {
-        final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {OptimizedShippingMethodEnum as opti} " +
-                "where {opti.pk} = {c.optimizedShippingMethod} and {opti.code} = ?optimizedShippingMethodEnum ");
+    public Collection<ConsignmentModel> getAllGroundedConsignments(final String yDay, final String today) {
+        final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs}" +
+                "where {c.optimizedShippingStartDate} in ('" + yDay + "', '" + today + "') and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-        query.addQueryParameter("optimizedShippingMethodEnum", optimizedShippingMethodEnum);
         final Collection<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.CONSIGNMENT_FETCHING + optimizedShippingMethodEnum);
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.CONSIGNMENT_FETCHING);
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
 

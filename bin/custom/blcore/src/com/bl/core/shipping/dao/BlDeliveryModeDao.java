@@ -143,8 +143,9 @@ public interface BlDeliveryModeDao {
     /**
      * This method will return Collection of Consignment models with input
      *
-     * @param optimizedShippingMethodEnum 3 or 2 or overnight
+     * @param yDay date
+     * @param today date
      * @return Collection<ConsignmentModel>
      */
-    Collection<ConsignmentModel> getAllGroundedConsignments(final String optimizedShippingMethodEnum);
+    Collection<ConsignmentModel> getAllGroundedConsignments(final String yDay, final String today);
 }

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import de.hybris.platform.acceleratorservices.payment.strategies.CreateSubscriptionRequestStrategy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -668,13 +669,24 @@ public final class BlDateTimeUtils
 	 * @param rentalStart date
 	 * @return int difference of days
 	 */
-	public static int getBusinessDaysDifferenceWithCutOffTime(final Date rentalStart) {
-		int result = BlDateTimeUtils.getDaysBetweenBusinessDays(BlDateTimeUtils.getCurrentDateUsingCalendar(
-				BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), BlDateTimeUtils.convertDateToStringDate(
+	public static int getBusinessDaysDifferenceWithCutOffTime(final Date optimizedDate, final Date rentalStart, final String time) {
+		int result = BlDateTimeUtils.getDaysBetweenBusinessDays(BlDateTimeUtils.convertDateToStringDate(
+				optimizedDate, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), BlDateTimeUtils.convertDateToStringDate(
 				rentalStart, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN));
-		if(BlDateTimeUtils.compareTimeWithCutOff("16:00")) {
+		if(BlDateTimeUtils.compareTimeWithCutOff(time)) {
 			result = result - BlInventoryScanLoggingConstants.ONE;
 		}
 		return result;
+	}
+
+	/**
+	 * this method will return pass date
+	 *
+	 * @return
+	 */
+	public static String getYesterdayDate() {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, -BlInventoryScanLoggingConstants.ONE);
+		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN).format(calendar.getTime()).toString();
 	}
 }
