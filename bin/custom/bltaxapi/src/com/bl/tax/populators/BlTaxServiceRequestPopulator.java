@@ -213,7 +213,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     {
       discountTaxLine.setQuantity(BltaxapiConstants.QTY);
       discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
-      Double discountAmount = abstractOrder.getGiftCardAmount() + abstractOrder.getTotalDiscounts();
+      final Double giftCardAmount = null != abstractOrder.getGiftCardAmount() ?  abstractOrder.getGiftCardAmount() : 0.0;
+      final Double totalDiscount = null != abstractOrder.getTotalDiscounts() ? abstractOrder.getTotalDiscounts() :0.0;
+      final Double discountAmount = giftCardAmount + totalDiscount;
       discountTaxLine.setAmount(- discountAmount);
       discountTaxLine.setTaxCode(BltaxapiConstants.DISCOUNT_TAX_CODE);
       taxLines.add(discountTaxLine);
