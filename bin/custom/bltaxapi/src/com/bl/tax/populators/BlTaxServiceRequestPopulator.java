@@ -2,6 +2,7 @@ package com.bl.tax.populators;
 
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import com.bl.tax.Addresses;
@@ -161,8 +162,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           final String addressState = abstractOrder.getDeliveryAddress().getRegion().getName();
             taxRequest.setTaxExemptState(addressState.equalsIgnoreCase(abstractOrder.getUser().getTaxExemptState()) ? addressState : null);
           final Date endDay = getDateForRequest(abstractOrder);
-          if (null != abstractOrder.getUser().getTaxExemptExpiry() && null != endDay && endDay
-                .before(abstractOrder.getUser().getTaxExemptExpiry()) && null != taxRequest.getTaxExemptState()) {
+          if (null != abstractOrder.getUser().getTaxExemptExpiry() && null != endDay && endDay.compareTo(abstractOrder.getUser().getTaxExemptExpiry()) < 0 && null != taxRequest.getTaxExemptState()) {
               taxRequest.setTaxExemptExpiry(abstractOrder.getUser().getTaxExemptExpiry());
               taxRequest.setExemptionNo(StringUtils.isNotBlank(abstractOrder.getUser().getTaxExemptNumber()) ? abstractOrder.getUser().getTaxExemptNumber() : null);
               taxRequest.setCommit(abstractOrder.getUser().getIsTaxExempt());
@@ -178,9 +178,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
 
   private Date getDateForRequest(final AbstractOrderModel abstractOrder) throws ParseException {
     final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-
     if (null != rentalDateDto && null != rentalDateDto.getSelectedToDate()) {
-        return new SimpleDateFormat(BltaxapiConstants.DATE_FORMAT).parse(rentalDateDto.getSelectedToDate());
+      return BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate() , BltaxapiConstants.DATE_FORMAT);
       }
 
     if (abstractOrder.getEntries().stream()
