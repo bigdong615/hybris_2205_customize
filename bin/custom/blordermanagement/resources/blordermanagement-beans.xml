@@ -17,6 +17,8 @@
 		<property name="availabilityMap" type="java.util.Map&lt;String, java.util.List&lt;de.hybris.platform.ordersplitting.model.StockLevelModel>>" />
 		<property name="allocatedMap" type="java.util.Map&lt;String, Long>" />
 		<property name="completeSourcePossible" type="boolean" />
+		<property name="groundAvailability" type="boolean" />
+		<property name="groundAvailabilityCode" type="java.lang.String" />
 	</bean>
 	
 

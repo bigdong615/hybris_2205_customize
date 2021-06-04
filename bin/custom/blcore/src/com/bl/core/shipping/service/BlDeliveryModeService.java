@@ -1,9 +1,12 @@
 package com.bl.core.shipping.service;
 
+import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.*;
+import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -213,4 +216,26 @@ public interface BlDeliveryModeService {
 	  */
    boolean checkCartEntriesAvailability(final String rentalStart, final String rentalEnd,
          final ZoneDeliveryModeModel deliveryModeModel);
+
+    /**
+     * This method will return ShippingOptimizationModel with input elements
+     *
+     * @param carrierId UPS/FedEx or 2/1
+     * @param warehouseCode CA/MA or 1/2
+     * @param customerZip from delivery address
+     * @param serviceDays businessDays ground availability
+     * @param inbound going/coming
+     *
+     * @return ShippingOptimizationModel
+     */
+    ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, final String customerZip,
+                                                         final int serviceDays, final int inbound);
+
+    /**
+     * This method will return Collection of Consignment models with input
+     *
+     * @param optimizedShippingMethodEnum 3 or 2 or overnight
+     * @return Collection<ConsignmentModel>
+     */
+    Collection<ConsignmentModel> getAllGroundedConsignments(final String optimizedShippingMethodEnum);
 }

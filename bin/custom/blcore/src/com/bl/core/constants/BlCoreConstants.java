@@ -159,11 +159,14 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES ="lenses";
 	public static final String CAMERAS ="cameras";
 	public static final String PRODUCTION ="production";
+
+	public static final int SKIP_THREE_DAYS = 3;
 	public static final int SKIP_TWO_DAYS = 2;
+	public static final int SKIP_ONE_DAYS = 1;
+
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
-
 
 	private BlCoreConstants()
 	{

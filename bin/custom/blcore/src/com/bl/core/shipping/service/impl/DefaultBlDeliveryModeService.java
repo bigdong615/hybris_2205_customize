@@ -22,6 +22,7 @@ import com.bl.integration.services.BlFedExSameDayService;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.Sets;
 
+import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -30,6 +31,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeValueModel;
 import de.hybris.platform.order.impl.DefaultZoneDeliveryModeService;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -598,7 +600,24 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
    	} 
     	return false;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, final String customerZip,
+                                                                final int serviceDays, final int inbound) {
+        return getBlZoneDeliveryModeDao().getOptimizedShippingRecord(carrierId, warehouseCode, customerZip, serviceDays, inbound);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<ConsignmentModel> getAllGroundedConsignments(final String optimizedShippingMethodEnum) {
+        return getBlZoneDeliveryModeDao().getAllGroundedConsignments(optimizedShippingMethodEnum);
+    }
+
     /**
      * Gets the rental start date by subtracting number of days to skip for selected delivery mode.
      *
@@ -618,7 +637,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
        }
        return Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
-    
+
     /**
      * Gets the rental end date by adding number of days to skip for selected delivery mode..
      *

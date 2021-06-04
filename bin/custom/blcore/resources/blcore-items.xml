@@ -128,7 +128,25 @@
         </enumtype>
         <!-- BL-542 End-->
 
-        
+        <!--Shipping Optimization-->
+        <enumtype generate="true" code="OptimizedShippingMethodEnum" autocreate="true" dynamic="true">
+            <value code="THREE_DAY_GROUND"/>
+            <value code="TWO_DAY_GROUND"/>
+            <value code="ONE_DAY_GROUND"/>
+            <value code="TWO_DAY_AIR"/>
+            <value code="TWO_DAY_AIR_AM"/>
+            <value code="NEXT_DAY_AIR"/>
+            <value code="NEXT_DAY_AIR_AM"/>
+            <value code="NEXT_DAY_AIR_SAT"/>
+            <value code="DEFAULT"/>
+        </enumtype>
+
+        <enumtype generate="true" code="OptimizedShippingTypeEnum" autocreate="true" dynamic="true">
+            <value code="WAREHOUSE2WAREHOUSE"/>
+            <value code="WAREHOUSE2CUSTOMER"/>
+            <value code="WAREHOUSE2PICKUP"/>
+        </enumtype>
+        <!--Shipping Optimization End-->
 
     </enumtypes>
 
@@ -1899,6 +1917,73 @@
                 <description>Extending ConsignmentEntry type with additional attributes.</description>
                 <attributes>
                     <attribute type="serialProductCodes" qualifier="serialProductCodes">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="Consignment" autocreate="false" generate="false">
+                <description>Extending Consignment type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="optimizedShippingStartDate" type="java.util.Date">
+                        <description>Optimized shipping from date.</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="optimizedShippingEndDate" type="java.util.Date">
+                        <description>optimized shipping end date.</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
+                        <description>Shipping method optimization type</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="optimizedShippingType" type="optimizedShippingTypeEnum">
+                        <description>Shipping method optimization type</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
+        <typegroup name="ShippingOptimization">
+            <itemtype code="ShippingOptimization" autocreate="true" generate="false">
+                <description>Shipping Optimization for optimizing shipping method after order placement.</description>
+                <deployment table="ShippingOptimization" typecode="12216"/>
+                <attributes>
+                    <attribute type="java.lang.Integer" qualifier="groundShippingDaysID">
+                        <modifiers read="true" write="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="Region" qualifier="state">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="zip">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="serviceDays">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="zone">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="homeBaseID">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="carrierID">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="inbound">
                         <modifiers read="true" write="true"/>
                         <persistence type="property"/>
                     </attribute>

@@ -661,4 +661,20 @@ public final class BlDateTimeUtils
 		return localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY
 				|| blackOutDates.stream().anyMatch(date -> DateUtils.isSameDay(date, dateToCheck));
 	}
+
+	/**
+	 * This method will return business days difference considering cutOff time for current day
+	 *
+	 * @param rentalStart date
+	 * @return int difference of days
+	 */
+	public static int getBusinessDaysDifferenceWithCutOffTime(final Date rentalStart) {
+		int result = BlDateTimeUtils.getDaysBetweenBusinessDays(BlDateTimeUtils.getCurrentDateUsingCalendar(
+				BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), BlDateTimeUtils.convertDateToStringDate(
+				rentalStart, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN));
+		if(BlDateTimeUtils.compareTimeWithCutOff("16:00")) {
+			result = result - BlInventoryScanLoggingConstants.ONE;
+		}
+		return result;
+	}
 }

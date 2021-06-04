@@ -802,4 +802,21 @@
 	</bean>
 	<!--Gift card End-->
 
+	<!-- Shipping Optimization-->
+	<alias name="defaultBlShippingOptimizationStrategy" alias="blShippingOptimizationStrategy"/>
+	<bean id="defaultBlShippingOptimizationStrategy"
+		  class="com.bl.core.shipping.strategy.impl.DefaultBlShippingOptimizationStrategy"
+		  parent="abstractBusinessService">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+	</bean>
+
+	<bean id="blShippingOptimizationJob" class="com.bl.core.job.BlShippingOptimizationJob"
+		  parent="abstractJobPerformable">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
+		<property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
+	</bean>
+	<!-- Shipping Optimization End-->
+
 </beans>
