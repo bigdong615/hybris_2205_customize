@@ -16,7 +16,7 @@
 	<c:otherwise>
 		<%-- jquery --%>
 		<script src="${commonResourcePathHtml}/js/jquery-3.5.1.min.js"></script>
-		
+		<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 		<%-- plugins --%>
 		<script src="${commonResourcePathHtml}/js/enquire.min.js"></script>
 		<script src="${commonResourcePathHtml}/js/Imager.min.js"></script>
@@ -37,7 +37,13 @@
 		<script src="${commonResourcePathHtml}/js/jquery.slideviewer.custom.1.2.js"></script>
 		
 		<%-- Custom ACC JS --%>
+
+		<%-- added custom js bl-custom.js for gift card --%>
+		<script src="${commonResourcePathHtml}/js/bl-custom.js"></script>
+		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+
     <script src="${commonResourcePathHtml}/js/acc.address.js"></script>
+
 		<script src="${commonResourcePathHtml}/js/acc.autocomplete.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.carousel.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.cart.js"></script>

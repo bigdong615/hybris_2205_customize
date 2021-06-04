@@ -1,0 +1,2 @@
+## messageSource=classpath:/blcore/messages/email-giftCard_$lang.properties
+${ctx.messages.getMessage('giftCardEmailSubject')}

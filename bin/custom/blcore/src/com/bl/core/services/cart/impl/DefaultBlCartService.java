@@ -40,13 +40,9 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
 
   private CommerceCartService commerceCartService;
-  
-  private CommerceCartCalculationStrategy commerceCartCalculationStrategy;
-
+	private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
 	private BlCommerceStockService blCommerceStockService;
-	
 	private BaseStoreService baseStoreService;
-	
 	private BlDatePickerService blDatePickerService;
 
   /**
@@ -98,7 +94,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		if (BooleanUtils.isFalse(cartModel.getCalculated()))
 		{
 			final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
-			getCommerceCartCalculationStrategy().recalculateCart(parameter);
+			getBlCheckoutCartCalculationStrategy().calculateCart(parameter);
 		}
 	}
 
@@ -119,7 +115,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 			getModelService().save(cartEntryModel);
 			getModelService().save(cartModel);
 			final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
-			getCommerceCartCalculationStrategy().recalculateCart(parameter);
+			getBlCheckoutCartCalculationStrategy().recalculateCart(parameter);
 		}
 	}
 	
@@ -156,6 +152,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final CommerceCartParameter parameter = new CommerceCartParameter();
 		parameter.setCart(cartModel);
 		parameter.setEnableHooks(Boolean.TRUE);
+		parameter.setRecalculate(true);
 		return parameter;
 	}
 
@@ -225,21 +222,20 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   public void setCommerceCartService(CommerceCartService commerceCartService) {
     this.commerceCartService = commerceCartService;
   }
-  
-  /**
-	 * @return the commerceCartCalculationStrategy
+
+	/**
+	 * @return blCheckoutCartCalculationStrategy
 	 */
-	public CommerceCartCalculationStrategy getCommerceCartCalculationStrategy()
-	{
-		return commerceCartCalculationStrategy;
+	public CommerceCartCalculationStrategy getBlCheckoutCartCalculationStrategy() {
+		return blCheckoutCartCalculationStrategy;
 	}
 
 	/**
-	 * @param commerceCartCalculationStrategy the commerceCartCalculationStrategy to set
+	 * @param blCheckoutCartCalculationStrategy
 	 */
-	public void setCommerceCartCalculationStrategy(final CommerceCartCalculationStrategy commerceCartCalculationStrategy)
-	{
-		this.commerceCartCalculationStrategy = commerceCartCalculationStrategy;
+	public void setBlCheckoutCartCalculationStrategy(
+			CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
+		this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
 	}
 
 	/**
