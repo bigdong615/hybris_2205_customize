@@ -24,6 +24,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMPTY_STRING = "";
 	public static final String CODE = "code";
 	public static final String BRANDS = "Brands";
+
+	public static final String COUPON_APPLIED_MSG = "coupon_applied_msg";
+
+
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
 	public static final String BL_PAGE_TYPE = "blPageType";
@@ -156,6 +160,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String CAMERAS ="cameras";
 	public static final String PRODUCTION ="production";
 	public static final int SKIP_TWO_DAYS = 2;
+	public static final String GIFT_CARD = "giftcard-";
+	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
+	public static final String HYPHEN = "-";
 
 
 	private BlCoreConstants()

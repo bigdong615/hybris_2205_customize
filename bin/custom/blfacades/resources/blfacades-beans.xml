@@ -104,6 +104,10 @@
       <property name="statusUpdate" type="Boolean"/>
       <property name="deliveryNotes" type="String"/>
       <property name="isRentalCart" type="java.lang.Boolean"/>
+      <property name="giftCode" type="String"/>
+      <property name="grandTotal" type="PriceData"/>
+      <property name="giftCardDiscount" type="PriceData"/>
+      <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
   </bean>
 
     <!-- Shipping -->
@@ -219,8 +223,22 @@
   
   <bean class="de.hybris.platform.commerceservices.service.data.CommerceCartParameter">
 		  <property name="isFromAddToCartPopup" type="Boolean"/>
-	</bean>	
+	</bean>
 
+  <!--BL-563 Gift Card-->
+  <bean class="com.bl.facades.giftcard.data.BLGiftCardData">
+      <property name="code" type="String"/>
+      <property name="amount" type="java.lang.Double"/>
+      <property name="redeemamount" type="java.lang.Double"/>
+      <property name="balanceamount" type="java.lang.Double"/>
+      <property name="reedemDate" type="java.util.Date" />
+      <property name="cartId" type="String" />
+      <property name="url" type="String" />
+      <property name="currency" type="de.hybris.platform.commercefacades.storesession.data.CurrencyData" />
+      <property name="amountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
+      <property name="balanceamountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
+      <property name="indicator" type="String" />
+  </bean>
 
 </beans>
 

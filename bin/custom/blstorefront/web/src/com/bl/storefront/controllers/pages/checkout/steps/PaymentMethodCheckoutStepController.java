@@ -30,6 +30,7 @@ import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
 import com.bl.storefront.controllers.ControllerConstants;
 
+import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -68,6 +69,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@Resource(name = "addressDataUtil")
 	private AddressDataUtil addressDataUtil;
+
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -384,6 +388,10 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		{
 			model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getBillTo_country()));
 			model.addAttribute("country", sopPaymentDetailsForm.getBillTo_country());
+		}
+		if(sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null) {
+			model.addAttribute(BlCoreConstants.COUPON_APPLIED_MSG, sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG));
+			sessionService.removeAttribute(BlCoreConstants.COUPON_APPLIED_MSG);
 		}
 	}
 

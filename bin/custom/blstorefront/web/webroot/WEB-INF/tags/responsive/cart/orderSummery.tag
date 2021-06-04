@@ -51,6 +51,12 @@
                   </c:choose>
                 </td>
               </tr>
+              <c:if test="${not empty cartData.appliedVouchers}">
+              <tr class="discount">
+              		  <td><spring:theme code="text.discount" /></td>
+              			<td class="text-end">-<format:blPrice priceData="${cartData.giftCardDiscount}" /></td>
+              </tr>
+              </c:if>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
                   <td class="text-end" id="cart-shipping-total"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
@@ -64,4 +70,16 @@
         </div>
       </div>
       <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
+      <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
+      		<form:form id="removeVoucherForm${loop.index}"
+      			action="${removeVoucherAction}" method="post"
+      			commandName="voucherForm">
+      			<p class="body14">
+      				<span class="gray60">${gift.code}</span> <a href="#"
+      					class="js-release-voucher-remove-btn" id="${gift.code}"><spring:theme
+      						code="text.remove"/></a><span class="float-end">${gift.redeemamount}</span>
+      			</p>
+      			<form:input id="${gift.code}" value="${gift.code}" path="voucherCode" />
+      		</form:form>
+      	</c:forEach>
 </div>
