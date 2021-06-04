@@ -19,7 +19,6 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
