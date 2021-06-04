@@ -21,7 +21,7 @@ public final class BltaxapiConstants extends GeneratedBltaxapiConstants
 
 	public static final String BL_TAX_REST_CLIENT_LOGGING_ENABLED = "Bl.tax.rest.client.logging.enabled";
 
-	public static final String DATE_FORMAT = "yyyy-MM-dd";
+	public static final String DATE_FORMAT = "dd-MM-yyyy";
 	public static final String SALESORDER = "SalesOrder";
 	public static final String SALESINVOICE = "SalesInvoice";
 	public static final String USD = "USD";
