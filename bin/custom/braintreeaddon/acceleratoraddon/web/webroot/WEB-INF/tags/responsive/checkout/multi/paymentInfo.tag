@@ -9,8 +9,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:if test="${not empty paymentInfo && showPaymentInfo}">
-    <ul class="checkout-order-summary-list">
+<c:if test="${not empty paymentInfo}">
+    <%-- <ul class="checkout-order-summary-list">
         <li class="checkout-order-summary-list-heading">
             <div class="title"><spring:theme code="checkout.multi.payment" text="Payment:"></spring:theme></div>
             <div class="address">
@@ -61,6 +61,24 @@
 				</c:if>
             </div>
         </li>
-    </ul>
+    </ul> --%>
+    
+    <div class="row mb-4">
+		<div class="col-2 text-center">
+			<img src="assets/cc-mastercard.png" style="width: 49px;">
+		</div>
+		<div class="col-5">
+			<p class="gray80">
+				<b class="gray100">${fn:escapeXml(brainTreePaymentInfo.cardType)}</b>
+				${fn:escapeXml(brainTreePaymentInfo.cardNumber)} exp
+				${fn:escapeXml(paymentInfo.expiryMonth)},${fn:escapeXml(paymentInfo.expiryYear)}
+			</p>
+		</div>
+		<div class="col-5">
+			<p class="gray80">
+				<b class="gray100">Order Notes</b> JayZ Superbowl Shoot
+			</p>
+		</div>
+	</div>
 </c:if>
 

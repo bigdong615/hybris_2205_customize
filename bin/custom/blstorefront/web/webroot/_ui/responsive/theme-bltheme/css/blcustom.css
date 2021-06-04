@@ -88,3 +88,8 @@ BL-31 Added for error message in login and create account popup
     width: 18px;
     height: 18px;
 }
+
+#order h1 {
+    font-size: 34px;
+    line-height: 40px;
+}
