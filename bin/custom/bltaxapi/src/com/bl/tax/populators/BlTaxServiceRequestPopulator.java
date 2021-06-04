@@ -50,7 +50,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     taxRequest.setCompanyCode(BltaxapiConstants.COMPANY_CODE);
     taxRequest.setCode(abstractOrder.getCode());
     taxRequest.setType(BltaxapiConstants.SALESORDER);
-    setOrderDateToRequest(abstractOrder , taxRequest);
+    setOrderDateToRequest(taxRequest);
     taxRequest.setCustomerCode(abstractOrder.getUser().getUid());
     taxRequest.setSalesPersonCode(null);
     taxRequest.setOriginCode(BltaxapiConstants.ORIGIN);
@@ -148,7 +148,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   /**
    * To set orderDate to request
    */
-  private void setOrderDateToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) {
+  private void setOrderDateToRequest(final TaxRequestData taxRequest) {
    taxRequest.setDate(DateFormatUtils.format(new Date(), BltaxapiConstants.DATE_FORMAT));
   }
 
