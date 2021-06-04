@@ -110,7 +110,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shipTo.setLine1(deliveryAddressForOrder.getLine1());
       shipTo.setLine2(deliveryAddressForOrder.getLine2());
       shipTo.setCity(deliveryAddressForOrder.getTown());
-      shipTo.setState(deliveryAddressForOrder.getDistrict());
+      shipTo.setState(deliveryAddressForOrder.getRegion().getName());
       shipTo.setRegion(null != deliveryAddressForOrder.getRegion()? deliveryAddressForOrder.getRegion().getIsocode() : null);
       shipTo.setCountry(null != deliveryAddressForOrder.getCountry()? deliveryAddressForOrder.getCountry().getIsocode() : null);
       shipTo.setPostalCode(deliveryAddressForOrder.getPostalcode());
@@ -149,7 +149,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * To set orderDate to request
    */
   private void setOrderDateToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) {
-   taxRequest.setDate(DateFormatUtils.format(abstractOrder.getDate(), BltaxapiConstants.DATE_FORMAT));
+   taxRequest.setDate(DateFormatUtils.format(new Date(), BltaxapiConstants.DATE_FORMAT));
   }
 
 
@@ -157,16 +157,15 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * Validate and set tax excemption details to request
    */
   private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) throws ParseException {
-        final boolean isTaxExempt = abstractOrder.getUser().getIsTaxExempt();
-        if(isTaxExempt) {
-          final String addressState = abstractOrder.getDeliveryAddress().getDistrict();
+        if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt())) {
+          final String addressState = abstractOrder.getDeliveryAddress().getRegion().getName();
             taxRequest.setTaxExemptState(addressState.equalsIgnoreCase(abstractOrder.getUser().getTaxExemptState()) ? addressState : null);
           final Date endDay = getDateForRequest(abstractOrder);
           if (null != abstractOrder.getUser().getTaxExemptExpiry() && null != endDay && endDay
                 .before(abstractOrder.getUser().getTaxExemptExpiry()) && null != taxRequest.getTaxExemptState()) {
               taxRequest.setTaxExemptExpiry(abstractOrder.getUser().getTaxExemptExpiry());
               taxRequest.setExemptionNo(StringUtils.isNotBlank(abstractOrder.getUser().getTaxExemptNumber()) ? abstractOrder.getUser().getTaxExemptNumber() : null);
-              taxRequest.setCommit(isTaxExempt);
+              taxRequest.setCommit(abstractOrder.getUser().getIsTaxExempt());
           }
           else {
             taxRequest.setCommit(false);
@@ -212,7 +211,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     {
       discountTaxLine.setQuantity(BltaxapiConstants.QTY);
       discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
-      discountTaxLine.setAmount(-10.00);
+      Double discountAmount = abstractOrder.getGiftCardAmount() + abstractOrder.getTotalDiscounts();
+      discountTaxLine.setAmount(- discountAmount);
       discountTaxLine.setTaxCode(BltaxapiConstants.DISCOUNT_TAX_CODE);
       taxLines.add(discountTaxLine);
     }
