@@ -111,12 +111,8 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shipTo.setLine2(deliveryAddressForOrder.getLine2());
       shipTo.setCity(deliveryAddressForOrder.getTown());
       if(null != deliveryAddressForOrder.getRegion()) {
-        if (null != deliveryAddressForOrder.getRegion().getName()){
           shipTo.setState(deliveryAddressForOrder.getRegion().getName());
-        }
-        if (null != deliveryAddressForOrder.getRegion().getIsocode()) {
           shipTo.setRegion(deliveryAddressForOrder.getRegion().getIsocode());
-        }
       }
       if(null != deliveryAddressForOrder.getCountry() && null != deliveryAddressForOrder.getCountry().getIsocode()) {
         shipTo.setCountry(deliveryAddressForOrder.getCountry().getIsocode());
@@ -167,7 +163,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
   private void setTaxCommittedToRequest(final AbstractOrderModel abstractOrder , final TaxRequestData taxRequest) throws ParseException {
         if(BooleanUtils.isTrue(abstractOrder.getUser().getIsTaxExempt())) {
            String addressState = BltaxapiConstants.EMPTY_STRING;
-          if(null != abstractOrder.getDeliveryAddress().getRegion() && StringUtils.isNotBlank(abstractOrder.getDeliveryAddress().getRegion().getName())) {
+          if(null != abstractOrder.getDeliveryAddress().getRegion()) {
             addressState = abstractOrder.getDeliveryAddress().getRegion().getName();
           }
             taxRequest.setTaxExemptState(addressState.equalsIgnoreCase(abstractOrder.getUser().getTaxExemptState()) ? addressState : null);
