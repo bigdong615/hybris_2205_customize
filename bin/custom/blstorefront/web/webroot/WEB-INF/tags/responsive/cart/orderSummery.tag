@@ -7,6 +7,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 
+<c:url value="/checkout/removeGiftCard" var="removeGiftCardAction" />
 <spring:htmlEscape defaultHtmlEscape="true" />
 <div id="orderSummary" class="card">
       <h5>
@@ -51,15 +52,15 @@
                   </c:choose>
                 </td>
               </tr>
-              <c:if test="${not empty cartData.appliedVouchers}">
+              <c:if test="${fn:length(cartData.giftCardData) > 0}">
               <tr class="discount">
               		  <td><spring:theme code="text.discount" /></td>
-              			<td class="text-end">-<format:blPrice priceData="${cartData.giftCardDiscount}" /></td>
+              		  <td class="text-end" id="cart-shipping-discount">-<format:price priceData="${cartData.giftCardDiscount}" /></td>
               </tr>
               </c:if>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
-                  <td class="text-end" id="cart-shipping-total"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
+                  <td class="text-end" id="cart-shipping-total"> <format:price priceData="${cartData.totalPriceWithTax}" /> </td>
               </tr>
           </tbody>
       </table>
@@ -71,15 +72,15 @@
       </div>
       <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
       <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
-      		<form:form id="removeVoucherForm${loop.index}"
-      			action="${removeVoucherAction}" method="post"
-      			commandName="voucherForm">
+      		<form:form id="removeGiftCardForm${loop.index}"
+      			action="${removeGiftCardAction}" method="post"
+      			modelAttribute="giftCardForm">
       			<p class="body14">
       				<span class="gray60">${gift.code}</span> <a href="#"
-      					class="js-release-voucher-remove-btn" id="${gift.code}"><spring:theme
+      					class="remove-gift-card" id="${gift.code}"><spring:theme
       						code="text.remove"/></a><span class="float-end">${gift.redeemamount}</span>
       			</p>
-      			<form:input id="${gift.code}" value="${gift.code}" path="voucherCode" />
+      			<form:input id="${gift.code}" value="${gift.code}" path="giftCardCode" />
       		</form:form>
       	</c:forEach>
 </div>

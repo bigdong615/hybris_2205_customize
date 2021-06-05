@@ -128,16 +128,6 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     giftCardModelList.add(giftCardModel);
     cartModel.setGiftCard(giftCardModelList);
     cartModel.setCalculated(Boolean.FALSE);
-    List<String> appliedGiftCardCodeList;
-    if (CollectionUtils.isNotEmpty(cartModel.getAppliedCouponCodes())) {
-        appliedGiftCardCodeList = new ArrayList<>(cartModel.getAppliedCouponCodes());
-    } else {
-        appliedGiftCardCodeList = new ArrayList<>();
-    }
-    for (GiftCardModel gcCardModel : giftCardModelList) {
-        appliedGiftCardCodeList.add(gcCardModel.getCode());
-    }
-    cartModel.setAppliedCouponCodes(appliedGiftCardCodeList);
     getModelService().save(cartModel);
     final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
     commerceCartParameter.setCart(cartModel);
@@ -265,22 +255,17 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     List<GiftCardModel> giftCardModelList = new ArrayList<>();
     final GiftCardModel giftCard = getGiftCardDao().getGiftCard(giftCardCode);
     if (giftCard != null) {
-        final List<GiftCardModel> giftCardPresentInCart = cartModel.getGiftCard();
+        final Collection<GiftCardModel> giftCardPresentInCart = new ArrayList<>(cartModel.getGiftCard());
         this.clearUncommittedMovements(giftCard);
-        Collection<String> appliedGiftCardCodes = new ArrayList<>(
-            cartModel.getAppliedCouponCodes());
         for (GiftCardModel giftCardModel : giftCardPresentInCart) {
-          GiftCardModel gift = null;
+          //Remove gift card, if already present in current cart.
           if (giftCardModel.getCode().equals(giftCardCode)) {
-            appliedGiftCardCodes.removeIf(gcCode -> gcCode.equals(giftCardModel.getCode()));
-          } else {
-            gift = giftCardModel;
-            giftCardModelList.add(gift);
+             giftCardPresentInCart.removeIf(gcCode -> gcCode.getCode().equals(giftCard.getCode()));
+             break;
           }
         }
+        giftCardModelList.addAll(giftCardPresentInCart);
         cartModel.setGiftCard(giftCardModelList);
-        cartModel.setAppliedCouponCodes(appliedGiftCardCodes);
-
         cartModel.setCalculated(Boolean.FALSE);
         getModelService().save(cartModel);
         final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
