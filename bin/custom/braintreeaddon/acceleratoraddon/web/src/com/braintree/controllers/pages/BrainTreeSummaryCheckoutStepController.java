@@ -198,12 +198,12 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			}
 		}
 
-//		if (!placeOrderForm.isTermsCheck())
-//		{
-//			GlobalMessages.addErrorMessage(model, "checkout.error.terms.not.accepted");
-//			invalid = true;
-//			return invalid;
-//		}
+		if (!placeOrderForm.isTermsCheck())
+		{
+			GlobalMessages.addErrorMessage(model, "checkout.error.terms.not.accepted");
+			invalid = true;
+			return invalid;
+		}
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 
 		if (!getCheckoutFacade().containsTaxValues())
