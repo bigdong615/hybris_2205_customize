@@ -131,31 +131,6 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
                 LOG.error("what is this ? placeOrderForm.getSecurityCode: " + placeOrderForm.getSecurityCode());	
                 LOG.error("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(	
                                 placeOrderForm.getCustomFields()));
-                CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
-                boolean isPaymentAuthorized = false;
-					 boolean isPayPalCheckout = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT.equals(paymentInfo.getSubscriptionId())
-							|| BraintreeConstants.PAYPAL_PAYMENT.equals(paymentInfo.getSubscriptionId());
-					 boolean isOrderIntent = BraintreeConstants.PAYPAL_INTENT_ORDER.equalsIgnoreCase(brainTreeConfigService.getIntent());
-                boolean isPayPalPaymentMethodOrderIntent = isOrderIntent && isPayPalCheckout;
-
-                if (!isPayPalPaymentMethodOrderIntent)	
-                {	
-                try	
-                {	
-                        isPaymentAuthorized = getCheckoutFacade().authorizePayment(placeOrderForm.getSecurityCode());	
-                }	
-                catch (final AdapterException ae)	
-                {	
-                        // handle a case where a wrong paymentProvider configurations on the store see getCommerceCheckoutService().getPaymentProvider()
-                        LOG.error(ae.getMessage(), ae);
-                }
-                if (!isPaymentAuthorized)	
-                {
-
-                        GlobalMessages.addErrorMessage(model, "checkout.error.authorization.failed");
-                        return enterStep(model, redirectModel);
-                }	
-                }
 
 		final OrderData orderData;
 		try
@@ -223,22 +198,22 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			}
 		}
 
-		if (!placeOrderForm.isTermsCheck())
-		{
-			GlobalMessages.addErrorMessage(model, "checkout.error.terms.not.accepted");
-			invalid = true;
-			return invalid;
-		}
+//		if (!placeOrderForm.isTermsCheck())
+//		{
+//			GlobalMessages.addErrorMessage(model, "checkout.error.terms.not.accepted");
+//			invalid = true;
+//			return invalid;
+//		}
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 
-//		if (!getCheckoutFacade().containsTaxValues())
-//		{
-//			LOG.error(String.format(
-//					"Cart %s does not have any tax values, which means the tax cacluation was not properly done, placement of order can't continue",
-//					cartData.getCode()));
-//			GlobalMessages.addErrorMessage(model, "checkout.error.tax.missing");
-//			invalid = true;
-//		}
+		if (!getCheckoutFacade().containsTaxValues())
+		{
+			LOG.error(String.format(
+					"Cart %s does not have any tax values, which means the tax cacluation was not properly done, placement of order can't continue",
+					cartData.getCode()));
+			GlobalMessages.addErrorMessage(model, "checkout.error.tax.missing");
+			invalid = true;
+		}
 
 		if (!cartData.isCalculated())
 		{

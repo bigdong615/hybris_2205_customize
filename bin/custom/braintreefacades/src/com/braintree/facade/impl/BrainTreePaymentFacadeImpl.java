@@ -168,8 +168,9 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		//get value from form if we should show that payment info
 		final boolean isStoreInVault = brainTreeConfigService.getVaultingForCurrentUser(brainTreeSubscriptionInfoData.getPaymentProvider());
 		BrainTreeCreatePaymentMethodResult result = null;
-//		if (isAvailableCreatingNewPaymentMethod(brainTreeSubscriptionInfoData, isStoreInVault, isCreditEnabled))
-//		{
+		// The below code has been commented out because the credit card details needs to be stored in vault
+		//		if (isAvailableCreatingNewPaymentMethod(brainTreeSubscriptionInfoData, isStoreInVault, isCreditEnabled))
+		//		{
 			BraintreeInfo paymentMethodBrainTreeInfo = null;
 			paymentMethodBrainTreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
 			result = getBrainTreePaymentService().createPaymentMethodForCustomer(customer,
@@ -297,7 +298,8 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 					}
 					else
 					{
-						if (payment.getCardholderName().equals(paymentInfo.getCardholder()))
+						if (null != payment.getCardholderName() && null != paymentInfo.getCardholder() &&
+								payment.getCardholderName().equals(paymentInfo.getCardholder()))
 						{
 							return true;
 						}
