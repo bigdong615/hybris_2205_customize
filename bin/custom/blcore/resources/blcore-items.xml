@@ -192,6 +192,33 @@
         </relation>
         <!-- BL-542 End-->
 
+      <!-- Gift card Start-->
+      <relation code="GiftCard2Movement" generate="true" localized="false"
+        autocreate="true">
+        <sourceElement qualifier="giftCard" type="GiftCard"
+          cardinality="one" />
+        <targetElement qualifier="movements" type="GiftCardMovement"
+          cardinality="many" collectiontype="list" />
+      </relation>
+
+      <relation code="GiftCard2Order" generate="true" localized="false"
+        autocreate="true">
+        <deployment table="GiftCard2OrderRel" typecode="25671" />
+        <sourceElement qualifier="giftCard" type="GiftCard"
+          cardinality="many" collectiontype="list" />
+        <targetElement qualifier="order" type="AbstractOrder"
+          cardinality="many" collectiontype="list" />
+      </relation>
+
+      <relation code="GiftCard2Customer" generate="true" localized="false"
+        autocreate="true">
+        <sourceElement qualifier="giftCard" type="GiftCard"
+          cardinality="many" collectiontype="list" />
+        <targetElement qualifier="customer" type="Customer"
+          cardinality="one" />
+      </relation>
+      <!-- Gift card End-->
+
     </relations>
 
 
@@ -1159,6 +1186,145 @@
                     </attribute>
                 </attributes>
             </itemtype>
+
+            <!--Gift Card Start-->
+          <itemtype code="GiftCardEmailProcess" extends="StoreFrontCustomerProcess"
+            autocreate="true" generate="true">
+            <description>Represents process that is used for sending Gift Card email.</description>
+            <attributes>
+              <attribute qualifier="customerEmail" type="java.lang.String">
+                <persistence type="property" />
+                <description>Customer Email</description>
+              </attribute>
+              <attribute qualifier="giftcard" type="GiftCard">
+                <persistence type="property" />
+                <description>Gift Card for which email is sent</description>
+              </attribute>
+            </attributes>
+          </itemtype>
+
+          <itemtype code="GiftCard" autocreate="true" generate="true">
+            <deployment table="GiftCard" typecode="25239" />
+            <attributes>
+              <attribute qualifier="code" type="java.lang.String">
+                <description>Gift card code</description>
+                <modifiers write="true" read="true" optional="false" search="true" unique="true" />
+                <persistence type="property" />
+              </attribute>
+              <attribute qualifier="amount" type="java.lang.Double">
+                <description>Gift card amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="currency" type="Currency">
+                <description>Currency type of gift card</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute type="java.util.Date" qualifier="startDate">
+                <description>Gift card start date</description>
+                <modifiers write="true" read="true" optional="true"
+                  search="true" />
+                <persistence type="property" />
+              </attribute>
+              <attribute type="java.util.Date" qualifier="endDate">
+                <description>Gift card end date</description>
+                <modifiers write="true" read="true" optional="true"
+                  search="true" />
+                <persistence type="property" />
+              </attribute>
+              <attribute qualifier="active" type="java.lang.Boolean">
+                <description>It defines gift card is active or not</description>
+                <persistence type="property" />
+                <modifiers search="false" optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute qualifier="email" type="java.lang.Boolean">
+                <description>It defines whether email should be sent to user or not</description>
+                <persistence type="property" />
+                <modifiers search="false" optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute qualifier="issuer" type="java.lang.String">
+                <description>Gift card issuer, who created the gift card</description>
+                <persistence type="property" />
+                <modifiers search="false" optional="true" />
+              </attribute>
+              <attribute autocreate="true" qualifier="balance" type="java.lang.Double">
+                <description>Dynamic attribute for balance amount</description>
+                <modifiers write="false" />
+                <persistence type="dynamic" attributeHandler="giftCardbalance" />
+              </attribute>
+              <attribute qualifier="isPurchased" type="java.lang.Boolean">
+                <description>It defines that gift card is purchased or not</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="true" optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute qualifier="customerEmail" type="java.lang.String">
+                <description>Email of the user to whom an email should be sent</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="true" optional="true" />
+              </attribute>
+              <attribute qualifier="name" type="java.lang.String">
+                <description>Name of the user to whom a gift card has been issued</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="true" optional="true" />
+              </attribute>
+              <attribute qualifier="message" type="java.lang.String">
+                <description>Gift card message</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="false" optional="true" />
+              </attribute>
+            </attributes>
+          </itemtype>
+
+          <itemtype code="GiftCardMovement" autocreate="true"
+            generate="true">
+            <deployment table="GiftCardMovement" typecode="25240" />
+            <attributes>
+              <attribute qualifier="transactionId" type="java.lang.String">
+                <description>Gift card movement id</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true" optional="false" />
+              </attribute>
+              <attribute qualifier="amount" type="java.lang.Double">
+                <description>Gift card movement amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="currency" type="Currency">
+                <description>Currency of the gift card movement amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="order" type="Order">
+                <description>Gift card assigned to order</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="committed" type="java.lang.Boolean">
+                <description>It defines whether a gift card has been used or not</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute type="java.util.Date" qualifier="redeemDate">
+                <description>If defines, on which date a gift card has been used</description>
+                <modifiers write="true" read="true" optional="true"
+                  search="true" />
+                <persistence type="property" />
+              </attribute>
+            </attributes>
+          </itemtype>
+          <!--Gift Card End-->
+
          </typegroup>
          
         <typegroup name="Pricing">
@@ -1542,6 +1708,18 @@
                       <modifiers optional="true" read="true" write="true" />
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                       <description>flag to identify cart type rental or used gear</description>
+                    </attribute>
+                    <attribute qualifier="giftCardAmount" type="java.lang.Double">
+                      <description>Gift Card Amount</description>
+                      <modifiers read="true" write="true" search="false"
+                      optional="true" />
+                      <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="grandTotal" type="java.lang.Double">
+                      <description>Grand Total</description>
+                      <modifiers read="true" write="true" search="false"
+                      optional="true" />
+                      <persistence type="property" />
                     </attribute>
                 </attributes>
             </itemtype>

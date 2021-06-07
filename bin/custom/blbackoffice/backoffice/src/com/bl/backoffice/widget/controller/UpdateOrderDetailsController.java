@@ -35,6 +35,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -45,6 +46,7 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.facades.fexEx.data.SameDayCityReqData;
@@ -138,6 +140,12 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 	@Autowired
 	CalculationService calculationService;
+
+	@Value("${shipping.nyc.zip.code}")
+	private String nyc;
+
+	@Value("${shipping.sf.zip.code}")
+	private String sf;
 
 	private Converter<RegionModel, RegionData> regionConverter;
 
@@ -309,9 +317,15 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		{
 			final BlRushDeliveryModeModel zonedeliveryMode = (BlRushDeliveryModeModel) blZoneDeliveryMode;
 
-			final String warehouseZipCode = getWarehouseZipCode(zonedeliveryMode);
+			if (zonedeliveryMode.getShippingGroup().getCode().contains(BlCoreConstants.RUSH_SAN_CARLOS))
+			{
+				sameDayCityReqData.setWarehouseZipCode(sf);
+			}
+			else if (zonedeliveryMode.getShippingGroup().getCode().contains(BlCoreConstants.RUSH_NYC_NEXT_DAY))
+			{
+				sameDayCityReqData.setWarehouseZipCode(nyc);
+			}
 
-			sameDayCityReqData.setWarehouseZipCode(warehouseZipCode);
 			sameDayCityReqData.setDeliveryAddressZipCode(deliveryAddressZipCode);
 
 			try
