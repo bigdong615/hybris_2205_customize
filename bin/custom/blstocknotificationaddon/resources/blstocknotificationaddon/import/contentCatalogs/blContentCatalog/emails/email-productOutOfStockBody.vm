@@ -75,9 +75,9 @@ ${ctx.messages.getMessage('paragraphFirst', ${ctx.productData.name})}
 
 ${ctx.productData.name}<br />
 
-<a href="${ctx.secureBaseUrl}/rent/product/${ctx.productData.code}">
+<a href="${ctx.productPageURL}">
 #foreach($image in $ctx.productData.images) #if($image.imageType == "PRIMARY" && $image.format == "thumbnail" )
-  <img src="${ctx.mediaBaseUrl}$image.url" alt="${ctx.productData.name} photo" title="$ctx.productData.name" style="max-width:500px;"/>
+  <img src="$image.url" alt="${ctx.productData.name} photo" title="$ctx.productData.name" style="max-width:500px;"/>
 #end #end
 </a>
 </h3>

@@ -17,6 +17,7 @@
 
         <requires-extension name="blcore"/>
         <requires-extension name="customerinterestsfacades"/>
+        <requires-extension name="stocknotificationfacades"/>
 
         <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="com.bl.facades"/>
                 		

@@ -195,6 +195,7 @@
 		<property name="stockConverter" ref="stockConverter"/>
 		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
 		<property name="commercePriceService" ref="commercePriceService"/>
+		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
 	</bean>
 
 

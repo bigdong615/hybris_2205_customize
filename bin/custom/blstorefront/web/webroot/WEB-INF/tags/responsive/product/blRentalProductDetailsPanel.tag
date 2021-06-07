@@ -89,6 +89,7 @@
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                   <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span>
                                 </div>
+                                <!--BL-628: Notify Me-->
                                 <c:choose >
                                 <c:when test="${product.isUpcoming eq 'true'}">
                                 <spring:theme code="text.stock.notification.subscribe.title" var="colorBoxTitle" />
@@ -106,22 +107,12 @@
                                             data-bs-target="#getNotified">Unsubscribe Me</a>
                                       </c:when>
                                       <c:otherwise>
-                                         <c:url var="actionUrl" value="/my-account/my-stocknotification/add/${productData.code}"/>
-                                         <form:form id="stockNotificationForm" action="${actionUrl}" method="post" modelAttribute="stockNotificationForm">
-                                            <c:forEach items="${stockNotificationForm.channels}" var="channel" varStatus="loop">
-                                               <c:if test="${channel.visible}">
-                                                  <input name="channels[${fn:escapeXml(loop.index)}].channel" value="${fn:escapeXml(channel.channel)}" type="hidden"  />
-                                                  <input  type="checkbox"  class="checkbox" checked="checked"
-                                                     id="channel${fn:escapeXml(loop.index)}" name="channels[${fn:escapeXml(loop.index)}].enabled" />
-                                               </c:if>
-                                            </c:forEach>
-                                            <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 arrival-notification"  data-box-title="${colorBoxTitle}"
+                                         <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 arrival-notification"  data-box-title="${colorBoxTitle}"
                                                data-box-productcode="${product.code}" data-bs-toggle="modal"
                                                data-bs-target="#getNotified">
                                                <spring:theme code="text.get.notified" />
                                             </a>
-                                         </form:form>
-                                      </c:otherwise>
+                                         </c:otherwise>
                                    </c:choose>
                                 </sec:authorize>
                                 </c:when>

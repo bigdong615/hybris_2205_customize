@@ -22,18 +22,19 @@ public class OutOfStockNotificationEmailContext extends AbstractEmailContext<Sto
 
     private Converter<ProductModel, ProductData> productConverter;
     private Locale emailLocale;
+    private String productPageURL;
+    private static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
 
     @Override
     public void init(final StockNotificationProcessModel businessProcessModel, final EmailPageModel emailPageModel)
     {
         super.init(businessProcessModel, emailPageModel);
-
         productData = getProductConverter().convert(businessProcessModel.getProduct());
+        this.setProductPageURL(getBaseSiteurlData());
         setEmailLocale(businessProcessModel);
         updateBaseUrl(businessProcessModel, emailLocale);
         updateTitle(businessProcessModel, emailLocale);
         updateProductName(businessProcessModel, emailLocale);
-
     }
 
     protected void setEmailLocale(final StockNotificationProcessModel businessProcessModel)
@@ -93,6 +94,17 @@ public class OutOfStockNotificationEmailContext extends AbstractEmailContext<Sto
     }
     public ProductData getProductData() {
         return productData;
+    }
+
+    private String getBaseSiteurlData(){
+       return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, RENTAL_PDP_URL_PREFIX+productData.getCode());
+    }
+    public String getProductPageURL() {
+        return productPageURL;
+    }
+
+    public void setProductPageURL(String productPageURL) {
+        this.productPageURL = productPageURL;
     }
 
 }

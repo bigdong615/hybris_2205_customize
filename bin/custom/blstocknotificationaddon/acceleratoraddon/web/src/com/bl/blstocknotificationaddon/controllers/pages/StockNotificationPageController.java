@@ -3,6 +3,7 @@
  */
 package com.bl.blstocknotificationaddon.controllers.pages;
 
+import com.bl.blstocknotificationaddon.forms.NotificationChannelForm;
 import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
@@ -19,15 +20,13 @@ import com.bl.blstocknotificationaddon.forms.StockNotificationForm;
 import com.bl.blstocknotificationaddon.handlers.StockNotificationHandler;
 import de.hybris.platform.util.Config;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.spockframework.util.CollectionUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,6 +53,7 @@ public class StockNotificationPageController extends AbstractPageController
 	private static final String[] DISALLOWED_FIELDS = new String[] {};
 	private static final String IS_ADDING_NOTIFICATION = "isAddingNotification";
 	private static final String PRODUCT_DATA = "productData";
+	private static final String CHANNAL_TYPE = "EMAIL";
 
 	@Resource(name = "blProductInterestFacade")
 	private ProductInterestFacade productInterestFacade;
@@ -125,9 +125,10 @@ public class StockNotificationPageController extends AbstractPageController
 	@PostMapping(value = "/add/" + PRODUCT_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String addStockNotification(@PathVariable final String productCode,
-			@ModelAttribute("stockNotificationForm") final StockNotificationForm stockNotificationForm,
-			final HttpServletResponse response, final Model model)
+			@ModelAttribute("stockNotificationForm")  StockNotificationForm stockNotificationForm,
+									   final HttpServletRequest request,final HttpServletResponse response, final Model model)
 	{
+		stockNotificationForm = createFormData();
 		final Optional<ProductInterestData> optional = productInterestFacade
 				.getProductInterestDataForCurrentCustomer(productCode, NotificationType.BACK_IN_STOCK);
 
@@ -164,4 +165,17 @@ public class StockNotificationPageController extends AbstractPageController
 		return BlstocknotificationaddonManagerControllerConstants.Pages.AddNotificationPage;
 	}
 
+	/**
+	 * This method is created for providing form data.
+	 */
+	private StockNotificationForm createFormData(){
+		NotificationChannelForm notificationChannelForm = new NotificationChannelForm();
+		notificationChannelForm.setChannel(CHANNAL_TYPE);
+		notificationChannelForm.setEnabled(true);
+		List<NotificationChannelForm> notificationChannelFormList = new ArrayList<>();
+		notificationChannelFormList.add(notificationChannelForm);
+		StockNotificationForm stockNotificationForm = new StockNotificationForm();
+		stockNotificationForm.setChannels(notificationChannelFormList);
+		return stockNotificationForm;
+	}
 }
