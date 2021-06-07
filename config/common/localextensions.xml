@@ -79,7 +79,8 @@
     <extension name='cmsfacades'/>
 
     <!-- Extension to enable customers to receive back-in-stock notifications for their interested products -->
-    <extension name='stocknotificationaddon'/>
+    <extension name='blstocknotificationaddon'/>
+    <extension name='customerinterestsaddon' />
 
     <!-- Extension to enable to support Groovy Programming Language -->
     <extension name='groovynature'/>

@@ -475,6 +475,17 @@
 		class="com.bl.facades.process.email.context.BlGiftCardEmailContext"
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
+	<bean id="outOfStockNotificationEmailContext" class="com.bl.facades.process.email.context.OutOfStockNotificationEmailContext" parent="abstractEmailContext" scope="prototype" >
+		<property name="productConverter" ref="productConverter"/>
+	</bean>
 
+	<alias name="defaultBlProductInterestFacade" alias="blProductInterestFacade"/>
+	<bean id="defaultBlProductInterestFacade" class="com.bl.facades.customerinterestsfacades.productinterest.impl.DefaultBlProductInterestFacade" parent="productInterestFacade">
+		<property name="modelService" ref="modelService"/>
+		<property name="userService" ref="userService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
 
 </beans>

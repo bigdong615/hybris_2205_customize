@@ -1,5 +1,6 @@
 package com.bl.storefront.controllers.pages;
 
+import com.bl.blstocknotificationaddon.handlers.StockNotificationHandler;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -11,13 +12,16 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import de.hybris.platform.notificationfacades.facades.NotificationPreferenceFacade;
+import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 
 /**
  * This is created to render rental product details related data .
@@ -38,6 +43,16 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
+
+   @Resource(name = "stockNotificationHandler")
+    private StockNotificationHandler stockNotificationHandler;
+
+    @Resource(name = "notificationPreferenceFacade")
+    private NotificationPreferenceFacade notificationPreferenceFacade;
+
+    @Resource(name = "stockNotificationFacade")
+    private StockNotificationFacade stockNotificationFacade;
+
 
   /**
    * This common method created to get rental duration for rental products from BlRentalDateUtils class
@@ -77,7 +92,10 @@ public class RentalProductPageController extends AbstractBlProductPageController
 				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
 				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
 				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA) );
+                model.addAttribute(BlControllerConstants.STOCK_NOTIFICATION_FORM, stockNotificationHandler
+               .prepareStockNotifcationFormByCustomer(notificationPreferenceFacade.getValidNotificationPreferences()));
+     model.addAttribute(BlControllerConstants.IS_WATCHING, stockNotificationFacade.isWatchingProduct(productData));
       return productDetail(encodedProductCode, options, productData, model, request, response);
   }
-  
+
 }

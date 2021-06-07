@@ -797,4 +797,12 @@
 	</bean>
 	<!--Gift card End-->
 
+	<bean id="generateOutOfStockNotificationEmail" parent="abstractGenerateEmailAction">
+		<property name="frontendTemplateName" value="ProductOutOfStockNotificationEmailTemplate" />
+	</bean>
+
+	<bean id="productOutOfStockNotificationEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
+		<property name="resource" value="classpath:/blcore/processes/productOutOfStockNotificationEmailProcess.xml" />
+	</bean>
+
 </beans>

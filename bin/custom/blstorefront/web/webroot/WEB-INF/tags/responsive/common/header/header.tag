@@ -126,6 +126,13 @@
        </div>
     </div>
 
+    <!-- Get notify modal start-->
+    <div class="modal fade signinbox" id="getNotified" tabindex="-1" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered modal-sm">
+       </div>
+    </div>
+   <!-- Get notify modal end -->
+
     <!-- modal for forgot password -->
         <div class="modal fade signinbox" id="forgotPass" tabindex="-1" aria-hidden="true">
            <div class="modal-dialog modal-dialog-centered modal-sm">
