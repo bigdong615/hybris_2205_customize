@@ -10,6 +10,7 @@
 
 <spring:url value="/cart/voucher/remove" var="removeVoucherAction" htmlEscape="false"/>
 
+<c:url value="/checkout/removeGiftCard" var="removeGiftCardAction" />
 <spring:htmlEscape defaultHtmlEscape="true" />
 <div id="orderSummary" class="card">
       <h5>
@@ -61,11 +62,11 @@
                <td class="text-end" id="cart-shipping-tax">
                - <format:blPrice priceData="${cartData.totalDiscounts}"/>
                </td>
-              </c:if>
+
             </tr>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
-                  <td class="text-end" id="cart-shipping-total"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
+                  <td class="text-end" id="cart-shipping-total"> <format:price priceData="${cartData.totalPriceWithTax}" /> </td>
               </tr>
           </tbody>
       </table>
@@ -110,12 +111,15 @@
       		<form:form id="removeVoucherForm${loop.index}"
       			action="${removeVoucherAction}" method="post"
       			modelAttribute="voucherForm">
+      		<form:form id="removeGiftCardForm${loop.index}"
+      			action="${removeGiftCardAction}" method="post"
+      			modelAttribute="giftCardForm">
       			<p class="body14">
       				<span class="gray60">${gift.code}</span> <a href="#"
-      					class="js-release-voucher-remove-btn" id="${gift.code}"><spring:theme
+      					class="remove-gift-card" id="${gift.code}"><spring:theme
       						code="text.remove"/></a><span class="float-end">${gift.redeemamount}</span>
       			</p>
-      			<form:input id="${gift.code}" value="${gift.code}" path="voucherCode" />
+      			<form:input id="${gift.code}" value="${gift.code}" path="giftCardCode" />
       		</form:form>
       	</c:forEach>
 </div>
