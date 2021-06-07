@@ -1,6 +1,7 @@
 package com.bl.core.shipping.dao.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.*;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
@@ -284,7 +285,8 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     @Override
     public Collection<ConsignmentModel> getAllGroundedConsignments(final String yDay, final String today) {
         final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs}" +
-                "where {c.optimizedShippingStartDate} in ('" + yDay + "', '" + today + "') and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
+                " where to_char({c.optimizedShippingStartDate},'" + BlCoreConstants.DATE_FORMAT + "') in ('" + yDay + "', '" + today + "') " +
+                "and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         final Collection<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.CONSIGNMENT_FETCHING);

@@ -615,10 +615,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public Collection<ConsignmentModel> getAllGroundedConsignments() {
-        return getBlZoneDeliveryModeDao().getAllGroundedConsignments(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST,
-                BlDateTimeUtils.getStringToDateWithTimeZone(BlDateTimeUtils.getYesterdayDate(),
-                        BlDeliveryModeLoggingConstants.ZONE_PST)) ,BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST,
-                BlDateTimeUtils.getStringToDateWithTimeZone(new Date().toString(), BlDeliveryModeLoggingConstants.ZONE_PST)));
+        return getBlZoneDeliveryModeDao().getAllGroundedConsignments(BlDateTimeUtils.getCurrentDateUsingCalendar(
+                BlDeliveryModeLoggingConstants.ZONE_PST, BlDateTimeUtils.getStringToDateWithTimeZone(BlDateTimeUtils.getYesterdayDate(),
+                        BlDeliveryModeLoggingConstants.ZONE_PST)) ,BlDateTimeUtils.getCurrentDateUsingCalendar(
+                                BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
     }
 
     /**

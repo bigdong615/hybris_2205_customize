@@ -672,8 +672,8 @@ public final class BlDateTimeUtils
 	public static int getBusinessDaysDifferenceWithCutOffTime(final Date optimizedDate, final Date rentalStart, final String time) {
 		int result = BlDateTimeUtils.getDaysBetweenBusinessDays(BlDateTimeUtils.convertDateToStringDate(
 				optimizedDate, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), BlDateTimeUtils.convertDateToStringDate(
-				rentalStart, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN));
-		if(BlDateTimeUtils.compareTimeWithCutOff(time)) {
+				rentalStart, BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN));
+		if(!BlDateTimeUtils.compareTimeWithCutOff(time)) {
 			result = result - BlInventoryScanLoggingConstants.ONE;
 		}
 		return result;
@@ -686,7 +686,9 @@ public final class BlDateTimeUtils
 	 */
 	public static String getYesterdayDate() {
 		final Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
 		calendar.add(Calendar.DATE, -BlInventoryScanLoggingConstants.ONE);
-		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN).format(calendar.getTime()).toString();
+		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN).format(calendar.getTime());
 	}
+
 }
