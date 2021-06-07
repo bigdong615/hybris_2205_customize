@@ -23,8 +23,8 @@ import org.apache.log4j.Logger;
  * @author Sunil
  */
 public class BlAvailabilitySourcingLocationPopulator implements SourcingLocationPopulator {
-  private static final Logger LOG = Logger
-      .getLogger(BlAvailabilitySourcingLocationPopulator.class);
+
+  private static final Logger LOG = Logger.getLogger(BlAvailabilitySourcingLocationPopulator.class);
   private BlCommerceStockService blCommerceStockService;
 
   public BlAvailabilitySourcingLocationPopulator() {
@@ -37,30 +37,35 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
    * @param source the WarehouseModel
    * @param target the SourcingLocation
    */
-  public void populate(WarehouseModel source, SourcingLocation target) {
+  public void populate(final WarehouseModel source, final SourcingLocation target) {
+
     Preconditions.checkArgument(source != null, "Point of service model (source) cannot be null.");
     Preconditions.checkArgument(target != null, "Sourcing location (target) cannot be null.");
-    Map<String, List<StockLevelModel>> availabilityMap;
-    AbstractOrderModel order = target.getContext().getOrderEntries().iterator().next().getOrder();
-    Set<String> productCodes = order.getEntries().stream()
+    final Map<String, List<StockLevelModel>> availabilityMap;
+    final AbstractOrderModel order = target.getContext().getOrderEntries().iterator().next()
+        .getOrder();
+    final Set<String> productCodes = order.getEntries().stream()
         .map(entry -> entry.getProduct().getCode()).collect(Collectors.toSet());
-    Collection<StockLevelModel> stockLevels = blCommerceStockService
+
+    final Collection<StockLevelModel> stockLevels = blCommerceStockService
         .getStockForProductCodesAndDate(productCodes,
             source, order.getRentalStartDate(), order.getRentalEndDate());
+
     if (CollectionUtils.isNotEmpty(stockLevels)) {
-      availabilityMap = blCommerceStockService.groupByProductsAvailability(stockLevels);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Populating availability map, serial products {} found for product codes {} from date {} to date {}",
-          stockLevels.stream().map(StockLevelModel :: getSerialProductCode).collect(Collectors.toList()),  productCodes, order.getRentalStartDate(), order.getRentalEndDate());
+      availabilityMap = blCommerceStockService.groupBySkuProductWithAvailability(stockLevels);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "Populating availability map, serial products  size = {} found for product codes {} from date {} to date {}",
+          stockLevels.size(), productCodes, order.getRentalStartDate(),
+          order.getRentalEndDate());
       target.setAvailabilityMap(availabilityMap);
     }
-
   }
 
   public com.bl.core.stock.BlCommerceStockService getBlCommerceStockService() {
     return blCommerceStockService;
   }
 
-  public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
+  public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService) {
     this.blCommerceStockService = blCommerceStockService;
   }
 

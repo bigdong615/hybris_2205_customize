@@ -50,14 +50,15 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    * @return ConsignmentModel
    */
   @Override
-  public ConsignmentModel createConsignment(AbstractOrderModel order, String code,
-      SourcingResult result) {
+  public ConsignmentModel createConsignment(final AbstractOrderModel order, final String code,
+      final SourcingResult result) {
+
     ServicesUtil.validateParameterNotNullStandardMessage("result", result);
     ServicesUtil.validateParameterNotNullStandardMessage("order", order);
     Assert.isTrue(!Strings.isNullOrEmpty(code), "Parameter code cannot be null or empty");
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating consignment for Location: '{}'",
         result.getWarehouse().getCode());
-    ConsignmentModel consignment = (ConsignmentModel) this.getModelService()
+    final ConsignmentModel consignment = (ConsignmentModel) this.getModelService()
         .create(ConsignmentModel.class);
     consignment.setCode(code);
     consignment.setOrder(order);
@@ -65,10 +66,11 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     try {
       consignment.setFulfillmentSystemConfig(
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
-      Set<Entry<AbstractOrderEntryModel, Long>> resultEntries = result.getAllocation().entrySet();
+      final Set<Entry<AbstractOrderEntryModel, Long>> resultEntries = result.getAllocation().entrySet();
       Optional<PointOfServiceModel> pickupPos = resultEntries.stream().map(entry ->
           ((AbstractOrderEntryModel) entry.getKey()).getDeliveryPointOfService()
       ).filter(Objects::nonNull).findFirst();
+
       if (pickupPos.isPresent()) {
         consignment.setStatus(ConsignmentStatus.READY);
         consignment.setDeliveryMode(this.getDeliveryModeService().getDeliveryModeForCode("pickup"));
@@ -82,7 +84,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             .setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
       }
 
-      Set<ConsignmentEntryModel> entries = resultEntries.stream().map(mapEntry ->
+      final Set<ConsignmentEntryModel> entries = resultEntries.stream().map(mapEntry ->
           this.createConsignmentEntry(mapEntry.getKey(), mapEntry.getValue(), consignment, result)
       ).collect(Collectors.toSet());
       consignment.setConsignmentEntries(entries);
@@ -94,43 +96,54 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       if (!consignment.getWarehouse().isExternal()) {
         this.getInventoryEventService().createAllocationEvents(consignment);
       }
-    } catch (AmbiguousIdentifierException var8) {
+    } catch (final AmbiguousIdentifierException var8) {
       consignment.setStatus(ConsignmentStatus.CANCELLED);
       BlLogger
           .logFormatMessageInfo(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
               "Cancelling consignment with code {}  since only one fulfillment system configuration is allowed per consignment.",
               consignment.getCode(), var8);
+    } catch (Exception ex) {
+      consignment.setStatus(ConsignmentStatus.CANCELLED);
+      BlLogger
+          .logFormatMessageInfo(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
+              "Cancelling consignment with code {}",
+              consignment.getCode(), ex);
     }
-    List<String> assignedSerialProducts = new ArrayList<>();
+
+    final List<String> allocatedProductCodes = new ArrayList<>();
     for (Set<String> aSet : result.getSerialProductMap().values()) {
-      assignedSerialProducts.addAll(aSet);
+      allocatedProductCodes.addAll(aSet);
     }
-    Collection<StockLevelModel> serialStocks = reserveSerialsAndSave(order,
-        new HashSet<>(assignedSerialProducts));
-    serialStocks.forEach(stock ->
-        stock.setReservedStatus(true)
-    );
+    final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
+        new HashSet<>(allocatedProductCodes));
+
     if ((!serialStocks.isEmpty()) && serialStocks.stream()
-        .allMatch(stock -> assignedSerialProducts.contains(stock.getSerialProductCode()))) {
+        .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+      serialStocks.forEach(stock -> stock.setReservedStatus(true));
       this.getModelService().saveAll(serialStocks);
+      this.getModelService().save(consignment);
+      return consignment;
+    } else {
+      return null;
     }
-    this.getModelService().save(consignment);
-    return consignment;
+
   }
 
-  private Collection<StockLevelModel> reserveSerialsAndSave(AbstractOrderModel order,
-      Set<String> serialProductCodes) {
+  private Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
+      final Set<String> serialProductCodes) {
+
     return blStockLevelDao
         .findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getRentalStartDate(),
             order.getRentalEndDate());
   }
 
-  protected ConsignmentEntryModel createConsignmentEntry(AbstractOrderEntryModel orderEntry,
-      Long quantity, ConsignmentModel consignment, SourcingResult result) {
+  protected ConsignmentEntryModel createConsignmentEntry(final AbstractOrderEntryModel orderEntry,
+      Long quantity, final ConsignmentModel consignment, final SourcingResult result) {
+
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
         "ConsignmentEntry :: Product [{}]: \tQuantity: '{}'",
         orderEntry.getProduct().getCode(), quantity);
-    ConsignmentEntryModel entry = (ConsignmentEntryModel) this.getModelService()
+    final ConsignmentEntryModel entry = (ConsignmentEntryModel) this.getModelService()
         .create(ConsignmentEntryModel.class);
     entry.setOrderEntry(orderEntry);
     entry.setQuantity(quantity);
@@ -138,7 +151,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
     entry.setSerialProductCodes(result.getSerialProductMap()
         .get(orderEntry.getEntryNumber()));   //setting serial products from result
-    Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
+    final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
       orderEntry.getConsignmentEntries().forEach(consignmentEntries::add);
     }
@@ -152,7 +165,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     return blStockLevelDao;
   }
 
-  public void setBlStockLevelDao(BlStockLevelDao blStockLevelDao) {
+  public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao) {
     this.blStockLevelDao = blStockLevelDao;
   }
 

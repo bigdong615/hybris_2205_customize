@@ -67,6 +67,16 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get);
   }
 
+  /**
+   * Validating the rules and assign the serials.
+   * @param context
+   * @param results
+   * @param warehouse
+   * @param result
+   * @param allEntrySourceComplete
+   * @param entry
+   * @param stocks
+   */
   private void validateAllocationRulesAndAssignSerials(final SourcingContext context, final Set<SourcingResult> results,
       final WarehouseModel warehouse, final SourcingResult result, final List<AtomicBoolean> allEntrySourceComplete,
       final AbstractOrderEntryModel entry, final List<StockLevelModel> stocks) {
@@ -123,6 +133,17 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     }
   }
 
+  /**
+   * Validate the fulfilled quantity against the assigned serials.
+   * @param context
+   * @param results
+   * @param warehouse
+   * @param result
+   * @param entry
+   * @param assignedSerials
+   * @param blConsignerSerials
+   * @return true if fulfilled quantity
+   */
   private boolean validateFulfilledQuantityAndAssignSerials(final SourcingContext context,
       final Set<SourcingResult> results, final WarehouseModel warehouse,
       final SourcingResult result, final AbstractOrderEntryModel entry,
@@ -132,6 +153,12 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         assignedSerials) && isFulfilledQuantityEqualToEntryQuantity(entry, result);
   }
 
+  /**
+   * Validate the fulfilled quantity equality with the entry quantity.
+   * @param entry
+   * @param result
+   * @return true if equal.
+   */
   private boolean isFulfilledQuantityEqualToEntryQuantity(final AbstractOrderEntryModel entry,
       final SourcingResult result) {
 
@@ -139,6 +166,18 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     return fulfilledQuantity == entry.getQuantity();
   }
 
+  /**
+   * Assign serials.
+   *
+   * @param context
+   * @param result
+   * @param results
+   * @param entry
+   * @param warehouse
+   * @param serialProducts
+   * @param fulfilledQuantity
+   * @return
+   */
   private boolean getUnAssignedAndFilteredSerials(final SourcingContext context, final SourcingResult result,
       final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
       final List<BlSerialProductModel> serialProducts, final long fulfilledQuantity) {
@@ -161,6 +200,12 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     }
   }
 
+  /**
+   * Get un-assigned serials.
+   * @param allSerialProducts
+   * @param assignedSerials
+   * @return set of un-assigned serials.
+   */
   private Set<BlSerialProductModel> getUnAssignedSerials(
       final Collection<BlSerialProductModel> allSerialProducts,
       final List<String> assignedSerials) {
@@ -170,6 +215,15 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         .collect(Collectors.toSet());
   }
 
+  /**
+   * Create sourcing result and assign serials.
+   * @param context
+   * @param result
+   * @param results
+   * @param entry
+   * @param warehouse
+   * @param serialProducts
+   */
   private void createResultAndAssignSerials(final SourcingContext context, final SourcingResult result,
       final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
       final Set<BlSerialProductModel> serialProducts) {
@@ -200,6 +254,17 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     context.getResult().setResults(results);
   }
 
+  /**
+   * Validate fulfilled quantity and order entry quantity.
+   * @param context
+   * @param result
+   * @param results
+   * @param entry
+   * @param warehouse
+   * @param serialProducts
+   * @param assignedSerials
+   * @return true if quantities are equal.
+   */
   private boolean validateSerialsAndFulfilledQuantityWithOrderEntry(final SourcingContext context, final SourcingResult result,
       final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
       final Set<BlSerialProductModel> serialProducts, final List<String> assignedSerials) {
@@ -225,6 +290,11 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     }
   }
 
+  /**
+   * Get all non-sale and non-BL consigner serials.
+   * @param serialProducts
+   * @return set of serials.
+   */
   private Set<BlSerialProductModel> getAllNonSaleAndNonBLConsignerSerials(
       final Collection<BlSerialProductModel> serialProducts) {
 
@@ -233,6 +303,11 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         .collect(Collectors.toSet());
   }
 
+  /**
+   * Get list of oldest serials.
+   * @param serialProducts
+   * @return list of oldest serials.
+   */
   private List<BlSerialProductModel> getOldestSerials(final List<BlSerialProductModel> serialProducts) {
 
     //set 0 for null values of no of days rented attribute of serial product
@@ -248,6 +323,12 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     return serialProducts;
   }
 
+  /**
+   * Get all sale-able serials.
+   * @param consignerSerials
+   * @param forSale
+   * @return set of serials.
+   */
   private Set<BlSerialProductModel> getAllForSaleSerials(
       final Set<BlSerialProductModel> consignerSerials,
       boolean forSale) {
@@ -256,6 +337,11 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         .collect(Collectors.toSet());
   }
 
+  /**
+   * Get all BL consigner serials.
+   * @param allSerialProducts
+   * @return BL consigner serials.
+   */
   private Set<BlSerialProductModel> getAllBLConsignerSerials(
       final Collection<BlSerialProductModel> allSerialProducts) {
 
@@ -267,7 +353,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     return blProductDao;
   }
 
-  public void setBlProductDao(BlProductDao blProductDao) {
+  public void setBlProductDao(final BlProductDao blProductDao) {
     this.blProductDao = blProductDao;
   }
 
@@ -275,7 +361,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     return modelService;
   }
 
-  public void setModelService(ModelService modelService) {
+  public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
   }
 

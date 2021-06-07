@@ -18,5 +18,5 @@ public interface BlSourcingLocationService {
    * @param location the WarehouseModel
    * @return sourcing location.
    */
-  public SourcingLocation createSourcingLocation(SourcingContext context, WarehouseModel location);
+  public SourcingLocation createSourcingLocation(final SourcingContext context, final WarehouseModel location);
 }

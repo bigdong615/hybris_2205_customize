@@ -27,8 +27,8 @@ import org.apache.log4j.Logger;
  * @author Sunil
  */
 public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessModel> {
-  private static final Logger LOG = Logger
-      .getLogger(BlSourceOrderAction.class);
+
+  private static final Logger LOG = Logger.getLogger(BlSourceOrderAction.class);
   private BusinessProcessService businessProcessService;
   private BlSourcingService blSourcingService;
   private AllocationService allocationService;
@@ -37,8 +37,8 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    * {@inheritDoc}
    */
   @Override
-  public void executeAction(OrderProcessModel process)
-      throws RetryLaterException, Exception {
+  public void executeAction(final OrderProcessModel process) throws RetryLaterException, Exception {
+
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Process: {} in step {}",
         process.getCode(), getClass().getSimpleName());
     final OrderModel order = process.getOrder();
@@ -47,7 +47,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
     try {
       results = blSourcingService.sourceOrder(order);
-    } catch (final IllegalArgumentException e) //NOSONAR
+    } catch (final IllegalArgumentException e)
     {
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
           "Could not create SourcingResults. Changing order status to SUSPENDED",
@@ -87,6 +87,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
    */
   protected void startConsignmentSubProcess(final Collection<ConsignmentModel> consignments,
       final OrderProcessModel process) {
+
     for (final ConsignmentModel consignment : consignments) {
       final ConsignmentProcessModel subProcess = getBusinessProcessService()
           .createProcess(
@@ -105,8 +106,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     return businessProcessService;
   }
 
-  public void setBusinessProcessService(
-      BusinessProcessService businessProcessService) {
+  public void setBusinessProcessService(final BusinessProcessService businessProcessService) {
     this.businessProcessService = businessProcessService;
   }
 
@@ -114,7 +114,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     return blSourcingService;
   }
 
-  public void setBlSourcingService(BlSourcingService blSourcingService) {
+  public void setBlSourcingService(final BlSourcingService blSourcingService) {
     this.blSourcingService = blSourcingService;
   }
 
@@ -122,8 +122,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     return allocationService;
   }
 
-  public void setAllocationService(
-      AllocationService allocationService) {
+  public void setAllocationService(final AllocationService allocationService) {
     this.allocationService = allocationService;
   }
 }

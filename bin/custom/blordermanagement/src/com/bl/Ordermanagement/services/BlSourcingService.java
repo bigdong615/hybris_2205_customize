@@ -16,5 +16,5 @@ public interface BlSourcingService extends SourcingService {
    *
    * @return SourcingResults The SourcingResults
    */
-  public SourcingResults sourceOrder(AbstractOrderModel order);
+  public SourcingResults sourceOrder(final AbstractOrderModel order);
 }

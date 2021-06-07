@@ -1799,7 +1799,7 @@
 				<modifiers read="true" write="true" optional="false"/>
 				<description>Warehouse that is active or not.</description>
 				<persistence type="property"/>
-				<defaultvalue>Boolean.TRUE</defaultvalue>
+				<defaultvalue>Boolean.FALSE</defaultvalue>
 			  </attribute>
 			</attributes>
 		  </itemtype>

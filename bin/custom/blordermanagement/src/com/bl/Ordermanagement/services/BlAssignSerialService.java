@@ -16,6 +16,6 @@ public interface BlAssignSerialService {
    *
    * @param context, the SourcingContext
    */
-  boolean assignSerialsFromLocation(SourcingContext context,
-      SourcingLocation sourcingLocation)  throws BlSourcingException;
+  boolean assignSerialsFromLocation(final SourcingContext context,
+      final SourcingLocation sourcingLocation)  throws BlSourcingException;
 }

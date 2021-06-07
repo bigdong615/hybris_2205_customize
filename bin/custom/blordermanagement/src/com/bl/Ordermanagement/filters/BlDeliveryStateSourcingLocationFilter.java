@@ -17,22 +17,31 @@ import org.apache.log4j.Logger;
  * @author Sunil
  */
 public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingLocationFilter {
-  private static final Logger LOG = Logger
-      .getLogger(BlDeliveryStateSourcingLocationFilter.class);
+
+  private static final Logger LOG = Logger.getLogger(BlDeliveryStateSourcingLocationFilter.class);
   private BlStateWarehouseMappingDao blStateWarehouseMappingDao;
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public Collection<WarehouseModel> applyFilter(AbstractOrderModel order,
-      Set<WarehouseModel> locations) {
+  public Collection<WarehouseModel> applyFilter(final AbstractOrderModel order,
+      final Set<WarehouseModel> locations) {
 
-    String stateCode = order.getDeliveryAddress().getRegion().getIsocodeShort();
-    WarehouseModel foundLocation = blStateWarehouseMappingDao.getStateWarehouseForStateCode(stateCode).getWarehouse();
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Location found for state iso code {} is warehouse {}",
-        stateCode, foundLocation.getCode());
-    locations.add(foundLocation);
+    String stateCode = "";
+    if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getRegion()
+        && null != order.getDeliveryAddress().getRegion().getIsocodeShort()) {
+      stateCode = order.getDeliveryAddress().getRegion().getIsocodeShort();
+    }
+
+    final WarehouseModel foundLocation = blStateWarehouseMappingDao.getStateWarehouseForStateCode(stateCode).getWarehouse();
+
+    if (null != foundLocation) {
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "Location found for state iso code {} is warehouse {}",
+          stateCode, foundLocation.getCode());
+      locations.add(foundLocation);
+    }
 
     return locations;
   }
@@ -41,7 +50,8 @@ public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingL
    * {@inheritDoc}
    */
   @Override
-  public void filterLocations(AbstractOrderModel order, Set<WarehouseModel> locations) {
+  public void filterLocations(final AbstractOrderModel order, final Set<WarehouseModel> locations) {
+
     this.filterResultOperator = SourcingFilterResultOperator.AND;
     if (order != null && locations != null) {
       if (this.filterResultOperator == null) {
@@ -60,8 +70,7 @@ public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingL
     return blStateWarehouseMappingDao;
   }
 
-  public void setBlStateWarehouseMappingDao(
-      BlStateWarehouseMappingDao blStateWarehouseMappingDao) {
+  public void setBlStateWarehouseMappingDao(final BlStateWarehouseMappingDao blStateWarehouseMappingDao) {
     this.blStateWarehouseMappingDao = blStateWarehouseMappingDao;
   }
 }
