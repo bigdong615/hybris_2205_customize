@@ -46,6 +46,7 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.facades.fexEx.data.SameDayCityReqData;
@@ -316,11 +317,11 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		{
 			final BlRushDeliveryModeModel zonedeliveryMode = (BlRushDeliveryModeModel) blZoneDeliveryMode;
 
-			if (zonedeliveryMode.getShippingGroup().getCode().contains("RUSH_SAN_CARLOS"))
+			if (zonedeliveryMode.getShippingGroup().getCode().contains(BlCoreConstants.RUSH_SAN_CARLOS))
 			{
 				sameDayCityReqData.setWarehouseZipCode(sf);
 			}
-			else if (zonedeliveryMode.getShippingGroup().getCode().contains("RUSH_NYC_NEXT_DAY"))
+			else if (zonedeliveryMode.getShippingGroup().getCode().contains(BlCoreConstants.RUSH_NYC_NEXT_DAY))
 			{
 				sameDayCityReqData.setWarehouseZipCode(nyc);
 			}
