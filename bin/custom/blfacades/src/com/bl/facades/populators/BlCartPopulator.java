@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
@@ -78,15 +79,6 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			}
 			target.setGiftCardData(blGiftCardDataList);
 		}
-
-		// Added for showing Promotion discount and Gift Card Discounts on Cart page and checkout page
-		Double giftCartAmount = 0.0;
-		if(null != source.getGiftCardAmount()) {
-			giftCartAmount = source.getGiftCardAmount();
-		}
-		Double totalPromotion = giftCartAmount + source.getTotalDiscounts();
-
-		target.setTotalDiscounts(createPrice(source ,totalPromotion));
 	}
 
 	/**
@@ -108,14 +100,16 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	 */
   private void populatePromotionAmount(final CartModel source, final CartData target) {
 		final Map<String, BigDecimal> amountMap = new HashMap<>();
-		for(final PromotionResultModel promotionResultModel : source.getAllPromotionResults()){
-			final RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel.getActions().iterator().next();
-			for(final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes())
-			{
-				amountMap.put(couponCode , ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(2 , RoundingMode.HALF_DOWN));
+		if(CollectionUtils.isNotEmpty(source.getAllPromotionResults())) {
+			for (final PromotionResultModel promotionResultModel : source.getAllPromotionResults()) {
+				final RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel
+						.getActions().iterator().next();
+				for (final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes()) {
+					amountMap.put(couponCode, ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(
+							BlCoreConstants.DECIMAL_PRECISION, RoundingMode.HALF_DOWN));
+				}
 			}
 		}
 		target.setPromotionAmountMap(amountMap);
 	}
-
 }

@@ -56,7 +56,7 @@
               </tr>
 
             <tr class="discount">
-              <c:if test ="${cartData.totalDiscounts.value > 0 || not empty cartData.appliedVouchers}">
+              <c:if test ="${cartData.totalDiscounts.value > 0}">
                   <td ><spring:theme code="text.discount"/></td>
                <td class="text-end" id="cart-shipping-tax">
                - <format:blPrice priceData="${cartData.totalDiscounts}"/>
@@ -89,7 +89,9 @@
  <c:forEach items="${cartData.appliedVouchers}" var="voucher" varStatus="loop">
  <form:form action="${voucherRemoveUrl}" modelAttribute="voucherForm" method="POST" id="removeVoucherForm${loop.index}">
     <p class="body14">
+    <c:if test="${cartData.totalDiscounts.value > 0}">
        <span class="gray60">${fn:escapeXml(voucher)}</span>
+
        <form:input hidden="hidden" value="${fn:escapeXml(voucher)}" path="voucherCode" name="voucherCode"/>
        <a href="#" class="js-cart-release-voucher-remove-btn" id="removeVoucherForm${loop.index}"><small>Remove Item</small></a>
        <c:forEach items ="${cartData.promotionAmountMap}" var="amountMap">
@@ -97,6 +99,7 @@
              <span class="float-end">-${amountMap.value}</span>
           </c:if>
        </c:forEach>
+    </c:if>
     </p>
  </form:form>
     </c:forEach>

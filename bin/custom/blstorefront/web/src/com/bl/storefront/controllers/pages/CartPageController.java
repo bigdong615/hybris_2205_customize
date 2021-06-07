@@ -943,7 +943,8 @@ public class CartPageController extends AbstractCartPageController
 	}
 
 	/**
-	 * This method created for Coupon URL
+	 * This method created to decide url to redirect on apply or remove of coupon using referer
+	 *
 	 */
 	private String getRedirectUrlForCoupon(final HttpServletRequest request) {
 
