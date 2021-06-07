@@ -62,7 +62,7 @@
                <td class="text-end" id="cart-shipping-tax">
                - <format:blPrice priceData="${cartData.totalDiscounts}"/>
                </td>
-
+              </c:if>
             </tr>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
@@ -108,9 +108,6 @@
 
       <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
       <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
-      		<form:form id="removeVoucherForm${loop.index}"
-      			action="${removeVoucherAction}" method="post"
-      			modelAttribute="voucherForm">
       		<form:form id="removeGiftCardForm${loop.index}"
       			action="${removeGiftCardAction}" method="post"
       			modelAttribute="giftCardForm">
