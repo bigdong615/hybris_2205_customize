@@ -1,147 +1,112 @@
 <%@ page trimDirectiveWhitespaces="true" contentType="application/json" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="theme" tagdir="/WEB-INF/tags/shared/theme" %>
-<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
-<%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-{"cartData": {
-"total": "${cartData.totalPrice.value}",
-"products": [
-<c:forEach items="${cartData.entries}" var="cartEntry" varStatus="status">
-	{
-		"sku":		"${cartEntry.product.code}",
-		"name": 	"<c:out value='${cartEntry.product.name}' />",
-		"qty": 		"${cartEntry.quantity}",
-		"price": 	"${cartEntry.basePrice.value}",
-		"categories": [
-		<c:forEach items="${cartEntry.product.categories}" var="category" varStatus="categoryStatus">
-			"<c:out value='${category.name}' />"<c:if test="${not categoryStatus.last}">,</c:if>
-		</c:forEach>
-		]
-	}<c:if test="${not status.last}">,</c:if>
-</c:forEach>
-]
-},
-
-"quickOrderErrorData": [
+<c:set var="productName" value="${fn:escapeXml(product.name)}" />
+<c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
+<c:url value="/cart" var="viewCartUrl"/>
+{"quickOrderErrorData": [
 <c:forEach items="${quickOrderErrorData}" var="quickOrderEntry" varStatus="status">
+	<c:set var="productCode" value="${fn:escapeXml(quickOrderEntry.productData.code)}" />
+	<spring:theme code="${quickOrderEntry.errorMsg}" var="quickOrderEntryErrorMsg" htmlEscape="true"/>
 	{
-		"sku":		"${quickOrderEntry.productData.code}",
-		"errorMsg": "<spring:theme code='${quickOrderEntry.errorMsg}' htmlEscape='true' />"
+		"sku":		"${ycommerce:encodeJSON(productCode)}",
+		"errorMsg": "${ycommerce:encodeJSON(quickOrderEntryErrorMsg)}"
 	}<c:if test="${not status.last}">,</c:if>
 </c:forEach>
 ],
 
-"cartAnalyticsData":{"cartCode" : "${cartCode}","productPostPrice":"${entry.basePrice.value}","productName":"<c:out value='${product.name}' />"}
+"cartAnalyticsData":{"cartCode" : "${ycommerce:encodeJSON(cartCode)}","productPostPrice":"${ycommerce:encodeJSON(entry.basePrice.value)}","productName":"${ycommerce:encodeJSON(productName)}"}
 ,
-"addToCartLayer":"<spring:escapeBody javaScriptEscape='true'>
-	<jsp:include page='../../../messages/braintreeErrorMessages.jsp' />
-
+"addToCartLayer":"<spring:escapeBody javaScriptEscape="true" htmlEscape="false">
+	<spring:htmlEscape defaultHtmlEscape="true">
 	<spring:theme code="text.addToCart" var="addToCartText"/>
 	<c:url value="/cart" var="cartUrl"/>
-	<c:url value="/cart/checkout" var="checkoutUrl"/>
-
 	<ycommerce:testId code="addToCartPopup">
-		<div id="addToCartLayer" class="add-to-cart">
-            <div class="cart_popup_error_msg">
-                <c:choose>
-	                <c:when test="${quickOrderErrorData ne null and not empty quickOrderErrorData}">
-	                	<spring:theme code="${quickOrderErrorMsg}" arguments="${fn:length(quickOrderErrorData)}" htmlEscape="true" />
-                    </c:when>
-                    <c:when test="${multidErrorMsgs ne null and not empty multidErrorMsgs}">
-                        <c:forEach items="${multidErrorMsgs}" var="multidErrorMsg">
-                            <spring:theme code="${multidErrorMsg}" />
-                        </br>
-                        </c:forEach>
-                    </c:when>
-                    <c:otherwise>
-                        <spring:theme code="${errorMsg}" />
-                    </c:otherwise>
-                </c:choose>
+	<!-- BL-454 add to cart Modal -->
+   <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><spring:theme code="text.addtocart.popup"/> <i class="cart-check"></i></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
+                  <div class="col-md-7 mt-4"><b>${product.name}</b>
+                  <c:if test="${not empty rentalDate.selectedFromDate}">
+                    <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate} (${rentalDate.numberOfDays} days)</span>
+                  </c:if>
+                  </div>
+                  <div class="col-md-3 mt-4 text-md-end">
+                      <b>${entry.basePrice.formattedValue}</b>
+                      <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
+                          modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
+                          <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
+                          <input type="hidden" name="productCode" value="${entry.product.code}" />
+                          <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
+                          <input type="hidden" name="quantity" value="${entry.quantity}" />
+                        <spring:theme code="text.quantity"/>
+                        <select class="mt-3 select js-select js-component-init js-update-quantity" id="shopping-cart-qty_${entry.entryNumber}" name="shopping-cart-qty">
+                           <c:forEach var="item" begin="1" end="10">
+                             <option value="${item}" ${item == quantity ? 'selected="selected"' : ''}>${item}</option>
+                           </c:forEach>
+                       </select>
+                      </form:form>
+                  </div>
+              </div>
+              <hr>
+              <!-- BL-455 TODO Additional Gear Slider -->
+              <h5 class="d-none d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
+              <div class="row d-none d-md-flex mt-4">
+                  <div class="col-md-4">
+                      <div class="card">
+                          <span class="badge badge-new">New</span>
+                          <span class="bookmark"></span>
+                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg"></li>
+                          <p class="overline"><a href="#">Canon</a></p>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
+                          <a href="#" class="btn btn-primary">Add to Rental</a>
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="card">
+                          <span class="badge badge-new">New</span>
+                          <span class="bookmark"></span>
+                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                          <p class="overline"><a href="#">Canon</a></p>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
+                          <a href="#" class="btn btn-primary">Add to Rental</a>
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="card">
+                          <span class="badge badge-new">New</span>
+                          <span class="bookmark"></span>
+                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
+                          <p class="overline"><a href="#">Canon</a></p>
+                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
+                          <h6 class="price">$44</h6>
+                          <a href="#" class="btn btn-primary">Add to Rental</a>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>
+                <a href="${viewCartUrl}" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>
+            </div>
+   </div>
 
-            <c:choose>
-                <c:when test="${modifications ne null}">
-
-                    <c:forEach items="${modifications}" var="modification">
-                        <c:set var="product" value="${modification.entry.product}" />
-                        <c:set var="entry" value="${modification.entry}" />
-                        <c:set var="quantity" value="${modification.quantityAdded}" />
-                        <cart:popupCartItems entry="${entry}" product="${product}" quantity="${quantity}"/>
-                    </c:forEach>
-                </c:when>
-                <c:otherwise>
-
-                    <cart:popupCartItems entry="${entry}" product="${product}" quantity="${quantity}"/>
-                </c:otherwise>
-            </c:choose>
-
-            <spring:eval expression="@configurationService.configuration.getProperty('braintree.user.action')" var="userAction"/>
-
-			<script>
-			    var paypalIntent = "${payPalCheckoutData.intent}";
-    			var clientToken = "${client_token}";
-    			var storeInVault = "${payPalCheckoutData.storeInVault}";
-    			var amount = "${payPalCheckoutData.amount}";
-    			var locale = "${payPalCheckoutData.locale}";
-    			var enableShippingAddress = "${payPalCheckoutData.enableShippingAddress}";
-    			var braintreeLocale = "${braintreeLocale}";
-    			var currency = "${payPalCheckoutData.currency}";
-    			var advancedFraudToolsEnabled = "${payPalCheckoutData.advancedFraudTools}";
-    			var dbaName = "${payPalCheckoutData.dbaName}";
-                var billingAgreementDescription = "${billingAgreementDescription}";
-    			var userAction="${userAction}";
-    			var applePayEnabled = ${payPalCheckoutData.applePayEnabled};
-                var creditEnabled = ${isCreditEnabled};
-				var payPalButtonConfig = "${payPalButtonConfig}";
-				var payPalShouldBeSaved = "${payPalShouldBeSaved}";
-				var environment = "${payPalCheckoutData.environment}";
-				var googleMerchantId = "${googleMerchantId}";
-				var googlePayCountryCode = "${googlePayCountryCode}";
-	</script>
-
-			<div id="wrapper">
-				<div id="row">
-				<div id="paypal_express_error"></div>
-					<div id="paypayShortcut" class="bt_center">
-						<c:if test="${applePayEnabled}">
-							<div id="apple-pay-button" class="apple-pay-button-container">
-								<img src="${contextPath}/_ui/addons/braintreeaddon/responsive/common/images/apple-pay.png"
-									class="apple-pay-button" alt="Buy with Apple Pay" />
-							</div>
-						</c:if>
-						<c:if test="${payPalExpressEnabled}">
-							<div id="paypal-button" class="paypal-button-in-popup paypal_button_container"></div>
-						</c:if>
-                        <c:if test="${googlePayEnable}">
-                            <div id="google-pay-button" class="google_pay_container"></div>
-                        </c:if>
-					</div>
-					<div id="orSeparator" class="bt_center"><spring:theme code="braintree.cart.or"/></div>
-				</div>
-			</div>
-
-
-            <ycommerce:testId code="checkoutLinkInPopup">
-                <a href="${cartUrl}" class="btn btn-primary btn-block add-to-cart-button">
-                    <spring:theme code="checkout.checkout" />
-                </a>
-            </ycommerce:testId>
-
-
-            <a href="" class="btn btn-default btn-block js-mini-cart-close-button">
-                <spring:theme code="cart.page.continue"/>
-            </a>
-            <script>
-				configurePaypalShortcut(CONST.PAYPAL_BUTTON_CONTAINER);
-			</script>
-		</div>
-	</ycommerce:testId>
+  </ycommerce:testId>
+	</spring:htmlEscape>
 </spring:escapeBody>"
 }
+
+
+

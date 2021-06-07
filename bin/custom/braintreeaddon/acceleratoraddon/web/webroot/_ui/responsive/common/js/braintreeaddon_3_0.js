@@ -487,6 +487,12 @@ function creditCardValidation(errorMessage){
 	  $('#validationMessage').append(validationDiv);
 }
 
+function allFieldValidation(errorMessage){
+	
+	 var validationDiv = $('<div class="notification notification-warning mb-4" />').text(errorMessage);
+	  $('#allFieldvalidationMessage').append(validationDiv);
+}
+
 //Error Notifications
 function showErrorForInputValidation(section) {
    let notification = '';
@@ -991,3 +997,20 @@ $('ul.selectSavedBillingAddress').on('click','li',function(e){
 	}
 	$("#paymentAddNewAddress").show();
 });
+
+
+$('#submit_silentOrderPostForm').click(function () {
+	
+	var ccEnable = $('#paymentMethodBT').is(':checked');
+	var giftcardApplied = $("input[name='appliedGC']").val();
+	
+	if(giftcardApplied == '' && ccEnable == false)
+	{
+		allFieldValidation(ACC.ccError.allFieldsNotSelected);
+	}
+	
+	if(ccEnable == false && giftcardApplied != '')
+	{
+		allFieldValidation(ACC.ccError.onlyGCSelected);
+	}
+});	

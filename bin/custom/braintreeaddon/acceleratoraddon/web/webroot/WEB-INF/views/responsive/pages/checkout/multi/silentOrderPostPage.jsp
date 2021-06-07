@@ -268,8 +268,12 @@
 									<div id="validationMessage">
 										
 									</div>
-									<%-- <checkout:validationMessages /> --%>
 									
+														<cart:blGiftCard cartData="${cartData}"/>
+                                                        
+                                                        <div id="allFieldvalidationMessage">
+										
+									                   </div>
                                                         
 
 														<button type="submit" id="submit_silentOrderPostForm"

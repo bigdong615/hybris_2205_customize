@@ -38,7 +38,9 @@
 			ACC.ccError.cardYear = '<spring:theme code="payment.cc.error.card.year" htmlEscape="false" javaScriptEscape="true" />';
 			ACC.ccError.cardMonth = '<spring:theme code="payment.cc.error.card.month" htmlEscape="false" javaScriptEscape="true" />';
 			ACC.ccError.cardCVV = '<spring:theme code="payment.cc.error.card.cvv" htmlEscape="false" javaScriptEscape="true" />';
-
+			ACC.ccError.allFieldsNotSelected ='<spring:theme code="payment.all.field.not.selected" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.onlyGCSelected = '<spring:theme code="payment.only.giftCard.selected" htmlEscape="false" javaScriptEscape="true" />'
+			
 			<c:if test="${request.secure}">
 				<c:url var="autocompleteUrl" value="/search/autocompleteSecure" />
 			</c:if>
@@ -64,4 +66,3 @@
 	
 	<%-- generated variables from commonVariables.properties --%>
 	<script src="${fn:escapeXml(sharedResourcePath)}/js/generatedVariables.js"></script>
-	

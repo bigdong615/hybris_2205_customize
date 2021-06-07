@@ -68,6 +68,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
 
   private static final Logger LOG = Logger.getLogger(BrainTreePaymentController.class);
   private final static String PAYMENT_METHOD = "payment-method";
+  public static final String REDIRECT_TO_PAYMENT_METHOD = "redirect:/checkout/multi/payment-method/add";
 
   @Resource(name = "brainTreePaymentFacadeImpl")
   private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
@@ -129,16 +130,16 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
         && !BraintreeConstants.BRAINTREE_CREDITCARD_PAYMENT.equals(paymentProvider))
     {
       LOG.error("It is impossible to save payment method when braintree.store.in.vault property is false");
-      GlobalMessages.addErrorMessage(model, getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.forbidden"));
-      return BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
+      GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.forbidden"),null);
+      return REDIRECT_TO_PAYMENT_METHOD;
     }
 
     if (sopPaymentDetailsForm.isSavePaymentInfo() && (BraintreeConstants.PAYPAL_INTENT_ORDER.equalsIgnoreCase(brainTreeConfigService.getIntent())
         && !BraintreeConstants.BRAINTREE_CREDITCARD_PAYMENT.equals(paymentProvider)))
     {
-      LOG.error("It is impossible to save payment method when braintree.paypal.intent property is set to 'order'");
-      GlobalMessages.addErrorMessage(model, getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.forbidden"));
-      return BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
+       LOG.error("It is impossible to save payment method when braintree.paypal.intent property is set to 'order'");
+       GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.forbidden"),null);
+      return REDIRECT_TO_PAYMENT_METHOD;
     }
 
     if (Boolean.TRUE.toString().equals(saveBillingAddress))
@@ -158,8 +159,9 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       }
       catch (final Exception exception)
       {
-        GlobalMessages.addErrorMessage(model, getLocalizedString("braintree.billing.general.error"));
-        return BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
+        
+    	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+        return REDIRECT_TO_PAYMENT_METHOD;
       }
     }
     else
@@ -167,8 +169,9 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       final AddressData addressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm);
       if (Objects.isNull(addressData))
       {
-        GlobalMessages.addErrorMessage(model, getLocalizedString("braintree.billing.general.error"));
-        return BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
+        
+    	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+        return REDIRECT_TO_PAYMENT_METHOD;
       }
       subscriptionInfo.setAddressData(addressData);
 
@@ -182,14 +185,15 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
         }
         catch (final Exception exception)
         {
-          GlobalMessages.addErrorMessage(model, getLocalizedString("braintree.billing.general.error"));
-          return BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
+          
+        	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+          return REDIRECT_TO_PAYMENT_METHOD;
         }
       }
       else
       {
-        GlobalMessages.addErrorMessage(model, getLocalizedString("braintree.billing.address.error"));
-        return BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
+    	  GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+        return REDIRECT_TO_PAYMENT_METHOD;
       }
 
     }
