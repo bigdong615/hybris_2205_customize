@@ -80,8 +80,8 @@ public interface BlStockLevelDao {
 	 * @param endDate      the end date
 	 * @return list of stock levels
 	 */
-	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(Set<String> productCodes,
-			WarehouseModel warehouse, Date startDate, Date endDate);
+	public Collection<StockLevelModel> findStockLevelsForProductCodesAndDate(final Set<String> productCodes,
+			final WarehouseModel warehouse, final Date startDate, final Date endDate);
 
 	/**
 	 * It finds the stocks for the given serials and serial from start date to end date
@@ -92,7 +92,6 @@ public interface BlStockLevelDao {
 	 * @return list of stock levels
 	 */
 	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodes(
-			final Set<String> serialProductCodes,
-			final Date startDay, final Date endDay);
+			final Set<String> serialProductCodes, final Date startDay, final Date endDay);
 
 }

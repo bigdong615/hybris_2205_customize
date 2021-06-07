@@ -15,6 +15,6 @@ public interface BlStateWarehouseMappingDao {
    * @param stateCode - id of state.
    * @return StateWarehouseMapping object.
    */
-  BlStateWarehouseMappingModel getStateWarehouseForStateCode(String stateCode);
+  BlStateWarehouseMappingModel getStateWarehouseForStateCode(final String stateCode);
 
 }

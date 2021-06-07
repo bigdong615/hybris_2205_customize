@@ -44,6 +44,7 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
           " as cv} WHERE {cv:VERSION} = ?version AND {cv:catalog} in ({{SELECT {c:pk} FROM {"
           + CatalogModel._TYPECODE +
           " as c} WHERE {c:id} = ?catalog}})}})";
+
   private static final String GET_BLSERIALPRODUCTS_FOR_CODES_QUERY =
       "SELECT {pk} from {"
           + BlSerialProductModel._TYPECODE
@@ -88,19 +89,23 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   @Override
   public Collection<BlSerialProductModel> getBlSerialProductsForCodes(
       final Set<String> serialProductCodes) {
+
     final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
         GET_BLSERIALPRODUCTS_FOR_CODES_QUERY);
-    fQuery.addQueryParameter("codes", serialProductCodes);
+    fQuery.addQueryParameter(BlCoreConstants.CODES, serialProductCodes);
     fQuery.addQueryParameter(BlCoreConstants.APPROVED, ArticleApprovalStatus.APPROVED.getCode());
     fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
-    fQuery.addQueryParameter(BlCoreConstants.VERSION, "Online");
+    fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.ONLINE);
+
     final SearchResult<BlSerialProductModel> result = getFlexibleSearchService().search(fQuery);
     final List<BlSerialProductModel> serialProducts = result.getResult();
+
     if (CollectionUtils.isEmpty(serialProducts)) {
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No serial products found for codes: {}",
           serialProductCodes);
       return Collections.emptyList();
     }
+
     return serialProducts;
   }
 }

@@ -1,5 +1,6 @@
 package com.bl.core.dao.warehouse.impl;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlStateWarehouseMappingDao;
 import com.bl.core.model.BlStateWarehouseMappingModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -26,20 +27,20 @@ public class DefaultBlStateWarehouseMappingDao implements BlStateWarehouseMappin
      */
     @Override
     public BlStateWarehouseMappingModel getStateWarehouseForStateCode(final String isoCodeShort) {
+
         final FlexibleSearchQuery query = new FlexibleSearchQuery(
             FIND_BL_STATE_WAREHOUSE_BY_STATE_CODE);
-        query.addQueryParameter("isoCodeShort", isoCodeShort);
+        query.addQueryParameter(BlCoreConstants.ISO_CODE_SHORT, isoCodeShort);
         final SearchResult<BlStateWarehouseMappingModel> result = getFlexibleSearchService()
             .search(query);
-        return result.getResult()
-            .get(0);
+        return result.getResult().get(0);
     }
 
     public FlexibleSearchService getFlexibleSearchService() {
         return flexibleSearchService;
     }
 
-    public void setFlexibleSearchService(FlexibleSearchService flexibleSearchService) {
+    public void setFlexibleSearchService(final FlexibleSearchService flexibleSearchService) {
         this.flexibleSearchService = flexibleSearchService;
     }
 
