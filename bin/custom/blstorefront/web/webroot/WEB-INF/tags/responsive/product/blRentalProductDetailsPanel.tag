@@ -59,7 +59,7 @@
                                 <c:choose >
                                 <c:when test="${product.isUpcoming eq 'true'}">
                                 <div id="pickupDelivery">
-                                  <p><span class="arrival">Coming Soon</span></p>
+                                  <p><span class="arrival"><spring:theme code="pdp.rental.comming.soon.text"/></span></p>
                                 </div>
                                 </c:when>
                                 <c:otherwise>
