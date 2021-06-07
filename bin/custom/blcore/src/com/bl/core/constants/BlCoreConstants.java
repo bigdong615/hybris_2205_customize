@@ -163,6 +163,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
+	public static final String RUSH_SAN_CARLOS = "RUSH_SAN_CARLOS";
+	public static final String RUSH_NYC_NEXT_DAY = "RUSH_NYC_NEXT_DAY";
 
 
 	private BlCoreConstants()
