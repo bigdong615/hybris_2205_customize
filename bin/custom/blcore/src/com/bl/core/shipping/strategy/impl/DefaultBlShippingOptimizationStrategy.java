@@ -242,8 +242,9 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     public boolean getOptimizedShippingMethodForOrder(final ConsignmentModel consignmentModel) {
         final String rentalStartDate = BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder().getRentalStartDate(), BlCoreConstants.DATE_FORMAT);
         final String rentalEndDate = BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder().getRentalEndDate(), BlCoreConstants.DATE_FORMAT);
-        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOptimizedShippingStartDate(),
-                consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());
+        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(Calendar.getInstance(TimeZone.getTimeZone(
+                BlDeliveryModeLoggingConstants.ZONE_PST)).getTime(), consignmentModel.getOrder().getRentalStartDate(),
+                consignmentModel.getWarehouse().getCutOffTime());
         final int carrierId = getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode());
         final int warehouseCode = getWarehouseCode(consignmentModel.getWarehouse());
         final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
