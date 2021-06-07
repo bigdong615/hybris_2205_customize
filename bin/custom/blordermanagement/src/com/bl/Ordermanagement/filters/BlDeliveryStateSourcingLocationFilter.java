@@ -1,5 +1,6 @@
 package com.bl.Ordermanagement.filters;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlStateWarehouseMappingDao;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -16,7 +17,7 @@ import org.apache.log4j.Logger;
  *
  * @author Sunil
  */
-public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingLocationFilter {
+public class BlDeliveryStateSourcingLocationFilter {
 
   private static final Logger LOG = Logger.getLogger(BlDeliveryStateSourcingLocationFilter.class);
   private BlStateWarehouseMappingDao blStateWarehouseMappingDao;
@@ -24,11 +25,10 @@ public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingL
   /**
    * {@inheritDoc}
    */
-  @Override
   public Collection<WarehouseModel> applyFilter(final AbstractOrderModel order,
       final Set<WarehouseModel> locations) {
 
-    String stateCode = "";
+    String stateCode = BlCoreConstants.EMPTY_STRING;
     if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getRegion()
         && null != order.getDeliveryAddress().getRegion().getIsocodeShort()) {
       stateCode = order.getDeliveryAddress().getRegion().getIsocodeShort();
@@ -45,26 +45,6 @@ public class BlDeliveryStateSourcingLocationFilter extends AbstractBaseSourcingL
 
     return locations;
   }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void filterLocations(final AbstractOrderModel order, final Set<WarehouseModel> locations) {
-
-    this.filterResultOperator = SourcingFilterResultOperator.AND;
-    if (order != null && locations != null) {
-      if (this.filterResultOperator == null) {
-        throw new IllegalArgumentException("Parameter filterResultOperator cannot be null");
-      } else {
-        Collection<WarehouseModel> filteredResults = this.applyFilter(order, locations);
-        this.combineFilteredLocations(filteredResults, locations);
-      }
-    } else {
-      throw new IllegalArgumentException("Parameters order and locations cannot be null");
-    }
-  }
-
 
   public BlStateWarehouseMappingDao getBlStateWarehouseMappingDao() {
     return blStateWarehouseMappingDao;

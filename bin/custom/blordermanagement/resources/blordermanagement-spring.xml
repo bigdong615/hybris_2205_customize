@@ -96,7 +96,7 @@
     <!-- Sourcing and allocation -->
     <alias name="defaultBlSourcingService" alias="blSourcingService" />
     <bean id="defaultBlSourcingService" class="com.bl.Ordermanagement.services.impl.DefaultBlSourcingService">
-        <property name="sourcingFilterProcessor" ref="sourcingFilterProcessor"/>
+        <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
         <property name="blSourcingStrategyService" ref="blSourcingStrategyService"/>
         <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
     </bean>
@@ -115,17 +115,8 @@
         </property>
     </bean>
 
-    <bean id="sourcingFilterProcessor" class="de.hybris.platform.warehousing.sourcing.filter.SourcingFilterProcessor">
-        <property name="filters">
-            <list>
-                <ref bean="blDeliveryStateSourcingLocationFilter"/>
-            </list>
-        </property>
-    </bean>
-
     <bean name="blDeliveryStateSourcingLocationFilter"
-      class="com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter"
-      parent="abstractBaseSourcingLocationFilter">
+      class="com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter">
         <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
     </bean>
 

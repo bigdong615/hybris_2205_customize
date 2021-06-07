@@ -1,6 +1,7 @@
 package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
+import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.Ordermanagement.strategy.BlSourcingStrategyService;
@@ -29,11 +30,11 @@ import org.apache.log4j.Logger;
  * @author Sunil
  */
 public class DefaultBlSourcingService implements BlSourcingService {
+
   private static final Logger LOG = Logger.getLogger(DefaultBlSourcingService.class);
-  private SourcingFilterProcessor sourcingFilterProcessor;
   private BlSourcingStrategyService blSourcingStrategyService;
   private BlSourcingLocationService blSourcingLocationService;
-
+  private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
   /**
    * This is to source the order
@@ -42,17 +43,18 @@ public class DefaultBlSourcingService implements BlSourcingService {
    * @return SourcingResults The SourcingResults
    */
   @Override
-  public SourcingResults sourceOrder(AbstractOrderModel order) {
+  public SourcingResults sourceOrder(final AbstractOrderModel order) {
+
     ServicesUtil.validateParameterNotNullStandardMessage("order", order);
     Preconditions.checkArgument(Objects.nonNull(order), "Parameter order cannot be null.");
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Starting sourcing Order : {}",
         order.getCode());
-    Set<WarehouseModel> locations = Sets.newHashSet();
-    this.getSourcingFilterProcessor().filterLocations(order, locations);
+    final Set<WarehouseModel> locations = Sets.newHashSet();
+    blDeliveryStateSourcingLocationFilter.applyFilter(order, locations);
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total filtered sourcing locations found: {}",
         locations.size());
-    SourcingContext context = new SourcingContext();
-    SourcingResults result = new SourcingResults();
+    final SourcingContext context = new SourcingContext();
+    final SourcingResults result = new SourcingResults();
     result.setResults(Sets.newHashSet());
     result.setComplete(Boolean.FALSE);
     context.setResult(result);
@@ -62,12 +64,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
       sourcingLocations.add(blSourcingLocationService.createSourcingLocation(context, location))
     );
 
-    List<SourcingStrategy> strategies = this.blSourcingStrategyService.getDefaultStrategies();
+    final List<SourcingStrategy> strategies = this.blSourcingStrategyService.getDefaultStrategies();
 
-    Iterator<SourcingStrategy> strategyItr = strategies.iterator();
+    final Iterator<SourcingStrategy> strategyItr = strategies.iterator();
     try {
       while (strategyItr.hasNext()) {
-        SourcingStrategy strategy = strategyItr.next();
+        final SourcingStrategy strategy = strategyItr.next();
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Apply sourcing strategy: {}",
             strategy.getClass().getSimpleName());
 
@@ -80,7 +82,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
           break;
         }
       }
-    } catch (BlSourcingException e) {
+    } catch (final BlSourcingException e) {
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), e);
       return null;
     }
@@ -88,20 +90,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
     return context.getResult();
   }
 
-  private SourcingFilterProcessor getSourcingFilterProcessor() {
-    return this.sourcingFilterProcessor;
-  }
-
-  public void setSourcingFilterProcessor(SourcingFilterProcessor sourcingFilterProcessor) {
-    this.sourcingFilterProcessor = sourcingFilterProcessor;
-  }
-
   public BlSourcingLocationService getBlSourcingLocationService() {
     return blSourcingLocationService;
   }
 
   public void setBlSourcingLocationService(
-      BlSourcingLocationService blSourcingLocationService) {
+      final BlSourcingLocationService blSourcingLocationService) {
     this.blSourcingLocationService = blSourcingLocationService;
   }
 
@@ -110,7 +104,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
   }
 
   public void setBlSourcingStrategyService(
-      BlSourcingStrategyService blSourcingStrategyService) {
+      final BlSourcingStrategyService blSourcingStrategyService) {
     this.blSourcingStrategyService = blSourcingStrategyService;
   }
 

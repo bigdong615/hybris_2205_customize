@@ -2,6 +2,7 @@ package com.bl.Ordermanagement.actions.order;
 
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
 import com.bl.Ordermanagement.services.BlSourcingService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -50,22 +51,19 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     } catch (final IllegalArgumentException e)
     {
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
-          "Could not create SourcingResults. Changing order status to SUSPENDED",
-          e);
+          "Could not create SourcingResults. Changing order status to SUSPENDED", e);
     }
 
     if (null != results && CollectionUtils.isNotEmpty(results.getResults())) {
       final Collection<ConsignmentModel> consignments = getAllocationService()
-          .createConsignments(process.getOrder(), "cons" + process.getOrder().getCode(), results);
+          .createConsignments(process.getOrder(), BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + process.getOrder().getCode(), results);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "Number of consignments created during allocation: {}",
-          consignments.size());
+          "Number of consignments created during allocation: {}", consignments.size());
       startConsignmentSubProcess(consignments, process);
       order.setStatus(OrderStatus.READY);
 
-      failedFulfillment = order.getEntries().stream()
-          .allMatch(
-              orderEntry -> ((OrderEntryModel) orderEntry).getQuantityAllocated().longValue() == 0);
+      failedFulfillment = order.getEntries().stream().allMatch(
+          orderEntry -> ((OrderEntryModel) orderEntry).getQuantityAllocated().longValue() == 0);
     } else {
       failedFulfillment = true;
     }
