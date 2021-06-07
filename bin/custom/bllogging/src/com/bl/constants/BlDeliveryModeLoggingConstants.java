@@ -48,6 +48,7 @@ public class BlDeliveryModeLoggingConstants {
     public static final String UPS = "UPS";
 
     public static final String RUSH_NYC_NEXT_DAY_9_To_12 = "RUSH_NYC_NEXT_DAY_9_To_12";
+    public static final String OPTIMIZED_SHIPPING_TYPE = "Optimized Shipping Type Enum : ";
 
     public static final String SHIP_HOME_HOTEL_BUSINESS_MSG = "Ship to home, hotel business";
     public static final String BL_PARTNER_PICKUP_MSG = "BL-Partner pickup";

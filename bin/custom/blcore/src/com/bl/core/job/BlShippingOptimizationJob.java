@@ -28,8 +28,12 @@ public class BlShippingOptimizationJob extends AbstractJobPerformable<CronJobMod
      */
     @Override
     public PerformResult perform(final CronJobModel cronJobModel) {
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlShippingOptimizationJob...");
-        changeGroundStatus(getZoneDeliveryModeService().getAllGroundedConsignments());
+        if(!getBlShippingOptimizationStrategy().checkCurrentDayInBlackOutDays()) {
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlShippingOptimizationJob...");
+            changeGroundStatus(getZoneDeliveryModeService().getAllGroundedConsignments());
+        }
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stopped performing BlShippingOptimizationJob as current " +
+                "day falls under black days...");
         return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
     }
 

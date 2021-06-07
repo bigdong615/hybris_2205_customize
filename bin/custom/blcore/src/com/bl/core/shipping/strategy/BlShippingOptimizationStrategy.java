@@ -31,4 +31,11 @@ public interface BlShippingOptimizationStrategy {
      * @return true if success
      */
     boolean getOptimizedShippingMethodForOrder(final ConsignmentModel consignmentModel);
+
+    /**
+     * This method will check current day in black dates
+     *
+     * @return true if present
+     */
+    boolean checkCurrentDayInBlackOutDays();
 }
