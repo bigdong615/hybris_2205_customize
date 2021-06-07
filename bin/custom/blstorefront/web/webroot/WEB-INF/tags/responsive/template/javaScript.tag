@@ -39,7 +39,6 @@
 		<%-- Custom ACC JS --%>
 
 		<%-- added custom js bl-custom.js for gift card --%>
-		<script src="${commonResourcePathHtml}/js/bl-custom.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.address.js"></script>
 
     <script src="${commonResourcePathHtml}/js/acc.address.js"></script>
