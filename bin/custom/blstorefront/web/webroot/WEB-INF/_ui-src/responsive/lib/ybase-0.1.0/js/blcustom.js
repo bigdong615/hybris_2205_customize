@@ -206,12 +206,12 @@ $("#giftCardForm").validate({
 });
 
 //BL-563 Remove Gift Card
-$('.js-release-voucher-remove-btn').on("click", function(e) {
+$('.remove-gift-card').on("click", function(e) {
      e.preventDefault();
      var method = "POST";
-     var voucherForm = {};
+     var giftCardForm = {};
      var code = $(this).attr('id');
-          voucherForm["voucherCode"] = $(this).attr('id');
+          giftCardForm["giftCardCode"] = $(this).attr('id');
           $.ajax({
               url: ACC.config.encodedContextPath + '/checkout/removeGiftCard',
               data: {
@@ -223,7 +223,7 @@ $('.js-release-voucher-remove-btn').on("click", function(e) {
                   window.location.reload();
               },
               error: function(error) {
-                  console.log("voucher error");
+                  console.log("Error while removing gift card");
               }
           });
 });
