@@ -797,4 +797,9 @@
 	</bean>
 	<!--Gift card End-->
 
+	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
+    <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
+        <property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+    </bean>
 </beans>
