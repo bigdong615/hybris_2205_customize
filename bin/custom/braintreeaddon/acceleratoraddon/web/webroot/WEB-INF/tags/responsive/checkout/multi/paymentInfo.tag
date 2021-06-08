@@ -65,7 +65,7 @@
     
     <div class="row mb-4">
 		<div class="col-2 text-center">
-			<img src="assets/cc-mastercard.png" style="width: 49px;">
+			<img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/cc-${fn:toLowerCase(fn:escapeXml(brainTreePaymentInfo.cardType))}.png" style="width: 49px;">
 		</div>
 		<div class="col-5">
 			<p class="gray80">

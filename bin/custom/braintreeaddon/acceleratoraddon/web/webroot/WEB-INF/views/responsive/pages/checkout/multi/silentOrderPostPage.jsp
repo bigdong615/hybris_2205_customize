@@ -76,8 +76,7 @@
 											</c:otherwise>
 										</c:choose>
 										<div class="col-11" id="cardDetails">
-											<b>Credit Card <img src="assets/payment-cc.png"
-												style="height: 44px; width: auto;"></b>
+											<b>Credit Card <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png" style="height: 44px; width: auto;"></b>
 											<div class="collapse" id="credit-card-expand"
 												data-bs-parent="#paymentOptions">
 
@@ -275,12 +274,8 @@
 										
 									                   </div>
                                                         
-
-														<button type="submit" id="submit_silentOrderPostForm"
-															class="btn btn-primary btn-block checkout-next">
-															<spring:theme
-																code="checkout.multi.paymentMethod.continue" text="Next" />
-														</button>
+                             
+														
 
 									<%--<c:if test="${not empty braintreePaymentInfos}">
                     <div id="savedpayments">
@@ -380,6 +375,11 @@
                 </c:if>--%>
 								</div>
 							</div>
+							<div class="cart-actions">
+                                <a href="#" class="gray80">Back to renting</a>
+                                <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
+                            </div> 
+							
 						</div>
 
 						<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
