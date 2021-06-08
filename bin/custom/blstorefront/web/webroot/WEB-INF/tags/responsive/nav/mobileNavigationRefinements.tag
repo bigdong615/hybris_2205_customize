@@ -37,7 +37,7 @@
 	 <li>
 	 <span>
       <c:forEach items="${pageData.facets}" var="facet">
-                 <nav:facetNavigationRefinements facetData="${facet}"/>
+                 <nav:mobileFacetNavigationRefinements  facetData="${facet}"/>
         </c:forEach>
                 </span>
                 </li>
