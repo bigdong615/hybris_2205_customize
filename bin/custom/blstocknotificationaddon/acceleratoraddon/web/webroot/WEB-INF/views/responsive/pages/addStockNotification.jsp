@@ -11,15 +11,16 @@
          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-         <h5>Get Notified</h5>
          <c:choose>
             <c:when test="${isAddingNotification}">
+             <h5><spring:theme code="text.get.notified"/></h5>
                <p class="body14">
                   <spring:theme code="pdp.rental.upcomming.product.add.subscription.text1"/>&nbsp;<strong>${productData.name}</strong>&nbsp;
                    <spring:theme code="pdp.rental.upcomming.product.add.subscription.text2" />
                </p>
             </c:when>
             <c:otherwise>
+             <h5><spring:theme code="text.remove.notified.button.text"/></h5>
                <p class="body14">
                   <spring:theme code="pdp.rental.upcomming.product.remove.subscription.text"/>
                </p>
