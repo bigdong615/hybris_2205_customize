@@ -53,15 +53,15 @@
                   </c:choose>
                 </td>
               </tr>
-              <c:if test="${not empty cartData.appliedVouchers}">
+              <c:if test="${fn:length(cartData.giftCardData) > 0}">
               <tr class="discount">
               		  <td><spring:theme code="text.discount" /></td>
-              			<td class="text-end">-<format:blPrice priceData="${cartData.giftCardDiscount}" /></td>
+              		  <td class="text-end" id="cart-shipping-discount">-<format:price priceData="${cartData.giftCardDiscount}" /></td>
               </tr>
               </c:if>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
-                  <td class="text-end" id="cart-shipping-total"><format:blPrice priceData="${cartData.totalPriceWithTax}"/></td>
+                  <td class="text-end" id="cart-shipping-total"><format:price priceData="${cartData.totalPriceWithTax}"/></td>
               </tr>
           </tbody>
       </table>
@@ -71,8 +71,11 @@
           <button class="btn btn-secondary" type="button"><spring:theme code="text.voucher.apply.button.label"/></button>
         </div>
       </div>
-      <%-- <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
-      <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
+       <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
+       
+       <!--This Changes might needed in future   -->
+       
+       <%-- <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
       		<form:form id="removeVoucherForm${loop.index}"
       			action="${removeVoucherAction}" method="post"
       			modelAttribute="voucherForm">
