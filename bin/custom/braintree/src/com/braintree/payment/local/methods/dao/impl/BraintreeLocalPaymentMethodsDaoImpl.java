@@ -21,7 +21,7 @@ import java.util.Map;
 public class BraintreeLocalPaymentMethodsDaoImpl extends DefaultCommerceCartDao implements BraintreeLocalPaymentMethodsDao
 {
 	private final String selectAllQuery = "SELECT {" + BraintreeLocalPaymentMethodsModel.PK + "} FROM {" + BraintreeLocalPaymentMethodsModel._TYPECODE
-			+ "} WHERE {" + BraintreeLocalPaymentMethodsModel.ISENABLED + "} = " + Boolean.TRUE;
+			+ "} WHERE {" + BraintreeLocalPaymentMethodsModel.ISENABLED + "} = ?isEnabled" ;
 
 	protected static final String GET_ORDER_BY_PAYMENT_ID = "SELECT {order:" + OrderModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " as order JOIN " + BrainTreePaymentInfoModel._TYPECODE +
@@ -39,7 +39,10 @@ public class BraintreeLocalPaymentMethodsDaoImpl extends DefaultCommerceCartDao 
 	@Override
 	public List<BraintreeLocalPaymentMethodsModel> getAll()
 	{
-		SearchResult<BraintreeLocalPaymentMethodsModel> searchResult = search(new FlexibleSearchQuery(selectAllQuery));
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(selectAllQuery);
+
+		fQuery.addQueryParameter("isEnabled",Boolean.TRUE);
+		SearchResult<BraintreeLocalPaymentMethodsModel> searchResult = search(fQuery);
 		return searchResult.getResult();
 	}
 
