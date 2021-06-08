@@ -15,8 +15,6 @@
         <requires-extension name="bllogging"/>
         <requires-extension name="blintegration"/>
         <requires-extension name="commercefacades"/>
-        <requires-extension name="notificationservices" />
-        <requires-extension name="stocknotificationservices"/>
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		
         

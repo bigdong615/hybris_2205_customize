@@ -1,6 +1,8 @@
 ACC.stocknotification = {
     _autoload: ["bindStockNotification"],
     bindStockNotification: function() {
+
+   /* Register product to product interest for sending availability notification*/
          $(".arrival-notification").click(function(e) {
                     $('#getNotified').html("");
                     var productCode = ACC.common.encodeHtml($(this).attr("data-box-productcode"));
@@ -19,15 +21,13 @@ ACC.stocknotification = {
                      	}, 500)
                       }
                      	})
-
-
                 });
-
+                /*  Reload page to update data on page.*/
                   $('#getNotified').on('hidden.bs.modal', function () {
                   location.reload();
                    })
 
-
+                   /* remove product from product interest and stop sending further notification*/
                  	$(document).on("click", ".removeInterestbtn", function (e) {
                                 			e.preventDefault();
 

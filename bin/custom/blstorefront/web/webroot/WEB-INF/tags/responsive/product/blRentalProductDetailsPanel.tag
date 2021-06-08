@@ -104,7 +104,7 @@
                                       <c:when test="${isWatching}">
                                          <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 removeInterestbtn"  data-box-title="${colorBoxTitle}"
                                             data-box-productcode="${product.code}" data-bs-toggle="modal"
-                                            data-bs-target="#getNotified">Unsubscribe Me</a>
+                                            data-bs-target="#getNotified"><spring:theme code="text.remove.notified.button.text"/></a>
                                       </c:when>
                                       <c:otherwise>
                                          <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 arrival-notification"  data-box-title="${colorBoxTitle}"

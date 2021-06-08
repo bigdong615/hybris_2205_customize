@@ -24,29 +24,25 @@
      			 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                  <button type="submit" class="btn btn-primary dis js-login-popup" data-link="<c:url value='/login/loginpopup'/>"
                    data-bs-toggle="modal"  data-bs-target="#signIn" aria-disabled="false">
-                 						<spring:theme code="text.notify.me" />
+                  <spring:theme code="text.notify.me" />
                   </button>
      			  </sec:authorize>
      			  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
      			  <c:choose>
-                                                        <c:when test="${product.isWatching}">
-                    <button type="submit" class="btn btn-primary dis removeInterestbtn"
-                                         data-box-productcode="${product.code}" data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
-                    						Unsubscribe Me
-                    					</button>
-                                                       </c:when>
-                                                        <c:otherwise>
-
-                           <button type="submit" class="btn btn-primary dis arrival-notification"
-                                               data-box-productcode="${product.code}" data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
-                          						<spring:theme code="text.notify.me" />
-                          					</button>
-                                                        </c:otherwise>
-                                                     </c:choose>
-
-
+                     <c:when test="${product.isWatching}">
+                        <button type="submit" class="btn btn-primary dis removeInterestbtn"  data-box-productcode="${product.code}"
+                               data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
+                    			<spring:theme code="text.remove.notified.button.text"/>
+       					</button>
+                     </c:when>
+                     <c:otherwise>
+                      <button type="submit" class="btn btn-primary dis arrival-notification"  data-box-productcode="${product.code}"
+                                data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
+                          			<spring:theme code="text.notify.me" />
+                      </button>
+                     </c:otherwise>
+                  </c:choose>
      			   </sec:authorize>
-
 				</c:when>
 				<c:when test="${product.isDiscontinued or product.stock.stockLevelStatus.code eq 'outOfStock'}">
 					<button type="submit" class="btn btn-outline btn-disabled"

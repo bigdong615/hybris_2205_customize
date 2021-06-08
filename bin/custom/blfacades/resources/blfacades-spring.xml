@@ -476,6 +476,7 @@
 		class="com.bl.facades.process.email.context.BlGiftCardEmailContext"
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
+	<!-- BL-628: Notify me start -->
 	<bean id="outOfStockNotificationEmailContext" class="com.bl.facades.process.email.context.OutOfStockNotificationEmailContext" parent="abstractEmailContext" scope="prototype" >
 		<property name="productConverter" ref="productConverter"/>
 	</bean>
@@ -488,5 +489,5 @@
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
-
+	<!-- Notify me end-->
 </beans>

@@ -14,6 +14,10 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.stocknotificationservices.model.StockNotificationProcessModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
+/**
+ * @auther vijay vishwakarma
+ * This class is created to start business process for sending notification confirmation email.
+ * */
 public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade implements BlProductInterestFacade {
 
     private ModelService modelService;

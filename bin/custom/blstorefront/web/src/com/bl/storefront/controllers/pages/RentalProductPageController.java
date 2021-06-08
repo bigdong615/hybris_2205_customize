@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
 /**
  * This is created to render rental product details related data .
  *
@@ -40,10 +38,9 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
-  
 
-    @Resource(name = "stockNotificationFacade")
-    private StockNotificationFacade stockNotificationFacade;
+  @Resource(name = "stockNotificationFacade")
+  private StockNotificationFacade stockNotificationFacade;
 
 
   /**

@@ -81,6 +81,7 @@ public class BlControllerConstants
 	public static final String FALSE_STRING = "false";
 	public static final String IS_WATCHING = "isWatching";
 	public static final String STOCK_NOTIFICATION_FORM = "stockNotificationForm";
+	public static final String USER_EMAIL_STRING = "userEmail";
 
 	private BlControllerConstants()
 	{
