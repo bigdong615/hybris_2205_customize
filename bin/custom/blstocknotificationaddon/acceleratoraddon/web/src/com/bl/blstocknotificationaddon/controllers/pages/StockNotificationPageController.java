@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.spockframework.util.CollectionUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +38,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
@@ -128,7 +126,7 @@ public class StockNotificationPageController extends AbstractPageController
 			@ModelAttribute("stockNotificationForm")  StockNotificationForm stockNotificationForm,
 									   final HttpServletRequest request,final HttpServletResponse response, final Model model)
 	{
-		stockNotificationForm = createFormData();
+		stockNotificationForm = createFormData(); //NOSONAR
 		final Optional<ProductInterestData> optional = productInterestFacade
 				.getProductInterestDataForCurrentCustomer(productCode, NotificationType.BACK_IN_STOCK);
 
