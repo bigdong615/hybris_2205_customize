@@ -326,11 +326,16 @@
             $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
           });
           // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+          //BL-678 changes added fixedheight
           document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
               type   : 'loop',
               perPage: 1,
               drag   : false,
+              fixedHeight :275,
               breakpoints: {
+                  '1025': {
+                      fixedHeight:200,
+                  },
                   '991': {
                       pagination: false,
                   },
@@ -600,7 +605,7 @@
                                                  keyboard: false,
                                              } ).mount();
                                              // Initialize Additional Gear Slider - required for Single Product Page
-                                             // BL-605 :changes starts here
+                                             // BL-605 BL-682 :changes starts here
 
                                              new Splide( '#gear-slider', {
                                                  perPage: 4,
@@ -786,7 +791,7 @@
                                                      },
                                                      keyboard: false,
                                                  } ).mount());
-
+                                          
                                          </script>
 
                                 		</c:if>
