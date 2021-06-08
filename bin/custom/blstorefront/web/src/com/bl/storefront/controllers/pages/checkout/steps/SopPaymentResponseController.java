@@ -150,9 +150,9 @@ public class SopPaymentResponseController extends PaymentMethodCheckoutStepContr
 		{
 			final AddressData deliveryAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
 
-			if (deliveryAddress.getRegion() != null && !StringUtils.isEmpty(deliveryAddress.getRegion().getIsocode()))
+			if (deliveryAddress.getRegion() != null && StringUtils.isNotBlank(deliveryAddress.getRegion().getIsocode()))
 			{
-				sopPaymentDetailsForm.setBillTo_state(deliveryAddress.getRegion().getIsocodeShort());
+				sopPaymentDetailsForm.setBillTo_state(deliveryAddress.getRegion().getIsocode());
 			}
 
 			sopPaymentDetailsForm.setBillTo_titleCode(deliveryAddress.getTitleCode());
@@ -163,6 +163,7 @@ public class SopPaymentResponseController extends PaymentMethodCheckoutStepContr
 			sopPaymentDetailsForm.setBillTo_city(deliveryAddress.getTown());
 			sopPaymentDetailsForm.setBillTo_postalCode(deliveryAddress.getPostalCode());
 			sopPaymentDetailsForm.setBillTo_country(deliveryAddress.getCountry().getIsocode());
+			sopPaymentDetailsForm.setBillTo_email(deliveryAddress.getEmail());
 			sopPaymentDetailsForm.setBillTo_phoneNumber(deliveryAddress.getPhone());
 		}
 		return ControllerConstants.Views.Fragments.Checkout.BillingAddressForm;
