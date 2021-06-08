@@ -28,8 +28,8 @@ import org.apache.log4j.Logger;
  * @author Sunil
  */
 public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
-  private static final Logger LOG = Logger
-      .getLogger(BlNoSplittingStrategy.class);
+
+  private static final Logger LOG = Logger.getLogger(BlNoSplittingStrategy.class);
   private BlCommerceStockService blCommerceStockService;
   private BlSourcingLocationService blSourcingLocationService;
   private BaseStoreService baseStoreService;
@@ -39,27 +39,29 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
    *
    * @param sourcingContext the sourcingContext
    */
-  public void source(SourcingContext sourcingContext) {
+  public void source(final SourcingContext sourcingContext) {
+
     ServicesUtil.validateParameterNotNullStandardMessage("sourcingContext", sourcingContext);
 
-    SourcingLocation sourcingLocation = sourcingContext.getSourcingLocations().iterator().next();
+    final SourcingLocation sourcingLocation = sourcingContext.getSourcingLocations().iterator().next();
     sourcingContext.setPrimaryLocation(sourcingLocation);
     populateContextWithUnAllocatedMap(sourcingContext);
+
     if (isSourcingNoSplittingPossible(sourcingContext, sourcingLocation)) {
        sourcingLocation.setCompleteSourcePossible(true);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
           sourcingLocation.getWarehouse().getCode());
     } else {
       final BaseStoreModel baseStore = baseStoreService.getBaseStoreForUid("bl");
-      Collection<WarehouseModel> warehouseModels = baseStore.getWarehouses();
+      final Collection<WarehouseModel> warehouseModels = baseStore.getWarehouses();
       for (WarehouseModel warehouse : warehouseModels) {
         if (!StringUtils
             .equalsIgnoreCase(warehouse.getCode(), sourcingLocation.getWarehouse().getCode())
             && warehouse.isActive()) {
-          SourcingLocation otherSourcingLocation = blSourcingLocationService
+
+         final SourcingLocation otherSourcingLocation = blSourcingLocationService
               .createSourcingLocation(sourcingContext, warehouse);
-          if (isSourcingNoSplittingPossible(sourcingContext,
-              otherSourcingLocation)) {
+          if (isSourcingNoSplittingPossible(sourcingContext, otherSourcingLocation)) {
             otherSourcingLocation.setCompleteSourcePossible(true);
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
                 otherSourcingLocation.getWarehouse().getCode());
@@ -71,56 +73,86 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     }
   }
 
-  private void populateContextWithUnAllocatedMap(SourcingContext sourcingContext) {
-    Map<String, Long> unAllocatedMap = new HashMap<>();
-    if (MapUtils.isEmpty(sourcingContext.getUnAllocatedMap())) {
+  /**
+   * Populate context with unallocated map.
+   * @param sourcingContext
+   */
+  private void populateContextWithUnAllocatedMap(final SourcingContext sourcingContext) {
+
+    final Map<String, Long> unAllocatedMap = new HashMap<>();
+    if (MapUtils.isEmpty(sourcingContext.getUnallocatedMap())) {
       sourcingContext.getOrderEntries()
           .forEach(entry -> unAllocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), entry.getQuantity()));
     }
-    sourcingContext.setUnAllocatedMap(unAllocatedMap);
+    sourcingContext.setUnallocatedMap(unAllocatedMap);
   }
 
-  private boolean isSourcingNoSplittingPossible(SourcingContext sourcingContext,
-      SourcingLocation sourcingLocation) {
+  /**
+   * Check whether sourcing is possible with no splitting.
+   * @param sourcingContext
+   * @param sourcingLocation
+   * @return true if possible.
+   */
+  private boolean isSourcingNoSplittingPossible(final SourcingContext sourcingContext,
+      final SourcingLocation sourcingLocation) {
+
     sourcingContext.getOrderEntries().stream().forEach(orderEntry -> {
-      Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+      final Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
       if (availableQty.longValue() != 0l) {
         populateContextWithAllocatedQuantity(sourcingContext, sourcingLocation, orderEntry,
             availableQty);
       }
     });
+
     return sourcingContext.getOrderEntries().stream().allMatch(entry -> {
-      Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
+      final Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
       return ((OrderEntryModel) entry).getQuantity() <= availableQty;
     });
 
   }
 
-  private void populateContextWithAllocatedQuantity(SourcingContext sourcingContext,
-      SourcingLocation sourcingLocation, AbstractOrderEntryModel entry, Long availableQty) {
-    Map<String, Long> unAllocatedMap = sourcingContext.getUnAllocatedMap();
+  /**
+   * Populate context with allocatedQuantity.
+   * @param sourcingContext
+   * @param sourcingLocation
+   * @param entry
+   * @param availableQty
+   */
+  private void populateContextWithAllocatedQuantity(final SourcingContext sourcingContext,
+      final SourcingLocation sourcingLocation, final AbstractOrderEntryModel entry, final Long availableQty) {
 
-    Long oldUnAllocatedQty = unAllocatedMap.get(entry.getProduct().getCode()+"_"+entry.getEntryNumber());
-    Map<String, Long> allocatedMap = new HashMap<>();
-    Long allocatableQty = (oldUnAllocatedQty > 0) && (oldUnAllocatedQty > availableQty) ? availableQty : oldUnAllocatedQty;
+    final Map<String, Long> unAllocatedMap = sourcingContext.getUnallocatedMap();
+
+    final Long oldUnAllocatedQty = unAllocatedMap.get(entry.getProduct().getCode()+"_"+entry.getEntryNumber());
+    final Map<String, Long> allocatedMap = new HashMap<>();
+    final Long allocatableQty = (oldUnAllocatedQty > 0) && (oldUnAllocatedQty > availableQty) ? availableQty : oldUnAllocatedQty;
 
     allocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), allocatableQty);
     sourcingLocation.setAllocatedMap(allocatedMap);
     unAllocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), oldUnAllocatedQty - allocatableQty);
-    sourcingContext.setUnAllocatedMap(unAllocatedMap);
+    sourcingContext.setUnallocatedMap(unAllocatedMap);
   }
 
+  /**
+   * Get availability for product.
+   * @param productModel
+   * @param sourcingLocation
+   * @return available quantity.
+   */
   @Override
-  protected Long getAvailabilityForProduct(ProductModel productModel,
-      SourcingLocation sourcingLocation) {
+  protected Long getAvailabilityForProduct(final ProductModel productModel,
+      final SourcingLocation sourcingLocation) {
+
     Long stockLevel = 0L;
     if (sourcingLocation.getAvailabilityMap() != null
         && sourcingLocation.getAvailabilityMap().get(productModel.getCode()) != null) {
       stockLevel = Long
           .valueOf(sourcingLocation.getAvailabilityMap().get(productModel.getCode()).size());
     }
+
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} found for product code {} from warehouse {} ",
         stockLevel.intValue(), productModel.getCode(), sourcingLocation.getWarehouse().getCode());
+
     return stockLevel;
   }
 
@@ -128,7 +160,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     return blCommerceStockService;
   }
 
-  public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
+  public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService) {
     this.blCommerceStockService = blCommerceStockService;
   }
 
@@ -137,7 +169,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
   }
 
   public void setBlSourcingLocationService(
-      BlSourcingLocationService blSourcingLocationService) {
+      final BlSourcingLocationService blSourcingLocationService) {
     this.blSourcingLocationService = blSourcingLocationService;
   }
 

@@ -22,8 +22,8 @@ import org.apache.log4j.Logger;
  * @author Sunil
  */
 public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
-  private static final Logger LOG = Logger
-      .getLogger(BlNoRestrictionsStrategy.class);
+
+  private static final Logger LOG = Logger.getLogger(BlNoRestrictionsStrategy.class);
 
   private ModelService modelService;
   private BlAssignSerialService blAssignSerialService;
@@ -37,11 +37,12 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
    *
    * @param sourcingContext the sourcingContext
    */
-  public void source(SourcingContext sourcingContext)  throws BlSourcingException {
+  public void source(final SourcingContext sourcingContext)  throws BlSourcingException {
+
     ServicesUtil.validateParameterNotNullStandardMessage("sourcingContext", sourcingContext);
 
     if (canBeSourcedCompletely(sourcingContext)) {
-      boolean sourcingComplete = assignSerials(sourcingContext);
+      final boolean sourcingComplete = assignSerials(sourcingContext);
       sourcingContext.getResult().setComplete(sourcingComplete);
     } else {
       //can not be sourced all the products from all warehouses
@@ -55,8 +56,15 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     }
   }
 
-  private boolean assignSerials(SourcingContext context)  throws BlSourcingException  {
-    SourcingLocation completeSourcingLocation = context.getSourcingLocations().stream().filter(
+  /**
+   * Source and assign serials.
+   * @param context
+   * @return true if sourcing complete.
+   * @throws BlSourcingException
+   */
+  private boolean assignSerials(final SourcingContext context)  throws BlSourcingException  {
+
+    final SourcingLocation completeSourcingLocation = context.getSourcingLocations().stream().filter(
         SourcingLocation::isCompleteSourcePossible).findAny().orElse(null);
 
     boolean sourcingComplete = false;
@@ -66,8 +74,8 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
       sourcingComplete = blAssignSerialService
           .assignSerialsFromLocation(context, completeSourcingLocation);
     } else {  //sourcing from multiple locations
-      SourcingLocation primarySourcingLocation = context.getPrimaryLocation();
-      List<SourcingLocation> otherLocations = context.getSourcingLocations().stream()
+      final SourcingLocation primarySourcingLocation = context.getPrimaryLocation();
+      final List<SourcingLocation> otherLocations = context.getSourcingLocations().stream()
           .filter(sl -> !sl.getWarehouse().equals(primarySourcingLocation.getWarehouse())).collect(
               Collectors.toList());
 
@@ -83,9 +91,16 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     return sourcingComplete;
   }
 
-  private boolean canBeSourcedCompletely(SourcingContext sourcingContext)  throws BlSourcingException {
+  /**
+   * Check whether sourcing done completely.
+   * @param sourcingContext
+   * @return
+   * @throws BlSourcingException
+   */
+  private boolean canBeSourcedCompletely(final SourcingContext sourcingContext)  throws BlSourcingException {
+
     boolean canBeSourcedCompletely = true;
-    for (Long unAllocatedValue : sourcingContext.getUnAllocatedMap().values()) {
+    for (Long unAllocatedValue : sourcingContext.getUnallocatedMap().values()) {
       if (unAllocatedValue > 0) {
         // source was incomplete from all warehouses
         // mark the order status as error
@@ -101,7 +116,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
   }
 
   public void setBlAssignSerialService(
-      BlAssignSerialService blAssignSerialService) {
+      final BlAssignSerialService blAssignSerialService) {
     this.blAssignSerialService = blAssignSerialService;
   }
 
@@ -109,7 +124,7 @@ public class BlNoRestrictionsStrategy extends AbstractSourcingStrategy {
     return modelService;
   }
 
-  public void setModelService(ModelService modelService) {
+  public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
   }
 

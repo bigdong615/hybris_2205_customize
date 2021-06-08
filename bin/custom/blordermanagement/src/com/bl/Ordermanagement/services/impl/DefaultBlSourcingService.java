@@ -34,6 +34,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private static final Logger LOG = Logger.getLogger(DefaultBlSourcingService.class);
   private BlSourcingStrategyService blSourcingStrategyService;
   private BlSourcingLocationService blSourcingLocationService;
+
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
   /**
@@ -53,13 +54,15 @@ public class DefaultBlSourcingService implements BlSourcingService {
     blDeliveryStateSourcingLocationFilter.applyFilter(order, locations);
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total filtered sourcing locations found: {}",
         locations.size());
+
     final SourcingContext context = new SourcingContext();
     final SourcingResults result = new SourcingResults();
     result.setResults(Sets.newHashSet());
     result.setComplete(Boolean.FALSE);
     context.setResult(result);
     context.setOrderEntries(order.getEntries());
-    Set<SourcingLocation> sourcingLocations = Sets.newHashSet();
+
+    final Set<SourcingLocation> sourcingLocations = Sets.newHashSet();
     locations.forEach(location ->
       sourcingLocations.add(blSourcingLocationService.createSourcingLocation(context, location))
     );
@@ -108,4 +111,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
     this.blSourcingStrategyService = blSourcingStrategyService;
   }
 
+  public BlDeliveryStateSourcingLocationFilter getBlDeliveryStateSourcingLocationFilter() {
+    return blDeliveryStateSourcingLocationFilter;
+  }
+
+  public void setBlDeliveryStateSourcingLocationFilter(
+      final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
+    this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
+  }
 }

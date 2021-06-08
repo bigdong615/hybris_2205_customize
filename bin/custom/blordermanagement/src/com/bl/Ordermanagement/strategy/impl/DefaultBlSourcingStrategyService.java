@@ -17,6 +17,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Sunil
  */
 public class DefaultBlSourcingStrategyService implements BlSourcingStrategyService, InitializingBean {
+
   private List<SourcingStrategy> defaultStrategies;
 
   public DefaultBlSourcingStrategyService() {
@@ -31,13 +32,14 @@ public class DefaultBlSourcingStrategyService implements BlSourcingStrategyServi
    * @return SourcingStrategy list
    */
   public List<SourcingStrategy> getStrategies(
-      SourcingContext context, Collection<SourcingStrategyMapper> mappers) {
-    List<SourcingStrategy> strategies = new ArrayList<>();
-    Iterator<SourcingStrategyMapper> var5 = mappers.iterator();
+      final SourcingContext context, final Collection<SourcingStrategyMapper> mappers) {
 
-    while(var5.hasNext()) {
-      SourcingStrategyMapper mapper = var5.next();
-      Boolean isMatching = mapper.isMatch(context);
+    final List<SourcingStrategy> strategies = new ArrayList<>();
+    final Iterator<SourcingStrategyMapper> var5 = mappers.iterator();
+
+    while (var5.hasNext()) {
+      final SourcingStrategyMapper mapper = var5.next();
+      final Boolean isMatching = mapper.isMatch(context);
       if (Boolean.TRUE.equals(isMatching)) {
         strategies.add(mapper.getStrategy());
       }
@@ -56,7 +58,7 @@ public class DefaultBlSourcingStrategyService implements BlSourcingStrategyServi
     }
   }
 
-  public void setDefaultStrategies(List<SourcingStrategy> defaultStrategies) {
+  public void setDefaultStrategies(final List<SourcingStrategy> defaultStrategies) {
     this.defaultStrategies = defaultStrategies;
   }
 }

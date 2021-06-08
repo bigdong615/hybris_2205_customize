@@ -22,20 +22,22 @@ public class DefaultBlSourcingLocationService implements BlSourcingLocationServi
    * {@inheritDoc}
    */
   @Override
-  public SourcingLocation createSourcingLocation(SourcingContext context, WarehouseModel location) {
-    SourcingLocation sourcingLocation = new SourcingLocation();
+  public SourcingLocation createSourcingLocation(final SourcingContext context, final WarehouseModel location) {
+
+    final SourcingLocation sourcingLocation = new SourcingLocation();
     sourcingLocation.setWarehouse(location);
     sourcingLocation.setContext(context);
     this.getSourcingLocationPopulators().forEach(populator ->
       populator.populate(location, sourcingLocation)
     );
 
-    Set<SourcingLocation> sourcingLocations = (Set) context.getSourcingLocations();
+    final Set<SourcingLocation> sourcingLocations = (Set) context.getSourcingLocations();
+
     if (CollectionUtils.isNotEmpty(sourcingLocations)) {
       sourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(sourcingLocations);
     } else {
-      Set<SourcingLocation> newSourcingLocations = new HashSet<>();
+      final Set<SourcingLocation> newSourcingLocations = new HashSet<>();
       newSourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(newSourcingLocations);
     }
@@ -47,7 +49,7 @@ public class DefaultBlSourcingLocationService implements BlSourcingLocationServi
     return this.sourcingLocationPopulators;
   }
 
-  public void setSourcingLocationPopulators(Set<SourcingLocationPopulator> populators) {
+  public void setSourcingLocationPopulators(final Set<SourcingLocationPopulator> populators) {
     this.sourcingLocationPopulators = populators;
   }
 }
