@@ -28,14 +28,12 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
       if (StringUtils.isNotBlank(selectedPaymentMethodNonce))
       {
         brainTreeCheckoutFacade.setPaymentDetails(selectedPaymentMethodId, selectedPaymentMethodNonce);
-        sessionService.setAttribute("userSelectedPaymentId", selectedPaymentMethodId);
-        sessionService.setAttribute("selectedPaymentMethodNonce", selectedPaymentMethodNonce);
+       
       }
       else
       {
         getCheckoutFacade().setPaymentDetails(selectedPaymentMethodId);
-        sessionService.setAttribute("userSelectedPaymentId", selectedPaymentMethodId);
-        sessionService.setAttribute("selectedPaymentMethodNonce", selectedPaymentMethodNonce);
+        
       }
     }
     return getCheckoutStep().currentStep();
