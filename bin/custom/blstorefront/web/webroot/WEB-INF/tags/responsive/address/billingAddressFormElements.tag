@@ -14,7 +14,7 @@
 
 
 
-     <!-- <input type="checkbox" class="form-control" id="useDeliveryAddress" ><label for="useDeliveryAddress"><span class="gray80">Use shipping address</span></label>   	 -->
+     
 		<formElement:formInputBox idKey="address.firstName" placeholder="address.firstName" labelKey="" path="billTo_firstName" inputCSS="form-control" mandatory="true" />
 		<formElement:formInputBox idKey="address.lastName" labelKey="" placeholder="address.lastName" path="billTo_lastName" inputCSS="form-control" mandatory="true" />
 		<formElement:formInputBox idKey="address.line1" labelKey="" placeholder="address.street1" path="billTo_street1" inputCSS="form-control" mandatory="true" />

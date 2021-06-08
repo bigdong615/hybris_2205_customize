@@ -72,22 +72,7 @@
         </div>
       </div>
        <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
-       
-       <!--This Changes might needed in future   -->
-       
-       <%-- <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
-      		<form:form id="removeVoucherForm${loop.index}"
-      			action="${removeVoucherAction}" method="post"
-      			modelAttribute="voucherForm">
-      			<p class="body14">
-      				<span class="gray60">${gift.code}</span> <a href="#"
-      					class="js-release-voucher-remove-btn" id="${gift.code}"><spring:theme
-      						code="text.remove"/></a><span class="float-end">${gift.redeemamount}</span>
-      			</p>
-      			<form:input id="${gift.code}" value="${gift.code}" path="voucherCode" />
-      		</form:form>
-      	</c:forEach> --%>
-      	<div class="cart-actions">
+       <div class="cart-actions">
                                 <form:form action="${placeOrderUrl}" id="placeOrderForm1" modelAttribute="placeOrderForm">
                                         
                                <button id="placeOrder" type="submit" class="btn btn-block btn-primary mt-4">

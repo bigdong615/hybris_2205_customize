@@ -14,6 +14,8 @@
 
 	<itemtypes>
 
+		<!--Same piece of code is present in another file of braintreefulfilmentprocess so commented out  -->
+		
         <!-- <itemtype code="ConsignmentProcess" autocreate="false" generate="false" >
             <attributes>
                 <attribute qualifier="done" type="boolean">

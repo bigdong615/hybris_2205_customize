@@ -79,7 +79,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	private BlCustomerFacade blCustomerFacade;
 
 	@Resource(name = "sessionService")
-	public SessionService sessionService;
+	private SessionService sessionService;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -190,31 +190,6 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			try
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
-
-				final CartData cartData = getCheckoutFacade().getCheckoutCart();
-				final String userSelectedPaymentId = (String) sessionService.getAttribute("userSelectedPaymentId");
-
-				if (StringUtils.isNotBlank(userSelectedPaymentId))
-				{
-					model.addAttribute("userSelectedPaymentInfo", cartData.getPaymentInfo());
-					model.addAttribute("userSelectedPaymentId", userSelectedPaymentId);
-					model.addAttribute("isSavedCardOrder", Boolean.TRUE);
-					model.addAttribute("selectedPaymentMethodNonce", sessionService.getAttribute("selectedPaymentMethodNonce"));
-					sessionService.removeAttribute("userSelectedPaymentId");
-					sessionService.removeAttribute("selectedPaymentMethodNonce");
-				}
-
-				model.addAttribute("selectedcard", "false");
-				final CCPaymentInfoData payInfo = cartData.getPaymentInfo();
-				if (payInfo != null)
-				{
-					final String subid = payInfo.getSubscriptionId();
-					if (StringUtils.isNotEmpty(subid))
-					{
-						model.addAttribute("selectedcard", "true");
-					}
-				}
-
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)
