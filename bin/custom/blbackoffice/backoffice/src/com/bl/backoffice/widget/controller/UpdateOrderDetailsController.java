@@ -21,6 +21,7 @@ import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
+import de.hybris.platform.util.Config;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -68,6 +68,9 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	private static final String COUNTRY_CODE = "US";
 
 	private static final int DURATION = 2000;
+
+	private static final String SF_ZIPCODE = Config.getString("shipping.sf.zip.code", "94070");
+	private static final String NYC_ZIPCODE = Config.getString("shipping.sf.zip.code", "10004");
 
 	@Wire
 	private Textbox firstName;
@@ -140,12 +143,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 	@Autowired
 	CalculationService calculationService;
-
-	@Value("${shipping.nyc.zip.code}")
-	private String nyc;
-
-	@Value("${shipping.sf.zip.code}")
-	private String sf;
 
 	private Converter<RegionModel, RegionData> regionConverter;
 
@@ -251,14 +248,14 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 		final String deliveryAddressZipCode = getOrderModel().getDeliveryAddress().getPostalcode();
 
-		validateZipCodeForDelivery(sameDayCityReqData, deliveryAddressZipCode);
+		validateZipCodeForDelivery(sameDayCityReqData, deliveryAddressZipCode, true);
 	}
 
 	@ViewEvent(componentID = "postalCode", eventName = "onChange")
 	public void changeZipCode()
 	{
 		final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
-		validateZipCodeForDelivery(sameDayCityReqData, this.postalCode.getValue());
+		validateZipCodeForDelivery(sameDayCityReqData, this.postalCode.getValue(), false);
 	}
 
 	@ViewEvent(componentID = "isPickStoreAddress", eventName = "onChange")
@@ -278,7 +275,8 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	 * @param deliveryAddressZipCode
 	 * @param warehouseZipCode
 	 */
-	private void validateZipCodeForDelivery(final SameDayCityReqData sameDayCityReqData, final String deliveryAddressZipCode)
+	private void validateZipCodeForDelivery(final SameDayCityReqData sameDayCityReqData, final String deliveryAddressZipCode,
+			final boolean forDeliveryMode)
 	{
 		AddressModel deliveryAddress = getOrderModel().getDeliveryAddress();
 		final ZoneDeliveryModeModel blZoneDeliveryMode = this.deliveryModeCombobox.getSelectedItem().getValue();
@@ -291,10 +289,13 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 			{
 				deliveryAddress.setPickStoreAddress(true);
 				deliveryAddress.setUpsStoreAddress(false);
-				final AddressModel pickUpStoreAddress = zonedeliveryMode.getInternalStoreAddress();
-				final AddressModel pickupDeliveryAddress = modelService.clone(pickUpStoreAddress);
-				pickupDeliveryAddress.setShippingAddress(true);
-				deliveryAddress = pickupDeliveryAddress;
+				if (zonedeliveryMode.getInternalStoreAddress() != null)
+				{
+					final AddressModel pickUpStoreAddress = zonedeliveryMode.getInternalStoreAddress();
+					final AddressModel pickupDeliveryAddress = modelService.clone(pickUpStoreAddress);
+					pickupDeliveryAddress.setShippingAddress(true);
+					deliveryAddress = pickupDeliveryAddress;
+				}
 			}
 
 			if ("SHIP_UPS_OFFICE".equals(zonedeliveryMode.getShippingGroup().getCode()))
@@ -317,16 +318,17 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		{
 			final BlRushDeliveryModeModel zonedeliveryMode = (BlRushDeliveryModeModel) blZoneDeliveryMode;
 
-			if (zonedeliveryMode.getShippingGroup().getCode().contains(BlCoreConstants.RUSH_SAN_CARLOS))
+			if (zonedeliveryMode.getShippingGroup().getCode().equals(BlCoreConstants.RUSH_SAN_CARLOS))
 			{
-				sameDayCityReqData.setWarehouseZipCode(sf);
+				sameDayCityReqData.setWarehouseZipCode(SF_ZIPCODE);
 			}
-			else if (zonedeliveryMode.getShippingGroup().getCode().contains(BlCoreConstants.RUSH_NYC_NEXT_DAY))
+			else if (zonedeliveryMode.getShippingGroup().getCode().equals(BlCoreConstants.RUSH_NYC_NEXT_DAY))
 			{
-				sameDayCityReqData.setWarehouseZipCode(nyc);
+				sameDayCityReqData.setWarehouseZipCode(NYC_ZIPCODE);
 			}
 
-			sameDayCityReqData.setDeliveryAddressZipCode(deliveryAddressZipCode);
+			//sameDayCityReqData.setDeliveryAddressZipCode(deliveryAddressZipCode);
+			sameDayCityReqData.setDeliveryAddressZipCode(this.postalCode.getValue());
 
 			try
 			{
@@ -340,8 +342,16 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				{
 					deliveryList.addToSelection(getOrderModel().getDeliveryMode());
 					Messagebox.show("Selected shipping method service is not applicable for added zip code");
-					throw new WrongValueException(this.deliveryModeCombobox,
-							this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
+
+					if (forDeliveryMode)
+					{
+						throw new WrongValueException(this.deliveryModeCombobox,
+								this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
+					}
+					else
+					{
+						throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
+					}
 
 				}
 			}
