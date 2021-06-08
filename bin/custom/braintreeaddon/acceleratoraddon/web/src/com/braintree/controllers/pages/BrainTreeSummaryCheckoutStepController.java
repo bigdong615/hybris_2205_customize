@@ -1,5 +1,8 @@
 package com.braintree.controllers.pages;
 
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.constants.BraintreeConstants;
@@ -62,6 +65,13 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@Resource(name = "brainTreeConfigService")
 	private BrainTreeConfigService brainTreeConfigService;
+	
+	
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration()
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
