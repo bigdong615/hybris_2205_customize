@@ -245,17 +245,32 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	public void changeDeliveryMode()
 	{
 		final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
-
+		final String postalCode = this.postalCode.getValue();
 		final String deliveryAddressZipCode = getOrderModel().getDeliveryAddress().getPostalcode();
+		try
+		{
+			validateZipCodeForDelivery(sameDayCityReqData, deliveryAddressZipCode);
+		}
+		catch (final WrongValueException we)
+		{
+			this.postalCode.setValue(postalCode);
+		}
 
-		validateZipCodeForDelivery(sameDayCityReqData, deliveryAddressZipCode, true);
 	}
 
 	@ViewEvent(componentID = "postalCode", eventName = "onChange")
 	public void changeZipCode()
 	{
+		final String postalCode = this.postalCode.getValue();
 		final SameDayCityReqData sameDayCityReqData = new SameDayCityReqData();
-		validateZipCodeForDelivery(sameDayCityReqData, this.postalCode.getValue(), false);
+		try
+		{
+			validateZipCodeForDelivery(sameDayCityReqData, this.postalCode.getValue());
+		}
+		catch (final WrongValueException we)
+		{
+			this.postalCode.setValue(postalCode);
+		}
 	}
 
 	@ViewEvent(componentID = "isPickStoreAddress", eventName = "onChange")
@@ -275,8 +290,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	 * @param deliveryAddressZipCode
 	 * @param warehouseZipCode
 	 */
-	private void validateZipCodeForDelivery(final SameDayCityReqData sameDayCityReqData, final String deliveryAddressZipCode,
-			final boolean forDeliveryMode)
+	private void validateZipCodeForDelivery(final SameDayCityReqData sameDayCityReqData, final String deliveryAddressZipCode)
 	{
 		AddressModel deliveryAddress = getOrderModel().getDeliveryAddress();
 		final ZoneDeliveryModeModel blZoneDeliveryMode = this.deliveryModeCombobox.getSelectedItem().getValue();
@@ -327,7 +341,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				sameDayCityReqData.setWarehouseZipCode(NYC_ZIPCODE);
 			}
 
-			//sameDayCityReqData.setDeliveryAddressZipCode(deliveryAddressZipCode);
 			sameDayCityReqData.setDeliveryAddressZipCode(this.postalCode.getValue());
 
 			try
@@ -342,17 +355,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				{
 					deliveryList.addToSelection(getOrderModel().getDeliveryMode());
 					Messagebox.show("Selected shipping method service is not applicable for added zip code");
-
-					if (forDeliveryMode)
-					{
-						throw new WrongValueException(this.deliveryModeCombobox,
-								this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
-					}
-					else
-					{
-						throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
-					}
-
+					throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
 				}
 			}
 			catch (final URISyntaxException ex)
