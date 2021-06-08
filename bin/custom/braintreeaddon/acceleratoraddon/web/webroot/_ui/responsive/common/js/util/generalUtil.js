@@ -87,7 +87,7 @@ function createForm(name, action) {
 function createHiddenParameter(name, value) {
     var input = $(HTML.INPUT).attr(HTML.TYPE, "hidden").attr(CONST.ATTR_NAME, name).val(
         value);
-        alert(name +" " + value);
+        
     return input;
 }
 
