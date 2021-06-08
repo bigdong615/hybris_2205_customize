@@ -746,7 +746,9 @@ function createHostedFields(clientInstance) {
 
 
             // Add a click event listener to PayPal image
-            $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).click(function () {
+            $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).click(function (e) {
+            	e.preventDefault();
+            	
 				$('.global-alerts').hide();
 				$('#validationMessage').empty();
 				$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).addClass("disbleButtonColor");
