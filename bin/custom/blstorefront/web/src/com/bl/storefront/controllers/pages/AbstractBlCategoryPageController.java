@@ -89,10 +89,18 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 if(StringUtils.isNotBlank(categoryParam)) {
                     final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
                         .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+
                     if(StringUtils.isNotBlank(categoryCodeMap.get(categoryCode))) {
+                        if(BlControllerConstants.AUDIO_CATEGORY.equalsIgnoreCase(categoryCodeMap.get(categoryCode)) ||
+                            BlControllerConstants.LIGHTING_CATEGORY.equalsIgnoreCase(categoryCodeMap.get(categoryCode))) {
+                            searchQuery = String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE))
+                                .append(getConfigParameters(BlCoreConstants.FACTED_USED_GEAR_CATEGORY_NAME))
+                                .append(BlControllerConstants.PRODUCTION_CATEGORY));
+                        }
+                        else {
                         searchQuery = String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE))
                             .append(getConfigParameters(BlCoreConstants.FACTED_USED_GEAR_CATEGORY_NAME))
-                            .append(categoryCodeMap.get(categoryCode)));
+                            .append(categoryCodeMap.get(categoryCode)));}
                     }
                 }
         }

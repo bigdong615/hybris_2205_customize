@@ -211,7 +211,14 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
   private void addQueryForCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,final String key , final String value) {
     target.getSearchQuery().addFilterQuery(key,value);
     // Added for Rental Gear and Used Gear sorting field
-          final String sortName = null != target.getPageableData().getSort() ? target.getPageableData().getSort() : target.getSearchQueryData().getSort() ;
+          String sortName = BlCoreConstants.EMPTY_STRING;
+          if(null != target.getPageableData() && null != target.getPageableData().getSort()) {
+           sortName = target.getPageableData().getSort();
+          }
+          else if(null != target.getSearchQueryData().getSort()) {
+             sortName = target.getSearchQueryData().getSort();
+          }
+
         for (final IndexedTypeSort indexedTypeSorts : target.getSearchQuery().getIndexedType().getSorts()) {
           if(indexedTypeSorts.getCode().equalsIgnoreCase(sortName) && (BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName)
           ||  BlCoreConstants.PRICE_DESC.equalsIgnoreCase(sortName))){
