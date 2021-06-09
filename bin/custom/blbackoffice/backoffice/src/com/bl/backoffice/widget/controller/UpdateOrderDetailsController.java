@@ -45,7 +45,7 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
-import com.bl.core.constants.BlCoreConstants;
+import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.facades.fexEx.data.SameDayCityReqData;
@@ -272,7 +272,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 			isDeliveryModeChange = true;
 			final BlPickUpZoneDeliveryModeModel zonedeliveryMode = (BlPickUpZoneDeliveryModeModel) blZoneDeliveryMode;
 
-			if ("BL_PARTNER_PICKUP".equals(zonedeliveryMode.getShippingGroup().getCode()))
+			if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(zonedeliveryMode.getShippingGroup().getCode()))
 			{
 				deliveryAddress.setPickStoreAddress(true);
 				deliveryAddress.setUpsStoreAddress(false);
@@ -285,7 +285,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				}
 			}
 
-			if ("SHIP_UPS_OFFICE".equals(zonedeliveryMode.getShippingGroup().getCode()))
+			if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(zonedeliveryMode.getShippingGroup().getCode()))
 			{
 				deliveryAddress.setPickStoreAddress(false);
 				deliveryAddress.setUpsStoreAddress(true);
@@ -312,11 +312,11 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 		{
 			final BlRushDeliveryModeModel zonedeliveryMode = (BlRushDeliveryModeModel) blZoneDeliveryMode;
 
-			if (zonedeliveryMode.getShippingGroup().getCode().equals(BlCoreConstants.RUSH_SAN_CARLOS))
+			if (zonedeliveryMode.getShippingGroup().getCode().equals(BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY))
 			{
 				sameDayCityReqData.setWarehouseZipCode(SF_ZIPCODE);
 			}
-			else if (zonedeliveryMode.getShippingGroup().getCode().equals(BlCoreConstants.RUSH_NYC_NEXT_DAY))
+			else if (zonedeliveryMode.getShippingGroup().getCode().equals(BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY))
 			{
 				sameDayCityReqData.setWarehouseZipCode(NYC_ZIPCODE);
 			}
@@ -325,7 +325,14 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 			try
 			{
+				Messagebox.show("Request sent to FedEx" + "----" + this.deliveryModeCombobox.getValue() + "-"
+						+ sameDayCityReqData.getDeliveryAddressZipCode() + "----" + sameDayCityReqData.getWarehouseZipCode());
+
 				final SameDayCityResData resData = getFedExSameDayServiceImpl().getAvailability(sameDayCityReqData);
+
+				Messagebox.show(
+						"FedEx Response Data" + "----" + this.deliveryModeCombobox.getValue() + "-" + resData.getServiceApplicable());
+
 				if (BooleanUtils.isTrue(resData.getServiceApplicable()))
 				{
 					deliveryList.addToSelection(blZoneDeliveryMode);
