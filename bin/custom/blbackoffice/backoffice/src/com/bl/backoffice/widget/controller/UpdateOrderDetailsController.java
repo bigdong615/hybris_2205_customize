@@ -333,6 +333,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				}
 				else
 				{
+					deliveryList.addToSelection(getOrderModel().getDeliveryMode());
 					Messagebox.show("Selected shipping method service is not applicable for added zip code" + "----"
 							+ this.deliveryModeCombobox.getValue() + "-" + this.postalCode.getValue());
 
