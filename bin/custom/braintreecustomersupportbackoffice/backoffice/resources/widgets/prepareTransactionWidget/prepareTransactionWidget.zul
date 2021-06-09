@@ -1,0 +1,13 @@
+<widget style="overflow:scroll;height:100%">
+    <div style="padding:12px; background-color:#d3d9df">
+			<label>Site</label>
+		</div>
+		<listbox id="siteList" />
+		<div style="padding:12px; background-color:#d3d9df">
+			<label>Currency</label>
+		</div>
+		<listbox id="currencyList" />
+	<div>
+		<button id="nextBtn" label="Next" style="margin:20px"/>
+	</div>
+</widget>

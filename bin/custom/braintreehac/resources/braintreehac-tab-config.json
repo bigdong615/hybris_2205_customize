@@ -1,0 +1,48 @@
+[ {
+  "basePath" : "/braintreehac",
+  "mainTabLabel" : "PayPal Button Settings",
+  "subTabs" : [ {
+    "path" : "/button/config/cart/",
+    "label" : "Cart Button Config",
+    "skipPrefix" : false
+  },
+    {
+      "path" : "/button/config/minicart/",
+      "label" : "MiniCart Button Config",
+      "skipPrefix" : false
+    },
+    {
+      "path" : "/button/config/mark/",
+      "label" : "Billing Button Config",
+      "skipPrefix" : false
+    }]
+},
+  {
+    "basePath": "/braintreehac",
+    "mainTabLabel": "Credit Message Configuration",
+    "subTabs": [
+      {
+        "path": "/productDetailsPageCreditMessage/config/",
+        "label": "Product Details Page Credit Message",
+        "skipPrefix": false
+      },
+      {
+        "path": "/productListCreditMessage/config/",
+        "label": "Product List Credit Message",
+        "skipPrefix": false
+      },
+      {
+        "path": "/cartPageCreditMessage/config/",
+        "label": "Cart Page Credit Message",
+        "skipPrefix": false
+      },
+      {
+        "path": "/productGridCreditMessage/config/",
+        "label": "Product Grid Credit Message",
+        "skipPrefix": false
+      }
+    ]
+  }
+]
+
+

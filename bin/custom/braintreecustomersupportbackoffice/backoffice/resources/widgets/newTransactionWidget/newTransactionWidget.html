@@ -1,0 +1,48 @@
+
+<head>
+	<script src="https://js.braintreegateway.com/web/3.52.0/js/client.min.js"></script>
+	<script src="https://js.braintreegateway.com/web/3.52.0/js/hosted-fields.min.js"></script>
+	<script src="https://js.braintreegateway.com/web/3.52.0/js/three-d-secure.min.js"></script>
+	<script src="https://js.braintreegateway.com/web/3.52.0/js/data-collector.min.js"></script>
+	<script src="https://js.braintreegateway.com/web/3.52.0/js/paypal.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+</head>
+
+
+<widget ng-controller="NewTransactionWidgetController">
+
+		<form action="" method="POST" id="braintree-payment-form">
+
+			<div >
+				<input type="text" name="cardholder" id="cardholder" placeholder="Cardholder Name" maxlength="175" />
+			</div>
+
+			<br/>
+
+			<div id="number"></div>
+
+			<br/>
+
+			<div id="cvv"></div>
+
+			<br/>
+
+			<div id="expiration-date"></div>
+
+			<div id="messages">
+
+				<span id="validPaymentMethodCheck" class="card-check" cng-local="label.paymentMethodCheckMessage">$labels.local.label.paymentMethodCheckMessage</span>
+
+				<span id="validPaymentMethodSuccess" class="card-valid" cng-local="label.paymentMethodValidMessage">$labels.local.label.paymentMethodValidMessage</span>
+
+				<span id="validPaymentMethodError" class="card-invalid" cng-local="label.paymentMethodInvalidMessage">$labels.local.label.paymentMethodInvalidMessage</span>
+
+			</div>
+
+			<input type="button" id="submit" value="Validate Credit Card" class="z-button z-button.btnblue" />
+
+		</form>
+
+	<cng-event type="ready" handler="init()" />
+
+</widget>
