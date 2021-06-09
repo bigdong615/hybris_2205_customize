@@ -477,7 +477,7 @@
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
 	<!-- BL-628: Notify me start -->
-	<bean id="outOfStockNotificationEmailContext" class="com.bl.facades.process.email.context.OutOfStockNotificationEmailContext" parent="abstractEmailContext" scope="prototype" >
+	<bean id="productNotifyMeEmailContext" class="com.bl.facades.process.email.context.ProductNotifyMeEmailContext" parent="abstractEmailContext" scope="prototype" >
 		<property name="productConverter" ref="productConverter"/>
 	</bean>
 

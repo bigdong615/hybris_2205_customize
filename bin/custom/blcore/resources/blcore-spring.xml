@@ -798,12 +798,12 @@
 	<!--Gift card End-->
 	
 	<!-- BL-628: Notify me start -->
-	<bean id="generateOutOfStockNotificationEmail" parent="abstractGenerateEmailAction">
-		<property name="frontendTemplateName" value="ProductOutOfStockNotificationEmailTemplate" />
+	<bean id="generateProductNotifyMeEmail" parent="abstractGenerateEmailAction">
+		<property name="frontendTemplateName" value="ProductNotifyMeEmailTemplate" />
 	</bean>
 
-	<bean id="productOutOfStockNotificationEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
-		<property name="resource" value="classpath:/blcore/processes/productOutOfStockNotificationEmailProcess.xml" />
+	<bean id="productNotifyMeEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
+		<property name="resource" value="classpath:/blcore/processes/productNotifyMeEmailProcess.xml" />
 	</bean>
 	<!-- Notify me end -->
 

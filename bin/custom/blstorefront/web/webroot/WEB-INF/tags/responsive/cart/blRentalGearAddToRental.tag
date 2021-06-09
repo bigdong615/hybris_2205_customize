@@ -24,7 +24,7 @@
      			 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
                  <button type="submit" class="btn btn-primary dis js-login-popup" data-link="<c:url value='/login/loginpopup'/>"
                    data-bs-toggle="modal"  data-bs-target="#signIn" aria-disabled="false">
-                  <spring:theme code="text.notify.me" />
+                  <spring:theme code="text.get.notified" />
                   </button>
      			  </sec:authorize>
      			  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
@@ -38,7 +38,7 @@
                      <c:otherwise>
                       <button type="submit" class="btn btn-primary dis arrival-notification"  data-box-productcode="${product.code}"
                                 data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
-                          			<spring:theme code="text.notify.me" />
+                          			<spring:theme code="text.get.notified" />
                       </button>
                      </c:otherwise>
                   </c:choose>

@@ -16,7 +16,7 @@ import java.util.Locale;
  * @author vijay vishwakarma
  * This class is created for providing dynamic data for notify me email.
  */
-public class OutOfStockNotificationEmailContext extends AbstractEmailContext<StockNotificationProcessModel> {
+public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotificationProcessModel> {
 
     private ProductData productData;
 

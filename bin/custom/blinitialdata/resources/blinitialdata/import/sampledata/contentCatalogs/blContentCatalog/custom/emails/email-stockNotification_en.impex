@@ -12,7 +12,7 @@ $lang=en
 
 # Email Pages
 UPDATE EmailPage;$contentCV[unique=true];uid[unique=true];fromEmail[lang=$lang];fromName[lang=$lang]
-                ;;ProductOutOfStockNotificationEmail;"customerservices@hybris.com";"Customer Services Team"
+                ;;ProductNotifyMeEmail;"customerservices@hybris.com";"Customer Services Team"
 
 
 INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]

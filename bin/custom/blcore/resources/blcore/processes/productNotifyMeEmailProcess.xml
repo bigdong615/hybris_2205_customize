@@ -2,10 +2,10 @@
 <!--
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
-<process xmlns="http://www.hybris.de/xsd/processdefinition" start="generateOutOfStockNotificationEmail" name="productOutOfStockNotificationEmailProcess"
+<process xmlns="http://www.hybris.de/xsd/processdefinition" start="generateProductNotifyMeEmail" name="productNotifyMeEmailProcess"
          processClass="de.hybris.platform.stocknotificationservices.model.StockNotificationProcessModel" onError="error">
 
-    <action id="generateOutOfStockNotificationEmail" bean="generateOutOfStockNotificationEmail">
+    <action id="generateProductNotifyMeEmail" bean="generateProductNotifyMeEmail">
         <transition name="OK" to="sendEmail"/>
         <transition name="NOK" to="error"/>
     </action>

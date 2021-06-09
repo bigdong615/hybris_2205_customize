@@ -14,9 +14,9 @@ $lang=en
 
 # Create Email page Template
 INSERT_UPDATE EmailPageTemplate	;$contentCV[unique=true];uid[unique=true]		      ;name           ;active	;frontendTemplateName	;subject(code)							;htmlTemplate(code)		;restrictedPageTypes(code)
-                                   ;        ;ProductOutOfStockNotificationEmailTemplate;Product Out of Stock Email Template;true  ;ProductOutOfStockNotificationEmailTemplate ;bl_Email_Product_Out_Of_Stock_Subject;bl_Email_Product_Out_Of_Stock_Body ;EmailPage
+                                   ;        ;ProductNotifyMeEmailTemplate;Product Out of Stock Email Template;true  ;ProductNotifyMeEmailTemplate ;bl_Email_Product_Notify_Me_Subject;bl_Email_Product_Notify_Me_Body ;EmailPage
 
-INSERT_UPDATE ContentSlotName;name[unique=true];template(uid,$contentCV)[unique=true][default='ProductOutOfStockNotificationEmailTemplate'];validComponentTypes(code)
+INSERT_UPDATE ContentSlotName;name[unique=true];template(uid,$contentCV)[unique=true][default='ProductNotifyMeEmailTemplate'];validComponentTypes(code)
                              ;BlSiteLogo;;$wideContent;
                              ;BlBottomSocialLink;;$wideContent;
                              ;BlBottomContent;;$wideContent;
@@ -27,18 +27,18 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active
                          ;;BlBottomContentSlot;BlBottomContent Slot;true
 
 # Bind Content Slots to Email Page Templates
-INSERT_UPDATE ContentSlotForTemplate;$contentCV[unique=true];uid[unique=true];position[unique=true];pageTemplate(uid,$contentCV)[unique=true][default='ProductOutOfStockNotificationEmailTemplate'];contentSlot(uid,$contentCV)[unique=true];allowOverwrite
-                                    ;;BlSiteLogo-ProductOutOfStockNotificationEmail;BlSiteLogo;;BlSiteLogoSlot;true
-                                    ;;BlBottomSocialLink-ProductOutOfStockNotificationEmail ;BlBottomSocialLink;;BlBottomSocialLinkSlot;true
-                                    ;;BlBottomContent-ProductOutOfStockNotificationEmail;BlBottomContent;;BlBottomContentSlot;true
+INSERT_UPDATE ContentSlotForTemplate;$contentCV[unique=true];uid[unique=true];position[unique=true];pageTemplate(uid,$contentCV)[unique=true][default='ProductNotifyMeEmailTemplate'];contentSlot(uid,$contentCV)[unique=true];allowOverwrite
+                                    ;;BlSiteLogo-ProductNotifyMeEmail;BlSiteLogo;;BlSiteLogoSlot;true
+                                    ;;BlBottomSocialLink-ProductNotifyMeEmail ;BlBottomSocialLink;;BlBottomSocialLinkSlot;true
+                                    ;;BlBottomContent-ProductNotifyMeEmail;BlBottomContent;;BlBottomContentSlot;true
 
 
 # Create Email Page
 INSERT_UPDATE EmailPage	;$contentCV[unique=true];uid[unique=true]	;masterTemplate(uid,$contentCV);approvalStatus(code)[default='approved'];
-                           ;              ;ProductOutOfStockNotificationEmail;ProductOutOfStockNotificationEmailTemplate;
+                           ;              ;ProductNotifyMeEmail;ProductNotifyMeEmailTemplate;
 
 # Create Template Renderers
 INSERT_UPDATE RendererTemplate	;code[unique=true]			         ;contextClass								;templateScript[lang=en,translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator];rendererType(code)[default='velocity']
-                                  ;bl_Email_Product_Out_Of_Stock_Body      ;$emailPackageName.OutOfStockNotificationEmailContext ;$emailResource/email-productOutOfStockBody.vm
-                                  ;bl_Email_Product_Out_Of_Stock_Subject   ;$emailPackageName.OutOfStockNotificationEmailContext ;$emailResource/email-productOutOfStockSubject.vm
+                                  ;bl_Email_Product_Notify_Me_Body      ;$emailPackageName.ProductNotifyMeEmailContext ;$emailResource/email-productNotifyMeBody.vm
+                                  ;bl_Email_Product_Notify_Me_Subject   ;$emailPackageName.ProductNotifyMeEmailContext ;$emailResource/email-productNotifyMeSubject.vm
 

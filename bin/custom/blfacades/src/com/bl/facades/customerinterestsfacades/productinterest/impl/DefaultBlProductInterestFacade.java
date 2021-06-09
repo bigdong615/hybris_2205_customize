@@ -41,9 +41,9 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
 
 
         final StockNotificationProcessModel stockNotificationProcessModel =  getBusinessProcessService()
-                .createProcess("productOutOfStockNotificationEmailProcess-" + customer.getUid() + "-" + System.currentTimeMillis()
+                .createProcess("productNotifyMeEmailProcess-" + customer.getUid() + "-" + System.currentTimeMillis()
                                 + "-" + Thread.currentThread().getId(),
-                        "productOutOfStockNotificationEmailProcess");
+                        "productNotifyMeEmailProcess");
         stockNotificationProcessModel.setLanguage(language);
         stockNotificationProcessModel.setProduct(product);
         stockNotificationProcessModel.setCustomer(customer);
