@@ -742,6 +742,12 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 	</bean>
 
+	<alias name="blCommerceDeliveryModeStrategy" alias="commerceDeliveryModeStrategy"/>
+	<bean id="blCommerceDeliveryModeStrategy"
+		class="com.bl.core.services.strategy.impl.DefaultBlCommerceDeliveryModeStrategy"
+		parent="defaultCommerceDeliveryModeStrategy">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+	</bean>
 
 	<alias name="defaultBlStateWarehouseMappingDao" alias="blStateWarehouseMappingDao"/>
 	<bean id="defaultBlStateWarehouseMappingDao" class="com.bl.core.dao.warehouse.impl.DefaultBlStateWarehouseMappingDao">

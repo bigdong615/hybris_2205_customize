@@ -41,7 +41,7 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
 
     Preconditions.checkArgument(source != null, "Point of service model (source) cannot be null.");
     Preconditions.checkArgument(target != null, "Sourcing location (target) cannot be null.");
-    final Map<String, List<StockLevelModel>> availabilityMap;
+
     final AbstractOrderModel order = target.getContext().getOrderEntries().iterator().next()
         .getOrder();
     final Set<String> productCodes = order.getEntries().stream()
@@ -49,14 +49,14 @@ public class BlAvailabilitySourcingLocationPopulator implements SourcingLocation
 
     final Collection<StockLevelModel> stockLevels = blCommerceStockService
         .getStockForProductCodesAndDate(productCodes,
-            source, order.getRentalStartDate(), order.getRentalEndDate());
+            source, order.getActualRentalStartDate(), order.getActualRentalEndDate());
 
     if (CollectionUtils.isNotEmpty(stockLevels)) {
-      availabilityMap = blCommerceStockService.groupBySkuProductWithAvailability(stockLevels);
+      final Map<String, List<StockLevelModel>> availabilityMap = blCommerceStockService.groupBySkuProductWithAvailability(stockLevels);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "Populating availability map, serial products  size = {} found for product codes {} from date {} to date {}",
-          stockLevels.size(), productCodes, order.getRentalStartDate(),
-          order.getRentalEndDate());
+          "Populating availability map, serial products  size = {} found for product codes {} from date {} to date {} from warehouse {}",
+          stockLevels.size(), productCodes, order.getActualRentalStartDate(),
+          order.getActualRentalEndDate(), source.getName());
       target.setAvailabilityMap(availabilityMap);
     }
   }

@@ -1691,13 +1691,23 @@
                     <attribute qualifier="rentalStartDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						<description>Selected rental start date</description>
+						            <description>Selected rental start date</description>
                     </attribute>
                     <attribute qualifier="rentalEndDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						<description>Selected rental end date</description>
+						            <description>Selected rental end date</description>
                     </attribute>
+                  <attribute qualifier="actualRentalStartDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Actual rental start date</description>
+                  </attribute>
+                  <attribute qualifier="actualRentalEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Actual rental end date</description>
+                  </attribute>
                     <attribute qualifier="isRentalCart" type="java.lang.Boolean">
                       <persistence type="property" />
                       <modifiers optional="true" read="true" write="true" />

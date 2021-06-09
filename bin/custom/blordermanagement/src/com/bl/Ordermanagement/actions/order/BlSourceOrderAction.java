@@ -1,10 +1,12 @@
 package com.bl.Ordermanagement.actions.order;
 
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
+import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -13,6 +15,7 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.processengine.action.AbstractProceduralAction;
+import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.task.RetryLaterException;
 import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.constants.WarehousingConstants;
@@ -43,38 +46,60 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Process: {} in step {}",
         process.getCode(), getClass().getSimpleName());
     final OrderModel order = process.getOrder();
-    boolean failedFulfillment = false;
+    boolean isSourcingSuccessful;
     SourcingResults results = null;
 
     try {
+
       results = blSourcingService.sourceOrder(order);
-    } catch (final IllegalArgumentException e)
-    {
+      isSourcingSuccessful = true;
+    } catch (final IllegalArgumentException e) {
+
+      isSourcingSuccessful = false;
+      setOrderSuspendedStatus(order);
       BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
           "Could not create SourcingResults. Changing order status to SUSPENDED", e);
+    } catch (final BlSourcingException ex) {
+
+      isSourcingSuccessful = false;
+      setOrderSuspendedStatus(order);
+      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(),
+          ex.getMessage() + " Changing order status to SUSPENDED", ex);
     }
 
-    if (null != results && CollectionUtils.isNotEmpty(results.getResults())) {
-      final Collection<ConsignmentModel> consignments = getAllocationService()
-          .createConsignments(process.getOrder(), BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + process.getOrder().getCode(), results);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "Number of consignments created during allocation: {}", consignments.size());
-      startConsignmentSubProcess(consignments, process);
-      order.setStatus(OrderStatus.READY);
+    if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {
+      try {
+        final Collection<ConsignmentModel> consignments = getAllocationService()
+            .createConsignments(process.getOrder(),
+                BlCoreConstants.CONSIGNMENT_PROCESS_PREFIX + process.getOrder().getCode(), results);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+            "Number of consignments created during allocation: {}", consignments.size());
+        startConsignmentSubProcess(consignments, process);
+        order.setStatus(OrderStatus.READY);
+        getModelService().save(order);
 
-      failedFulfillment = order.getEntries().stream().allMatch(
-          orderEntry -> ((OrderEntryModel) orderEntry).getQuantityAllocated().longValue() == 0);
-    } else {
-      failedFulfillment = true;
+      } catch (final AmbiguousIdentifierException ex) {
+
+        setOrderSuspendedStatus(order);
+        BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+            LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
+            "Cancelling consignment since only one fulfillment system configuration is allowed per consignment.",
+            ex);
+      } catch (final BlSourcingException ex) {
+
+        setOrderSuspendedStatus(order);
+        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
+            ex.getMessage() + " Changing order status to SUSPENDED", ex);
+      }
     }
 
-    if (failedFulfillment) {
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order failed to be sourced");
-      order.setStatus(OrderStatus.SUSPENDED);
-    } else {
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Order was successfully sourced");
-    }
+  }
+
+  private void setOrderSuspendedStatus(final OrderModel order) {
+
+    order.setStatus(OrderStatus.SUSPENDED);
     getModelService().save(order);
+
   }
 
   /**

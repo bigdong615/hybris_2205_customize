@@ -71,6 +71,12 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 			+ StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE
 			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) ";
 
+	private static final String STOCK_LEVELS_FOR_PRODUCTS_DATE_AND_STATUS_QUERY = SELECT + ItemModel.PK + FROM + StockLevelModel._TYPECODE
+			+ WHERE + StockLevelModel.PRODUCTCODE + "} IN (?productCodes) " + AND + StockLevelModel.DATE + DATE_PARAM + AND
+			+ StockLevelModel.SERIALSTATUS + "} IN ({{SELECT {sse:PK} FROM {" + SerialStatusEnum._TYPECODE
+			+ " as sse} WHERE {sse:CODE} = (?active)}}) " + AND + StockLevelModel.WAREHOUSE + "} IN (?warehouses) " +
+			AND + StockLevelModel.RESERVEDSTATUS + "} = ?reservedStatus ";
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -239,15 +245,12 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
     } else {
 
       final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
-          STOCK_LEVELS_FOR_PRODUCTS_AND_DATE_QUERY);
+					STOCK_LEVELS_FOR_PRODUCTS_DATE_AND_STATUS_QUERY);
       fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CODES, productCodes);
-      fQuery.addQueryParameter(BlCoreConstants.START_DATE,
-          BlDateTimeUtils.getFormattedStartDay(startDate).getTime());
-      fQuery.addQueryParameter(BlCoreConstants.END_DATE,
-          BlDateTimeUtils.getFormattedEndDay(endDate).getTime());
+			addQueryParameter(startDate, endDate, fQuery);
       fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
       fQuery.addQueryParameter(BlCoreConstants.RESERVED_STATUS, Boolean.FALSE);
-      fQuery.addQueryParameter(BlCoreConstants.WAREHOUSE, warehouse);
+      fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouse);
 
       final List<StockLevelModel> stockLevels = (List<StockLevelModel>)(List<?>)getFlexibleSearchService().search(fQuery).getResult();
       if (CollectionUtils.isEmpty(stockLevels)) {

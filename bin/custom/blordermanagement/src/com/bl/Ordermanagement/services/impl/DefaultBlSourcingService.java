@@ -46,14 +46,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
   @Override
   public SourcingResults sourceOrder(final AbstractOrderModel order) {
 
+    try {
+
     ServicesUtil.validateParameterNotNullStandardMessage("order", order);
     Preconditions.checkArgument(Objects.nonNull(order), "Parameter order cannot be null.");
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Starting sourcing Order : {}",
         order.getCode());
-    final Set<WarehouseModel> locations = Sets.newHashSet();
-    blDeliveryStateSourcingLocationFilter.applyFilter(order, locations);
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total filtered sourcing locations found: {}",
-        locations.size());
 
     final SourcingContext context = new SourcingContext();
     final SourcingResults result = new SourcingResults();
@@ -62,15 +60,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
     context.setResult(result);
     context.setOrderEntries(order.getEntries());
 
-    final Set<SourcingLocation> sourcingLocations = Sets.newHashSet();
-    locations.forEach(location ->
-      sourcingLocations.add(blSourcingLocationService.createSourcingLocation(context, location))
-    );
+    blSourcingLocationService.createSourcingLocation(context, blDeliveryStateSourcingLocationFilter.applyFilter(order));
 
     final List<SourcingStrategy> strategies = this.blSourcingStrategyService.getDefaultStrategies();
 
     final Iterator<SourcingStrategy> strategyItr = strategies.iterator();
-    try {
+
       while (strategyItr.hasNext()) {
         final SourcingStrategy strategy = strategyItr.next();
         BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Apply sourcing strategy: {}",
@@ -85,12 +80,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
           break;
         }
       }
-    } catch (final BlSourcingException e) {
-      BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_SOURCING_ERROR.getCode(), e);
-      return null;
+
+      return context.getResult();
+    } catch (final Exception e) {
+      throw new BlSourcingException("Error while doing the order sourcing.", e);
     }
 
-    return context.getResult();
   }
 
   public BlSourcingLocationService getBlSourcingLocationService() {

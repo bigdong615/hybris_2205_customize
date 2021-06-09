@@ -2,6 +2,7 @@ package com.bl.Ordermanagement.filters;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlStateWarehouseMappingDao;
+import com.bl.core.model.BlStateWarehouseMappingModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -25,25 +26,27 @@ public class BlDeliveryStateSourcingLocationFilter {
   /**
    * {@inheritDoc}
    */
-  public Collection<WarehouseModel> applyFilter(final AbstractOrderModel order,
-      final Set<WarehouseModel> locations) {
+  public WarehouseModel applyFilter(final AbstractOrderModel order) {
 
-    String stateCode = BlCoreConstants.EMPTY_STRING;
     if (null != order.getDeliveryAddress() && null != order.getDeliveryAddress().getRegion()
         && null != order.getDeliveryAddress().getRegion().getIsocodeShort()) {
-      stateCode = order.getDeliveryAddress().getRegion().getIsocodeShort();
+      final String stateCode = order.getDeliveryAddress().getRegion().getIsocodeShort();
+
+      final BlStateWarehouseMappingModel blStateWarehouseMappingModel = blStateWarehouseMappingDao.getStateWarehouseForStateCode(stateCode);
+
+      if (null != blStateWarehouseMappingModel) {
+        final WarehouseModel foundLocation = blStateWarehouseMappingModel.getWarehouse();
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+            "Location found for state iso code {} is warehouse {}", stateCode,
+            foundLocation.getCode());
+
+        return foundLocation;
+      }
+      BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Warehouse not found for state code : {}", stateCode);
+      return null;
     }
-
-    final WarehouseModel foundLocation = blStateWarehouseMappingDao.getStateWarehouseForStateCode(stateCode).getWarehouse();
-
-    if (null != foundLocation) {
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "Location found for state iso code {} is warehouse {}",
-          stateCode, foundLocation.getCode());
-      locations.add(foundLocation);
-    }
-
-    return locations;
+    BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "State code and delivery address is null");
+    return null;
   }
 
   public BlStateWarehouseMappingDao getBlStateWarehouseMappingDao() {

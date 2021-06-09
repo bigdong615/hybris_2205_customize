@@ -144,7 +144,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
       final SourcingLocation sourcingLocation) {
 
     Long stockLevel = 0L;
-    if (sourcingLocation.getAvailabilityMap() != null
+    if (MapUtils.isNotEmpty(sourcingLocation.getAvailabilityMap())
         && sourcingLocation.getAvailabilityMap().get(productModel.getCode()) != null) {
       stockLevel = Long
           .valueOf(sourcingLocation.getAvailabilityMap().get(productModel.getCode()).size());

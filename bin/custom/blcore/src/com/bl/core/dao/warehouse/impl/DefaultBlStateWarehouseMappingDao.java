@@ -6,6 +6,7 @@ import com.bl.core.model.BlStateWarehouseMappingModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
+import org.apache.commons.collections.CollectionUtils;
 
 
 /**
@@ -33,7 +34,11 @@ public class DefaultBlStateWarehouseMappingDao implements BlStateWarehouseMappin
         query.addQueryParameter(BlCoreConstants.ISO_CODE_SHORT, isoCodeShort);
         final SearchResult<BlStateWarehouseMappingModel> result = getFlexibleSearchService()
             .search(query);
-        return result.getResult().get(0);
+        if (null != result && CollectionUtils.isNotEmpty(result.getResult())) {
+            return result.getResult().get(0);
+        }
+
+       return null;
     }
 
     public FlexibleSearchService getFlexibleSearchService() {

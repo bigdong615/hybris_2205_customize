@@ -161,7 +161,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ONLINE ="Online";
 	public static final String SERIAL_PRODUCT_CODES ="serialProductCodes";
 	public static final String PRODUCT_CODES ="productCodes";
-	public static final String WAREHOUSE ="warehouse";
+	public static final String CONSIGNMENT_PROCESS_PREFIX ="cons";
 
 	public static final String LENSES ="lenses";
 	public static final String CAMERAS ="cameras";
