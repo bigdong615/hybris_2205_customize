@@ -43,6 +43,11 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
         emailLocale = new Locale(isoCode);
     }
 
+    /**
+     * This method is responsible for base site url.
+     * @param businessProcessModel
+     * @param emailLocale
+     */
     protected void updateBaseUrl(final StockNotificationProcessModel businessProcessModel, final Locale emailLocale)
     {
         final String baseUrl = (String) get(BASE_URL);
@@ -53,6 +58,11 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
         put(SECURE_BASE_URL, baseSecrueUrl.replaceAll("/" + defaultIsoCode + "$", "/" + siteIsoCode));
     }
 
+    /**
+     * This method is responsible for providing title
+     * @param businessProcessModel
+     * @param emailLocale
+     */
     protected void updateTitle(final StockNotificationProcessModel businessProcessModel, final Locale emailLocale)
     {
         String title="";
@@ -61,6 +71,12 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
         }
         put(TITLE, title);
     }
+
+    /**
+     * This method is responsible for updating product name as per current locale.
+     * @param businessProcessModel
+     * @param emailLocale
+     */
     protected void updateProductName(final StockNotificationProcessModel businessProcessModel, final Locale emailLocale)
     {
         final String productName = businessProcessModel.getProduct().getName(emailLocale);
@@ -96,6 +112,10 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
         return productData;
     }
 
+    /**
+     * This method is responsible for providing rental product url.
+     * @return
+     */
     private String getBaseSiteurlData(){
        return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, RENTAL_PDP_URL_PREFIX+productData.getCode());
     }

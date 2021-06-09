@@ -32,14 +32,14 @@ public class DefaultBlProductInterestFacade extends DefaultProductInterestFacade
         super.saveProductInterest(productInterest);
         createBusinessProcessForSendingEmail(productInterest.getProduct().getCode());
     }
-
+   /**
+    * This method is responsible for create and start business process for product notification email.
+    */
     protected void createBusinessProcessForSendingEmail(String productCode){
         final LanguageModel language =  getCommonI18NService().getCurrentLanguage();
         final ProductModel product = getProductService().getProductForCode(productCode);
         final CustomerModel customer = (CustomerModel) getUserService().getCurrentUser();
         final BaseSiteModel baseSite = getBaseSiteService().getCurrentBaseSite();
-
-
         final StockNotificationProcessModel stockNotificationProcessModel =  getBusinessProcessService()
                 .createProcess("productNotifyMeEmailProcess-" + customer.getUid() + "-" + System.currentTimeMillis()
                                 + "-" + Thread.currentThread().getId(),
