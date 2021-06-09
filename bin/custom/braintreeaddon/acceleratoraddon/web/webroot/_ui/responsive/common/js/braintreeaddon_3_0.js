@@ -114,6 +114,7 @@ jQuery(document).ready(function ($) {
     var deviceData;
     var client;
     var paymentMethodResponse;
+    $("#save-address").prop('checked', true);
 	if($("#paymentAddNewAddress").length <= 0)
 	{
 		$("#billing-address-form-expand").toggle();
@@ -168,6 +169,7 @@ jQuery(document).ready(function ($) {
 
 
 $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
+	$("#allFieldvalidationMessage").empty();
 	 initializeBTclientSDK();
 });
 
@@ -575,18 +577,18 @@ function createHostedFields(clientInstance) {
                     placeholder : 'Month',
                     select: {
                       options: [
-                        '01 - January',
-                        '02 - February',
-                        '03 - March',
-                        '04 - April',
-                        '05 - May',
-                        '06 - June',
-                        '07 - July',
-                        '08 - August',
-                        '09 - September',
-                        '10 - October',
-                        '11 - November',
-                        '12 - December'
+                        '01   Jan',
+                        '02   Feb',
+                        '03   Mar',
+                        '04   Apr',
+                        '05   May',
+                        '06   Jun',
+                        '07   Jul',
+                        '08   Aug',
+                        '09   Sep',
+                        '10   Oct',
+                        '11   Nov',
+                        '12   Dec'
                       ]
                     }
                   },
@@ -610,7 +612,7 @@ function createHostedFields(clientInstance) {
         function (hostedFieldsErr, hostedFieldsInstance) {
 
             if (hostedFieldsErr) {
-            //	alert(hostedFieldsErr);
+            
                 handleClientError(hostedFieldsErr);
                 return;
             }
@@ -743,7 +745,7 @@ function createHostedFields(clientInstance) {
 
 
             $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).unbind(EVENTS.CLICK);
-
+            
 
             // Add a click event listener to PayPal image
             $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).click(function (e) {
@@ -803,8 +805,10 @@ function createHostedFields(clientInstance) {
 					creditCardValidation(ACC.ccError.cardCVV);
 					$("#cvv").addClass("crs-error-field");
 				}
-          	
-				if(!state.fields.number.isPotentiallyValid)
+				
+			
+				
+				if(!state.fields.number.isPotentiallyValid )
 				{
 					hasNoError = false;
 					$('#submit_silentOrderPostForm').removeAttr("disabled");
@@ -832,8 +836,9 @@ function createHostedFields(clientInstance) {
 					hostedFieldsInstance.tokenize(function (tokenizeErr, payload) 
 					{
 						if (tokenizeErr) 
-						{
-							$('#submit_silentOrderPostForm').removeAttr("disabled");
+						{    hasNoError = false;
+						   $('#submit_silentOrderPostForm').removeAttr("disabled");
+						    creditCardValidation(tokenizeErr);
 							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
 							handleClientError(tokenizeErr)
 						} 
@@ -982,6 +987,7 @@ function validatePhone(phone, fieldName)
 $("#paymentAddNewAddress").on("click",function(e)
 {
 	e.preventDefault();
+	$("#save-address").prop('checked', true);
 	$("#savedAddresses").html("Enter New Address");
 	$("#savedBillingAddressId").val('');
 	$("#paymentAddNewAddress").hide();
@@ -1006,6 +1012,7 @@ $('#submit_silentOrderPostForm').click(function () {
 	var ccEnable = $('#paymentMethodBT').is(':checked');
 	var giftcardApplied = $("input[name='appliedGC']").val();
 	
+	$("#allFieldvalidationMessage").empty();
 	if(giftcardApplied == '' && ccEnable == false)
 	{
 		allFieldValidation(ACC.ccError.allFieldsNotSelected);

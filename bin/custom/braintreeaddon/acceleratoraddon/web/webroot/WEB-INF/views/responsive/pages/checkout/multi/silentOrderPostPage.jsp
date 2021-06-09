@@ -377,7 +377,7 @@
 							</div>
 							<div class="cart-actions">
                                 <a href="#" class="gray80">Back to renting</a>
-                                <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
+                                <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
                             </div> 
 							
 						</div>
