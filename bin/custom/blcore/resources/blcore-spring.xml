@@ -796,7 +796,7 @@
 		<property name="giftCardService" ref="giftCardService" />
 	</bean>
 	<!--Gift card End-->
-
+	
 	<!-- BL-628: Notify me start -->
 	<bean id="generateOutOfStockNotificationEmail" parent="abstractGenerateEmailAction">
 		<property name="frontendTemplateName" value="ProductOutOfStockNotificationEmailTemplate" />
@@ -806,5 +806,11 @@
 		<property name="resource" value="classpath:/blcore/processes/productOutOfStockNotificationEmailProcess.xml" />
 	</bean>
 	<!-- Notify me end -->
+
+	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
+    <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
+        <property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+    </bean>
 
 </beans>

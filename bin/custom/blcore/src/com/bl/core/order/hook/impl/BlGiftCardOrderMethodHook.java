@@ -49,7 +49,6 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     // add tax to total only if order is NET
     double totalplustax = order.getTotalPrice().doubleValue();
     if (Boolean.TRUE.equals(order.getNet())) {
-      totalplustax += order.getTotalTax().doubleValue();
       //commented code can be used while implementing place order using gift card. If not required remove it later on.
       			/*for (final AbstractOrderEntryModel abstractOrderEntryModel : order.getEntries())
       			{

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="braintreecustomersupportbackofficeService" class="com.braintree.customersupportbackoffice.services.BraintreecustomersupportbackofficeService" />
+
+	<bean id="braintreecustomersupportbackofficeLabelLocator" class="com.hybris.cockpitng.util.labels.ResourcesLabelLocator" scope="singleton" init-method="init" lazy-init="false">
+  		<property name="location" value="/braintreecustomersupportbackoffice-backoffice-labels/"/>
+  		<property name="name" value="labels"/>
+  	</bean>
+
+	<bean id="braintreecustomersupportbackofficeSystemSetup"
+		  class="com.braintree.customersupportbackoffice.setup.BrainTreeBackofficeSystemSetup"
+		  parent="abstractCoreSystemSetup"/>
+
+	<bean id="newTransactionByVaultHandler"
+		  class="com.braintree.customersupportbackoffice.widgets.NewTransactionByVaultHandler">
+		<property name="notificationStack" ref="notificationStack"/>
+		<property name="customFieldsService" ref="customFieldsService"/>
+		<property name="brainTreeCustomerSupportFacade" ref="brainTreeCustomerSupportFacade"/>
+	</bean>
+
+	<alias name="brainTreeAdvancedSearchOperatorService" alias="advancedSearchOperatorService"/>
+	<bean id="brainTreeAdvancedSearchOperatorService" parent="defaultAdvancedSearchOperatorService"
+		  class="com.braintree.customersupportbackoffice.search.BrainTreeAdvancedSearchOperatorService"/>
+
+	<alias name="brainTreeAdvancedSearchRenderer" alias="advancedSearchRenderer"/>
+	<bean id="brainTreeAdvancedSearchRenderer" parent="defaultAdvancedSearchRenderer" scope="prototype">
+		<constructor-arg name="typeFacade" ref="typeFacade"/>
+		<constructor-arg name="labelService" ref="labelService"/>
+		<constructor-arg name="advancedSearchOperatorService" ref="advancedSearchOperatorService"/>
+		<constructor-arg name="permissionFacade" ref="permissionFacade"/>
+		<constructor-arg name="cockpitLocaleService" ref="cockpitLocaleService"/>
+	</bean>
+
+	<bean id="brainTreeCustomerSearchService"
+		  class="com.braintree.customersupportbackoffice.services.impl.BraintreeCustomerSearchServiceImpl">
+		<property name="brainTreeFindCustomerBackofficeCommand" ref="brainTreeFindCustomerBackofficeCommand"/>
+	</bean>
+
+
+	<bean id="brainTreeFindCustomerBackofficeCommand"
+		  class="com.braintree.customersupportbackoffice.commands.impl.FindCustomerBackofficeCommandImpl"
+		  parent="brainTreeAbstractCommand"/>
+
+	<bean id="brainTreeFindTransactionBackofficeCommand"
+		  class="com.braintree.customersupportbackoffice.commands.impl.FindTransactionBackofficeCommandImpl"
+		  parent="brainTreeAbstractCommand"/>
+
+	<alias name="brainTreeCustomerSupportResponseConverter" alias="customerSupportTransactionResponseConverter"/>
+	<bean id="brainTreeCustomerSupportResponseConverter"
+		  class="com.braintree.customersupportbackoffice.converters.BrainTreeCustomerSupportResponseConverter">
+		<property name="targetClass" value="com.braintree.hybris.data.BrainTreeResponseResultData"/>
+	</bean>
+
+	<bean id="brainTreeTransactionSearchService"
+		  class="com.braintree.customersupportbackoffice.services.impl.BraintreeTransactionSearchServiceImpl">
+		<property name="brainTreeFindTransactionBackofficeCommand" ref="brainTreeFindTransactionBackofficeCommand"/>
+	</bean>
+
+	<bean id="brainTreeCustomerSupportFacade"
+		  class="com.braintree.customersupportbackoffice.facade.impl.BrainTreeCustomerSupportFacadeImpl">
+		<property name="userService" ref="userService"/>
+		<property name="customerSearchService" ref="brainTreeCustomerSearchService"/>
+		<property name="transactionSearchService" ref="brainTreeTransactionSearchService"/>
+		<property name="customerDetailsPopulator" ref="customerDetailsPopulator"/>
+		<property name="transactionSearchResultConverter" ref="transactionSearchResultConverter"/>
+		<property name="transactionDetailPopulator" ref="transactionDetailPopulator"/>
+		<property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+		<property name="sessionService" ref="sessionService"/>
+		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+		<property name="brainTreeCustomerSupportResponseConverter" ref="customerSupportTransactionResponseConverter"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="paymentMethodConverter" ref="paymentMethodConverter"/>
+		<property name="paymentInfoService" ref="paymentInfoService"/>
+		<property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+	</bean>
+
+	<!--    <bean id="brainTreeAdvancedSearchEngineController"-->
+	<!--          class="com.braintree.customersupportbackoffice.widgets.advancedsearch.engine.BrainTreeAdvancedSearchEngineController">-->
+	<!--        <property name="brainTreeCustomerSupportFacade" ref="brainTreeCustomerSupportFacade"/>-->
+	<!--        <property name="exceptionTranslationService" ref="exceptionTranslationService"/>-->
+	<!--    </bean>-->
+
+	<bean id="brainTreeOrderManagementActionsService"
+		  class="com.braintree.customersupportbackoffice.services.impl.BrainTreeOrderManagementActionsServiceImpl">
+		<property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+		<property name="braintreePartialCaptureService" ref="braintreePartialCaptureService"/>
+		<property name="returnService" ref="returnService"/>
+	</bean>
+
+	<bean id="brainTreeTransactionManagementActionService"
+		  class="com.braintree.customersupportbackoffice.services.impl.BrainTreeTransactionManagementActionServiceImpl"/>
+
+</beans>
