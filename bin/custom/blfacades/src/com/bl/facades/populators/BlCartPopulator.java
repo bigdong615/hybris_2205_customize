@@ -49,8 +49,6 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
 		target.setIsRentalCart(source.getIsRentalCart());
-		populatePromotionAmount(source,target);
-
 
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
@@ -95,21 +93,5 @@ public class BlCartPopulator extends CartPopulator<CartData>
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
 
-	/**
-   * This method created to add coupon price
-	 */
-  private void populatePromotionAmount(final CartModel source, final CartData target) {
-		final Map<String, BigDecimal> amountMap = new HashMap<>();
-		if(CollectionUtils.isNotEmpty(source.getAllPromotionResults())) {
-			for (final PromotionResultModel promotionResultModel : source.getAllPromotionResults()) {
-				final RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel
-						.getActions().iterator().next();
-				for (final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes()) {
-					amountMap.put(couponCode, ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(
-							BlCoreConstants.DECIMAL_PRECISION, RoundingMode.HALF_DOWN));
-				}
-			}
-		}
-		target.setPromotionAmountMap(amountMap);
-	}
+
 }
