@@ -2,6 +2,7 @@ package com.bl.facades.populators;
 
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
@@ -55,16 +56,19 @@ public class BlCartPopulator extends CartPopulator<CartData>
 				target.setGrandTotal(grandTotal);
 			}
 		}
-		if (source.getGiftCardAmount() != null)
-		{
-			final PriceData giftDiscount = getPriceDataFactory().create(priceType,
-					BigDecimal.valueOf(source.getGiftCardAmount().doubleValue()),
-					source.getCurrency() != null ? source.getCurrency().getIsocode() : "");
-			if (giftDiscount != null)
-			{
-				target.setGiftCardDiscount(giftDiscount);
-			}
+
+		// BL-657 to add total discount with gift cart discount to display on order summary section
+		 Double totalPromotionDiscount = BlFacadesConstants.DOUBLE_VALUE;
+		 Double totalGiftCardDiscount = BlFacadesConstants.DOUBLE_VALUE;
+		if(null != source.getDiscounts()){
+			totalPromotionDiscount = source.getTotalDiscounts();
 		}
+		if(null != source.getGiftCardAmount()){
+			totalGiftCardDiscount = source.getGiftCardAmount();
+		}
+			final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
+			target.setTotalDiscounts(createPrice(source , totalDiscount));
+
 
 		if (CollectionUtils.isNotEmpty(source.getGiftCard()))
 		{
@@ -97,4 +101,6 @@ public class BlCartPopulator extends CartPopulator<CartData>
     // Since we have already calculated the total with Tax , so returning cart total as total price with tax
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
+
+
 }
