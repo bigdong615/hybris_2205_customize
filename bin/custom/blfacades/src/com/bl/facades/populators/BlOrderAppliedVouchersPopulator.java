@@ -11,7 +11,6 @@ import de.hybris.platform.promotions.model.AbstractPromotionActionModel;
 import de.hybris.platform.promotions.model.PromotionResultModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,9 +65,9 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
     final RuleBasedOrderEntryAdjustActionModel ruleBasedOrderEntryAdjustActionModel = (RuleBasedOrderEntryAdjustActionModel) promotionResultModel
         .getActions().iterator().next();
     for (final String couponCode : ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes()) {
-      if(BlFacadesConstants.DOUBLE_VALUE < ruleBasedOrderEntryAdjustActionModel.getAmount().doubleValue()) {
+      if(Double.compare(ruleBasedOrderEntryAdjustActionModel.getAmount().doubleValue(), BlFacadesConstants.DOUBLE_VALUE) > BlFacadesConstants.ZERO) {
         amountMap.put(couponCode, ruleBasedOrderEntryAdjustActionModel.getAmount()
-            .setScale(BlCoreConstants.DECIMAL_PRECISION, RoundingMode.HALF_DOWN));
+            .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
         vouchers.add(couponCode);
       }
     }
@@ -83,9 +82,9 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
     final RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel
         .getActions().iterator().next();
     for (final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes()) {
-      if(BlFacadesConstants.DOUBLE_VALUE < ruleBasedOrderAdjustTotalActionModel.getAmount().doubleValue()) {
+      if(Double.compare(ruleBasedOrderAdjustTotalActionModel.getAmount().doubleValue(), BlFacadesConstants.DOUBLE_VALUE) > BlFacadesConstants.ZERO) {
         amountMap.put(couponCode, ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(
-            BlCoreConstants.DECIMAL_PRECISION, RoundingMode.HALF_DOWN));
+            BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
         vouchers.add(couponCode);
       }
     }
