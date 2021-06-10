@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<action-definition id="com.braintree.customersupportbackoffice.actions.transaction.braintreeclonetransactionaction"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+    <name>Clone</name>
+    <description>Clone Transaction Action</description>
+    <author>braintree</author>
+    <version>0.1</version>
+
+    <actionClassName>com.braintree.customersupportbackoffice.actions.transaction.clone.BrainTreeCloneTransactionAction</actionClassName>
+    <inputType>com.braintree.model.BrainTreeTransactionDetailModel</inputType>
+    <outputType>com.braintree.model.BrainTreeTransactionDetailModel</outputType>
+
+    <settings>
+        <setting key="viewMode" default-value="Text"/>
+    </settings>
+
+    <!-- Sockets definition-->
+    <sockets>
+        <output id="cloneTransactionContext"/>
+    </sockets>
+
+</action-definition>

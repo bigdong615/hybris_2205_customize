@@ -5,6 +5,9 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
@@ -31,6 +34,7 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
@@ -44,6 +48,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -71,6 +76,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@Resource(name = "addressDataUtil")
 	private AddressDataUtil addressDataUtil;
+
+	@Resource(name = "customerFacade")
+	private BlCustomerFacade blCustomerFacade;
 
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
@@ -136,6 +144,13 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return expiryYears;
 	}
 
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration()
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
+
 	@Override
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -198,7 +213,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		model.addAttribute(CART_DATA_ATTR, cartData);
 
-		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+		if (Boolean.TRUE.equals(cartData.getIsRentalCart()))
+		{
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
@@ -389,12 +405,17 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		model.addAttribute("sopPaymentDetailsForm", sopPaymentDetailsForm);
 		model.addAttribute("paymentInfos", getUserFacade().getCCPaymentInfos(true));
 		model.addAttribute("sopCardTypes", getSopCardTypes());
-		if (StringUtils.isNotBlank(sopPaymentDetailsForm.getBillTo_country()))
+		model.addAttribute("billingAddresses", getBlCustomerFacade().getAllVisibleBillingAddressesOnUser());
+		if (MapUtils.isNotEmpty(sopPaymentDetailsForm.getParameters())
+				&& sopPaymentDetailsForm.getParameters().containsKey("billTo_country")
+				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get("billTo_country")))
 		{
-			model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getBillTo_country()));
+			model.addAttribute("regions",
+					getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get("billTo_country")));
 			model.addAttribute("country", sopPaymentDetailsForm.getBillTo_country());
 		}
-		if(sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null) {
+		if (sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null)
+		{
 			model.addAttribute(BlCoreConstants.COUPON_APPLIED_MSG, sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG));
 			sessionService.removeAttribute(BlCoreConstants.COUPON_APPLIED_MSG);
 		}
@@ -433,12 +454,31 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	}
 
 	@Override
-	public BlCheckoutFacade getCheckoutFacade() {
+	public BlCheckoutFacade getCheckoutFacade()
+	{
 		return checkoutFacade;
 	}
 
-	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+	public void setCheckoutFacade(final BlCheckoutFacade checkoutFacade)
+	{
 		this.checkoutFacade = checkoutFacade;
+	}
+
+	/**
+	 * @return the blCustomerFacade
+	 */
+	public BlCustomerFacade getBlCustomerFacade()
+	{
+		return blCustomerFacade;
+	}
+
+	/**
+	 * @param blCustomerFacade
+	 *           the blCustomerFacade to set
+	 */
+	public void setBlCustomerFacade(final BlCustomerFacade blCustomerFacade)
+	{
+		this.blCustomerFacade = blCustomerFacade;
 	}
 
 }

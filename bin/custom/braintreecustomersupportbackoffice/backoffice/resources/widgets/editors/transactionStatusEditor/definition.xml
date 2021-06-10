@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<editor-definition id="com.braintreecustomerbackoffice.editor.transactionStatusEditor"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/editor-definition.xsd">
+
+    <name>BrainTree Transaction Status Editor</name>
+    <description>Transaction Status editor</description>
+    <!--The type of the value this editor is capable of handling.-->
+    <type>java.lang.Enum(?:\((.*)\))?</type>
+    <!--this is the renderer class of the editor. It is responsible for creation of the editor view.-->
+    <editorClassName>com.braintree.customersupportbackoffice.editor.TransactionStatusEditor</editorClassName>
+
+</editor-definition>

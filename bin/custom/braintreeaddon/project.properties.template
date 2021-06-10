@@ -1,0 +1,21 @@
+# ---------------------------------------------------------------------------
+# Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+# ---------------------------------------------------------------------------
+# you can put key/value pairs here.
+# Use Config.getParameter(..) to retrieve the values during runtime.
+
+braintreeaddon.key=value
+
+# Specifies the location of the spring context file added automatically to the global platform application context.
+braintreeaddon.application-context=braintreeaddon-spring.xml
+
+# Specifies the location of the spring context file which will be added to commerce web services web context
+yacceleratorstorefront.additionalWebSpringConfigs.braintreeaddon=classpath:/braintreeaddon/web/spring/braintreeaddon-web-spring.xml
+
+# Braintree channel, default values
+braintree.channel=XpN3PelQ9b1JzUfpBqC5znzNe0v9k2zkJLmIisiGoLw=
+
+braintreeaddon.javascript.paths.responsive=/responsive/common/js/braintreeConstants.js;/responsive/common/js/braintreeaddon_3_0.js;/responsive/common/js/util/braintreeUtil.js;/responsive/common/js/util/generalUtil.js;/responsive/common/js/method/applePay.js;/responsive/common/js/method/googlePay.js;/responsive/common/js/method/creditCard.js;/responsive/common/js/method/payPalButton.js;/responsive/common/js/method/localPayment.js;/responsive/common/js/method/venmo.js;/responsive/common/js/method/creditMessages.js;/responsive/common/js/pages/expressCheckoutPage.js;/responsive/common/js/pages/billingPage.js;/responsive/common/js/pages/myAccountPage.js
+
+braintreeaddon.css.paths.responsive=/responsive/common/css/braintreeaddon.css
+
