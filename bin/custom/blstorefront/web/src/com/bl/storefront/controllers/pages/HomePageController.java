@@ -9,6 +9,7 @@ import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
+import de.hybris.platform.acceleratorstorefrontcommons.util.XSSFilterUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
@@ -19,9 +20,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 
 /**
  * Controller for home page
@@ -41,6 +44,9 @@ public class HomePageController extends AbstractPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
+	@Resource(name = "blEmailSubscriptionFacade")
+	private BlEmailSubscriptionFacade blEmailSubscriptionFacade;
+	
 	@GetMapping
 	public String home(@RequestParam(value = WebConstants.CLOSE_ACCOUNT, defaultValue = "false") final boolean closeAcc,
 			@RequestParam(value = LOGOUT, defaultValue = "false") final boolean logout, final Model model,
@@ -65,5 +71,14 @@ public class HomePageController extends AbstractPageController
 	protected void updatePageTitle(final Model model, final AbstractPageModel cmsPage)
 	{
 		storeContentPageTitleInModel(model, getPageTitleResolver().resolveHomePageTitle(cmsPage.getTitle()));
+	}
+	
+	@RequestMapping(value = "/subscribe-email", method = RequestMethod.GET)
+	public void subscribeEmail(@RequestParam("emailId")
+	final String emailId, final Model model, final RedirectAttributes redirectAttributes)
+	{
+		XSSFilterUtil.filter(emailId);
+		blEmailSubscriptionFacade.subscribe(emailId);
+
 	}
 }

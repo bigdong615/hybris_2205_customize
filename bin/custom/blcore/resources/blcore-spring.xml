@@ -802,4 +802,17 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
     </bean>
+    
+    <!--Email Subscription changes-->
+	<alias name="defaultBlEmailSubscriptionService" alias="blEmailSubscriptionService"/>
+	<bean id="defaultBlEmailSubscriptionService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionService">
+		<property name="modelService" ref="modelService"/>
+		<property name="blEmailSubscriptionRestService" ref="blEmailSubscriptionRestService"/>
+	</bean>
+	
+	<alias name="defaultBlEmailSubscriptionRestService" alias="blEmailSubscriptionRestService"/>
+	<bean id="defaultBlEmailSubscriptionRestService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionRestService">
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+	
 </beans>

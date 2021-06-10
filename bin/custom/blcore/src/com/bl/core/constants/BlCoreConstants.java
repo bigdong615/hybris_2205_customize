@@ -165,6 +165,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String HYPHEN = "-";
 
 
+	public static final String SUBSCRIPTION_API_OPERATION_STATUS = "OK";
+
 	private BlCoreConstants()
 	{
 		//empty

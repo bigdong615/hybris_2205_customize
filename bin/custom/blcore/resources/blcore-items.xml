@@ -1323,6 +1323,24 @@
           </itemtype>
           <!--Gift Card End-->
 
+        	<itemtype code="BlStoredEmailSubscription" autocreate="true" generate="true"
+                 jaloclass="com.bl.core.jalo.BlStoredEmailSubscription">
+                 <description>Contact details for EmailSubscription</description>
+                 <deployment table="blEmailSubscription" typecode="12215" />
+               <attributes>
+                 <attribute qualifier="contactKey" type="java.lang.String">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" unique="true"  optional="true"/>
+                     <description>Contact Key for EmailSubscription</description>
+                 </attribute>
+                 <attribute qualifier="contactId" type="java.lang.String">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" unique="true"  optional="true"/>
+                     <description>Contact id for EmailSubscription</description>
+                 </attribute>
+               </attributes>
+            </itemtype>
+            
          </typegroup>
          
         <typegroup name="Pricing">

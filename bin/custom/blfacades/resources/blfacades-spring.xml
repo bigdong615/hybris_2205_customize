@@ -476,5 +476,15 @@
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
 
+	<!-- Email Subscription changes -->
+	<alias name="defaultBlEmailSubscriptionFacade" alias="blEmailSubscriptionFacade"/>
+    <bean id="defaultBlEmailSubscriptionFacade" class="com.bl.facades.subscription.impl.DefaultBlEmailSubscriptionFacade">
+        <property name="blEmailSubscriptionService" ref="blEmailSubscriptionService"/>
+        <property name="blEmailSubscriptionPopulator" ref="blEmailSubscriptionPopulator"/>
+    </bean>
+    
+    <alias name="defaultBlEmailSubscriptionPopulator" alias="blEmailSubscriptionPopulator"/>
+    <bean id="defaultBlEmailSubscriptionPopulator" class="com.bl.facades.populators.BlEmailSubscriptionPopulator" />
+
 
 </beans>
