@@ -55,6 +55,16 @@ public class BlCartPopulator extends CartPopulator<CartData>
 				target.setGrandTotal(grandTotal);
 			}
 		}
+		if (source.getGiftCardAmount() != null)
+		{
+			final PriceData giftDiscount = getPriceDataFactory().create(priceType,
+					BigDecimal.valueOf(source.getGiftCardAmount().doubleValue()),
+					source.getCurrency() != null ? source.getCurrency().getIsocode() : "");
+			if (giftDiscount != null)
+			{
+				target.setGiftCardDiscount(giftDiscount);
+			}
+		}
 
 		if (CollectionUtils.isNotEmpty(source.getGiftCard()))
 		{
@@ -87,6 +97,4 @@ public class BlCartPopulator extends CartPopulator<CartData>
     // Since we have already calculated the total with Tax , so returning cart total as total price with tax
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
-
-
 }
