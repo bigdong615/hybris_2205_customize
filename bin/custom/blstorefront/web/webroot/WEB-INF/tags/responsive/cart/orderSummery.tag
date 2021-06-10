@@ -57,6 +57,13 @@
               </tr>
 
             <tr class="discount">
+            <c:if test="${fn:length(cartData.giftCardData) > 0}">
+                          <tr class="discount">
+                          		  <td><spring:theme code="text.discount" /></td>
+                          		  <td class="text-end" id="cart-shipping-discount">-<format:price priceData="${cartData.giftCardDiscount}" /></td>
+                          </tr>
+             </c:if>
+
               <c:if test ="${cartData.totalDiscounts.value > 0}">
                   <td ><spring:theme code="text.discount"/></td>
                <td class="text-end" id="cart-shipping-tax">
