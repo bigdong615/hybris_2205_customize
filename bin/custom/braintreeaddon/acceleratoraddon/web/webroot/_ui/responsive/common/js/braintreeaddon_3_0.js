@@ -495,24 +495,7 @@ function allFieldValidation(errorMessage){
 	  $('#allFieldvalidationMessage').append(validationDiv);
 }
 
-//Error Notifications
-function showErrorForInputValidation(section) {
-   let notification = '';
-   if(section == 'Ship') {
-       notification += '<div class="notification notification-error"> You are missing ' +
-                           $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error').length +
-                           ' required fields.' +
-                           '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
-   } else {
-       notification += '<div class="notification notification-error"> You are missing ' +
-                           $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error').length +
-                           ' required fields.' +
-                           '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
-   }
-   notification += '</div>';
-   $('#showErrorForInputValidation').html(notification);
-   $('#showErrorForInputValidation').show();
-}
+
 
 function createHostedFields(clientInstance) {
     var name = $("#userSelectedPaymentInfo_name").val();
@@ -821,9 +804,13 @@ function createHostedFields(clientInstance) {
 				if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-warning mb-4" />').text("You are missing " + billingFormErrorCounts + " required fields.");
+					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
+							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
+					
 				}
+				
+				
 				
 				function scrollErrorMessage() {
 					$('html, body').animate({
@@ -988,7 +975,7 @@ $("#paymentAddNewAddress").on("click",function(e)
 {
 	e.preventDefault();
 	$("#save-address").prop('checked', true);
-	$("#savedAddresses").html("Enter New Address");
+	$("#savedAddresses").html("Enter New Or Select Saved Address");
 	$("#savedBillingAddressId").val('');
 	$("#paymentAddNewAddress").hide();
 });
@@ -1023,3 +1010,8 @@ $('#submit_silentOrderPostForm').click(function () {
 		allFieldValidation(ACC.ccError.onlyGCSelected);
 	}
 });	
+
+
+function scrollUpForError() {
+	   $('#billingAddressForm').find('.form-group .error')[0].scrollIntoView(true);
+	 }
