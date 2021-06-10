@@ -27,6 +27,9 @@
 <jsp:include page="../../../../messages/braintreeErrorMessages.jsp" />
 <c:url var="savedPaymentInfoFormURL" value="/checkout/multi/payment-method/braintree/choose-cc" />
 
+<c:if test="${deliveryAddress.pickStoreAddress or deliveryAddress.upsStoreAddress}">
+<c:set var="hideUseShipping" value="hideUseShipping"/>
+</c:if>
 <spring:eval
 	expression="@configurationService.configuration.getProperty('braintree.store.in.vault')"
 	var="storeInVault" />
@@ -203,11 +206,15 @@
                                              data-regionisocode="deliveryAddress.region.isocode"
                                              data-email="${deliveryAddress.email}"
                                              data-address-id="${deliveryAddress.id}"></div>
+                                           
                                         <formElement:formCheckbox path="useDeliveryAddress"
                                                                   idKey="ccUseDeliveryAddress"
                                                                   labelKey="checkout.multi.sop.useMyDeliveryAddress"
-                                                                  tabindex="11"/>
+                                                                  tabindex="11"
+                                                                  inputCSS="${hideUseShipping}"
+                                                                  labelCSS="${hideUseShipping}" />
                                     </c:if> 
+                                    
 
 															<input type="hidden" name="paypal_email"
 																id="paypal_email" /> <%-- <input type="hidden"

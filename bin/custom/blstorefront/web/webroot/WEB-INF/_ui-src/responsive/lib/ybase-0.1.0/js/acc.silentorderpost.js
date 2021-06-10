@@ -11,12 +11,16 @@ ACC.silentorderpost = {
 				var options = {'countryIsoCode': $('#useDeliveryAddressData').data('countryisocode'), 'useDeliveryAddress': true};
 				ACC.silentorderpost.enableAddressForm();
 				ACC.silentorderpost.displayCreditCardAddressForm(options, ACC.silentorderpost.useDeliveryAddressSelected);
+				$("#save-address").prop('checked', true);
+				$('.hideUseShipping').hide();
 				ACC.silentorderpost.enableReadOnlyAddressForm();
 			}
 			else
 			{
 				ACC.silentorderpost.clearAddressForm();
 				ACC.silentorderpost.enableAddressForm();
+				$("#save-address").prop('checked', true);
+				$('.hideUseShipping').hide();
 				ACC.silentorderpost.disableReadOnlyAddressForm();
 			}
 		});
@@ -26,13 +30,18 @@ ACC.silentorderpost = {
 			var options = {'countryIsoCode': $('#useDeliveryAddressData').data('countryisocode'), 'useDeliveryAddress': true};
 			ACC.silentorderpost.enableAddressForm();
 			ACC.silentorderpost.displayCreditCardAddressForm(options, ACC.silentorderpost.useDeliveryAddressSelected);
+			$("#save-address").prop('checked', true);
+			$('.hideUseShipping').hide();
 			ACC.silentorderpost.disableAddressForm();
+			
 		}
 		else
 		{
 			var options = {'countryIsoCode': $('#useDeliveryAddressData').data('countryisocode'), 'useDeliveryAddress': false};
 			ACC.silentorderpost.displayCreditCardAddressForm(options, ACC.silentorderpost.useDeliveryAddressSelected);
 			ACC.silentorderpost.enableAddressForm();
+			$("#save-address").prop('checked', true);
+			$('.hideUseShipping').hide();
 			ACC.silentorderpost.disableReadOnlyAddressForm();
 		}
 	},
@@ -104,6 +113,8 @@ ACC.silentorderpost = {
 			}
 			else
 			{
+				$("#save-address").prop('checked', true);
+				$('.hideUseShipping').hide();
 				ACC.silentorderpost.enableReadOnlyAddressForm();
 			}
 		}
@@ -111,6 +122,8 @@ ACC.silentorderpost = {
 		{
 			ACC.silentorderpost.clearAddressForm();
 			ACC.silentorderpost.enableAddressForm();
+			$("#save-address").prop('checked', true);
+			$('.hideUseShipping').hide();
 			ACC.silentorderpost.disableReadOnlyAddressForm();
 		}
 	},
@@ -157,7 +170,7 @@ $(document).ready(function ()
 	ACC.silentorderpost.bindUseDeliveryAddress();
 	ACC.silentorderpost.bindSubmitSilentOrderPostForm();
 	ACC.silentorderpost.bindCreditCardAddressForm();
-
+	$('.hideUseShipping').hide();
 	// check the checkbox
 	$("#useDeliveryAddress").click();
 });
