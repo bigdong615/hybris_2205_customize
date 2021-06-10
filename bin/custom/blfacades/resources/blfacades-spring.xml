@@ -476,5 +476,9 @@
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
 
+	<alias name="blOrderAppliedVouchersPopulator" alias="orderAppliedVouchersPopulator"/>
+	<bean id="blOrderAppliedVouchersPopulator" class="com.bl.facades.populators.BlOrderAppliedVouchersPopulator">
+	</bean>
+
 
 </beans>
