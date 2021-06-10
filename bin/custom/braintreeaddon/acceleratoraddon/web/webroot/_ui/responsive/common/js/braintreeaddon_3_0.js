@@ -114,6 +114,7 @@ jQuery(document).ready(function ($) {
     var deviceData;
     var client;
     var paymentMethodResponse;
+    $("#save-address").prop('checked', true);
 	if($("#paymentAddNewAddress").length <= 0)
 	{
 		$("#billing-address-form-expand").toggle();
@@ -168,6 +169,7 @@ jQuery(document).ready(function ($) {
 
 
 $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
+	$("#allFieldvalidationMessage").empty();
 	 initializeBTclientSDK();
 });
 
@@ -493,24 +495,7 @@ function allFieldValidation(errorMessage){
 	  $('#allFieldvalidationMessage').append(validationDiv);
 }
 
-//Error Notifications
-function showErrorForInputValidation(section) {
-   let notification = '';
-   if(section == 'Ship') {
-       notification += '<div class="notification notification-error"> You are missing ' +
-                           $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error').length +
-                           ' required fields.' +
-                           '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
-   } else {
-       notification += '<div class="notification notification-error"> You are missing ' +
-                           $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error').length +
-                           ' required fields.' +
-                           '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
-   }
-   notification += '</div>';
-   $('#showErrorForInputValidation').html(notification);
-   $('#showErrorForInputValidation').show();
-}
+
 
 function createHostedFields(clientInstance) {
     var name = $("#userSelectedPaymentInfo_name").val();
@@ -575,18 +560,18 @@ function createHostedFields(clientInstance) {
                     placeholder : 'Month',
                     select: {
                       options: [
-                        '01 - January',
-                        '02 - February',
-                        '03 - March',
-                        '04 - April',
-                        '05 - May',
-                        '06 - June',
-                        '07 - July',
-                        '08 - August',
-                        '09 - September',
-                        '10 - October',
-                        '11 - November',
-                        '12 - December'
+                        '01   Jan',
+                        '02   Feb',
+                        '03   Mar',
+                        '04   Apr',
+                        '05   May',
+                        '06   Jun',
+                        '07   Jul',
+                        '08   Aug',
+                        '09   Sep',
+                        '10   Oct',
+                        '11   Nov',
+                        '12   Dec'
                       ]
                     }
                   },
@@ -610,7 +595,7 @@ function createHostedFields(clientInstance) {
         function (hostedFieldsErr, hostedFieldsInstance) {
 
             if (hostedFieldsErr) {
-            //	alert(hostedFieldsErr);
+            
                 handleClientError(hostedFieldsErr);
                 return;
             }
@@ -743,7 +728,7 @@ function createHostedFields(clientInstance) {
 
 
             $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).unbind(EVENTS.CLICK);
-
+            
 
             // Add a click event listener to PayPal image
             $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).click(function (e) {
@@ -803,8 +788,10 @@ function createHostedFields(clientInstance) {
 					creditCardValidation(ACC.ccError.cardCVV);
 					$("#cvv").addClass("crs-error-field");
 				}
-          	
-				if(!state.fields.number.isPotentiallyValid)
+				
+			
+				
+				if(!state.fields.number.isPotentiallyValid )
 				{
 					hasNoError = false;
 					$('#submit_silentOrderPostForm').removeAttr("disabled");
@@ -817,9 +804,13 @@ function createHostedFields(clientInstance) {
 				if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-warning mb-4" />').text("You are missing " + billingFormErrorCounts + " required fields.");
+					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
+							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
+					
 				}
+				
+				
 				
 				function scrollErrorMessage() {
 					$('html, body').animate({
@@ -832,8 +823,9 @@ function createHostedFields(clientInstance) {
 					hostedFieldsInstance.tokenize(function (tokenizeErr, payload) 
 					{
 						if (tokenizeErr) 
-						{
-							$('#submit_silentOrderPostForm').removeAttr("disabled");
+						{    hasNoError = false;
+						   $('#submit_silentOrderPostForm').removeAttr("disabled");
+						    creditCardValidation(tokenizeErr);
 							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
 							handleClientError(tokenizeErr)
 						} 
@@ -982,7 +974,8 @@ function validatePhone(phone, fieldName)
 $("#paymentAddNewAddress").on("click",function(e)
 {
 	e.preventDefault();
-	$("#savedAddresses").html("Enter New Address");
+	$("#save-address").prop('checked', true);
+	$("#savedAddresses").html("Enter New Or Select Saved Address");
 	$("#savedBillingAddressId").val('');
 	$("#paymentAddNewAddress").hide();
 });
@@ -1006,6 +999,7 @@ $('#submit_silentOrderPostForm').click(function () {
 	var ccEnable = $('#paymentMethodBT').is(':checked');
 	var giftcardApplied = $("input[name='appliedGC']").val();
 	
+	$("#allFieldvalidationMessage").empty();
 	if(giftcardApplied == '' && ccEnable == false)
 	{
 		allFieldValidation(ACC.ccError.allFieldsNotSelected);
@@ -1016,3 +1010,8 @@ $('#submit_silentOrderPostForm').click(function () {
 		allFieldValidation(ACC.ccError.onlyGCSelected);
 	}
 });	
+
+
+function scrollUpForError() {
+	   $('#billingAddressForm').find('.form-group .error')[0].scrollIntoView(true);
+	 }
