@@ -308,6 +308,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	private void getSameDayCityResponse(final SameDayCityReqData sameDayCityReqData,
 			final ZoneDeliveryModeModel blZoneDeliveryMode)
 	{
+		this.postalCode.clearErrorMessage();
 		if (blZoneDeliveryMode instanceof BlRushDeliveryModeModel)
 		{
 			final BlRushDeliveryModeModel zonedeliveryMode = (BlRushDeliveryModeModel) blZoneDeliveryMode;
@@ -325,13 +326,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 
 			try
 			{
-				Messagebox.show("Request sent to FedEx" + "----" + this.deliveryModeCombobox.getValue() + "-"
-						+ sameDayCityReqData.getDeliveryAddressZipCode() + "----" + sameDayCityReqData.getWarehouseZipCode());
-
 				final SameDayCityResData resData = getFedExSameDayServiceImpl().getAvailability(sameDayCityReqData);
-
-				Messagebox.show(
-						"FedEx Response Data" + "----" + this.deliveryModeCombobox.getValue() + "-" + resData.getServiceApplicable());
 
 				if (BooleanUtils.isTrue(resData.getServiceApplicable()))
 				{
@@ -340,7 +335,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				}
 				else
 				{
-					deliveryList.addToSelection(getOrderModel().getDeliveryMode());
 					Messagebox.show("Selected shipping method service is not applicable for added zip code" + "----"
 							+ this.deliveryModeCombobox.getValue() + "-" + this.postalCode.getValue());
 
@@ -350,10 +344,6 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 			catch (final URISyntaxException ex)
 			{
 				BlLogger.logMessage(LOG, Level.ERROR, ex.getMessage());
-			}
-			finally
-			{
-				this.postalCode.clearErrorMessage();
 			}
 		}
 	}
