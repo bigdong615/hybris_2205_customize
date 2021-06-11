@@ -95,3 +95,12 @@ input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b
     font-size: 34px;
     line-height: 40px;
 }
+/* BL-45 */
+.hero-content a{color: #fff;text-decoration: none;}
+@media screen and (max-width: 767px){
+  .embed-responsive img {
+    max-width: fit-content;
+  }
+  }
+/* BL-45 */
+
