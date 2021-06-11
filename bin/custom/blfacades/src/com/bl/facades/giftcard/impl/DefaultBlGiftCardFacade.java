@@ -10,7 +10,6 @@ import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.List;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -117,18 +116,16 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
    * {@inheritDoc}
    */
   @Override
-  public void removeAppliedGiftCardFromCartAndShippingPage(final CartModel cartModel) {
-    List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
-    if (CollectionUtils.isNotEmpty(giftCardModelList)) {
-      for (GiftCardModel giftCardModel : giftCardModelList) {
-        try {
-          giftCardService.removeGiftCard(giftCardModel.getCode(), cartModel);
-        } catch (final Exception exception) {
-          BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
-              "Error occurred while removing applied gift card code: {} from cart: {} for the customer: {}",
-              giftCardModel.getCode(), cartModel.getCode(), cartModel.getUser().getUid(),
-              exception);
-        }
+  public void removeAppliedGiftCardFromCartAndShippingPage(final CartModel cartModel,
+      final List<GiftCardModel> giftCardModelList) {
+    for (GiftCardModel giftCardModel : giftCardModelList) {
+      try {
+        giftCardService.removeGiftCard(giftCardModel.getCode(), cartModel);
+      } catch (final Exception exception) {
+        BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
+            "Error occurred while removing applied gift card code: {} from cart: {} for the customer: {}",
+            giftCardModel.getCode(), cartModel.getCode(), cartModel.getUser().getUid(),
+            exception);
       }
     }
   }

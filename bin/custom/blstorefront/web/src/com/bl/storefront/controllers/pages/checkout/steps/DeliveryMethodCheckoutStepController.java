@@ -99,8 +99,12 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
         CartModel cartModel = blCartService.getSessionCart();
         if (cartModel != null) {
-            blGiftCardFacade.removeAppliedGiftCardFromCartAndShippingPage(cartModel);
-            model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, Config.getParameter("text.gift.card.remove"));
+            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+            if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+                blGiftCardFacade.removeAppliedGiftCardFromCartAndShippingPage(cartModel, giftCardModelList);
+                model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE,
+                    Config.getParameter("text.gift.card.remove"));
+            }
         }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);

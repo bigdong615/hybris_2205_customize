@@ -184,8 +184,12 @@ public class CartPageController extends AbstractCartPageController
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
 		if (cartModel != null) {
-        blGiftCardFacade.removeAppliedGiftCardFromCartAndShippingPage(cartModel);
-				model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, Config.getParameter("text.gift.card.remove"));
+			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+			if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+				blGiftCardFacade.removeAppliedGiftCardFromCartAndShippingPage(cartModel, giftCardModelList);
+				model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE,
+						Config.getParameter("text.gift.card.remove"));
+			}
 		}
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
 		return prepareCartUrl(model);
