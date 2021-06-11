@@ -64,11 +64,9 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
         .getActions().iterator().next();
     if(null != ruleBasedOrderEntryAdjustActionModel && CollectionUtils.isNotEmpty(ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes())) {
       for (final String couponCode : ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes()) {
-        if (null != ruleBasedOrderEntryAdjustActionModel.getAmount() && (
-            Double.compare(ruleBasedOrderEntryAdjustActionModel.getAmount().doubleValue(), 0.0)
-                > 0)) {
-          amountMap.put(couponCode, ruleBasedOrderEntryAdjustActionModel.getAmount()
-              .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+        final BigDecimal amount =  ruleBasedOrderEntryAdjustActionModel.getAmount();
+        if (null != amount && (Double.compare(amount.doubleValue(), 0.0) > 0)) {
+          amountMap.put(couponCode, amount.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
           vouchers.add(couponCode);
         }
       }
@@ -85,10 +83,9 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
         .getActions().iterator().next();
     if(null != ruleBasedOrderAdjustTotalActionModel && CollectionUtils.isNotEmpty(ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes())) {
       for (final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes()) {
-        if (null != ruleBasedOrderAdjustTotalActionModel.getAmount() && (
-            Double.compare(ruleBasedOrderAdjustTotalActionModel.getAmount().doubleValue(), 0.0)
-                > 0)) {
-          amountMap.put(couponCode, ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(
+        final BigDecimal amount = ruleBasedOrderAdjustTotalActionModel.getAmount();
+        if (null != amount && (Double.compare(amount.doubleValue(), 0.0) > 0)) {
+          amountMap.put(couponCode, amount.setScale(
               BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
           vouchers.add(couponCode);
         }
