@@ -5,8 +5,6 @@ package com.bl.core.subscription.service.impl;
 
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 
-import java.util.Random;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -31,10 +29,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Restful service to subscribe emails.
  *
  * @author Sunil Sahu
- *
  */
-public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptionRestService
-{
+public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptionRestService {
 
 	private static final Logger LOG = Logger.getLogger(DefaultBlEmailSubscriptionRestService.class);
 	private static final String SUBSCRIPTION_AUTH_BASE_URL = "email.subscription.auth.base.url";//   https://mcz111jg0kwv-qyxpw8rh1dff6j8.auth.marketingcloudapis.com
@@ -44,7 +40,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	private static final String SUBSCRIPTION_CLIENT_ID = "email.subscription.client.id";//   lvnx2e631tweqcvn6uup7fjl
 	private static final String SUBSCRIPTION_CLIENT_SECRET = "email.subscription.client.secret";//   82YtBWAokGenYTQf1UuZldBJ
 	private static final String SUBSCRIPTION_ACCOUNT_ID = "email.subscription.account.id";//   515009598
-	private static final String SUBSCRIPTION_GRANT_TYPE= "email.subscription.grant.type";//   client_credentials
+	private static final String SUBSCRIPTION_GRANT_TYPE = "email.subscription.grant.type";//   client_credentials
 	private static final String SUBSCRIPTION_ACCESS_SCOPE = "email.subscription.access.scope";//  email_read email_write email_send
 
 	private ConfigurationService configurationService;
@@ -53,8 +49,8 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ContactResponse subscribeEmail(final ContactRequest contactRequest)
-	{
+	public ContactResponse subscribeEmail(final ContactRequest contactRequest) {
+
 		//1. call first api to get accesstoken
 		final String accessToken = getAccessToken();
 
@@ -100,7 +96,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 			if (null != response && StringUtils.isBlank(response.getErrorDescription())) {
 				accessToken = response.getAccessToken();
 
-			} else {
+			} else if (null != response && StringUtils.isNotBlank(response.getErrorDescription())){
 				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
 						"Got error response for getting acceess token, error is : [{%s}]",
 						response.getErrorDescription());
@@ -190,31 +186,33 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	}
 
 
-
-
 	/**
 	 * Return access token request object by populating values configured from local.properties.
+	 *
 	 * @return SubscriptionAccessTokenRequest
 	 */
 	private SubscriptionAccessTokenRequest getSubscriptionAccessTokenRequest() {
 
 		final SubscriptionAccessTokenRequest request = new SubscriptionAccessTokenRequest();
-		request.setAccountId(getConfigurationService().getConfiguration().getString(SUBSCRIPTION_ACCOUNT_ID));
-		request.setClientId(getConfigurationService().getConfiguration().getString(SUBSCRIPTION_CLIENT_ID));
-		request.setClientSecret(getConfigurationService().getConfiguration().getString(SUBSCRIPTION_CLIENT_SECRET));
-		request.setGrantType(getConfigurationService().getConfiguration().getString(SUBSCRIPTION_GRANT_TYPE));
-		request.setScope(getConfigurationService().getConfiguration().getString(SUBSCRIPTION_ACCESS_SCOPE));
+		request.setAccountId(
+				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_ACCOUNT_ID));
+		request.setClientId(
+				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_CLIENT_ID));
+		request.setClientSecret(
+				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_CLIENT_SECRET));
+		request.setGrantType(
+				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_GRANT_TYPE));
+		request.setScope(
+				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_ACCESS_SCOPE));
 
 		return request;
 	}
 
-	protected ConfigurationService getConfigurationService()
-	{
+	protected ConfigurationService getConfigurationService() {
 		return configurationService;
 	}
 
-	public void setConfigurationService(final ConfigurationService configurationService)
-	{
+	public void setConfigurationService(final ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 

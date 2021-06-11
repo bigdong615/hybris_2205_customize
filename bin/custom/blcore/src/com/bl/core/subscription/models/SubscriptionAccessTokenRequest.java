@@ -10,10 +10,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * SubscriptionAccessTokenRequest to subscribe emails.
  *
  * @author Sunil Sahu
- *
  */
-public class SubscriptionAccessTokenRequest
-{
+public class SubscriptionAccessTokenRequest {
 
 	@JsonProperty(value = "grant_type")
 	private String grantType;
@@ -32,88 +30,71 @@ public class SubscriptionAccessTokenRequest
 	/**
 	 * @return the grantType
 	 */
-	public String getGrantType()
-	{
+	public String getGrantType() {
 		return grantType;
 	}
 
 	/**
 	 * @return the clientId
 	 */
-	public String getClientId()
-	{
+	public String getClientId() {
 		return clientId;
 	}
 
 	/**
 	 * @return the clientSecret
 	 */
-	public String getClientSecret()
-	{
+	public String getClientSecret() {
 		return clientSecret;
 	}
 
 	/**
 	 * @return the scope
 	 */
-	public String getScope()
-	{
+	public String getScope() {
 		return scope;
 	}
 
 	/**
 	 * @return the accountId
 	 */
-	public String getAccountId()
-	{
+	public String getAccountId() {
 		return accountId;
 	}
 
 	/**
-	 * @param grantType
-	 *           the grantType to set
+	 * @param grantType the grantType to set
 	 */
-	public void setGrantType(final String grantType)
-	{
+	public void setGrantType(final String grantType) {
 		this.grantType = grantType;
 	}
 
 	/**
-	 * @param clientId
-	 *           the clientId to set
+	 * @param clientId the clientId to set
 	 */
-	public void setClientId(final String clientId)
-	{
+	public void setClientId(final String clientId) {
 		this.clientId = clientId;
 	}
 
 	/**
-	 * @param clientSecret
-	 *           the clientSecret to set
+	 * @param clientSecret the clientSecret to set
 	 */
-	public void setClientSecret(final String clientSecret)
-	{
+	public void setClientSecret(final String clientSecret) {
 		this.clientSecret = clientSecret;
 	}
 
 	/**
-	 * @param scope
-	 *           the scope to set
+	 * @param scope the scope to set
 	 */
-	public void setScope(final String scope)
-	{
+	public void setScope(final String scope) {
 		this.scope = scope;
 	}
 
 	/**
-	 * @param accountId
-	 *           the accountId to set
+	 * @param accountId the accountId to set
 	 */
-	public void setAccountId(final String accountId)
-	{
+	public void setAccountId(final String accountId) {
 		this.accountId = accountId;
 	}
-
-
 
 }

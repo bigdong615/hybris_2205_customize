@@ -16,19 +16,17 @@ import com.bl.core.subscription.models.Value;
  * BlEmailSubscriptionPopulator
  *
  * @author Sunil Sahu
- *
  */
-public class BlEmailSubscriptionPopulator
-{
+public class BlEmailSubscriptionPopulator {
+
 	/**
 	 * This method is created for populating values for create contact request
 	 *
-	 * @param email
-	 *           id to be subscribed
+	 * @param emailId to be subscribed
 	 * @param contactRequest
 	 */
-	public void poupulateContactRequest(final String emailId, final ContactRequest contactRequest)
-	{
+	public void poupulateContactRequest(final String emailId, final ContactRequest contactRequest) {
+
 		contactRequest.setContactKey(emailId);
 		final List<AttributeSet> attributeSets = new ArrayList<>();
 		final AttributeSet attributeSet = new AttributeSet();

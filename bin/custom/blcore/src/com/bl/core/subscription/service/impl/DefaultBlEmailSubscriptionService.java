@@ -23,44 +23,54 @@ import com.bl.logging.BlLogger;
  *
  * @author Sunil Sahu
  */
-public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionService
-{
+public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionService {
+
 	private static final Logger LOG = Logger.getLogger(DefaultBlEmailSubscriptionService.class);
 	private ModelService modelService;
 	private BlEmailSubscriptionRestService blEmailSubscriptionRestService;
 
 
 	/**
+	 * Subscribe and save the contact.
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void subscribe(final ContactRequest contactRequest)
-	{
-		//call the actual rest api and collect response
-		final ContactResponse contactResponse = blEmailSubscriptionRestService.subscribeEmail(contactRequest);
+	public void subscribe(final ContactRequest contactRequest) {
 
-		if (null != contactResponse && StringUtils.equalsIgnoreCase(BlCoreConstants.SUBSCRIPTION_API_OPERATION_STATUS,
-				contactResponse.getOperationStatus()))
-		{
+		//call the actual rest api and collect response
+		final ContactResponse contactResponse = blEmailSubscriptionRestService
+				.subscribeEmail(contactRequest);
+
+		if (null != contactResponse && StringUtils
+				.equalsIgnoreCase(BlCoreConstants.SUBSCRIPTION_API_OPERATION_STATUS,
+						contactResponse.getOperationStatus())) {
 			//save the contact in hybris db
 			saveContactInHybris(contactResponse);
 		}
-
 	}
 
 	/**
+	 * Save the contact key to database.
 	 * @param contactResponse
 	 */
-	private void saveContactInHybris(final ContactResponse contactResponse)
-	{
-		final BlStoredEmailSubscriptionModel emailSubscriptionModel = (BlStoredEmailSubscriptionModel) getModelService()
-				.create(BlStoredEmailSubscriptionModel.class);
-		emailSubscriptionModel.setContactId(String.valueOf(contactResponse.getContactId()));
-		emailSubscriptionModel.setContactKey(contactResponse.getContactKey());
+	private void saveContactInHybris(final ContactResponse contactResponse) {
 
-		getModelService().save(emailSubscriptionModel);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Email contact saved for subscription with id [{%s}] and with key [{%s}]",
-				contactResponse.getContactId(), contactResponse.getContactKey());
+		if (contactResponse.isNewContactKey()) {
+
+			final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
+					.create(BlStoredEmailSubscriptionModel.class);
+			emailSubscriptionModel.setContactId(String.valueOf(contactResponse.getContactId()));
+			emailSubscriptionModel.setContactKey(contactResponse.getContactKey());
+
+			getModelService().save(emailSubscriptionModel);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"Email contact saved for subscription with id [{%s}] and with key [{%s}]",
+					contactResponse.getContactId(), contactResponse.getContactKey());
+		} else {
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"Email contact already exist with key [{%s}]", contactResponse.getContactKey());
+		}
+
 	}
 
 	public ModelService getModelService()
@@ -77,17 +87,15 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	/**
 	 * @return the blEmailSubscriptionRestService
 	 */
-	public BlEmailSubscriptionRestService getBlEmailSubscriptionRestService()
-	{
+	public BlEmailSubscriptionRestService getBlEmailSubscriptionRestService() {
 		return blEmailSubscriptionRestService;
 	}
 
 	/**
-	 * @param blEmailSubscriptionRestService
-	 *           the blEmailSubscriptionRestService to set
+	 * @param blEmailSubscriptionRestService the blEmailSubscriptionRestService to set
 	 */
-	public void setBlEmailSubscriptionRestService(final BlEmailSubscriptionRestService blEmailSubscriptionRestService)
-	{
+	public void setBlEmailSubscriptionRestService(
+			final BlEmailSubscriptionRestService blEmailSubscriptionRestService) {
 		this.blEmailSubscriptionRestService = blEmailSubscriptionRestService;
 	}
 

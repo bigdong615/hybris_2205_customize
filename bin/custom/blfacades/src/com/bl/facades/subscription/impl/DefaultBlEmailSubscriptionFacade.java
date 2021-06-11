@@ -14,8 +14,8 @@ import com.bl.facades.subscription.BlEmailSubscriptionFacade;
  *
  * @author Sunil Sahu
  */
-public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFacade
-{
+public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFacade {
+
 	private BlEmailSubscriptionService blEmailSubscriptionService;
 	private BlEmailSubscriptionPopulator blEmailSubscriptionPopulator;
 
@@ -23,8 +23,8 @@ public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFaca
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void subscribe(final String emailId)
-	{
+	public void subscribe(final String emailId) {
+
 		final ContactRequest contactRequest = new ContactRequest();
 		blEmailSubscriptionPopulator.poupulateContactRequest(emailId, contactRequest);
 		// call API to create contact
@@ -35,35 +35,30 @@ public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFaca
 	/**
 	 * @return the blEmailSubscriptionService
 	 */
-	public BlEmailSubscriptionService getBlEmailSubscriptionService()
-	{
+	public BlEmailSubscriptionService getBlEmailSubscriptionService() {
 		return blEmailSubscriptionService;
 	}
 
 	/**
-	 * @param blEmailSubscriptionService
-	 *           the blEmailSubscriptionService to set
+	 * @param blEmailSubscriptionService the blEmailSubscriptionService to set
 	 */
-	public void setBlEmailSubscriptionService(final BlEmailSubscriptionService blEmailSubscriptionService)
-	{
+	public void setBlEmailSubscriptionService(
+			final BlEmailSubscriptionService blEmailSubscriptionService) {
 		this.blEmailSubscriptionService = blEmailSubscriptionService;
 	}
 
 	/**
 	 * @return the blEmailSubscriptionPopulator
 	 */
-	public BlEmailSubscriptionPopulator getBlEmailSubscriptionPopulator()
-	{
+	public BlEmailSubscriptionPopulator getBlEmailSubscriptionPopulator() {
 		return blEmailSubscriptionPopulator;
 	}
 
 	/**
-	 * @param blEmailSubscriptionPopulator
-	 *           the blEmailSubscriptionPopulator to set
+	 * @param blEmailSubscriptionPopulator the blEmailSubscriptionPopulator to set
 	 */
-	public void setBlEmailSubscriptionPopulator(final BlEmailSubscriptionPopulator blEmailSubscriptionPopulator)
-	{
+	public void setBlEmailSubscriptionPopulator(
+			final BlEmailSubscriptionPopulator blEmailSubscriptionPopulator) {
 		this.blEmailSubscriptionPopulator = blEmailSubscriptionPopulator;
 	}
-
 }
