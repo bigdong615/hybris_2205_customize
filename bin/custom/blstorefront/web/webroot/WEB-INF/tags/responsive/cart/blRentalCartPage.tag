@@ -59,7 +59,8 @@
                                   </sec:authorize>
 
                               </div>
-                              <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                              <!--BL-533 changes -->
+                              <p class="mt-5 d-none body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>

@@ -311,7 +311,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .hero-content { position: relative; z-index: 5; }
 .hero-content .overline { font-size: 14px; }
 /* Change title width */
-.hero-content h1 { font-size: 80px; line-height: 80px; padding-bottom: 130px; width: 450px; }
+.hero-content h1 { font-size: 80px; line-height: 80px; padding-bottom: 130px; width: 580px; }
 .product-feature { position: absolute; bottom: 40px; right: 40px; z-index: 5; color: white; }
 .product-feature .badge { margin-right: 10px; }
 .product-feature a { color: white; text-decoration: none; }
