@@ -65,7 +65,7 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
     final RuleBasedOrderEntryAdjustActionModel ruleBasedOrderEntryAdjustActionModel = (RuleBasedOrderEntryAdjustActionModel) promotionResultModel
         .getActions().iterator().next();
     for (final String couponCode : ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes()) {
-      if(Double.compare(ruleBasedOrderEntryAdjustActionModel.getAmount().doubleValue(), BlFacadesConstants.DOUBLE_VALUE) > BlFacadesConstants.ZERO) {
+      if(Double.compare(ruleBasedOrderEntryAdjustActionModel.getAmount().doubleValue(), 0.0) > 0) {
         amountMap.put(couponCode, ruleBasedOrderEntryAdjustActionModel.getAmount()
             .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
         vouchers.add(couponCode);
@@ -82,7 +82,7 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
     final RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel
         .getActions().iterator().next();
     for (final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes()) {
-      if(Double.compare(ruleBasedOrderAdjustTotalActionModel.getAmount().doubleValue(), BlFacadesConstants.DOUBLE_VALUE) > BlFacadesConstants.ZERO) {
+      if(Double.compare(ruleBasedOrderAdjustTotalActionModel.getAmount().doubleValue(), 0.0) > 0) {
         amountMap.put(couponCode, ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(
             BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
         vouchers.add(couponCode);
