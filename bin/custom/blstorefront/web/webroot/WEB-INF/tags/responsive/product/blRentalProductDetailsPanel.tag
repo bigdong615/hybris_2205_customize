@@ -172,7 +172,8 @@
                                   <hr>
                                 <!-- Additional Gear Slider -->
                                  <h5><spring:theme code= "pdp.rental.product.recommendation.section.text" /></h5>
-                                  <div id="gear-slider" class="splide mt-4">
+                                 <!-- BL-605 :added class below -->
+                                  <div id="gear-slider" class="splide mt-4 hide-days">
                                      <cms:pageSlot position="CrossSelling" var="comp" element="div" class="productDetailsPageSectionCrossSelling">
                                          <cms:component component="${comp}" element="div" class="productDetailsPageSectionCrossSelling-component"/>
                                      </cms:pageSlot>

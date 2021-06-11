@@ -28,10 +28,6 @@ Added for removing add to cart popup background, when unable to add product to c
    .card .splide__arrow { padding: 8px; background: rgba(255,255,255,.6); border-radius: 50%; z-index: 99; }
    .card .splide__arrow--next { margin-right: -15px;z-index: 2; position: absolute; right: 0; }
 
-/*BL- 605 */
-@media(min-width:767px){
-  #productExtras #gear-slider-list .card { padding: 30px 10px; }
-}
 
 /**
 BL-31 Added for error message in login and create account popup
@@ -51,11 +47,15 @@ BL-31 Added for error message in login and create account popup
 .icon-production {
  background: url(../assets/icon-equipment.svg) center no-repeat;
   }
+  /* BL-494 ends here */
+
   .btn-outline { border: 1px solid #cccccc; }
   .litepicker .reset-button { color: #3d3c3c; position: absolute; bottom: 30px; left: 50px; text-transform: initial; }
   @media screen and (max-width: 480px) { .litepicker .reset-button { position: relative; bottom: 0; left: 0 }}
   @media screen and (max-width: 480px) { .litepicker .preview-date-range { display: block; padding-bottom: 10px; }}
 .litepicker .container__months .month-item { transform: none !important; }
+
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
 
 .cart h1 {
     font-size: 34px;
@@ -71,9 +71,8 @@ BL-31 Added for error message in login and create account popup
 
 .testing {
 	padding: 10px;
-    
- margin-top: 6px;
-    margin-bottom: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 
 
@@ -127,3 +126,18 @@ padding-right:5px;}
 #costSummary a{
 text-decoration :none ;
 }
+
+/* BL-678  BL-677 */
+.card li {display :flex; align-items: center;}
+/* BL-606 */
+.splide__slide .card h6.product, #productList .card h6.product {height :36px; overflow: hidden;}
+@media only screen and (max-width: 1025px) and (min-width: 991px)   {
+  .splide__slide .card h6.product, #productList .card h6.product {height :43px; overflow: hidden;}
+  #gear-slider .splide__slide .card h6.product {height :35px; overflow: hidden;}
+ }
+
+ /*BL- 605 */
+  #productExtras #gear-slider-list .card { padding: 30px 20px; }
+  .hide-days .period{ display: none;}
+
+

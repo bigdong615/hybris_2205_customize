@@ -242,3 +242,4 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
     $(" #productDates .input-group").addClass("red-border");
 	
 }
+$(".js-hr-tag").last().hide();

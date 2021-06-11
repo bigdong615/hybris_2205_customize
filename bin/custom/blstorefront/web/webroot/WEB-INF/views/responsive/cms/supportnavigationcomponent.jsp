@@ -25,7 +25,7 @@
 				</h5>
 				<div class="row">
 					<c:forEach items="${component.navigationNode.entries}"	var="entry">
-					<c:if test="${entry.item.type ne 'Link'}">
+					<c:if test="${entry.item.type ne 'Link' and entry.item.visible}">
 						<div class="col-md-3">						
 							<h6>${entry.item.title }</h6>
 							<p class="body14">${entry.item.content }</p>
