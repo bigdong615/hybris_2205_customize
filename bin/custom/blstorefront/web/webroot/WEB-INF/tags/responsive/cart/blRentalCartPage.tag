@@ -10,6 +10,7 @@
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
@@ -62,6 +63,13 @@
                           </div>
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+                             <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+                              <div class="notification notification-error">
+                                      ${fn:escapeXml(errorMsg)}
+                               </div>
+                             </c:if>
+                             <div class="notification notification-error d-none"id="errorMessages_voucher" />
+
                               <div id="cart-warning" class="notification notification-warning" style="display:none"><spring:theme code="text.date.range.not.available" /></div>
                               <%--<div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                               <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
