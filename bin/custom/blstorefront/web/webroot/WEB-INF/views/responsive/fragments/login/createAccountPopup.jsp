@@ -47,7 +47,6 @@
              data-bs-dismiss="modal">
             <spring:theme code="login.login" />
           </a>
-          &nbsp;
           <spring:theme code="login.suggestion.text"/>
         </p>
       </form:form>
