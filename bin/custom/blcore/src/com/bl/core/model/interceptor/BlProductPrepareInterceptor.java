@@ -45,9 +45,11 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
     }
     createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
 
-    if(CollectionUtils.isNotEmpty(serialProducts) && (interceptorContext.isModified(blProductModel,BlProductModel.FORSALEBASEPRICE) || interceptorContext
-        .isModified(blProductModel,BlProductModel.FORSALEDISCOUNT))){
-      calculateFinalSalePriceForSerialProducts(blProductModel, serialProducts,interceptorContext);
+    if(CollectionUtils.isNotEmpty(serialProducts)){
+      if(interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)  && blProductModel.getForSaleBasePrice().compareTo(BigDecimal.ZERO) > 0){
+        calculateFinalSalePriceForSerialProducts(blProductModel, serialProducts,interceptorContext);
+      }
+      if(interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)  && forSaleDiscount > 0){
       calculateIncentivizedPriceForSerialProducts(blProductModel,serialProducts, interceptorContext);
     }
   }
@@ -59,7 +61,6 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
    * @param interceptorContext
    */
   private void calculateFinalSalePriceForSerialProducts(final BlProductModel blProductModel,final Collection<BlSerialProductModel> serialProducts,final InterceptorContext interceptorContext) {
-    if(interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)  && blProductModel.getForSaleBasePrice().compareTo(BigDecimal.ZERO) > 0){
       serialProducts.forEach(serialProduct-> {
         if(serialProduct.getConditionRatingOverallScore() > 0.0D) {
           serialProduct.setFinalSalePrice(getBlPricingService()
@@ -69,7 +70,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
         interceptorContext.getModelService().save(serialProduct);
 
       });
-    }
+
   }
 
   /**
@@ -80,7 +81,6 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
    */
   private void calculateIncentivizedPriceForSerialProducts(final BlProductModel blProductModel,final Collection<BlSerialProductModel> serialProducts,final InterceptorContext interceptorContext) {
     final Integer forSaleDiscount = blProductModel.getForSaleDiscount();
-    if(interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)  && forSaleDiscount > 0){
       serialProducts.stream().forEach( serialProduct -> {
         BigDecimal calculatedIncentivizedPrice = null;
         if(serialProduct.getFinalSalePrice().compareTo(BigDecimal.ZERO) > 0) {
@@ -98,7 +98,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
         }
         interceptorContext.getModelService().save(serialProduct);
       });
-   }
+
  }
 
   /**

@@ -39,28 +39,28 @@ INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique
                              ;;26134;207730 ;207730 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003824;true;;982.3;Canon;756.55;333813;;2;BARCODE;1257B002;13803064551;LENSES
                              ;;37374;220232 ;220232 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003736;true;;955;Norman's;756.55;333793;;2;BARCODE;1257B002;13803064551;LENSES
 
-UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFirstActive[dateformat=dd.MM.yyyy HH:mm];totalRepairSpend;purchaseOrder;orderNumberRecord;invoiceNumberRecord;trackingNumber;invoiceNumber;invoiceDate;firmwareVersion
-                      ;;5122541 ;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;
-                      ;;6051076 ;;"Sold to 1123639";;;;;;;;;
-                      ;;6128205 ;;;;;;;;;;;
-                      ;;CPL58.016;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;
-                      ;;CPL58.022;"PO 221102 B&H (Trello card 2010)";"Nowpocalypse tool deactivating serials in homeBaseID 1";;;221102;1059352386;;;;;
-                      ;;CPL58.023;;;;;221102;1059352386;;;;;
-                      ;;Y7ADF1SFS00078;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;
-                      ;;Y7ADG1SFS00249;;"Nowpocalypse tool deactivating serials in homeBaseID 2";;;;;;;;;
-                      ;;Y7ADG1SFS00197;;"Automatically set active by receiving barcode scan for order #890218";;;;;;;;;
-                      ;;3002962 ;;"camera turned off on me a few times, then LCD faded to white once. Intermittent" ;;;;;;;;;A1.11 B1.11 L2.017
-                      ;;3003088 ;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;A1.11 B1.11 L2.018
-                      ;;3003086 ;"some dust in viewfinder, not affecting usage 8/15/17";;;;;;;;;;A1.11 B1.11 L2.018
-                      ;;152000000000 ;"new shutter: 0 mirror: 182507 (7/19/17) Serial engraved.";"bent CF pin, shutter curtain stuck in front of sensor";;;;;;800000000000;;;1.3.6
-                      ;;132000000001 ;"Serial engraved  NOT FIT FOR VIP! VIP REJECT     Small mark on sensor, not showing in photos.  ";"Sold to 1127379";;;;;;796000000000;;;1.3.6
-                      ;;132000000000 ;"Cosmetic scuffs on bottom, LCD has minor scuffs and slight scratches. Serial engraved.";"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;796000000000;;;1.3.6
-                      ;;5353841 ;;"Still shipped on order 1134356 - return tracking has not been shipped" ;;;;;;;;;
-                      ;;5579698 ;;"Automatically set active by receiving barcode scan for order #1154291";;;;;;;;;
-                      ;;5789775 ;;;;;;;;;;
-                      ;;198534 ;;;;;;;;1ZE6W3113917380719,1ZE6W3113917395301,1ZE6W3113917396051,1ZE6W3113917396560,1ZE6W3113917397112;;;;
-                      ;;207730 ;;;;;;;;2570540792;;;
-                      ;;220232 ;;;;;;;;800000000000;;;
+UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;dateFirstActive[dateformat=dd.MM.yyyy HH:mm];totalRepairSpend;purchaseOrder;orderNumberRecord;invoiceNumberRecord;trackingNumber;invoiceNumber;invoiceDate;firmwareVersion
+                      ;;5122541 ;;;;;;;;;;
+                      ;;6051076 ;;;;;;;;;;
+                      ;;6128205 ;;;;;;;;;;
+                      ;;CPL58.016;;;;;;;;;;
+                      ;;CPL58.022;"PO 221102 B&H (Trello card 2010)";;;221102;1059352386;;;;;
+                      ;;CPL58.023;;;;221102;1059352386;;;;;
+                      ;;Y7ADF1SFS00078;;;;;;;;;;
+                      ;;Y7ADG1SFS00249;;;;;;;;;;
+                      ;;Y7ADG1SFS00197;;;;;;;;;;
+                      ;;3002962 ;;;;;;;;;;A1.11 B1.11 L2.017
+                      ;;3003088 ;;;;;;;;;;A1.11 B1.11 L2.018
+                      ;;3003086 ;"some dust in viewfinder, not affecting usage 8/15/17";;;;;;;;;A1.11 B1.11 L2.018
+                      ;;152000000000 ;"new shutter: 0 mirror: 182507 (7/19/17) Serial engraved.";;;;;;800000000000;;;1.3.6
+                      ;;132000000001 ;"Serial engraved  NOT FIT FOR VIP! VIP REJECT     Small mark on sensor, not showing in photos.  ";;;;;;796000000000;;;1.3.6
+                      ;;132000000000 ;"Cosmetic scuffs on bottom, LCD has minor scuffs and slight scratches. Serial engraved.";;;;;;796000000000;;;1.3.6
+                      ;;5353841 ;;;;;;;;;;
+                      ;;5579698 ;;;;;;;;;;
+                      ;;5789775 ;;;;;;;;;
+                      ;;198534 ;;;;;;;1ZE6W3113917380719,1ZE6W3113917395301,1ZE6W3113917396051,1ZE6W3113917396560,1ZE6W3113917397112;;;
+                      ;;207730 ;;;;;;;2570540792;;;
+                      ;;220232 ;;;;;;;800000000000;;;
 
 
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;notes;withOrderID;finalSalePrice;dateOfSale;conditionRatingOverallScore
