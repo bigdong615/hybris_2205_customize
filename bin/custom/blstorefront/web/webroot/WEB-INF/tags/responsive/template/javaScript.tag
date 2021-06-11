@@ -629,7 +629,7 @@
                                                  numberOfMonths: 2,
                                                  numberOfColumns: 2,
                                                  autoApply: false,
-                                                 format: "MMM D, YYYY",
+                                                 format: "MMM D",
                                                  resetButton: () => {
 												 let btn = document.createElement('button');
 												 btn.innerText = 'Reset Dates';
@@ -691,7 +691,7 @@
                                                  numberOfMonths: 1,
                                                  numberOfColumns: 1,
                                                  autoApply: false,
-                                                 format: "MMM D, YYYY",
+                                                 format: "MMM D",
                                                  resetButton: () => {
                                      				 let btn = document.createElement('button');
                                      				 btn.innerText = 'Reset';

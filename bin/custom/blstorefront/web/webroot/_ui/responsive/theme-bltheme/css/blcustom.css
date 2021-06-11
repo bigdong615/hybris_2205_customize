@@ -93,3 +93,37 @@ BL-31 Added for error message in login and create account popup
     font-size: 34px;
     line-height: 40px;
 }
+ /* BL-688*/
+#productInfo .nextAvailDate{color:#e64b4f;}
+ #productDates .red-border { border: 2px solid #e64b4f;}
+.date-notAvail{
+  background-image: url("../assets/notification-error.svg") !important;
+  background-position: 95% 50% !important;
+  background-repeat: no-repeat !important;
+}
+.date-notAvail::placeholder { color: #e64b4f;}
+/* Added for I-pad pro device */
+@media screen and (min-device-width: 991px) and (max-device-width: 1025px){
+#productDates .input-group {
+padding-left:4px;}
+#globalSearch .input-group span, #productDates .input-group span{
+padding-right:10px;}
+#product-litepicker{padding-left :6px;}
+}
+
+@media (max-width: 321px){
+#productDates .input-group {
+padding-left:4px;}
+#globalSearch .input-group span, #productDates .input-group span{
+padding-right:5px;}
+#mobile-product-litepicker{padding-left :6px;}
+.date-notAvail{
+  background-image: url("../assets/notification-error.svg") !important;
+  background-position: 97% 50% !important;
+  background-repeat: no-repeat !important;
+}
+}
+/* BL-681*/
+#costSummary a{
+text-decoration :none ;
+}
