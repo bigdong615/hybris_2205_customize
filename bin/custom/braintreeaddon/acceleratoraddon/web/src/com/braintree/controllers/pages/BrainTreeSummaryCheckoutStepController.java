@@ -76,7 +76,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	private static final String REDIRECT_TO_PAYMENT_METHOD = "redirect:/checkout/multi/payment-method/add";
+	public static final String REDIRECT_PREFIX = "redirect:";
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -151,7 +151,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 					"Error occurred while adding message to redirect attribute for removed gift card",
 					exception);
 		}
-		return REDIRECT_TO_PAYMENT_METHOD;
+		return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 	}
 
 	@RequestMapping(value = "/placeOrder")
