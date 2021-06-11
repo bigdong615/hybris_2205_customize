@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved
+-->
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widgets.xsd">
+
+    <widget-extension widgetId="csAdvancedSearch">
+        <remove widgetId="csAdvancedSearchEngine"/>
+        <widget id="csAdvancedSearchEngine" widgetDefinitionId="braintree.customersupportbackoffice.advancedsearchengine"
+                slotId="cockpitWidgetChildrenInvisible" template="false">
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="defaultPageSize" type="Integer">20</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <virtual-sockets/>
+        </widget>
+    </widget-extension>
+
+    <widget-extension widgetId="mainSlot">
+
+        <widget id="prepareTransactionWidget" widgetDefinitionId="com.braintreecustomerbackoffice.widgets.prepareTransactionWidget"
+                slotId="cockpitWidgetChildrenInvisible" template="true" title="Merchant details">
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <close>
+                    <all-outgoing-events/>
+                </close>
+            </instance-settings>
+        </widget>
+
+        <widget id="newTransactionWidget" widgetDefinitionId="com.braintreecustomerbackoffice.widgets.newTransactionWidget"
+                slotId="cockpitWidgetChildrenInvisible" template="true" title="Card Details">
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <close>
+                    <all-outgoing-events/>
+                </close>
+            </instance-settings>
+        </widget>
+
+
+        <widget id="createTransactionWidget" widgetDefinitionId="com.braintreecustomerbackoffice.widgets.createTransactionWidget"
+                slotId="cockpitWidgetChildrenInvisible" template="true" title="Transaction Details">
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <close>
+                    <all-outgoing-events/>
+                </close>
+            </instance-settings>
+        </widget>
+
+        <widget id="braintree_customers_find_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                slotId="cockpitWidgetChildrenInvisible" template="false">
+            <widget id="braintree_customers_find_propertyextractor" widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+                    slotId="cockpitWidgetChildrenInvisible" template="false">
+                <setting key="expression" type="String" value="name"/>
+                <setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+                <setting key="widgetStyleAttribute" type="String" value=""/>
+                <setting key="widgetStyleClass" type="String" value=""/>
+                <virtual-sockets/>
+            </widget>
+            <setting key="expression" type="String" value="#root.id EQ 'btcs_treenode_find_customers'"/>
+            <setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+            <setting key="widgetStyleAttribute" type="String" value=""/>
+            <setting key="widgetStyleClass" type="String" value=""/>
+            <virtual-sockets/>
+        </widget>
+
+        <widget id="braintree_transactions_find_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                slotId="cockpitWidgetChildrenInvisible" template="false">
+            <widget id="braintree_transactions_find_propertyextractor" widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+                    slotId="cockpitWidgetChildrenInvisible" template="false">
+                <setting key="expression" type="String" value="name"/>
+                <setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+                <setting key="widgetStyleAttribute" type="String" value=""/>
+                <setting key="widgetStyleClass" type="String" value=""/>
+                <virtual-sockets/>
+            </widget>
+            <setting key="expression" type="String" value="#root.id EQ 'btcs_treenode_find_transactions'"/>
+            <setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+            <setting key="widgetStyleAttribute" type="String" value=""/>
+            <setting key="widgetStyleClass" type="String" value=""/>
+            <virtual-sockets/>
+        </widget>
+
+        <widget id="braintree_transaction_prepare_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                slotId="cockpitWidgetChildrenInvisible" template="false">
+            <widget id="braintree_transaction_prepare_propertyextractor" widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+                    slotId="cockpitWidgetChildrenInvisible" template="false">
+                <setting key="expression" type="String" value="id"/>
+                <setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+                <setting key="widgetStyleAttribute" type="String" value=""/>
+                <setting key="widgetStyleClass" type="String" value=""/>
+                <virtual-sockets/>
+            </widget>
+            <setting key="expression" type="String" value="#root.id EQ 'btcs_treenode_prepare_transaction_wizard'"/>
+            <setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+            <setting key="widgetStyleAttribute" type="String" value=""/>
+            <setting key="widgetStyleClass" type="String" value=""/>
+            <virtual-sockets/>
+        </widget>
+
+        <widget id="braintree_transaction_create_byVault_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+                slotId="cockpitWidgetChildrenInvisible" template="false">
+            <widget id="braintree_transaction_create_byVault_propertyextractor" widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+                    slotId="cockpitWidgetChildrenInvisible" template="false">
+                <setting key="expression" type="String" value="id"/>
+                <setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+                <setting key="widgetStyleAttribute" type="String" value=""/>
+                <setting key="widgetStyleClass" type="String" value=""/>
+                <virtual-sockets/>
+            </widget>
+            <setting key="expression" type="String" value="#root.id EQ 'btcs_treenode_create_transaction_byVault_wizard'"/>
+            <setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+            <setting key="widgetStyleAttribute" type="String" value=""/>
+            <setting key="widgetStyleClass" type="String" value=""/>
+            <virtual-sockets/>
+        </widget>
+
+        <widget id="braintree_authorize_order_popup" widgetDefinitionId="com.braintree.customersupportbackoffice.widgets.orderauthorization" slotId="cockpitWidgetChildrenInvisible"
+                title="Authorize Order" template="true">
+
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <all-outgoing-events/>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <setting key="_width" type="String">1000px</setting>
+            <setting key="_height" type="String">150px</setting>
+            <virtual-sockets />
+        </widget>
+
+        <widget id="braintree_multiple_capture_popup" widgetDefinitionId="com.braintree.customersupportbackoffice.widgets.multiplecapture" slotId="cockpitWidgetChildrenInvisible"
+                title="Multiple Capture" template="true">
+
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <all-outgoing-events/>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <setting key="_width" type="String">1000px</setting>
+            <setting key="_height" type="String">150px</setting>
+            <virtual-sockets/>
+        </widget>
+
+        <widget id="braintree_void_popup" widgetDefinitionId="com.braintree.customersupportbackoffice.widgets.order.void" slotId="cockpitWidgetChildrenInvisible"
+                title="Void" template="true">
+
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <all-outgoing-events/>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <setting key="_width" type="String">1000px</setting>
+            <setting key="_height" type="String">250px</setting>
+            <virtual-sockets/>
+        </widget>
+
+        <widget id="braintree_clone_transaction_popup" widgetDefinitionId="com.braintree.customersupportbackoffice.widgets.clonetransaction" slotId="cockpitWidgetChildrenInvisible"
+                title="Clone Transaction" template="true">
+
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <all-outgoing-events/>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <setting key="_width" type="String">700px</setting>
+            <setting key="_height" type="String">150px</setting>
+            <virtual-sockets />
+        </widget>
+
+        <widget id="braintree_refund_transaction_popup" widgetDefinitionId="com.braintree.customersupportbackoffice.widgets.refundtransaction" slotId="cockpitWidgetChildrenInvisible"
+                title="Refund Transaction" template="true">
+
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <all-outgoing-events/>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <setting key="_width" type="String">700px</setting>
+            <setting key="_height" type="String">150px</setting>
+            <virtual-sockets />
+        </widget>
+
+        <widget id="braintree_submit_transaction_popup" widgetDefinitionId="com.braintree.customersupportbackoffice.widgets.submitforsettlementtransaction" slotId="cockpitWidgetChildrenInvisible"
+                title="Submit For Settlement" template="true">
+
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <all-outgoing-events/>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="__externalLocationPath" type="String">extension://braintreecustomersupport1811backoffice</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <setting key="_width" type="String">700px</setting>
+            <setting key="_height" type="String">150px</setting>
+            <virtual-sockets />
+        </widget>
+
+        <widget id="braintree_partial_refund_order_popup" widgetDefinitionId="com.braintree.customersupportbackoffice.widgets.partialrefund" slotId="cockpitWidgetChildrenInvisible"
+                title="Partial Refund Order" template="true">
+
+            <instance-settings socketEventRoutingMode="LAST_USED">
+                <create onInit="false" reuseExisting="true">
+                    <all-incoming-events/>
+                </create>
+                <close>
+                    <all-outgoing-events/>
+                </close>
+                <select onInit="false">
+                    <all-incoming-events/>
+                </select>
+            </instance-settings>
+
+            <setting key="widgetStyleClass" type="String"/>
+            <setting key="__externalLocationPath" type="String">extension://braintreecustomersupportbackoffice</setting>
+            <setting key="widgetStyleAttribute" type="String"/>
+            <setting key="_width" type="String">1000px</setting>
+            <setting key="_height" type="String">150px</setting>
+            <virtual-sockets />
+        </widget>
+
+    </widget-extension>
+
+    <widget-connection sourceWidgetId="csExplorerTree" inputId="input" outputId="nodeSelected"
+                       targetWidgetId="braintree_transaction_prepare_conditionevaluator"/>
+    <widget-connection sourceWidgetId="braintree_transaction_prepare_conditionevaluator" inputId="genericInput" outputId="true"
+                       targetWidgetId="braintree_transaction_prepare_propertyextractor"/>
+    <widget-connection sourceWidgetId="braintree_transaction_prepare_propertyextractor" inputId="contextType" outputId="genericOutput"
+                       targetWidgetId="prepareTransactionWidget"/>
+
+    <widget-connection sourceWidgetId="csExplorerTree" inputId="input" outputId="nodeSelected"
+                       targetWidgetId="braintree_transaction_create_byVault_conditionevaluator"/>
+    <widget-connection sourceWidgetId="braintree_transaction_create_byVault_conditionevaluator" inputId="genericInput" outputId="true"
+                       targetWidgetId="braintree_transaction_create_byVault_propertyextractor"/>
+    <widget-connection sourceWidgetId="braintree_transaction_create_byVault_propertyextractor" inputId="contextType" outputId="genericOutput"
+                       targetWidgetId="configurableFlow"/>
+
+    <widget-connection sourceWidgetId="csExplorerTree" inputId="input" outputId="nodeSelected"
+                       targetWidgetId="braintree_customers_find_conditionevaluator"/>
+    <widget-connection sourceWidgetId="braintree_customers_find_conditionevaluator" inputId="genericInput" outputId="true"
+                       targetWidgetId="braintree_customers_find_propertyextractor"/>
+    <widget-connection sourceWidgetId="braintree_customers_find_propertyextractor" inputId="type" outputId="genericOutput"
+                       targetWidgetId="csAdvancedSearch"/>
+
+    <widget-connection sourceWidgetId="csExplorerTree" inputId="input" outputId="nodeSelected"
+                       targetWidgetId="braintree_transactions_find_conditionevaluator"/>
+    <widget-connection sourceWidgetId="braintree_transactions_find_conditionevaluator" inputId="genericInput" outputId="true"
+                       targetWidgetId="braintree_transactions_find_propertyextractor"/>
+    <widget-connection sourceWidgetId="braintree_transactions_find_propertyextractor" inputId="type" outputId="genericOutput"
+                       targetWidgetId="csAdvancedSearch"/>
+
+    <widget-connection sourceWidgetId="btcsCollectionBrowser" outputId="selectedItem" targetWidgetId="csBackofficeSpaceManagement"
+                       inputId="listSelectedObject"/>
+    <widget-connection sourceWidgetId="btcsCollectionBrowser" outputId="selectedItem" targetWidgetId="csEditorArea" inputId="inputObject"/>
+    <widget-connection sourceWidgetId="btcsCollectionBrowser" outputId="sortData" targetWidgetId="btcsAdvancedSearch" inputId="sortData"/>
+
+    <widget-connection sourceWidgetId="STUB_com.braintree.customersupportbackoffice.actions.order.authorize"
+                       outputId="authorizeOrderContext" targetWidgetId="braintree_authorize_order_popup" inputId="inputObject"/>
+
+    <widget-connection sourceWidgetId="STUB_com.braintree.customersupportbackoffice.actions.order.multiplecapture"
+                       outputId="multipleCaptureContext" targetWidgetId="braintree_multiple_capture_popup" inputId="inputObject"/>
+
+    <widget-connection sourceWidgetId="STUB_com.braintree.customersupportbackoffice.actions.order.void"
+                       outputId="voidContext" targetWidgetId="braintree_void_popup" inputId="inputObject"/>
+
+    <widget-connection sourceWidgetId="STUB_com.braintree.customersupportbackoffice.actions.transaction.braintreeclonetransactionaction"
+                       outputId="cloneTransactionContext" targetWidgetId="braintree_clone_transaction_popup" inputId="inputObject"/>
+
+    <widget-connection sourceWidgetId="STUB_com.braintree.customersupportbackoffice.actions.transaction.braintreerefundtransactionaction"
+                       outputId="refundTransactionContext" targetWidgetId="braintree_refund_transaction_popup" inputId="inputObject"/>
+
+    <widget-connection sourceWidgetId="STUB_com.braintree.customersupportbackoffice.actions.transaction.braintreesubmitforsettlementtransactionaction"
+                       outputId="captureTransactionContext" targetWidgetId="braintree_submit_transaction_popup" inputId="inputObject"/>
+
+    <widget-connection sourceWidgetId="newTransactionWidget" outputId="newTransactionOutput"
+                       targetWidgetId="createTransactionWidget" inputId="incomingMsg" />
+
+    <widget-connection sourceWidgetId="prepareTransactionWidget" outputId="outgoingMsg"
+                       targetWidgetId="newTransactionWidget" inputId="incomingMsg" />
+
+    <widget-connection sourceWidgetId="STUB_com.braintree.customersupportbackoffice.actions.order.partialrefund"
+                       outputId="partialRefundOrderContext" targetWidgetId="braintree_partial_refund_order_popup" inputId="inputObject"/>
+
+    <widget-connection sourceWidgetId="braintree_authorize_order_popup" outputId="modifiedItem" targetWidgetId="csEditorArea" inputId="inputObject"/>
+    <widget-connection sourceWidgetId="braintree_partial_refund_order_popup" outputId="modifiedItem" targetWidgetId="csEditorArea" inputId="inputObject"/>
+    <widget-connection sourceWidgetId="braintree_multiple_capture_popup" outputId="modifiedItem" targetWidgetId="csEditorArea" inputId="inputObject"/>
+    <widget-connection sourceWidgetId="braintree_void_popup" outputId="modifiedItem" targetWidgetId="csEditorArea" inputId="inputObject"/>
+
+</widgets>

@@ -104,6 +104,7 @@
       <property name="statusUpdate" type="Boolean"/>
       <property name="deliveryNotes" type="String"/>
       <property name="isRentalCart" type="java.lang.Boolean"/>
+      <property name="promotionAmountMap" type="java.util.Map&lt;String,java.math.BigDecimal>"/>
       <property name="giftCode" type="String"/>
       <property name="grandTotal" type="PriceData"/>
       <property name="giftCardDiscount" type="PriceData"/>
