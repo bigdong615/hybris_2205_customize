@@ -228,4 +228,18 @@ $('.remove-gift-card').on("click", function(e) {
           });
 });
 
+//BL-688 changes
+if($("#addToCartButton").hasClass("js-disable-btn"))
+{
+    $("#product-litepicker").addClass("date-notAvail");
+    $("#mobile-product-litepicker").addClass("date-notAvail");
+    $("#pickupDelivery .pickupDeliveryLink").addClass("d-none");
+    $(" #productDates .input-group").addClass("red-border");
+}
+if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("js-disable-btn")){
+    $("#product-litepicker").addClass("date-notAvail");
+    $("#mobile-product-litepicker").addClass("date-notAvail");
+    $(" #productDates .input-group").addClass("red-border");
+	
+}
 $(".js-hr-tag").last().hide();

@@ -65,7 +65,7 @@
                                  <p>
 	                                 <c:choose>
 	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
-	                                 		<span class="arrival"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 	<c:when test="${not empty nextAvailabilityDate }">
 	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span> 
@@ -87,14 +87,14 @@
                                    <c:choose>
                                   		<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
                                   				<button id="addToCartButton" type="submit"
-                                  					  class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn"
+                                  					  class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn "
                                   					  aria-disabled="true" disabled="disabled">
                                   				  <spring:theme code="basket.add.to.rental.cart.button.text" />
                                   				</button>
                                   		</c:when>
                                   		<c:when test="${product.isDiscontinued eq 'true' }">
                                           <button id="addToCartButton" type="submit"
-                                                   class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn"
+                                                   class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn "
                                                    aria-disabled="true" disabled="disabled">
                                                  <spring:theme code="basket.add.to.rental.cart.button.text" />
                                       		</button>
