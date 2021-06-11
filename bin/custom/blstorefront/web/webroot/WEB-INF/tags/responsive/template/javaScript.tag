@@ -338,11 +338,16 @@
             $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
           });
           // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+          //BL-678 changes added fixedheight
           document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
               type   : 'loop',
               perPage: 1,
               drag   : false,
+              fixedHeight :275,
               breakpoints: {
+                  '1025': {
+                      fixedHeight:200,
+                  },
                   '991': {
                       pagination: false,
                   },
@@ -612,6 +617,8 @@
                                                  keyboard: false,
                                              } ).mount();
                                              // Initialize Additional Gear Slider - required for Single Product Page
+                                             // BL-605 BL-682 :changes starts here
+
                                              new Splide( '#gear-slider', {
                                                  perPage: 4,
                                                  breakpoints: {
@@ -632,6 +639,26 @@
                                                  padding: 10,
                                                  keyboard: false,
                                              } ).mount();
+
+                                             let DontForgetCardQty= document.querySelectorAll("#gear-slider .card").length;
+                                             console.log(DontForgetCardQty);
+                                             if(DontForgetCardQty<=4 && screen.width>991){
+                                                 document.querySelector("#gear-slider .splide__arrows").style.display="none";
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                              if(DontForgetCardQty<=3 && screen.width<=991 && screen.width>767){
+                                                 document.querySelector("#gear-slider .splide__arrows").style.display="none";
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                              if(DontForgetCardQty<=2 && screen.width<=767 && screen.width>640){
+                                                 document.querySelector("#gear-slider .splide__arrows").style.display="none";
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                              if(DontForgetCardQty==1 && screen.width<640){
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                             // BL-605: changes end here
+                                             
                                              // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
 
                                              // Initialize PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
@@ -756,18 +783,27 @@
                                                     buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                                              });
                                          // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+                                         // BL-605 : fixedHeight added
                                                  document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
                                                      type   : 'loop',
                                                      perPage: 1,
+                                                     fixedHeight:200,
                                                      drag   : false,
                                                      breakpoints: {
+                                                         '1025': {
+                                                              fixedHeight:150,
+                                                         },
                                                          '991': {
                                                              pagination: false,
+                                                         },
+                                                         '640': {
+                                                             pagination: false,
+                                                             fixedHeight: 300,
                                                          },
                                                      },
                                                      keyboard: false,
                                                  } ).mount());
-
+                                          
                                          </script>
 
                                 		</c:if>
