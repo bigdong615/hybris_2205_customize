@@ -33,6 +33,12 @@
 				<c:if test="${not empty coupon_applied_msg}">
 					<div class="notification notification-warning">${coupon_applied_msg}</div>
 				</c:if>
+				<c:if test="${not empty giftCardCodeRemove}">
+        		<c:forEach items="${giftCardCodeRemove}" var="giftCardRemoved">
+                <div class="notification notification-warning">${giftCardRemoved}</div>
+            </c:forEach>
+        </c:if>
+
     </div>
 	</div>
 </div>

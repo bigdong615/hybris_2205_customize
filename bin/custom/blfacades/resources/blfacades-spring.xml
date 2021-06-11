@@ -430,6 +430,10 @@
 		<property name="blRushDeliveryModeConverter" ref="blRushDeliveryModeConverter"/>
 		<property name="blShippingGroupConverter" ref="blShippingGroupConverter"/>
 		<property name="blPartnerPickUpStoreConverter" ref="blPartnerPickUpStoreConverter"/>
+		<property name="blGiftCardFacade" ref="blGiftCardFacade"/>
+		<property name="brainTreeCheckoutFacade" ref="brainTreeCheckoutFacade"/>
+		<property name="checkoutFacade" ref="checkoutFacade"/>
+		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy"/>
 	</bean>
 
 	<alias name="defaultBlFindDeliveryCostStrategy" alias="findDeliveryCostStrategy"/>

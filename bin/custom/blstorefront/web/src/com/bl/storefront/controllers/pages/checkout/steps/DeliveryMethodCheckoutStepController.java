@@ -6,12 +6,17 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.AddressTypeEnum;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
@@ -36,11 +41,16 @@ import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.util.Config;
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,6 +61,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/checkout/multi/delivery-method")
 public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepController implements BlCheckoutStepController {
+    private static final Logger LOGGER = Logger.getLogger(DeliveryMethodCheckoutStepController.class);
     private static final String DELIVERY_METHOD = "delivery-method";
     private static final String DELIVERY_OR_PICKUP = "deliveryOrPickup";
     private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
@@ -65,6 +76,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
     @Resource(name = "baseStoreService")
     private BaseStoreService baseStoreService;
+
+    @Resource(name = "cartService")
+    private BlCartService blCartService;
+
+    @Resource(name = "blGiftCardFacade")
+    private BlGiftCardFacade blGiftCardFacade;
+
+    @Resource(name ="cartFacade")
+    private BlCartFacade blCartFacade;
     
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
  	 private RentalDateDto getRentalsDuration() 
@@ -77,6 +97,24 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        CartModel cartModel = blCartService.getSessionCart();
+        if (cartModel != null) {
+            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+            if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+                for (GiftCardModel giftCardModel : giftCardModelList) {
+                    try {
+                        blGiftCardFacade.removeGiftCard(giftCardModel.getCode(), cartModel);
+                    } catch (final Exception exception) {
+                        BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
+                            "User lands on shipping page and got error while removing applied gift card code: {} from cart: {} for the customer: {}",
+                            giftCardModel.getCode(), cartModel.getCode(),
+                            cartModel.getUser().getUid(),
+                            exception);
+                    }
+                }
+                model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, Config.getParameter("text.gift.card.remove"));
+            }
+        }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
