@@ -99,21 +99,8 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
         CartModel cartModel = blCartService.getSessionCart();
         if (cartModel != null) {
-            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
-            if (CollectionUtils.isNotEmpty(giftCardModelList)) {
-                for (GiftCardModel giftCardModel : giftCardModelList) {
-                    try {
-                        blGiftCardFacade.removeGiftCard(giftCardModel.getCode(), cartModel);
-                    } catch (final Exception exception) {
-                        BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
-                            "User lands on shipping page and got error while removing applied gift card code: {} from cart: {} for the customer: {}",
-                            giftCardModel.getCode(), cartModel.getCode(),
-                            cartModel.getUser().getUid(),
-                            exception);
-                    }
-                }
-                model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, Config.getParameter("text.gift.card.remove"));
-            }
+            blGiftCardFacade.removeAppliedGiftCardFromCartAndShippingPage(cartModel);
+            model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, Config.getParameter("text.gift.card.remove"));
         }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);

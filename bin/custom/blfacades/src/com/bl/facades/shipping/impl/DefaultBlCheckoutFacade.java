@@ -568,14 +568,13 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 .getSessionCart();
             List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
             if (CollectionUtils.isNotEmpty(giftCardModelList)) {
-                List<String> giftCardCodeList = new ArrayList<>();
                 final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
                 commerceCartParameter.setCart(cartModel);
                 commerceCartParameter.setBaseSite(cartModel.getSite());
                 commerceCartParameter.setEnableHooks(true);
                 commerceCartParameter.setRecalculate(true);
                 getBlCheckoutCartCalculationStrategy().calculateCart(commerceCartParameter);
-                return getRemovedGiftCardCodes(cartModel, giftCardModelList, giftCardCodeList);
+                return getRemovedGiftCardCodes(cartModel, giftCardModelList);
             }
         }
         return Collections.emptyList();
@@ -586,16 +585,15 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      *
      * @param cartModel
      * @param giftCardModelList
-     * @param giftCardCodeList
      * @return list of gift cards.
      */
     private List<String> getRemovedGiftCardCodes(final CartModel cartModel,
-        final List<GiftCardModel> giftCardModelList, final List<String> giftCardCodeList) {
+        final List<GiftCardModel> giftCardModelList) {
         List<GiftCardMovementModel> giftCardMovementModelList;
+        List<String> giftCardCodeList = new ArrayList<>();
         for (GiftCardModel giftCardModel : giftCardModelList) {
             giftCardMovementModelList = giftCardModel.getMovements();
-            if (getCheckoutFacade().isCommittedMovement(giftCardMovementModelList)
-                && giftCardModel.getBalance() == 0) {
+            if (Double.compare(giftCardModel.getBalance(), 0) == 0 && getCheckoutFacade().isCommittedMovement(giftCardMovementModelList)) {
                 String removedGiftCardCode = getCheckoutFacade()
                     .removeGiftCardFromCart(giftCardModel.getCode(), cartModel);
                 if (StringUtils.isNotEmpty(removedGiftCardCode)) {
@@ -617,6 +615,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             for (GiftCardMovementModel giftCardMovementModel : giftCardMovementModelList) {
                 if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted())) {
                     committedMovement = false;
+                    break;
                 }
             }
         }

@@ -184,20 +184,8 @@ public class CartPageController extends AbstractCartPageController
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
 		if (cartModel != null) {
-			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
-			if (CollectionUtils.isNotEmpty(giftCardModelList)) {
-				for (GiftCardModel giftCardModel : giftCardModelList) {
-					try {
-						blGiftCardFacade.removeGiftCard(giftCardModel.getCode(), cartModel);
-					} catch (final Exception exception) {
-						BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-								"User lands on cart page and got error while removing applied gift card code: {} from cart: {} for the customer: {}",
-								giftCardModel.getCode(), cartModel.getCode(), cartModel.getUser().getUid(),
-								exception);
-					}
-				}
+        blGiftCardFacade.removeAppliedGiftCardFromCartAndShippingPage(cartModel);
 				model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, Config.getParameter("text.gift.card.remove"));
-			}
 		}
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
 		return prepareCartUrl(model);

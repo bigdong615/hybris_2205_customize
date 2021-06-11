@@ -43,4 +43,9 @@ public interface BlGiftCardFacade {
      */
     GiftCardModel getGiftCard(final String giftCardCode);
 
+    /**
+     * It removes applied gift card from cart/shipping page.
+     * @param cartModel
+     */
+    void removeAppliedGiftCardFromCartAndShippingPage(final CartModel cartModel);
 }
