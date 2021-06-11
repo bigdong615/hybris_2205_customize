@@ -53,12 +53,14 @@
                   </c:choose>
                 </td>
               </tr>
-              <c:if test="${fn:length(cartData.giftCardData) > 0}">
-              <tr class="discount">
-              		  <td><spring:theme code="text.discount" /></td>
-              		  <td class="text-end" id="cart-shipping-discount">-<format:price priceData="${cartData.giftCardDiscount}" /></td>
-              </tr>
-              </c:if>
+                <tr class="discount">
+                             <c:if test ="${cartData.totalDiscounts.value > 0}">
+                                 <td ><spring:theme code="text.discount"/></td>
+                              <td class="text-end" id="cart-shipping-tax">
+                              - <format:blPrice priceData="${cartData.totalDiscounts}"/>
+                              </td>
+                             </c:if>
+                           </tr>
               <tr class="total">
                   <td><spring:theme code="basket.page.total"/></td>
                   <td class="text-end" id="cart-shipping-total"><format:price priceData="${cartData.totalPriceWithTax}"/></td>
@@ -79,5 +81,5 @@
                                    <spring:theme code="checkout.summary.placeOrder" text="Place Your Order"/>
                                </button>
                               </form:form>
-       </div> 
+       </div>
 </div>      	

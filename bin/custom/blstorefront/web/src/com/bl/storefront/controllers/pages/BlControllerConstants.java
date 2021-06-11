@@ -83,6 +83,9 @@ public class BlControllerConstants
 	public static final String STOCK_NOTIFICATION_FORM = "stockNotificationForm";
 	public static final String USER_EMAIL_STRING = "userEmail";
 
+	public static final String VOUCHER_FORM = "voucherForm";
+	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";
+	public static final String PAYMENT_METHOD_CHECKOUT_URL = "/checkout/multi/payment-method/add";
 	private BlControllerConstants()
 	{
 		//empty
