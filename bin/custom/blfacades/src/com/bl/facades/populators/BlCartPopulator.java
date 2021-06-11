@@ -2,7 +2,6 @@ package com.bl.facades.populators;
 
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
