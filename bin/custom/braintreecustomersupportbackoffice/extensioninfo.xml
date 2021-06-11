@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved
+--><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+
+
+    <extension abstractclassprefix="Generated" classprefix="Braintreecustomersupportbackoffice" name="braintreecustomersupportbackoffice" usemaven="false">
+
+        <requires-extension name="backoffice"/>
+        <requires-extension name="customersupportbackoffice"/>
+        <requires-extension name="commercefacades"/>
+
+        <requires-extension name="braintree"/>
+        <requires-extension name="braintreefacades"/>
+
+        <coremodule generated="true" manager="com.braintree.customersupportbackoffice.jalo.BraintreecustomersupportbackofficeManager" packageroot="com.braintree.customersupportbackoffice"/>
+
+        <meta key="backoffice-module" value="true"/>
+
+    </extension>
+
+
+</extensioninfo>

@@ -24,12 +24,7 @@ public class DefaultBlCommerceCartCalculationStrategy extends
     final boolean result = super.calculateCart(parameter);
     final CartModel order = parameter.getCart();
     if (recalculate) {
-      // add tax to total only if order is NET
-      double totalPlusTax = order.getTotalPrice();
-      if (order.getNet() != null && order.getNet()) {
-        totalPlusTax += order.getTotalTax();
-      }
-      getGiftCardService().calculateGiftCard(order, totalPlusTax);
+      getGiftCardService().calculateGiftCard(order, order.getTotalPrice());
     }
     return result;
   }

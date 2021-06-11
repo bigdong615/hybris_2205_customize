@@ -56,3 +56,42 @@ BL-31 Added for error message in login and create account popup
   @media screen and (max-width: 480px) { .litepicker .reset-button { position: relative; bottom: 0; left: 0 }}
   @media screen and (max-width: 480px) { .litepicker .preview-date-range { display: block; padding-bottom: 10px; }}
 .litepicker .container__months .month-item { transform: none !important; }
+
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
+
+.cart h1 {
+    font-size: 34px;
+    line-height: 40px;
+}
+
+
+.cartProduct, .shipProduct, .payProduct, .paymentOption, .reviewCart {
+    padding-bottom: 40px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d4d3d3;
+}
+
+.testing {
+	padding: 10px;
+    
+ margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+
+.secure { background: url(../assets/icon-lock.svg) 97% center no-repeat; }
+
+.billingAddressData input[type="checkbox"]:checked:before {
+    background: #52bfc0 url(../assets/icon-check-white.svg) no-repeat center;
+    border-color: #52bfc0;
+    position: absolute;
+    background-size: 10px;
+    content: "";
+    width: 18px;
+    height: 18px;
+}
+
+#order h1 {
+    font-size: 34px;
+    line-height: 40px;
+}

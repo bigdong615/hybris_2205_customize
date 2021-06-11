@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+        sclass="bt-widget-multiplecapture-configuration"
+        id="voidview" height="100%" width="100%">
+
+    <separator width="100%" height="10px"/>
+
+    <hlayout height="60px" sclass="bt-widget-multiplecapture--header">
+
+        <hbox sclass="bt-widget-multiplecapture--body">
+            <vbox>
+                <label value="${labels.available.transactions}" width="100%"/>
+                <!--textbox sclass="bt-widget-multiplecapture-input-text-box" readonly="false" id="amount"
+                         width="240px"/-->
+                <combobox id="transactions" readonly="true" />
+            </vbox>
+        </hbox>
+
+
+        <hbox style="float:right;">
+            <div sclass="bt-widget-multiplecapture--controller-area">
+                <div sclass="bt-widget-multiplecapture--confirm-area" style="">
+                    <button id="voidrequest" width="100%"
+                            label="${labels.button.submit}"
+                            sclass="bt-widget-multiplecapture-configuration-button bt-widget-multiplecapture-configuration-save-button"/>
+                    <separator width="100%" height="10px"/>
+                </div>
+            </div>
+        </hbox>
+
+    </hlayout>
+
+</widget>
