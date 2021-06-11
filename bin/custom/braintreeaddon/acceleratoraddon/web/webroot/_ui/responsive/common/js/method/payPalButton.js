@@ -6,16 +6,29 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
         globalErrorsComponent.append(createErrorDiv(ACC.addons.braintreeaddon['braintree.message.incorect.intent']))
 
     } else {
-        if ($(CONST.MARK_PAYPAL_BUTTON).is(":empty")) {
-            braintree.paypalCheckout.create({
-                client: client
-            }, function (paypalCheckoutErr, paypalCheckoutInstance) {
-                let commit = paypalIntent === CONST.INTENT_SALE && userAction === 'true';
-                loadSDK(paypalCheckoutInstance, paypalIntent, commit, paypalOptions.flow, function () {
-                    console.log("PayPal Sdk was loaded");
-                    payPalCheckoutRenderButton(paypalCheckoutInstance, CONST.MARK_PAYPAL_BUTTON, paypalOptions, commit, payPalButtonConfigObj);
-                })
-            });
+        if ($(CONST.MARK_PAYPAL_BUTTON).is(":empty")) 
+		{
+			braintree.client.create(
+			{
+				authorization: 'sandbox_rzyvcjvy_hxzcyrbktsgzrb4n'
+			},
+			function (clientErr, clientInstance)
+			{
+				braintree.paypalCheckout.create(
+				{
+					client: clientInstance
+				}, 
+				function (paypalCheckoutErr, paypalCheckoutInstance) 
+				{
+					let commit = paypalIntent === CONST.INTENT_SALE && userAction === 'true';
+					loadSDK(paypalCheckoutInstance, paypalIntent, commit, paypalOptions.flow, 
+						function () 
+						{
+							console.log("PayPal Sdk was loaded");
+							payPalCheckoutRenderButton(paypalCheckoutInstance, CONST.MARK_PAYPAL_BUTTON, paypalOptions, commit, payPalButtonConfigObj);
+						})
+				});
+			});
         }
     }
 }

@@ -270,6 +270,27 @@
 
 											</div>
 										</div>
+										<!-- Paypal section -->
+										
+                                        <input id="paymentMethodPayPal" type="radio"
+                                               name="paymentMethodSelection" value="paypal"
+                                               class="paypalselection"/>
+                                        <div class="paypalimage" id="paypal-container">
+                                            <div class="cmsimage">
+                                                <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png"
+                                                     alt="Buy now with PayPal" class="payment-logo"/>
+                                            </div>
+                                        </div>
+                                        <div id="text" class="paypalurl">
+                                            <a style="padding-left: 10px;"
+                                               href="https://www.paypal.com/webapps/mpp/paypal-popup"
+                                               title="How PayPal Works"
+                                               onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"><spring:theme
+                                                    code="braintree.text.what.is.paypal"/>?</a>
+                                        </div>
+                                        <div id="mark-paypal-button" class="paypal_button_container btn btn-block"></div>
+                                    
+                                    <br>
 									</div>
 									<div id="validationMessage">
 										
@@ -439,13 +460,6 @@
             enableLocalPayment="${localPaymentsEnabled}"
             enableApplePay="${payPalCheckoutData.applePayEnabled}"
             enableSecure3d="${payPalCheckoutData.secure3d}"/>--%>
-	<script type="text/javascript"
-		src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
-	<script type="text/javascript"
-		src="https://js.braintreegateway.com/web/3.69.0/js/hosted-fields.min.js"></script>
-	<script type="text/javascript"
-		src="https://js.braintreegateway.com/web/3.69.0/js/data-collector.min.js"></script>
-
 
 	<script>
         var paymentMethodsPage = "paymentMethodsPage";
@@ -493,4 +507,13 @@
         var currencyMerchantAccountId = "${currencyMerchantAccount}";
         var googlePayEnabled = ${googlePayEnable};
     </script>
+    
+    <script type="text/javascript"
+		src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
+	<script type="text/javascript"
+		src="https://js.braintreegateway.com/web/3.69.0/js/hosted-fields.min.js"></script>
+	<script type="text/javascript"
+		src="https://js.braintreegateway.com/web/3.69.0/js/data-collector.min.js"></script>
+	<script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/paypal.min.js"></script>
+    <script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/paypal-checkout.min.js"></script>
 </template:page>

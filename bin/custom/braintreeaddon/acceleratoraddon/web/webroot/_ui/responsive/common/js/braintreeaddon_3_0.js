@@ -114,6 +114,7 @@ jQuery(document).ready(function ($) {
     var deviceData;
     var client;
     var paymentMethodResponse;
+	$("#paymentMethodPayPal").click();
     $("#save-address").prop('checked', true);
 	if($("#paymentAddNewAddress").length <= 0)
 	{
