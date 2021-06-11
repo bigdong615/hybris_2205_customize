@@ -790,6 +790,16 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>Determines the product is discounted</description>
                    </attribute>
+                   <attribute qualifier="forSaleBasePrice" type="java.math.BigDecimal">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Starting base price for the sku for used gear sales of all serials</description>
+                   </attribute>
+                   <attribute qualifier="forSaleDiscount" type="java.lang.Integer">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Additional Discount for used gear</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -812,11 +822,6 @@
                          <modifiers read="true" write="true" unique="true" optional="true"/>
                          <description>Determines the warehouse where the products are kept</description>
                      </attribute>
-                     <attribute qualifier="forSaleBasePrice" type="java.math.BigDecimal">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="false" initial="true"/>
-                         <description>Starting base price for the sku for used gear sales of all serials</description>
-                     </attribute>
                      <attribute qualifier="isBufferedInventory" type="java.lang.Boolean">
                        <persistence type="property" />
                        <modifiers read="true" write="true" search="true" optional="true"/>
@@ -837,11 +842,6 @@
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Calculated based on incentivized discount and for sale base price and condition rating score</description>
-                     </attribute>
-                     <attribute qualifier="forSaleDiscount" type="java.lang.Integer">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>Additional Discount for used gear</description>
                      </attribute>
                    <attribute qualifier="ownedBy" type="java.lang.String">
                      <persistence type="property"/>
@@ -877,11 +877,6 @@
                      <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Generic notes about the serial</description>
-                   </attribute>
-                   <attribute qualifier="forSaleNotes" type="java.lang.String">
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Sales Note on the Serial</description>
                    </attribute>
                    <attribute qualifier="purchaseOrder" type="java.lang.String">
                      <persistence type="property" />
