@@ -297,7 +297,7 @@ ACC.cart = {
         $('#ajaxCart').text($("#cartTotalsTemplate").tmpl(cartData));
         ACC.quote.bindQuoteDiscount();
     },
-    
+
     updateEntryNumbersForCartMenuData: function (entry) {
     	var entryNumbers = "";
         $.each(entry.entries, function(index, subEntry) {
@@ -306,7 +306,7 @@ ACC.cart = {
         	}
         	entryNumbers = entryNumbers + subEntry.entryNumber;
         });
-        $('.js-execute-entry-action-button').data('actionEntryNumbers',entryNumbers); 
+        $('.js-execute-entry-action-button').data('actionEntryNumbers',entryNumbers);
     },
 
     getProductQuantity: function (gridContainer, mapData, i) {

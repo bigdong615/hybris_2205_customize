@@ -5,6 +5,8 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
@@ -20,6 +22,9 @@ public class BlAddressDataUtil extends AddressDataUtil {
     public AddressData convertToAddressData(final AddressForm addressForm)
     {
         final AddressData addressData = super.convertToAddressData(addressForm);
+        final boolean isBillingAddress = BooleanUtils.toBoolean(addressForm.getBillingAddress());
+        addressData.setBillingAddress(isBillingAddress);
+        addressData.setShippingAddress(BooleanUtils.negate(isBillingAddress));
         fillExtendedAttributes(addressForm, addressData);
         return addressData;
     }

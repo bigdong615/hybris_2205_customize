@@ -579,9 +579,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public boolean checkCartEntriesAvailability(final String rentalStart, final String rentalEnd,
        final ZoneDeliveryModeModel deliveryModeModel) 
     {
+   	 final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
+
    	 if (Objects.nonNull(deliveryModeModel))
     	{
-    		final AtomicBoolean isAvailable = new AtomicBoolean(false);
     		final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
     		final Date rentalStartDate = getRentalStartDate(rentalStart, numberOfDaysToSkip);
     		final Date rentalEndDate = getRentalEndDate(rentalEnd, numberOfDaysToSkip);
@@ -592,11 +593,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
    		cartModel.getEntries().forEach(cartEntry -> {
    			final StockResult stockForEntireDuration = getBlCommerceStockService().getStockForEntireDuration(
    					cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate, rentalEndDate);
-   			isAvailable.set(stockForEntireDuration.getAvailableCount() > 0);
+   			if(stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity())
+   			{
+   				isAvailable.set(Boolean.FALSE);
+   				return;
+   			}
+   			
    		});
    		return isAvailable.get();
    	} 
-    	return false;
+   	 return isAvailable.get();
     }
     
     /**

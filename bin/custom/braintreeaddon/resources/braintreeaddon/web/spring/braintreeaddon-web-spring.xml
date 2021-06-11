@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<context:annotation-config/>
+
+	<!-- To handle BrainTree AddOn controllers -->
+	<context:component-scan base-package="com.braintree.controllers" scope-resolver="de.hybris.platform.spring.IgnoreTenantScopeMetadataResolver"/>
+
+	<!-- Expose /acceleratoraddon/web/webroot/WEB-INF/messages/base.js.properties  resource bundle as javascript variables -->
+	<bean id="defaultBraintreeaddonJavaScriptMessageResourceAccessor" parent="abstractJavaScriptMessageResourceAccessor">
+		<property name="addOnName" value="braintreeaddon"/>
+	</bean>
+
+	<bean id="defaultBraintreeaddonBeforeViewJsPropsHandlerAdaptee" parent="abstractBeforeViewJsPropsHandlerAdaptee" class="de.hybris.platform.addonsupport.interceptors.ExportJsPropertiesBeforeViewHandler">
+		<property name="messageSource" ref="defaultBraintreeaddonJavaScriptMessageResourceAccessor"/>
+	</bean>
+
+	<bean id="getBraintreeaddonBeforeViewHandler" parent="beforeViewHandlerAdapter">
+		<property name="adaptee">
+			<ref bean="defaultBraintreeaddonBeforeViewJsPropsHandlerAdaptee"/>
+		</property>
+	</bean>
+	<bean id="BraintreeaddonBeforeViewHandlerListMergeDirective" depends-on="beforeViewHandlersList" parent="listMergeDirective">
+		<property name="add" ref="getBraintreeaddonBeforeViewHandler"/>
+	</bean>
+
+	<bean id="brainTreeBeforeViewHandler"
+		  class="com.braintree.controllers.handler.BrainTreeBeforeViewHandler">
+		<property name="i18NService" ref="i18NService" />
+		<property name="sessionService" ref="sessionService" />
+	</bean>
+
+	<!-- Add our new before view adaptee to the existing list using a merge -->
+	<bean depends-on="beforeViewHandlersList" parent="listMergeDirective">
+		<property name="add">
+			<bean parent="beforeViewHandlerAdapter">
+				<property name="adaptee" ref="brainTreeBeforeViewHandler" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="payPalGUIDCookieStrategy" class="com.braintree.security.PayPalGUIDCookieStrategy">
+		<property name="cookieGenerator" ref="guidCookieGenerator" />
+	</bean>
+
+	<alias name="brainTreePaymentMethodCheckoutStep" alias="paymentMethodCheckoutStep" />
+	<bean id="brainTreePaymentMethodCheckoutStep" parent="defaultPaymentMethodCheckoutStep">
+		<property name="checkoutGroup" ref="defaultCheckoutGroup"/>
+		<property name="checkoutStepValidator" ref="defaultPaymentMethodCheckoutValidator"/>
+		<property name="transitions">
+			<map merge="true">
+				<entry key="previous" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+				<entry key="current" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+				<entry key="next" value-ref="BRAINTREE_REDIRECT_TO_SUMMARY"/>
+			</map>
+		</property>
+		<property name="progressBarId" value="paymentMethod"/>
+	</bean>
+
+	<alias name="brainTreeResponsivePaymentMethodCheckoutStep" alias="responsivePaymentMethodCheckoutStep" />
+	<bean id="brainTreeResponsivePaymentMethodCheckoutStep" parent="defaultResponsivePaymentMethodCheckoutStep">
+		<property name="checkoutGroup" ref="responsiveCheckoutGroup"/>
+		<property name="checkoutStepValidator" ref="defaultResponsivePaymentMethodCheckoutValidator"/>
+		<property name="transitions">
+			<map merge="true">
+				<entry key="previous" value-ref="REDIRECT_TO_DELIVERY_METHOD"/>
+				<entry key="current" value-ref="REDIRECT_TO_PAYMENT_METHOD"/>
+				<entry key="next" value-ref="BRAINTREE_REDIRECT_TO_SUMMARY"/>
+			</map>
+		</property>
+		<property name="progressBarId" value="paymentMethod"/>
+	</bean>
+
+	<bean id="BRAINTREE_REDIRECT_TO_SUMMARY" class="java.lang.String">
+		<constructor-arg value="redirect:/checkout/multi/summary/braintree/view"/>
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject">
+			<ref bean="excludeUrlSet"/>
+		</property>
+		<property name="targetMethod">
+			<value>addAll</value>
+		</property>
+		<property name="arguments">
+			<util:set>
+				<value>/paypal/webhook/**</value>
+				<value>/braintree/checkout/lpm/fallback</value>
+				<value>/braintree/checkout/lpm/processFallback</value>
+			</util:set>
+		</property>
+	</bean>
+
+	<!-- Disable csrf for webhook listener and  for fallback -->
+	<security:http disable-url-rewriting="true" use-expressions="true">
+		<security:intercept-url pattern="/paypal/webhook/**" />
+		<security:intercept-url pattern="/braintree/checkout/lpm/fallback" />
+		<security:intercept-url pattern="/braintree/checkout/lpm/processFallback" />
+		<security:anonymous username="anonymous" granted-authority="ROLE_ANONYMOUS"/>
+		<security:access-denied-handler error-page="/login"/>
+
+		<security:form-login
+				login-processing-url="/checkout/j_spring_security_check"
+				login-page="/login/checkout"
+				authentication-failure-handler-ref="loginCheckoutAuthenticationFailureHandler"
+				authentication-success-handler-ref="loginCheckoutGuidAuthenticationSuccessHandler"/>
+		<security:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler"/>
+
+		<security:csrf disabled="true"/>
+	</security:http>
+
+</beans>

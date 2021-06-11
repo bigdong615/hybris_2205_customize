@@ -79,7 +79,7 @@ public class DefaultBlGiftCardServiceTest {
   }
 
   @Test
-  public void testRemoveGiftcard() {
+  public void testRemoveGiftCard() {
 
     GiftCardModel giftCardModel = mock(GiftCardModel.class);
     final SearchResult<GiftCardModel> searchResult = mock(SearchResult.class);
@@ -94,30 +94,21 @@ public class DefaultBlGiftCardServiceTest {
 
   private void giftCardNotNull(final List<GiftCardModel> giftList, final CartModel cartModel) {
 
+    Assert.assertNotNull(giftList);
+    Assert.assertNotNull(cartModel);
     given(cartModel.getGiftCard()).willReturn(giftList);
-    Collection<String> couponCodes = mock(Collection.class);
-    couponCodes.add("gcTest1");
-    couponCodes.add("gcTest2");
-    cartModel.setAppliedCouponCodes(couponCodes);
-
-    when(cartModel.getAppliedCouponCodes()).thenReturn(couponCodes);
-
+    when(cartModel.getGiftCard()).thenReturn(giftList);
     cartModel.setGiftCard(giftList);
-    cartModel.setAppliedCouponCodes(couponCodes);
     cartModel.setCalculated(Boolean.FALSE);
     modelService.save(cartModel);
-
     final CommerceCartParameter commerceCartParameter = mock(CommerceCartParameter.class);
     commerceCartParameter.setCart(cartModel);
     commerceCartParameter.setBaseSite(cartModel.getSite());
     commerceCartParameter.setEnableHooks(true);
     commerceCartParameter.setRecalculate(true);
     defaultBlCommerceCartCalculationStrategy.calculateCart(commerceCartParameter);
-
     modelService.refresh(cartModel);
-
   }
-
 
   private List<GiftCardModel> getGiftCardModelList() {
     CurrencyModel currencyModel = mock(CurrencyModel.class);
@@ -134,7 +125,6 @@ public class DefaultBlGiftCardServiceTest {
 
     model.setCode(GIFTCARD_CODE);
     model.setActive(Boolean.TRUE);
-    //model.setCustomer(customerModel);
     model.setAmount(100d);
     model.setCurrency(currencyModel);
     model.setMovements(giftCardMovementModelList);
@@ -144,7 +134,6 @@ public class DefaultBlGiftCardServiceTest {
     when(model.getEmail()).thenReturn(Boolean.TRUE);
     when(model.getAmount()).thenReturn(Double.valueOf(100));
     when(model.getCurrency()).thenReturn(currencyModel);
-    //when(model.getCustomer()).thenReturn(customerModel);
     when(model.getMovements()).thenReturn(giftCardMovementModelList);
     return Arrays.asList(model);
   }

@@ -1,0 +1,8 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+$defaultPassword=12341234
+
+INSERT_UPDATE Customer;uid[unique=true];customerID[unique=true];name;description;sessionLanguage(isocode);sessionCurrency(isocode);password
+                      ;acceptanceuser@test.com;acceptanceuser@test.com;acceptance user;;en;USD;$defaultPassword
+

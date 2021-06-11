@@ -1,0 +1,127 @@
+$contentCatalog=electronicsContentCatalog
+$contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
+$jarResourceCms=jar:de.hybris.platform.yacceleratorcore.setup.CoreSystemSetup&/yacceleratorcore/import/cockpits/cmscockpit
+$siteResource=jar:com.braintree.constants.BraintreeaddonConstants&/braintreeaddon/import/contentCatalogs/$contentCatalog
+
+# Language
+$lang=en
+
+# PayPal Standard UI Image Component
+INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;page;&componentRef
+;;PayPalCheckoutComponent;PayPal Checkout Display Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/cart/checkoutDisplay.jsp;PayPalCheckoutComponent
+;;BrainTreeAccountPaymentDetailsComponent;Brain Tree Account Payment Details Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPaymentInfoPage.jsp;BrainTreeAccountPaymentDetailsComponent
+;;AccountAddPaymentMethodComponent;Account Add Payment Method Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountAddPaymentMethodPage.jsp;AccountAddPaymentMethodComponent
+;;AccountEditPaymentMethodComponent;Account Edit Payment Method Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountEditPaymentMethodPage.jsp;AccountEditPaymentMethodComponent
+;;AccountOrderDetailsShippingComponent;Account Order Details Shipping Info Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountOrderDetailShippingInfo.jsp;AccountOrderDetailsShippingComponent
+
+# CMS Navigation Nodes
+INSERT_UPDATE CMSNavigationNode;uid[unique=true];$contentCV[unique=true];&nodeRef;
+;AccountLeftNavNode;;AccountLeftNavNode
+
+INSERT_UPDATE AccountNavigationComponent;$contentCV[unique=true];uid[unique=true];name;navigationNode(&nodeRef);styleClass;&componentRef
+;;AccountLeftNavigationComponent;Account Left Navigation Component;AccountLeftNavNode;;AccountLeftNavigationComponent
+
+###### Account payment detail page
+# ContentSlot
+INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(&componentRef)
+;;SideContent-add-payment-method;Side Content Slot for Add Payment Method;true;AccountLeftNavigationComponent
+;;SideContent-edit-payment-method;Side Content Slot for Add Payment Method;true;AccountLeftNavigationComponent
+;;BodyContent-add-payment-method;Body Content Slot for Edit Payment Method;true;AccountAddPaymentMethodComponent
+;;BodyContent-edit-payment-method;Body Content Slot for Edit Payment Method;true;AccountEditPaymentMethodComponent
+
+# ContentSlotForPage
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='add-edit-payment-method'];contentSlot(uid,$contentCV)[unique=true];;;
+;;BodyContent-add-payment-method;BodyContent;;BodyContent-add-payment-method;;;
+;;SideContent-add-payment-method;SideContent;;SideContent-add-payment-method;;;
+
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='edit-payment-method'];contentSlot(uid,$contentCV)[unique=true];;;
+;;BodyContent-edit-payment-method;BodyContent;;BodyContent-edit-payment-method;;;
+;;SideContent-edit-payment-method;SideContent;;SideContent-edit-payment-method;;;
+
+# Preview Image for use in the CMS Cockpit for special ContentPages
+INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];mime;realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true]
+;;ContentPageModel__function_preview;text/gif;ContentPageModel__function_preview.gif;$jarResourceCms/preview-images/ContentPageModel__function_preview.gif
+
+# Functional Content Pages
+INSERT_UPDATE ContentPage;$contentCV[unique=true];uid[unique=true];name;masterTemplate(uid,$contentCV);label;defaultPage[default='true'];approvalStatus(code)[default='approved'];homepage[default='false'];previewImage(code, $contentCV)[default='ContentPageModel__function_preview']
+;;add-edit-payment-method;Add Edit Payment Method Page;AccountPageTemplate;add-edit-payment-method
+;;edit-payment-method;Edit Payment Method Page;AccountPageTemplate;edit-payment-method
+
+INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)
+;;BottomContentSlot-cartPage;PayPalCheckoutComponent,CartSuggestions
+;;BodyContent-payment-details;BrainTreeAccountPaymentDetailsComponent
+
+INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;page;actions(uid,$contentCV);
+;;AccountOrderDetailsShippingComponent;Account Order Details Shipping Info Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountOrderDetailShippingInfo.jsp;;
+;;OrderConfirmationShippingComponent;Order Confirmation Shipping Info Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountOrderDetailShippingInfo.jsp;;
+
+###### Account payment detail page
+# ContentSlot
+INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;cmsComponents(uid,$contentCV)
+;;BodyContent-add-payment-method;Body Content Slot for Edit Payment Method;true;AccountAddPaymentMethodComponent
+;;BodyContent-edit-payment-method;Body Content Slot for Edit Payment Method;true;AccountEditPaymentMethodComponent
+
+###### Empty account page SideContent
+UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV);
+;;SideContent-add-payment-method;;
+;;SideContent-edit-payment-method;;
+
+# ContentSlotForPage
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='add-edit-payment-method'];contentSlot(uid,$contentCV)[unique=true];;;
+;;BodyContent-add-payment-method;BodyContent;;BodyContent-add-payment-method;;;
+;;SideContent-add-payment-method;SideContent;;SideContent-add-payment-method;;;
+
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='edit-payment-method'];contentSlot(uid,$contentCV)[unique=true];;;
+;;BodyContent-edit-payment-method;BodyContent;;BodyContent-edit-payment-method;;;
+;;SideContent-edit-payment-method;SideContent;;SideContent-edit-payment-method;;;
+
+# Preview Image for use in the CMS Cockpit for special ContentPages
+INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];mime;realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true]
+;;ContentPageModel__function_preview;text/gif;ContentPageModel__function_preview.gif;$jarResourceCms/preview-images/ContentPageModel__function_preview.gif
+
+# Functional Content Pages
+INSERT_UPDATE ContentPage;$contentCV[unique=true];uid[unique=true];name;masterTemplate(uid,$contentCV);label;defaultPage[default='true'];approvalStatus(code)[default='approved'];homepage[default='false'];previewImage(code, $contentCV)[default='ContentPageModel__function_preview']
+;;add-edit-payment-method;Add Edit Payment Method Page;AccountPageTemplate;add-edit-payment-method
+;;edit-payment-method;Edit Payment Method Page;AccountPageTemplate;edit-payment-method
+
+
+INSERT_UPDATE Media;$contentCV[unique=true];code[unique=true];mime;realfilename;@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true];altText;folder(qualifier)[default='images']
+                   ;;logo_sepa;text/png;logo_sepa.png;$siteResource/images/LPMimages/logo_sepa.png; SEPA
+                   ;;logo_bancontact;text/png;logo_bancontact.svg;$siteResource/images/LPMimages/logo_bancontact.svg; Bancontact
+                   ;;logo_eps;text/png;logo_eps.svg;$siteResource/images/LPMimages/logo_eps.svg; EPS
+                   ;;logo_giropay;text/png;logo_giropay.svg;$siteResource/images/LPMimages/logo_giropay.svg; Giropay
+                   ;;Altpay_logo_iDEAL;text/png;Altpay_logo_iDEAL.svg;$siteResource/images/LPMimages/Altpay_logo_iDEAL.svg; iDEAL
+                   ;;logo_sofort;text/png;logo_sofort.svg;$siteResource/images/LPMimages/logo_sofort.svg; SOFORT
+                   ;;MyBank;text/png;MyBank.svg;$siteResource/images/LPMimages/MyBank.svg; MyBank
+                   ;;p24;text/png;p24.PNG;$siteResource/images/LPMimages/p24.PNG; P24
+
+
+INSERT_UPDATE BraintreeLocalPaymentMethods;&Item;code[unique=true];name;isEnabled;image(code, $contentCV)
+;;sepa;SEPA/ELV Direct Debit;true;logo_sepa
+;;bancontact;Bancontact;true;logo_bancontact
+;;eps;EPS;true;logo_eps
+;;giropay;giropay;true;logo_giropay
+;;ideal;iDEAL;true;Altpay_logo_iDEAL
+;;sofort;Klarna Pay Now / SOFORT;true;logo_sofort
+;;mybank;MyBank;true;MyBank
+;;p24;P24;true;p24
+
+
+INSERT_UPDATE PayPalCreditMessageComponent; $contentCV[unique = true]; uid[unique = true]; name; page; placement(code); layout(code); color(code); ratio(code)
+                                             ;;PayPalProductDetailsPageMessageComponent; Product Details Page Credit Message Component; /WEB-INF/views/addons/braintreeaddon/responsive/cms/paypalcreditmessagecomponent.jsp; product; flex; blue; 20x1
+                                             ;;PayPalProductListCreditMessageComponent; Product List Page Credit Message Component; /WEB-INF/views/addons/braintreeaddon/responsive/cms/paypalcreditmessagecomponent.jsp; category; flex; blue; 20x1
+                                             ;;PayPalProductGridCreditMessageComponent; Product Grid Credit Message Component; /WEB-INF/views/addons/braintreeaddon/responsive/cms/paypalcreditmessagecomponent.jsp; category; flex; blue; 20x1
+                                             ;;PayPalCartPageCreditMessageComponent; Cart Page Credit Message Component; /WEB-INF/views/addons/braintreeaddon/responsive/cms/paypalcreditmessagecomponent.jsp; cart; flex; blue; 20x1
+
+#### ProductDetailsPage
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]; cmsComponents(uid, $contentCV)
+                         ; ; AddToCartSlot ; AddToCart, PayPalProductDetailsPageMessageComponent
+
+#### ProductListPage
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]; name; active; cmsComponents(uid, $contentCV);;;
+                         ; ; ProductListSlot ; Product List Slot for Product List ; true ; PayPalProductListCreditMessageComponent, ProductListComponent ; ; ;
+
+#### ProductGridPage
+INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]; name; active; cmsComponents(uid, $contentCV);;;
+                         ; ; ProductGridSlot ; Product Grid Slot for Product List ; true ; PayPalProductGridCreditMessageComponent, ProductGridComponent ; ; ;
+

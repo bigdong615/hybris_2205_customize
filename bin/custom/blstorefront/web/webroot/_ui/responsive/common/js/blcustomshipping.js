@@ -644,15 +644,18 @@
   }
 
   $("#sameDayZipCheckText").on('change keydown paste input', function(){
-    hideErrorForInputValidation();
-    $('#same-day-notification').val('');
-    $('#same-day-notification').hide();
-    $('#same-day-address-div').hide();
-    $('#sameDayShippingMethodsNotification').hide();
-    $('#sameDayShippingMethods').html('');
+    if(JSON.parse(sessionStorage.getItem("currentZIP")) != $('#sameDayZipCheckText').val().trim()) {
+        hideErrorForInputValidation();
+        $('#same-day-notification').val('');
+        $('#same-day-notification').hide();
+        $('#same-day-address-div').hide();
+        $('#sameDayShippingMethodsNotification').hide();
+        $('#sameDayShippingMethods').html('');
+    }
   });
 
   function sameDayZipCheck() {
+    sessionStorage.setItem("currentZIP", JSON.stringify($('#sameDayZipCheckText').val()));
     hideErrorForInputValidation();
     $('#same-day-notification').val('');
     $('#same-day-notification').hide();
@@ -770,7 +773,7 @@
                },
                success: function (data) {
                     if(data == 'SUCCESS') {
-                        saveSelectedAddress(savedAddress, $('#same-day-select-box').val(), deliveryMode, $('#sameDayZipCheckText').val(), null);
+                        saveSelectedAddress(savedAddress, $('#same-day-select-box').val(), deliveryMode, $('#sameDayZipCheckText').val(), false);
                     }
                },
                error: function (data) {
@@ -1404,7 +1407,8 @@
     let total = checkNaN(parseFloat($('#cart-shipping-subTotal').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-waiver').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-cost').text().split('$')[1])) +
-                checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1]));
+                checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1])) -
+                checkNaN(parseFloat($('#cart-shipping-discount').text().split('-$')[1]));
     $('#cart-shipping-total').text('$' + total.toFixed(2));
   }
 
