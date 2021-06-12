@@ -641,7 +641,6 @@
                                              } ).mount();
 
                                              let DontForgetCardQty= document.querySelectorAll("#gear-slider .card").length;
-                                             console.log(DontForgetCardQty);
                                              if(DontForgetCardQty<=4 && screen.width>991){
                                                  document.querySelector("#gear-slider .splide__arrows").style.display="none";
                                                   document.querySelector("#gear-slider .splide__pagination").style.display="none";

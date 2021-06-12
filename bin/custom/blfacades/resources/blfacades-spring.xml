@@ -485,5 +485,18 @@
 	<bean id="blOrderAppliedVouchersPopulator" class="com.bl.facades.populators.BlOrderAppliedVouchersPopulator">
 	</bean>
 
+	<!--[BL-643]: Custom Promotions-->
+	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator"/>
+
+	<alias name="defaultCartRaoConverter" alias="cartRaoConverter" />
+	<bean id="defaultCartRaoConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.ruleengineservices.rao.CartRAO" />
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blCartRaoPopulator" />
+				<ref bean="cartRaoPopulator" />
+			</list>
+		</property>
+	</bean>
 
 </beans>
