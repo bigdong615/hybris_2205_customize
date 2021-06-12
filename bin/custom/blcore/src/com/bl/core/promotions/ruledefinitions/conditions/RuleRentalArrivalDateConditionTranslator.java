@@ -26,15 +26,13 @@ import java.util.Map;
  */
 public class RuleRentalArrivalDateConditionTranslator implements RuleConditionTranslator {
 
-  public static final String OPERATOR = "operator";
-
   @Override
   public RuleIrCondition translate(final RuleCompilerContext ruleCompilerContext,final RuleConditionData condition,final RuleConditionDefinitionData ruleConditionDefinitionData) {
 
     final Map<String, RuleParameterData> conditionParameters = condition.getParameters();
 
     final Date valueParameter = conditionParameters.get(BlCoreConstants.RENTAL_ARRIVAL_DATE).getValue();
-    final AmountOperator operatorParameter = conditionParameters.get(OPERATOR).getValue();
+    final AmountOperator operatorParameter = conditionParameters.get(BlCoreConstants.OPERATOR).getValue();
 
     final RuleIrGroupCondition irRentalArrivalDateCondition = RuleIrGroupConditionBuilder
         .newGroupConditionOf(RuleIrGroupOperator.AND).build();
