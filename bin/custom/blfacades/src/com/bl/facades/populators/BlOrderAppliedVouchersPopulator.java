@@ -1,7 +1,6 @@
 package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.voucher.converters.populator.OrderAppliedVouchersPopulator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -9,7 +8,6 @@ import de.hybris.platform.promotionengineservices.model.RuleBasedOrderAdjustTota
 import de.hybris.platform.promotionengineservices.model.RuleBasedOrderEntryAdjustActionModel;
 import de.hybris.platform.promotions.model.AbstractPromotionActionModel;
 import de.hybris.platform.promotions.model.PromotionResultModel;
-import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +26,7 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
    * This method created to populate coupon codes and coupon amount based on promotional results
    */
   @Override
-  public void populate(final AbstractOrderModel source, final AbstractOrderData target) throws ConversionException
+  public void populate(final AbstractOrderModel source, final AbstractOrderData target)
   {
     final Map<String, BigDecimal> amountMap = new HashMap<>();
     final List<String> vouchers = new ArrayList<>();
@@ -64,11 +62,13 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
       final PromotionResultModel promotionResultModel ,final Collection<String> vouchers) {
     final RuleBasedOrderEntryAdjustActionModel ruleBasedOrderEntryAdjustActionModel = (RuleBasedOrderEntryAdjustActionModel) promotionResultModel
         .getActions().iterator().next();
-    for (final String couponCode : ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes()) {
-      if(Double.compare(ruleBasedOrderEntryAdjustActionModel.getAmount().doubleValue(), 0.0) > 0) {
-        amountMap.put(couponCode, ruleBasedOrderEntryAdjustActionModel.getAmount()
-            .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
-        vouchers.add(couponCode);
+    if(null != ruleBasedOrderEntryAdjustActionModel && CollectionUtils.isNotEmpty(ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes())) {
+      for (final String couponCode : ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes()) {
+        final BigDecimal amount =  ruleBasedOrderEntryAdjustActionModel.getAmount();
+        if (null != amount && (Double.compare(amount.doubleValue(), 0.0) > 0)) {
+          amountMap.put(couponCode, amount.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+          vouchers.add(couponCode);
+        }
       }
     }
   }
@@ -81,11 +81,14 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
       final PromotionResultModel promotionResultModel ,final Collection<String> vouchers) {
     final RuleBasedOrderAdjustTotalActionModel ruleBasedOrderAdjustTotalActionModel = (RuleBasedOrderAdjustTotalActionModel) promotionResultModel
         .getActions().iterator().next();
-    for (final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes()) {
-      if(Double.compare(ruleBasedOrderAdjustTotalActionModel.getAmount().doubleValue(), 0.0) > 0) {
-        amountMap.put(couponCode, ruleBasedOrderAdjustTotalActionModel.getAmount().setScale(
-            BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
-        vouchers.add(couponCode);
+    if(null != ruleBasedOrderAdjustTotalActionModel && CollectionUtils.isNotEmpty(ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes())) {
+      for (final String couponCode : ruleBasedOrderAdjustTotalActionModel.getUsedCouponCodes()) {
+        final BigDecimal amount = ruleBasedOrderAdjustTotalActionModel.getAmount();
+        if (null != amount && (Double.compare(amount.doubleValue(), 0.0) > 0)) {
+          amountMap.put(couponCode, amount.setScale(
+              BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+          vouchers.add(couponCode);
+        }
       }
     }
 
