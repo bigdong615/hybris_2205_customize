@@ -267,8 +267,6 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
                                       $('.page-loader-new-layout').show();
                                     },
                                     success: function (response) {
-                                    alert("product added to cart");
-                                      //addToCartToAdded();
                                     },
                                      complete: function() {
                                        $('.page-loader-new-layout').hide();
