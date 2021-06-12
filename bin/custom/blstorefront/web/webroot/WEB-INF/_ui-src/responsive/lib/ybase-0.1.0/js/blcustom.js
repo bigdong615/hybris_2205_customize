@@ -229,11 +229,11 @@ $('.remove-gift-card').on("click", function(e) {
 
  //BL-455 add to cart
    function addToCartFromModal(){
-  $('.js-add-to-cart1').on('click',function(e) {
+  $('.js-add-to-cart-popup').on('click',function(e) {
                         e.preventDefault();
-                         let z= this.getAttribute("id");
+                         let popUpId = this.getAttribute("id");
                             var index = $( ".js-add-to-cart1" ).index( this );
-                            document.getElementById(z).innerHTML= "Added";
+                            document.getElementById(popUpId).innerHTML= "Added";
 
                          var productCode = $(this).attr('data-product-code');
                          var serialCode = $(this).attr('data-serial');
