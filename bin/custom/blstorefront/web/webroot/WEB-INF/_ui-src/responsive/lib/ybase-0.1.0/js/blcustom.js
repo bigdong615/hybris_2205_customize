@@ -146,87 +146,53 @@ $('#cart-continue').on("click", function (e) {
 });
 
 //BL-563 Gift Card Apply
-$(".gc-message input").focus(function () {
-	$(this).siblings(".gc-message").hide();
-});
-
 $('#applyGcCode').click(function (e) {
 	e.preventDefault();
   var giftCardForm = $("#giftCardForm");
-  if (!giftCardForm.valid()) {
-		return false
-	}
-	var $form = $(this);
+  var $form = $(this);
 	var gcCode = $("#gift-card-apply-gift-card-number").val();
-	var formBtnSubmit = $(this).find('[type="submit"]');
-	formBtnSubmit.prop("disabled", true).attr("disabled", "disabled");
-  $.ajax({
+	$.ajax({
 		url: giftCardForm.attr('action'),
 		type: giftCardForm.attr("method"),
 		data: {
 			code: gcCode
 		},
+		beforeSend: function(){
+        $('.page-loader-new-layout').show();
+    },
     success: function (data) {
-			formBtnSubmit.prop("disabled", false).removeAttr("disabled");
-			window.location.reload();
+      window.location.reload();
+    },
+    complete: function() {
+        $('.page-loader-new-layout').hide();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+       $('.page-loader-new-layout').hide();
+       console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
     }
 	});
-});
-
-$("#giftCardForm").validate({
-	errorClass: "error",
-	errorElement: "span",
-	focusInvalid: false,
-	rules: {
-		giftCardNumber: {
-			required: true
-    },
-  },
-	messages: {
-		giftCardNumber: {
-			required: "Uh-oh, please enter a gift card code"
-    },
-  },
-	errorPlacement: function (error,
-		element) {
-		if ($(element).is('select')) {
-			element.parent().after(error);
-		} else {
-			error.insertAfter(element);
-		}
-	},
-	highlight: function (element) {
-		$(element).parent().addClass(
-			"form-error");
-	},
-	unhighlight: function (element) {
-		$(element).parent().removeClass(
-			"form-error");
-	}
 });
 
 //BL-563 Remove Gift Card
 $('.remove-gift-card').on("click", function(e) {
      e.preventDefault();
-     var method = "POST";
-     var giftCardForm = {};
-     var code = $(this).attr('id');
-          giftCardForm["giftCardCode"] = $(this).attr('id');
-          $.ajax({
-              url: ACC.config.encodedContextPath + '/checkout/removeGiftCard',
-              data: {
-                  code: code
-              },
-              async: false,
-              type: method,
-              success: function(data, status, xhr) {
-                  window.location.reload();
-              },
-              error: function(error) {
-                  console.log("Error while removing gift card");
-              }
-          });
+     var itemIndex = $(this).data("index");
+     var $form = $(document).find('#removeGiftCardForm' + itemIndex);
+     var method = $form.attr("method") ? $form.attr("method").toUpperCase() : "POST";
+     $.ajax({
+         url: $form.attr("action"),
+         data: $form.serialize(),
+         async: false,
+         type: method,
+         success: function(data, status, xhr) {
+              window.location.reload();
+         },
+         error: function(error) {
+             console.log("Error while removing gift card");
+         }
+     });
 });
+
 // BL-581
 $(".js-hr-tag").last().hide();
 

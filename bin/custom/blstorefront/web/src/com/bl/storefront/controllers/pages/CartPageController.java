@@ -186,7 +186,7 @@ public class CartPageController extends AbstractCartPageController
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
 			if (CollectionUtils.isNotEmpty(giftCardModelList)) {
-				blGiftCardFacade.removeAppliedGiftCardFromCartAndShippingPage(cartModel, giftCardModelList);
+				blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
 				model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE,
 						Config.getParameter("text.gift.card.remove"));
 			}

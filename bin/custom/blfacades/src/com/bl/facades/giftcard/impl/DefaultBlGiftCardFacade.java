@@ -116,7 +116,7 @@ public class DefaultBlGiftCardFacade implements BlGiftCardFacade {
    * {@inheritDoc}
    */
   @Override
-  public void removeAppliedGiftCardFromCartAndShippingPage(final CartModel cartModel,
+  public void removeAppliedGiftCardFromCartOrShippingPage(final CartModel cartModel,
       final List<GiftCardModel> giftCardModelList) {
     for (GiftCardModel giftCardModel : giftCardModelList) {
       try {

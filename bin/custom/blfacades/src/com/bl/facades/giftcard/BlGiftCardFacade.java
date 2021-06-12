@@ -49,5 +49,5 @@ public interface BlGiftCardFacade {
      * @param cartModel
      * @param giftCardModelList
      */
-    void removeAppliedGiftCardFromCartAndShippingPage(final CartModel cartModel, final List<GiftCardModel> giftCardModelList);
+    void removeAppliedGiftCardFromCartOrShippingPage(final CartModel cartModel, final List<GiftCardModel> giftCardModelList);
 }
