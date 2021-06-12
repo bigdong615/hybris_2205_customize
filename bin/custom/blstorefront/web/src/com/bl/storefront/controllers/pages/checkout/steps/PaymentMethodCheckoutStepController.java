@@ -10,6 +10,7 @@ import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -163,7 +164,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		setupAddPaymentPage(model);
 
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
-
+		model.addAttribute(BlControllerConstants.GIFT_CARD_FORM, new GiftCardForm());
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());

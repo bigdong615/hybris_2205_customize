@@ -14,6 +14,7 @@ import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorfacades.flow.impl.SessionOverrideCheckoutFlowFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
@@ -361,9 +362,15 @@ public class CheckoutController extends AbstractCheckoutController
 	@ResponseBody
 	public String apply(final String code, final HttpServletRequest request, final Model model) {
 		final CartModel cartModel = blCartService.getSessionCart();
+		final Locale locale = getI18nService().getCurrentLocale();
+		if(StringUtils.isEmpty(code)){
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.code.blank", null, locale));
+			return BlControllerConstants.ERROR;
+		}
+
 		if(cartModel != null) {
 			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
-			final Locale locale = getI18nService().getCurrentLocale();
 			final List<BLGiftCardData> blGiftCardDataList = blCartFacade.getSessionCart()
 					.getGiftCardData();
 			final List<String> giftCardDataList = new ArrayList<>();
@@ -443,23 +450,22 @@ public class CheckoutController extends AbstractCheckoutController
 
 	/**
 	 * It removes applied gift card from cart.
-	 *
-	 * @param code
+	 * @param giftCardForm
 	 * @param request
 	 * @param model
 	 * @return String
 	 */
 	@PostMapping(value = "/removeGiftCard")
 	@ResponseBody
-	public String remove(final String code, final HttpServletRequest request, final Model model) {
+	public String remove(final GiftCardForm giftCardForm, final HttpServletRequest request, final Model model) {
 		CartModel cartModel = blCartService.getSessionCart();
 		try {
-			blGiftCardFacade.removeGiftCard(code, cartModel);
+			blGiftCardFacade.removeGiftCard(giftCardForm.getGiftCardCode(), cartModel);
 			return BlControllerConstants.TRUE_STRING;
 		} catch (final Exception exception) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
 					"Error while removing applied gift card code: {} from cart: {} for the customer: {}",
-					code, cartModel.getCode(), cartModel.getUser().getUid(), exception);
+					giftCardForm.getGiftCardCode(), cartModel.getCode(), cartModel.getUser().getUid(), exception);
 			return BlControllerConstants.FALSE_STRING;
 		}
 	}
