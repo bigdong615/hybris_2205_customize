@@ -14,6 +14,9 @@ $lang=en
 UPDATE EmailPage;$contentCV[unique=true];uid[unique=true];fromEmail[lang=$lang];fromName[lang=$lang]
                 ;;ProductNotifyMeEmail;"customerservices@hybris.com";"Customer Services Team"
 
+UPDATE EmailPage;$contentCV[unique=true];uid[unique=true];fromEmail[lang=$lang];fromName[lang=$lang]
+                ;;ProductBackInStockNotificationEmail;"customerservices@hybris.com";"Customer Services Team"
+
 
 INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]
                                    ;; BlSiteLogoComponent ;  "<tr style=""valign: bottom;"">

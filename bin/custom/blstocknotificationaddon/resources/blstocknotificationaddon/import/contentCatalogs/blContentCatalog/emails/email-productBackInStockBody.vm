@@ -15,160 +15,129 @@
 <html>
 <head>
 </head>
-<body bgcolor="#ffffff"
+ <body bgcolor="#ffffff" text="#000000" style="background-color: #ffffff; color: #000000; padding: 15px; -webkit-text-size-adjust:none; font-size: 16px; font-family:arial,helvetica,sans-serif;">
+  <span class="mcnPreview Text" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;">Updates on your order status.</span>
+    <div style="font-size:0; line-height:0;"><custom name="opencounter" type="tracking"><custom name="usermatch" type="tracking" /></div>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
+      <tr>
+        <td align="center" valign="top">
+          <custom type="header"/>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <table cellspacing="0" cellpadding="0" border="0" width="600" class="container" align="center">
+            <tr>
+              <td>
+                <table class="tb_properties border_style" style="background-color:#FFFFFF;" cellspacing="0" cellpadding="0" bgcolor="#ffffff" width="100%">
+                  <tr>
+                    <td align="center" valign="top">
+                      <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                          <!-- added padding here -->
+                          <td class="content_padding" style="">
+                            <!-- end of comment -->
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                              <tr> <!-- top slot -->
+                                <td align="center" class="header" valign="top">
+                                  <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tbody>
+                                        <tr>
+                                          <td align="left" valign="top">
+                                            <table cellspacing="0" cellpadding="0" style="width:100%">
+                                              <tbody>
+                                              <tr>
+                                                <td class="responsive-td" valign="top" style="width: 100%;">
+                                                  <table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><table width="100%" colspan="0" cellpadding="0" border="0">
+${ctx.cmsSlotContents.BlSiteLogo}
 
-#set ($myinterestUrl = "${ctx.secureBaseUrl}/my-account/my-interests")
-#set ($productUrl = "${ctx.secureBaseUrl}${ctx.productData.url}")
-#set ($isForceInStock = ${ctx.productData.stock.stockLevelStatus.code} == "inStock" && !$ctx.productData.stock.stockLevel)
+</table></td></tr></table><table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td style="padding-top: 10px; padding-right: 10px; padding-left: 10px; " class="stylingblock-content-wrapper camarker-inner"><table cellspacing="0" cellpadding="0" style="width: 100%;"><tr><td><table cellspacing="0" cellpadding="0" style="width: 100%;"><tr><td class="responsive-td" valign="top" style="width: 100%;"><table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td style="padding-bottom: 10px; " class="stylingblock-content-wrapper camarker-inner">
 
-<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#ffffff"
-<tr>
-	<td>&nbsp;</td>
-</tr>
-<tr>
-<td align="center" valign="top">
-<table width="610" border="0" align="center" cellpadding="0" cellspacing="0" bordercolor="#fff">
-<tr>
-<td align="center" valign="top" bgcolor="#FFFFFF">
-<table width="570" cellpadding="0" cellspacing="0" border="0" align="center">
-<tr>
-	<td valign="middle">&nbsp;</td>
-</tr>
-<tr>
-	<td valign="middle">
-		${ctx.cmsSlotContents.SiteLogo}
-		<img src="${ctx.themeResourceUrl}/images/header_01.png" alt="" width="229" height="72" border="0" align="right" title=""/>
-	</td>
-</tr>
-<tr>
-	<td height="30" align="right" valign="middle" bgcolor="#000000">
-		#if (! $ctx.order.guestCustomer )
-		<font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif"><a href="${ctx.secureBaseUrl}/my-account"><font color="#FFFFFF">${ctx.messages.myAccount}</font></a> |
-		#end <a href="${ctx.secureBaseUrl}/store-finder"><font color="#FFFFFF">${ctx.messages.storeFinder}</font></a> &nbsp;&nbsp;</font>
-	</td>
-</tr>
-<tr>
-	<td align="center" valign="middle">
-		<font color="#666666" size="2" face="Arial, Helvetica, sans-serif">
-			<a href="${ctx.secureBaseUrl}" style="display:block; margin-top:10px;margin-bottom:10px;">${ctx.cmsSlotContents.TopContent}</a>
-		</font>
-	</td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-</tr>
-<tr>
-<td align="left" valign="top">
-#set ($spaceHolderPosition = "")
+<hr noshade />
 
-<p style="margin:2px 0"><font color="#666666" size="3" face="Arial, Helvetica, sans-serif"><b>${ctx.messages.emailSubject}</b></font></p>
-<br/>
-<p style="margin:2px 0"><font color="#666666" size="2" face="Arial, Helvetica, sans-serif"><b>${ctx.messages.getMessage('salutation', ${ctx.title},${ctx.displayName})}</b>,</font></p>
-<br/>
-#if($isForceInStock)
-<p style="margin:2px 0"><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">${ctx.messages.getMessage('productForceInStockAvaiable', "#genHtmlLinkStartTag($productUrl)", "#genHtmlBoldFont(${ctx.productData.name})", "#genHtmlLinkEndTag()")}</font></p>
-#else
-<p style="margin:2px 0"><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">${ctx.messages.getMessage('productAvaiable', "#genHtmlLinkStartTag($productUrl)", "#genHtmlBoldFont(${ctx.productData.name})", "#genHtmlLinkEndTag()", "${ctx.productData.stock.stockLevel}")}</font></p>
-#end
+<h1 style="font-family: Tahoma,helvetica, sans-serif; font-size: 36px; color: rgb(0, 0, 0); line-height: 1.2em; font-weight: 800; font-style: normal;text-align:center;text-transform:uppercase">
+${ctx.messages.newGearAlert}</h1>
 
-<br/>
-	<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bordercolor="#51585c" class="products" style="border: 1px solid #51585c;">
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.salutation}</h3>
 
-						<tr>
-							<td valign="top" width="110px" style="width:110px;padding-left:10px;padding-right:10px">
-								<a href="${ctx.secureBaseUrl}${ctx.productData.url}" style="text-decoration:none">
-										#foreach($image in $ctx.productData.images) #if($image.imageType == "PRIMARY" && $image.format == "thumbnail" )
-											<img src="${ctx.mediaBaseUrl}$image.url" alt="" title="$ctx.productData.name"/>
-										#end #end
-										</a>
-										&nbsp;
-							</td>
-							<td valign="top">
-								<p><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">
-									<a href="${ctx.secureBaseUrl}${ctx.productData.url}"><font color="#666666"><b>${ctx.productData.name}</b></font></a>
-								</p>
-							</td>
-							<td valign="top">
-								<p><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">
-										<a href="${ctx.secureBaseUrl}${ctx.productData.url}"><font color="#666666"><b>${ctx.messages.shopNow}</b></font></a>
-								</p>
-							</td>
-							<td width="10%">
-							</td>																					
-						</tr>
-						
-   </table>						
-<br/>
-#if(!$ctx.productReferences.isEmpty())
-	<p><font color="#666666" size="4" face="Arial, Helvetica, sans-serif">${ctx.messages.getMessage('product_recommendation_title')}</font></p>
-#end
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.getMessage('productAvaiable', '<a href='"'#'"'><strong>'${ctx.productData.name}'</strong></a>')}
+</p>
+
+<h3 style="font-family: Tahoma,helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); line-height: 1.2em; font-weight: 800; font-style: normal;text-align:center;">
+
+<a href="${ctx.secureBaseUrl}${ctx.productData.url}">${ctx.productData.name}</a><br />
+
+<a href="">
+#foreach($image in $ctx.productData.images) #if($image.imageType == "PRIMARY" && $image.format == "thumbnail" )
+  <img src="$image.url" alt="${ctx.productData.name} photo" title="$ctx.productData.name" style="max-width:500px;"/>
+#end #end
+</a>
+
+</h3>
+
+
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.productForceInStockAvaiable}
+</p>
+
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.getMessage('shopNow', '<a href='"'#'"'>latest and upcoming arrivals</a>')}
+</p>
+
+<p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
+${ctx.messages.signature}<br/>
+<a href="${ctx.messages.siteUrl}">${ctx.messages.siteName}</a><br/>
+</p></td></tr></table></td></tr></table></td></tr></table></td></tr></table>
+
+<table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><style>
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,800');
+@media only screen and (max-width: 479px) {
+  .hidden-xs { display: none; }
+}
+</style>
+
+<hr noshade />
+
+<table width="100%"><tr><td align="center">
 <table>
-<tr>
-#foreach($reference in $ctx.productReferences)
-		<td style="width:110px;padding-left:10px;padding-right:10px">	
-			<a href="${ctx.secureBaseUrl}${ctx.productData.url}" style="text-decoration:none">
-					#foreach($image in $reference.images) #if($image.imageType == "PRIMARY" && $image.format == "thumbnail" )
-						<img src="${ctx.mediaBaseUrl}$image.url" alt="" title="$reference.name"/>
-					#end #end
-			</a>
-			&nbsp;
-		</td>
-#end
-</tr>
-<tr>
-#foreach($reference in $ctx.productReferences)
-		<td style="width:110px;padding-left:10px;padding-right:10px>
-			<p><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">
-				<a href="${ctx.secureBaseUrl}${reference.url}"><font color="#666666"><b>${reference.name}</b></font></a>
-			</p>
-		</td>
-#end
-</tr>
-<tr>
-#foreach($reference in $ctx.productReferences)
-		<td valign="bottom" style="height:30px">
-			<p><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">
-				<a href="${ctx.secureBaseUrl}${reference.url}"><font color="#666666"><b>${ctx.messages.shopNow}</b></font></a>
-			</p>
-		</td>
-#end
-</tr>
+${ctx.cmsSlotContents.BlBottomSocialLink}
 </table>
-<br/>
-<p style="margin:2px 0"><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">${ctx.messages.getMessage('manageNotification', "#genHtmlLinkStartTag($myinterestUrl)", "#genHtmlBoldFont(${ctx.messages.myInterests})", "#genHtmlLinkEndTag()")}</font></p>
-	
-<p><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">${ctx.messages.getMessage('paragraphContactUs', "#genHtmlLinkStartTag(${ctx.messages.contactUsPage})", "#genHtmlLinkEndTag()")}</font></p>
+</td></tr></table>
 
-<p><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">${ctx.messages.complimentaryClosing}</font></p>
+<hr noshade />
 
-<p><font color="#666666" size="2" face="Arial, Helvetica, sans-serif">${ctx.messages.signature}</font></p>
-</td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-</tr>
-<tr>
-	<td align="center" valign="middle">
-		<a href="${ctx.secureBaseUrl}" style="display:block; margin-top:10px;margin-bottom:10px;">${ctx.cmsSlotContents.BottomContent}</a>
-	</td>
-</tr>
-<tr>
-	<td height="30" align="right" valign="middle" bgcolor="#000000">
-		<font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif"><a href="${ctx.secureBaseUrl}"><font color="#FFFFFF">${ctx.messages.help}</font></a> | <a href="${ctx.messages.contactUsPage}"><font color="#FFFFFF">${ctx.messages.contactUs}</font></a> | <a href="${ctx.secureBaseUrl}"><font color="#FFFFFF">${ctx.messages.termsAndCondition}</font></a> &nbsp;&nbsp;</font>
-	</td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-</tr>
-</table>
-</body>
+${ctx.cmsSlotContents.BlBottomContent}
+
+<p></p><a href="#" style="color:#000000;font-weight:normal;text-decoration:none;line-height:100%;"> </a></div></td></tr></table>
+                                                </td>
+                                              </tr>
+                                              </tbody>
+                                            </table>
+                                          </td>
+                                        </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <custom type="footer" />
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

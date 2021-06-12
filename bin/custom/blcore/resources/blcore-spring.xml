@@ -805,6 +805,10 @@
 	<bean id="productNotifyMeEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
 		<property name="resource" value="classpath:/blcore/processes/productNotifyMeEmailProcess.xml" />
 	</bean>
+
+	<alias name="blBackInStockNotificationJob" alias="stockLevelStatusJob" />
+	<bean id="blBackInStockNotificationJob" class="com.bl.core.job.BlBackInStockNotificationJob" parent="defaultStockLevelStatusJob">
+	</bean>
 	<!-- Notify me end -->
 
 	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
