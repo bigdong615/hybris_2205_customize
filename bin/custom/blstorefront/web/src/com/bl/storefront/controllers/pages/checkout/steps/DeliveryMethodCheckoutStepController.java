@@ -16,7 +16,6 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.ups.address.data.AVSResposeData;
-import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
@@ -49,8 +48,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,7 +58,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/checkout/multi/delivery-method")
 public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepController implements BlCheckoutStepController {
-    private static final Logger LOGGER = Logger.getLogger(DeliveryMethodCheckoutStepController.class);
     private static final String DELIVERY_METHOD = "delivery-method";
     private static final String DELIVERY_OR_PICKUP = "deliveryOrPickup";
     private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
