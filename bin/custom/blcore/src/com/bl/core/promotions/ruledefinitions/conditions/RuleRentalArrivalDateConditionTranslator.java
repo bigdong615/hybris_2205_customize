@@ -33,18 +33,18 @@ public class RuleRentalArrivalDateConditionTranslator implements RuleConditionTr
 
     final Map<String, RuleParameterData> conditionParameters = condition.getParameters();
 
-    final Date rentalArrivalDate = conditionParameters.get(RENTAL_ARRIVAL_DATE).getValue();
+    final Date valueParameter = conditionParameters.get(RENTAL_ARRIVAL_DATE).getValue();
     final AmountOperator operatorParameter = conditionParameters.get(OPERATOR).getValue();
 
     final RuleIrGroupCondition irRentalArrivalDateCondition = RuleIrGroupConditionBuilder
         .newGroupConditionOf(RuleIrGroupOperator.AND).build();
 
-    if (rentalArrivalDate == null) {
+    if (valueParameter == null) {
       return new RuleIrFalseCondition();
     } else {
       final String cartRaoVariable = ruleCompilerContext.generateVariable(CartRAO.class);
       irRentalArrivalDateCondition.getChildren().add(RuleIrAttributeConditionBuilder.newAttributeConditionFor(cartRaoVariable)
-          .withAttribute(RENTAL_ARRIVAL_DATE).withOperator(RuleIrAttributeOperator.valueOf(operatorParameter.name())).withValue(rentalArrivalDate).build());
+          .withAttribute(RENTAL_ARRIVAL_DATE).withOperator(RuleIrAttributeOperator.valueOf(operatorParameter.name())).withValue(valueParameter).build());
     }
     return irRentalArrivalDateCondition;
   }
