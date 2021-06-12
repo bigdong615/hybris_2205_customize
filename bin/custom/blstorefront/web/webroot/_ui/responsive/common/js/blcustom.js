@@ -78,6 +78,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       addToCartFromModal();
                                       addId();
                                       setTimeout(myfunc,100);
+
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -177,6 +178,9 @@ $('#cart-continue').on("click", function (e) {
 			console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
 		}
 	});
+<<<<<<< HEAD
+});
+=======
 });
 
 
@@ -234,3 +238,4 @@ function addToCartFromModal(){
 
   });
   }
+
