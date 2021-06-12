@@ -30,7 +30,7 @@ public class RuleRentalCartConditionTranslator implements RuleConditionTranslato
       final RuleConditionDefinitionData conditionDefinition)
   {
     final Map<String, RuleParameterData> conditionParameters = condition.getParameters();
-    final Boolean valueParameter = conditionParameters.get("value").getValue();
+    final Boolean valueParameter = conditionParameters.get(BlCoreConstants.RENTAL_VALUE).getValue();
 
     final RuleIrGroupCondition irRentalCartCondition = RuleIrGroupConditionBuilder
         .newGroupConditionOf(RuleIrGroupOperator.AND).build();

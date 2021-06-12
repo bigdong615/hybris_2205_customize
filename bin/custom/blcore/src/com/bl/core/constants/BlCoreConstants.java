@@ -167,6 +167,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	//Promotion Condition Translator
 
 	public static final String IS_RENTAL_CART = "rentalCart";
+	public static final String RENTAL_VALUE = "value";
 	public static final String RENTAL_DURATION = "rentalDuration";
 	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
 	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
