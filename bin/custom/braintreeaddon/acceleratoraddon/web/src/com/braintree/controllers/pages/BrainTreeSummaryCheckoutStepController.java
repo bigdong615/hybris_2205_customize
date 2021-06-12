@@ -2,10 +2,10 @@ package com.braintree.controllers.pages;
 
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.configuration.service.BrainTreeConfigService;
-import com.braintree.constants.BraintreeaddonWebConstants;
-import com.braintree.constants.BraintreeConstants;
 import com.braintree.constants.ControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
@@ -21,7 +21,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkou
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.PlaceOrderForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
-import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
@@ -29,9 +28,16 @@ import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
-import de.hybris.platform.payment.AdapterException;
-import de.hybris.platform.util.localization.Localization;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,11 +45,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Map;
 
 
 @Controller
@@ -65,13 +66,17 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@Resource(name = "brainTreeConfigService")
 	private BrainTreeConfigService brainTreeConfigService;
-	
+
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade blCheckoutFacade;
 	
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
 		return BlRentalDateUtils.getRentalsDuration();
 	}
+
+	public static final String REDIRECT_PREFIX = "redirect:";
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -80,6 +85,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
+		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+			return redirectToPaymentPageOnGiftCardRemove(redirectAttributes, removedGiftCardCodeList);
+		}
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		if (cartData.getEntries() != null && !cartData.getEntries().isEmpty())
 		{
@@ -120,12 +129,42 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return ControllerConstants.Views.Pages.MultiStepCheckout.CheckoutSummaryPage;
 	}
 
+	/**
+	 * If gift card removed from cart then it add message to model attribute for removed gift card and
+	 * redirects to payment page.
+	 * @param redirectAttributes
+	 * @param removedGiftCardCodeList
+	 */
+	private String redirectToPaymentPageOnGiftCardRemove(final RedirectAttributes redirectAttributes,
+			final List<String> removedGiftCardCodeList) {
+		try {
+			final Locale locale = getI18nService().getCurrentLocale();
+			List<String> removeGiftCardMessage = new ArrayList<>();
+			for (String gcCode : removedGiftCardCodeList) {
+				removeGiftCardMessage
+						.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+								{gcCode}, locale));
+			}
+			redirectAttributes.addFlashAttribute(BlControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
+			} catch (final Exception exception) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Error occurred while adding message to redirect attribute for removed gift card",
+					exception);
+		}
+		return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
+	}
+
 	@RequestMapping(value = "/placeOrder")
 	@RequireHardLogIn
 	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, final Model model,
                              final HttpServletRequest request, final RedirectAttributes redirectModel)
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
+		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+			return redirectToPaymentPageOnGiftCardRemove(redirectModel, removedGiftCardCodeList);
+		}
+
 		if (validateOrderForm(placeOrderForm, model))
 		{
 			return enterStep(model, redirectModel);
