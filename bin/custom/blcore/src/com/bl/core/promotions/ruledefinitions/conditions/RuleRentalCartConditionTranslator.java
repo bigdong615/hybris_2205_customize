@@ -1,5 +1,6 @@
 package com.bl.core.promotions.ruledefinitions.conditions;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.ruledefinitions.conditions.builders.RuleIrAttributeConditionBuilder;
 import de.hybris.platform.ruledefinitions.conditions.builders.RuleIrGroupConditionBuilder;
 import de.hybris.platform.ruleengineservices.compiler.RuleCompilerContext;
@@ -23,7 +24,6 @@ import java.util.Map;
  */
 public class RuleRentalCartConditionTranslator implements RuleConditionTranslator
 {
-  protected static final String IS_RENTAL_CART = "rentalCart";
 
   @Override
   public RuleIrCondition translate(final RuleCompilerContext ruleCompilerContext, final RuleConditionData condition,
@@ -43,7 +43,7 @@ public class RuleRentalCartConditionTranslator implements RuleConditionTranslato
     {
       final String cartRaoVariable = ruleCompilerContext.generateVariable(CartRAO.class);
       irRentalCartCondition.getChildren().add(RuleIrAttributeConditionBuilder.newAttributeConditionFor(cartRaoVariable)
-          .withAttribute(IS_RENTAL_CART).withOperator(RuleIrAttributeOperator.EQUAL).withValue(valueParameter).build());
+          .withAttribute(BlCoreConstants.IS_RENTAL_CART).withOperator(RuleIrAttributeOperator.EQUAL).withValue(valueParameter).build());
     }
 
     return irRentalCartCondition;

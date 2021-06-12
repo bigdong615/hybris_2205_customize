@@ -1,5 +1,6 @@
 package com.bl.core.promotions.ruledefinitions.conditions;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.ruledefinitions.AmountOperator;
 import de.hybris.platform.ruledefinitions.conditions.builders.RuleIrAttributeConditionBuilder;
 import de.hybris.platform.ruledefinitions.conditions.builders.RuleIrGroupConditionBuilder;
@@ -24,16 +25,12 @@ import java.util.Map;
  */
 public class RuleRentalDurationConditionTranslator implements RuleConditionTranslator {
 
-  public static final String RENTAL_DURATION = "rentalDuration";
-  public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
-  public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
-
-  @Override
+   @Override
   public RuleIrCondition translate(final RuleCompilerContext ruleCompilerContext,final RuleConditionData condition,final RuleConditionDefinitionData ruleConditionDefinitionData) {
 
     final Map<String, RuleParameterData> conditionParameters = condition.getParameters();
-    final Integer rentalDuration = conditionParameters.get(RENTAL_DURATION).getValue();
-    final AmountOperator operatorParameter = conditionParameters.get(RENTAL_DURATION_OPERATOR).getValue();
+    final Integer rentalDuration = conditionParameters.get(BlCoreConstants.RENTAL_DURATION).getValue();
+    final AmountOperator operatorParameter = conditionParameters.get(BlCoreConstants.RENTAL_DURATION_OPERATOR).getValue();
 
     final RuleIrGroupCondition irRentalDurationCondition = RuleIrGroupConditionBuilder.newGroupConditionOf(RuleIrGroupOperator.AND).build();
 
@@ -42,7 +39,7 @@ public class RuleRentalDurationConditionTranslator implements RuleConditionTrans
     } else {
       final String cartRaoVariable = ruleCompilerContext.generateVariable(CartRAO.class);
       irRentalDurationCondition.getChildren().add(RuleIrAttributeConditionBuilder.newAttributeConditionFor(cartRaoVariable)
-          .withAttribute(RENTAL_DURATION_DAYS).withOperator(RuleIrAttributeOperator.valueOf(operatorParameter.name())).withValue(rentalDuration).build());
+          .withAttribute(BlCoreConstants.RENTAL_DURATION_DAYS).withOperator(RuleIrAttributeOperator.valueOf(operatorParameter.name())).withValue(rentalDuration).build());
     }
     return irRentalDurationCondition;
   }

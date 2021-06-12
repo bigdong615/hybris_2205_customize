@@ -1,5 +1,6 @@
 package com.bl.core.promotions.ruledefinitions.conditions;
 
+import com.bl.core.constants.BlCoreConstants;
 import de.hybris.platform.ruledefinitions.AmountOperator;
 import de.hybris.platform.ruledefinitions.conditions.builders.RuleIrAttributeConditionBuilder;
 import de.hybris.platform.ruledefinitions.conditions.builders.RuleIrGroupConditionBuilder;
@@ -25,7 +26,6 @@ import java.util.Map;
  */
 public class RuleRentalArrivalDateConditionTranslator implements RuleConditionTranslator {
 
-  public static final String RENTAL_ARRIVAL_DATE = "rentalArrivalDate";
   public static final String OPERATOR = "operator";
 
   @Override
@@ -33,7 +33,7 @@ public class RuleRentalArrivalDateConditionTranslator implements RuleConditionTr
 
     final Map<String, RuleParameterData> conditionParameters = condition.getParameters();
 
-    final Date valueParameter = conditionParameters.get(RENTAL_ARRIVAL_DATE).getValue();
+    final Date valueParameter = conditionParameters.get(BlCoreConstants.RENTAL_ARRIVAL_DATE).getValue();
     final AmountOperator operatorParameter = conditionParameters.get(OPERATOR).getValue();
 
     final RuleIrGroupCondition irRentalArrivalDateCondition = RuleIrGroupConditionBuilder
@@ -44,7 +44,7 @@ public class RuleRentalArrivalDateConditionTranslator implements RuleConditionTr
     } else {
       final String cartRaoVariable = ruleCompilerContext.generateVariable(CartRAO.class);
       irRentalArrivalDateCondition.getChildren().add(RuleIrAttributeConditionBuilder.newAttributeConditionFor(cartRaoVariable)
-          .withAttribute(RENTAL_ARRIVAL_DATE).withOperator(RuleIrAttributeOperator.valueOf(operatorParameter.name())).withValue(valueParameter).build());
+          .withAttribute(BlCoreConstants.RENTAL_ARRIVAL_DATE).withOperator(RuleIrAttributeOperator.valueOf(operatorParameter.name())).withValue(valueParameter).build());
     }
     return irRentalArrivalDateCondition;
   }
