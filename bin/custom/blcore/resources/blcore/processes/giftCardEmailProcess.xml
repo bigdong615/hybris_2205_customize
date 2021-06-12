@@ -1,0 +1,23 @@
+<process xmlns="http://www.hybris.de/xsd/processdefinition" start="generateGiftCardEmail" name="giftCardEmailProcess"
+         processClass="com.bl.core.model.GiftCardEmailProcessModel" onError="error">
+
+    <action id="generateGiftCardEmail" bean="generateGiftCardEmail">
+        <transition name="OK" to="sendEmail"/>
+        <transition name="NOK" to="error"/>
+    </action>
+
+    <action id="sendEmail" bean="sendEmail">
+        <transition name="OK" to="removeSentEmail"/>
+        <transition name="NOK" to="failed"/>
+    </action>
+
+    <action id="removeSentEmail" bean="removeSentEmail">
+        <transition name="OK" to="success"/>
+        <transition name="NOK" to="error"/>
+    </action>
+
+    <end id="error" state="ERROR">Something went wrong.</end>
+    <end id="failed" state="FAILED">Could not send email.</end>
+    <end id="success" state="SUCCEEDED">Sent email.</end>
+
+</process>

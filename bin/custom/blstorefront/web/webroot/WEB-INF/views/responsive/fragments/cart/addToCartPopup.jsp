@@ -9,12 +9,9 @@
 
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
 <c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
-<<<<<<< HEAD
 <c:url value="/cart/add" var="addToCartUrl"/>
-
-=======
 <c:url value="/cart" var="viewCartUrl"/>
->>>>>>> develop
+
 {"quickOrderErrorData": [
 <c:forEach items="${quickOrderErrorData}" var="quickOrderEntry" varStatus="status">
 	<c:set var="productCode" value="${fn:escapeXml(quickOrderEntry.productData.code)}" />

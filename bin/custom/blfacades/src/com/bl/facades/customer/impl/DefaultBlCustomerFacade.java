@@ -2,10 +2,26 @@ package com.bl.facades.customer.impl;
 
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+
 import de.hybris.platform.commercefacades.customer.impl.DefaultCustomerFacade;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.RegisterData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.core.model.user.UserModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
@@ -16,6 +32,8 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
  * @author vijay vishwakarma
  */
 public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements BlCustomerFacade {
+	
+	private static final Logger LOG = Logger.getLogger(DefaultBlCustomerFacade.class);
 
     /*
     * This method is override to remove validation from first name and lastName in registration process.
@@ -41,5 +59,50 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
         setUidForRegister(registerData, customerModel);
         customerModel.setSessionLanguage(getCommonI18NService().getCurrentLanguage());
         customerModel.setSessionCurrency(getCommonI18NService().getCurrentCurrency());
+    }
+    
+    @Override
+ 	public List<AddressData> getAllVisibleBillingAddressesOnUser()
+ 	{
+ 		try
+ 		{
+ 			final UserModel currentUser = getUserService().getCurrentUser();
+ 			if (Objects.nonNull(currentUser) && !getUserService().isAnonymousUser(currentUser)
+ 					&& currentUser instanceof CustomerModel)
+ 			{
+ 				final List<AddressData> lBillingAddressessOnUser = new ArrayList<>();
+ 				getCustomerAccountService().getAddressBookEntries((CustomerModel) currentUser).forEach(addressModel -> {
+ 					if (BooleanUtils.toBoolean(addressModel.getBillingAddress()))
+ 					{
+ 						lBillingAddressessOnUser.add(getAddressConverter().convert(addressModel));
+ 					}
+ 				});
+ 				return lBillingAddressessOnUser;
+ 			}
+ 		}
+ 		catch (final Exception exception)
+ 		{
+ 			BlLogger.logMessage(LOG, Level.ERROR, "Error while retriving all visible billing addresses from user", exception);
+ 		}
+ 		return Lists.newArrayList();
+ 	}
+    
+    @Override
+    public AddressData getAddressForCode(final String code)
+    {
+   	 try
+   	 {
+   		 final UserModel currentUser = getUserService().getCurrentUser();
+      	 if(StringUtils.isNotBlank(code) && Objects.nonNull(currentUser) && !getUserService().isAnonymousUser(currentUser)
+   					&& currentUser instanceof CustomerModel)
+      	 {
+      		 return getAddressConverter().convert(getCustomerAccountService().getAddressForCode((CustomerModel)currentUser, code));
+      	 }
+   	 }
+   	 catch(final Exception exception)
+   	 {
+   		 BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, "Error while getting address for code - {}", code);
+   	 }
+   	 return null;
     }
 }

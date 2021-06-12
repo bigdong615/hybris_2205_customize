@@ -62,25 +62,19 @@ $('.shopping-cart__item-remove').on("click", function (e){
                        e.preventDefault();
                         var productCode = $(this).attr('data-product-code');
                         var serialCode = $(this).attr('data-serial');
-                        var recognise = $(this).attr('data-popup');
                         if(serialCode == '' || serialCode == undefined){
                         serialCode = "serialCodeNotPresent";
-                        }
-                        if(recognise == '' || recognise == undefined){
-                        recognise = "notClickedFromModal";
                         }
                         $.ajax({
                                    url: ACC.config.encodedContextPath + "/cart/add",
                                    type: 'POST',
-                                   data: {productCodePost: productCode,serialProductCodePost:serialCode, popUpRecognisePost:recognise},
+                                   data: {productCodePost: productCode,serialProductCodePost:serialCode},
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                       updateQuantity();
-                                      addToCartFromModal();
-                                      addId();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -88,6 +82,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
                                    }
                         });
+
  });
 
  // BL-454 update quantity from rental add to cart popup.
@@ -122,6 +117,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
                           }
                 });
     });
+
+
  }
 
 //BL-461,465 Product Availability
@@ -148,50 +145,85 @@ $('#cart-continue').on("click", function (e) {
 	});
 });
 
-function addId(){
-let seemore = document.querySelectorAll(".SeeMore2");
-   for(var i=0;i<seemore.length;i++){
-          seemore[i].id ="abc-"+i;
-          alert("for loop is running")
-           }
-}
+//BL-563 Gift Card Apply
+$(".gc-message input").focus(function () {
+	$(this).siblings(".gc-message").hide();
+});
 
-let seemore = document.querySelectorAll(".SeeMore2");
-for(var i=0;i<seemore.length;i++){
-seemore[i].id ="abc-"+i;
-}
+$('#applyGcCode').click(function (e) {
+	e.preventDefault();
+  var giftCardForm = $("#giftCardForm");
+  if (!giftCardForm.valid()) {
+		return false
+	}
+	var $form = $(this);
+	var gcCode = $("#gift-card-apply-gift-card-number").val();
+	var formBtnSubmit = $(this).find('[type="submit"]');
+	formBtnSubmit.prop("disabled", true).attr("disabled", "disabled");
+  $.ajax({
+		url: giftCardForm.attr('action'),
+		type: giftCardForm.attr("method"),
+		data: {
+			code: gcCode
+		},
+    success: function (data) {
+			formBtnSubmit.prop("disabled", false).removeAttr("disabled");
+			window.location.reload();
+    }
+	});
+});
 
-  //BL-454 add to cart
-   function addToCartFromModal(){
-  $('.js-add-to-cart1').on('click',function(e) {
-                        e.preventDefault();
-                         let z= this.getAttribute("id");
-                            var index = $( ".js-add-to-cart1" ).index( this );
-                            document.getElementById(z).innerHTML= "Added";
+$("#giftCardForm").validate({
+	errorClass: "error",
+	errorElement: "span",
+	focusInvalid: false,
+	rules: {
+		giftCardNumber: {
+			required: true
+    },
+  },
+	messages: {
+		giftCardNumber: {
+			required: "Uh-oh, please enter a gift card code"
+    },
+  },
+	errorPlacement: function (error,
+		element) {
+		if ($(element).is('select')) {
+			element.parent().after(error);
+		} else {
+			error.insertAfter(element);
+		}
+	},
+	highlight: function (element) {
+		$(element).parent().addClass(
+			"form-error");
+	},
+	unhighlight: function (element) {
+		$(element).parent().removeClass(
+			"form-error");
+	}
+});
 
-                         var productCode = $(this).attr('data-product-code');
-                         var serialCode = $(this).attr('data-serial');
-                         var recognise = $(this).attr('data-popup');
-                         if(serialCode == '' || serialCode == undefined){
-                        serialCode = "serialCodeNotPresent";
-                        }
-                         if(recognise == '' || recognise == undefined){
-                         recognise = "notClickedFromModal";
-                         }
-                         $.ajax({
-                                    url: ACC.config.encodedContextPath + "/cart/add",
-                                    type: 'POST',
-                                    data: {productCodePost: productCode, popUpRecognisePost:recognise,serialProductCodePost:serialCode},
-                                    success: function (response) {
-                                    alert("product added to cart");
-                                      //addToCartToAdded();
-                                    },
-                                    error: function (jqXHR, textStatus, errorThrown) {
-                                          $('.modal-backdrop').addClass('remove-popup-background');
-                                          // log the error to the console
-                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
-                                    }
-                         });
-
-  });
- }
+//BL-563 Remove Gift Card
+$('.remove-gift-card').on("click", function(e) {
+     e.preventDefault();
+     var method = "POST";
+     var giftCardForm = {};
+     var code = $(this).attr('id');
+          giftCardForm["giftCardCode"] = $(this).attr('id');
+          $.ajax({
+              url: ACC.config.encodedContextPath + '/checkout/removeGiftCard',
+              data: {
+                  code: code
+              },
+              async: false,
+              type: method,
+              success: function(data, status, xhr) {
+                  window.location.reload();
+              },
+              error: function(error) {
+                  console.log("Error while removing gift card");
+              }
+          });
+});

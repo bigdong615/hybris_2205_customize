@@ -1,0 +1,73 @@
+#braintree-payment-form {
+	margin: 20px;
+}
+
+#cardholder {
+	margin-right: 20px;
+	width: 244px;
+	position: relative;
+	height: 31px;
+	border: 1px solid #ddd;
+	padding: 0 0.5em;
+	background-color: white;
+}
+
+#number {
+	margin-right: 20px;
+	width: 244px;
+	position: relative;
+	height: 31px;
+	border: 1px solid #ddd;
+	padding: 0 0.5em;
+	background-color: white;
+}
+
+#cvv {
+	margin-right: 20px;
+	width: 244px;
+	position: relative;
+	height: 31px;
+	border: 1px solid #ddd;
+	padding: 0 0.5em;
+	background-color: white;
+}
+#expiration-date {
+	margin-right: 20px;
+	width: 244px;
+	position: relative;
+	height: 31px;
+	border: 1px solid #ddd;
+	padding: 0 0.5em;
+	background-color: white;
+}
+#number.braintree-hosted-fields-invalid {
+	border: 1px solid #FFB6C1;
+}
+
+#cvv.braintree-hosted-fields-invalid {
+	border: 1px solid #FFB6C1;
+}
+
+#expiration-date.braintree-hosted-fields-invalid {
+	border: 1px solid #FFB6C1;
+}
+
+#messages {
+	margin-top: 20px;
+}
+
+.card-check{
+	color: blue;
+	display: none;
+}
+
+.card-valid{
+	color: green;
+	display: none;
+}
+
+.card-invalid{
+	color: red;
+	display: none;
+}
+

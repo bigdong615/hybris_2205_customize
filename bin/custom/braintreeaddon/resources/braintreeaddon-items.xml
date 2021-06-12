@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<!--
+	ATTENTION: This is just an example file. You have to edit it according to your needs.
+-->
+
+<items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			xsi:noNamespaceSchemaLocation="items.xsd">
+
+	<enumtypes>
+		<enumtype code="PayPalCreditMessagePageType">
+			<value code="home"/>
+			<value code="category"/>
+			<value code="product"/>
+			<value code="cart"/>
+			<value code="payment"/>
+		</enumtype>
+		<enumtype code="PayPalCreditMessageStyleLayout">
+			<value code="text"/>
+			<value code="flex"/>
+		</enumtype>
+		<enumtype code="PayPalCreditMessageStyleLogoType">
+			<value code="primary"/>
+			<value code="alternative"/>
+			<value code="inline"/>
+			<value code="none"/>
+		</enumtype>
+		<enumtype code="PayPalCreditMessageStyleLogoPosition">
+			<value code="left"/>
+			<value code="right"/>
+			<value code="top"/>
+		</enumtype>
+		<enumtype code="PayPalCreditMessageStyleTextColor">
+			<value code="black"/>
+			<value code="white"/>
+			<value code="monochrome"/>
+			<value code="grayscale"/>
+		</enumtype>
+	</enumtypes>
+
+	<itemtypes>
+		<itemtype code="PayPalCreditMessageComponent" extends="JspIncludeComponent">
+			<attributes>
+				<attribute qualifier="amount" type="java.lang.Double">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="PayPalCreditMessagePageType" qualifier="placement">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="PayPalCreditMessageStyleLayout" qualifier="layout">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="PayPalCreditMessageStyleLogoType" qualifier="logoType">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="PayPalCreditMessageStyleLogoPosition" qualifier="logoPosition">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="PayPalCreditMessageStyleTextColor" qualifier="textColor">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="color">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="ratio">
+					<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.Boolean" qualifier="enabled">
+					<defaultvalue>Boolean.TRUE</defaultvalue>
+					<modifiers optional="false"/>
+					<persistence type="property"/>
+				</attribute>
+			</attributes>
+		</itemtype>
+	</itemtypes>
+</items>

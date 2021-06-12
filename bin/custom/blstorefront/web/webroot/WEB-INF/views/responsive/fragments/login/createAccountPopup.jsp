@@ -37,8 +37,9 @@
                            </c:if>
 
            <div class ="notification notification-error d-none" id="errorMessages_sigin_errorbox">
-                                       <div id="errorMessages_sigin_email"></div> &nbsp;
-                                       <div id="errorMessages_sigin_pwd"></div> &nbsp;
+                                     <!--  BL:689 changes in below two line -->
+                                       <div id="errorMessages_sigin_email" class="mb-2"></div>
+                                       <div id="errorMessages_sigin_pwd" class="mb-2"></div>
                                        <div id="errorMessages_sigin_chkPwd"></div>
            </div>
         <p class="body14 text-center mb-0 mt-4">
@@ -46,7 +47,6 @@
              data-bs-dismiss="modal">
             <spring:theme code="login.login" />
           </a>
-          &nbsp;
           <spring:theme code="login.suggestion.text"/>
         </p>
       </form:form>
