@@ -99,7 +99,6 @@ public class AddToCartController extends AbstractController
 	{
 		validateParameterNotNull(code, "Product code must not be null");
 		validateParameterNotNull(serialCode, "Serial code must not be null");
-	//	validateParameterNotNull(recognise, "recognise data must not be null");
 
 		if (bindingErrors.hasErrors())
 		{

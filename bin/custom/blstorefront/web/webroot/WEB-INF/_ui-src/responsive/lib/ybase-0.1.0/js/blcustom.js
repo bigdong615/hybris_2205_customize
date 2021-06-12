@@ -75,6 +75,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                       updateQuantity();
+                                      addToCartFromModal();
+                                       setTimeout(modalBodyContent,100);
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -107,9 +109,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                              if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                   ACC.minicart.updateMiniCartDisplay();
                              }
-                          },
-                          complete: function() {
-                             $('.page-loader-new-layout').hide();
                           },
                           error: function (jqXHR, textStatus, errorThrown) {
                             $('.page-loader-new-layout').hide();
@@ -227,3 +226,91 @@ $('.remove-gift-card').on("click", function(e) {
               }
           });
 });
+
+ //BL-455 add to cart
+   function addToCartFromModal(){
+  $('.js-add-to-cart1').on('click',function(e) {
+                        e.preventDefault();
+                         let z= this.getAttribute("id");
+                            var index = $( ".js-add-to-cart1" ).index( this );
+                            document.getElementById(z).innerHTML= "Added";
+
+                         var productCode = $(this).attr('data-product-code');
+                         var serialCode = $(this).attr('data-serial');
+                         if(serialCode == '' || serialCode == undefined){
+                        serialCode = "serialCodeNotPresent";
+                        }
+                         $.ajax({
+                                    url: ACC.config.encodedContextPath + "/cart/add",
+                                    type: 'POST',
+                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                    beforeSend: function(){
+                                      $('.page-loader-new-layout').show();
+                                    },
+                                    success: function (response) {
+                                    alert("product added to cart");
+                                      //addToCartToAdded();
+                                    },
+                                     complete: function() {
+                                       $('.page-loader-new-layout').hide();
+                                      },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                          $('.modal-backdrop').addClass('remove-popup-background');
+                                          // log the error to the console
+                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                                    }
+                         });
+
+  });
+ }
+
+//BL-455  Changes for Add To Cart POP Up
+  function modalBodyContent(){
+  	new Splide( '#addToCart-gear-sliders', {
+  					perPage: 3,
+
+  					breakpoints: {
+  						'991': {
+  							perPage: 2,
+  						},
+  						'640': {
+  							perPage: 1,
+  						},
+  					},
+  					rewind : true,
+  					gap: 20,
+  					padding: 10,
+  					arrows : true,
+  					pagination :true,
+  					keyboard: false,
+  				} ).mount();
+  				 document.querySelectorAll('.card-sliders').forEach(carousel => new Splide( carousel, {
+  					type   : 'loop',
+  					perPage: 1,
+  					pagination: true,
+  					drag   : false,
+  					fixedHeight: 140,
+  					breakpoints: {
+  						'991': {
+  							pagination: false,
+  						},
+  					},
+  					keyboard: false,
+  				} ).mount());
+//BL-537  ends  here
+  		   let modalCardQty =  document.getElementsByClassName("card-sliders").length;
+  			if(modalCardQty<=3 && screen.width>991){
+  				document.querySelector("#addToCart-gear-sliders .splide__arrows").style.display="none";
+  				 document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
+  			}
+  			 if(modalCardQty<=2 && screen.width<=991 && screen.width>767){
+  				document.querySelector("#addToCart-gear-sliders .splide__arrows").style.display="none";
+  				 document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
+  			}
+  			 if(modalCardQty==1 && screen.width<640){
+  				// document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
+  			 }
+
+
+   }
+
