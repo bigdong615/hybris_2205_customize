@@ -157,8 +157,6 @@ input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b
 
 @media(max-width:767px){#addToCart-gear-sliders > .splide__arrows{display: none;} }
 
-#addToCart-gear-sliders .period{ display: none;}
-
 #addToCart-gear-sliders .card li {display: flex; align-items: center;}
 
 #addToCart-gear-sliders .card h6.product{  overflow:hidden;}
