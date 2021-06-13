@@ -641,6 +641,7 @@
                                              } ).mount();
 
                                              let DontForgetCardQty= document.querySelectorAll("#gear-slider .card").length;
+                                             if (DontForgetCardQty!=0){
                                              if(DontForgetCardQty<=4 && screen.width>991){
                                                  document.querySelector("#gear-slider .splide__arrows").style.display="none";
                                                   document.querySelector("#gear-slider .splide__pagination").style.display="none";
@@ -655,6 +656,7 @@
                                              }
                                               if(DontForgetCardQty==1 && screen.width<640){
                                                   document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
                                              }
                                              // BL-605: changes end here
                                              
