@@ -164,6 +164,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
 
+	//Promotion Condition Translator
+	public static final String RENTAL_ARRIVAL_DATE = "rentalArrivalDate";
+	public static final String OPERATOR = "operator";
+	public static final String IS_RENTAL_CART = "rentalCart";
+	public static final String RENTAL_VALUE = "value";
+	public static final String RENTAL_DURATION = "rentalDuration";
+	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
+	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
+
+
 
 	private BlCoreConstants()
 	{

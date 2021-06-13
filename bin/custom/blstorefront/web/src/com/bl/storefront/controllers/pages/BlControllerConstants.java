@@ -79,6 +79,8 @@ public class BlControllerConstants
 	public static final int SKIP_TWO_DAYS = 2;
 	public static final String TRUE_STRING = "true";
 	public static final String FALSE_STRING = "false";
+	public static final String GIFT_CARD_REMOVE = "giftCardCodeRemove";
+	public static final String GIFT_CARD_FORM = "giftCardForm";
 
 	public static final String VOUCHER_FORM = "voucherForm";
 	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";
