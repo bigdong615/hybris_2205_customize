@@ -141,6 +141,8 @@
     <bean id="defaultBlAssignSerialService"
       class="com.bl.Ordermanagement.services.impl.DefaultBlAssignSerialService">
         <property name="blProductDao" ref="productDao"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
+        <property name="sessionService" ref="sessionService"/>
     </bean>
 
     <alias name="defaultBlNoSplittingStrategy" alias="blNoSplittingStrategy"/>

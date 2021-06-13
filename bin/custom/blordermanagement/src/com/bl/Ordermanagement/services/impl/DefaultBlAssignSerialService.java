@@ -8,14 +8,19 @@ import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.ClosureUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Level;
@@ -39,6 +45,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   private static final Logger LOG = Logger.getLogger(DefaultBlAssignSerialService.class);
   private BlProductDao blProductDao;
   private ModelService modelService;
+  private SearchRestrictionService searchRestrictionService;
+  private SessionService sessionService;
 
   /**
    * {@inheritDoc}
@@ -87,8 +95,16 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} for product code {}",
         stocks.size(), entry.getProduct().getCode());
 
-    final Collection<BlSerialProductModel> allSerialProducts = blProductDao
-        .getBlSerialProductsForCodes(new HashSet<>(serialProductCodes));
+    Collection<BlSerialProductModel> allSerialProducts = getSessionService()
+        .executeInLocalView(new SessionExecutionBody() {
+
+          @Override
+          public Collection<BlSerialProductModel> execute() {
+            getSearchRestrictionService().disableSearchRestrictions();
+            return blProductDao
+                .getBlSerialProductsForCodes(new HashSet<>(serialProductCodes));
+          }
+        });
 
     final List<String> assignedSerials = new ArrayList<>();
     //proceed with below checks
@@ -345,7 +361,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
   private Set<BlSerialProductModel> getAllBLConsignerSerials(
       final Collection<BlSerialProductModel> allSerialProducts) {
 
-    return allSerialProducts.stream().filter(serial -> serial.getOwnedBy().equalsIgnoreCase("BL"))
+    return allSerialProducts.stream().filter(serial -> "BL".equalsIgnoreCase(serial.getOwnedBy()))
         .collect(Collectors.toSet());
   }
 
@@ -363,6 +379,23 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
   public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
+  }
+
+  public SearchRestrictionService getSearchRestrictionService() {
+    return searchRestrictionService;
+  }
+
+  public void setSearchRestrictionService(
+      final SearchRestrictionService searchRestrictionService) {
+    this.searchRestrictionService = searchRestrictionService;
+  }
+
+  public SessionService getSessionService() {
+    return sessionService;
+  }
+
+  public void setSessionService(final SessionService sessionService) {
+    this.sessionService = sessionService;
   }
 
 }
