@@ -156,6 +156,13 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BL_IMAGE = "blimage";
 	public static final String MEDIA_FORMAT = "300Wx300H";
 
+	public static final String ISO_CODE_SHORT ="isoCodeShort";
+	public static final String CODES ="codes";
+	public static final String ONLINE ="Online";
+	public static final String SERIAL_PRODUCT_CODES ="serialProductCodes";
+	public static final String PRODUCT_CODES ="productCodes";
+	public static final String CONSIGNMENT_PROCESS_PREFIX ="cons";
+
 	public static final String LENSES ="lenses";
 	public static final String CAMERAS ="cameras";
 	public static final String PRODUCTION ="production";
