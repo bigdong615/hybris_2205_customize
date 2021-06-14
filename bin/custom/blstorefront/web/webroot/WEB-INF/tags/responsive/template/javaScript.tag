@@ -135,7 +135,9 @@
         </c:if>
 
 		<c:if test="${cmsPage.uid eq 'homepage'}">
+
 		<script>
+		$('.social').eq(1).remove();
         document.addEventListener(
             "DOMContentLoaded", () => {
                  new Mmenu( "#my-menu", {

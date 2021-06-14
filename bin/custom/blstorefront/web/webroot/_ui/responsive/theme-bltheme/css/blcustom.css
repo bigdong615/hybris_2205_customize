@@ -145,7 +145,10 @@ text-decoration :none ;
   .embed-responsive img {
     max-width: fit-content;
   }
+  .social{position: static !important;margin-bottom: 3rem;}
   }
 /* BL-45 */
 
 
+.social-icon{position : relative}
+.social{position: absolute;bottom: -23px;left: 0;}

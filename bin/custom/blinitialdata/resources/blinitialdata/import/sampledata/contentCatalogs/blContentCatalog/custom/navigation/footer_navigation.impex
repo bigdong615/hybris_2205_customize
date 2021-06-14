@@ -86,10 +86,14 @@ INSERT_UPDATE CustomFooterCopyRightComponent ; $contentCV[unique=true] ; uid[uni
                                              
                                              
 INSERT_UPDATE CustomFooterSubscriptionComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                          ; &componentRef               ; placeHolder         ; footerAddress                                                                                                                                                                                                              
-                                                ;                         ; FooterSubscriptionComponent ; Footer Subscription Component ; FooterSubscriptionComponent ; "Get email updates" ; "<p><b>BorrowLenses</b>San Francisco, CA<br>Boston, MA</p><p class=""links""><a href=""tel:844.853.6737"">844.853.6737</a><br><a href=""mailto:info@borrowlenses.com"" class=""email-link"">info@borrowlenses.com</a></p>" 
-                                                
-###  Assign Components to the Slots  ###        
+                                                ;                         ; FooterSubscriptionComponent ; Footer Subscription Component ; FooterSubscriptionComponent ; "Get email updates" ; "<p><b>BorrowLenses</b>San Francisco, CA<br>Boston, MA</p><p class=""links""><a href=""tel:844.853.6737"">844.853.6737</a><br><a href=""mailto:info@borrowlenses.com"" class=""email-link"">info@borrowlenses.com</a></p>"
+
+INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                          ; &componentRef                ;  medias(code)
+                              ;                         ; socialMediaSectionComponent ; Social Media Section Component ; socialMediaSectionComponent ;  /images/logo-youtube1.svg,/images/logo-instagram1.svg,/images/logo-facebook1.svg
+
+###  Assign Components to the Slots  ###
 UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]       ; cmsComponents(uid,$contentCV) 
                    ;                         ; FooterSlot             ; FooterNavigationComponent     
                    ;                         ; FooterCopyRightslot    ; CopyRightParagraphComponent1  
-                   ;                         ; FooterSubscriptionSlot ; FooterSubscriptionComponent   
+                   ;                         ; FooterSubscriptionSlot ; FooterSubscriptionComponent
+                   ;                         ; SocialMediaSectionSlot     ; socialMediaSectionComponent

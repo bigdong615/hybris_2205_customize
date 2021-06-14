@@ -445,6 +445,16 @@
                      </attribute>
                </attributes>
             </itemtype>
+
+      <itemtype code="Media"  autocreate="false" generate="false">
+        <attributes>
+          <attribute autocreate="true" qualifier="redirectUrl" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>Redirect Url</description>
+          </attribute>
+        </attributes>
+      </itemtype>
 		</typegroup>
 
         <typegroup name="borrowLenses">
@@ -1589,7 +1599,7 @@
             </itemtype>
 
             <itemtype code="PartnerPickUpStore" extends="GenericItem" autocreate="true" generate="true">
-                <deployment table="partnerPickUpStore" typecode="12210" />
+                <deployment table="partnerPickUpStore" typecode="12310" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
