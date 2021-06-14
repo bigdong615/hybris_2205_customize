@@ -108,15 +108,14 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     {
       sopPaymentDetailsForm.setSavePaymentInfo(false);
     }
-
-    setupAddPaymentPage(model);
-    setupParametersSilentOrderPostPage(sopPaymentDetailsForm, model, paymentProvider, String.valueOf(sopPaymentDetailsForm.isSavePaymentInfo()));
-
-    final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(nonce, paymentProvider, cardDetails, cardType, payPalEmail,
-        deviceData, liabilityShifted, sopPaymentDetailsForm.isSavePaymentInfo(), cardholder);
-
+    BrainTreeSubscriptionInfoData subscriptionInfo = null;
     try
     {
+      setupAddPaymentPage(model);
+      setupParametersSilentOrderPostPage(sopPaymentDetailsForm, model, paymentProvider, String.valueOf(sopPaymentDetailsForm.isSavePaymentInfo()));
+
+      subscriptionInfo = buildSubscriptionInfo(nonce, paymentProvider, cardDetails, cardType, payPalEmail,
+          deviceData, liabilityShifted, sopPaymentDetailsForm.isSavePaymentInfo(), cardholder);
       setupSilentOrderPostPage(sopPaymentDetailsForm, model);
     }
     catch (final Exception e)
@@ -144,9 +143,14 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
 
     if (Boolean.TRUE.toString().equals(saveBillingAddress))
     {
-      final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm);
+      final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY,
+          sopPaymentDetailsForm);
       newAddress.setVisibleInAddressBook(Boolean.TRUE);
-      getUserFacade().addAddress(newAddress);
+      try {
+        getUserFacade().addAddress(newAddress);
+      } catch (final Exception ex) {
+          LOG.error("Error occurred while adding new billing address", ex);
+      }
     }
 
     List<PaymentErrorField> errorFields = Lists.newArrayList();

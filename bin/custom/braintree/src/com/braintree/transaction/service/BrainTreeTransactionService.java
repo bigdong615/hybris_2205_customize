@@ -61,4 +61,18 @@ public interface BrainTreeTransactionService
 
 	void createOrderTransaction(AbstractOrderModel cart, BrainTreeCreatePaymentMethodResult result);
 
+	/**
+	 * To create the auth transaction of the order
+	 * @param orderModel
+	 * @return  boolean
+	 */
+	boolean createAuthorizationTransactionOfOrder(final AbstractOrderModel orderModel);
+
+	/**
+	 * To create the capture transaction of the order
+	 * @param orderModel
+	 * @return  boolean
+	 */
+	boolean captureAuthorizationTransaction(final AbstractOrderModel orderModel);
+
 }

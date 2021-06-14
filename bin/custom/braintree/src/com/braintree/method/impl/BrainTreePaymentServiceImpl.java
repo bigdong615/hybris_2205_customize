@@ -74,14 +74,17 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.payment.commands.AuthorizationCommand;
+import de.hybris.platform.payment.commands.CaptureCommand;
 import de.hybris.platform.payment.commands.CreateSubscriptionCommand;
 import de.hybris.platform.payment.commands.factory.CommandFactory;
 import de.hybris.platform.payment.commands.factory.CommandFactoryRegistry;
 import de.hybris.platform.payment.commands.factory.CommandNotSupportedException;
 import de.hybris.platform.payment.commands.request.AuthorizationRequest;
+import de.hybris.platform.payment.commands.request.CaptureRequest;
 import de.hybris.platform.payment.commands.request.CreateSubscriptionRequest;
 import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.commands.result.AuthorizationResult;
+import de.hybris.platform.payment.commands.result.CaptureResult;
 import de.hybris.platform.payment.commands.result.SubscriptionResult;
 import de.hybris.platform.payment.dto.BillingInfo;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
@@ -124,7 +127,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	@Override
 	public AuthorizationResult authorize(final BrainTreeAuthorizationRequest authorizationRequest, final CustomerModel customer)
 	{
-		LOG.error("authorize, authorizationRequest.getTotalAmount: " + authorizationRequest.getTotalAmount());
+		LOG.debug("authorize, authorizationRequest.getTotalAmount: " + authorizationRequest.getTotalAmount());
 
 		try
 		{
@@ -900,6 +903,17 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 			LOG.error("[BT Payment Service] Errors during trying to get webhook payment method by token " + exception.getMessage(), exception);
 			throw new AdapterException(exception.getMessage(), exception);
 		}
+	}
+
+	/**
+	 *{@inheritDoc}
+	 */
+	@Override
+	public CaptureResult capture(final CaptureRequest captureRequest)
+			throws CommandNotSupportedException {
+		final CaptureCommand command = getCommandFactory().createCommand(CaptureCommand.class);
+		final CaptureResult result = command.perform(captureRequest);
+		return result;
 	}
 
 	/**

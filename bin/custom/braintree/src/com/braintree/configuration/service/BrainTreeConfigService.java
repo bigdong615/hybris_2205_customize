@@ -8,6 +8,7 @@ import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.site.BaseSiteService;
+import java.math.BigDecimal;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -431,5 +432,10 @@ public class BrainTreeConfigService
 	{
 		return getPayPalStandardEnabled() || getHostedFieldEnabled() || getVenmoEnabled() || getLocalPaymentsEnabled()
 				|| getApplePayEnabled() || getGooglePayEnabled();
+	}
+
+	public BigDecimal getAuthAMountToVerifyCard()
+	{
+		return getConfiguration().getBigDecimal(AUTH_AMOUNT_TO_VERIFY_CARD);
 	}
 }
