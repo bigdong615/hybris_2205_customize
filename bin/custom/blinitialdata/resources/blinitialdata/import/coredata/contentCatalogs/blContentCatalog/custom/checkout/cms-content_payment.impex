@@ -1,0 +1,40 @@
+#% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs cms-content_payment.impex =========================");
+
+$contentCatalog = blContentCatalog
+$contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default='Staged'])[default=$contentCatalog:Staged]
+
+# Import modulegen config properties into impex macros
+UPDATE GenericItem[processor = de.hybris.platform.commerceservices.impex.impl.ConfigPropertyImportProcessor]; pk[unique = true]
+$jarResourceCms = $config-jarResourceCmsValue
+
+###  Page Template For Borrow Lenses Rental Cart Page ###
+INSERT_UPDATE PageTemplate; $contentCV[unique = true]; uid[unique = true]               	; name                                  	; frontendTemplateName              ; velocityTemplate[translator = de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]; restrictedPageTypes(code); active[default = true]
+                          ;                          ; MultiStepCheckoutSummaryPageTemplate ; MultiStep Checkout Summary Page Template  ; checkout/multi/silentOrderPostPage; $jarResourceCms/structure-view/structure_multiStepCheckoutSummaryPageTemplate.vm                       ; CategoryPage,ContentPage
+
+###  Define Content SlotNames  ###
+INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $contentCV)[unique = true][default = 'MultiStepCheckoutSummaryPageTemplate']; validComponentTypes(code); compTypeGroup(code)
+                             ; PromoBannerSlot          ;                                                                                       	;                          ; wide
+                             ; SiteLogoHeaderSlot       ;                                                                                       	;                          ; logo
+                             ; HeaderLinkForSupportSlot ;                                                                                       	;                          ; headerlink
+                             ; MiniCartSlot             ;                                                                                       	;                          ; minicart
+                             ; FooterSlot               ;                                                                                       	;                          ; footer
+                             ; FooterSubscriptionSlot   ;                                                                                       	;                          ; wide
+                             ; FooterCopyRightslot      ;                                                                                       	;                          ; wide
+
+###  Define ContentSlot For Template  ###
+INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                	   ; position[unique = true]  ; pageTemplate(uid, $contentCV)[unique = true][default = 'MultiStepCheckoutSummaryPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
+                                    ;                          ; PromoBannerSlot-multiStepCheckoutSummaryPage          ; PromoBannerSlot          ;                                                                                           	  ; PromoBannerSlot                            ; true
+                                    ;                          ; SiteLogoHeaderSlot-multiStepCheckoutSummaryPage       ; SiteLogoHeaderSlot       ;                                                                                           	  ; SiteLogoHeaderSlot                         ; true
+                                    ;                          ; HeaderLinkForSupportSlot-multiStepCheckoutSummaryPage ; HeaderLinkForSupportSlot ;                                                                                           	  ; HeaderLinkForSupportSlot                   ; true
+                                    ;                          ; MiniCartSlot-multiStepCheckoutSummaryPage             ; MiniCartSlot             ;                                                                                           	  ; MiniCartSlot                               ; true
+                                    ;                          ; FooterSlot-multiStepCheckoutSummaryPage               ; FooterSlot               ;                                                                                           	  ; FooterSlot                                 ; true
+                                    ;                          ; FooterSubscriptionSlot-multiStepCheckoutSummaryPage   ; FooterSubscriptionSlot   ;                                                                                           	  ; FooterSubscriptionSlot                     ; true
+                                    ;                          ; FooterCopyRightslot-multiStepCheckoutSummaryPage      ; FooterCopyRightslot      ;                                                                                           	  ; FooterCopyRightslot                        ; true
+
+
+###  Create Content Page  ###
+INSERT_UPDATE ContentPage; $contentCV[unique = true]; uid[unique = true]           ; name                         ; masterTemplate(uid, $contentCV)      ; label                    ; title ; defaultPage[default = 'true']; approvalStatus(code)[default = 'approved'] ; homepage[default = 'false']
+                         ;                          ; multiStepCheckoutSummaryPage ; Multi Checkout Summary Page  ; MultiStepCheckoutSummaryPageTemplate ; multiStepCheckoutSummary	;       ;                              ;											;
+
+INSERT_UPDATE PayPalCreditMessageComponent; $contentCV[unique = true]; uid[unique = true]; name; page; placement(code); layout(code); color(code); ratio(code)
+                                          ;                          ;PayPalCartPageCreditMessageComponent; Cart Page Credit Message Component; /WEB-INF/views/addons/braintreeaddon/responsive/cms/paypalcreditmessagecomponent.jsp; cart; flex; blue; 20x1

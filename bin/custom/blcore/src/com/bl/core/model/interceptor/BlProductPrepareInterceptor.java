@@ -47,12 +47,12 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
     createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
 
     if (CollectionUtils.isNotEmpty(serialProducts)) {
-      if (interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)
+      if (null != blProductModel.getForSaleBasePrice() && interceptorContext.isModified(blProductModel, BlProductModel.FORSALEBASEPRICE)
           && blProductModel.getForSaleBasePrice().compareTo(BigDecimal.ZERO) > 0) {
         calculateFinalSalePriceForSerialProducts(blProductModel, serialProducts,
             interceptorContext);
       }
-      if (interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)
+      if (null != blProductModel.getForSaleDiscount() && interceptorContext.isModified(blProductModel, BlProductModel.FORSALEDISCOUNT)
           && blProductModel.getForSaleDiscount() > 0) {
         calculateIncentivizedPriceForSerialProducts(blProductModel, serialProducts,
             interceptorContext);

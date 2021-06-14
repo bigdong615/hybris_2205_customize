@@ -6,7 +6,11 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.AddressTypeEnum;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
@@ -36,8 +40,11 @@ import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import de.hybris.platform.util.Config;
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -65,6 +72,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
     @Resource(name = "baseStoreService")
     private BaseStoreService baseStoreService;
+
+    @Resource(name = "cartService")
+    private BlCartService blCartService;
+
+    @Resource(name = "blGiftCardFacade")
+    private BlGiftCardFacade blGiftCardFacade;
+
+    @Resource(name ="cartFacade")
+    private BlCartFacade blCartFacade;
     
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
  	 private RentalDateDto getRentalsDuration() 
@@ -77,6 +93,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        CartModel cartModel = blCartService.getSessionCart();
+        if (cartModel != null) {
+            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+            if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+                blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
+                model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE,
+                    Config.getParameter("text.gift.card.remove"));
+            }
+        }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());

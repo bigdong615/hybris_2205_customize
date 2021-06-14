@@ -33,8 +33,14 @@
 		<property name="addressConverter" ref="deliveryAddressGeocodeConverter"/>
 	</bean>
 		
-	<bean id="sourceOrderAction" class="com.bl.Ordermanagement.actions.order.SourceOrderAction" parent="abstractAction">
+	<!--<bean id="sourceOrderAction" class="com.bl.Ordermanagement.actions.order.SourceOrderAction" parent="abstractAction">
 		<property name="sourcingService" ref="sourcingService"/>
+		<property name="allocationService" ref="allocationService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>-->
+
+	<bean id="blSourceOrderAction" class="com.bl.Ordermanagement.actions.order.BlSourceOrderAction" parent="abstractAction">
+		<property name="blSourcingService" ref="blSourcingService"/>
 		<property name="allocationService" ref="allocationService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>

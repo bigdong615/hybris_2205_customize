@@ -1,5 +1,6 @@
 package com.bl.facades.shipping;
 
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
@@ -11,10 +12,12 @@ import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * {javadoc}
@@ -178,4 +181,26 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
   	 * @return Collection of ZoneDeliveryModeModels
   	 */
   	Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
+
+    /**
+     * It removes, applied gift card from cart.
+     * @param giftCardCode
+     * @param cartModel
+     * @return String
+     */
+    String removeGiftCardFromCart(final String giftCardCode, final CartModel cartModel);
+
+    /**
+     * It checks, gift card committed movement.
+     * @param giftCardMovementModelList
+     * @return boolean value
+     */
+    boolean isCommittedMovement(final List<GiftCardMovementModel> giftCardMovementModelList);
+
+    /**
+     * It checks, if gift card has been applied then recalculate cart and checks if applied gift card has
+     * insufficient balance then remove it from cart.
+     * @return String
+     */
+    List<String> recalculateCartForGiftCard();
 }
