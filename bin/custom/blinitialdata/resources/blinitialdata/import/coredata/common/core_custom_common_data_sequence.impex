@@ -16,4 +16,6 @@ $commonCustomPath = /blinitialdata/import/coredata/common/custom
 # State-Warehouse mapping Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/statewarehousemapping.impex"), "utf-8", 0, 0);
 
+# Promotion Rule Definition Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/promotions/rule-definitions.impex"), "utf-8", 0, 0);
 
