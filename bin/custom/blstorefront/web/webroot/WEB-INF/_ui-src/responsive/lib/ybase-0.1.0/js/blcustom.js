@@ -76,7 +76,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       }
                                       updateQuantity();
                                       addToCartFromModal();
-                                       setTimeout(modalBodyContent,100);
+                                      if(document.getElementById("addToCart-gear-sliders") != null){
+                                          setTimeout(modalBodyContent,100);
+                                      };
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -246,6 +248,7 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
    				} ).mount());
  //BL-537  ends  here
    		   let modalCardQty =  document.getElementsByClassName("card-sliders").length;
+   		   if (modalCardQty!=0){
    			if(modalCardQty<=3 && screen.width>991){
    				document.querySelector("#addToCart-gear-sliders .splide__arrows").style.display="none";
    				 document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
@@ -254,9 +257,7 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
    				document.querySelector("#addToCart-gear-sliders .splide__arrows").style.display="none";
    				 document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
    			}
-   			 if(modalCardQty==1 && screen.width<640){
-   				// document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
-   			 }
+     	}
     }
 
   //BL-455 add to cart

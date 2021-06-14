@@ -5,7 +5,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
+
 
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
 <c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
@@ -110,7 +110,7 @@
                                                                                <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
                                                                                <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
                                                                                <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
-                                                                               <h6 class="price"><format:price priceData="${productReference.target.price}"/>
+                                                                               <h6 class="price">${productReference.target.price.formattedValue}</h6>
                                                                               
                                                                                 <c:choose>
                                                                                       <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
