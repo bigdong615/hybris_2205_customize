@@ -21,6 +21,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $content
                              ; FooterSlot               ;                                                                                       ;                          ; footer
                              ; FooterSubscriptionSlot   ;                                                                                       ;                          ; wide
                              ; FooterCopyRightslot      ;                                                                                       ;                          ; wide
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                ; position[unique = true]  ; pageTemplate(uid, $contentCV)[unique = true][default = 'DeliveryOrPickUpCartPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -31,6 +32,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; FooterSlot-DeliveryOrPickupCartpage               ; FooterSlot               ;                                                                                           ; FooterSlot                                 ; true
                                     ;                          ; FooterSubscriptionSlot-DeliveryOrPickupCartpage   ; FooterSubscriptionSlot   ;                                                                                           ; FooterSubscriptionSlot                     ; true
                                     ;                          ; FooterCopyRightslot-DeliveryOrPickupCartpage      ; FooterCopyRightslot      ;                                                                                           ; FooterCopyRightslot                        ; true
+                                    ;                         ; SocialMediaSectionSlot-DeliveryOrPickupCartpage    ; SocialMediaSectionSlot        ;                                                                                      ; SocialMediaSectionSlot                   ; true
 
 
 ###  Create Content Page  ###

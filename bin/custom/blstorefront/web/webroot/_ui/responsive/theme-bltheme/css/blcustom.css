@@ -147,6 +147,7 @@ text-decoration :none ;
   .embed-responsive img {
     max-width: fit-content;
   }
+  .social{position: static !important;margin-bottom: 3rem;}
   }
 /* BL-45 */
 
@@ -166,3 +167,5 @@ input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b
 @media screen and (min-width: 767px){ #matchingProducts #addToCart-gear-sliders  .card{ min-height :400px  !important;} }
 /*BL-455 */
 
+.social-icon{position : relative}
+.social{position: absolute;bottom: -23px;left: 0;}
