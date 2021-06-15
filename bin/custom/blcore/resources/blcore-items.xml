@@ -1599,7 +1599,7 @@
             </itemtype>
 
             <itemtype code="PartnerPickUpStore" extends="GenericItem" autocreate="true" generate="true">
-                <deployment table="partnerPickUpStore" typecode="12310" />
+                <deployment table="partnerPickUpStore" typecode="12210" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
