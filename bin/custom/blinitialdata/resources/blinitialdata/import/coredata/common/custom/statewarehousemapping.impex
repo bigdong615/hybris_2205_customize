@@ -1,0 +1,53 @@
+
+INSERT_UPDATE BlStateWarehouseMapping ;stateID[unique=true] ; name                  ; code(isocodeShort)     ; isActive ; region     ; warehouse(name[lang=en])
+                                      ;2	               ;Alabama	                ;AL  	                 ;1         ; Southeast	; MA
+                                      ;3                   ;Alaska                  ;AK	                     ;1	        ;West	    ;CA
+                                      ;5	               ;Arizona                 ;AZ	                     ;1	        ;Southwest	;CA
+                                      ;6	               ;Arkansas	            ;AR	                     ;1	        ;Southeast	;MA
+                                      ;7	               ;California	            ;CA	                     ;1	        ;West	    ;CA
+                                      ;8	               ;Colorado	            ;CO	                     ;1	        ;West	    ;CA
+                                      ;9	               ;Connecticut	            ;CT	                     ;1	        ;Northeast   ;MA
+                                      ;10	               ;Delaware	            ;DE	                     ;1	        ;Northeast   ;MA
+                                      ;11	               ;District of Columbia	;DC                      ;1	        ;Northeast	;MA
+                                      ;13	               ;Florida                 ;FL	                     ;1	        ;Southeast	;MA
+                                      ;14	               ;Georgia                 ;GA	                     ;1	        ;Southeast	;MA
+                                      ;16	               ;Hawaii	                ; HI	                 ;1	        ;West	    ;CA
+                                      ;17	               ;Idaho	                ; ID	                 ;1	        ;West	    ;CA
+                                      ;18	               ;Illinois	            ;IL	                     ;1	        ;Midwest     ;MA
+                                      ;19	               ;Indiana	                ;IN	                      ;1	    ;Midwest     ;MA
+                                      ;20	               ;Iowa	                ;IA	                      ;1	    ;Midwest     ;MA
+                                      ;21	               ;Kansas	                ;KS	                      ;1	    ;Midwest     ;MA
+                                      ;22	               ;Kentucky	            ;KY	                      ;1	    ;Southeast	 ;MA
+                                      ;23	               ;Louisiana	            ;LA	                      ;1	    ;Southeast	 ;MA
+                                      ;24	               ;Maine	                ;ME	                      ;1	    ;Northeast	 ;MA
+                                      ;26	               ;Maryland	            ;MD	                      ;1	    ;Northeast	 ;MA
+                                      ;27	               ;Massachusetts           ;MA	                      ;1	    ;Northeast	 ;MA
+                                      ;28	               ;Michigan	            ;MI	                      ;1	    ;Midwest 	 ;MA
+                                      ;29	               ;Minnesota	            ;MN	                      ;1	    ;Midwest 	 ;MA
+                                      ;30	               ;Mississippi	            ;MS	                      ;1	    ;Southeast	 ;MA
+                                      ;31	               ;Missouri	            ;MO	                      ;1	    ;Midwest	 ;MA
+                                      ;32	               ;Montana                 ;MT	                      ;1	    ;West	     ;CA
+                                      ;33	               ;Nebraska                ;NE	                      ;1	    ;Midwest	 ;CA
+                                      ;34	               ;Nevada                  ;NV	                      ;1	    ;West	     ;CA
+                                      ;35	               ;New Hampshire         	;NH	                       ;1     	;Northeast	 ;MA
+                                      ;36	               ;New Jersey	            ;NJ	                       ;1     	;Northeast	 ;MA
+                                      ;37	               ;New Mexico	            ;NM	                       ;1     	;Southwest	 ;CA
+                                      ;38	               ;New York	            ;NY	                       ;1     	;Northeast	 ;MA
+                                      ;39	               ;North Carolina	        ;NC	                       ;1	    ;Southeast	 ;MA
+                                      ;40	               ;North Dakota	        ;ND	                       ;1	    ;Midwest	 ;CA
+                                      ;42	               ;Ohio	                ;OH	                       ;1	    ;Midwest	 ;MA
+                                      ;43	               ;Oklahoma	            ;OK	                       ;1	    ;Southwest	 ;CA
+                                      ;44	               ;Oregon	                ;OR	                       ;1	    ;West	     ;CA
+                                      ;46	               ;Pennsylvania	        ;PA	                       ;1	    ;Northeast	 ;MA
+                                      ;48	               ;Rhode Island	        ;RI	                       ;1	    ;Northeast	 ;MA
+                                      ;49	               ;South Carolina	        ;SC	                       ;1	    ;Southeast	 ;MA
+                                      ;50	               ;South Dakota	        ;SD	                       ;1	    ;Midwest	 ;CA
+                                      ;51	               ;Tennessee	            ;TN	                       ;1	    ;Southeast	 ;MA
+                                      ;52	               ;Texas	               ;TX	                       ;1	    ;Southwest	 ;CA
+                                      ;53	               ;Utah	               ;UT	                       ;1	    ;West	     ;CA
+                                      ;54	               ;Vermont	               ;VT	                       ;1	    ;Northeast	 ;MA
+                                      ;56	               ;Virginia	           ;VA	                       ;1	    ;Southeast	 ;MA
+                                      ;57	               ;Washington	           ;WA	                       ;1	    ;West	     ;CA
+                                      ;58	               ;West Virginia	       ;WV	                       ;1	    ;Southeast	 ;MA
+                                      ;59	               ;Wisconsin	           ;WI	                       ;1	    ;Midwest	 ;MA
+                                      ;60	               ;Wyoming	               ;WY	                       ;1	    ;West	     ;CA
