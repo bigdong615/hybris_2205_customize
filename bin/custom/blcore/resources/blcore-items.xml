@@ -8,6 +8,8 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
+		<collectiontype code="serialProductCodes" elementtype="java.lang.String" autocreate="true"
+      generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
     </collectiontypes>
@@ -854,10 +856,10 @@
                      <description>Total amount spent on repairs on this serial to date,should update with every repair</description>
                    </attribute>
                    <attribute qualifier="noDaysRented" type="java.lang.long">
-                     <persistence type="dynamic" attributeHandler="serialProductTotalRentedDaysHandler" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>The total no of days the serial was rented for all orders</description>
-                   </attribute>
+					<persistence type="property"/>
+					<modifiers read="true" write="true" optional="true"/>
+					<description>The total no of days the serial was rented for all orders</description>
+				  </attribute>
                    <attribute qualifier="noDaysNotInService" type="java.lang.long">
                      <persistence type="dynamic" attributeHandler="serialProductNotInServiceHandler" />
                      <modifiers read="true" write="true" optional="true"/>
@@ -1447,7 +1449,12 @@
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if No Damage Waiver is selected for Rental Gear</description>         				
          			</attribute>
-         		</attributes>
+					<attribute qualifier="serialProductCodes" type="serialProductCodes">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true"/>
+						<description>Serial products for the entry</description>
+					</attribute>
+				</attributes>
          	</itemtype>
          </typegroup>
 
@@ -1679,13 +1686,23 @@
                     <attribute qualifier="rentalStartDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						<description>Selected rental start date</description>
+						            <description>Selected rental start date</description>
                     </attribute>
                     <attribute qualifier="rentalEndDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						<description>Selected rental end date</description>
+						            <description>Selected rental end date</description>
                     </attribute>
+                  <attribute qualifier="actualRentalStartDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Actual rental start date</description>
+                  </attribute>
+                  <attribute qualifier="actualRentalEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Actual rental end date</description>
+                  </attribute>
                     <attribute qualifier="isRentalCart" type="java.lang.Boolean">
                       <persistence type="property" />
                       <modifiers optional="true" read="true" write="true" />
@@ -1734,6 +1751,76 @@
             </itemtype>
         </typegroup>
 
+		<typegroup name="StateWarehouseMapping">
+		  <itemtype code="BlStateWarehouseMapping" autocreate="true" generate="true"
+			jaloclass="com.bl.core.jalo.BlStateWarehouseMapping">
+			<description>This table is for storing configuration related to InventoryScan.</description>
+			<deployment table="blStateWarehouseMapping" typecode="12214"/>
+			<attributes>
+			  <attribute qualifier="stateID" type="java.lang.Integer">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" unique="true" optional="false"/>
+				<description>State ID</description>
+			  </attribute>
+			  <attribute qualifier="name" type="java.lang.String">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Name of states</description>
+			  </attribute>
+			  <attribute qualifier="code" type="Region">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Region codes</description>
+			  </attribute>
+			  <attribute qualifier="isActive" type="java.lang.Integer">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Particular mapping is Active or not</description>
+			  </attribute>
+			  <attribute qualifier="region" type="java.lang.String">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Region name</description>
+			  </attribute>
+			  <attribute qualifier="warehouse" type="Warehouse">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Allocated Warehouse</description>
+			  </attribute>
+			</attributes>
+		  </itemtype>
+		</typegroup>
+
+		<typegroup name="Warehouse">
+		  <itemtype code="Warehouse" autocreate="false" generate="false">
+			<description>Extending Warehouse type with additional attributes for BL.</description>
+			<attributes>
+			  <attribute type="java.lang.String" qualifier="cutOffTime">
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Cutoff time for the warehouse.</description>
+				<persistence type="property"/>
+			  </attribute>
+			  <attribute type="boolean" qualifier="active">
+				<modifiers read="true" write="true" optional="false"/>
+				<description>Warehouse that is active or not.</description>
+				<persistence type="property"/>
+				<defaultvalue>Boolean.FALSE</defaultvalue>
+			  </attribute>
+			</attributes>
+		  </itemtype>
+		</typegroup>
+		<typegroup name="Consignment">
+		  <itemtype code="ConsignmentEntry" autocreate="false" generate="false">
+			<description>Extending ConsignmentEntry type with additional attributes.</description>
+			<attributes>
+			  <attribute type="serialProductCodes" qualifier="serialProductCodes">
+				<modifiers read="true" write="true"/>
+				<persistence type="property"/>
+			  </attribute>
+			</attributes>
+		  </itemtype>
+		</typegroup>
+	
         <typegroup name="BaseStore">
             <itemtype code="BaseStore" autocreate="false" generate="false">
                 <description>Extending BaseStore type with additional attributes.</description>

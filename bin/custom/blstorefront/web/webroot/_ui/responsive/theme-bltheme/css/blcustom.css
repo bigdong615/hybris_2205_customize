@@ -129,6 +129,8 @@ text-decoration :none ;
 
 /* BL-678  BL-677 */
 .card li {display :flex; align-items: center;}
+.btnwidth button {width :100%; margin-top:1%;}
+.btnwidth a{width :100%;}
 /* BL-606 */
 .splide__slide .card h6.product, #productList .card h6.product {height :36px; overflow: hidden;}
 @media only screen and (max-width: 1025px) and (min-width: 991px)   {

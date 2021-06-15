@@ -75,10 +75,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                       updateQuantity();
-                                      addToCartFromModal();
-                                      if(document.getElementById("addToCart-gear-sliders") != null){
-                                          setTimeout(modalBodyContent,100);
-                                      };
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -111,6 +107,9 @@ $('.shopping-cart__item-remove').on("click", function (e){
                              if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                   ACC.minicart.updateMiniCartDisplay();
                              }
+                          },
+                          complete: function() {
+                             $('.page-loader-new-layout').hide();
                           },
                           error: function (jqXHR, textStatus, errorThrown) {
                             $('.page-loader-new-layout').hide();
@@ -211,6 +210,7 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
     $("#product-litepicker").addClass("date-notAvail");
     $("#mobile-product-litepicker").addClass("date-notAvail");
     $(" #productDates .input-group").addClass("red-border");
+    $("#pickupDelivery .pickupDeliveryLink").addClass("d-none");
 }
 
  //BL-455  Changes for Add To Cart POP Up
@@ -246,7 +246,7 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
    					},
    					keyboard: false,
    				} ).mount());
- //BL-537  ends  here
+ //BL-455  ends  here
    		   let modalCardQty =  document.getElementsByClassName("card-sliders").length;
    		   if (modalCardQty!=0){
    			if(modalCardQty<=3 && screen.width>991){
@@ -293,3 +293,4 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
 
    });
   }
+}

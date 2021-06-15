@@ -195,8 +195,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
                     null, payByCustomer);
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
-            return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
-                    pstCutOffTime, payByCustomer);
+            final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
+            if(currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
+                return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                        null, payByCustomer);
+            } else {
+                return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                        pstCutOffTime, payByCustomer);
+            }
         } 
         return Collections.emptyList();
     }
