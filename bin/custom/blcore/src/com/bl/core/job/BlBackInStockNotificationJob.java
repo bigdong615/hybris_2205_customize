@@ -18,7 +18,7 @@ import java.util.Date;
 public class BlBackInStockNotificationJob extends StockLevelStatusJob {
 
     /**
-     *  this method is overide oto check product in stock status.
+     *  This method is override to check product in stock status.
      * @param productInterest
      * @param now
      * @return
