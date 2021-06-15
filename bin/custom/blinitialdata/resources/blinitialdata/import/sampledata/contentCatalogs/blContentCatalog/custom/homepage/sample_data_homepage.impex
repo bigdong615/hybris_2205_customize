@@ -124,9 +124,9 @@ INSERT_UPDATE CMSParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]
 
 #Mobile device navigation link component for ship or pickup, support and Account nav link                                    
 INSERT_UPDATE CMSLinkComponent ; $contentCV[unique=true] ; uid[unique=true] ; name            ; url  ; target(code)[default='sameWindow']
-                               ;						; MobilePickUpAndDeliveryLink; Mobile PickUp And Delivery Link; "/shiporpickup";
-                               ;						; MobileSupportLink; Mobile Support Link; "/support";
-                               ;						; MobileAccountNavLink; Mobile My Account Link; "/myaccount";
+								;						; MobilePickUpAndDeliveryLink; Mobile PickUp And Delivery Link; "/shiporpickup";
+								;						; MobileSupportLink; Mobile Support Link; "/support";
+								;						; MobileAccountNavLink; Mobile My Account Link; "/myaccount";
 
 
 INSERT_UPDATE CMSNavigationNode ; uid[unique=true]        ; $contentCV[unique=true] ; name               ; &nodeRef                ; parent(uid, $contentCV) ; children(uid,$contentCV) ; links(&linkRef) ;
@@ -154,11 +154,11 @@ INSERT_UPDATE CMSNavigationEntry ; uid[unique=true]                ; $contentCV[
 #Mobile header bottom information
 INSERT_UPDATE CustomBLParagraphComponent ; $contentCV[unique=true] ; uid[unique=true]               ; name                               ; &componentRef                  ; content[lang=$lang]
                                          ;                         ; MobileHeaderBottomInfoComponent1 ; Mobile Header Bottom Info Component1 ; MobileHeaderBottomInfoComponent1 ;"<i class='icon-availability'></i> Real time availability"
-                                         ;                         ; MobileHeaderBottomInfoComponent2 ; Mobile Header Bottom Info Component2 ; MobileHeaderBottomInfoComponent2 ;"<i class='icon-checkbadge'></i> Free changes & cancellations"
-                                         ;                         ; MobileHeaderBottomInfoComponent3 ; Mobile Header Bottom Info Component3 ; MobileHeaderBottomInfoComponent3 ;"<i class='icon-truck'></i> Free 2-day shipping"
+										;                         ; MobileHeaderBottomInfoComponent2 ; Mobile Header Bottom Info Component2 ; MobileHeaderBottomInfoComponent2 ;"<i class='icon-checkbadge'></i> Free changes & cancellations"
+										;                         ; MobileHeaderBottomInfoComponent3 ; Mobile Header Bottom Info Component3 ; MobileHeaderBottomInfoComponent3 ;"<i class='icon-truck'></i> Free 2-day shipping"
 
 INSERT_UPDATE ProductCarouselComponent;$contentCV[unique=true];uid[unique=true]				;name					;title		 ;&componentRef					; products(code, $productCV)
-                                      ;						  ;HomePageFeaturedGearComponent;Homepage Featured Gear;Featured Gear;HomePageFeaturedGearComponent ; Canon_1Ds_Mark_II,Nikon_D70,Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon,67mm_CP_Filter,72mm_CP_Filter,Hasselblad_H5D40_Medium_Format_DSLR_Camera,Nikon-D5300-Digital-SLR-Camera,Panasonic_Battery_DMW-BLC12
+									  ;						  ;HomePageFeaturedGearComponent;Homepage Featured Gear;Featured Gear;HomePageFeaturedGearComponent ; Canon_1Ds_Mark_II,Nikon_D70,Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon,67mm_CP_Filter,72mm_CP_Filter,Hasselblad_H5D40_Medium_Format_DSLR_Camera,Nikon-D5300-Digital-SLR-Camera,Panasonic_Battery_DMW-BLC12
 
 INSERT_UPDATE SearchBoxComponent; $contentCV[unique = true]; uid[unique = true]; name       ; &componentRef
                                 ;                          ; BlSearchBox       ; Search Box ; BlSearchBox
@@ -189,7 +189,8 @@ UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                 
                    ;                         ; MobileHeaderLinkForSupportSlot           ; BLSupportNavComponent
                    ;                         ; MobileHeaderLinkForAccountSlot           ; AccountNavigationComponent
                    ;                         ; MobileHeaderBottomInfo                       ; MobileHeaderBottomInfoComponent1,MobileHeaderBottomInfoComponent2,MobileHeaderBottomInfoComponent3
-                   ;						 ; HomePageFeaturedGearSectionSlot    ; HomePageFeaturedGearComponent
+				   ;						 ; HomePageFeaturedGearSectionSlot    ; HomePageFeaturedGearComponent
                    ;                         ; MobileMiniCartSlot                 ; MiniCart
                    ;                         ; HomePageBannerSearchBoxSlot        ; BlSearchBox
                    ;                         ; MobileHomePageBannerSearchBoxSlot  ; BlSearchBox
+
