@@ -50,7 +50,7 @@
  <p class="overline">${product.manufacturer}</p>
  <h6 class="product">
  <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
-            <a href="${usedGearUrl}"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/></a>
+            <a href="${usedGearUrl}" role="button"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/> </a>
   </h6>
 		<ycommerce:testId code="product_wholeProduct">
 
