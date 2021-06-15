@@ -6,7 +6,6 @@
 
 <c:choose>
 	<c:when test="${positionAttribute == 'SocialMediaSectionSlot'}">
-	${feature}ttttttttt
 	<div class="social">
 			<c:forEach items="${feature.medias}" var="image">
 		   	<a href="${image.redirectUrl}" target="_blank">

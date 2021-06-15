@@ -11,7 +11,6 @@
         					       	<cms:component component="${feature}"/>
     			         	   	</cms:pageSlot>
                   					      <cms:pageSlot position="SocialMediaSectionSlot" var="feature">
-                  					      ${feature}gggggggg
                                           <cms:component component="${feature}"/>
                                  </cms:pageSlot>
                         <div class="col-md-5 offset-md-1 col-lg-4 offset-lg-4">
