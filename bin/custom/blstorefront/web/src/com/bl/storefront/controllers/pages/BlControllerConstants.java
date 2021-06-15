@@ -86,6 +86,9 @@ public class BlControllerConstants
 	public static final String VOUCHER_FORM = "voucherForm";
 	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";
 	public static final String PAYMENT_METHOD_CHECKOUT_URL = "/checkout/multi/payment-method/add";
+
+	public static final String PRODUCT_REFERENCE = "productReferences";
+	public static final String MAXIMUM_LIMIT = "maxlimit";
 	private BlControllerConstants()
 	{
 		//empty
