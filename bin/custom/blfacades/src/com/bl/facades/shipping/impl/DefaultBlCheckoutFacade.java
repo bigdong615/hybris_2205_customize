@@ -4,10 +4,16 @@ import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.ShippingTypeEnum;
-import com.bl.core.model.*;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.PartnerPickUpStoreModel;
+import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UPSLocatorRequestData;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.shipping.BlCheckoutFacade;
@@ -20,12 +26,15 @@ import com.bl.integration.services.BlUPSAddressValidatorService;
 import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
+import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -33,15 +42,21 @@ import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * {javadoc}
@@ -60,6 +75,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     @Resource(name = "upsAddressValidatorService")
     BlUPSAddressValidatorService blUPSAddressValidatorService;
+
+    private BlGiftCardFacade blGiftCardFacade;
+    private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
+    private BlCheckoutFacade checkoutFacade;
+    private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
 
     private BlDatePickerService blDatePickerService;
     private Converter<ZoneDeliveryModeModel, ZoneDeliveryModeData> blZoneDeliveryModeConverter;
@@ -538,7 +558,87 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 						(ZoneDeliveryModeModel) deliveryModeModel)
 				: Boolean.FALSE;
 	}
- 	
+
+	/**
+   * {@inheritDoc}
+   */
+	 public List<String> recalculateCartForGiftCard() {
+        if (getBrainTreeCheckoutFacade().getCartService() != null) {
+            final CartModel cartModel = getBrainTreeCheckoutFacade().getCartService()
+                .getSessionCart();
+            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+            if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+                final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
+                commerceCartParameter.setCart(cartModel);
+                commerceCartParameter.setBaseSite(cartModel.getSite());
+                commerceCartParameter.setEnableHooks(true);
+                commerceCartParameter.setRecalculate(true);
+                getBlCheckoutCartCalculationStrategy().calculateCart(commerceCartParameter);
+                return getRemovedGiftCardCodes(cartModel, giftCardModelList);
+            }
+        }
+        return Collections.emptyList();
+	 }
+
+    /**
+     * It removes applied gift card and returns all the gift card codes, which has been removed.
+     *
+     * @param cartModel
+     * @param giftCardModelList
+     * @return list of gift cards.
+     */
+    private List<String> getRemovedGiftCardCodes(final CartModel cartModel,
+        final List<GiftCardModel> giftCardModelList) {
+        List<GiftCardMovementModel> giftCardMovementModelList;
+        List<String> giftCardCodeList = new ArrayList<>();
+        for (GiftCardModel giftCardModel : giftCardModelList) {
+            giftCardMovementModelList = giftCardModel.getMovements();
+            if (Double.compare(giftCardModel.getBalance(), 0) == 0 && getCheckoutFacade().isCommittedMovement(giftCardMovementModelList)) {
+                String removedGiftCardCode = getCheckoutFacade()
+                    .removeGiftCardFromCart(giftCardModel.getCode(), cartModel);
+                if (StringUtils.isNotEmpty(removedGiftCardCode)) {
+                    giftCardCodeList.add(removedGiftCardCode);
+                }
+            }
+        }
+        return giftCardCodeList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isCommittedMovement(
+        final List<GiftCardMovementModel> giftCardMovementModelList) {
+        boolean committedMovement = true;
+        if (CollectionUtils.isNotEmpty(giftCardMovementModelList)) {
+            for (GiftCardMovementModel giftCardMovementModel : giftCardMovementModelList) {
+                if (Boolean.FALSE.equals(giftCardMovementModel.getCommitted())) {
+                    committedMovement = false;
+                    break;
+                }
+            }
+        }
+        return committedMovement;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String removeGiftCardFromCart(final String giftCardCode, final CartModel cartModel) {
+        try {
+            getBlGiftCardFacade()
+                .removeGiftCard(giftCardCode, cartModel);
+            return giftCardCode;
+        } catch (final Exception exception) {
+            BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+                "Error while removing applied gift card code: {} from cart: {} for the customer: {}",
+                giftCardCode, cartModel.getCode(), cartModel.getUser().getUid(), exception);
+            return null;
+        }
+    }
+
     public BlDeliveryModeService getBlZoneDeliveryModeService() {
         return blDeliveryModeService;
     }
@@ -609,5 +709,39 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     public void setBlUPSAddressValidatorService(BlUPSAddressValidatorService blUPSAddressValidatorService) {
         this.blUPSAddressValidatorService = blUPSAddressValidatorService;
+    }
+
+    public BlGiftCardFacade getBlGiftCardFacade() {
+        return blGiftCardFacade;
+    }
+
+    public void setBlGiftCardFacade(BlGiftCardFacade blGiftCardFacade) {
+        this.blGiftCardFacade = blGiftCardFacade;
+    }
+
+    public BrainTreeCheckoutFacade getBrainTreeCheckoutFacade() {
+        return brainTreeCheckoutFacade;
+    }
+
+    public void setBrainTreeCheckoutFacade(
+        BrainTreeCheckoutFacade brainTreeCheckoutFacade) {
+        this.brainTreeCheckoutFacade = brainTreeCheckoutFacade;
+    }
+
+    public BlCheckoutFacade getCheckoutFacade() {
+        return checkoutFacade;
+    }
+
+    public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+        this.checkoutFacade = checkoutFacade;
+    }
+
+    public CommerceCartCalculationStrategy getBlCheckoutCartCalculationStrategy() {
+        return blCheckoutCartCalculationStrategy;
+    }
+
+    public void setBlCheckoutCartCalculationStrategy(
+        CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
+        this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
     }
 }

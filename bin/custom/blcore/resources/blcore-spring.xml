@@ -512,7 +512,7 @@
 
 	<!--BL-91 Adding attribute handler classes for dynamic attributes-->
 	<bean id="serialProductNotInServiceHandler" class="com.bl.core.model.handler.SerialProductNotInServiceHandler"/>
-	<bean id="serialProductTotalRentedDaysHandler" class="com.bl.core.model.handler.SerialProductTotalRentedDaysHandler"/>
+
 	<bean id="serialProductTotalRepairsHandler" class="com.bl.core.model.handler.SerialProductTotalRepairsHandler"/>
 	<bean id="serialProductTotalTransitDaysHandler" class="com.bl.core.model.handler.SerialProductTotalTransitDaysHandler"/>
 
@@ -742,6 +742,19 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 	</bean>
 
+	<alias name="blCommerceDeliveryModeStrategy" alias="commerceDeliveryModeStrategy"/>
+	<bean id="blCommerceDeliveryModeStrategy"
+		class="com.bl.core.services.strategy.impl.DefaultBlCommerceDeliveryModeStrategy"
+		parent="defaultCommerceDeliveryModeStrategy">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+	</bean>
+
+	<alias name="defaultBlStateWarehouseMappingDao" alias="blStateWarehouseMappingDao"/>
+	<bean id="defaultBlStateWarehouseMappingDao" class="com.bl.core.dao.warehouse.impl.DefaultBlStateWarehouseMappingDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+
 	<!--BL-565 Gift Card Email Start -->
 	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BlGiftCardEmailEventListener"
 		parent="abstractAcceleratorSiteEventListener">
@@ -816,5 +829,15 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
     </bean>
+	
+	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
+	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
+	<bean id="defaultRuleRentalDurationConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalDurationConditionTranslator" />
+
+	<alias alias="ruleRentalCartConditionTranslator" name="defaultRuleRentalCartConditionTranslator" />
+	<bean id="defaultRuleRentalCartConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalCartConditionTranslator" />
+
+	<alias alias="ruleRentalArrivalDateConditionTranslator" name="defaultRuleRentalArrivalDateConditionTranslator" />
+	<bean id="defaultRuleRentalArrivalDateConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalArrivalDateConditionTranslator" />
 
 </beans>

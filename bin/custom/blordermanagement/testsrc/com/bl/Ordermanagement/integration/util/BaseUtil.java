@@ -10,6 +10,7 @@
  */
 package com.bl.Ordermanagement.integration.util;
 
+import com.bl.Ordermanagement.actions.order.BlSourceOrderAction;
 import de.hybris.platform.acceleratorservices.payment.cybersource.enums.TransactionTypeEnum;
 import de.hybris.platform.acceleratorservices.payment.data.OrderInfoData;
 import de.hybris.platform.catalog.CatalogVersionService;
@@ -122,7 +123,7 @@ public class BaseUtil
 	protected BaseStoreService baseStoreService;
 	protected DefaultWorkflowService newestWorkflowService;
 	protected WorkflowTemplateService workflowTemplateService;
-	protected SourceOrderAction sourceOrderAction;
+	protected BlSourceOrderAction sourceOrderAction;
 	protected CheckOrderAction checkOrderAction;
 	protected CommerceStockService commerceStockService;
 	protected BaseStores baseStores;
@@ -664,7 +665,7 @@ public class BaseUtil
 		this.workflowTemplateService = workflowTemplateService;
 	}
 
-	public void setSourceOrderAction(SourceOrderAction sourceOrderAction)
+	public void setSourceOrderAction(BlSourceOrderAction sourceOrderAction)
 	{
 		this.sourceOrderAction = sourceOrderAction;
 	}
@@ -859,7 +860,7 @@ public class BaseUtil
 		return businessProcessService;
 	}
 
-	public SourceOrderAction getSourceOrderAction()
+	public BlSourceOrderAction getSourceOrderAction()
 	{
 		return sourceOrderAction;
 	}

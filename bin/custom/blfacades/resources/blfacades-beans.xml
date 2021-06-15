@@ -242,6 +242,14 @@
       <property name="indicator" type="String" />
   </bean>
 
+  <!--[Bl-643]: Custom Promotions-->
+  <bean class="de.hybris.platform.ruleengineservices.rao.CartRAO" extends="de.hybris.platform.ruleengineservices.rao.AbstractOrderRAO">
+    <property name="rentalDurationDays" type="java.lang.Integer" />
+    <property name="rentalCart" type="java.lang.Boolean" />
+    <property name="rentalArrivalDate" type="java.util.Date" />
+    <property name="rentalToDate" type="java.util.Date" />
+  </bean>
+
 </beans>
 
 

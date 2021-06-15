@@ -10,6 +10,7 @@ import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -34,7 +35,6 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
 import com.bl.storefront.controllers.ControllerConstants;
-import com.bl.storefront.controllers.pages.BlControllerConstants;
 
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
@@ -43,11 +43,12 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -158,11 +159,12 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
+		showMessageForRemovedGiftCard(model);
 		getCheckoutFacade().setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
 
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
-
+		model.addAttribute(BlControllerConstants.GIFT_CARD_FORM, new GiftCardForm());
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
@@ -218,6 +220,24 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
+	}
+
+	/**
+	 * If gift card removed from cart then it add message to model attribute for removed gift card.
+	 * @param model
+	 */
+	private void showMessageForRemovedGiftCard(final Model model) {
+		final List<String> removedGiftCardCodeList = getCheckoutFacade().recalculateCartForGiftCard();
+		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+			final Locale locale = getI18nService().getCurrentLocale();
+			List<String> removeGiftCardMessage = new ArrayList<>();
+			for (String gcCode : removedGiftCardCodeList) {
+				removeGiftCardMessage
+						.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+								{gcCode}, locale));
+			}
+			model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
+		}
 	}
 
 	@RequestMapping(value =
@@ -480,5 +500,4 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	{
 		this.blCustomerFacade = blCustomerFacade;
 	}
-
 }

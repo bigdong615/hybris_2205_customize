@@ -1,0 +1,25 @@
+#% impex.info("=============================== Importing content from coredata/contentCatalogs rule-definition.impex =========================");
+
+
+$lang=en
+INSERT_UPDATE RuleConditionDefinition;id[unique=true]  ;name[lang=$lang];breadcrumb[lang=$lang]                      ;priority;allowsChildren;translatorId                ;translatorParameters;categories(id)
+                                     ;y_rental_duration_condition;Rental Duration ;Rental Duration {rentalDurationOperator} {rentalDuration}  days;         ;false         ;ruleRentalDurationConditionTranslator   ;            ;cart
+                                     ;y_rental_cart_condition;Rental Cart Condition;Is Rental Product Promotion {value}      ;         ;false         ;ruleRentalCartConditionTranslator   ;            ;cart
+                                     ;y_rental_arrival_date_condition;Rental Arrival Date Condition;Rental Arrival Date {operator} {rentalArrivalDate}   ;         ;false         ;ruleRentalArrivalDateConditionTranslator   ;            ;cart
+
+INSERT_UPDATE RuleConditionDefinitionParameter;definition(id)[unique=true];id[unique=true];name[lang=$lang];description[lang=$lang]                         ;priority;type                                                 ;value;required[default=true];validators;filters;defaultEditor
+                                              ;y_rental_duration_condition    ;rentalDuration;Days    ;Rental Duration                       ;         ;java.lang.Integer                                                                         ;      ;                      ;          ;       ;
+                                              ;y_rental_duration_condition    ;rentalDurationOperator;Rental Duration operator;Rental Duration value                       ;         ;Enum(de.hybris.platform.ruledefinitions.AmountOperator)    ;      ;                      ;          ;       ;
+                                              ;y_rental_arrival_date_condition    ;rentalArrivalDate;Rental Arrival Date  ;Rental Arrival Date                      ;         ;java.util.Date                                                                         ;      ;                      ;          ;       ;
+                                              ;y_rental_arrival_date_condition    ;operator;Operator;Rental Arrival Date                       ;         ;Enum(de.hybris.platform.ruledefinitions.AmountOperator)    ;      ;                      ;          ;       ;
+
+INSERT_UPDATE RuleConditionDefinitionParameter; definition(id)[unique = true]; id[unique = true]        ; priority; name[lang = $lang]                ; description[lang = $lang]                                                                                    ; type                                                                                 ; value                       ; required[default = true]; validators
+                                              ; y_rental_cart_condition           ; value                    ; 1000    ; Rental Cart Condition   ; Rental Cart Condition ; java.lang.Boolean                                                                    ; true                        ;
+
+INSERT_UPDATE RuleConditionDefinitionRuleTypeMapping;definition(id)[unique=true];ruleType(code)[default=PromotionSourceRule][unique=true]
+                                                    ;y_rental_duration_condition   ;
+                                                    ;y_rental_cart_condition   ;
+                                                    ;y_rental_arrival_date_condition;
+
+
+

@@ -9,6 +9,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ attribute name="cartData" required="true" type="de.hybris.platform.commercefacades.order.data.CartData" %>
 
+<div class="page-loader-new-layout">
+    <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+</div>
 <c:url value="/checkout/applyGiftCard" var="giftCardUrl" />
 <spring:htmlEscape defaultHtmlEscape="true" />
 <div class="paymentOption">
@@ -33,6 +36,12 @@
 				<c:if test="${not empty coupon_applied_msg}">
 					<div class="notification notification-warning">${coupon_applied_msg}</div>
 				</c:if>
+				<c:if test="${not empty giftCardCodeRemove}">
+        		<c:forEach items="${giftCardCodeRemove}" var="giftCardRemoved">
+                <div class="notification notification-warning">${giftCardRemoved}</div>
+            </c:forEach>
+        </c:if>
+
     </div>
 	</div>
 </div>
