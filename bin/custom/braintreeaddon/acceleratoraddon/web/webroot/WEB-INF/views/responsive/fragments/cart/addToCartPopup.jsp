@@ -65,11 +65,11 @@
               <!-- BL-455 TODO Additional Gear Slider -->
              <h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
               <c:choose>
-                            	<c:when test="${not empty productReferences and maxlimit > 0}">
+                            	<c:when test="${not empty productReferences and productsLimit > 0}">
                             	<div id="addToCart-gear-sliders" class="splide mt-4">
                                 		<div class="splide__track">
                                               <ul class="splide__list">
-                                                            <c:forEach end="${maxlimit}" items="${productReferences}" var="productReference" varStatus="loopindex">
+                                                            <c:forEach end="${productsLimit}" items="${productReferences}" var="productReference" varStatus="loopindex">
                                         				        	<li class="splide__slide">
                                                                         <div class="card">
                                                                      <c:choose>
