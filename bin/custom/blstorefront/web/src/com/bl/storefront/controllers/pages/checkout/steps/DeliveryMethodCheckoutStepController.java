@@ -98,8 +98,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
             List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
             if (CollectionUtils.isNotEmpty(giftCardModelList)) {
                 blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
-                model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE,
-                    Config.getParameter("text.gift.card.remove"));
+                model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
             }
         }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
