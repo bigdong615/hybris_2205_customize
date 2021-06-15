@@ -42,7 +42,6 @@ import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.store.services.BaseStoreService;
-import de.hybris.platform.util.Config;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Resource;
