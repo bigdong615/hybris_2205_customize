@@ -70,7 +70,6 @@ public class AddToCartController extends AbstractController
 
 	private static final Logger LOG = Logger.getLogger(AddToCartController.class);
 
-	protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY , ProductOption.STOCK);
 
 	@Resource(name = "cartFacade")
 	private CartFacade cartFacade;
@@ -154,13 +153,17 @@ public class AddToCartController extends AbstractController
 		}
 
 		model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC)));
+		final List<ProductOption> PRODUCT_OPTIONS = Arrays
+				.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA,
+						ProductOption.GALLERY, ProductOption.STOCK);
+		Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
 		final List<ProductReferenceData> productReferences = productFacade
 				.getProductReferencesForCode(code, getEnumerationService().getEnumerationValues(
 						ProductReferenceTypeEnum._TYPECODE),
-						PRODUCT_OPTIONS, Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50)));
+						PRODUCT_OPTIONS, productsLimit);
 
-		model.addAttribute("productReferences", productReferences);
-		model.addAttribute("maxlimit" , Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50)));
+		model.addAttribute(BlControllerConstants.PRODUCTREFERENCE, productReferences);
+		model.addAttribute(BlControllerConstants.MAXIMUM_LIMIT , productsLimit);
 		return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 	}
 
