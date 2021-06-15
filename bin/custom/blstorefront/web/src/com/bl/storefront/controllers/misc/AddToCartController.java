@@ -156,13 +156,13 @@ public class AddToCartController extends AbstractController
 		final List<ProductOption> PRODUCT_OPTIONS = Arrays
 				.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA,
 						ProductOption.GALLERY, ProductOption.STOCK);
-		Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
+		final Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
 		final List<ProductReferenceData> productReferences = productFacade
 				.getProductReferencesForCode(code, getEnumerationService().getEnumerationValues(
 						ProductReferenceTypeEnum._TYPECODE),
 						PRODUCT_OPTIONS, productsLimit);
 
-		model.addAttribute(BlControllerConstants.PRODUCTREFERENCE, productReferences);
+		model.addAttribute(BlControllerConstants.PRODUCT_REFERENCE, productReferences);
 		model.addAttribute(BlControllerConstants.MAXIMUM_LIMIT , productsLimit);
 		return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 	}
