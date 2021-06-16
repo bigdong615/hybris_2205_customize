@@ -210,7 +210,9 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shippingTaxLine.setNumber(taxRequest.getLines().get(taxRequest.getLines().size() -1).getNumber() + 1);
       shippingTaxLine.setItemCode(BltaxapiConstants.SHIPPING);
       shippingTaxLine.setAmount(abstractOrder.getDeliveryCost());
-      shippingTaxLine.setTaxCode(abstractOrder.getEntries().stream().findAny().get().getProduct() instanceof BlSerialProductModel
+      shippingTaxLine.setTaxCode( abstractOrder.getEntries().stream()
+          .anyMatch(abstractOrderEntryModel ->
+              abstractOrderEntryModel.getProduct() instanceof BlSerialProductModel)
           ? BltaxapiConstants.SHIPPING_SALES_TAX_CODE : BltaxapiConstants.RENTAL_TAX_CODE);
       taxLines.add(shippingTaxLine);
     }
