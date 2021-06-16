@@ -155,7 +155,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * To set orderDate to request
    */
   private void setOrderDateToRequest(final TaxRequestData taxRequest) {
-   taxRequest.setDate(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+   taxRequest.setDate(DateFormatUtils.format(new Date(), BltaxapiConstants.LOCAL_DATE_FORMAT));
   }
 
 
