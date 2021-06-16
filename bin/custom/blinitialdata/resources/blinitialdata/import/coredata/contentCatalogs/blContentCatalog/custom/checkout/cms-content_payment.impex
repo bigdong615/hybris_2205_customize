@@ -20,6 +20,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $content
                              ; FooterSlot               ;                                                                                       	;                          ; footer
                              ; FooterSubscriptionSlot   ;                                                                                       	;                          ; wide
                              ; FooterCopyRightslot      ;                                                                                       	;                          ; wide
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = true]                                	   ; position[unique = true]  ; pageTemplate(uid, $contentCV)[unique = true][default = 'MultiStepCheckoutSummaryPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -30,6 +31,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; FooterSlot-multiStepCheckoutSummaryPage               ; FooterSlot               ;                                                                                           	  ; FooterSlot                                 ; true
                                     ;                          ; FooterSubscriptionSlot-multiStepCheckoutSummaryPage   ; FooterSubscriptionSlot   ;                                                                                           	  ; FooterSubscriptionSlot                     ; true
                                     ;                          ; FooterCopyRightslot-multiStepCheckoutSummaryPage      ; FooterCopyRightslot      ;                                                                                           	  ; FooterCopyRightslot                        ; true
+                                    ;                         ; SocialMediaSectionSlot-multiStepCheckoutSummaryPage    ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
 
 
 ###  Create Content Page  ###
