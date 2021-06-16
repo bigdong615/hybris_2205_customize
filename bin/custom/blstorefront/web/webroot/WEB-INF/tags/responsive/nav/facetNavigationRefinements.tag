@@ -38,7 +38,8 @@
 									<c:if test="${pageType == 'PRODUCTSEARCH'}">
                                                  <input type="hidden" name="blPageType" value="${blPageType}"/>
                   </c:if>
-                   <input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
+                  <!--BL-447 changes added below -->
+                   <input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/ autocomplete="off">
 									<label for="${facetData.code}-${facetValue.name}">
 										<span class="facet__list__label">
 											<span class="facet__list__mark"></span>
@@ -78,7 +79,8 @@
 								 <c:if test="${pageType == 'PRODUCTSEARCH'}">
                                <input type="hidden" name="blPageType" value="${blPageType}"/>
                                </c:if>
-                               <input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
+                                <!--BL-447 changes added below --> 
+                               <input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/ autocomplete="off">
 								<label for="${facetData.code}-${facetValue.name}">
 									<span class="facet__list__label">
 										<span class="facet__list__mark"></span>

@@ -9,6 +9,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ attribute name="cartData" required="true" type="de.hybris.platform.commercefacades.order.data.CartData" %>
 
+<div class="page-loader-new-layout">
+    <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+</div>
 <c:url value="/checkout/applyGiftCard" var="giftCardUrl" />
 <spring:htmlEscape defaultHtmlEscape="true" />
 <div class="paymentOption">
@@ -20,17 +23,25 @@
 				<b class="mt-4"><spring:theme code="text.gift.title"/></b>
         <form:form method="post" id="giftCardForm" action="${giftCardUrl}">
 					<div class="input-group mt-2">
-						<input type="text" id="gift-card-apply-gift-card-number"
+						<input type="text" id="gift-card-apply-gift-card-number" 
 							name="giftCardNumber" class="form-control"
 							placeholder="Gift Card Number">
 						<div class="input-group-append">
+						
 							<button id="applyGcCode" class="btn btn-secondary" type="submit"><spring:theme code="text.gift.apply"/></button>
 						</div>
 					</div>
+					<input type="hidden" name="appliedGC" value="${cartData.giftCardData}"/>
 				</form:form>
 				<c:if test="${not empty coupon_applied_msg}">
 					<div class="notification notification-warning">${coupon_applied_msg}</div>
 				</c:if>
+				<c:if test="${not empty giftCardCodeRemove}">
+        		<c:forEach items="${giftCardCodeRemove}" var="giftCardRemoved">
+                <div class="notification notification-warning">${giftCardRemoved}</div>
+            </c:forEach>
+        </c:if>
+
     </div>
 	</div>
 </div>

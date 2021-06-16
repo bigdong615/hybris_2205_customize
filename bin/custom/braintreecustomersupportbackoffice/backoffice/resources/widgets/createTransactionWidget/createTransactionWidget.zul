@@ -1,0 +1,29 @@
+<widget style="overflow:scroll;height:100%">
+		<div style="padding:12px; background-color:#d3d9df">
+			<label>Payment details</label>
+		</div>
+		<grid>
+			<rows>
+				<row style="padding-left:12px">Amount: 					<textbox id="amount" width="100%" constraint="no empty" /></row>
+				<row style="padding-left:12px">Tax Amount: 				<textbox id="taxAmount" width="100%" /></row>
+				<row style="padding-left:12px">Custom Fields (key1:val1,key2:val2...):	<textbox id="customFields" width="100%" /></row>
+			</rows>
+		</grid>
+		<div style="padding:12px; background-color:#d3d9df">
+			<label>Customer details</label>
+		</div>
+		<grid>
+			<rows>
+				<row style="padding-left:12px">First Name: 				<textbox id="firstName" width="100%" /></row>
+				<row style="padding-left:12px">Last Name: 				<textbox id="lastName" width="100%" /></row>
+				<row style="padding-left:12px">Email: 					<textbox id="email" width="100%" /></row>
+				<row style="padding-left:12px">Billing Postal Code: 	<textbox id="billingPostCode" width="100%" /></row>
+				<row style="padding-left:12px">Billing Street Address: 	<textbox id="billingStreetAddress" width="100%" /></row>
+				<row style="padding-left:12px">Shipping Postal Code: 	<textbox id="shippingPostalCode" width="100%" /></row>
+				<row style="padding-left:12px">Shipping Street Address: <textbox id="shippingStreet" width="100%" /></row>
+			</rows>
+		</grid>
+	<div>
+		<button id="saveBtn" label="Save" style="margin:20px"/>
+	</div>
+</widget>

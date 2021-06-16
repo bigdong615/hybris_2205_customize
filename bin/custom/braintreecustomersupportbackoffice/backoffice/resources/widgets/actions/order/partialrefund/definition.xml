@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<action-definition id="com.braintree.customersupportbackoffice.actions.order.partialrefund"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+    <name>partial.refund.action</name>
+    <description>Partial Refund Order Action</description>
+    <author>braintree</author>
+    <version>0.1</version>
+
+    <actionClassName>com.braintree.customersupportbackoffice.actions.order.partialrefund.BrainTreePartialRefundOrderAction</actionClassName>
+    <inputType>de.hybris.platform.core.model.order.OrderModel</inputType>
+    <outputType>de.hybris.platform.core.model.order.OrderModel</outputType>
+
+    <iconUri>icons/icon_action_partialrefund_default.png</iconUri>
+    <iconDisabledUri>icons/icon_action_partialrefund_disabled.png</iconDisabledUri>
+    <iconHoverUri>icons/icon_action_partialrefund_hover.png</iconHoverUri>
+
+    <settings>
+        <setting key="viewMode" default-value="iconAndText"/>
+    </settings>
+
+    <!-- Sockets definition-->
+    <sockets>
+        <output id="partialRefundOrderContext"/>
+    </sockets>
+
+</action-definition>

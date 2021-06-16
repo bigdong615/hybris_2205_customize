@@ -66,6 +66,18 @@
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+                            <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+                                                          <div class="notification notification-error">
+                                                                  ${fn:escapeXml(errorMsg)}
+                                                           </div>
+                                                         </c:if>
+                            <c:if test="${not empty giftCardCodeRemove}">
+                                <div class="notification notification-warning">${giftCardCodeRemove}</div>
+                            </c:if>
+                            <c:if test="${isGiftCardRemoved eq 'true'}">
+                                <div class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
+                            </c:if>
+                                                         <div class="notification notification-error d-none"id="errorMessages_voucher" />
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>
                             <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                             <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>

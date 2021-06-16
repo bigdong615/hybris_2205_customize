@@ -10,6 +10,7 @@
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
@@ -58,11 +59,25 @@
                                   </sec:authorize>
 
                               </div>
-                              <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                              <!--BL-533 changes -->
+                              <p class="mt-5 d-none body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+                             <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+                              <div class="notification notification-error">
+                                      ${fn:escapeXml(errorMsg)}
+                               </div>
+                             </c:if>
+                             <div class="notification notification-error d-none"id="errorMessages_voucher"></div>
+
                               <div id="cart-warning" class="notification notification-warning" style="display:none"><spring:theme code="text.date.range.not.available" /></div>
+                              <c:if test="${not empty giftCardCodeRemove}">
+                                  <div id="cart-warning" class="notification notification-warning">${giftCardCodeRemove}</div>
+                              </c:if>
+                              <c:if test="${isGiftCardRemoved eq 'true'}">
+                                 <div id="cart-warning" class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
+                              </c:if>
                               <%--<div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                               <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                               <div class="order-actions my-4">

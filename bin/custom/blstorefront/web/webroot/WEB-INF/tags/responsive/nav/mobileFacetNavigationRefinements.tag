@@ -28,7 +28,6 @@
 	<hr>
 	<div class="facet js-facet collapse" id="${facetid}">
 		<div class="facet__values js-facet-values js-facet-form">
-
 			<c:if test="${not empty facetData.topValues}">
 			
 				<ul class="facet__list js-facet-list js-facet-top-values checkbox-list">
@@ -120,6 +119,7 @@
 			</c:if>
 		</div>
 	</div>	
-
+<!-- BL:581 added hr tag -->
+	<hr class="js-hr-tag">
 	</ycommerce:testId>
 </c:if>
