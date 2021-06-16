@@ -6,6 +6,15 @@
     changeUPSStore();
     hideShippingForm();
     hideErrorForInputValidation();
+    $('#ship-it-savedAddresses option').each(function() {         
+        var optionText = this.text;       
+        var newOption = optionText.substring(0,57); 
+        if(screen.width<600){
+            var newOption = optionText.substring(0,35); 
+        }       
+        jQuery(this).text(newOption + '..');
+
+    });
 });
 
  $('#ship-it-select-box').change(function () {

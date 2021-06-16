@@ -138,12 +138,21 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
     background-size: 10px;
     background-position: right;
     background-position-x: calc(100% - 18px);
+    text-transform: inherit;
   }
   .accordion select::-ms-expand {
     display: none !important;
+    width: 100%;
   }
 
   .accordion select {
    -moz-appearance: none;
    -webkit-appearance: none;
+   width: 100%;
+   white-space: break-spaces;
   }
+  .accordion select option{
+      overflow: hidden;
+      white-space: break-spaces;      
+  }
+  
