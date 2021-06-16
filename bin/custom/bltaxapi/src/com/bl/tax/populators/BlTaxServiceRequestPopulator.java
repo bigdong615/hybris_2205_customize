@@ -26,6 +26,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -110,6 +111,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
       shipTo.setLine1(deliveryAddressForOrder.getLine1());
       shipTo.setLine2(deliveryAddressForOrder.getLine2());
       shipTo.setCity(deliveryAddressForOrder.getTown());
+
       if(null != deliveryAddressForOrder.getRegion()) {
           shipTo.setState(deliveryAddressForOrder.getRegion().getName());
           shipTo.setRegion(deliveryAddressForOrder.getRegion().getIsocode());
@@ -153,7 +155,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
    * To set orderDate to request
    */
   private void setOrderDateToRequest(final TaxRequestData taxRequest) {
-   taxRequest.setDate(DateFormatUtils.format(new Date(), BltaxapiConstants.DATE_FORMAT));
+   taxRequest.setDate(DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
   }
 
 
@@ -168,7 +170,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           }
             taxRequest.setTaxExemptState(addressState.equalsIgnoreCase(abstractOrder.getUser().getTaxExemptState()) ? addressState : null);
           final Date endDay = getDateForRequest(abstractOrder);
-          if (null != abstractOrder.getUser().getTaxExemptExpiry() && null != endDay && endDay.compareTo(abstractOrder.getUser().getTaxExemptExpiry()) < 0 && null != taxRequest.getTaxExemptState()) {
+          if (null != abstractOrder.getUser().getTaxExemptExpiry() && null != endDay && isTaxExemptDateValid(abstractOrder ,endDay) && null != taxRequest.getTaxExemptState()) {
               taxRequest.setTaxExemptExpiry(abstractOrder.getUser().getTaxExemptExpiry());
               taxRequest.setExemptionNo(StringUtils.isNotBlank(abstractOrder.getUser().getTaxExemptNumber()) ? abstractOrder.getUser().getTaxExemptNumber() : null);
               taxRequest.setCommit(abstractOrder.getUser().getIsTaxExempt());
@@ -212,7 +214,7 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           ? BltaxapiConstants.SHIPPING_SALES_TAX_CODE : BltaxapiConstants.RENTAL_TAX_CODE);
       taxLines.add(shippingTaxLine);
     }
-    if(CollectionUtils.isNotEmpty(abstractOrder.getAppliedCouponCodes()))
+    if(CollectionUtils.isNotEmpty(abstractOrder.getAppliedCouponCodes()) || CollectionUtils.isNotEmpty(abstractOrder.getGiftCard()))
     {
       discountTaxLine.setQuantity(BltaxapiConstants.QTY);
       discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
@@ -225,6 +227,12 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
     }
   }
 
+  /**
+   * This method check for rental end date is on or before tax certificate expiry
+   */
+  private boolean isTaxExemptDateValid(final AbstractOrderModel abstractOrder , final Date endDay) {
+    return endDay.before(abstractOrder.getUser().getTaxExemptExpiry()) || DateUtils.isSameDay(abstractOrder.getUser().getTaxExemptExpiry() ,endDay);
+  }
 
   public BlDatePickerService getBlDatePickerService() {
     return blDatePickerService;
