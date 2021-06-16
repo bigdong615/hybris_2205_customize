@@ -57,9 +57,22 @@ INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @me
 INSERT_UPDATE Media ; $contentCV[unique=true] ; code[unique=true]            ; realfilename   ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/jpg+xml'] ; altText ; folder(qualifier)[default='images'] 
                     ;                         ; /images/theme/img-blog-1.jpg ; img-blog-1.jpg ; $siteResource/images/theme/img-blog-1.jpg                                  ; image/jpg+xml                 ;         ;                                     
                     ;                         ; /images/theme/img-blog-2.jpg ; img-blog-2.jpg ; $siteResource/images/theme/img-blog-2.jpg                                  ; image/jpg+xml                 ;         ;                                     
-                    ;                         ; /images/theme/img-blog-3.jpg ; img-blog-3.jpg ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;                                     
-                    
-UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]         
+                    ;                         ; /images/theme/img-blog-3.jpg ; img-blog-3.jpg ; $siteResource/images/theme/img-blog-3.jpg                                  ; image/jpg+xml                 ;         ;
+
+
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ;description                                 ; realfilename                 ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
+                    ;                        ; /images/theme/inspected123.png     ; $siteResource/images/theme/icon-used-inspected.png                                   ;Inspected & cleaned by our experts          ; icon-used-inspected          ;         ;image/png+xml
+                    ;                        ; /images/theme/guarantee123.png     ; $siteResource/images/theme/icon-used-guarantee.png                                   ;We guarantee your gear will work perfectly  ; icon-used-guarantee          ;         ;image/png+xml
+                    ;                        ; /images/theme/condition123.png     ; $siteResource/images/theme/icon-used-condition.png                                   ;Know what to expect with condition details  ;icon-used-condition           ;         ;image/png+xml
+                    ;                        ; /images/theme/returns123.png       ; $siteResource/images/theme/icon-used-returns.png                                   ;Try it yourself with easy returns           ; icon-used-returns            ;         ;image/png+xml
+
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ;redirectUrl                                         ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename           ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
+                    ;                        ; /images/logo-youtube1.svg    ;https://www.youtube.com/user/BorrowLenses/featured  ; $siteResource/images/icon-youtube.svg                                                         ; logo-youtube.svg     ;         ; image/svg+xml              ;                         ;
+                    ;                        ; /images/logo-instagram1.svg  ;https://instagram.com/borrowlenses                  ; $siteResource/images/icon-instagram.svg                                                       ; logo-instagram.svg   ;         ; image/svg+xml              ;                         ;
+                    ;                        ; /images/logo-facebook1.svg   ;http://facebook.com/Borrowlenses                   ; $siteResource/images/icon-facebook.svg                                                        ; logo-facebook.svg    ;         ; image/svg+xml              ;                         ;
+
+
+UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]
                                ;                         ; BLSiteLogoComponent ; /images/theme/bl-logo@2x.png ;  
                                
 UPDATE CustomNavigationPromoComponent ; $contentCV[unique=true] ; uid[unique=true]            ; $picture[lang=$lang]          
@@ -124,4 +137,5 @@ UPDATE CustomBrandsComponent ; $contentCV[unique=true] ; uid[unique=true]       
                              ;                         ; CustomBrandsComponent2 ; /images/logo-sony.svg       ; "/Sony/c/Sony"           ; Sony                        
                              ;                         ; CustomBrandsComponent3 ; /images/logo-nikon1.svg     ; "/Nikon/c/nikon"         ; Nikon                       
                              ;                         ; CustomBrandsComponent4 ; /images/logo-dji1.svg       ; "/DJI/c/DJI"             ; DJI                         
-                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/Panasonic/c/Panasonic" ; Panasonic                   
+                             ;                         ; CustomBrandsComponent5 ; /images/logo-panasonic1.svg ; "/Panasonic/c/Panasonic" ; Panasonic
+

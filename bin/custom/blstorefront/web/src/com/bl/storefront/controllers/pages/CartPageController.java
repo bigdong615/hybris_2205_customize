@@ -5,18 +5,19 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
-
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -49,11 +50,11 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.quote.data.QuoteData;
 import de.hybris.platform.commercefacades.voucher.VoucherFacade;
 import de.hybris.platform.commercefacades.voucher.exceptions.VoucherOperationException;
-import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.site.BaseSiteService;
@@ -102,7 +103,6 @@ public class CartPageController extends AbstractCartPageController
 	public static final String SHOW_CHECKOUT_STRATEGY_OPTIONS = "storefront.show.checkout.flows";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
 	public static final String SUCCESSFUL_MODIFICATION_CODE = "success";
-	public static final String VOUCHER_FORM = "voucherForm";
 	public static final String SITE_QUOTES_ENABLED = "site.quotes.enabled.";
 	private static final String CART_CHECKOUT_ERROR = "cart.checkout.error";
 
@@ -111,6 +111,7 @@ public class CartPageController extends AbstractCartPageController
 	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 	private static final String REDIRECT_QUOTE_EDIT_URL = REDIRECT_PREFIX + "/quote/%s/edit/";
 	private static final String REDIRECT_QUOTE_VIEW_URL = REDIRECT_PREFIX + "/my-account/my-quotes/%s/";
+
 
 	private static final Logger LOG = Logger.getLogger(CartPageController.class);
 
@@ -162,6 +163,9 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
 
+	@Resource(name = "blGiftCardFacade")
+	private BlGiftCardFacade blGiftCardFacade;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -178,6 +182,14 @@ public class CartPageController extends AbstractCartPageController
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
 		getCheckoutFacade().removeDeliveryDetails();
+		CartModel cartModel = blCartService.getSessionCart();
+		if (cartModel != null) {
+			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+			if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+				blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
+				model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
+			}
+		}
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
 		return prepareCartUrl(model);
 	}
@@ -493,9 +505,9 @@ public class CartPageController extends AbstractCartPageController
 	{
 		super.prepareDataForPage(model);
 
-		if (!model.containsAttribute(VOUCHER_FORM))
+		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
 		{
-			model.addAttribute(VOUCHER_FORM, new VoucherForm());
+			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 		}
 
 		// Because DefaultSiteConfigService.getProperty() doesn't set default boolean value for undefined property,
@@ -681,8 +693,8 @@ public class CartPageController extends AbstractCartPageController
 		{
 			if (bindingResult.hasErrors())
 			{
-				redirectAttributes.addFlashAttribute("errorMsg",
-						getMessageSource().getMessage("text.voucher.apply.invalid.error", null, getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
+						getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
 			}
 			else
 			{
@@ -690,7 +702,7 @@ public class CartPageController extends AbstractCartPageController
 				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
 				{
 					redirectAttributes.addFlashAttribute("disableUpdate", Boolean.valueOf(true));
-					redirectAttributes.addFlashAttribute("errorMsg",
+					redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
 							getMessageSource().getMessage("text.voucher.apply.bruteforce.error", null, getI18nService().getCurrentLocale()));
 				}
 				else
@@ -704,10 +716,10 @@ public class CartPageController extends AbstractCartPageController
 		}
 		catch (final VoucherOperationException e)
 		{
-			redirectAttributes.addFlashAttribute(VOUCHER_FORM, form);
-			redirectAttributes.addFlashAttribute("errorMsg",
+			redirectAttributes.addFlashAttribute(BlControllerConstants.VOUCHER_FORM, form);
+			redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
 					getMessageSource().getMessage(e.getMessage(), null,
-							getMessageSource().getMessage("text.voucher.apply.invalid.error", null, getI18nService().getCurrentLocale()),
+							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
 							getI18nService().getCurrentLocale()));
 			if (LOG.isDebugEnabled())
 			{
@@ -716,11 +728,11 @@ public class CartPageController extends AbstractCartPageController
 
 		}
 
-		return REDIRECT_CART_URL;
+		return getRedirectUrlForCoupon(request);
 	}
 
 	@RequestMapping(value = "/voucher/remove", method = RequestMethod.POST)
-	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel)
+	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request)
 	{
 		try
 		{
@@ -737,7 +749,8 @@ public class CartPageController extends AbstractCartPageController
 			}
 
 		}
-		return REDIRECT_CART_URL;
+
+		return getRedirectUrlForCoupon(request);
 	}
 
 	@Override
@@ -939,6 +952,26 @@ public class CartPageController extends AbstractCartPageController
 			}
 		}
 		return BlControllerConstants.SUCCESS;
+	}
+
+	/**
+	 * This method created to decide url to redirect on apply or remove of coupon using referer
+	 *
+	 */
+	private String getRedirectUrlForCoupon(final HttpServletRequest request) {
+
+		final String referer = request.getHeader(BlControllerConstants.REFERER);
+
+		if (referer.contains(BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL))
+		{
+			return REDIRECT_PREFIX + BlControllerConstants.DELIVERY_METHOD_CHECKOUT_URL;
+		}
+		else if(referer.contains(BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL)) {
+
+			return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
+		}
+
+		return REDIRECT_CART_URL;
 	}
 
 	/**

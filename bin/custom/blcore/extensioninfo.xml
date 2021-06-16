@@ -14,6 +14,8 @@
         <requires-extension name="acceleratorcms"/>
         <requires-extension name="bllogging"/>
         <requires-extension name="blintegration"/>
+        <requires-extension name="commercefacades"/>
+        <requires-extension name="ruledefinitions"/>
         <requires-extension name="wishlist"/>
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		

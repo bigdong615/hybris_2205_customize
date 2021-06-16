@@ -3,6 +3,19 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
+
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.services.gitfcard.BlGiftCardService;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
+import com.bl.facades.giftcard.data.BLGiftCardData;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorfacades.flow.impl.SessionOverrideCheckoutFlowFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -14,10 +27,10 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.ConsentForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.GuestRegisterForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.GuestRegisterValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.security.AutoLoginStrategy;
-import de.hybris.platform.commercefacades.consent.CustomerConsentDataStrategy;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.consent.ConsentFacade;
+import de.hybris.platform.commercefacades.consent.CustomerConsentDataStrategy;
 import de.hybris.platform.commercefacades.consent.data.AnonymousConsentData;
 import de.hybris.platform.commercefacades.coupon.data.CouponData;
 import de.hybris.platform.commercefacades.order.CheckoutFacade;
@@ -28,40 +41,42 @@ import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
-import com.bl.storefront.controllers.ControllerConstants;
-
+import de.hybris.platform.servicelayer.session.SessionService;
+import de.hybris.platform.servicelayer.user.UserService;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
 
 
 
@@ -104,6 +119,27 @@ public class CheckoutController extends AbstractCheckoutController
 
 	@Resource(name = "customerConsentDataStrategy")
 	protected CustomerConsentDataStrategy customerConsentDataStrategy;
+
+  @Resource(name = "cartFacade")
+  private BlCartFacade blCartFacade;
+
+  @Resource(name = "giftCardService")
+  private BlGiftCardService giftCardService;
+
+  @Resource(name = "sessionService")
+  private SessionService sessionService;
+
+  @Resource(name = "userService")
+  private UserService userService;
+
+  @Resource(name = "cartService")
+  private BlCartService blCartService;
+
+  @Resource(name = "checkoutCartCalculationStrategy")
+  private CommerceCartCalculationStrategy commerceCartCalculationStrategy;
+
+  @Resource(name = "blGiftCardFacade")
+  private BlGiftCardFacade blGiftCardFacade;
 
 	@ExceptionHandler(ModelNotFoundException.class)
 	public String handleModelNotFoundException(final ModelNotFoundException exception, final HttpServletRequest request)
@@ -310,6 +346,128 @@ public class CheckoutController extends AbstractCheckoutController
 			uid = orderDetails.getUser().getUid();
 		}
 		model.addAttribute("email", uid);
+	}
+
+	/**
+	 * This method is used to apply gift card.
+	 *
+	 * @param code
+	 * @param request
+	 * @param model
+	 * @return String.
+	 * @throws CMSItemNotFoundException
+	 * @throws CalculationException
+	 */
+	@PostMapping(value = "/applyGiftCard")
+	@ResponseBody
+	public String apply(final String code, final HttpServletRequest request, final Model model) {
+		final CartModel cartModel = blCartService.getSessionCart();
+		final Locale locale = getI18nService().getCurrentLocale();
+		if(StringUtils.isEmpty(code)){
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.code.blank", null, locale));
+			return BlControllerConstants.ERROR;
+		}
+
+		if(cartModel != null) {
+			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
+			final List<BLGiftCardData> blGiftCardDataList = blCartFacade.getSessionCart()
+					.getGiftCardData();
+			final List<String> giftCardDataList = new ArrayList<>();
+			if (CollectionUtils.isNotEmpty(blGiftCardDataList)) {
+				for (BLGiftCardData giftCardData : blGiftCardDataList) {
+					giftCardDataList.add(giftCardData.getCode());
+				}
+			}
+			try {
+				return handleGiftCardStatus(code, locale, giftCardDataList, cartModel, giftCardModel);
+			} catch (final Exception exception) {
+				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+						"Error occurred while applying gift card code: {} on cart: {} for the customer: {}",
+						code,
+						cartModel.getCode(), cartModel.getUser().getUid(), exception);
+			}
+		}
+		return BlControllerConstants.ERROR;
+	}
+
+	/**
+	 * It sets message in the session attribute based on the gift card apply operation.
+	 *
+	 * @param code
+	 * @param locale
+	 * @param giftCardData
+	 * @param cartModel
+	 * @param giftCardModel
+	 * @return String.
+	 */
+	private String handleGiftCardStatus(final String code, final Locale locale,
+			final List<String> giftCardData, final CartModel cartModel,
+			final GiftCardModel giftCardModel) {
+		if (CollectionUtils.isNotEmpty(giftCardData) && giftCardData.contains(code)
+				&& isOrderFullyPaid(cartModel)) {
+			//if cart already have applied GC  and order total is 0.00
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.apply.applied.again", null, locale));
+			return BlControllerConstants.ERROR;
+		} else if (CollectionUtils.isNotEmpty(giftCardData) && giftCardData.contains(code)) {
+			//if cart already have applied GC and GC have insufficient balance
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+							{code}, locale));
+			return BlControllerConstants.ERROR;
+		}
+		if (blGiftCardFacade.applyGiftCard(code)) {
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.apply.success", new Object[]
+							{code}, locale));
+			return BlControllerConstants.SUCCESS;
+		} else {
+			if (giftCardModel == null) {
+				//if applied GC is not present in the system.
+				sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+						getMessageSource().getMessage("text.gift.apply.applied.fail", null, locale));
+				return BlControllerConstants.ERROR;
+			} else if (isOrderFullyPaid(cartModel)) {
+				//if order total is 0.00
+				sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+						getMessageSource().getMessage("text.gift.apply.applied.again", null, locale));
+				return BlControllerConstants.ERROR;
+			}
+		}
+		return BlControllerConstants.ERROR;
+	}
+
+	/**
+	 * It checks that cart total price shouldn't be zero or less than zero.
+	 *
+	 * @param cartModel
+	 * @return boolean value
+	 */
+	private boolean isOrderFullyPaid(final CartModel cartModel) {
+		return cartModel.getTotalPrice() <= 0;
+	}
+
+	/**
+	 * It removes applied gift card from cart.
+	 * @param giftCardForm
+	 * @param request
+	 * @param model
+	 * @return String
+	 */
+	@PostMapping(value = "/removeGiftCard")
+	@ResponseBody
+	public String remove(final GiftCardForm giftCardForm, final HttpServletRequest request, final Model model) {
+		CartModel cartModel = blCartService.getSessionCart();
+		try {
+			blGiftCardFacade.removeGiftCard(giftCardForm.getGiftCardCode(), cartModel);
+			return BlControllerConstants.TRUE_STRING;
+		} catch (final Exception exception) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Error while removing applied gift card code: {} from cart: {} for the customer: {}",
+					giftCardForm.getGiftCardCode(), cartModel.getCode(), cartModel.getUser().getUid(), exception);
+			return BlControllerConstants.FALSE_STRING;
+		}
 	}
 
 	protected GuestRegisterValidator getGuestRegisterValidator()

@@ -28,10 +28,6 @@ Added for removing add to cart popup background, when unable to add product to c
    .card .splide__arrow { padding: 8px; background: rgba(255,255,255,.6); border-radius: 50%; z-index: 99; }
    .card .splide__arrow--next { margin-right: -15px;z-index: 2; position: absolute; right: 0; }
 
-/*BL- 605 */
-@media(min-width:767px){
-  #productExtras #gear-slider-list .card { padding: 30px 10px; }
-}
 
 /**
 BL-31 Added for error message in login and create account popup
@@ -51,11 +47,128 @@ BL-31 Added for error message in login and create account popup
 .icon-production {
  background: url(../assets/icon-equipment.svg) center no-repeat;
   }
+  /* BL-494 ends here */
+
   .btn-outline { border: 1px solid #cccccc; }
   .litepicker .reset-button { color: #3d3c3c; position: absolute; bottom: 30px; left: 50px; text-transform: initial; }
   @media screen and (max-width: 480px) { .litepicker .reset-button { position: relative; bottom: 0; left: 0 }}
   @media screen and (max-width: 480px) { .litepicker .preview-date-range { display: block; padding-bottom: 10px; }}
 .litepicker .container__months .month-item { transform: none !important; }
+
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
+
+.cart h1 {
+    font-size: 34px;
+    line-height: 40px;
+}
+
+
+.cartProduct, .shipProduct, .payProduct, .paymentOption, .reviewCart {
+    padding-bottom: 40px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #d4d3d3;
+}
+
+.testing {
+	padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+
+.secure { background: url(../assets/icon-lock.svg) 97% center no-repeat; }
+
+.billingAddressData input[type="checkbox"]:checked:before {
+    background: #52bfc0 url(../assets/icon-check-white.svg) no-repeat center;
+    border-color: #52bfc0;
+    position: absolute;
+    background-size: 10px;
+    content: "";
+    width: 18px;
+    height: 18px;
+}
+
+#order h1 {
+    font-size: 34px;
+    line-height: 40px;
+}
+ /* BL-688*/
+#productInfo .nextAvailDate{color:#e64b4f;}
+ #productDates .red-border { border: 2px solid #e64b4f;}
+.date-notAvail{
+  background-image: url("../assets/notification-error.svg") !important;
+  background-position: 95% 50% !important;
+  background-repeat: no-repeat !important;
+}
+.date-notAvail::placeholder { color: #e64b4f;}
+/* Added for I-pad pro device */
+@media screen and (min-device-width: 991px) and (max-device-width: 1025px){
+#productDates .input-group {
+padding-left:4px;}
+#globalSearch .input-group span, #productDates .input-group span{
+padding-right:10px;}
+#product-litepicker{padding-left :6px;}
+}
+
+@media (max-width: 321px){
+#productDates .input-group {
+padding-left:4px;}
+#globalSearch .input-group span, #productDates .input-group span{
+padding-right:5px;}
+#mobile-product-litepicker{padding-left :6px;}
+.date-notAvail{
+  background-image: url("../assets/notification-error.svg") !important;
+  background-position: 97% 50% !important;
+  background-repeat: no-repeat !important;
+}
+}
+/* BL-681*/
+#costSummary a{
+text-decoration :none ;
+}
+
+/* BL-678  BL-677 */
+.card li {display :flex; align-items: center;}
+.btnwidth button {width :100%; margin-top:1%;}
+.btnwidth a{width :100%;}
+/* BL-606 */
+.splide__slide .card h6.product, #productList .card h6.product {height :36px; overflow: hidden;}
+@media only screen and (max-width: 1025px) and (min-width: 991px)   {
+  .splide__slide .card h6.product, #productList .card h6.product {height :43px; overflow: hidden;}
+  #gear-slider .splide__slide .card h6.product {height :35px; overflow: hidden;}
+ }
+
+ /*BL- 605 */
+  #productExtras #gear-slider-list .card { padding: 30px 20px; }
+  .hide-days .period{ display: none;}
+  /* BL-45 */
+.hero-content a{color: #fff;text-decoration: none;}
+@media screen and (max-width: 767px){
+  .embed-responsive img {
+    max-width: fit-content;
+  }
+  .social{position: static !important;margin-bottom: 3rem;}
+  }
+/* BL-45 */
+
+/*BL-455 CSS for add to cart pop up */
+#addToCart-gear-sliders > .splide__arrows .splide__arrow--prev, #blog-slider > .splide__arrows .splide__arrow--prev, #gear-slider-cart > .splide__arrows .splide__arrow--prev { margin-left: -30px; }
+
+#addToCart-gear-sliders > .splide__arrows .splide__arrow--next, #blog-slider > .splide__arrows .splide__arrow--next, #gear-slider-cart > .splide__arrows .splide__arrow--next { margin-right: -30px; }
+
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
+
+@media(max-width:767px){#addToCart-gear-sliders > .splide__arrows{display: none;} }
+
+#addToCart-gear-sliders .card li {display: flex; align-items: center;}
+
+#addToCart-gear-sliders .card h6.product{  overflow:hidden;}
+@media screen and (min-width: 1200px){ #matchingProducts #addToCart-gear-sliders  .card{ min-height :400px  !important;} }
+@media screen and (min-width: 767px){ #matchingProducts #addToCart-gear-sliders  .card{ min-height :400px  !important;} }
+/*BL-455 */
+
+.social-icon{position : relative}
+.social{position: absolute;bottom: -23px;left: 0;}
 
 /* for wishlist */
 .bookmark-checked{background-color:red !important;}

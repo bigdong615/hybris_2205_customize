@@ -89,4 +89,10 @@
 
   <bean id="blAvalaraTaxCalculationService" class="com.bl.tax.service.impl.BlAvalaraTaxCalculationService"/>
 
+  <!--Added to calculate tax by overriding OOB strategy-->
+  
+  <alias name="defaultBlApplyExternalTaxesStrategy" alias="applyExternalTaxesStrategy"/>
+  <bean id="defaultBlApplyExternalTaxesStrategy" class="com.bl.tax.stratergy.DefaultBlApplyExternalTaxesStrategy"/>
+
+
 </beans>

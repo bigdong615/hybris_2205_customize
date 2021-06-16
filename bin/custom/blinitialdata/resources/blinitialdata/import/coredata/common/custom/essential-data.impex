@@ -167,7 +167,13 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 INSERT_UPDATE BlDamageWaiverPricing ; damageWaiverGearType(code)[unique=true] ; waiverPercentage 
                                     ; VIDEO                                   ; 28               
                                     ; PHOTO                                   ; 26               
-                                    ; GEAR_GUARD_PRO                          ; 155              
+                                    ; GEAR_GUARD_PRO                          ; 155
+
+
+### BL-567 Added for promotion ###
+INSERT_UPDATE CatalogVersionToRuleEngineContextMapping;context(name)[unique=true];catalogVersion(catalog(id),version)[unique=true]
+                                                      ;promotions-context;blProductCatalog:Online
+                                                      ;promotions-preview-context;blProductCatalog:Staged
 
 
 

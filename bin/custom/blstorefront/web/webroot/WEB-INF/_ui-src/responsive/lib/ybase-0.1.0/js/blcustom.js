@@ -144,3 +144,153 @@ $('#cart-continue').on("click", function (e) {
 		}
 	});
 });
+
+//BL-563 Gift Card Apply
+$('#applyGcCode').click(function (e) {
+	e.preventDefault();
+  var giftCardForm = $("#giftCardForm");
+  var $form = $(this);
+	var gcCode = $("#gift-card-apply-gift-card-number").val();
+	$.ajax({
+		url: giftCardForm.attr('action'),
+		type: giftCardForm.attr("method"),
+		data: {
+			code: gcCode
+		},
+		beforeSend: function(){
+        $('.page-loader-new-layout').show();
+    },
+    success: function (data) {
+      window.location.reload();
+    },
+    complete: function() {
+        $('.page-loader-new-layout').hide();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+       $('.page-loader-new-layout').hide();
+       console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+    }
+	});
+});
+
+//BL-563 Remove Gift Card
+$('.remove-gift-card').on("click", function(e) {
+     e.preventDefault();
+     var itemIndex = $(this).data("index");
+     var $form = $(document).find('#removeGiftCardForm' + itemIndex);
+     var method = $form.attr("method") ? $form.attr("method").toUpperCase() : "POST";
+     $.ajax({
+         url: $form.attr("action"),
+         data: $form.serialize(),
+         async: false,
+         type: method,
+         success: function(data, status, xhr) {
+              window.location.reload();
+         },
+         error: function(error) {
+             console.log("Error while removing gift card");
+         }
+     });
+});
+
+// BL-581
+$(".js-hr-tag").last().hide();
+
+//BL-688 changes
+
+if($("#addToCartButton").hasClass("js-disable-btn"))
+{
+    $("#product-litepicker").addClass("date-notAvail");
+    $("#mobile-product-litepicker").addClass("date-notAvail");
+    $("#pickupDelivery .pickupDeliveryLink").addClass("d-none");
+    $(" #productDates .input-group").addClass("red-border");
+}
+
+if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("js-disable-btn")){
+    $("#product-litepicker").addClass("date-notAvail");
+    $("#mobile-product-litepicker").addClass("date-notAvail");
+    $(" #productDates .input-group").addClass("red-border");
+    $("#pickupDelivery .pickupDeliveryLink").addClass("d-none");
+}
+
+ //BL-455  Changes for Add To Cart POP Up
+   function modalBodyContent(){
+   	new Splide( '#addToCart-gear-sliders', {
+   					perPage: 3,
+
+   					breakpoints: {
+   						'991': {
+   							perPage: 2,
+   						},
+   						'640': {
+   							perPage: 1,
+   						},
+   					},
+   					rewind : true,
+   					gap: 20,
+   					padding: 10,
+   					arrows : true,
+   					pagination :true,
+   					keyboard: false,
+   				} ).mount();
+   				 document.querySelectorAll('.card-sliders').forEach(carousel => new Splide( carousel, {
+   					type   : 'loop',
+   					perPage: 1,
+   					pagination: true,
+   					drag   : false,
+   					fixedHeight: 140,
+   					breakpoints: {
+   						'991': {
+   							pagination: false,
+   						},
+   					},
+   					keyboard: false,
+   				} ).mount());
+ //BL-455  ends  here
+   		   let modalCardQty =  document.getElementsByClassName("card-sliders").length;
+   		   if (modalCardQty!=0){
+   			if(modalCardQty<=3 && screen.width>991){
+   				document.querySelector("#addToCart-gear-sliders .splide__arrows").style.display="none";
+   				 document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
+   			}
+   			 if(modalCardQty<=2 && screen.width<=991 && screen.width>767){
+   				document.querySelector("#addToCart-gear-sliders .splide__arrows").style.display="none";
+   				 document.querySelector("#addToCart-gear-sliders > .splide__pagination").style.display="none";
+   			}
+     	}
+    }
+
+  //BL-455 add to cart
+    function addToCartFromModal(){
+   $('.js-add-to-cart-popup').on('click',function(e) {
+                         e.preventDefault();
+                         let popUpId = this.getAttribute("id");
+                          var productCode = $(this).attr('data-product-code');
+                          var serialCode = $(this).attr('data-serial');
+                          if(serialCode == '' || serialCode == undefined){
+                         serialCode = "serialCodeNotPresent";
+                         }
+                          $.ajax({
+                                     url: ACC.config.encodedContextPath + "/cart/add",
+                                     type: 'POST',
+                                     data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                     beforeSend: function(){
+                                       $('.page-loader-new-layout').show();
+                                     },
+                                     success: function (response) {
+                                      var index = $( ".js-add-to-cart-popup" ).index( this );
+                                      document.getElementById(popUpId).innerHTML= "Added";
+                                     },
+                                      complete: function() {
+                                        $('.page-loader-new-layout').hide();
+                                       },
+                                     error: function (jqXHR, textStatus, errorThrown) {
+                                           $('.modal-backdrop').addClass('remove-popup-background');
+                                           // log the error to the console
+                                           console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                                     }
+                          });
+
+   });
+  }
+}

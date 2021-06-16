@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+   
+    [y] hybris Platform 
+    Copyright (c) 2000-2016 SAP SE or an SAP affiliate company.
+    All rights reserved.
+   
+    This software is the confidential and proprietary information of SAP
+    ("Confidential Information"). You shall not disclose such Confidential
+    Information and shall use it only in accordance with the terms of the
+    license agreement you entered into with SAP.
+   
+ -->
+
+<action-definition id="com.braintree.customersupportbackoffice.actions.order.void"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+
+    <name>void.action</name>
+    <description>Void Action</description>
+    <author>braintree</author>
+    <version>0.1</version>
+
+    <actionClassName>com.braintree.customersupportbackoffice.actions.order.voidorder.BraintreeVoidAction</actionClassName>
+    <inputType>de.hybris.platform.core.model.order.OrderModel</inputType>
+    <outputType>de.hybris.platform.core.model.order.OrderModel</outputType>
+
+    <iconUri>icons/icon_action_void_default.png</iconUri>
+    <iconDisabledUri>icons/icon_action_void_disabled.png</iconDisabledUri>
+    <iconHoverUri>icons/icon_action_void_hover.png</iconHoverUri>
+
+    <settings>
+        <setting key="viewMode" default-value="iconAndText"/>
+    </settings>
+
+    <!-- Sockets definition-->
+    <sockets>
+        <output id="voidContext"/>
+    </sockets>
+
+</action-definition>

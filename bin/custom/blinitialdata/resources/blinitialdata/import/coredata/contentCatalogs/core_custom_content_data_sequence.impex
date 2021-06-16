@@ -55,5 +55,7 @@ $contentCatalogsCustomShippingPagePath = /blinitialdata/import/coredata/contentC
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomShippingPagePath/cms-content_rentalDeliveryOrPickUpPage.impex"), "utf-8", 0, 0);
 
 #Mention here Checkout Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCheckoutPagePath/cms-content_payment.impex"), "utf-8", 0, 0);
 
 #Mention here Email Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/giftCardEmail_content.impex"), "utf-8", 0, 0);

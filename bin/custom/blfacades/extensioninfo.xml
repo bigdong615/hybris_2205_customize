@@ -16,13 +16,14 @@
         <requires-extension name="blintegration"/>
 
         <requires-extension name="blcore"/>
-        <requires-extension name="wishlist"/>
 
+        <requires-extension name="braintreefacades"/>
+
+        <requires-extension name="wishlist"/>
         <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="com.bl.facades"/>
-                		
-        
-        		
-	
+
+
+
     
     </extension>
         
