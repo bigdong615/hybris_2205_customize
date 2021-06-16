@@ -88,6 +88,11 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		}
 	}
 
+	/**
+	 * Overriding to remove discounts from subtotal
+	 * @param source
+	 * @param abstractOrderData
+	 */
 	@Override
 	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData abstractOrderData)
 	{
