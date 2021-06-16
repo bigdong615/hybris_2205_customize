@@ -33,15 +33,15 @@ import org.apache.log4j.Logger;
  * @author Ritika
  *
  */
-public class RuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSupport {
+public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSupport {
 
-  private static final Logger LOG = Logger.getLogger(RuleFreeRentalDatesRAOAction.class);
+  private static final Logger LOG = Logger.getLogger(BlRuleFreeRentalDatesRAOAction.class);
 
   private BlCommercePriceService blCommercePriceService;
   private ProductService productService;
   private Converter<OrderEntryRAO, NumberedLineItem> orderEntryRaoToNumberedLineItemConverter;
 
-  public RuleFreeRentalDatesRAOAction() {
+  public BlRuleFreeRentalDatesRAOAction() {
   }
 
   /**
