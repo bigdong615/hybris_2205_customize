@@ -826,6 +826,8 @@ public class CartPageController extends AbstractCartPageController
 			getBlCartFacade().removeCartEntries();
 		} catch (final Exception exception) {
 			BlLogger.logMessage(LOG, Level.ERROR, "Unable to remove cart entries:", exception);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+					"text.page.cart.clear.fail");
 		}
 		return REDIRECT_CART_URL;
 	}
