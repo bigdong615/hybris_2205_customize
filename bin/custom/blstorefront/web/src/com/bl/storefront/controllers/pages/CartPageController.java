@@ -178,7 +178,7 @@ public class CartPageController extends AbstractCartPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
 		getCheckoutFacade().removeDeliveryDetails();
@@ -360,7 +360,7 @@ public class CartPageController extends AbstractCartPageController
 				}
 				else
 				{
-					updateCartEntry(entryNumber, productCode, form, request, redirectModel);
+					updateCartEntry(entryNumber, productCode, form, redirectModel);
 				}			
 
 				// Redirect to the cart page on update success so that the browser doesn't re-post again
@@ -385,15 +385,13 @@ public class CartPageController extends AbstractCartPageController
 	 *           the product code
 	 * @param form
 	 *           the form
-	 * @param request
-	 *           the request
 	 * @param redirectModel
 	 *           the redirect model
 	 * @throws CommerceCartModificationException
 	 *            the commerce cart modification exception
 	 */
 	private void updateCartEntry(final long entryNumber, final String productCode, final UpdateQuantityForm form,
-			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CommerceCartModificationException
+			final RedirectAttributes redirectModel) throws CommerceCartModificationException
 	{
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
 		if(Objects.nonNull(rentalDateDto))
@@ -826,13 +824,8 @@ public class CartPageController extends AbstractCartPageController
 	public String emptyCart(final Model model, final RedirectAttributes redirectAttributes) {
 		try {
 			getBlCartFacade().removeCartEntries();
-			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-					"text.page.cart.clear.success");
-
 		} catch (final Exception exception) {
 			BlLogger.logMessage(LOG, Level.ERROR, "Unable to remove cart entries:", exception);
-			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
-					"text.page.cart.clear.fail");
 		}
 		return REDIRECT_CART_URL;
 	}
