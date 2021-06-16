@@ -14,6 +14,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractContr
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartOrderForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToEntryGroupForm;
+import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.commercefacades.order.CartFacade;
 import de.hybris.platform.commercefacades.order.converters.populator.GroupCartModificationListPopulator;
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
@@ -22,7 +23,9 @@ import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
+import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
 import com.bl.storefront.controllers.ControllerConstants;
@@ -63,8 +66,10 @@ public class AddToCartController extends AbstractController
 	private static final String ERROR_MSG_TYPE = "errorMsg";
 	private static final String QUANTITY_INVALID_BINDING_MESSAGE_KEY = "basket.error.quantity.invalid.binding";
 	private static final String SHOWN_PRODUCT_COUNT = "blstorefront.storefront.minicart.shownProductCount";
+	private static final String PRODUCT_LIMIT = "addtocart.dontforget.product.limit";
 
 	private static final Logger LOG = Logger.getLogger(AddToCartController.class);
+
 
 	@Resource(name = "cartFacade")
 	private CartFacade cartFacade;
@@ -77,6 +82,9 @@ public class AddToCartController extends AbstractController
 
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
+
+	@Resource(name = "enumerationService")
+	private EnumerationService enumerationService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
@@ -145,7 +153,17 @@ public class AddToCartController extends AbstractController
 		}
 
 		model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC)));
+		final List<ProductOption> PRODUCT_OPTIONS = Arrays
+				.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA,
+						ProductOption.GALLERY, ProductOption.STOCK);
+		final Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
+		final List<ProductReferenceData> productReferences = productFacade
+				.getProductReferencesForCode(code, getEnumerationService().getEnumerationValues(
+						ProductReferenceTypeEnum._TYPECODE),
+						PRODUCT_OPTIONS, productsLimit);
 
+		model.addAttribute(BlControllerConstants.PRODUCT_REFERENCE, productReferences);
+		model.addAttribute(BlControllerConstants.MAXIMUM_LIMIT , productsLimit);
 		return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
 	}
 
@@ -355,5 +373,13 @@ public class AddToCartController extends AbstractController
 	protected boolean isValidQuantity(final OrderEntryData cartEntry)
 	{
 		return cartEntry.getQuantity() != null && cartEntry.getQuantity().longValue() >= 1L;
+	}
+
+	public EnumerationService getEnumerationService() {
+		return enumerationService;
+	}
+
+	public void setEnumerationService(EnumerationService enumerationService) {
+		this.enumerationService = enumerationService;
 	}
 }

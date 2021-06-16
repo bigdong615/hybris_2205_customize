@@ -129,6 +129,8 @@ text-decoration :none ;
 
 /* BL-678  BL-677 */
 .card li {display :flex; align-items: center;}
+.btnwidth button {width :100%; margin-top:1%;}
+.btnwidth a{width :100%;}
 /* BL-606 */
 .splide__slide .card h6.product, #productList .card h6.product {height :36px; overflow: hidden;}
 @media only screen and (max-width: 1025px) and (min-width: 991px)   {
@@ -145,7 +147,25 @@ text-decoration :none ;
   .embed-responsive img {
     max-width: fit-content;
   }
+  .social{position: static !important;margin-bottom: 3rem;}
   }
 /* BL-45 */
 
+/*BL-455 CSS for add to cart pop up */
+#addToCart-gear-sliders > .splide__arrows .splide__arrow--prev, #blog-slider > .splide__arrows .splide__arrow--prev, #gear-slider-cart > .splide__arrows .splide__arrow--prev { margin-left: -30px; }
 
+#addToCart-gear-sliders > .splide__arrows .splide__arrow--next, #blog-slider > .splide__arrows .splide__arrow--next, #gear-slider-cart > .splide__arrows .splide__arrow--next { margin-right: -30px; }
+
+input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b4f!important; background: url(../assets/notification-error.svg) right 8px center no-repeat !important; }
+
+@media(max-width:767px){#addToCart-gear-sliders > .splide__arrows{display: none;} }
+
+#addToCart-gear-sliders .card li {display: flex; align-items: center;}
+
+#addToCart-gear-sliders .card h6.product{  overflow:hidden;}
+@media screen and (min-width: 1200px){ #matchingProducts #addToCart-gear-sliders  .card{ min-height :400px  !important;} }
+@media screen and (min-width: 767px){ #matchingProducts #addToCart-gear-sliders  .card{ min-height :400px  !important;} }
+/*BL-455 */
+
+.social-icon{position : relative}
+.social{position: absolute;bottom: -23px;left: 0;}

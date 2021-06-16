@@ -35,6 +35,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; HomePageRentingGearSectionSlot     ;                                                                       ;                           ; wide
                               ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
                               ; BodyContent                        ;                                                                         ;                           ;wide
+                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
 
 
 ###  Define ContentSlot For Template  ###
@@ -53,6 +54,8 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MyAccountSlot-AccountPage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
                                      ;                         ; HomePageRentingGearIsEasyTitleSlot-AccountPage ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true
                                      ;                         ; HomePageRentingGearSectionSlot-AccountPage     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
+                                     ;                         ; SocialMediaSectionSlot-AccountPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+
 
 # Functional Content Pages
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]             ; name                           ; masterTemplate(uid,$contentCV)       ; label                    ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false'] ; 
