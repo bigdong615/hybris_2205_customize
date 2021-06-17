@@ -29,6 +29,7 @@ import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.payment.AdapterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,12 +53,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "checkout/multi/summary/braintree")
 public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStepController
 {
-	private final static Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	private static final Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 
-	private final static String SUMMARY = "summary";
+	private static final String SUMMARY = "summary";
 
 	@Resource(name = "customFieldsService")
 	private CustomFieldsService customFieldsService;
@@ -78,6 +79,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	}
 
 	public static final String REDIRECT_PREFIX = "redirect:";
+	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -181,7 +183,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     LOG.info("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(placeOrderForm.getCustomFields()));
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
-    if (BraintreeaddonConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
     {
       try
       {
