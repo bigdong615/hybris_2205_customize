@@ -374,6 +374,10 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 			{
 				brainTreeSubscriptionInfoData.setEmail(createPaymentMethodResult.getEmail());
 			}
+			if(StringUtils.isNotBlank(createPaymentMethodResult.getBraintreeAddressId()))
+			{
+			  brainTreeSubscriptionInfoData.setBraintreeAddressId(createPaymentMethodResult.getBraintreeAddressId());
+			}			
 		}
 	}
 

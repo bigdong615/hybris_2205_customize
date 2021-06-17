@@ -41,6 +41,8 @@ public class BraintreeInfo
 
 	private String amount;
 
+  private String braintreeAddressId;
+
 	public BraintreeInfo()
 	{
 		this.duplicatedPayment = false;
@@ -315,4 +317,20 @@ public class BraintreeInfo
 	{
 		this.amount = amount;
 	}
+
+  /**
+   * @return the braintreeAddressId
+   */
+  public String getBraintreeAddressId()
+  {
+    return braintreeAddressId;
+  }
+
+  /**
+   * @param braintreeAddressId the braintreeAddressId to set
+   */
+  public void setBraintreeAddressId(String braintreeAddressId)
+  {
+    this.braintreeAddressId = braintreeAddressId;
+  }
 }

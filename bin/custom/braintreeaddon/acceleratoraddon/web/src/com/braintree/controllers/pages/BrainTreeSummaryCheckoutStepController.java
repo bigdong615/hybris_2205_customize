@@ -21,6 +21,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkou
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.PlaceOrderForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
@@ -175,12 +176,28 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		{
 			// Invalid cart. Bounce back to the cart page.
 			return REDIRECT_PREFIX + "/cart";
-		}
-		        LOG.error("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
-                LOG.error("what is this ? placeOrderForm.getSecurityCode: " + placeOrderForm.getSecurityCode());	
-                LOG.error("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(	
-                                placeOrderForm.getCustomFields()));
-
+    }
+    LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
+    LOG.info("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(placeOrderForm.getCustomFields()));
+    CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
+    boolean isPaymentAuthorized = false;
+    if (BraintreeaddonConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    {
+      try
+      {
+        isPaymentAuthorized = getCheckoutFacade().authorizePayment(placeOrderForm.getSecurityCode());
+      }
+      catch (final AdapterException ae)
+      {
+        // handle a case where a wrong paymentProvider configurations on the store see getCommerceCheckoutService().getPaymentProvider()
+        LOG.error(ae.getMessage(), ae);
+      }
+      if (!isPaymentAuthorized)
+      {
+        GlobalMessages.addErrorMessage(model, "checkout.error.authorization.failed");
+        return enterStep(model, redirectModel);
+      }
+    }
 		final OrderData orderData;
 		try
 		{
