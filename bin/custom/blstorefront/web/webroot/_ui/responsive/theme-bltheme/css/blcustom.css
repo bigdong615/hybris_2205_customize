@@ -147,6 +147,7 @@ text-decoration :none ;
   .embed-responsive img {
     max-width: fit-content;
   }
+  .social{position: static !important;margin-bottom: 3rem;}
   }
 /* BL-45 */
 
@@ -166,3 +167,56 @@ input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b
 @media screen and (min-width: 767px){ #matchingProducts #addToCart-gear-sliders  .card{ min-height :400px  !important;} }
 /*BL-455 */
 
+.social-icon{position : relative}
+.social{position: absolute;bottom: -23px;left: 0;}
+
+/*BL-458*/
+.quantity{border: 1px solid rgba(193,226,227,.5);
+border-radius: 3px;
+text-align: center;
+width: fit-content;
+float: right;margin-left:9px ;}
+.quantity input{ margin: 0 !important;
+padding: 0 !important;
+text-align: center;
+width: 26px !important;
+flex: inherit !important;}
+.quantity .btn {
+text-decoration: none;
+padding: 0px 4px !important;
+letter-spacing: 1px;
+height: 19px;
+line-height: 16px;
+opacity: 1;
+cursor: pointer;
+}
+.quantity .input-group{
+padding:0;
+}
+.quantity span:hover{
+outline:none;
+border:none;
+}
+.quantity .btn:hover{
+border:none;
+background:none;
+outline:none !important;
+}
+.quantity .input-group-btn{
+background-color:rgba(193,226,227,.5);
+border: 1px solid rgba(193,226,227,.5);
+border-radius: 0px;
+color: #fff;
+width: 25px;
+margin: 0;
+}
+.glyphicon-minus:before {
+content: "-";
+color:#52BFC0;
+font-size: 21px;
+}
+.glyphicon-plus:before {
+content: "+";
+color:#52BFC0;
+font-size: 21px;
+}
