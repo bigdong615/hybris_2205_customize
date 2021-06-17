@@ -1,16 +1,14 @@
 package com.braintree.payment.local.methods.dao.impl;
 
 import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.constants.BraintreeConstants;
 import com.braintree.enums.BrainTreePaymentMethod;
-import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.model.BraintreeLocalPaymentMethodsModel;
 import com.braintree.payment.local.methods.dao.BraintreeLocalPaymentMethodsDao;
 import de.hybris.platform.commerceservices.order.dao.impl.DefaultCommerceCartDao;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.jalo.order.Order;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
-import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
 import java.util.HashMap;
@@ -41,7 +39,7 @@ public class BraintreeLocalPaymentMethodsDaoImpl extends DefaultCommerceCartDao 
 	{
 		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(selectAllQuery);
 
-		fQuery.addQueryParameter("isEnabled",Boolean.TRUE);
+    fQuery.addQueryParameter(BraintreeConstants.IS_ENABLED, Boolean.TRUE);
 		SearchResult<BraintreeLocalPaymentMethodsModel> searchResult = search(fQuery);
 		return searchResult.getResult();
 	}

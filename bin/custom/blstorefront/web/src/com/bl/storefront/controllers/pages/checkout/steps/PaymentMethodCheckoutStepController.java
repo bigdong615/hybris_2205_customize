@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -196,6 +197,15 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			try
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
+				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
+				{
+					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
+					model.addAttribute("userSelectedPaymentInfo", paymentInfo);
+					model.addAttribute("selectedPaymentMethodNonce",paymentInfo.getPaymentMethodNonce());
+					model.addAttribute("paymentInfoBillingAddress", paymentInfo.getBillingAddress());
+					model.addAttribute("isSavedCardOrder", Boolean.TRUE);
+				}
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)

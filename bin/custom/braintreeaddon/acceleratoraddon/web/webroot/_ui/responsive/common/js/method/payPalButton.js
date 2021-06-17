@@ -10,7 +10,7 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
 		{
 			braintree.client.create(
 			{
-				authorization: 'sandbox_rzyvcjvy_hxzcyrbktsgzrb4n'
+				authorization: clientToken
 			},
 			function (clientErr, clientInstance)
 			{
