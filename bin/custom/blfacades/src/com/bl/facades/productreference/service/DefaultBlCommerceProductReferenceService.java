@@ -6,7 +6,6 @@ import com.bl.facades.productreference.BlCommerceProductReferenceService;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
 import de.hybris.platform.commerceservices.product.data.ReferenceData;
-import de.hybris.platform.commerceservices.product.impl.DefaultCommerceProductReferenceService;
 import de.hybris.platform.commerceservices.strategies.ProductReferenceTargetStrategy;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -15,13 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
 
 public class DefaultBlCommerceProductReferenceService implements
     BlCommerceProductReferenceService<ProductReferenceTypeEnum, ProductModel> {
-
-  private static final Logger LOG = Logger.getLogger(DefaultCommerceProductReferenceService.class);
 
   private ModelService modelService;
   private Map<ProductReferenceTypeEnum, ProductReferenceTargetStrategy> productReferenceTargetStrategies;
@@ -32,7 +27,7 @@ public class DefaultBlCommerceProductReferenceService implements
       ProductModel currentProduct, Integer limit) {
     validateParameterNotNull(currentProduct, "Parameter code must not be null");
 
-    final List<ReferenceData<ProductReferenceTypeEnum, ProductModel>> result = new ArrayList<ReferenceData<ProductReferenceTypeEnum, ProductModel>>();
+    final List<ReferenceData<ProductReferenceTypeEnum, ProductModel>> result = new ArrayList<>();
 
     final List<ProductReferenceModel> references = getAllActiveProductReferencesFromSourceOfType(
         currentProduct);
@@ -60,9 +55,7 @@ public class DefaultBlCommerceProductReferenceService implements
 
   protected List<ProductReferenceModel> getAllActiveProductReferencesFromSourceOfType(
       final ProductModel product) {
-    final List<ProductReferenceModel> allReferences = (List<ProductReferenceModel>) getProductReferencesForProduct(
-        product);
-    return allReferences;
+    return  (List<ProductReferenceModel>) getProductReferencesForProduct(product);
   }
 
 
@@ -119,14 +112,13 @@ public class DefaultBlCommerceProductReferenceService implements
   }
 
   protected ReferenceData<ProductReferenceTypeEnum, ProductModel> createReferenceData() {
-    return new ReferenceData<ProductReferenceTypeEnum, ProductModel>();
+    return new ReferenceData<>();
   }
 
   protected ModelService getModelService() {
     return modelService;
   }
 
-  @Required
   public void setModelService(final ModelService modelService) {
     this.modelService = modelService;
   }
@@ -135,7 +127,6 @@ public class DefaultBlCommerceProductReferenceService implements
     return productReferenceTargetStrategies;
   }
 
-  @Required
   public void setProductReferenceTargetStrategies(
       final Map<ProductReferenceTypeEnum, ProductReferenceTargetStrategy> productReferenceTargetStrategies) {
     this.productReferenceTargetStrategies = productReferenceTargetStrategies;
@@ -145,7 +136,6 @@ public class DefaultBlCommerceProductReferenceService implements
     return defaultProductReferenceTargetStrategy;
   }
 
-  @Required
   public void setDefaultProductReferenceTargetStrategy(
       final ProductReferenceTargetStrategy defaultProductReferenceTargetStrategy) {
     this.defaultProductReferenceTargetStrategy = defaultProductReferenceTargetStrategy;

@@ -25,7 +25,7 @@ public class DefaultBlProductFacade<REF_TARGET> implements BlProductFacade {
     final List<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>> references = getBlCommerceProductReferenceService()
         .getProductReferencesForCode(currentProduct, limit);
 
-    final List<ProductReferenceData> result = new ArrayList<ProductReferenceData>();
+    final List<ProductReferenceData> result = new ArrayList<>();
 
     for (final ReferenceData<ProductReferenceTypeEnum, REF_TARGET> reference : references) {
       final ProductReferenceData productReferenceData = getReferenceDataProductReferenceConverter()

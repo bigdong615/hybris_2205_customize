@@ -5,9 +5,7 @@ import de.hybris.platform.core.model.product.ProductModel;
 import java.util.List;
 
 
-public interface BlCommerceProductReferenceService<TYPE, TARGET> {
-
-
+public interface BlCommerceProductReferenceService<TYPE, TARGET>  {
 
   List<ReferenceData<TYPE, TARGET>> getProductReferencesForCode(final ProductModel currentProduct, final Integer limit);
 }
