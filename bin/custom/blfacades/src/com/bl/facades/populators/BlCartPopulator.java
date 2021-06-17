@@ -5,6 +5,7 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
@@ -87,6 +88,20 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		}
 	}
 
+	/**
+	 * Overriding to remove discounts from subtotal
+	 * @param source
+	 * @param abstractOrderData
+	 */
+	@Override
+	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData abstractOrderData)
+	{
+	  super.addTotals(source,abstractOrderData);
+		final double subTotal = source.getSubtotal().doubleValue();
+		final PriceData subTotalPriceData = createPrice(source, Double.valueOf(subTotal));
+		abstractOrderData.setSubTotal(subTotalPriceData);
+
+	}
 	/**
 	 * This method overridden to calculate the totalPrice with tax
 	 */
