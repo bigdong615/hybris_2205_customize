@@ -13,7 +13,12 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Default implementation of {@link BlProductFacade}.
+ *
+ * @param <REF_TARGET>
+ *           generic type parameter for the product model type
+ */
 public class DefaultBlProductFacade<REF_TARGET> implements BlProductFacade {
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
