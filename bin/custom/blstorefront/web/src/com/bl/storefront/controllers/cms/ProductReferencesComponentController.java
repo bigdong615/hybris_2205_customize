@@ -34,7 +34,7 @@ public class ProductReferencesComponentController extends
         AbstractAcceleratorCMSComponentController<ProductReferencesComponentModel> {
     protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY , ProductOption.STOCK);
 
-    @Resource(name = "productVariantFacade")
+    @Resource(name = "blProductFacade")
     private DefaultBlProductFacade defaultBlProductFacade;
 
     @Override
@@ -43,7 +43,7 @@ public class ProductReferencesComponentController extends
         if (currentProduct != null) {
 //            List<ProductReferenceTypeEnum> productReferenceTypeEnum = currentProduct.getProductReferences().stream()
 //                .map(ProductReferenceModel::getReferenceType).collect(Collectors.toList());
-            final List<ProductReferenceData> productReferences = defaultBlProductFacade.getProductReferencesForCode(currentProduct.getCode(),PRODUCT_OPTIONS, component.getMaximumNumberProducts());
+            final List<ProductReferenceData> productReferences = defaultBlProductFacade.getProductReferencesForCode(currentProduct,PRODUCT_OPTIONS, component.getMaximumNumberProducts());
 
             model.addAttribute("title", component.getTitle());
             model.addAttribute("productReferences", productReferences);

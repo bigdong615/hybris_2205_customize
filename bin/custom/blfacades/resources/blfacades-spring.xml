@@ -499,4 +499,32 @@
 		</property>
 	</bean>
 
+	<alias name="blProductFacade" alias="blProductFacade"/>
+	<bean id="blProductFacade" class="com.bl.facades.productreference.impl.DefaultBlProductFacade">
+		<property name="blCommerceProductReferenceService" ref="blCommerceProductReferenceService"/>
+		<property name="referenceDataProductReferenceConverter" ref="referenceDataProductReferenceConverter"/>
+		<property name="referenceProductConfiguredPopulator" ref="productConfiguredPopulator"/>
+	</bean>
+
+	<alias name="blCommerceProductReferenceService" alias="blCommerceProductReferenceService"/>
+	<bean id="blCommerceProductReferenceService" class="com.bl.facades.productreference.service.DefaultBlCommerceProductReferenceService">
+		<property name="modelService" ref="modelService"/>
+		<property name="productReferenceTargetStrategies">
+			<map key-type="de.hybris.platform.catalog.enums.ProductReferenceTypeEnum">
+				<!-- Add a strategy for a specific reference type -->
+				<!-- <entry key="SIMILAR" value-ref="..."/> -->
+			</map>
+		</property>
+		<property name="defaultProductReferenceTargetStrategy" ref="crossSellingProductReferenceTargetStrategy"/>
+	</bean>
+
+	<alias name="defaultCrossSellingProductReferenceTargetStrategy" alias="crossSellingProductReferenceTargetStrategy"/>
+	<bean id="defaultCrossSellingProductReferenceTargetStrategy"
+		class="de.hybris.platform.commerceservices.strategies.impl.ChainProductReferenceTargetStrategy">
+		<property name="productReferenceTargetStrategies">
+			<list>
+				<ref bean="loneLeafVariantProductReferenceTargetStrategy"/>
+			</list>
+		</property>
+	</bean>
 </beans>

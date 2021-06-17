@@ -18,6 +18,7 @@ import de.hybris.platform.commerceservices.product.data.ReferenceData;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.converters.ConfigurablePopulator;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
@@ -32,6 +33,27 @@ import org.apache.log4j.Logger;
  */
 public class DefaultBlProductFacade<REF_TARGET> implements BlProductFacade {
 
+  private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
+  private Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> referenceDataProductReferenceConverter;
+  private ConfigurablePopulator<REF_TARGET, ProductData, ProductOption> referenceProductConfiguredPopulator;
+
+  public List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct,
+      final List<ProductOption> options, final Integer limit) {
+    final List<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>> references = getBlCommerceProductReferenceService()
+        .getProductReferencesForCode(currentProduct, limit);
+
+    final List<ProductReferenceData> result = new ArrayList<ProductReferenceData>();
+
+    for (final ReferenceData<ProductReferenceTypeEnum, REF_TARGET> reference : references) {
+      final ProductReferenceData productReferenceData = getReferenceDataProductReferenceConverter()
+          .convert(reference);
+      getReferenceProductConfiguredPopulator()
+          .populate(reference.getTarget(), productReferenceData.getTarget(), options);
+      result.add(productReferenceData);
+    }
+
+    return result;
+  }
 
   public BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> getBlCommerceProductReferenceService() {
     return blCommerceProductReferenceService;
@@ -41,29 +63,6 @@ public class DefaultBlProductFacade<REF_TARGET> implements BlProductFacade {
       BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService) {
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
   }
-
-  private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
-  private Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> referenceDataProductReferenceConverter;
-  private ConfigurablePopulator<REF_TARGET, ProductData, ProductOption> referenceProductConfiguredPopulator;
-
-  public List<ProductReferenceData> getProductReferencesForCode(final String code, final List<ProductOption> options, final Integer limit)
-  {
-    final List<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>> references = getBlCommerceProductReferenceService().getProductReferencesForCode(code,limit);
-
-    final List<ProductReferenceData> result = new ArrayList<ProductReferenceData>();
-
-    for (final ReferenceData<ProductReferenceTypeEnum, REF_TARGET> reference : references)
-    {
-      final ProductReferenceData productReferenceData = getReferenceDataProductReferenceConverter().convert(reference);
-      getReferenceProductConfiguredPopulator().populate(reference.getTarget(), productReferenceData.getTarget(), options);
-      result.add(productReferenceData);
-    }
-
-    return result;
-  }
-
-
-
 
   public Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> getReferenceDataProductReferenceConverter() {
     return referenceDataProductReferenceConverter;

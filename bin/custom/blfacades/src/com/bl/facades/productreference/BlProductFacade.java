@@ -5,6 +5,7 @@ import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.product.ProductModel;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public interface BlProductFacade {
 
-  List<ProductReferenceData> getProductReferencesForCode(String code,List<ProductOption> options, Integer limit);
+  List<ProductReferenceData> getProductReferencesForCode(ProductModel currentProduct,List<ProductOption> options, Integer limit);
 
 
 }
