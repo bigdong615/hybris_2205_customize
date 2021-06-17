@@ -5,8 +5,10 @@ import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 
+/**
+ * This Class created to Populate Subtotal without discount
+ */
 public class BlMiniCartPopulator extends MiniCartPopulator {
-
   /**
    * Overriding to remove discounts from subtotal
    * @param source abstractOrderModel

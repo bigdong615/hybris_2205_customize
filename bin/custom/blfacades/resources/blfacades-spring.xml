@@ -349,6 +349,7 @@
     <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
     <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
 
+	<!-- Added to override OOB populator to populate subtotal without discount on storefront-->
 	<alias name="defaultBlMiniCartPopulator" alias="miniCartPopulator"/>
 	<bean id="defaultBlMiniCartPopulator" class="com.bl.facades.populators.BlMiniCartPopulator" parent="defaultMiniCartPopulator"/>
 
