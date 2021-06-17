@@ -69,11 +69,15 @@ public class DefaultBlPaymentService implements BlPaymentService
 				}
 			}
 		} catch(final BraintreeErrorException ex) {
-			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while performing "
-					+ "BlAuthorizePaymentJob for order {} ", order.getCode(), ex);
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while capturing "
+					+ "the payment for order {} ", order.getCode(), ex);
 		}
 	}
 
+	/**
+	 * It gets the authorization entry of the order
+	 * @param order
+	 */
 	private PaymentTransactionEntryModel getAUthEntry(OrderModel order) {
 		List<PaymentTransactionModel> transactions = order.getPaymentTransactions();
 		if(CollectionUtils.isNotEmpty(transactions)) {
