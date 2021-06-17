@@ -61,7 +61,7 @@
             <tr class="discount">
               <c:if test ="${cartData.totalDiscounts.value > 0}">
                   <td ><spring:theme code="text.discount"/></td>
-               <td class="text-end" id="cart-shipping-tax">
+               <td class="text-end" id="cart-shipping-discount">
                - <format:blPrice priceData="${cartData.totalDiscounts}"/>
                </td>
               </c:if>
