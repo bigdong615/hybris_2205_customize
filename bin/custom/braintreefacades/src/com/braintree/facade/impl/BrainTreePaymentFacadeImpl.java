@@ -175,7 +175,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 			paymentMethodBrainTreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
 			result = getBrainTreePaymentService().createPaymentMethodForCustomer(customer,
 					billingAddress, paymentMethodBrainTreeInfo);
-			LOG.error("result: " + result);
+			LOG.info("result: " + result);
 
 			checkBraintreeResult(result);
 

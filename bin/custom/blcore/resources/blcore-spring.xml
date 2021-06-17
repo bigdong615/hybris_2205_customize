@@ -811,6 +811,7 @@
 	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
 		<property name="orderDao" ref="orderDao"/>
 		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
 	
 	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">

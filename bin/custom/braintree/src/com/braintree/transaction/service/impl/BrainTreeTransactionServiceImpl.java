@@ -1,5 +1,16 @@
 package com.braintree.transaction.service.impl;
 
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_PAYMENT;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_PROVIDER_NAME;
+import static com.braintree.constants.BraintreeConstants.FAKE_REQUEST_ID;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_PAYMENT;
+import static com.braintree.constants.BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
+import static com.braintree.constants.BraintreeConstants.PROPERTY_LEVEL2_LEVEL3;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
 import com.braintree.command.request.BrainTreeCreatePaymentMethodRequest;
@@ -25,7 +36,6 @@ import com.braintree.paypal.converters.impl.BillingAddressConverter;
 import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
-
 import com.google.common.collect.Lists;
 import de.hybris.platform.commerceservices.enums.CustomerType;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
@@ -46,7 +56,6 @@ import de.hybris.platform.payment.dto.BillingInfo;
 import de.hybris.platform.payment.dto.TransactionStatus;
 import de.hybris.platform.payment.dto.TransactionStatusDetails;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
-
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
@@ -54,12 +63,6 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.DiscountValue;
 import de.hybris.platform.util.TaxValue;
-import java.util.Optional;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -69,17 +72,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.braintree.constants.BraintreeConstants.BRAINTREE_PAYMENT;
-import static com.braintree.constants.BraintreeConstants.BRAINTREE_PROVIDER_NAME;
-import static com.braintree.constants.BraintreeConstants.FAKE_REQUEST_ID;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_PAYMENT;
-import static com.braintree.constants.BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
-import static com.braintree.constants.BraintreeConstants.PROPERTY_LEVEL2_LEVEL3;
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionService
@@ -142,24 +137,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	}
 
 	@Override
-	public boolean captureAuthorizationTransaction(final OrderModel orderModel)
+	public boolean captureAuthorizationTransaction(final OrderModel orderModel, final BigDecimal amount,
+			final String requestId)
 			throws BraintreeErrorException {
-		List<PaymentTransactionModel> transactions = orderModel.getPaymentTransactions();
-		List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
-		if(CollectionUtils.isNotEmpty(transactionEntries)) {
-			final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
-					.filter(transactionEntry ->
-							transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION))
-					.reduce((first, second) -> second);
-			if (authEntry.isPresent() && TransactionStatus.ACCEPTED.name()
-					.equals(authEntry.get().getTransactionStatus())) {
-				final PaymentTransactionEntryModel authorizedEntry = authEntry.get();
 				return getBraintreeSubmitForSettlementService()
-						.submitForSettlement(orderModel, authorizedEntry.getAmount(),
-								authorizedEntry.getRequestId());
-			}
-		}
-		return false;
+						.submitForSettlement(orderModel, amount, requestId);
 	}
 
 	private boolean handleAuthorizationResult(BrainTreeAuthorizationResult result, AbstractOrderModel cart)

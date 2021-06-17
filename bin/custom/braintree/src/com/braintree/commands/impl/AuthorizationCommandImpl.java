@@ -76,8 +76,6 @@ public class AuthorizationCommandImpl extends AbstractCommand<AuthorizationReque
 
 			setAdditionalParameters(brainTreeAuthorizationRequest, request);
 
-//			LOG.error(
-//					"if Level2 enabled: " + configurationService.getConfiguration().getBoolean(PROPERTY_LEVEL2_LEVEL3, Boolean.FALSE)); //NOSONAR
 			if (configurationService.getConfiguration().getBoolean(PROPERTY_LEVEL2_LEVEL3, Boolean.FALSE))
 			{
 				//                validate Level2 fields, if valid then apply to request
