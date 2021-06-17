@@ -104,7 +104,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		try
 		{
 			payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
-			isSavePaymentInfo = Boolean.parseBoolean(request.getParameter(SAVE_PAYMENT_INFO));
+      isSavePaymentInfo = true; /* Boolean.parseBoolean(request.getParameter(SAVE_PAYMENT_INFO)); */
 			deviceData = request.getParameter(DEVICE_DATA);
 		}
 		catch (final IllegalArgumentException exeption)
