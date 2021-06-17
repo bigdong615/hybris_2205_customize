@@ -56,6 +56,9 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			}
 		}
 
+		if(source.getPromotionalRentalEndDate() != null) {
+			target.setPromotionalToDate(source.getPromotionalRentalEndDate());
+		}
 		// BL-657 to add total discount with gift cart discount to display on order summary section
 		 Double totalPromotionDiscount = 0.0;
 		 Double totalGiftCardDiscount = 0.0;

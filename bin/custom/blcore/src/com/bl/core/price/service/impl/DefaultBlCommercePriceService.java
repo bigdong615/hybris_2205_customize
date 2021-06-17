@@ -84,6 +84,22 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 	}
 
 	/**
+	 * Gets the dynamic price data for product.
+	 *
+	 * @param isConstrainedProduct the is constrained product
+	 * @param priceValue           the price value
+	 * @param rentalDays           the rentalDays
+	 * @return the dynamic price data for product
+	 */
+	@Override
+	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct,final Double priceValue,final  Long rentalDays) {
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {}", priceValue);
+		return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
+				? getBlProductDynamicPriceStrategy().getDynamicPriceDataForProduct(isConstrainedProduct, priceValue, rentalDays)
+				: BigDecimal.valueOf(priceValue);
+	}
+
+	/**
 	 * Get rental days from the session.
 	 *
 	 * @return the rental days

@@ -224,6 +224,49 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   }
 
 	/**
+	 * Update promotional End date for the promotion with extended rental days
+	 *
+	 * @param updatedRentalToDate
+	 */
+	@Override
+	public void updatePromotionalEndDate(Date updatedRentalToDate) {
+		if (updatedRentalToDate != null) {
+			final CartModel cartModel = getSessionCart();
+			String cartCode = cartModel.getCode();
+			if(cartModel.getPromotionalRentalEndDate() != null && !isFreeRentalDayPromoApplied()){
+				cartModel.setPromotionalRentalEndDate(null);
+			}
+			else{
+				cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
+			}
+			try {
+				getModelService().save(cartModel);
+				BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
+						"Setting Rental Promotional End Date: {} on Cart: {}", updatedRentalToDate,cartCode);
+			} catch (final Exception exception) {
+				BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+						"Error while saving Rental Promotional End Date: {}  on cart - {}",updatedRentalToDate,
+						cartCode);
+			}
+		}
+	}
+
+	/**
+	 * Check if the Promotion with extended days is applied to cart
+	 *
+	 * @return
+	 */
+	@Override
+	public boolean isFreeRentalDayPromoApplied() {
+		CartModel cartModel = getSessionCart();
+		if(cartModel != null && CollectionUtils.isNotEmpty(cartModel.getAllPromotionResults())){
+			return  cartModel.getAllPromotionResults().stream().filter(promoResult -> promoResult.getPromotion().getCode().contains("EXTENDED_RENTALDAYS")).findAny().isPresent();
+		}
+		return  false;
+	}
+
+
+	/**
 	 * @return blCheckoutCartCalculationStrategy
 	 */
 	public CommerceCartCalculationStrategy getBlCheckoutCartCalculationStrategy() {

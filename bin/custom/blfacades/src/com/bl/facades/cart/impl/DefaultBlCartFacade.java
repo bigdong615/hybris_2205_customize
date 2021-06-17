@@ -11,6 +11,9 @@ import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.contents.components.CMSLinkComponentModel;
+import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
 import de.hybris.platform.commercefacades.order.data.AddToCartParams;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -51,6 +54,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private BaseStoreService baseStoreService;
   
   private BlCommerceStockService blCommerceStockService;
+  private CMSComponentService cmsComponentService;
 
   /**
    * {@inheritDoc}
@@ -233,8 +237,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 					}
 					else if (BooleanUtils.negate(availableQty >= cartEntryQty))
 					{
-						entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.available",
-								Arrays.asList(String.valueOf(availableQty))));
+						if(getBlCartService().isFreeRentalDayPromoApplied()){
+							entry.setAvailabilityMessage(getMessage("cart.entry.item.availability.low.stock.promotion.error",
+									Arrays.asList(String.valueOf(availableQty),getContactUsLink() )));
+						}else {
+							entry.setAvailabilityMessage(
+									getMessage("cart.entry.item.availability.low.stock.available",
+											Arrays.asList(String.valueOf(availableQty))));
+						}
 					}
 				});
 			}
@@ -245,6 +255,21 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 					"Error while checking next availability for cart - {}", cartData.getCode());
 			final AvailabilityMessage productUnavailableMessage = getMessage("text.stock.not.available", Lists.emptyList());
 			cartData.getEntries().forEach(cartEntry -> cartEntry.setAvailabilityMessage(productUnavailableMessage));
+		}
+	}
+
+	/**
+	 * Get Contact Us Link Node
+	 * @return
+	 */
+	private String getContactUsLink() {
+		try {
+			CMSLinkComponentModel contactUsNavNode = getCmsComponentService()
+					.getAbstractCMSComponent("ContactUsNavNode");
+			return contactUsNavNode.getUrl() != null ? contactUsNavNode.getUrl() : org.apache.commons.lang.StringUtils.EMPTY;
+		} catch (CMSItemNotFoundException e) {
+			e.printStackTrace();
+			return StringUtils.EMPTY;
 		}
 	}
 
@@ -423,4 +448,12 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	this.blCommerceStockService = blCommerceStockService;
 }
 
+	public CMSComponentService getCmsComponentService() {
+		return cmsComponentService;
+	}
+
+	public void setCmsComponentService(
+			CMSComponentService cmsComponentService) {
+		this.cmsComponentService = cmsComponentService;
+	}
 }

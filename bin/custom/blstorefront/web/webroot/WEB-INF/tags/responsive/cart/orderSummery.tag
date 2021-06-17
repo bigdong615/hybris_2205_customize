@@ -26,6 +26,10 @@
             placeholder="<spring:theme code="text.rental.cart.select.date"/>">
         </p>
       </c:if>
+      <c:forEach items="${cartData.appliedOrderPromotions}" var="promotion">
+         <div class="promotion" style="color:green">${ycommerce:sanitizeHTML(promotion.description)}
+         <fmt:formatDate value="${cartData.promotionalToDate}" pattern="dd/MM/YYYY" /></div>
+      </c:forEach>
       <hr>
       <table id="costSummary">
           <tbody>

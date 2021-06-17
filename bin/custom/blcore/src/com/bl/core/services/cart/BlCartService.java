@@ -63,5 +63,18 @@ public interface BlCartService extends CartService {
 	 */
 	Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
 			final RentalDateDto rentalDatesFromSession);
-	
+
+	/**
+	 * Update promotional End date for the promotion with extended
+	 * rental days
+	 * @param updatedRentalToDate
+	 */
+	void updatePromotionalEndDate(Date updatedRentalToDate);
+
+	/**
+	 * Check if the Promotion with extended days is applied to cart
+	 * @return
+	 */
+
+	boolean isFreeRentalDayPromoApplied();
 }
