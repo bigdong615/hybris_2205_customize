@@ -11,7 +11,6 @@ public final class BraintreeaddonConstants extends GeneratedBraintreeaddonConsta
 {
 	public static final String EXTENSIONNAME = "braintreeaddon"; //NOSONAR
 	public static final String SECURE_GUID_SESSION_KEY = "acceleratorSecureGUID";
-  public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 
 	private BraintreeaddonConstants()
 	{

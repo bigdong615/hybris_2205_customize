@@ -29,6 +29,7 @@ import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.payment.AdapterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,13 +54,14 @@ import de.hybris.platform.payment.AdapterException;
 @RequestMapping(value = "checkout/multi/summary/braintree")
 public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStepController
 {
-	private final static Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	private static final Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	public static final String REDIRECT_PREFIX = "redirect:";
 	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 
-	private final static String SUMMARY = "summary";
+	private static final String SUMMARY = "summary";
 
 	@Resource(name = "customFieldsService")
 	private CustomFieldsService customFieldsService;
@@ -78,8 +80,6 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	{
 		return BlRentalDateUtils.getRentalsDuration();
 	}
-
-	public static final String REDIRECT_PREFIX = "redirect:";
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
