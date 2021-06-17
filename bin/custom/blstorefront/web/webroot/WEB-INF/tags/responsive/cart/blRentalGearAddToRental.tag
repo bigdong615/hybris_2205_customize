@@ -22,7 +22,7 @@
      <c:choose>
      			<c:when test="${product.isUpcoming eq true}">
      			 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
-                 <button type="submit" class="btn btn-primary dis js-login-popup" data-link="<c:url value='/login/loginpopup'/>"
+                 <button type="submit" class="btn btn-primary dis btnwidthplp js-login-popup" data-link="<c:url value='/login/loginpopup'/>"
                    data-bs-toggle="modal"  data-bs-target="#signIn" aria-disabled="false">
                   <spring:theme code="text.get.notified" />
                   </button>
@@ -30,13 +30,13 @@
      			  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
      			  <c:choose>
                      <c:when test="${product.isWatching}">
-                        <button type="submit" class="btn btn-primary dis removeInterestbtn"  data-box-productcode="${product.code}"
+                        <button type="submit" class="btn btn-primary dis btnwidthplp removeInterestbtn"  data-box-productcode="${product.code}"
                                data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
                     			<spring:theme code="text.remove.notified.button.text"/>
        					</button>
                      </c:when>
                      <c:otherwise>
-                      <button type="submit" class="btn btn-primary dis arrival-notification"  data-box-productcode="${product.code}"
+                      <button type="submit" class="btn btn-primary dis btnwidthplp arrival-notification"  data-box-productcode="${product.code}"
                                 data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
                           			<spring:theme code="text.get.notified" />
                       </button>
@@ -67,7 +67,7 @@
           </c:otherwise>
         </c:choose>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
-                <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
+                <button type="button" class="btn btn-primary js-add-to-cart btnwidthplp" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
                       <spring:theme code="text.add.to.rental" />
 						    </button>
 						</form:form>
