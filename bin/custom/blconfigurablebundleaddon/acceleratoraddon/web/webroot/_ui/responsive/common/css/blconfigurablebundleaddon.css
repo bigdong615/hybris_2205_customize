@@ -1,3 +1,4 @@
+/*
 .submitRemoveBundle {
     color: #ff0000;
 }
@@ -36,7 +37,9 @@
     display: block;
 }
 
-/* cart notification (uncompleted guided selling ) */
+*/
+/* cart notification (uncompleted guided selling ) *//*
+
 .notification {
     border: 1px solid #ffbc0e;
     margin-bottom: 50px;
@@ -61,3 +64,4 @@
     color: #0073e4;
 }
 
+*/
