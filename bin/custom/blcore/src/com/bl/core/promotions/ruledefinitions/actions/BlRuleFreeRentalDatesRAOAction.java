@@ -10,7 +10,6 @@ import de.hybris.platform.core.model.product.ProductModel;
 
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.ruleengineservices.calculation.NumberedLineItem;
-import de.hybris.platform.ruleengineservices.rao.AbstractRuleActionRAO;
 import de.hybris.platform.ruleengineservices.rao.CartRAO;
 import de.hybris.platform.ruleengineservices.rao.DiscountRAO;
 import de.hybris.platform.ruleengineservices.rao.OrderEntryRAO;
@@ -42,6 +41,7 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
   private Converter<OrderEntryRAO, NumberedLineItem> orderEntryRaoToNumberedLineItemConverter;
 
   public BlRuleFreeRentalDatesRAOAction() {
+    //Do Nothing
   }
 
   /**
@@ -79,9 +79,9 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
       BlLogger.logMessage(LOG, Level.DEBUG, "Discount calculated for free dates: " + finalDiscount);
       RuleEngineResultRAO result = context.getRuleEngineResultRao();
       result.getActions().add(discount);
-      this.setRAOMetaData(context, new AbstractRuleActionRAO[]{discount});
-      context.scheduleForUpdate(new Object[]{cartRao, discount});
-      context.insertFacts(new Object[]{discount});
+      this.setRAOMetaData(context, discount);
+      context.scheduleForUpdate(cartRao, discount);
+      context.insertFacts(discount);
       return true;
     }
     return false;
