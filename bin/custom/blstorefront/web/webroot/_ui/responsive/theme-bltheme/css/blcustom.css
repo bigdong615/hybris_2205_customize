@@ -220,7 +220,14 @@ content: "+";
 color:#52BFC0;
 font-size: 21px;
 }
-
+/*BL-712*/
 .boldCustom {
   font-weight: bold;
+  }
+  #accountContent input::-webkit-input-placeholder {
+       color:#b2b2b2; /*Change the placeholder color*/
+       opacity: 0.5; /*Change the opacity between 0 and 1*/
+  }
+ #accountContent input::placeholder {
+   color:#b2b2b2;
   }
