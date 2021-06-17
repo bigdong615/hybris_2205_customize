@@ -5,9 +5,6 @@ package com.bl.storefront.controllers.cms;
 
 import com.bl.facades.productreference.impl.DefaultBlProductFacade;
 import de.hybris.platform.acceleratorcms.model.components.ProductReferencesComponentModel;
-import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
-import de.hybris.platform.catalog.model.ProductReferenceModel;
-import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -16,7 +13,6 @@ import com.bl.storefront.controllers.ControllerConstants;
 import java.util.Arrays;
 import java.util.List;
 
-import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,8 +37,6 @@ public class ProductReferencesComponentController extends
     protected void fillModel(final HttpServletRequest request, final Model model, final ProductReferencesComponentModel component) {
         final ProductModel currentProduct = getRequestContextData(request).getProduct();
         if (currentProduct != null) {
-//            List<ProductReferenceTypeEnum> productReferenceTypeEnum = currentProduct.getProductReferences().stream()
-//                .map(ProductReferenceModel::getReferenceType).collect(Collectors.toList());
             final List<ProductReferenceData> productReferences = defaultBlProductFacade.getProductReferencesForCode(currentProduct,PRODUCT_OPTIONS, component.getMaximumNumberProducts());
 
             model.addAttribute("title", component.getTitle());
