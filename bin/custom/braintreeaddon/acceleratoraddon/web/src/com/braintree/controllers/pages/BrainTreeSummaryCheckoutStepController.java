@@ -53,12 +53,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "checkout/multi/summary/braintree")
 public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStepController
 {
-	private final static Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	private static final Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 
-	private final static String SUMMARY = "summary";
+	private static final String SUMMARY = "summary";
 
 	@Resource(name = "customFieldsService")
 	private CustomFieldsService customFieldsService;
