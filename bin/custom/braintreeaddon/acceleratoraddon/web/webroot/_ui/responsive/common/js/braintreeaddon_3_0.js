@@ -418,7 +418,7 @@ function initializeBTclientSDK() {
         && (typeof braintree != 'undefined' && braintree != '')) {
 
         braintree.client.create({
-            authorization: 'sandbox_rzyvcjvy_hxzcyrbktsgzrb4n'
+            authorization: clientToken
         }, function (clientErr, clientInstance) {
             if (clientErr) {
                 handleClientError(clientErr);

@@ -201,10 +201,10 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
 				{
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
-					model.addAttribute("userSelectedPaymentInfo", paymentInfo);
-					model.addAttribute("selectedPaymentMethodNonce",paymentInfo.getPaymentMethodNonce());
-					model.addAttribute("paymentInfoBillingAddress", paymentInfo.getBillingAddress());
-					model.addAttribute("isSavedCardOrder", Boolean.TRUE);
+					model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
+					model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
+					model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
+					model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
 				}
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
