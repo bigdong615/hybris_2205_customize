@@ -17,7 +17,7 @@ public class DefaultBlCommerceProductReferenceService extends
 
   @Override
   public List<ReferenceData<ProductReferenceTypeEnum, ProductModel>> getProductReferencesForCode(
-      final ProductModel currentProduct, Integer limit) {
+      final ProductModel currentProduct, final Integer limit) {
     validateParameterNotNull(currentProduct, "Parameter code must not be null");
 
     final List<ReferenceData<ProductReferenceTypeEnum, ProductModel>> result = new ArrayList<>();
