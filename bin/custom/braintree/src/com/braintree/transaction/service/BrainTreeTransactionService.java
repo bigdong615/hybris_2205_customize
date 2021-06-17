@@ -5,6 +5,7 @@ import com.braintree.command.result.BrainTreeRefundTransactionResult;
 import com.braintree.command.result.BrainTreeSaleTransactionResult;
 import com.braintree.command.result.BrainTreeSubmitForSettlementTransactionResult;
 import com.braintree.command.result.BrainTreeVoidResult;
+import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.payment.dto.BraintreeInfo;
@@ -73,6 +74,6 @@ public interface BrainTreeTransactionService
 	 * @param orderModel
 	 * @return  boolean
 	 */
-	boolean captureAuthorizationTransaction(final AbstractOrderModel orderModel);
+	boolean captureAuthorizationTransaction(final OrderModel orderModel) throws BraintreeErrorException;
 
 }

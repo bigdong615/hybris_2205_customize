@@ -163,6 +163,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
+	private static final String IS_AUTHORISED = "isAuthorized";
 
 
 	private BlCoreConstants()

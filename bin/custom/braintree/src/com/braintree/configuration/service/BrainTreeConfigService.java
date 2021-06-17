@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.braintree.constants.BraintreeConstants.AUTH_AMOUNT_TO_VERIFY_CARD;
 import static com.braintree.constants.BraintreeConstants.B2B_ENDPOINT_URL_PROPERTY;
 import static com.braintree.constants.BraintreeConstants.B2C_ENDPOINT_URL_PROPERTY;
 import static com.braintree.constants.BraintreeConstants.B2C_FLOW;

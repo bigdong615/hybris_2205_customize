@@ -5,7 +5,7 @@ import com.braintree.command.request.beans.BrainTreeLineItemBean;
 import com.braintree.command.result.BrainTreeAuthorizationResult;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.enums.BrainTreePaymentMethod;
-import com.braintreegateway.PaymentMethod;
+
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionLineItem;
@@ -76,8 +76,8 @@ public class AuthorizationCommandImpl extends AbstractCommand<AuthorizationReque
 
 			setAdditionalParameters(brainTreeAuthorizationRequest, request);
 
-			LOG.error(
-					"if Level2 enabled: " + configurationService.getConfiguration().getBoolean(PROPERTY_LEVEL2_LEVEL3, Boolean.FALSE));
+//			LOG.error(
+//					"if Level2 enabled: " + configurationService.getConfiguration().getBoolean(PROPERTY_LEVEL2_LEVEL3, Boolean.FALSE)); //NOSONAR
 			if (configurationService.getConfiguration().getBoolean(PROPERTY_LEVEL2_LEVEL3, Boolean.FALSE))
 			{
 				//                validate Level2 fields, if valid then apply to request
