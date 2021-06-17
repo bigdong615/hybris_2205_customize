@@ -10,7 +10,7 @@
 <c:choose>
         <c:when test="${blPageType eq 'usedGear'}">
         <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
-         <a href="${usedGearUrl}" class="btn btn-primary">
+         <a href="${usedGearUrl}" class="btn btn-primary btnwidthusedgear">
          <spring:theme code="text.plp.see.pricing"/>
          </a>
         </c:when>
