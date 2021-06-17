@@ -25,7 +25,7 @@
 					</button>
 				</c:when>
 				<c:when test="${product.isDiscontinued or product.stock.stockLevelStatus.code eq 'outOfStock'}">
-					<button type="submit" class="btn btn-outline btn-disabled "
+					<button type="submit" class="btn btn-outline btn-disabled"
 						aria-disabled="true" disabled="disabled">
 						<spring:theme code="text.add.to.rental" />
 					</button>
