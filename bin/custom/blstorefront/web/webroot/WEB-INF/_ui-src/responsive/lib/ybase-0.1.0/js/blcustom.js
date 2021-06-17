@@ -75,6 +75,10 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
                                       updateQuantity();
+                                      addToCartFromModal();
+                                      if(document.getElementById("addToCart-gear-sliders") != null){
+                                        setTimeout(modalBodyContent,100);
+                                      };
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');

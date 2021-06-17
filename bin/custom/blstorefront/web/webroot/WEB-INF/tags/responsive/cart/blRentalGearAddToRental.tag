@@ -20,7 +20,7 @@
 	</spring:url>
      <c:choose>
      			<c:when test="${product.isUpcoming eq true}">
-					<button type="submit" class="btn btn-primary dis" aria-disabled="false">
+					<button type="submit" class="btn btn-primary dis btnwidthplp" aria-disabled="false">
 						<spring:theme code="text.notify.me" />
 					</button>
 				</c:when>
@@ -47,7 +47,7 @@
           </c:otherwise>
         </c:choose>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
-                <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
+                <button type="button" class="btn btn-primary js-add-to-cart btnwidthplp" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
                       <spring:theme code="text.add.to.rental" />
 						    </button>
 						</form:form>
