@@ -1410,7 +1410,7 @@
                 checkNaN(parseFloat($('#cart-shipping-cost').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1])) -
                 checkNaN(parseFloat($('#cart-shipping-discount').text().split('$')[1]));
-    $('#cart-shipping-total').text('$' + total);
+    $('#cart-shipping-total').text('$' + total.toFixed(2));
   }
 
   function checkNaN(attribute) {
