@@ -90,18 +90,18 @@ public class BlCartPopulator extends CartPopulator<CartData>
 
 	/**
 	 * Overriding to remove discounts from subtotal
-	 * @param source
-	 * @param abstractOrderData
+	 * @param source abstractOrderModel
+	 * @param target target object
 	 */
 	@Override
-	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData abstractOrderData)
+	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData target)
 	{
-	  super.addTotals(source,abstractOrderData);
+		super.addTotals(source,target);
 		final double subTotal = source.getSubtotal().doubleValue();
 		final PriceData subTotalPriceData = createPrice(source, Double.valueOf(subTotal));
-		abstractOrderData.setSubTotal(subTotalPriceData);
-
+		target.setSubTotal(subTotalPriceData);
 	}
+
 	/**
 	 * This method overridden to calculate the totalPrice with tax
 	 */

@@ -536,8 +536,8 @@
                 showErrorNotificationForPickUpId('They must show ID at time of pickup');
             } else {
             	$('#cart-shipping-cost').text('-');
-               calculateCartTotal();
-               showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
+            	 calculateCartTotal();
+                showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
             }
         },
         complete: function() {
