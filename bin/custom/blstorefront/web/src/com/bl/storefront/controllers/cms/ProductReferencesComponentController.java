@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.cms;
 
+import com.bl.facades.productreference.impl.DefaultBlProductFacade;
 import de.hybris.platform.acceleratorcms.model.components.ProductReferencesComponentModel;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.catalog.model.ProductReferenceModel;
@@ -34,16 +35,15 @@ public class ProductReferencesComponentController extends
     protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY , ProductOption.STOCK);
 
     @Resource(name = "productVariantFacade")
-    private ProductFacade productFacade;
+    private DefaultBlProductFacade defaultBlProductFacade;
 
     @Override
     protected void fillModel(final HttpServletRequest request, final Model model, final ProductReferencesComponentModel component) {
         final ProductModel currentProduct = getRequestContextData(request).getProduct();
         if (currentProduct != null) {
-            List<ProductReferenceTypeEnum> productReferenceTypeEnum = currentProduct.getProductReferences().stream()
-                .map(ProductReferenceModel::getReferenceType).collect(Collectors.toList());
-            final List<ProductReferenceData> productReferences = productFacade.getProductReferencesForCode(currentProduct.getCode(),
-                productReferenceTypeEnum, PRODUCT_OPTIONS, component.getMaximumNumberProducts());
+//            List<ProductReferenceTypeEnum> productReferenceTypeEnum = currentProduct.getProductReferences().stream()
+//                .map(ProductReferenceModel::getReferenceType).collect(Collectors.toList());
+            final List<ProductReferenceData> productReferences = defaultBlProductFacade.getProductReferencesForCode(currentProduct.getCode(),PRODUCT_OPTIONS, component.getMaximumNumberProducts());
 
             model.addAttribute("title", component.getTitle());
             model.addAttribute("productReferences", productReferences);
