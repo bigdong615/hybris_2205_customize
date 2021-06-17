@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BlProductFacade {
 
-  List<ProductReferenceData> getProductReferencesForCode(ProductModel currentProduct,List<ProductOption> options, Integer limit);
+  List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct, final List<ProductOption> options, final Integer limit);
 
 
 }
