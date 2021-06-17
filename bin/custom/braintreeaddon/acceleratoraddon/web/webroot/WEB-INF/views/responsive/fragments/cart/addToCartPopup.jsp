@@ -6,9 +6,12 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
+
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
 <c:url value="/cart/updateQuantity" var="cartUpdateFormAction"/>
 <c:url value="/cart" var="viewCartUrl"/>
+<c:url value="/cart/add" var="addToCartUrl"/>
+
 {"quickOrderErrorData": [
 <c:forEach items="${quickOrderErrorData}" var="quickOrderEntry" varStatus="status">
 	<c:set var="productCode" value="${fn:escapeXml(quickOrderEntry.productData.code)}" />
@@ -50,60 +53,116 @@
                           <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                           <input type="hidden" name="quantity" value="${entry.quantity}" />
                         <spring:theme code="text.quantity"/>
-                        <select class="mt-3 select js-select js-component-init js-update-quantity" id="shopping-cart-qty_${entry.entryNumber}" name="shopping-cart-qty">
-                           <c:forEach var="item" begin="1" end="10">
-                             <option value="${item}" ${item == quantity ? 'selected="selected"' : ''}>${item}</option>
-                           </c:forEach>
-                       </select>
+                        <div class="quantity">
+                        	<div class="input-group">
+                        		<span class="input-group-btn">
+                        			<button type="button" class="btn btn-default btn-number"
+                        				disabled="disabled" data-type="minus" data-field="quant[1]">
+                        				<span class="glyphicon glyphicon-minus"></span>
+                        			</button>
+                        		</span> <input type="text" name="quant[1]" class="form-control input-number"
+                        			value="1" min="1" max="99"
+                        			entryNumber="${entry.entryNumber}"> <span
+                        			class="input-group-btn">
+                        			<button type="button" class="btn btn-default btn-number"
+                        				data-type="plus" data-field="quant[1]">
+                        				<span class="glyphicon glyphicon-plus"></span>
+                        			</button>
+                        		</span>
+                        	</div>
+                        </div>
                       </form:form>
                   </div>
               </div>
               <hr>
               <!-- BL-455 TODO Additional Gear Slider -->
-              <h5 class="d-none d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
-              <div class="row d-none d-md-flex mt-4">
-                  <div class="col-md-4">
-                      <div class="card">
-                          <span class="badge badge-new">New</span>
-                          <span class="bookmark"></span>
-                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg"></li>
-                          <p class="overline"><a href="#">Canon</a></p>
-                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
-                          <h6 class="price">$44</h6>
-                          <a href="#" class="btn btn-primary">Add to Rental</a>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                      <div class="card">
-                          <span class="badge badge-new">New</span>
-                          <span class="bookmark"></span>
-                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
-                          <p class="overline"><a href="#">Canon</a></p>
-                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
-                          <h6 class="price">$44</h6>
-                          <a href="#" class="btn btn-primary">Add to Rental</a>
-                      </div>
-                  </div>
-                  <div class="col-md-4">
-                      <div class="card">
-                          <span class="badge badge-new">New</span>
-                          <span class="bookmark"></span>
-                          <img src="https://d2ieyhi8galmxj.cloudfront.net/product/MD6d750368-073c-4a5f-a9e9-1d818dac2685.jpg">
-                          <p class="overline"><a href="#">Canon</a></p>
-                          <h6 class="product"><a href="#">BG-10 Battery Grip</a></h6>
-                          <h6 class="price">$44</h6>
-                          <a href="#" class="btn btn-primary">Add to Rental</a>
-                      </div>
-                  </div>
-              </div>
-            </div>
+             <h5 class=" d-md-block"><spring:theme code="text.addtocart.dont.forget"/></h5>
+              <c:choose>
+                            	<c:when test="${not empty productReferences and productsLimit > 0}">
+                            	<div id="addToCart-gear-sliders" class="splide mt-4">
+                                		<div class="splide__track">
+                                              <ul class="splide__list">
+                                                            <c:forEach end="${productsLimit}" items="${productReferences}" var="productReference" varStatus="loopindex">
+                                        				        	<li class="splide__slide">
+                                                                        <div class="card">
+                                                                     <c:choose>
+                                                                              <c:when test="${productReference.target.stock.stockLevelStatus.code eq 'lowStock'}">
+                                                                        				<span class="badge badge-limited-stock"><spring:theme
+                                                                        						code="text.product.tile.flag.only.left"
+                                                                        						arguments="${productReference.target.stock.stockLevel}" /></span>
+                                                                        			</c:when>
+                                                                        			<c:when test="${productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                                                        				<span class="badge badge-out-of-stock"><spring:theme
+                                                                        						code="text.product.tile.flag.outOfStock"
+                                                                        						arguments="${productReference.target.stock.stockLevel}" /></span>
+                                                                        			</c:when>
+                                                                              <c:otherwise>
+                                                                                  <c:if test ="${productReference.target.productTagValues ne null}">
+                                                                                         <span class="badge badge-new">${productReference.target.productTagValues}</span>
+                                                                                  </c:if>
+                                                                              </c:otherwise>
+                                                                     </c:choose>
+                                                                           <span class="bookmark"></span>
+                                                                               <div class="card-sliders splide">
+                                                                                 <div class="splide__track">
+                                                                                   <ul class="splide__list">
+                                                                                   <c:forEach items="${productReference.target.images}" var="productImagePdp">
+                                                                                      <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY'}">
+                                                                                            <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
+                                                                                            <c:set value="this is alternate" var="altTextHtml"/>
+                                                                                            <!--BL-534: added <a> tag-->
+                                                                                                <li class="splide__slide">
+                                                                                                  <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                                                   <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}"></a</li>
+                                                                                      </c:if>
+                                                                                   </c:forEach>
+                                                                                   </ul>
+                                                                                 </div>
+                                                                               </div>
+                                                                               <p class="overline"><a href="#">${fn:escapeXml(productReference.target.manufacturer)}</a></p>
+                                                                               <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                               <h6 class="product"><a href="${rentalPDPUrl}">${fn:escapeXml(productReference.target.name)}</a></h6>
+                                                                               <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
+                                                                               <h6 class="price">${productReference.target.price.formattedValue}</h6>
+                                                                              
+                                                                                <c:choose>
+                                                                                      <c:when test="${productReference.target.isDiscontinued || productReference.target.stock.stockLevelStatus.code eq 'outOfStock'}">
+                                                                                            <button type="submit" class="btn btn-primary" disabled="disabled"><spring:theme code="pdp.rental.product.recommendation.section.addtorental.text"/> </button>
+                                                                                      </c:when>
+                                                                                      <c:when test="${productReference.target.isUpcoming}">
+                                                                                           <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
+                                                                                      </c:when>
+                                                                                       <c:otherwise>
+                                                                                       <div class="page-loader-new-layout">
+                                                                                                  <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+                                                                                             </div>
+                                                                                            <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                                                                                <button type="button" class="btn btn-primary btn-block js-add-to-cart-popup" id="modalCard-${loopindex.index}" data-bs-toggle="modal"
+                                                                                                   data-bs-target="#addToCart" data-product-code="${productReference.target.code}">
+                                                                                                  <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
+                                                                                                </button>
+                                                                                            </form>
+                                                                                        </c:otherwise>
+                                                                                </c:choose>
+                                                                        </div>
+                                                                    </li>
+                                                            </c:forEach>
+                                              </ul>
+                                        </div>
+                                        </div>
+                                	</c:when>
+
+                            	<c:otherwise>
+                            		<component:emptyComponent />
+                            	</c:otherwise>
+              </c:choose>
             <div class="modal-footer">
                 <a href="#" class="btn btn-outline" data-bs-dismiss="modal"><spring:theme code="text.popup.button.continue"/></a>
                 <a href="${viewCartUrl}" class="btn btn-primary"><spring:theme code="text.popup.button.viewcart"/></a>
             </div>
    </div>
 
-  </ycommerce:testId>
+  </ycommerce:testId>                
 	</spring:htmlEscape>
 </spring:escapeBody>"
 }

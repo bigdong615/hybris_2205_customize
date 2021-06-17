@@ -16,6 +16,8 @@
         <requires-extension name="blintegration"/>
         <requires-extension name="commercefacades"/>
         <requires-extension name="braintree"/>
+        <requires-extension name="ruledefinitions"/>
+
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		
         

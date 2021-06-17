@@ -135,7 +135,9 @@
         </c:if>
 
 		<c:if test="${cmsPage.uid eq 'homepage'}">
+
 		<script>
+		$('.social').eq(1).remove();
         document.addEventListener(
             "DOMContentLoaded", () => {
                  new Mmenu( "#my-menu", {
@@ -641,7 +643,7 @@
                                              } ).mount();
 
                                              let DontForgetCardQty= document.querySelectorAll("#gear-slider .card").length;
-                                             console.log(DontForgetCardQty);
+                                             if (DontForgetCardQty!=0){
                                              if(DontForgetCardQty<=4 && screen.width>991){
                                                  document.querySelector("#gear-slider .splide__arrows").style.display="none";
                                                   document.querySelector("#gear-slider .splide__pagination").style.display="none";
@@ -656,6 +658,7 @@
                                              }
                                               if(DontForgetCardQty==1 && screen.width<640){
                                                   document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
                                              }
                                              // BL-605: changes end here
                                              

@@ -66,6 +66,11 @@ INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ; @me
                     ;                        ; /images/theme/condition123.png     ; $siteResource/images/theme/icon-used-condition.png                                   ;Know what to expect with condition details  ;icon-used-condition           ;         ;image/png+xml
                     ;                        ; /images/theme/returns123.png       ; $siteResource/images/theme/icon-used-returns.png                                   ;Try it yourself with easy returns           ; icon-used-returns            ;         ;image/png+xml
 
+INSERT_UPDATE Media ; mediaFormat(qualifier) ; code[unique=true]           ;redirectUrl                                         ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator][forceWrite=true] ; realfilename           ; altText ; mime[default='image/jpeg'] ; $contentCV[unique=true] ; folder(qualifier)[default=images] ;
+                    ;                        ; /images/logo-youtube1.svg    ;https://www.youtube.com/user/BorrowLenses/featured  ; $siteResource/images/icon-youtube.svg                                                         ; logo-youtube.svg     ;         ; image/svg+xml              ;                         ;
+                    ;                        ; /images/logo-instagram1.svg  ;https://instagram.com/borrowlenses                  ; $siteResource/images/icon-instagram.svg                                                       ; logo-instagram.svg   ;         ; image/svg+xml              ;                         ;
+                    ;                        ; /images/logo-facebook1.svg   ;http://facebook.com/Borrowlenses                   ; $siteResource/images/icon-facebook.svg                                                        ; logo-facebook.svg    ;         ; image/svg+xml              ;                         ;
+
 
 UPDATE CustomSiteLogoComponent ; $contentCV[unique=true] ; uid[unique=true]    ; $picture[lang=$lang]
                                ;                         ; BLSiteLogoComponent ; /images/theme/bl-logo@2x.png ;  

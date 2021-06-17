@@ -69,15 +69,21 @@
                                       ${fn:escapeXml(errorMsg)}
                                </div>
                              </c:if>
-                             <div class="notification notification-error d-none"id="errorMessages_voucher" />
+                             <div class="notification notification-error d-none"id="errorMessages_voucher"></div>
 
                               <div id="cart-warning" class="notification notification-warning" style="display:none"><spring:theme code="text.date.range.not.available" /></div>
+                              <c:if test="${not empty giftCardCodeRemove}">
+                                  <div id="cart-warning" class="notification notification-warning">${giftCardCodeRemove}</div>
+                              </c:if>
+                              <c:if test="${isGiftCardRemoved eq 'true'}">
+                                 <div id="cart-warning" class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
+                              </c:if>
                               <%--<div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                               <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                               <div class="order-actions my-4">
                                   <a href="#" alt="Print Order"><i class="icon-print"></i></a>
                                   <a href="#"><i class="icon-save" alt="Save Order"></i></a>
-                                  <a href="${emptyCart}" alt="Trash Order" class="clear-cart-page"><i class="icon-trash"></i></a>
+                                  <a href="#" alt="Trash Order" class="clear-cart-page" data-bs-toggle="modal" data-bs-target="#clearCartWarning"><i class="icon-trash"></i></a>
                               </div>
                           </div>
                       </div>
@@ -128,4 +134,30 @@
             </div>
           </div>
       </div>
+  </div>
+  <div class="modal fade" id="clearCartWarning" tabindex="-1"
+  	aria-hidden="true">
+  	<div class="modal-dialog modal-dialog-centered modal-sm">
+  		<div class="modal-content">
+  			<div class="modal-header">
+  				<h5 class="modal-title">
+  					<spring:theme code="shipping.interception.change.date.warning.wait" />
+  				</h5>
+  				<button type="button" class="btn-close" data-bs-dismiss="modal"
+  					aria-label="Close"></button>
+  			</div>
+  			<div class="modal-body">
+  				<p class="body14">
+  					<spring:theme code="text.clear.cart.message" />
+  				</p>
+  				<a href="${emptyCart}" class="btn btn-primary btn-block my-4 clear-cart-continue"><spring:theme
+  						code="general.continue.button" /></a>
+  				<p class="text-center mb-0">
+  					<a href="#" class="lightteal" data-bs-dismiss="modal"
+  						aria-label="Close"><spring:theme
+  							code="text.button.cancel" /></a>
+  				</p>
+  			</div>
+  		</div>
+  	</div>
   </div>

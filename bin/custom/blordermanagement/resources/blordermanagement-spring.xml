@@ -92,4 +92,74 @@
     <bean id="returnLabelEmailContext" class="com.bl.Ordermanagement.email.ReturnLabelEmailContext" parent="abstractEmailContext" scope="prototype" >
         <property name="orderConverter" ref="orderConverter"/>
     </bean>
+
+    <!-- Sourcing and allocation -->
+    <alias name="defaultBlSourcingService" alias="blSourcingService" />
+    <bean id="defaultBlSourcingService" class="com.bl.Ordermanagement.services.impl.DefaultBlSourcingService">
+        <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
+        <property name="blSourcingStrategyService" ref="blSourcingStrategyService"/>
+        <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
+    </bean>
+
+    <alias name="defaultBlAllocationService" alias="allocationService" />
+    <bean id="defaultBlAllocationService" class="com.bl.Ordermanagement.services.impl.DefaultBlAllocationService" parent="defaultAllocationService">
+        <property name="blStockLevelDao" ref="blStockLevelDao"/>
+    </bean>
+
+    <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
+    <bean id="defaultBlSourcingLocationService" class="com.bl.Ordermanagement.services.impl.DefaultBlSourcingLocationService">
+       <property name="sourcingLocationPopulators">
+            <set>
+                <ref bean="blAvailabilitySourcingLocationPopulator"/>
+            </set>
+        </property>
+    </bean>
+
+    <bean name="blDeliveryStateSourcingLocationFilter"
+      class="com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter">
+        <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
+    </bean>
+
+
+    <bean name="blAvailabilitySourcingLocationPopulator"
+      class="com.bl.Ordermanagement.populators.BlAvailabilitySourcingLocationPopulator">
+        <property name="blCommerceStockService" ref="blCommerceStockService"/>
+    </bean>
+
+    <alias name="defaultBlSourcingStrategyService" alias="blSourcingStrategyService"/>
+    <bean id="defaultBlSourcingStrategyService"
+      class="com.bl.Ordermanagement.strategy.impl.DefaultBlSourcingStrategyService">
+        <property name="defaultStrategies">
+            <list>
+                <ref bean="blNoSplittingStrategy"/>
+                <ref bean="blNoRestrictionsStrategy"/>
+            </list>
+        </property>
+    </bean>
+
+    <alias name="defaultBlAssignSerialService" alias="blAssignSerialService"/>
+    <bean id="defaultBlAssignSerialService"
+      class="com.bl.Ordermanagement.services.impl.DefaultBlAssignSerialService">
+        <property name="blProductDao" ref="productDao"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
+        <property name="sessionService" ref="sessionService"/>
+    </bean>
+
+    <alias name="defaultBlNoSplittingStrategy" alias="blNoSplittingStrategy"/>
+    <bean id="defaultBlNoSplittingStrategy"
+      class="com.bl.Ordermanagement.strategy.impl.BlNoSplittingStrategy"
+      parent="abstractSourcingStrategy">
+        <property name="blCommerceStockService" ref="blCommerceStockService"/>
+        <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
+        <property name="baseStoreService" ref="baseStoreService"/>
+    </bean>
+
+    <alias name="defaultBlNoRestrictionsStrategy" alias="blNoRestrictionsStrategy"/>
+    <bean id="defaultBlNoRestrictionsStrategy"
+      class="com.bl.Ordermanagement.strategy.impl.BlNoRestrictionsStrategy"
+      parent="abstractSourcingStrategy">
+        <property name="modelService" ref="modelService"/>
+        <property name="blAssignSerialService" ref="blAssignSerialService"/>
+    </bean>
+
 </beans>
