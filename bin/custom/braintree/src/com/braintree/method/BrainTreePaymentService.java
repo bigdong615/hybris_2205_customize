@@ -213,11 +213,5 @@ public interface BrainTreePaymentService extends PaymentMethod
 
 	WebhookNotification getWebhookNotification(BrainTreeWebhookNotificationRequest webhookNotificationRequest);
 
-	PayPalAccount getPaymentMethodFromBTByToken(final  String paymentMethodToken);
-
-	/**
-	 * It is used to capture an authorized transaction
-	 * @param captureRequest
-	 */
-	CaptureResult capture(final CaptureRequest captureRequest) throws CommandNotSupportedException;
+	PayPalAccount getPaymentMethodFromBTByToken(final String paymentMethodToken);
 }

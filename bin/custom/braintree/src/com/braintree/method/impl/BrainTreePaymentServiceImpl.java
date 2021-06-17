@@ -906,17 +906,6 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	}
 
 	/**
-	 *{@inheritDoc}
-	 */
-	@Override
-	public CaptureResult capture(final CaptureRequest captureRequest)
-			throws CommandNotSupportedException {
-		final CaptureCommand command = getCommandFactory().createCommand(CaptureCommand.class);
-		final CaptureResult result = command.perform(captureRequest);
-		return result;
-	}
-
-	/**
 	 * @return the modelService
 	 */
 	public ModelService getModelService()

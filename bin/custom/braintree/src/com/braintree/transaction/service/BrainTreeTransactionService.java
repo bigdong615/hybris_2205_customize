@@ -73,10 +73,9 @@ public interface BrainTreeTransactionService
 	 * To create the capture transaction of the order
 	 * @param orderModel
 	 * @param amount
-	 * @param requestId 
+	 * @param requestId
 	 * @return  boolean
 	 */
 	boolean captureAuthorizationTransaction(final OrderModel orderModel, final BigDecimal amount,
 			final String requestId) throws BraintreeErrorException;
-
 }

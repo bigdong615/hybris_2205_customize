@@ -46,6 +46,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import de.hybris.platform.payment.AdapterException;
 
 
 @Controller
@@ -53,6 +54,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStepController
 {
 	private final static Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
@@ -181,7 +183,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     LOG.info("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(placeOrderForm.getCustomFields()));
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
-    if (BraintreeaddonConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
     {
       try
       {
@@ -192,7 +194,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
         // handle a case where a wrong paymentProvider configurations on the store see getCommerceCheckoutService().getPaymentProvider()
         LOG.error(ae.getMessage(), ae);
       }
-      if (!isPaymentAuthorized)
+      if(isPaymentAuthorized) {
+				brainTreeCheckoutFacade.voidAuthTransaction();
+			}
+      else
       {
         GlobalMessages.addErrorMessage(model, "checkout.error.authorization.failed");
         return enterStep(model, redirectModel);
