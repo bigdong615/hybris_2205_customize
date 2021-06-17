@@ -1,16 +1,16 @@
 //BL-467 clear cart functionality from cart page.
-$('.clear-cart-page').on("click", function (event) {
-            $.ajax({
-                     url: ACC.config.encodedContextPath + '/cart/emptyCart',
-                     type: "GET",
-                     success: function (data) {
-                     window.location.reload();
-                     },
-                     error: function (xht, textStatus, ex) {
-                       console.log("Error while removing cart entries");
-                     }
-            });
-       });
+$('.clear-cart-continue').on("click", function(event) {
+	$.ajax({
+		url : ACC.config.encodedContextPath + '/cart/emptyCart',
+		type : "GET",
+		success : function(data) {
+			window.location.reload();
+		},
+		error : function(xht, textStatus, ex) {
+			console.log("Error while removing cart entries");
+		}
+	});
+});
 
 // BL-458 update quantity from cart page.
 $('.update').on("change", function (e){
@@ -87,38 +87,109 @@ $('.shopping-cart__item-remove').on("click", function (e){
 
  // BL-454 update quantity from rental add to cart popup.
  function updateQuantity() {
-    $('.js-update-quantity').on("change", function (e){
-        			  var newCartQuantity = $(this).find(":selected").val();
-        				e.preventDefault();
-        				var entryNumber = $(this).attr('id').split("_");
-        				var form = $('#updateCartForm' + entryNumber[1]);
-        				var productCode = form.find('input[name=productCode]').val();
-        				var initialCartQuantity = form.find('input[name=initialQuantity]').val();
-        				var entryNumber = form.find('input[name=entryNumber]').val();
-        				form.find('input[name=quantity]').val(newCartQuantity);
-                $.ajax({
-                          url: ACC.config.encodedContextPath + "/cart/updateQuantity",
-                          type: 'POST',
-                          data: form.serialize(),
-                          beforeSend: function(){
-                             $('.page-loader-new-layout').show();
-                          },
-                          success: function (response) {
-                             if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
-                                  ACC.minicart.updateMiniCartDisplay();
-                             }
-                          },
-                          complete: function() {
-                             $('.page-loader-new-layout').hide();
-                          },
-                          error: function (jqXHR, textStatus, errorThrown) {
-                            $('.page-loader-new-layout').hide();
-                            console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
-                          }
-                });
+    $('.btn-number').click(function(e) {
+    	e.preventDefault();
+    	fieldName = $(this).attr('data-field');
+    	type = $(this).attr('data-type');
+    	var input = $("input[name='" + fieldName + "']");
+    	var currentVal = parseInt(input.val());
+    	if (!isNaN(currentVal)) {
+    		if (type == 'minus') {
+    			if (currentVal > input.attr('min')) {
+    				input.val(currentVal - 1).change();
+    			}
+    			if (parseInt(input.val()) == input.attr('min')) {
+    				$(this).attr('disabled', true);
+    			}
+    		} else if (type == 'plus') {
+    			if (currentVal < input.attr('max')) {
+    				input.val(currentVal + 1).change();
+    			}
+    			if (parseInt(input.val()) == input.attr('max')) {
+    				$(this).attr('disabled', true);
+    			}
+    		}
+    	} else {
+    		input.val(0);
+    	}
+    });
+    $('.input-number').focusin(function() {
+    	$(this).data('oldValue', $(this).val());
     });
 
+    $('.input-number').change(function() {
+    			minValue = parseInt($(this).attr('min'));
+    			maxValue = parseInt($(this).attr('max'));
+    			valueCurrent = parseInt($(this).val());
+    			name = $(this).attr('name');
+    			if (valueCurrent >= minValue) {
+    				$(
+    						".btn-number[data-type='minus'][data-field='"
+    						+ name + "']").removeAttr('disabled')
+    			} else {
+    				$(this).val($(this).data('oldValue'));
+    			}
+    			if (valueCurrent <= maxValue) {
+    				$(
+    						".btn-number[data-type='plus'][data-field='"
+    						+ name + "']").removeAttr('disabled')
+    			} else {
+    				$(this).val($(this).data('oldValue'));
+    			}
+    			// update cart quantity
+    			var entryNumber = parseInt($(this).attr('entryNumber'));
+    			var form = $('#updateCartForm' + entryNumber);
+    			var productCode = form.find('input[name=productCode]')
+    			.val();
+    			var initialCartQuantity = form.find(
+    			'input[name=initialQuantity]').val();
+    			var entryNumber = form.find('input[name=entryNumber]')
+    			.val();
+    			form.find('input[name=quantity]').val(valueCurrent);
+    			if (valueCurrent >= minValue && valueCurrent <= maxValue) {
+    			$.ajax({
+    				url : ACC.config.encodedContextPath
+    				+ "/cart/updateQuantity",
+    				type : 'POST',
+    				data : form.serialize(),
+    				beforeSend : function() {
+    					$('.page-loader-new-layout').show();
+    				},
+    				success : function(response) {
+    					if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+    						ACC.minicart.updateMiniCartDisplay();
+    					}
+    				},
+    				complete : function() {
+    					$('.page-loader-new-layout').hide();
+    				},
+    				error : function(jqXHR, textStatus, errorThrown) {
+    					$('.page-loader-new-layout').hide();
+    					console.log(
+    							"The following error occurred: "
+    							+ jqXHR, textStatus,
+    							errorThrown);
+    				}
+    			});
+    			}
+    });
 
+    $(".input-number").keydown(function(e) {
+    			// Allow: backspace, delete, tab, escape, enter and .
+    			if ($.inArray(e.keyCode, [ 46, 8, 9, 27, 13, 190 ]) !== -1 ||
+    					// Allow: Ctrl+A
+    					(e.keyCode == 65 && e.ctrlKey === true) ||
+    					// Allow: home, end, left, right
+    					(e.keyCode >= 35 && e.keyCode <= 39)) {
+    				// let it happen, don't do anything
+    				return;
+    			}
+    			// Ensure that it is a number and stop the keypress
+    			if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57))
+    					&& (e.keyCode < 96 || e.keyCode > 105)) {
+    				e.preventDefault();
+    			}
+    });
  }
 
 //BL-461,465 Product Availability
@@ -293,4 +364,81 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
 
    });
   }
-}
+
+//BL-458 Quantity Change
+$('.btn-number').click(function(e){
+	e.preventDefault();
+	fieldName = $(this).attr('data-field');
+	type = $(this).attr('data-type');
+	var input = $("input[name='"+fieldName+"']");
+	var currentVal = parseInt(input.val());
+	if (!isNaN(currentVal)) {
+		if(type == 'minus') {
+      if(currentVal > input.attr('min')) {
+				input.val(currentVal - 1).change();
+			}
+			if(parseInt(input.val()) == input.attr('min')) {
+				$(this).attr('disabled', true);
+			}
+    } else if(type == 'plus') {
+      if(currentVal < input.attr('max')) {
+				input.val(currentVal + 1).change();
+			}
+			if(parseInt(input.val()) == input.attr('max')) {
+				$(this).attr('disabled', true);
+			}
+		}
+	} else {
+		input.val(0);
+	}
+});
+$('.input-number').focusin(function(){
+	$(this).data('oldValue', $(this).val());
+});
+
+$('.input-number').change(function() {
+	minValue = parseInt($(this).attr('min'));
+	maxValue = parseInt($(this).attr('max'));
+	valueCurrent = parseInt($(this).val());
+  name = $(this).attr('name');
+	if(valueCurrent >= minValue) {
+		$(".btn-number[data-type='minus'][data-field='"+name+"']").removeAttr('disabled')
+	} else {
+		$(this).val($(this).data('oldValue'));
+	}
+	if(valueCurrent <= maxValue) {
+		$(".btn-number[data-type='plus'][data-field='"+name+"']").removeAttr('disabled')
+	} else {
+		$(this).val($(this).data('oldValue'));
+	}
+	//update cart quantity
+	if (valueCurrent >= minValue && valueCurrent <= maxValue) {
+  	var entryNumber = parseInt($(this).attr('entryNumber'));
+  	var form = $('#updateCartForm' + entryNumber);
+  	var productCode = form.find('input[name=productCode]').val();
+  	var initialCartQuantity = form.find('input[name=initialQuantity]').val();
+  	var entryNumber = form.find('input[name=entryNumber]').val();
+  	form.find('input[name=quantity]').val(valueCurrent);
+  	if (initialCartQuantity != valueCurrent) {
+  		ACC.track.trackUpdateCart(productCode, initialCartQuantity,
+  				valueCurrent);
+  		form.submit();
+  	}
+  }
+});
+
+$(".input-number").keydown(function (e) {
+	// Allow: backspace, delete, tab, escape, enter and .
+	if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
+			// Allow: Ctrl+A
+			(e.keyCode == 65 && e.ctrlKey === true) ||
+			// Allow: home, end, left, right
+			(e.keyCode >= 35 && e.keyCode <= 39)) {
+		// let it happen, don't do anything
+		return;
+	}
+	// Ensure that it is a number and stop the keypress
+	if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+		e.preventDefault();
+	}
+});
