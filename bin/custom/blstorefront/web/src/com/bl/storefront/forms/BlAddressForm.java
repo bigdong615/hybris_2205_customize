@@ -16,6 +16,7 @@ public class BlAddressForm extends AddressForm {
     private boolean upsStoreAddress;
     private boolean pickStoreAddress;
     private String openingDaysDetails;
+    private String companyName;
 
     public boolean isPickStoreAddress() {
         return pickStoreAddress;
@@ -56,6 +57,14 @@ public class BlAddressForm extends AddressForm {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
 }

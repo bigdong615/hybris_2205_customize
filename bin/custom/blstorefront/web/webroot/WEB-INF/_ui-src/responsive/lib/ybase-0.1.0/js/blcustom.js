@@ -293,4 +293,4 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
 
    });
   }
-}
+

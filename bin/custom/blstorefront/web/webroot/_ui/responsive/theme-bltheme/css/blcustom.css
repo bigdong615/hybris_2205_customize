@@ -169,3 +169,7 @@ input.error { padding-right: 30px; border-color: #e64b4f!important; color: #e64b
 
 .social-icon{position : relative}
 .social{position: absolute;bottom: -23px;left: 0;}
+
+.boldCustom {
+  font-weight: bold;
+}

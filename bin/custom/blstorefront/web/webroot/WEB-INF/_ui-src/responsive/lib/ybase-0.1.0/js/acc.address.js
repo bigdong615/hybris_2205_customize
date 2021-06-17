@@ -9,7 +9,8 @@ ACC.address = {
 		"bindViewAddressBook",
 		"bindToColorboxClose",
 		"showRemoveAddressFromBookConfirmation",
-		"backToListAddresses"
+		"backToListAddresses",
+		"bindSettingDefaultAddress"
 	],
 
 	spinner: $("<img src='" + ACC.config.commonResourcePath + "/images/spinner.gif' />"),
@@ -306,19 +307,7 @@ ACC.address = {
 		$(document).on("click", ".removeAddressFromBookButton", function ()
 		{
 			var addressId = $(this).data("addressId");
-			var popupTitle = $(this).data("popupTitle");
-
-			ACC.colorbox.open(popupTitle,{
-				inline: true,
-				height: false,
-				href: "#popup_confirm_address_removal_" + addressId,
-				onComplete: function ()
-				{
-
-					$(this).colorbox.resize();
-				}
-			});
-
+			document.getElementById("removeAddressLink").href = "remove-address/"+addressId;
 		})
 	},
 
@@ -327,5 +316,21 @@ ACC.address = {
 			var sUrl = $(this).data("backToAddresses");
 			window.location = sUrl;
 		});
-	}
+	},
+	bindSettingDefaultAddress :function(){
+    	$(document).on("click", ".js-set-default-shipping-address", function (e)
+        {
+          var url = $(this).val();
+             $.ajax({
+            	url: url,
+            	success: function (result) {
+            	location.reload();
+            	}
+            	});
+        });
+       	$(document).on("click", ".js-set-default-billing-address", function (e)
+             {
+             location.reload();
+            });
+    	}
 };
