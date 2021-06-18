@@ -105,6 +105,7 @@
 		</c:forEach>
 		
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
+        <script src="${commonResourcePathHtml}/js/select-script.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>

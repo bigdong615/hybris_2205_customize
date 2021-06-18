@@ -809,13 +809,27 @@
 		<property name="giftCardService" ref="giftCardService" />
 	</bean>
 	<!--Gift card End-->
+	
+	<!-- BL-628: Notify me start -->
+	<bean id="generateProductNotifyMeEmail" parent="abstractGenerateEmailAction">
+		<property name="frontendTemplateName" value="ProductNotifyMeEmailTemplate" />
+	</bean>
+
+	<bean id="productNotifyMeEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
+		<property name="resource" value="classpath:/blcore/processes/productNotifyMeEmailProcess.xml" />
+	</bean>
+
+	<alias name="blBackInStockNotificationJob" alias="stockLevelStatusJob" />
+	<bean id="blBackInStockNotificationJob" class="com.bl.core.job.BlBackInStockNotificationJob" parent="defaultStockLevelStatusJob">
+	</bean>
+	<!-- Notify me end -->
 
 	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
     <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
         <property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
     </bean>
-
+	
 	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
 	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
 	<bean id="defaultRuleRentalDurationConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalDurationConditionTranslator" />
@@ -826,4 +840,20 @@
 	<alias alias="ruleRentalArrivalDateConditionTranslator" name="defaultRuleRentalArrivalDateConditionTranslator" />
 	<bean id="defaultRuleRentalArrivalDateConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalArrivalDateConditionTranslator" />
 
+	<!-- [BL-655]: Custom Actions for rental products promotion-->
+	<alias alias="ruleFreeRentalDatesAction" name="defaultRuleFreeRentalDatesAction" />
+	<bean id="defaultRuleFreeRentalDatesAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="ruleFreeRentalDatesRAOAction"/>
+	</bean>
+	<alias alias="ruleFreeRentalDatesRAOAction" name="defaultBlRuleFreeRentalDatesRAOAction" />
+	<bean id="defaultBlRuleFreeRentalDatesRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlRuleFreeRentalDatesRAOAction">
+		<property name="blCommercePriceService" ref="commercePriceService"/>
+		<property name="productService" ref="productService"/>
+		<property name="orderEntryRaoToNumberedLineItemConverter" ref="orderEntryRaoToNumberedLineItemConverter"/>
+	</bean>
+
+	<bean id="blFreeRentalDatesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+		<property name="key" value="defaultBlRuleFreeRentalDatesRAOAction"/>
+		<property name="value" ref="orderTotalAdjustActionStrategy"/>
+	</bean>
 </beans>

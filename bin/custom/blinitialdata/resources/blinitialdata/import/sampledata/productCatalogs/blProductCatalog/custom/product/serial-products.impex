@@ -64,24 +64,24 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFi
 
 
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;withOrderID;finalSalePrice;dateOfSale;conditionRatingOverallScore
-                      ;;5122541 ;2586;1Z87099FNW99827320;;;;;;;;;2.55
-                      ;;6051076 ;2586;1Z87099FNY95392357;;;;;;9109749;;;3
-                      ;;6128205 ;2430;CAR016 S04;;;;;;;;;2.55
-                      ;;CPL58.016;6432;BIN SML 1253;;;;;MAM CLEAN028 S02;;;;0
-                      ;;CPL58.022;4413;BIN CAGE 5375;;;;;CAR032 S04;;;;0
-                      ;;CPL58.023;763;BIN SML 325;;;;;MAM DIRTY030 S04;;;;0
-                      ;;Y7ADF1SFS00078;4431;BIN CAGE 5393;;;;;CAR045 S04;;;;0
-                      ;;Y7ADG1SFS00249;2918;bin cage 1075;;;;;MAR059 S06;;;;0
-                      ;;Y7ADG1SFS00197;2918;bin cage 1075;;;;;MAR059 S06;;;;0
-                      ;;3002962 ;5532;ca repaircab001 s04;;;;;;6695408;;;3.2
-                      ;;3003088 ;876;MAR024 S05;;;;;;;;;3.2
-                      ;;3003086 ;2586;1Z19E596NY98745520;;;;;;;;;2.2
-                      ;;152000000000 ;2586;1Z19E5964267440264;;;;;;;;;2.8
-                      ;;132000000001 ;2586;1Z19E596P294020066;;;;;;9154272;;;2.2
-                      ;;132000000000 ;5532;CA REPAIRCAB001 S04;;;;;;;;;2.8
-                      ;;5353841 ;2586;;;;;;;;;;3.1
-                      ;;5579698 ;5484;MAM DIRTY013 S02;;;;;MAM DIRTY013 S02;;;;3.1
-                      ;;5789775 ;8608;;;;;;;;;;;3.1
-                      ;;198534 ;2586;1Z19E596NY92849232;;;;;;9598546;;;3
-                      ;;207730 ;2586;1Z19E596NY92262106;;;;;;9536469;;;3.1
-                      ;;220232 ;1926;BIN SML C679;;;;;CAM FD01 S02;9605590;;;3.9
+                      ;;5122541 ;2586;1Z87099FNW99827320;warehouse_ca;;;;;;;;2.55
+                      ;;6051076 ;2586;1Z87099FNY95392357;warehouse_ca;;;;;9109749;;;3
+                      ;;6128205 ;2430;CAR016 S04;warehouse_ma;;;;;;;;2.55
+                      ;;CPL58.016;6432;BIN SML 1253;warehouse_ca;;;;MAM CLEAN028 S02;;;;0
+                      ;;CPL58.022;4413;BIN CAGE 5375;warehouse_ca;;;;CAR032 S04;;;;0
+                      ;;CPL58.023;763;BIN SML 325;warehouse_ca;;;;MAM DIRTY030 S04;;;;0
+                      ;;Y7ADF1SFS00078;4431;BIN CAGE 5393;warehouse_ca;;;;CAR045 S04;;;;0
+                      ;;Y7ADG1SFS00249;2918;bin cage 1075;warehouse_ca;;;;MAR059 S06;;;;0
+                      ;;Y7ADG1SFS00197;2918;bin cage 1075;warehouse_ca;;;;MAR059 S06;;;;0
+                      ;;3002962 ;5532;ca repaircab001 s04;warehouse_ca;;;;;6695408;;;3.2
+                      ;;3003088 ;876;MAR024 S05;warehouse_ca;;;;;;;;3.2
+                      ;;3003086 ;2586;1Z19E596NY98745520;warehouse_ca;;;;;;;;2.2
+                      ;;152000000000 ;2586;1Z19E5964267440264;warehouse_ca;;;;;;;;2.8
+                      ;;132000000001 ;2586;1Z19E596P294020066;warehouse_ca;;;;;9154272;;;2.2
+                      ;;132000000000 ;5532;CA REPAIRCAB001 S04;warehouse_ca;;;;;;;;2.8
+                      ;;5353841 ;2586;;warehouse_ca;;;;;;;;3.1
+                      ;;5579698 ;5484;MAM DIRTY013 S02;warehouse_ca;;;;MAM DIRTY013 S02;;;;3.1
+                      ;;5789775 ;8608;;warehouse_ma;;;;;;;;;3.1
+                      ;;198534 ;2586;1Z19E596NY92849232;warehouse_ca;;;;;9598546;;;3
+                      ;;207730 ;2586;1Z19E596NY92262106;warehouse_ca;;;;;9536469;;;3.1
+                      ;;220232 ;1926;BIN SML C679;warehouse_ca;;;;CAM FD01 S02;9605590;;;3.9

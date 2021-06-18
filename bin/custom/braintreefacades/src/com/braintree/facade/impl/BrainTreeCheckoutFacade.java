@@ -1,7 +1,10 @@
 package com.braintree.facade.impl;
 
+import com.braintree.command.request.BrainTreeAddressRequest;
+import com.braintree.command.result.BrainTreeAddressResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
+import com.braintree.converters.utils.BlBrainTreeConvertUtils;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.enums.BrainTreePaymentMethod;
 import com.braintree.hybris.data.BrainTreeSubscriptionInfoData;
@@ -15,10 +18,13 @@ import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.core.model.c2l.RegionModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
@@ -34,6 +40,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
@@ -137,6 +144,149 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 
 		return null;
 	}
+	
+  /**
+   * Sets the payment details with updating address on Braintree and PaymentInfoModel.
+   *
+   * @param paymentInfoId the payment info id
+   * @param paymentMethodNonce the payment method nonce
+   * @param addressId the address id
+   * @param billingAddress the billing address
+   * @return true, if successful
+   */
+  public boolean setPaymentDetails(final String paymentInfoId, final String paymentMethodNonce, final String addressId,
+      final AddressData billingAddress)
+  {
+    validateParameterNotNullStandardMessage("paymentInfoId", paymentInfoId);
+
+    if (checkIfCurrentUserIsTheCartUser())
+    {
+      final CustomerModel currentUserForCheckout = getCurrentUserForCheckout();
+      if (StringUtils.isNotBlank(paymentInfoId) && Objects.nonNull(currentUserForCheckout))
+      {
+        final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentService.completeCreateSubscription(currentUserForCheckout, paymentInfoId);
+        if (paymentInfo != null)
+        {
+          final AddressModel newAddressModel = updateAddressInBtIfAvailable(currentUserForCheckout, addressId, paymentInfo, billingAddress);
+          if (Objects.nonNull(newAddressModel))
+          {
+            getModelService().remove(paymentInfo.getBillingAddress());
+            newAddressModel.setOwner(paymentInfo);
+            getModelService().save(newAddressModel);
+            paymentInfo.setBillingAddress(newAddressModel);
+          }
+          paymentInfo.setNonce(paymentMethodNonce);
+          getModelService().save(paymentInfo);
+          return true;
+        }
+        else
+        {
+          super.setPaymentDetails(paymentInfoId);
+        }
+      }
+    }
+    return false;
+  }
+	
+  /**
+   * Update address in braintree and PaymentInfoModel if available.
+   *
+   * @param currentUserForCheckout the current user for checkout
+   * @param addressId the address id
+   * @param paymentInfo the payment info
+   * @param billingAddress the billing address
+   * @return the address model
+   */
+  private AddressModel updateAddressInBtIfAvailable(final CustomerModel currentUserForCheckout, final String addressId,
+      final BrainTreePaymentInfoModel paymentInfo, final AddressData billingAddress)
+  {
+    try
+    {
+      if (!getUserService().isAnonymousUser(currentUserForCheckout))
+      {
+        if (StringUtils.isNotBlank(addressId) && !StringUtils.equalsIgnoreCase(addressId, paymentInfo.getBillingAddress().getPk().toString()))
+        {
+          final AddressData addressData =
+              getAddressConverter().convert(getCustomerAccountService().getAddressForCode(currentUserForCheckout, addressId));
+          return updateAddressOnBT(currentUserForCheckout, paymentInfo, addressData);
+        }
+        else if (Objects.nonNull(billingAddress))
+        {
+          return updateAddressOnBT(currentUserForCheckout, paymentInfo, billingAddress);
+        }
+      }
+    }
+    catch (final Exception exception)
+    {
+      LOG.error("Error occured while updating address", exception);
+      return null;
+    }
+    return null;
+  }
+
+  /**
+   * Update address on BrainTree.
+   *
+   * @param currentUserForCheckout the current user for checkout
+   * @param paymentInfo the payment info
+   * @param addressData the address data
+   * @return the address model
+   */
+  private AddressModel updateAddressOnBT(final CustomerModel currentUserForCheckout, final BrainTreePaymentInfoModel paymentInfo,
+      final AddressData addressData)
+  {
+    try
+    {
+      setRegionShortCodeIfNotAvailable(addressData);
+      final BrainTreeAddressRequest brainTreeAddressRequest =
+          BlBrainTreeConvertUtils.convertBrainTreeAddress(currentUserForCheckout.getBraintreeCustomerId(), addressData);
+      final String brainTreeAddressId = paymentInfo.getBillingAddress().getBrainTreeAddressId();
+      if (StringUtils.isNotBlank(brainTreeAddressId))
+      {
+        brainTreeAddressRequest.setAddressId(brainTreeAddressId);
+        final BrainTreeAddressResult updateAddressResult = getBrainTreePaymentService().updateAddress(brainTreeAddressRequest);
+        if (updateAddressResult.isSuccess())
+        {
+          final AddressModel addressModel = getModelService().create(AddressModel.class);
+          getAddressReversePopulator().populate(addressData, addressModel);
+          addressModel.setBrainTreeAddressId(brainTreeAddressId);
+          return addressModel;
+        }
+      }
+    }
+    catch (final Exception exception)
+    {
+      LOG.error("Error occured while updating address", exception);
+    }
+    return null;
+  }
+  
+  /**
+   * Sets the region short code if not available.
+   *
+   * @param addressData the new region short code if not available
+   */
+  private void setRegionShortCodeIfNotAvailable(final AddressData addressData)
+  {
+    if (checkObjectEmptyAndNull(addressData))
+    {
+      RegionModel region = getCommonI18NService().getRegion(getCommonI18NService().getCountry(addressData.getCountry().getIsocode()),
+          addressData.getRegion().getIsocode());
+      addressData.getRegion().setIsocodeShort(region.getIsocodeShort());
+    }
+  }
+
+  /**
+   * Check object is no empty and not null.
+   *
+   * @param addressData the address data
+   * @return true, if successful
+   */
+  private boolean checkObjectEmptyAndNull(final AddressData addressData)
+  {
+    return Objects.nonNull(addressData) && Objects.nonNull(addressData.getCountry()) && Objects.nonNull(addressData.getRegion())
+        && StringUtils.isBlank(addressData.getRegion().getIsocodeShort()) && StringUtils.isNotBlank(addressData.getCountry().getIsocode());
+  }
 
 	public boolean setPaymentDetails(final String paymentInfoId, final String paymentMethodNonce) {
 		validateParameterNotNullStandardMessage("paymentInfoId", paymentInfoId);
