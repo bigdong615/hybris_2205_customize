@@ -53,13 +53,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     populateContextWithUnAllocatedMap(sourcingContext);
 
     if (isSourcingNoSplittingPossible(sourcingContext, sourcingLocation)) {
-      sourcingContext.getOrderEntries().stream().forEach(orderEntry -> {
-        final Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
-        if (availableQty.longValue() != 0l) {
-          populateContextWithAllocatedQuantity(sourcingContext, sourcingLocation, orderEntry,
-              availableQty);
-        }
-      });
+      
        sourcingLocation.setCompleteSourcePossible(true);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
           sourcingLocation.getWarehouse().getCode());
@@ -74,13 +68,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
          final SourcingLocation otherSourcingLocation = blSourcingLocationService
               .createSourcingLocation(sourcingContext, warehouse);
           if (isSourcingNoSplittingPossible(sourcingContext, otherSourcingLocation)) {
-            sourcingContext.getOrderEntries().stream().forEach(orderEntry -> {
-              final Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), otherSourcingLocation);
-              if (availableQty.longValue() != 0l) {
-                populateContextWithAllocatedQuantity(sourcingContext, otherSourcingLocation, orderEntry,
-                    availableQty);
-              }
-            });
+            
             otherSourcingLocation.setCompleteSourcePossible(true);
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
                 otherSourcingLocation.getWarehouse().getCode());
@@ -115,6 +103,14 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
    */
   private boolean isSourcingNoSplittingPossible(final SourcingContext sourcingContext,
       final SourcingLocation sourcingLocation) {
+
+    sourcingContext.getOrderEntries().stream().forEach(orderEntry -> {
+      final Long availableQty = getAvailabilityForProduct(orderEntry.getProduct(), sourcingLocation);
+      if (availableQty.longValue() != 0l) {
+        populateContextWithAllocatedQuantity(sourcingContext, sourcingLocation, orderEntry,
+            availableQty);
+      }
+    });
 
     return sourcingContext.getOrderEntries().stream().allMatch(entry -> {
       final Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);

@@ -57,7 +57,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Assigning serials from warehouse {}",
         sourcingLocation.getWarehouse().getCode());
     final List<AtomicBoolean> allEntrySourceComplete = new ArrayList<>();
-
+    SourcingResult result = new SourcingResult();
     context.getOrderEntries().forEach(entry -> {
 
       final List<StockLevelModel> stocks = sourcingLocation.getAvailabilityMap()
@@ -65,14 +65,32 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
       if (CollectionUtils.isNotEmpty(stocks)) {
         validateAllocationRulesAndAssignSerials(context, context.getResult().getResults(),
-            sourcingLocation.getWarehouse(), new SourcingResult(), allEntrySourceComplete, entry,
+            sourcingLocation.getWarehouse(), result, allEntrySourceComplete, entry,
             stocks);
       } else {
         allEntrySourceComplete.add(new AtomicBoolean(false));
       }
     });
 
-    return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get);
+    return allEntrySourceComplete.stream().allMatch(AtomicBoolean::get) && isAllQuantityFulfilled(context);
+  }
+
+  private boolean isAllQuantityFulfilled(final SourcingContext context) {
+    final List<AtomicBoolean> allEntryQuantityFulfilled = new ArrayList<>();
+    context.getOrderEntries().stream().forEach(entry -> {
+      Long allResultQuantityAllocated = 0l;
+      for (SourcingResult result : context.getResult().getResults()) {
+        if(null != result.getAllocation().get(entry)) {
+          allResultQuantityAllocated += result.getAllocation().get(entry);
+        }
+      }
+
+      if (allResultQuantityAllocated.equals(entry.getQuantity())) {
+        allEntryQuantityFulfilled.add(new AtomicBoolean(true));
+      }
+    });
+
+    return !allEntryQuantityFulfilled.isEmpty() && allEntryQuantityFulfilled.stream().allMatch(AtomicBoolean::get);
   }
 
   /**
@@ -110,23 +128,25 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
     //proceed with below checks
     //1. get all bl consigners, and check quantity
     final Set<BlSerialProductModel> blConsignerSerials = getAllBLConsignerSerials(allSerialProducts);
-    long fulfilledQuantity = (null != result.getSerialProductMap()) ? result.getSerialProductMap().get(entry.getEntryNumber()).size() : 0;
 
     if (blConsignerSerials.size() > 0 ) {
       if (validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
-          assignedSerials, blConsignerSerials) && isFulfilledQuantityEqualToEntryQuantity(entry, result)) {
+          assignedSerials, blConsignerSerials) && isFulfilledQuantityEqualToEntryQuantity(entry, context)) {
         allEntrySourceComplete.add(new AtomicBoolean(true));
       } else {
 
         final Set<BlSerialProductModel> forSaleFalseSerials = getAllForSaleSerials(
             blConsignerSerials, false);
-        if (forSaleFalseSerials.size() != 0 && ((entry.getQuantity() - fulfilledQuantity) < forSaleFalseSerials.size()
-            || validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
-            assignedSerials, forSaleFalseSerials))) {
+        final Set<BlSerialProductModel> unAssignedForSaleFalseSerials = new HashSet<>(
+            getUnAssignedSerials(forSaleFalseSerials, assignedSerials));
 
-          if (!isFulfilledQuantityEqualToEntryQuantity(entry, result)) {
+        if (unAssignedForSaleFalseSerials.size() != 0 && ((entry.getQuantity() - getFulfilledQuantity(context, entry)) < unAssignedForSaleFalseSerials.size()
+            || validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
+            assignedSerials, unAssignedForSaleFalseSerials))) {
+
+          if (!isFulfilledQuantityEqualToEntryQuantity(entry, context)) {
             final List<BlSerialProductModel> oldestSerials = getOldestSerials(
-                new ArrayList<>(forSaleFalseSerials));
+                new ArrayList<>(unAssignedForSaleFalseSerials));
             getUnAssignedAndFilteredSerials(context, result, results, entry, warehouse,
                 oldestSerials);
           }
@@ -135,14 +155,21 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
           final Set<BlSerialProductModel> forSaleTrueSerials = getAllForSaleSerials(
               blConsignerSerials, true);
-          if (forSaleTrueSerials.size() != 0 && ((entry.getQuantity() - fulfilledQuantity)  < forSaleTrueSerials.size()
+          final Set<BlSerialProductModel> unAssignedForSaleTrueSerials = new HashSet<>(
+              getUnAssignedSerials(forSaleTrueSerials, assignedSerials));
+
+          if (unAssignedForSaleTrueSerials.size() != 0 && ((entry.getQuantity() - getFulfilledQuantity(context, entry))  < unAssignedForSaleTrueSerials.size()
               || validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
-              assignedSerials, forSaleTrueSerials))) {
-            if (!isFulfilledQuantityEqualToEntryQuantity(entry, result)) {
+              assignedSerials, unAssignedForSaleTrueSerials))) {
+
+            if (!isFulfilledQuantityEqualToEntryQuantity(entry, context)) {
+
               final List<BlSerialProductModel> oldestSerials = getOldestSerials(
-                  new ArrayList<>(forSaleTrueSerials));
+                  new ArrayList<>(unAssignedForSaleTrueSerials));
+              final List<BlSerialProductModel> unAssignedSerials = new ArrayList<>(
+                  getUnAssignedSerials(oldestSerials, assignedSerials));
               getUnAssignedAndFilteredSerials(context, result, results, entry, warehouse,
-                  oldestSerials);
+                  unAssignedSerials);
             }
             allEntrySourceComplete.add(new AtomicBoolean(true));
           } else {
@@ -153,7 +180,6 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
               validateAndAssignNonBlSerials(context, results, warehouse, result,
                   allEntrySourceComplete, entry, nonSaleAndNonBLSerials, assignedSerials, new HashSet<>(allSerialProducts));
             }
-
           }
         }
       }
@@ -177,17 +203,28 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
   }
 
+  private long getFulfilledQuantity(final SourcingContext context, final AbstractOrderEntryModel entry) {
+
+    final long[] fulfilledQuantity = {0l};
+    context.getResult().getResults().stream().forEach(result -> {
+      fulfilledQuantity[0] += (null != result.getSerialProductMap() && null != result.getSerialProductMap()
+          .get(entry.getEntryNumber())) ? result.getSerialProductMap()
+          .get(entry.getEntryNumber()).size() : 0;
+    } );
+
+    return fulfilledQuantity[0];
+  }
+
   private void validateAndAssignNonBlSerials(final SourcingContext context,
       final Set<SourcingResult> results, final WarehouseModel warehouse,
       final SourcingResult result, final List<AtomicBoolean> allEntrySourceComplete,
       final AbstractOrderEntryModel entry, final Set<BlSerialProductModel> nonSaleAndNonBLSerials,
       final List<String> assignedSerials, final Set<BlSerialProductModel> allSerialProducts) {
 
-    long fulfilledQuantity = (null != result.getSerialProductMap()) ? result.getSerialProductMap().get(entry.getEntryNumber()).size() : 0;
-    if ((entry.getQuantity() - fulfilledQuantity) < nonSaleAndNonBLSerials.size()
+    if ((entry.getQuantity() - getFulfilledQuantity(context, entry)) < nonSaleAndNonBLSerials.size()
         || validateFulfilledQuantityAndAssignSerials(context, results, warehouse, result, entry,
         assignedSerials, nonSaleAndNonBLSerials)) {
-      if (!isFulfilledQuantityEqualToEntryQuantity(entry, result)){
+      if (!isFulfilledQuantityEqualToEntryQuantity(entry, context)){
         final List<BlSerialProductModel> oldestSerials = getOldestSerials(
             new ArrayList<>(nonSaleAndNonBLSerials));
         getUnAssignedAndFilteredSerials(context, result, results, entry, warehouse,
@@ -221,8 +258,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final SourcingResult result, final AbstractOrderEntryModel entry,
       final List<String> assignedSerials, final Set<BlSerialProductModel> serialProducts) {
 
-    final Set<BlSerialProductModel> unAssignedSerialProducts = getUnAssignedSerials(serialProducts,
-        assignedSerials);
+    final Set<BlSerialProductModel> unAssignedSerialProducts = serialProducts.stream()
+        .filter(serialProduct -> !assignedSerials.contains(serialProduct.getCode())).collect(
+            Collectors.toSet());
     if (CollectionUtils.isNotEmpty(unAssignedSerialProducts)) {
 
       return validateSerialsAndFulfilledQuantityWithOrderEntry(context, result, results, entry,
@@ -235,14 +273,13 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
  /**
    * Validate the fulfilled quantity equality with the entry quantity.
    * @param entry
-   * @param result
+   * @param context
    * @return true if equal.
    */
   private boolean isFulfilledQuantityEqualToEntryQuantity(final AbstractOrderEntryModel entry,
-      final SourcingResult result) {
+      final SourcingContext context) {
 
-    long fulfilledQuantity = (null != result.getSerialProductMap()) ? result.getSerialProductMap().get(entry.getEntryNumber()).size() : 0;
-    return fulfilledQuantity == entry.getQuantity();
+    return getFulfilledQuantity(context, entry) == entry.getQuantity();
   }
 
   /**
@@ -256,19 +293,21 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
    * @param serialProducts
    * @return
    */
-  private boolean getUnAssignedAndFilteredSerials(final SourcingContext context, final SourcingResult result,
-      final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
+  private boolean getUnAssignedAndFilteredSerials(final SourcingContext context,
+      final SourcingResult result,
+      final Set<SourcingResult> results, final AbstractOrderEntryModel entry,
+      final WarehouseModel warehouse,
       final List<BlSerialProductModel> serialProducts) {
 
-    long fulfilledQuantity = (null != result.getSerialProductMap()) ? result.getSerialProductMap().get(entry.getEntryNumber()).size() : 0;
-    if (CollectionUtils.isNotEmpty(serialProducts) && serialProducts.size() >= fulfilledQuantity) {
+    if (CollectionUtils.isNotEmpty(serialProducts) && serialProducts.size() >= (entry.getQuantity()
+        - getFulfilledQuantity(context, entry))) {
       final Set<BlSerialProductModel> toAssign = new HashSet<>();
-      for (int i = 0; i < (entry.getQuantity() - fulfilledQuantity); i++) {
+      for (int i = 0; i < (entry.getQuantity() - getFulfilledQuantity(context, entry)); i++) {
         toAssign.add(serialProducts.get(i));
       }
 
       createResultAndAssignSerials(context, result, results, entry, warehouse, toAssign);
-      return isFulfilledQuantityEqualToEntryQuantity(entry, result);
+      return isFulfilledQuantityEqualToEntryQuantity(entry, context);
     } else {
 
       final AbstractOrderModel orderModel = entry.getOrder();
@@ -290,10 +329,12 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final List<String> assignedSerials) {
 
     if (CollectionUtils.isNotEmpty(assignedSerials)) {
+
       return allSerialProducts.stream()
-          .filter(serialProduct -> assignedSerials.stream().anyMatch(assignedSerialCode -> !assignedSerialCode.equalsIgnoreCase(serialProduct.getCode())))
+          .filter(serialProduct -> !assignedSerials.contains(serialProduct.getCode()))
           .collect(Collectors.toSet());
     } else {
+
       return new HashSet<>(allSerialProducts);
     }
   }
@@ -311,15 +352,23 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
       final Set<BlSerialProductModel> serialProducts) {
 
-    final Set<String> serialProductCodesToAssign = new HashSet<>(entry.getSerialProductCodes());
-    final Set<String> serialProductCodes = serialProducts.stream().map(BlSerialProductModel::getCode).filter(code -> !serialProductCodesToAssign.contains(code))
+    final Set<String> serialProductCodesToAssign = new HashSet<>(
+        (null != result.getSerialProductMap() && null != result.getSerialProductMap()
+            .get(entry.getEntryNumber())) ? result.getSerialProductMap().get(entry.getEntryNumber())
+            : Collections.emptySet());
+    final Set<String> serialProductCodes = serialProducts.stream()
+        .map(BlSerialProductModel::getCode)
+        .filter(code -> !serialProductCodesToAssign.contains(code))
         .collect(Collectors.toSet());
     serialProductCodesToAssign.addAll(serialProductCodes);
 
     final Map<AbstractOrderEntryModel, Long> allocationMap =
         MapUtils.isNotEmpty(result.getAllocation()) ? result.getAllocation() : new HashMap<>();
     allocationMap.put(entry, (long) serialProductCodesToAssign.size());
-    entry.setSerialProductCodes(serialProductCodesToAssign);
+
+    final Set<String> entrySerialProductCodes = new HashSet<>(entry.getSerialProductCodes());
+    entrySerialProductCodes.addAll(serialProductCodesToAssign);
+    entry.setSerialProductCodes(entrySerialProductCodes);
 
     final Map<Integer, Set<String>> serialProductMap =
         MapUtils.isNotEmpty(result.getSerialProductMap()) ? result.getSerialProductMap()
@@ -353,24 +402,20 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
       final Set<BlSerialProductModel> serialProducts, final List<String> assignedSerials) {
 
-    long fulfilledQuantity = (null != result.getSerialProductMap()) ? result.getSerialProductMap().get(entry.getEntryNumber()).size() : 0;
-    if (serialProducts.size() == (entry.getQuantity() - fulfilledQuantity) && fulfilledQuantity <= entry.getQuantity()) {
+    if (serialProducts.size() == (entry.getQuantity() - getFulfilledQuantity(context, entry)) && getFulfilledQuantity(context, entry) <= entry.getQuantity()) {
       createResultAndAssignSerials(context, result, results, entry, warehouse, serialProducts);
       assignedSerials
           .addAll(serialProducts.stream().map(BlSerialProductModel :: getCode).collect(Collectors.toList()));
-      return isFulfilledQuantityEqualToEntryQuantity(entry, result);
+      return isFulfilledQuantityEqualToEntryQuantity(entry, context);
     }
 
-    if (serialProducts.size() < (entry.getQuantity() - fulfilledQuantity) && fulfilledQuantity <= entry.getQuantity()) {
+    if (serialProducts.size() < (entry.getQuantity() - getFulfilledQuantity(context, entry)) && getFulfilledQuantity(context, entry) <= entry.getQuantity()) {
       createResultAndAssignSerials(context, result, results, entry, warehouse, serialProducts);
       assignedSerials
           .addAll(serialProducts.stream().map(BlSerialProductModel :: getCode).collect(Collectors.toList()));
-      return isFulfilledQuantityEqualToEntryQuantity(entry, result);
+      return isFulfilledQuantityEqualToEntryQuantity(entry, context);
     } else {
 
-     /* final List<BlSerialProductModel> oldestSerials = getOldestSerials(new ArrayList<>(serialProducts));
-      return getUnAssignedAndFilteredSerials(context, result, results, entry, warehouse,
-          oldestSerials, fulfilledQuantity);*/
       return false;
     }
   }
@@ -384,7 +429,8 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final Collection<BlSerialProductModel> serialProducts) {
 
     return serialProducts.stream()
-        .filter(serial -> !"BL".equalsIgnoreCase(serial.getOwnedBy()) && !serial.getForSale())
+        .filter(serial -> !"BL".equalsIgnoreCase(serial.getOwnedBy()))
+        .filter(serial -> !serial.getForSale())
         .collect(Collectors.toSet());
   }
 
