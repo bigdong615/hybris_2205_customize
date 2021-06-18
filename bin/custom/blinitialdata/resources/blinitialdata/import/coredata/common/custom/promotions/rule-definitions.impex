@@ -13,6 +13,7 @@ INSERT_UPDATE RuleConditionDefinitionParameter;definition(id)[unique=true];id[un
                                               ;y_rental_arrival_date_condition    ;rentalArrivalDate;Rental Arrival Date  ;Rental Arrival Date                      ;         ;java.util.Date                                                                         ;      ;                      ;          ;       ;
                                               ;y_rental_arrival_date_condition    ;operator;Operator;Rental Arrival Date                       ;         ;Enum(de.hybris.platform.ruledefinitions.AmountOperator)    ;      ;                      ;          ;       ;
 
+
 INSERT_UPDATE RuleConditionDefinitionParameter; definition(id)[unique = true]; id[unique = true]        ; priority; name[lang = $lang]                ; description[lang = $lang]                                                                                    ; type                                                                                 ; value                       ; required[default = true]; validators
                                               ; y_rental_cart_condition           ; value                    ; 1000    ; Rental Cart Condition   ; Rental Cart Condition ; java.lang.Boolean                                                                    ; true                        ;
 
@@ -20,6 +21,21 @@ INSERT_UPDATE RuleConditionDefinitionRuleTypeMapping;definition(id)[unique=true]
                                                     ;y_rental_duration_condition   ;
                                                     ;y_rental_cart_condition   ;
                                                     ;y_rental_arrival_date_condition;
+
+
+####Promotion Actions#####
+$lang=en
+INSERT_UPDATE RuleActionDefinition;id[unique=true];name[lang=$lang];priority;breadcrumb[lang=$lang];translatorId;translatorParameters;categories(id)
+                                  ;y_free_rental_dates;Free Rental dates;1000;Give {freeRentalDates} Free Rental dates ;ruleExecutableActionTranslator;actionId->ruleFreeRentalDatesAction;cart_discounts
+
+
+INSERT_UPDATE RuleActionDefinitionParameter;definition(id)[unique=true];id[unique=true];priority;name[lang=$lang];description[lang=$lang];type;value;required[default=true];validators
+                                           ;y_free_rental_dates;freeRentalDates;1000;Free Rental Dates;The free rental dates price to be discounted to the order as a result of the action;List(java.util.Date) ;;;
+
+INSERT_UPDATE RuleActionDefinitionRuleTypeMapping;definition(id)[unique=true];ruleType(code)[default=PromotionSourceRule][unique=true]
+                                                 ;y_free_rental_dates;
+
+
 
 
 

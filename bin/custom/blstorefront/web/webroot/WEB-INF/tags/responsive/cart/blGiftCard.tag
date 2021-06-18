@@ -17,10 +17,10 @@
 <div class="paymentOption">
 	<div class="row">
 		<div class="col-12">
-        <div class="notification notification-warning">
-					<spring:theme code="text.gift.card.disclaimer" />
-				</div>
 				<b class="mt-4"><spring:theme code="text.gift.title"/></b>
+				<div class="notification notification-warning">
+        		<spring:theme code="text.gift.card.disclaimer"/>
+        </div>
         <form:form method="post" id="giftCardForm" action="${giftCardUrl}">
 					<div class="input-group mt-2">
 						<input type="text" id="gift-card-apply-gift-card-number" 
@@ -41,7 +41,6 @@
                 <div class="notification notification-warning">${giftCardRemoved}</div>
             </c:forEach>
         </c:if>
-
     </div>
 	</div>
 </div>

@@ -74,7 +74,7 @@
 		<property name="providerName" value="hybris"/>
 	</bean>
 
-	<bean id="orderManualCheckedAction" class="com.braintree.actions.order.OrderManualCheckedAction"  parent="abstractOrderAction"/>
+	<bean id="brainTreeOrderManualCheckedAction" class="com.braintree.actions.order.OrderManualCheckedAction"  parent="abstractOrderAction"/>
 
 	<bean id="splitOrderAction" class="com.braintree.actions.order.SplitOrderAction"  parent="abstractAction">
 		<property name="orderSplittingService" ref="orderSplittingService"/>
