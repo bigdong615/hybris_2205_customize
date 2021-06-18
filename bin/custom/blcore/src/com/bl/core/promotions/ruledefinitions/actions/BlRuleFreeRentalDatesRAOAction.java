@@ -67,8 +67,8 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
    */
   protected boolean performAction(final RuleActionContext context, final List<Date> freeRentalDates) {
     CartRAO cartRao = context.getCartRao();
-    if (CollectionUtils.isNotEmpty(freeRentalDates)) {
-      int noDiscountDays = cartRao.getRentalDurationDays() - getFreeRentalDaysFromRentalDuration(cartRao,freeRentalDates);
+    if (CollectionUtils.isNotEmpty(freeRentalDates) && cartRao.getRentalDurationDays() > 0) {
+      final int noDiscountDays = cartRao.getRentalDurationDays() - getFreeRentalDaysFromRentalDuration(cartRao,freeRentalDates);
       final BigDecimal noDiscountTotal = getPromotionRentalDurationPrice(cartRao, context, noDiscountDays);
       BigDecimal finalDiscount = cartRao.getSubTotal().subtract(noDiscountTotal).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
       BlLogger.logMessage(LOG, Level.DEBUG, "Total Rental days cart subTotal: " + cartRao.getSubTotal());
@@ -112,8 +112,7 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
    * @param rentalDays
    * @return
    */
-  private BigDecimal getPromotionRentalDurationPrice(final CartRAO cartRao,
-      final RuleActionContext context, final Integer rentalDays) {
+  private BigDecimal getPromotionRentalDurationPrice(final CartRAO cartRao, final RuleActionContext context, final Integer rentalDays) {
     BigDecimal totalRentalPrice = BigDecimal.ZERO;
     int  entryNumber = 1;
     for (OrderEntryRAO entry : cartRao.getEntries()) {
