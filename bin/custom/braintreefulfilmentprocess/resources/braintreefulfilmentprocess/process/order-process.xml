@@ -40,7 +40,7 @@
 		<event>${process.code}_CSAOrderVerified</event>
 	</wait>
 	
-	<action id="orderManualChecked" bean="orderManualCheckedAction">
+	<action id="orderManualChecked" bean="brainTreeOrderManualCheckedAction">
 		<transition name="OK" to="sendOrderPlacedNotification"/>
 		<transition name="NOK" to="waitForCleanUp"/>
 		<transition name="UNDEFINED" to="waitForManualOrderCheckCSA"/>
