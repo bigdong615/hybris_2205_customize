@@ -220,7 +220,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .notification { margin-top: 20px; display: block; padding: 16px; border-left: 4px solid; border-radius: 6px; padding-left: 50px; background-position: 12px 18px; background-repeat: no-repeat; font-size: 14px; }
 .notification ul { margin-top: 1rem;}
 .notification ul li, .notification ol li { font-size: 14px; }
-.notification-error {text-transform: capitalize;background-color: #FCEDED; border-left-color: #e64b4f; color: #e64b4f; background-image: url(../assets/notification-error.svg); }
+.notification-error {background-color: #FCEDED; border-left-color: #e64b4f; color: #e64b4f; background-image: url(../assets/notification-error.svg); }
 .notification-error a { color: #e64b4f; }
 .notification-warning { background-color: #F6E0B6; border-left-color: #E97D1E; color: #E97D1E; background-image: url(../assets/notification-warning.svg); }
 .notification-warning a { color: #E97D1E; }

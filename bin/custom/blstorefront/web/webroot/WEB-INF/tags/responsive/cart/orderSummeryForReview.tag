@@ -67,12 +67,7 @@
               </tr>
           </tbody>
       </table>
-      <div class="input-group my-3">
-        <input type="text" class="form-control" placeholder="<spring:theme code="text.checkout.multi.order.summary.promocode.placeholder"/>">
-        <div class="input-group-append">
-          <button class="btn btn-secondary" type="button"><spring:theme code="text.voucher.apply.button.label"/></button>
-        </div>
-      </div>
+
        <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
        <div class="cart-actions">
                                 <form:form action="${placeOrderUrl}" id="placeOrderForm1" modelAttribute="placeOrderForm">
