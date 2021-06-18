@@ -26,7 +26,7 @@
 
 <jsp:include page="../../../../messages/braintreeErrorMessages.jsp" />
 <c:url var="savedPaymentInfoFormURL" value="/checkout/multi/payment-method/braintree/choose-cc" />
-
+<c:url value="/checkout/multi/payment-method/braintree/reviewSavedPayment" var="reviewSavedPaymentAction" />
 <c:if test="${deliveryAddress.pickStoreAddress or deliveryAddress.upsStoreAddress}">
 <c:set var="hideUseShipping" value="hideUseShipping"/>
 </c:if>
@@ -35,7 +35,7 @@
 	var="storeInVault" />
 <c:url value="${currentStepUrl}" var="choosePaymentMethodUrl" />
 <template:page pageTitle="${pageTitle}">
-	<section id="cartProcess" class="cart">
+	<section id="cartProcess">
 		<div class="container">
 			<div id="cartSteps" class="row justify-content-center">
 				<div class="col-xl-10">
@@ -52,8 +52,7 @@
 						<div id="order" class="col-lg-7">
 							<h1>Payment</h1>
 							<hr>
-							<p>
-								<b>Dates</b>&emsp;<input type="text"
+							<p><b>Dates</b>&emsp;<input type="text"
 									class="form-control cart-picker" id="litepicker"
 									placeholder="<spring:theme code="text.rental.cart.select.date"/>">
 							</p>
@@ -61,6 +60,9 @@
 							<div class="accordion" id="paymentOptions">
 								<div class="accordion-item payProduct">
 									<div class="row">
+										<c:if test="${not empty userSelectedPaymentInfo}">
+											<input type="hidden" id="isCCPresent" name="isCCPresent" value="true"/>
+										</c:if>
 										<c:choose>
 											<c:when test="${hostedFieldsEnable}">
 												<div class="col-1 text-center pt-2">
@@ -68,9 +70,8 @@
 														data-bs-toggle="collapse"
 														data-bs-target="#credit-card-expand"
 														aria-controls="credit-card-expand" aria-expanded="false">
-														<input type="radio" class="paypalselection"
-															id="paymentMethodBT" name="paymentMethodSelection"
-															value="bt"><label for="paymentMethodBT"></label>
+														<input type="radio" class="paypalselection" id="paymentMethodBT" name="paymentMethodSelection" value="bt">
+														<label for="paymentMethodBT"></label>
 													</button>
 												</div>
 											</c:when>
@@ -78,11 +79,10 @@
 												<div style="overflow: auto;"></div>
 											</c:otherwise>
 										</c:choose>
-										<div class="col-11" id="cardDetails">
+										<div class="col-11">
 											<b>Credit Card <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png" style="height: 44px; width: auto;"></b>
-											<div class="collapse" id="credit-card-expand"
-												data-bs-parent="#paymentOptions">
-
+											<div class="collapse" id="credit-card-expand" data-bs-parent="#paymentOptions">
+												
 												<ycommerce:testId code="paymentDetailsForm">
 													<form:form id="braintree-payment-form"
 														name="silentOrderPostForm"
@@ -90,342 +90,263 @@
 														modelAttribute="sopPaymentDetailsForm"
 														action="${request.contextPath}/braintree/checkout/hop/response"
 														method="POST">
-
-														<div class="hostedFields">
-															<div class="control-group cardForm"
-																style="dispaly: none;" id="cardForn">
+														<div id="cardDetails">
+															<div id="credit-card-saved" class="collapse show" data-bs-parent="#cardDetails">
+																<c:choose>
+																	<c:when test="${not empty userSelectedPaymentInfo.cardNumber and empty braintreePaymentInfos}">
+																	<b class="mt-4">Saved Credit Cards</b>
+																	<div class="dropdown my-2">
+																		<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
+																			<img src="${userSelectedPaymentInfo.accountHolderName}" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																		</button>
+																	</div>
+																		<a href="#" id="addNewCardForm" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a>
+																	</c:when>
+																	<c:otherwise>
+																	<c:if test="${not empty braintreePaymentInfos and braintreePaymentInfos.size() > 0}">
+																	<b class="mt-4">Saved Credit Cards</b>
+																		<div class="dropdown my-2">
+																	<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
+																		<c:choose>
+																			<c:when test="${not empty userSelectedPaymentInfo}">
+																				<img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)}
+																			</c:when>
+																			<c:otherwise>
+																				Select or Enter new card
+																			</c:otherwise>
+																		</c:choose>
+																	</button>
+																	<ul class="dropdown-menu savedPaymentList" aria-labelledby="savedCards" id="saved-payment-action">
+																		<c:forEach items="${braintreePaymentInfos}" var="paymentInfo" varStatus="status">
+																		<c:if test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'CreditCard')}">
+																			<li>
+																				<button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}">
+																					<img src="${paymentInfo.accountHolderName }" style="max-width: 33px; height: auto;">
+																					&nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)}
+																				</button>
+																			</li>
+																		</c:if>
+																		</c:forEach>
+																		<li id="enterNewCardLi">
+																			<button class="dropdown-item" data-id="newCard" data-nonce="" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">
+																				Enter new card
+																			</button>
+																		</li>
+																	</ul>
+																	
+																</div>
+																<a href="#" id="addNewCardForm" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a>
+																</c:if>
+																	</c:otherwise>
+																</c:choose>
 																
 																
-                                       	
-																<div id="number"
-																	class="controls form-control secure testing">
-                                                                </div>
-
-																<div class="row">
-																	<div class="col-4">
-
-																		<div id="expirationMonth" class="controls form-control"></div>
-																	</div>
-																	<div class="col-4">
-
-																		<div id="expirationYear" class="controls form-control"></div>
-																	</div>
-																	<div class="col-4">
-
-																		<div id="cvv" class="controls form-control"></div>
-
+															</div>
+															<div class="collapse" id="credit-card-form-expand" data-bs-parent="#cardDetails">
+															<b class="mt-4">Add Your Credit Card</b>
+															<div class="mb-5">
+																<div class="hostedFields">
+																	<div class="control-group cardForm" style="dispaly: none;" id="cardForn">
+																		<div id="number" class="controls form-control secure testing"></div>
+																		<div class="row">
+																			<div class="col-4">
+																				<div id="expirationMonth" class="controls form-control"></div>
+																			</div>
+																			<div class="col-4">
+																				<div id="expirationYear" class="controls form-control"></div>
+																			</div>
+																			<div class="col-4">
+																				<div id="cvv" class="controls form-control"></div>
+																			</div>
+																		</div>
+																		<%-- <c:if test="${not empty userSelectedPaymentInfo}">
+																			 <input id="userSelectedPaymentInfo_number" type="hidden" value="${userSelectedPaymentInfo.cardNumber}"/>
+																			 <input id="userSelectedPaymentInfo_month" type="hidden" value="${userSelectedPaymentInfo.expiryMonth}"/>
+																			 <input id="userSelectedPaymentInfo_year" type="hidden" value="${userSelectedPaymentInfo.expiryYear}"/>
+																		</c:if> --%>  
+																		<%-- <c:if test="${payPalCheckoutData.storeInVault}"> --%>
+																		<c:if test="true">
+																			<div class="form-additionals" id="savePaymentInfoComponent">
+																				 <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+																					  <formElement:formCheckbox idKey="savePaymentInfo"
+																					   labelKey="checkout.multi.sop.savePaymentInfo"
+																					   path="savePaymentInfo" inputCSS="" labelCSS=""
+																						mandatory="false"/>
+																				  </sec:authorize>
+																			</div>	
+																		</c:if>
 																	</div>
 																</div>
-																<c:if test="${not empty userSelectedPaymentInfo}">
-																${userSelectedPaymentInfo.cardNumber}
-                                                                 <input id="userSelectedPaymentInfo_number" type="hidden" value="${userSelectedPaymentInfo.cardNumber}"/>
-                                                                 <input id="userSelectedPaymentInfo_month" type="hidden" value="${userSelectedPaymentInfo.expiryMonth}"/>
-                                                                 <input id="userSelectedPaymentInfo_year" type="hidden" value="${userSelectedPaymentInfo.expiryYear}"/>
-                                                               </c:if>  
-																<%-- <c:if test="${payPalCheckoutData.storeInVault}"> --%>
-																<c:if test="true">
-																<div class="form-additionals" id="savePaymentInfoComponent">
-                                                                     <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                                                                          <formElement:formCheckbox idKey="savePaymentInfo"
-                                                                           labelKey="checkout.multi.sop.savePaymentInfo"
-                                                                           path="savePaymentInfo" inputCSS="" labelCSS=""
-                                                                            mandatory="false"/>
-                                                                      </sec:authorize>
-                                                             </div>	
-                                                             
-                                </c:if>
+															</div>
+															<a href="#" class="gray80" id="showSavedCard" data-bs-toggle="collapse" data-bs-target="#credit-card-saved" aria-expanded="false" aria-controls="credit-card-saved">+ Use a saved credit card</a>
 															</div>
 														</div>
-														<br />
-														<%-- <c:if test="${payPalCheckoutData.storeInVault}">
-                                    <div id="savePaymentButton" class="hide">
-                                        <c:if test="${not empty braintreePaymentInfos}">
-                                            <div class="form-group">
-                                                <button type="button" class="btn btn-default btn-block js-saved-payments">
-                                                    <spring:theme
-                                                            code="checkout.multi.paymentMethod.addPaymentDetails.useSavedPaymentMethod"/>
-
-                                                </button>
-                                            </div>
-                                        </c:if>
-                                    </div>
-                                    <div class="form-additionals" id="savePaymentInfoComponent">
-                                        <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-                                            <formElement:formCheckbox idKey="savePaymentInfo"
-                                                                      labelKey="checkout.multi.sop.savePaymentInfo"
-                                                                      path="savePaymentInfo" inputCSS="" labelCSS=""
-                                                                      mandatory="false"/>
-                                        </sec:authorize>
-                                    </div>
-                                    <script>
-                                        if (document.getElementById("savePaymentInfo")) {
-                                            if (paypalIntent.toLowerCase() === 'order') {
-                                                document.getElementById("savePaymentInfo").checked = false;
-                                                document.getElementById("savePaymentInfoComponent").style.display = 'none';
-                                            } else {
-                                                document.getElementById("savePaymentInfo").checked = true;
-                                            }
-                                        }
-                                    </script>
-                                </c:if> --%>
-
-														<div class="billingAddressData">
-
-															<%-- <div class="headline clear">
-                                        <spring:theme
-                                                code="checkout.multi.paymentMethod.addPaymentDetails.billingAddress"/>
-                                    </div> --%>
-                                    <c:if test="${not empty billingAddresses and billingAddresses.size() > 0}">
-                                    <b class="mt-4">Saved Billing Addresses</b>
-                                            <div class="dropdown my-2">
-                                            <c:forEach items="${billingAddresses}" var="billingAddress" begin="0" end="0">
-                                            	<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${billingAddress.id }"/>
-                                              <a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
-                                                ${billingAddress.formattedAddress }
-                                              </a>
-                                            
-                                             </c:forEach>
-                                              <ul class="dropdown-menu selectSavedBillingAddress" aria-labelledby="savedAddresses">
-                                              <c:forEach items="${billingAddresses}" var="billingAddress">
-                                                <li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
-                                              </c:forEach>
-                                              </ul>
-                                            </div>
-                                            <a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-controls="billing-address-form-expand">+ Add a new address</a>
-                                            </c:if>
-                                            <div class="collapse" id="billing-address-form-expand">
-                                            	 <c:if test="${cartData.deliveryItemsQuantity > 0}">
-                                        <div id="useDeliveryAddressData"
-                                             data-firstname="${deliveryAddress.firstName}"
-                                             data-lastname="${deliveryAddress.lastName}"
-                                             data-line1="${deliveryAddress.line1}"
-                                             data-line2="${deliveryAddress.line2}"
-                                             data-town="${deliveryAddress.town}"
-                                             data-postalcode="${deliveryAddress.postalCode}"
-                                             data-countryisocode="${deliveryAddress.country.isocode}"
-                                             data-regionisocode="deliveryAddress.region.isocode"
-                                             data-email="${deliveryAddress.email}"
-                                             data-address-id="${deliveryAddress.id}"></div>
-                                           
-                                        <formElement:formCheckbox path="useDeliveryAddress"
-                                                                  idKey="ccUseDeliveryAddress"
-                                                                  labelKey="checkout.multi.sop.useMyDeliveryAddress"
-                                                                  tabindex="11"
-                                                                  inputCSS="${hideUseShipping}"
-                                                                  labelCSS="${hideUseShipping}" />
-                                    </c:if> 
-                                    
-
-															<input type="hidden" name="paypal_email"
-																id="paypal_email" /> <%-- <input type="hidden"
-																value="${silentOrderPageData.parameters['billTo_email']}"
-																class="text" name="billTo_email" id="billTo_email"> --%>
-															<%-- <address:billAddressFormSelector
-                                            supportedCountries="${countries}" regions="${regions}"
-                                            tabindex="12"/> --%>
-                                            
-                                            <%-- <formElement:formSelectBox idKey="address.country"
-	                           labelKey=""
-	                           path="billTo_country"
-	                           mandatory="true"
-	                           skipBlank="false"
-	                           skipBlankMessageKey="address.selectCountry"
-	                           items="${countries}"
-	                           itemValue="isocode"
-	                           tabindex="${tabindex}"
-	                           selectCSSClass="form-control" /> --%>
-	                           <input type="hidden" name="billTo_country" id="address.country" value="US">
-	                           
-                                            <div id="billingAddressForm" class="billingAddressForm">
-                                            
-                                            </div>
-                                            </div>
-
-															 
-															<%-- <checkout:billingAddressForm
-																supportedCountries="${countries}" regions="${regions}"
-																cartData="${cartData}" tabindex="12" /> --%>
-														</div>
-
-														<div class="form-additionals"></div>
-
+														<hr/>
+														<div id="billingDetails">	
+															
+															<input type="hidden" id="isAddressPresent" name="isAddressPresent" value="true"/>
+																<div id="billing-address-saved" class="collapse" data-bs-parent="#billingDetails">
+																	<c:choose>
+																		<c:when test="${not empty paymentInfoBillingAddress and empty billingAddresses}">
+																			<b class="mt-4">Saved Billing Addresses</b>
+																			<div class="dropdown my-2">
+																				
+																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+																						${paymentInfoBillingAddress.formattedAddress }
+																					</a>
+																				
+																			</div>
+																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+																		</c:when>
+																		<c:otherwise>
+																		<c:if test="${not empty billingAddresses and billingAddresses.size() > 0 }">
+																			<b class="mt-4">Saved Billing Addresses</b>
+																	<div class="dropdown my-2">
+																		<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${paymentInfoBillingAddress.id }"/>
+																		<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+																			<c:choose>
+																				<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
+																					${paymentInfoBillingAddress.formattedAddress }
+																				</c:when>
+																				<c:otherwise>
+																					Select Saved Billing Address
+																				</c:otherwise>
+																			</c:choose>
+																		</a>
+																		<ul class="dropdown-menu selectSavedBillingAddress" aria-labelledby="savedAddresses">
+																		
+																			<c:forEach items="${billingAddresses}" var="billingAddress">
+																			<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
+																			</c:forEach>
+																		
+																		</ul>
+																	</div>
+																	<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+																	</c:if>
+																		</c:otherwise>
+																	</c:choose>																	
+																</div>	
+															
 														
-
-														<%--<div id="paypalButtonError"></div>
-                                <div id="google-pay-button" class="google-pay-button-container google_pay_container"></div>
-                                <div id="mark-paypal-button" class="paypal_button_container btn btn-block"></div>--%>
-														<%--<div id="lpm-buttons" class="paypal_button_container">
-                                    <c:forEach items="${localPaymentMethods}" var="localPaymentMethod">
-                                        <div id="${localPaymentMethod.code}" class="btn-local-payment-methods btn btn-block">
-                                            <div>
-                                                <img class="payment-button" src="${localPaymentMethod.image.url}"
-                                                     alt="${localPaymentMethod.image.altText}">
-                                            </div>
-                                            <label>${localPaymentMethod.name}</label>
-                                        </div>
-                                    </c:forEach>
-                                </div>--%>
+														<div class="collapse" id="billing-address-form-expand">
+															<c:if test="${cartData.deliveryItemsQuantity > 0}">
+																<div id="useDeliveryAddressData"
+																	 data-firstname="${deliveryAddress.firstName}"
+																	 data-lastname="${deliveryAddress.lastName}"
+																	 data-line1="${deliveryAddress.line1}"
+																	 data-line2="${deliveryAddress.line2}"
+																	 data-town="${deliveryAddress.town}"
+																	 data-postalcode="${deliveryAddress.postalCode}"
+																	 data-countryisocode="${deliveryAddress.country.isocode}"
+																	 data-regionisocode="deliveryAddress.region.isocode"
+																	 data-email="${deliveryAddress.email}"
+																	 data-address-id="${deliveryAddress.id}"></div>
+																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
+																	<formElement:formCheckbox path="useDeliveryAddress"
+																						  idKey="ccUseDeliveryAddress"
+																						  labelKey="checkout.multi.sop.useMyDeliveryAddress"
+																						  tabindex="11"
+																						  inputCSS="${hideUseShipping}"
+																						  labelCSS="${hideUseShipping}" />
+																	<label for="ccUseDeliveryAddress"></label>
+															</c:if> 
+															<input type="hidden" name="paypal_email" id="paypal_email" /> 
+														    <input type="hidden" name="billTo_country" id="address.country" value="US">
+														    
+															<div id="billingAddressForm" class="billingAddressForm"></div>
+															<a href="#" class="gray80" id="showSavedAddresses" data-bs-toggle="collapse" data-bs-target="#billing-address-saved" aria-expanded="false" aria-controls="billing-address-saved">+ Use a saved billing address</a>
+														</div>
+														<div class="form-additionals"></div>
 													</form:form>
 												</ycommerce:testId>
-
+												<form:form name="submitSavedCardForm" method="POST" id="submitSavedCardForm" action="${reviewSavedPaymentAction}">
+													<input type="hidden" id="savedCCCardId" name="savedCCCardId" value="${userSelectedPaymentInfo.id}"/>
+													<input type="hidden" id="savedCCCardNonce" name="savedCCCardNonce" value="${userSelectedPaymentInfo.paymentMethodNonce}"/>
+												</form:form>
+												<form:form name="selectSavedCardForm" method="POST" id="selectSavedCardForm" action="${savedPaymentInfoFormURL}">
+													<input type="hidden" id="selectedPaymentMethodId" name="selectedPaymentMethodId" value=""/>
+													<input type="hidden" id="selectedPaymentMethodNonce" name="selectedPaymentMethodNonce" value=""/>
+												</form:form>
+											</div>
+											
+										</div>
+										</div>
+									</div>
+								</div>
+								<!-- Paypal section -->
+								<div class="accordion-item payProduct">
+									<div class="row">											
+										<div class="col-1 text-center pt-2">
+											<button class="btn-checkbox" type="button"
+												data-bs-toggle="collapse"
+												data-bs-target="#paypal-expand"
+												aria-controls="paypal-expand" aria-expanded="false">
+												<input type="radio" class="paypalselection" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt">
+												<label for="paymentMethodPayPal"></label>
+											</button>
+										</div>
+										<div class="col-11">
+											<b>PayPal <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" style="height: 44px; width: auto;"></b>
+											<div class="collapse" id="paypal-expand" data-bs-parent="#paymentOptions">
+												<br/>
+												<div id="mark-paypal-button" class="paypal_button_container btn btn-block"></div>
+												<div id="text" class="paypalurl">
+													<a style="padding-left: 10px;"
+														href="https://www.paypal.com/webapps/mpp/paypal-popup"
+														title="How PayPal Works"
+														onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;">
+														<spring:theme code="braintree.text.what.is.paypal"/>?</a>
+												</div>
 											</div>
 										</div>
 									</div>
-									<div id="validationMessage">
-										
-									</div>
-									
-														<cart:blGiftCard cartData="${cartData}"/>
-                                                        
-                                                        <div id="allFieldvalidationMessage">
-										
-									                   </div>
-                                                        
-                             
-														
-
-									<%--<c:if test="${not empty braintreePaymentInfos}">
-                    <div id="savedpayments">
-                        <div id="savedpaymentstitle">
-                            <div class="headline">
-                                    <span class="headline-text"><spring:theme
-                                            code="checkout.multi.paymentMethod.addPaymentDetails.useSavedPaymentMethod"/></span>
-                            </div>
-                        </div>
-                        <div id="savedpaymentsbody">
-                            <c:forEach items="${braintreePaymentInfos}" var="paymentInfo"
-                                       varStatus="status">
-                                <input type="text" value="${paymentInfo.subscriptionId}" class=" paymentType hide">
-                                <form id="savedPaymentInfoForm${paymentInfo.id}"
-                                      action="${request.contextPath}/checkout/multi/payment-method/braintree/choose-cc"
-                                      method="GET">
-                                    <input type="hidden" name="selectedPaymentMethodId"
-                                           value="${paymentInfo.id}"/>
-                                    <input type="hidden" name="selectedPaymentMethodNonce"
-                                           value="${paymentInfo.paymentMethodNonce}">
-                                    <c:choose>
-                                        <c:when
-                                                test="${paymentInfo.subscriptionId eq 'BrainTreePayPalExpress' or paymentInfo.subscriptionId eq 'PayPalAccount'}">
-                                            <spring:theme code="paymentMethod.type.PayPal"/><br/>
-                                            <input type="hidden" name="selectedPaymentMethod" value="PayPal">
-                                            ${fn:escapeXml(paymentInfo.payer)}<br/>
-                                            <img
-                                                    src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png"
-                                                    alt="PayPal icon"/>
-                                            <br/>
-                                        </c:when>
-                                        <c:when test="${paymentInfo.subscriptionId eq 'VenmoAccount'}">
-                                            <br><spring:theme code="paymentMethod.type.Venmo" /><br/>
-                                            <input type="hidden" name="selectedPaymentMethod" value="PayPal">
-                                            ${fn:escapeXml(paymentInfo.payer)}<br>
-                                            <img height="28" width="56"
-                                                 src="${contextPath}/_ui/addons/braintreeaddon/responsive/common/images/venmo_acceptance_mark.svg"
-                                                 alt="Venmo icon"/>
-                                            <br/>
-                                        </c:when>
-                                        <c:when test="${paymentInfo.subscriptionId eq 'AndroidPayCard'}">
-                                            <br><spring:theme code="paymentMethod.type.GooglePay" />
-                                            <br>${fn:escapeXml(paymentInfo.payer)}
-                                            <br><img height="38" width="56"
-                                                     src="${contextPath}/_ui/addons/braintreeaddon/responsive/common/images/googlePay_mark.png"
-                                                     alt="GooglePay icon"/>
-                                            <br>${fn:escapeXml(paymentInfo.cardNumber)}
-                                            <br>${fn:escapeXml(paymentInfo.cardType)}
-                                            <br><spring:theme code="text.expires" text="Expires" />
-                                            <c:if test="${not empty paymentInfo.expiryMonth}">
-                                                ${fn:escapeXml(paymentInfo.expiryMonth)} /
-                                                ${fn:escapeXml(paymentInfo.expiryYear)}
-                                            </c:if>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <c:if test="${not empty paymentInfo.cardholderName}">
-                                                ${fn:escapeXml(paymentInfo.cardholderName)}<br/>
-                                            </c:if>
-                                            ${fn:escapeXml(paymentInfo.cardType)}<br/>
-                                            ${fn:escapeXml(paymentInfo.cardNumber)}<br/>
-                                            <c:if test="${not empty paymentInfo.expiryMonth}">
-                                                <spring:theme
-                                                        code="checkout.multi.paymentMethod.paymentDetails.expires"
-                                                        arguments="${fn:escapeXml(paymentInfo.expiryMonth)},${fn:escapeXml(paymentInfo.expiryYear)}"/>
-                                                <br/>
-                                            </c:if>
-                                            <c:if test="${not empty paymentInfo.accountHolderName}">
-                                                <img src="${fn:escapeXml(paymentInfo.accountHolderName)}"
-                                                     alt="Card Type"/>
-                                                <br/>
-                                            </c:if>
-                                        </c:otherwise>
-                                    </c:choose>
-                                    <strong>${fn:escapeXml(paymentInfo.billingAddress.firstName)}&nbsp; ${fn:escapeXml(paymentInfo.billingAddress.lastName)}</strong><br/>
-                                        ${fn:escapeXml(paymentInfo.billingAddress.line1)}&nbsp;
-                                    <c:if test="${not empty paymentInfo.billingAddress.line2}">
-                                        ${fn:escapeXml(paymentInfo.billingAddress.line2)}
-                                    </c:if><br/>
-                                        ${fn:escapeXml(paymentInfo.billingAddress.town)}&nbsp; ${fn:escapeXml(paymentInfo.billingAddress.region.isocodeShort)}<br/>
-                                        ${fn:escapeXml(paymentInfo.billingAddress.postalCode)}&nbsp; ${fn:escapeXml(paymentInfo.billingAddress.country.isocode)}<br/>
-                                    <c:choose>
-                                        <c:when test="${paymentInfo.defaultPaymentInfo}">
-                                            <button type="submit" class="btn btn-primary btn-block default-payment-method"
-                                                    tabindex="${fn:escapeXml((status.count * 2) - 1)}"><spring:theme
-                                                    code="checkout.multi.paymentMethod.addPaymentDetails.useDefaultPaymentDetails"/></button>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <button type="submit" class="btn btn-primary btn-block"
-                                                    tabindex="${fn:escapeXml((status.count * 2) - 1)}"><spring:theme
-                                                    code="checkout.multi.paymentMethod.addPaymentDetails.useThesePaymentDetails"/></button>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </form>
-                            </c:forEach>
-                        </div>
-                    </div>
-                </c:if>--%>
 								</div>
 							</div>
+							<%-- Error message secion --%>
+							<cart:blGiftCard cartData="${cartData}"/>
+							<hr class="my-5">
+							<div id="validationMessage"></div>
+                            <div id="allFieldvalidationMessage"></div>
+							<hr class="mt-5">
 							<div class="cart-actions">
                                 <a href="#" class="gray80">Back to renting</a>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
-                            </div> 
-							
-						</div>
-
+                                <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
+                            </div>
+                        </div>
 						<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
-							<cart:orderSummery cartData="${cartData}"
-								emptyCart="${emptyCart}" />
+							<cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}" />
 							<%-- <div class="notification notification-warning">This is a cart warning.</div>
                             <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                             <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
 							<div class="order-actions my-4">
-								<a href="#" alt="Print Order"><i class="icon-print"></i></a> <a
-									href="#"><i class="icon-save" alt="Save Order"></i></a>
+								<a href="#" alt="Print Order"><i class="icon-print"></i></a> 
+								<a href="#"><i class="icon-save" alt="Save Order"></i></a>
 								<%--<a href="${emptyCart}" alt="Trash Order" class="clear-cart-page" disabled="disabled"><i class="icon-trash"></i></a>--%>
 							</div>
 						</div>
 					</div>
-
+				</div>	
+			</div>
+		</div>	
+	</section>
+	<div class="modal fade" id="editWarning" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><spring:theme code="shipping.interception.change.date.warning.wait"/></h5>
+					<button type="button" class="btn-close" aria-label="Close" id="shippingCloseIconModal"></button>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" value="" id="rentalStartDate">
+					<input type="hidden" value="" id="rentalEndDate">
+					<p class="body14"><spring:theme code="shipping.interception.change.date.warning.message"/></p>
+					<a href="#" class="btn btn-primary btn-block my-4" id="shippingChangeRentalDate"><spring:theme code="shipping.interception.change.date.warning.continue"/></a>
+					<p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" id="shippingCloseModal"><spring:theme code="shipping.interception.change.date.warning.cancel"/></a></p>
 				</div>
 			</div>
 		</div>
-		</div>
-	</section>
-	
-	<div class="modal fade" id="editWarning" tabindex="-1" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-sm">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title"><spring:theme code="shipping.interception.change.date.warning.wait"/></h5>
-<button type="button" class="btn-close" aria-label="Close" id="shippingCloseIconModal"></button>
-</div>
-<div class="modal-body">
-<input type="hidden" value="" id="rentalStartDate">
-<input type="hidden" value="" id="rentalEndDate">
-<p class="body14"><spring:theme code="shipping.interception.change.date.warning.message"/></p>
-<a href="#" class="btn btn-primary btn-block my-4" id="shippingChangeRentalDate"><spring:theme code="shipping.interception.change.date.warning.continue"/></a>
-<p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" id="shippingCloseModal"><spring:theme code="shipping.interception.change.date.warning.cancel"/></a></p>
-</div>
-</div>
-</div>
-</div>
+	</div>
 	<spring:eval
 		expression="@configurationService.configuration.getProperty('braintree.user.action')"
 		var="userAction" />
@@ -439,13 +360,6 @@
             enableLocalPayment="${localPaymentsEnabled}"
             enableApplePay="${payPalCheckoutData.applePayEnabled}"
             enableSecure3d="${payPalCheckoutData.secure3d}"/>--%>
-	<script type="text/javascript"
-		src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
-	<script type="text/javascript"
-		src="https://js.braintreegateway.com/web/3.69.0/js/hosted-fields.min.js"></script>
-	<script type="text/javascript"
-		src="https://js.braintreegateway.com/web/3.69.0/js/data-collector.min.js"></script>
-
 
 	<script>
         var paymentMethodsPage = "paymentMethodsPage";
@@ -493,4 +407,13 @@
         var currencyMerchantAccountId = "${currencyMerchantAccount}";
         var googlePayEnabled = ${googlePayEnable};
     </script>
+    
+    <script type="text/javascript"
+		src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
+	<script type="text/javascript"
+		src="https://js.braintreegateway.com/web/3.69.0/js/hosted-fields.min.js"></script>
+	<script type="text/javascript"
+		src="https://js.braintreegateway.com/web/3.69.0/js/data-collector.min.js"></script>
+	<script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/paypal.min.js"></script>
+    <script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/paypal-checkout.min.js"></script>
 </template:page>

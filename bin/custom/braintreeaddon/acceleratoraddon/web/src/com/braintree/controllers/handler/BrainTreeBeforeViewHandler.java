@@ -133,177 +133,179 @@ public class BrainTreeBeforeViewHandler implements BeforeViewHandlerAdaptee
 
 	}
 
-	private String handleBrainTreeCheckoutScenario(final ModelMap model, final String viewName)
-			throws CMSItemNotFoundException
-	{
+  private String handleBrainTreeCheckoutScenario(final ModelMap model, final String viewName) throws CMSItemNotFoundException
+  {
+    try
+    {
+      if (configurationChangeListener == null)
+      {
+        registerConfigChangeLister();
+      }
 
-		if (configurationChangeListener == null)
-		{
-			registerConfigChangeLister();
-		}
+      if (CART_PAGE.equals(viewName))
+      {
+        setPayPalExpressEnabled(model);
+        fillPaymentMethodsInfo(model);
+        model.addAttribute(PAYPAL_BUTTON_CONFIG, payPalButtonConfigurationService.getFormattedProperty(CART_BUTTON_CONFIG));
+        final PayPalCreditMessageComponentModel creditMessageComponent = cmsComponentService.getSimpleCMSComponent(PAYPAL_CREDIT_MESSAGE);
+        model.addAttribute(CREDIT_MESSAGE_COMPONENT, creditMessageComponent);
+        model.addAttribute(IS_CREDIT_MESSAGE_ENABLED, creditMessageComponent.getEnabled());
+      }
 
-		if (CART_PAGE.equals(viewName))
-		{
-			setPayPalExpressEnabled(model);
-			fillPaymentMethodsInfo(model);
-			model.addAttribute(PAYPAL_BUTTON_CONFIG, payPalButtonConfigurationService.getFormattedProperty(CART_BUTTON_CONFIG));
-			final PayPalCreditMessageComponentModel creditMessageComponent = cmsComponentService
-					.getSimpleCMSComponent(PAYPAL_CREDIT_MESSAGE);
-			model.addAttribute(CREDIT_MESSAGE_COMPONENT, creditMessageComponent);
-			model.addAttribute(IS_CREDIT_MESSAGE_ENABLED, creditMessageComponent.getEnabled());
-		}
+      else if (ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage.equals(viewName))
+      {
+        setHostedFieldEnabled(model);
+        fillPaymentMethodsInfo(model);
+        final Map<String, String> paymentsImagesURL = brainTreeCheckoutFacade.getAcceptedPaymentMethodImages();
+        model.addAttribute(ACCEPTED_PAYMENTS_METHODS_IMAGES_URL, paymentsImagesURL);
+        model.addAttribute(PAYPAL_MARK_BUTTON_CONFIG, payPalButtonConfigurationService.getFormattedProperty(MARK_BUTTON_CONFIG));
+        model.addAttribute(DISABLE_MARK_FUNDING, brainTreeConfigService.getDisableFunding());
+        final List<BraintreeLocalPaymentMethodsModel> listLocalPaymentInfoModel = brainTreePaymentFacade.getLocalPaymentMethods();
+        model.addAttribute(LOCAL_PAYMENT_METHODS, listLocalPaymentInfoModel);
+        model.addAttribute(VENMO_PROFILE_ID, brainTreeConfigService.getVenmoProfileId());
+        model.addAttribute(CURRENCY_MERCHANT_ACCOUNT, brainTreeConfigService.getCurrencyMerchantAccountId());
 
-		else if (ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage.equals(viewName))
-		{
-			setHostedFieldEnabled(model);
-			fillPaymentMethodsInfo(model);
-			final Map<String, String> paymentsImagesURL = brainTreeCheckoutFacade.getAcceptedPaymentMethodImages();
-			model.addAttribute(ACCEPTED_PAYMENTS_METHODS_IMAGES_URL, paymentsImagesURL);
-			model.addAttribute(PAYPAL_MARK_BUTTON_CONFIG, payPalButtonConfigurationService.getFormattedProperty(MARK_BUTTON_CONFIG));
-			model.addAttribute(DISABLE_MARK_FUNDING, brainTreeConfigService.getDisableFunding());
-			model.addAttribute(LOCAL_PAYMENT_METHODS, brainTreePaymentFacade.getLocalPaymentMethods());
-			model.addAttribute(VENMO_PROFILE_ID, brainTreeConfigService.getVenmoProfileId());
-			model.addAttribute(CURRENCY_MERCHANT_ACCOUNT, brainTreeConfigService.getCurrencyMerchantAccountId());
+        List<String> lpmids = new ArrayList<>();
+        for (BraintreeLocalPaymentMethodsModel lpm : listLocalPaymentInfoModel)
+        {
+          lpmids.add(lpm.getCode());
+        }
+        ObjectMapper om = new ObjectMapper();
+        try
+        {
+          model.addAttribute("lpmids", om.writeValueAsString(lpmids));
+        }
+        catch (IOException e)
+        {
+          LOG.error("Error during write value");
+        }
+        return SilentOrderPostPage;
+      }
 
-			List<String> lpmids = new ArrayList<>();
-			for (BraintreeLocalPaymentMethodsModel lpm : brainTreePaymentFacade.getLocalPaymentMethods())
-			{
-				lpmids.add(lpm.getCode());
-			}
-			ObjectMapper om = new ObjectMapper();
-			try
-			{
-				model.addAttribute("lpmids", om.writeValueAsString(lpmids));
-			}
-			catch (IOException e)
-			{
-				LOG.error("Error during write value");
-			}
-			return SilentOrderPostPage;
-		}
+      else if (ControllerConstants.Views.Pages.MultiStepCheckout.AccountLayoutPage.equals(viewName))
+      {
+        // add BRAIN_TREE_PAYMENT_DATA for order view page
+        final OrderData orderData = (OrderData) model.get(ORDER_DATA);
+        if (orderData != null)
+        {
+          final String orderCode = orderData.getCode();
+          if (isNotBlank(orderCode))
+          {
+            model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData(orderCode));
+            return viewName;
+          }
+        }
 
-		else if (ControllerConstants.Views.Pages.MultiStepCheckout.AccountLayoutPage.equals(viewName))
-		{
-			// add BRAIN_TREE_PAYMENT_DATA for order view page
-			final OrderData orderData = (OrderData) model.get(ORDER_DATA);
-			if (orderData != null)
-			{
-				final String orderCode = orderData.getCode();
-				if (isNotBlank(orderCode))
-				{
-					model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData(orderCode));
-					return viewName;
-				}
-			}
+        if (Boolean.FALSE.equals(brainTreeConfigService.getPayPalStandardEnabled())
+            && Boolean.FALSE.equals(brainTreeConfigService.getHostedFieldEnabled()))
+        {
+          return viewName;
+        }
 
-			if (Boolean.FALSE.equals(brainTreeConfigService.getPayPalStandardEnabled())
-					&& Boolean.FALSE.equals(brainTreeConfigService.getHostedFieldEnabled()))
-			{
-				return viewName;
-			}
+        String clientToken = StringUtils.EMPTY;
+        try
+        {
+          clientToken = brainTreeCheckoutFacade.generateClientToken();
+        }
+        catch (final AdapterException exception)
+        {
+          LOG.error("[View Handler] Error during token generation!");
+        }
+        model.addAttribute(CLIENT_TOKEN, clientToken);
 
-			String clientToken = StringUtils.EMPTY;
-			try
-			{
-				clientToken = brainTreeCheckoutFacade.generateClientToken();
-			}
-			catch (final AdapterException exception)
-			{
-				LOG.error("[View Handler] Error during token generation!");
-			}
-			model.addAttribute(CLIENT_TOKEN, clientToken);
+        setBraintreeLocale(model);
+        setHostedFieldEnabled(model);
+        final PayPalConfigurationData payPalConfigurationData = brainTreeAccountFacade.getPayPalConfigurationData();
+        boolean addPaymentShow = payPalConfigurationData.getSecure3d() && payPalConfigurationData.getIntent().equals(PAYPAL_INTENT_ORDER);
+        model.addAttribute(ADD_PAYMENT_METHOD_SHOW, addPaymentShow);
+        model.addAttribute(PAY_PAL_CONFIGURATION_DATA, payPalConfigurationData);
+        final Map<String, String> paymentsImagesURL = brainTreeCheckoutFacade.getAcceptedPaymentMethodImages();
+        model.addAttribute(ACCEPTED_PAYMENTS_METHODS_IMAGES_URL, paymentsImagesURL);
+        model.addAttribute(VENMO_ENABLE, brainTreeConfigService.getVenmoEnabled());
+        model.addAttribute(PAYMENT_INFOS, brainTreeUserFacade.getBrainTreeCCPaymentInfos(true));
+        model.addAttribute(BILLING_AGREEMENT_DESCRIPTION, brainTreeConfigService.getBillingAgreementDescription());
+        model.addAttribute(GOOGLE_PAY_MERCHANT_ID, brainTreeConfigService.getGooglePayMerchantId());
+        model.addAttribute(GOOGLE_PAY_ENABLE, brainTreeConfigService.getGooglePayEnabled());
+        model.addAttribute(GOOGLE_PAY_COUNTRY_CODE, brainTreeConfigService.getGooglePayCountryCode());
+        return AccountLayoutPage;
+      }
 
-			setBraintreeLocale(model);
-			setHostedFieldEnabled(model);
-			final PayPalConfigurationData payPalConfigurationData = brainTreeAccountFacade.getPayPalConfigurationData();
-			boolean addPaymentShow = payPalConfigurationData.getSecure3d()
-					&& payPalConfigurationData.getIntent().equals(PAYPAL_INTENT_ORDER);
-			model.addAttribute(ADD_PAYMENT_METHOD_SHOW, addPaymentShow);
-			model.addAttribute(PAY_PAL_CONFIGURATION_DATA, payPalConfigurationData);
-			final Map<String, String> paymentsImagesURL = brainTreeCheckoutFacade.getAcceptedPaymentMethodImages();
-			model.addAttribute(ACCEPTED_PAYMENTS_METHODS_IMAGES_URL, paymentsImagesURL);
-			model.addAttribute(VENMO_ENABLE, brainTreeConfigService.getVenmoEnabled());
-			model.addAttribute(PAYMENT_INFOS, brainTreeUserFacade.getBrainTreeCCPaymentInfos(true));
-			model.addAttribute(BILLING_AGREEMENT_DESCRIPTION, brainTreeConfigService.getBillingAgreementDescription());
-			model.addAttribute(GOOGLE_PAY_MERCHANT_ID, brainTreeConfigService.getGooglePayMerchantId());
-			model.addAttribute(GOOGLE_PAY_ENABLE, brainTreeConfigService.getGooglePayEnabled());
-			model.addAttribute(GOOGLE_PAY_COUNTRY_CODE, brainTreeConfigService.getGooglePayCountryCode());
-			return AccountLayoutPage;
-		}
+      else if (B2C_CHECKOUT_CONFIRMATION_LAYOUT_PAGE.equals(viewName))
+      {
+        final String orderCode = ((OrderData) model.get(ORDER_DATA)).getCode();
+        if (isNotBlank(orderCode))
+        {
+          model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData(orderCode));
+        }
+        return viewName;
+      }
 
-		else if (B2C_CHECKOUT_CONFIRMATION_LAYOUT_PAGE.equals(viewName))
-		{
-			final String orderCode = ((OrderData) model.get(ORDER_DATA)).getCode();
-			if (isNotBlank(orderCode))
-			{
-				model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData(orderCode));
-			}
-			return viewName;
-		}
+      else if (ControllerConstants.Views.Pages.MultiStepCheckout.CheckoutSummaryPage.equals(viewName))
+      {
+        model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData());
+        return CheckoutSummaryPage;
+      }
 
-		else if (ControllerConstants.Views.Pages.MultiStepCheckout.CheckoutSummaryPage.equals(viewName))
-		{
-			model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData());
-			return CheckoutSummaryPage;
-		}
+      else if (B2C_CHECKOUT_CONFIRMATION_PAGE.equals(viewName))
+      {
+        final String orderCode = ((OrderData) model.get(ORDER_DATA)).getCode();
+        if (isNotBlank(orderCode))
+        {
+          model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData(orderCode));
+        }
+        return CheckoutConfirmationPage;
+      }
 
-		else if (B2C_CHECKOUT_CONFIRMATION_PAGE.equals(viewName))
-		{
-			final String orderCode = ((OrderData) model.get(ORDER_DATA)).getCode();
-			if (isNotBlank(orderCode))
-			{
-				model.addAttribute(BRAIN_TREE_PAYMENT_DATA, brainTreePaymentFacade.getBrainTreePaymentInfoData(orderCode));
-			}
-			return CheckoutConfirmationPage;
-		}
+      else if (B2C_ADD_TO_CART_POPUP_PAGE.equals(viewName))
+      {
+        if (isPaymentMethodsAvailable(viewName))
+        {
+          fillPaymentMethodsInfo(model);
+          setPayPalExpressEnabled(model);
+          model.addAttribute(PAYPAL_BUTTON_CONFIG, payPalButtonConfigurationService.getFormattedProperty(MINI_CART_BUTTON_CONFIG));
+          return BraintreeaddonControllerConstants.Views.Fragments.Cart.AddToCartPopup;
+        }
+        return viewName;
+      }
 
-		else if (B2C_ADD_TO_CART_POPUP_PAGE.equals(viewName))
-		{
-			if (isPaymentMethodsAvailable(viewName))
-			{
-				fillPaymentMethodsInfo(model);
-				setPayPalExpressEnabled(model);
-				model.addAttribute(PAYPAL_BUTTON_CONFIG,
-						payPalButtonConfigurationService.getFormattedProperty(MINI_CART_BUTTON_CONFIG));
-				return BraintreeaddonControllerConstants.Views.Fragments.Cart.AddToCartPopup;
-			}
-			return viewName;
-		}
-
-		else if (B2C_CART_POPUP_PAGE.equals(viewName))
-		{
-			if (isPaymentMethodsAvailable(viewName))
-			{
-				fillPaymentMethodsInfo(model);
-				setPayPalExpressEnabled(model);
-				model.addAttribute(PAYPAL_BUTTON_CONFIG,
-						payPalButtonConfigurationService.getFormattedProperty(MINI_CART_BUTTON_CONFIG));
-				return BraintreeaddonControllerConstants.Views.Fragments.Cart.CartPopup;
-			}
-			return viewName;
-		}
-		else if (B2C_CHECKOUT_DELIVERY_ADDRESS_PAGE.equals(viewName)
-				&& getSessionService().getAttribute("braintree.general.error.shippingAddress") != null)
-		{
-			model.addAttribute("accErrorMsgs", getSessionService().getAttribute("braintree.general.error.shippingAddress"));
-			getSessionService().removeAttribute("braintree.general.error.shippingAddress");
-		}
-		else if (ControllerConstants.Views.Pages.MultiStepCheckout.FallbackPage.equals(viewName))
-		{
-			String clientToken = StringUtils.EMPTY;
-			try
-			{
-				clientToken = brainTreeCheckoutFacade.generateClientToken();
-			}
-			catch (final AdapterException exception)
-			{
-				LOG.error("[View Handler] Error during token generation!");
-			}
-			model.addAttribute(CLIENT_TOKEN, clientToken);
-			return FallbackPage;
-		}
-		return viewName;
-	}
+      else if (B2C_CART_POPUP_PAGE.equals(viewName))
+      {
+        if (isPaymentMethodsAvailable(viewName))
+        {
+          fillPaymentMethodsInfo(model);
+          setPayPalExpressEnabled(model);
+          model.addAttribute(PAYPAL_BUTTON_CONFIG, payPalButtonConfigurationService.getFormattedProperty(MINI_CART_BUTTON_CONFIG));
+          return BraintreeaddonControllerConstants.Views.Fragments.Cart.CartPopup;
+        }
+        return viewName;
+      }
+      else if (B2C_CHECKOUT_DELIVERY_ADDRESS_PAGE.equals(viewName)
+          && getSessionService().getAttribute("braintree.general.error.shippingAddress") != null)
+      {
+        model.addAttribute("accErrorMsgs", getSessionService().getAttribute("braintree.general.error.shippingAddress"));
+        getSessionService().removeAttribute("braintree.general.error.shippingAddress");
+      }
+      else if (ControllerConstants.Views.Pages.MultiStepCheckout.FallbackPage.equals(viewName))
+      {
+        String clientToken = StringUtils.EMPTY;
+        try
+        {
+          clientToken = brainTreeCheckoutFacade.generateClientToken();
+        }
+        catch (final AdapterException exception)
+        {
+          LOG.error("[View Handler] Error during token generation!");
+        }
+        model.addAttribute(CLIENT_TOKEN, clientToken);
+        return FallbackPage;
+      }
+    }
+    catch (final Exception exception)
+    {
+      LOG.error(exception.getMessage(), exception);
+    }
+    return viewName;
+  }
 
 
 
