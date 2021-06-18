@@ -62,14 +62,14 @@ ${ctx.messages.newGearAlert}</h1>
 ${ctx.messages.salutation}</h3>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-${ctx.messages.getMessage('productAvaiable', '<a href='"'#'"'><strong>'${ctx.productData.name}'</strong></a>')}
+${ctx.messages.getMessage('productAvailable', "<a href=""${ctx.secureBaseUrl}/rent/product/${ctx.productData.code}""><strong>${ctx.productData.name}</strong></a>")}
 </p>
 
 <h3 style="font-family: Tahoma,helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); line-height: 1.2em; font-weight: 800; font-style: normal;text-align:center;">
 
-<a href="${ctx.secureBaseUrl}${ctx.productData.url}">${ctx.productData.name}</a><br />
+<a href="${ctx.secureBaseUrl}/rent/product/${ctx.productData.code}">${ctx.productData.name}</a><br />
 
-<a href="">
+<a href="${ctx.secureBaseUrl}/rent/product/${ctx.productData.code}">
 #foreach($image in $ctx.productData.images) #if($image.imageType == "PRIMARY" && $image.format == "thumbnail" )
   <img src="$image.url" alt="${ctx.productData.name} photo" title="$ctx.productData.name" style="max-width:500px;"/>
 #end #end
@@ -83,7 +83,7 @@ ${ctx.messages.productForceInStockAvaiable}
 </p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-${ctx.messages.getMessage('shopNow', '<a href='"'#'"'>latest and upcoming arrivals</a>')}
+${ctx.messages.getMessage('shopNow', "<a href=""#"">latest and upcoming arrivals</a>")}
 </p>
 
 <p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
