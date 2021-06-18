@@ -45,13 +45,13 @@
              	    <div class="input-group">
              		    <span class="input-group-btn">
              			  <button type="button" class="btn btn-default btn-number"
-             				  data-type="minus" data-field="quant[1]">
+             				  data-type="minus" data-field="quant[1]${entry.entryNumber}">
              				  <span class="glyphicon glyphicon-minus"></span>
              			  </button>
-             		    </span> <input type="text" name="quant[1]" class="form-control input-number"
+             		    </span> <input type="text" name="quant[1]${entry.entryNumber}" class="form-control input-number"
              			    value="${entry.quantity}" min="1" max="99" entryNumber="${entry.entryNumber}"> <span class="input-group-btn">
              			    <button type="button" class="btn btn-default btn-number"
-             				    data-type="plus" data-field="quant[1]">
+             				    data-type="plus" data-field="quant[1]${entry.entryNumber}">
              				    <span class="glyphicon glyphicon-plus"></span>
              			    </button>
              		    </span>
