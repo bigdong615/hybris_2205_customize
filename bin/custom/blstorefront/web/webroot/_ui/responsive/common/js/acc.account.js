@@ -139,7 +139,7 @@ ACC.account = {
 					 // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
-							$("#errorMessages_login").html("Your Email or password was incorrect");
+							$("#errorMessages_login").html("Your Email or Password was incorrect");
 						} else {
 							location.reload();
 						}
@@ -150,7 +150,7 @@ ACC.account = {
 				});
 			} else {
 				$("#errorMessages_login").removeClass("d-none");
-				$("#errorMessages_login").html("Your Email or password was incorrect");
+				$("#errorMessages_login").html("Your Email or Password was incorrect");
 			}
 		});
 
