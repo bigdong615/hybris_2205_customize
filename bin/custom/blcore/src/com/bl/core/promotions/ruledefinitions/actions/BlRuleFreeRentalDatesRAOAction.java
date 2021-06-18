@@ -118,21 +118,19 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
     int  entryNumber = 1;
     for (OrderEntryRAO entry : cartRao.getEntries()) {
       if (Objects.nonNull(entry.getPrice()) && rentalDays > 0) {
-        BlProductModel blProduct = (BlProductModel) this.findProduct(entry.getProductCode(), context);
-        Double basePrice = CollectionUtils.isNotEmpty(blProduct.getEurope1Prices()) ? blProduct.getEurope1Prices().iterator().next().getPrice() : 0.0D;
-        BigDecimal updatedEntryRentalPrice = getBlCommercePriceService().getDynamicPriceDataForProduct(blProduct.getConstrained(),basePrice, rentalDays.longValue()).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-        updatedEntryRentalPrice = rentalDays == 1 || rentalDays == 2 ? updatedEntryRentalPrice.divide(new BigDecimal(3)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE).multiply(new BigDecimal(rentalDays)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE) : updatedEntryRentalPrice;
-        updatedEntryRentalPrice = updatedEntryRentalPrice.multiply(new BigDecimal(entry.getAvailableQuantity())).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-
-        totalRentalPrice = totalRentalPrice.add(updatedEntryRentalPrice).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-        entry.setPrice(updatedEntryRentalPrice);
-        entry.setEntryNumber(entryNumber);
-        BlLogger.logMessage(LOG, Level.DEBUG,
-            " extended day cart entry price for : "+rentalDays +"rental days" + "for product" + entry
-                .getProductCode() +" is : "+ updatedEntryRentalPrice );
-
-        this.getOrderEntryRaoToNumberedLineItemConverter().convert(entry);
-        entryNumber++;
+        final BlProductModel blProduct = (BlProductModel) this.findProduct(entry.getProductCode(), context);
+        if (blProduct != null) {
+          final Double basePrice = CollectionUtils.isNotEmpty(blProduct.getEurope1Prices()) ? blProduct.getEurope1Prices().iterator().next().getPrice() : 0.0D;
+          BigDecimal updatedEntryRentalPrice = getBlCommercePriceService().getDynamicPriceDataForProduct(blProduct.getConstrained(), basePrice, rentalDays.longValue()).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+          updatedEntryRentalPrice = rentalDays <= 2 ? updatedEntryRentalPrice.divide(new BigDecimal(3)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE).multiply(new BigDecimal(rentalDays)).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE)  : updatedEntryRentalPrice;
+          updatedEntryRentalPrice = updatedEntryRentalPrice.multiply(new BigDecimal(entry.getAvailableQuantity())).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+          totalRentalPrice = totalRentalPrice.add(updatedEntryRentalPrice).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+          entry.setPrice(updatedEntryRentalPrice);
+          entry.setEntryNumber(entryNumber);
+          BlLogger.logMessage(LOG, Level.DEBUG," extended day cart entry price for : " + rentalDays + "rental days" + "for product" + entry.getProductCode() + " is : " + updatedEntryRentalPrice);
+          this.getOrderEntryRaoToNumberedLineItemConverter().convert(entry);
+          entryNumber++;
+        }
       }
     }
     return totalRentalPrice;
@@ -147,16 +145,15 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
    * @return
    */
   protected ProductModel findProduct(String productCode, RuleActionContext context) {
-    ProductModel product = null;
     try {
-      product = this.getProductService().getProductForCode(productCode);
-    } catch (Exception var5) {
+      return  this.getProductService().getProductForCode(productCode);
+    } catch (final Exception exception) {
       BlLogger.logMessage(LOG, Level.ERROR,
           "no product found for code" + productCode + "in rule" + this.getRuleCode(context)
               + "cannot apply rule action.");
 
     }
-    return product;
+    return null;
   }
 
 
