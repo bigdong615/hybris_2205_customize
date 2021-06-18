@@ -52,7 +52,7 @@
 				</c:when>
 				<c:otherwise>
 				<div class="page-loader-new-layout">
-            <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+            <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img"/>
         </div>
         <c:choose>
 				  <c:when test="${allowAddToCart || isRentalCart}">
