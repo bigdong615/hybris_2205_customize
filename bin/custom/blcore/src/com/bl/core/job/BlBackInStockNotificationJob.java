@@ -35,7 +35,7 @@ public class BlBackInStockNotificationJob extends StockLevelStatusJob {
         final Collection<BlSerialProductModel> blSerialProducts = product.getSerialProducts();
         final BaseStoreModel currentBaseStore = productInterest.getBaseStore();
         boolean hasActiveSerialProduct= false;
-        if(CollectionUtils.isNotEmpty(blSerialProducts) && CollectionUtils.isNotEmpty(currentBaseStore.getWarehouses())){
+        if(CollectionUtils.isNotEmpty(blSerialProducts) && currentBaseStore!=null && CollectionUtils.isNotEmpty(currentBaseStore.getWarehouses())){
             hasActiveSerialProduct = blSerialProducts.stream().anyMatch(blSerialProductModel ->
                     blSerialProductModel.getSerialStatus() != null && blSerialProductModel.getSerialStatus().equals(SerialStatusEnum.ACTIVE)
             );

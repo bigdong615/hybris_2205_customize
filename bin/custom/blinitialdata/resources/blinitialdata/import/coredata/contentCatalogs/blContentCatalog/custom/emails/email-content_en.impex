@@ -1,7 +1,7 @@
 
 #% impex.info("=============================== Importing content from BLInitialData coredata/contentCatalogs email-content_en.impex =========================");
 
-$contentCatalog=electronicsContentCatalog
+$contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 
 # Import config properties into impex macros for modulegen

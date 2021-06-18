@@ -9,6 +9,8 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.stocknotificationservices.model.StockNotificationProcessModel;
+import org.apache.commons.lang.StringUtils;
+
 
 import java.util.Locale;
 
@@ -65,7 +67,7 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
      */
     protected void updateTitle(final StockNotificationProcessModel businessProcessModel, final Locale emailLocale)
     {
-        String title="";
+        String title= StringUtils.EMPTY;
         if(businessProcessModel.getCustomer()!=null && businessProcessModel.getCustomer().getTitle()!=null) {
             title = businessProcessModel.getCustomer().getTitle().getName(emailLocale);
         }
