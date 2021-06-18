@@ -47,7 +47,7 @@
                         </label>
                     </div>
                     <b class="mt-4"><spring:theme code="text.ship.it.available.delivery.methods"/></b>
-                    <div id="shipToHomeShippingMethods"></div>
+                    <div id="shipToHomeShippingMethods" class="sub-option"></div>
                 </div>
                 <div id="tab-SHIP_UPS_OFFICE" class="ship-it-tab-content">
                     <div id="shipToUPSShippingMethods">
