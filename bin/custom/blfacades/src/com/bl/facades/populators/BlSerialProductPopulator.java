@@ -75,6 +75,12 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 				serialProductData.setFinalIncentivizedPrice(getProductPriceData(serialProductModel.getIncentivizedPrice()));
 				target.setHasIncentivizedPrice(Boolean.TRUE);
 			}
+			
+			//Added Serial status for used gear product
+			if (serialProductModel.getSerialStatus() != null)
+			{
+				serialProductData.setSerialStatus(serialProductModel.getSerialStatus());
+			}
 			serialProductDataList.add(serialProductData);
 		});
 		sortSerialBasedOnConditionRating(serialProductDataList);

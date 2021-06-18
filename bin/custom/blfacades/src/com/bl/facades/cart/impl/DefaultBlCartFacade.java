@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
+import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -162,6 +163,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         cartModel.setIsRentalCart(Boolean.TRUE);
       } else {
         cartModel.setIsRentalCart(Boolean.FALSE);
+        
+         //Added code for serial status changes
+			blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
+			getModelService().save(blSerialProductModel);
       }
     }
     getModelService().save(cartModel);

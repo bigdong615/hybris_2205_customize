@@ -28,6 +28,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlSerialProductModel;
 
 
 /**
@@ -35,40 +37,49 @@ import org.apache.log4j.Logger;
  *
  * @author Neeraj Singh
  */
-public class DefaultBlCartService extends DefaultCartService implements BlCartService {
+public class DefaultBlCartService extends DefaultCartService implements BlCartService
+{
 
-  private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
+	private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
 
-  private CommerceCartService commerceCartService;
+	private CommerceCartService commerceCartService;
 	private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
 	private BlCommerceStockService blCommerceStockService;
 	private BaseStoreService baseStoreService;
 	private BlDatePickerService blDatePickerService;
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void clearCartEntries() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void clearCartEntries()
+	{
 
-    final CartModel cartModel = getSessionCart();
+		final CartModel cartModel = getSessionCart();
 
-    if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+		if (CollectionUtils.isNotEmpty(cartModel.getEntries()))
+		{
 
-      final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
-      commerceCartParameter.setEnableHooks(true);
-      commerceCartParameter.setCart(cartModel);
-      getCommerceCartService().removeAllEntries(commerceCartParameter);
+			if (cartModel.getIsRentalCart().equals(Boolean.FALSE))
+			{
+				setUsedGearSerialProductStatus(cartModel);
+			}
 
-      BlLogger.logFormattedMessage(LOGGER, Level.DEBUG, BlCoreConstants.EMPTY_STRING,
-          "All entries removed from cart with code : {}", cartModel.getCode());
-    }
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  @Override
+			final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
+			commerceCartParameter.setEnableHooks(true);
+			commerceCartParameter.setCart(cartModel);
+			getCommerceCartService().removeAllEntries(commerceCartParameter);
+
+
+			BlLogger.logFormattedMessage(LOGGER, Level.DEBUG, BlCoreConstants.EMPTY_STRING,
+					"All entries removed from cart with code : {}", cartModel.getCode());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void resetCartCalculationFlag()
 	{
 		final CartModel cartModel = getSessionCart();
@@ -84,9 +95,9 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		getModelService().refresh(cartModel);
 	}
 
-  /**
-   * {@inheritDoc}
-   */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void recalculateCartIfRequired()
 	{
@@ -98,9 +109,9 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		}
 	}
 
-	 /**
-	   * {@inheritDoc}
-	   */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void updateCartEntryDamageWaiver(final long entryNumber, final String damageWaiverType)
 	{
@@ -118,7 +129,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 			getBlCheckoutCartCalculationStrategy().recalculateCart(parameter);
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -129,22 +140,25 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final String cartCode = cartModel.getCode();
 		cartModel.setRentalStartDate(rentalStartDate);
 		cartModel.setRentalEndDate(rentalEndDate);
-		try 
-		{			
-			getModelService().save(cartModel);
-			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}", rentalStartDate, rentalEndDate, cartCode);
-		}
-		catch(final Exception exception)
+		try
 		{
-			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, 
-					"Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate, cartCode);
+			getModelService().save(cartModel);
+			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}",
+					rentalStartDate, rentalEndDate, cartCode);
+		}
+		catch (final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+					"Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate,
+					cartCode);
 		}
 	}
 
 	/**
 	 * Gets the commerce cart parameter.
 	 *
-	 * @param cartModel the cart model
+	 * @param cartModel
+	 *           the cart model
 	 * @return the commerce cart parameter
 	 */
 	private CommerceCartParameter getCommerceCartParameter(final CartModel cartModel)
@@ -159,8 +173,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	/**
 	 * Check and set flag for selected damage Waiver.
 	 *
-	 * @param cartEntryModel the cart entry model
-	 * @param damageWaiverType the damage Waiver type
+	 * @param cartEntryModel
+	 *           the cart entry model
+	 * @param damageWaiverType
+	 *           the damage Waiver type
 	 */
 	private void checkAndSetFlagForSelectedDamageWaiver(final AbstractOrderEntryModel cartEntryModel,
 			final String damageWaiverType)
@@ -184,10 +200,14 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	/**
 	 * Sets the flags for Damage Waiver.
 	 *
-	 * @param cartEntryModel the cart entry model
-	 * @param gearGuardProFullWaiverSelected the gear Guard pro full waiver selected
-	 * @param gearGuardWaiverSelected the gear Guard waiver selected
-	 * @param noGearGuardWaiverSelected the no gear Guard waiver selected
+	 * @param cartEntryModel
+	 *           the cart entry model
+	 * @param gearGuardProFullWaiverSelected
+	 *           the gear Guard pro full waiver selected
+	 * @param gearGuardWaiverSelected
+	 *           the gear Guard waiver selected
+	 * @param noGearGuardWaiverSelected
+	 *           the no gear Guard waiver selected
 	 */
 	private void setFlags(final AbstractOrderEntryModel cartEntryModel, final Boolean gearGuardProFullWaiverSelected,
 			final Boolean gearGuardWaiverSelected, final Boolean noGearGuardWaiverSelected)
@@ -197,7 +217,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		cartEntryModel.setNoDamageWaiverSelected(noGearGuardWaiverSelected);
 		cartEntryModel.setCalculated(Boolean.FALSE);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -215,26 +235,52 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
 	}
 
-  public CommerceCartService getCommerceCartService() {
-    return commerceCartService;
-  }
 
-  public void setCommerceCartService(CommerceCartService commerceCartService) {
-    this.commerceCartService = commerceCartService;
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setUsedGearSerialProductStatus(final CartModel cartModel)
+	{
+		for (final AbstractOrderEntryModel entry : cartModel.getEntries())
+		{
+
+			if (entry.getProduct() instanceof BlSerialProductModel)
+			{
+				final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
+				if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus()))
+				{
+					blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+					getModelService().save(blSerialProductModel);
+				}
+			}
+		}
+
+	}
+
+	public CommerceCartService getCommerceCartService()
+	{
+		return commerceCartService;
+	}
+
+	public void setCommerceCartService(final CommerceCartService commerceCartService)
+	{
+		this.commerceCartService = commerceCartService;
+	}
 
 	/**
 	 * @return blCheckoutCartCalculationStrategy
 	 */
-	public CommerceCartCalculationStrategy getBlCheckoutCartCalculationStrategy() {
+	public CommerceCartCalculationStrategy getBlCheckoutCartCalculationStrategy()
+	{
 		return blCheckoutCartCalculationStrategy;
 	}
 
 	/**
 	 * @param blCheckoutCartCalculationStrategy
 	 */
-	public void setBlCheckoutCartCalculationStrategy(
-			CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
+	public void setBlCheckoutCartCalculationStrategy(final CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy)
+	{
 		this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
 	}
 
@@ -247,9 +293,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	}
 
 	/**
-	 * @param blCommerceStockService the blCommerceStockService to set
+	 * @param blCommerceStockService
+	 *           the blCommerceStockService to set
 	 */
-	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
 	{
 		this.blCommerceStockService = blCommerceStockService;
 	}
@@ -263,9 +310,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	}
 
 	/**
-	 * @param baseStoreService the baseStoreService to set
+	 * @param baseStoreService
+	 *           the baseStoreService to set
 	 */
-	public void setBaseStoreService(BaseStoreService baseStoreService)
+	public void setBaseStoreService(final BaseStoreService baseStoreService)
 	{
 		this.baseStoreService = baseStoreService;
 	}
@@ -279,9 +327,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	}
 
 	/**
-	 * @param blDatePickerService the blDatePickerService to set
+	 * @param blDatePickerService
+	 *           the blDatePickerService to set
 	 */
-	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	public void setBlDatePickerService(final BlDatePickerService blDatePickerService)
 	{
 		this.blDatePickerService = blDatePickerService;
 	}

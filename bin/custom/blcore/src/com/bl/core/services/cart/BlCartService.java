@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import de.hybris.platform.core.model.order.CartModel;
 
 import com.bl.facades.product.data.RentalDateDto;
 
@@ -63,5 +64,12 @@ public interface BlCartService extends CartService {
 	 */
 	Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
 			final RentalDateDto rentalDatesFromSession);
+	
+
+	/** Change usedGear serial product status when cart session Timeout
+	 *
+	 * @param cartModel
+	 */
+	void setUsedGearSerialProductStatus(final CartModel cartModel);
 	
 }

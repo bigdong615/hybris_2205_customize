@@ -55,6 +55,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+import com.bl.facades.constants.BlFacadesConstants;
+
+
 /**
  * Controller for Add to Cart functionality which is not specific to a certain page.
  */
@@ -67,7 +70,7 @@ public class AddToCartController extends AbstractController
 	private static final String QUANTITY_INVALID_BINDING_MESSAGE_KEY = "basket.error.quantity.invalid.binding";
 	private static final String SHOWN_PRODUCT_COUNT = "blstorefront.storefront.minicart.shownProductCount";
 	private static final String PRODUCT_LIMIT = "addtocart.dontforget.product.limit";
-
+	private static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
 	private static final Logger LOG = Logger.getLogger(AddToCartController.class);
 
 
@@ -164,7 +167,16 @@ public class AddToCartController extends AbstractController
 
 		model.addAttribute(BlControllerConstants.PRODUCT_REFERENCE, productReferences);
 		model.addAttribute(BlControllerConstants.MAXIMUM_LIMIT , productsLimit);
-		return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
+        //BL-471 Added condition for used gear redirection
+		if (StringUtils.isNotEmpty(serialCode) && !StringUtils.equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING))
+		{
+			return REDIRECT_CART_URL;
+		}
+		else
+		{
+			return ControllerConstants.Views.Fragments.Cart.AddToCartPopup;
+		}
+		
 	}
 
 	protected String getViewWithBindingErrorMessages(final Model model, final BindingResult bindingErrors)

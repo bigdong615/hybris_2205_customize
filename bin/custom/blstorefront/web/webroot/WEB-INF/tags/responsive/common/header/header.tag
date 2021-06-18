@@ -10,6 +10,7 @@
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<span id="timer-count" value="${usedGearTimer}"></span>
 
       <cms:pageSlot position="PromoBannerSlot" var="component" element="div" > 
          <cms:component component="${component}" />

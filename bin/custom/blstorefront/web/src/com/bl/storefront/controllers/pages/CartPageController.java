@@ -57,6 +57,7 @@ import de.hybris.platform.core.enums.QuoteState;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
@@ -356,6 +357,12 @@ public class CartPageController extends AbstractCartPageController
 			{				
 				if (removeEntry)
 				{
+					final CartModel cartModel = blCartService.getSessionCart();
+					
+					if(cartModel.getIsRentalCart().equals(Boolean.FALSE))
+					{	
+					blCartService.setUsedGearSerialProductStatus(cartModel);
+					}
 					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
 				}
 				else
@@ -967,6 +974,28 @@ public class CartPageController extends AbstractCartPageController
 		}
 
 		return REDIRECT_CART_URL;
+	}
+	
+	
+	/**
+	 * Remove cart entries when UsedGear cart timer end
+	 *
+	 * @param isUsedGearTimerEnd
+	 * @return
+	 */
+	@RequestMapping(value = "/cartTimerOut", method = RequestMethod.POST, produces = "application/json")
+	public String usedGearCartSessionTimeOut(
+			@RequestParam(value = "usedGearTimerEnd", required = false, defaultValue = "true") final boolean isUsedGearTimerEnd)
+
+	{
+		final CartData cartData = getCartFacade().getSessionCart();
+		if (isUsedGearTimerEnd &&  cartData.getIsRentalCart().equals(Boolean.FALSE))
+		{
+			getBlCartFacade().removeCartEntries();
+			return REDIRECT_CART_URL;
+		}
+		
+		return StringUtils.EMPTY;
 	}
 
 	/**

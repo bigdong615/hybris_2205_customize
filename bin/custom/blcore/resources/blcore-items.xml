@@ -40,6 +40,7 @@
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
+	        <value code="ADDED_TO_CART" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -1844,6 +1845,11 @@
                         <modifiers read="true" write="true" search="true" initial="true" />
                         <description>List of BlackOut Dates</description>
                     </attribute>
+                    <attribute qualifier="usedGearCartTimer" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>used gear session timer value </description>
+					</attribute>
                 </attributes>                
             </itemtype>
         </typegroup>

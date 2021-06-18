@@ -76,6 +76,7 @@
     <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="serialId" type="String"/>
+	<property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
   </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">

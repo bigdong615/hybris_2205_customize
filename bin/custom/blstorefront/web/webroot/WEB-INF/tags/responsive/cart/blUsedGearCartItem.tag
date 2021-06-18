@@ -17,7 +17,7 @@
 <div class="cartProduct">
      <div class="row">
          <div class="col-md-2 text-center">
-          <a href="#"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
+         <a href="#"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
          </div>
          <div class="col-md-7 mt-3">
            <b>${entry.product.name}</b>
@@ -37,7 +37,7 @@
      </div>
 
      <%-- It will be handled in BL-463 --%>
-     <div id="productOptions" class="row mt-3">
+     <%-- <div id="productOptions" class="row mt-3">
          <div class="col-md-10 offset-md-2">
              <p class="body14 mb-1"><spring:theme code="text.cart.options"/></p>
              <div class="dropdown">
@@ -51,7 +51,7 @@
                </ul>
              </div>
          </div>
-     </div>
+     </div> --%>
 
      <%--<div class="productNotifications row">
          <div class="col-12">
