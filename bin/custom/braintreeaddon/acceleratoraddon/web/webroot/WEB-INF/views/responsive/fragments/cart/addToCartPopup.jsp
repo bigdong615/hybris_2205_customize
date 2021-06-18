@@ -57,7 +57,7 @@
                         	<div class="input-group">
                         		<span class="input-group-btn">
                         			<button type="button" class="btn btn-default btn-number"
-                        				disabled="disabled" data-type="minus" data-field="quant[1]">
+                        				data-type="minus" data-field="quant[1]">
                         				<span class="glyphicon glyphicon-minus"></span>
                         			</button>
                         		</span> <input type="text" name="quant[1]" class="form-control input-number"
