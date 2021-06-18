@@ -15,6 +15,7 @@
         <requires-extension name="bllogging"/>
         <requires-extension name="blintegration"/>
         <requires-extension name="commercefacades"/>
+        <requires-extension name="stocknotificationservices"/>
         <requires-extension name="ruledefinitions"/>
         <requires-extension name="promotionengineservices"/>
 
