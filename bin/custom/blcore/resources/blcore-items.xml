@@ -1848,6 +1848,7 @@
             </itemtype>
         </typegroup>
         <!-- BL-542 End-->
+        <!-- BL-718 : For setting default Billing address. -->
         <typegroup name="Customer">
             <itemtype code="Customer" autocreate="false" generate="false">
             <description>Extending Customer type with additional attributes.</description>
