@@ -363,6 +363,9 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
                                      success: function (response) {
                                       var index = $( ".js-add-to-cart-popup" ).index( this );
                                       document.getElementById(popUpId).innerHTML= "Added";
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                           ACC.minicart.updateMiniCartDisplay();
+                                      }
                                      },
                                       complete: function() {
                                         $('.page-loader-new-layout').hide();
