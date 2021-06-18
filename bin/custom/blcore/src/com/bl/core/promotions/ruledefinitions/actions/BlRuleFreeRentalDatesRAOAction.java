@@ -143,7 +143,7 @@ public class BlRuleFreeRentalDatesRAOAction extends AbstractRuleExecutableSuppor
    * @param context
    * @return
    */
-  protected ProductModel findProduct(String productCode, RuleActionContext context) {
+  protected ProductModel findProduct(final String productCode,final RuleActionContext context) {
     try {
       return  this.getProductService().getProductForCode(productCode);
     } catch (final Exception exception) {
