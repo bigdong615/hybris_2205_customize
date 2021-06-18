@@ -195,6 +195,7 @@
 		<property name="stockConverter" ref="stockConverter"/>
 		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
 		<property name="commercePriceService" ref="commercePriceService"/>
+		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
 	</bean>
 
 
@@ -349,8 +350,14 @@
     <!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
     <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
     <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
-    
-    <!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
+
+	<!-- Added to override OOB populator to populate subtotal without discount on storefront-->
+	<alias name="defaultBlMiniCartPopulator" alias="miniCartPopulator"/>
+	<bean id="defaultBlMiniCartPopulator" class="com.bl.facades.populators.BlMiniCartPopulator" parent="defaultMiniCartPopulator"/>
+
+
+
+	<!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
     <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
     <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
 
@@ -480,6 +487,20 @@
 		class="com.bl.facades.process.email.context.BlGiftCardEmailContext"
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
+	<!-- BL-628: Notify me start -->
+	<bean id="productNotifyMeEmailContext" class="com.bl.facades.process.email.context.ProductNotifyMeEmailContext" parent="abstractEmailContext" scope="prototype" >
+		<property name="productConverter" ref="productConverter"/>
+	</bean>
+
+	<alias name="defaultBlProductInterestFacade" alias="blProductInterestFacade"/>
+	<bean id="defaultBlProductInterestFacade" class="com.bl.facades.customerinterestsfacades.productinterest.impl.DefaultBlProductInterestFacade" parent="productInterestFacade">
+		<property name="modelService" ref="modelService"/>
+		<property name="userService" ref="userService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
+	<!-- Notify me end-->
 
 	<!--BL-657 added to override orderAppliedVouchersPopulator -->
 	<alias name="blOrderAppliedVouchersPopulator" alias="orderAppliedVouchersPopulator"/>
@@ -499,5 +520,5 @@
 			</list>
 		</property>
 	</bean>
-
+	
 </beans>

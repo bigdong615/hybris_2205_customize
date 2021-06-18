@@ -840,7 +840,10 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 		final BrainTreePaymentInfoModel cardPaymentInfoModel = createCreditCardPaymentInfo(billingAddress, customer, braintreeInfo,
 				abstractOrderModel);
-
+		if(StringUtils.isNotBlank(braintreeInfo.getBraintreeAddressId()))
+		{
+		  billingAddress.setBrainTreeAddressId(braintreeInfo.getBraintreeAddressId());
+		}
 		billingAddress.setOwner(cardPaymentInfoModel);
 		billingAddress.setPickStoreAddress(Boolean.FALSE);
 		billingAddress.setUpsStoreAddress(Boolean.FALSE);
