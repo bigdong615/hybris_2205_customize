@@ -104,6 +104,7 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 	public static final String BRAINTREE_GOOGLE_PAY_MERCHANT_ID = "braintree.googlePay.merchant_id";
 	public static final String BRAINTREE_GOOGLE_PAY_ENABLE = "braintree.googlePay.enable";
 	public static final String BRAINTREE_GOOGLE_PAY_COUNTRY_CODE = "braintree.googlepay.seller.country.code";
+  public static final String IS_ENABLED = "isEnabled";
 
 	private BraintreeConstants()
 	{
