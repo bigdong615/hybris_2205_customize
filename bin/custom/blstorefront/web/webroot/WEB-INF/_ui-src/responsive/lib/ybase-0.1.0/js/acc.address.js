@@ -318,19 +318,15 @@ ACC.address = {
 		});
 	},
 	bindSettingDefaultAddress :function(){
-    	$(document).on("click", ".js-set-default-shipping-address", function (e)
-        {
-          var url = $(this).val();
-             $.ajax({
-            	url: url,
-            	success: function (result) {
-            	location.reload();
-            	}
-            	});
-        });
-       	$(document).on("click", ".js-set-default-billing-address", function (e)
-             {
-             location.reload();
-            });
+    	$(document).on("click", ".js-set-default-address", function (e)
+                {
+                  var url = $(this).val();
+                     $.ajax({
+                    	url: url,
+                    	success: function (result) {
+                    	location.reload();
+                    	}
+                    	});
+                });
     	}
 };

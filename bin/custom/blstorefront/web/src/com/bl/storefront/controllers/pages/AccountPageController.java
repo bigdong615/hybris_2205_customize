@@ -4,6 +4,7 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.facades.customer.BlUserFacade;
 import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
@@ -36,7 +37,6 @@ import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.ProductOption;
-import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
@@ -162,8 +162,8 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "acceleratorCheckoutFacade")
 	private CheckoutFacade checkoutFacade;
 
-	@Resource(name = "userFacade")
-	private UserFacade userFacade;
+	@Resource(name = "blUserFacade")
+	private BlUserFacade userFacade;
 
 	@Resource(name = "customerFacade")
 	private CustomerFacade customerFacade;
@@ -683,7 +683,7 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			newAddress.setDefaultAddress(addressForm.getDefaultAddress() != null && addressForm.getDefaultAddress().booleanValue());
 		}
-
+		newAddress.setDefaultBillingAddress(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue());
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -869,6 +869,24 @@ public class AccountPageController extends AbstractSearchPageController
 		addressData.setVisibleInAddressBook(true);
 		addressData.setId(addressCode);
 		userFacade.setDefaultAddress(addressData);
+		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
+				"account.confirmation.default.address.changed");
+		return BlControllerConstants.SUCCESS;
+	}
+
+	/**
+	 * This method is responsible for setting default billing address.
+	 */
+	@RequestMapping(value = "/set-default-billing-address/" + ADDRESS_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@RequireHardLogIn
+	public @ResponseBody
+	String setDefaultBillingAddress(@PathVariable("addressCode") final String addressCode, final RedirectAttributes redirectModel)
+	{
+		final AddressData addressData = new AddressData();
+		addressData.setDefaultBillingAddress(true);
+		addressData.setVisibleInAddressBook(true);
+		addressData.setId(addressCode);
+		userFacade.setDefaultBillingAddress(addressData);
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
 				"account.confirmation.default.address.changed");
 		return BlControllerConstants.SUCCESS;

@@ -37,13 +37,13 @@
             <div class="card mb-4">
                <div class="badges">
                   <c:choose>
-                     <c:when test="${address.billingAddress}">
+                     <c:when test="${address.defaultBillingAddress}">
                         <span class="badge badge-default float-start">
                            <spring:theme code="text.default.billing"/>
                         </span>
                      </c:when>
                      <c:otherwise>
-                        <button class="badge badge-outline float-md-start js-set-default-billing-address" value="${address.id}">
+                        <button class="badge badge-outline float-md-start js-set-default-address" value="set-default-billing-address/${address.id}">
                            <spring:theme code="text.setDefault.billing"/>
                         </button>
                      </c:otherwise>
@@ -55,7 +55,7 @@
                         </span>
                      </c:when>
                      <c:otherwise>
-                        <button class="badge badge-outline float-md-end js-set-default-shipping-address" value="set-default-address/${address.id}">
+                        <button class="badge badge-outline float-md-end js-set-default-address" value="set-default-address/${address.id}">
                            <spring:theme code="text.setDefault"/>
                         </button>
                      </c:otherwise>
