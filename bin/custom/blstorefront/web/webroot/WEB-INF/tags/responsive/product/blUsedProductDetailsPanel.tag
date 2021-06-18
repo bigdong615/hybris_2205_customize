@@ -71,8 +71,8 @@
                                 </c:choose>
                                 </table>
                                <c:if test="${product.serialproducts.size() >3}"> 
-                                 <!--BL-573  and BL-572  added class showmore-margintop -->
-                                <p class="mt-4"><a href="#" id="showmore" class="showmore-margintop"><spring:theme code="pdp.show.more.button.text"/></a>
+                                 <!--BL-573  and BL-572  added class showmore-margintop and mt-2 -->
+                                <p class="mt-2"><a href="#" id="showmore" class="showmore-margintop"><spring:theme code="pdp.show.more.button.text"/></a>
                                 </c:if> 
                                 <c:if test="${product.forRent}">
                                 <c:url var="rentUrl" value="/rent/product/${product.code}"/>

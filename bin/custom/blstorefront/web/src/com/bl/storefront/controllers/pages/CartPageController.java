@@ -5,18 +5,19 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.model.GiftCardModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.product.data.AvailabilityMessage;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
 import com.bl.storefront.controllers.ControllerConstants;
-
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryAction;
 import de.hybris.platform.acceleratorfacades.cart.action.CartEntryActionFacade;
 import de.hybris.platform.acceleratorfacades.cart.action.exceptions.CartEntryActionException;
@@ -49,11 +50,11 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.quote.data.QuoteData;
 import de.hybris.platform.commercefacades.voucher.VoucherFacade;
 import de.hybris.platform.commercefacades.voucher.exceptions.VoucherOperationException;
-import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.site.BaseSiteService;
@@ -162,6 +163,9 @@ public class CartPageController extends AbstractCartPageController
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
 
+	@Resource(name = "blGiftCardFacade")
+	private BlGiftCardFacade blGiftCardFacade;
+
 	@ModelAttribute("showCheckoutStrategies")
 	public boolean isCheckoutStrategyVisible()
 	{
@@ -174,10 +178,18 @@ public class CartPageController extends AbstractCartPageController
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public String showCart(final Model model) throws CMSItemNotFoundException
 	{
 		getCheckoutFacade().removeDeliveryDetails();
+		CartModel cartModel = blCartService.getSessionCart();
+		if (cartModel != null) {
+			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+			if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+				blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
+				model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
+			}
+		}
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
 		return prepareCartUrl(model);
 	}
@@ -348,7 +360,7 @@ public class CartPageController extends AbstractCartPageController
 				}
 				else
 				{
-					updateCartEntry(entryNumber, productCode, form, request, redirectModel);
+					updateCartEntry(entryNumber, productCode, form, redirectModel);
 				}			
 
 				// Redirect to the cart page on update success so that the browser doesn't re-post again
@@ -373,15 +385,13 @@ public class CartPageController extends AbstractCartPageController
 	 *           the product code
 	 * @param form
 	 *           the form
-	 * @param request
-	 *           the request
 	 * @param redirectModel
 	 *           the redirect model
 	 * @throws CommerceCartModificationException
 	 *            the commerce cart modification exception
 	 */
 	private void updateCartEntry(final long entryNumber, final String productCode, final UpdateQuantityForm form,
-			final HttpServletRequest request, final RedirectAttributes redirectModel) throws CommerceCartModificationException
+			final RedirectAttributes redirectModel) throws CommerceCartModificationException
 	{
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
 		if(Objects.nonNull(rentalDateDto))
@@ -814,9 +824,6 @@ public class CartPageController extends AbstractCartPageController
 	public String emptyCart(final Model model, final RedirectAttributes redirectAttributes) {
 		try {
 			getBlCartFacade().removeCartEntries();
-			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-					"text.page.cart.clear.success");
-
 		} catch (final Exception exception) {
 			BlLogger.logMessage(LOG, Level.ERROR, "Unable to remove cart entries:", exception);
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,

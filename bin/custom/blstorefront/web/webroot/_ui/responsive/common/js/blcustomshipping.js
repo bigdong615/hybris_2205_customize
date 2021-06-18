@@ -6,7 +6,7 @@
     changeUPSStore();
     hideShippingForm();
     hideErrorForInputValidation();
-});
+   });
 
  $('#ship-it-select-box').change(function () {
    dropdown = $('#ship-it-select-box').val();
@@ -87,13 +87,13 @@
          },
          success: function (data) {
              if(data != null && data.length != 0) {
-                 let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="btn btn-block btn-outline text-start my-4" '+
+                 let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="selectpicker mt-2" '+
                                         'onchange="onChangeOfShipItShipToHome(this)">';
                  let numberSelected = 0;
                  for (let i = 0; i < data.length; i++) {
-                     shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '">' + data[i].name;
+                     shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '" data-subtext="' + data[i].deliveryCost.formattedValue + '">' + data[i].name;
                      if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
-                         shippingModes += '<span class="float-end">' + data[i].deliveryCost.formattedValue + '</span>';
+                         shippingModes ;
                      }
                      shippingModes += '</option>';
                      if(i == 0) {
@@ -106,6 +106,7 @@
                         }
                      }
                  }
+                 
                  shippingModes += '</select>';
                  $('#shipToHomeShippingMethods').html(shippingModes);
              } else {
@@ -536,6 +537,7 @@
                 showErrorNotificationForPickUpId('They must show ID at time of pickup');
             } else {
             	$('#cart-shipping-cost').text('-');
+            	 calculateCartTotal();
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
             }
         },
@@ -1408,7 +1410,7 @@
                 checkNaN(parseFloat($('#cart-shipping-waiver').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-cost').text().split('$')[1])) +
                 checkNaN(parseFloat($('#cart-shipping-tax').text().split('$')[1])) -
-                checkNaN(parseFloat($('#cart-shipping-discount').text().split('-$')[1]));
+                checkNaN(parseFloat($('#cart-shipping-discount').text().split('$')[1]));
     $('#cart-shipping-total').text('$' + total.toFixed(2));
   }
 
@@ -1454,3 +1456,6 @@
     }
     return isAvailable;
  }
+ 
+    
+   

@@ -107,6 +107,11 @@
 		  "addon":"blconfigurablebundleaddon",
 		  "storefront":"blstorefront",
 		  "template":"yacceleratorstorefront"
+	   },
+	   { 
+		  "addon":"blstocknotificationaddon",
+		  "storefront":"blstorefront",
+		  "template":"yacceleratorstorefront"
 	   }
 
 	],

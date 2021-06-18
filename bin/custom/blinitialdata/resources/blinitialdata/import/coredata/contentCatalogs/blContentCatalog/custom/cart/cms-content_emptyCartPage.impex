@@ -27,6 +27,8 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; FooterSlot                         ;                                                                   ;                           ; footer
                               ; FooterSubscriptionSlot             ;                                                                   ;                           ; wide
                               ; FooterCopyRightslot                ;                                                                   ;                           ; wide
+                              ; SocialMediaSectionSlot           ;                                                                     ;                           ; wide
+
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='EmptyCartPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
@@ -41,6 +43,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; FooterSlot-EmptyCartPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true
                                      ;                         ; FooterSubscriptionSlot-EmptyCartPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true
                                      ;                         ; FooterCopyRightslot-EmptyCartPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true
+                                     ;                         ; SocialMediaSectionSlot-EmptyCartPage        ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
 
 
 ########################### Define Content slots for page######################

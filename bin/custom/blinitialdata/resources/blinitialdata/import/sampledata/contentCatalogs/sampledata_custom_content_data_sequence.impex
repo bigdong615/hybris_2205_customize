@@ -60,3 +60,5 @@ $contentCatalogsCustomProductPagePath = /blinitialdata/import/sampledata/content
 
 # Forgot Password Email Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-forgotpassword.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-stockNotification_en.impex"), "utf-8", 0, 0);
+

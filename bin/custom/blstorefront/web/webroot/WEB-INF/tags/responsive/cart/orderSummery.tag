@@ -61,7 +61,7 @@
             <tr class="discount">
               <c:if test ="${cartData.totalDiscounts.value > 0}">
                   <td ><spring:theme code="text.discount"/></td>
-               <td class="text-end" id="cart-shipping-tax">
+               <td class="text-end" id="cart-shipping-discount">
                - <format:blPrice priceData="${cartData.totalDiscounts}"/>
                </td>
               </c:if>
@@ -88,6 +88,7 @@
        </div>
     </div>
  </form:form>
+ <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
  <c:url value="/cart/voucher/remove" var="voucherRemoveUrl"/>
  <c:forEach items="${cartData.appliedVouchers}" var="voucher" varStatus="loop">
  <form:form action="${voucherRemoveUrl}" modelAttribute="voucherForm" method="POST" id="removeVoucherForm${loop.index}">
@@ -106,19 +107,21 @@
     </p>
  </form:form>
     </c:forEach>
-
-
-      <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
-      <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
-      		<form:form id="removeGiftCardForm${loop.index}"
-      			action="${removeGiftCardAction}" method="post"
-      			modelAttribute="giftCardForm">
-      			<p class="body14">
-      				<span class="gray60">${gift.code}</span> <a href="#"
-      					class="remove-gift-card" id="${gift.code}"><spring:theme
-      						code="text.remove"/></a><span class="float-end">${gift.redeemamount}</span>
-      			</p>
-      			<form:input id="${gift.code}" value="${gift.code}" path="giftCardCode" />
-      		</form:form>
-      	</c:forEach>
+    <c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
+    	<form:form id="removeGiftCardForm${loop.index}"
+    		action="${removeGiftCardAction}" method="POST"
+    		modelAttribute="giftCardForm">
+    		<p class="body14">
+    			<c:if test="${cartData.totalDiscounts.value > 0}">
+    				<span class="gray60">${fn:escapeXml(gift.code)}</span>
+    				<form:input hidden="hidden" value="${fn:escapeXml(gift.code)}"
+    					path="giftCardCode" name="giftCardCode" />
+    				<a href="#" class="remove-gift-card"
+    					id="removeGiftCardForm${loop.index}" data-index="${loop.index}"><spring:theme
+    						code="text.remove" /></a>
+    				<span class="float-end">${gift.redeemamount}</span>
+    			</c:if>
+    		</p>
+    	</form:form>
+    </c:forEach>
 </div>

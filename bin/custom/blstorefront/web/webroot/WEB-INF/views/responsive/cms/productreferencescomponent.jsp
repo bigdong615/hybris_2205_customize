@@ -74,7 +74,8 @@
                                                           </c:when>
                                                            <c:otherwise>
                                                                 <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
-                                                                    <button type="button" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal"
+                                                                  <!--BL-605 removed bootstrap class from below-->
+                                                                    <button type="button" class="btn btn-primary btn-block js-add-to-cart" data-bs-toggle="modal"
                                                                        data-bs-target="#addToCart" data-product-code="${product.code}">
                                                                       <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
                                                                     </button>
