@@ -16,16 +16,22 @@
    <spring:theme code="text.address.header"/>
 </h1>
 <hr>
-<div class="notification notification-tip truck">
+<c:if test="${empty addressData}">
+<div class="notification no-orders">
+    <p><strong><spring:theme code="text.account.addressBook.noSavedAddresses" /></strong></p>
+     <p><spring:theme code="text.account.addressBook.noSavedAddresses.paragraph.text1"/>&nbsp;
+     <a href="add-address">
+     <spring:theme code="text.account.addressBook.noSavedAddresses.addAddressButton"/>
+     </a>&nbsp;<spring:theme code="text.account.addressBook.noSavedAddresses.paragraph.text2"/></p>
+   </div>
+</c:if>
+<c:if test="${not empty addressData}">
+  <div class="notification notification-tip truck">
    <p>
       <spring:theme code="address.notification.banner.text"/>
    </p>
-</div>
-<div id="addressList" class="row mt-5">
-   <c:if test="${empty addressData}">
-      <spring:theme code="text.account.addressBook.noSavedAddresses" />
-   </c:if>
-   <c:if test="${not empty addressData}">
+  </div>
+ <div id="addressList" class="row mt-5">
       <c:forEach items="${addressData}" var="address">
          <div class="col-md-6 saved-address">
             <div class="card mb-4">
@@ -79,7 +85,7 @@
             </div>
          </div>
       </c:forEach>
-   </c:if>
+
    <ycommerce:testId code="addressBook_addNewAddress_button">
       <div class="col-12">
          <a href="add-address" class="btn btn-primary">
@@ -87,7 +93,9 @@
          </a>
       </div>
    </ycommerce:testId>
-</div>
+ </div>
+ </c:if>
+ </div>
 
 <!-- Remove address modal-->
  <div class="modal fade" id="removeAddressWarning" tabindex="-1" aria-hidden="true">
