@@ -120,25 +120,22 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
-			 double totalDamageWaiverCost = 0.0;
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
 			final double subtotal = order.getSubtotal().doubleValue();
 			//totalDamageWaiverCost
-			if(order.getIsRentalCart().equals(Boolean.TRUE))
-			{
-			 totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
+			final double totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 					? order.getTotalDamageWaiverCost().doubleValue()
 					: 0.0d;
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", totalDamageWaiverCost);
-			}
 			// discounts
 			final double totalDiscounts = calculateDiscountValues(order, recalculate);
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 			// set total
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
 					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
@@ -479,13 +476,12 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 
-	public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService()
-	{
+	public DefaultBlExternalTaxesService getDefaultBlExternalTaxesService() {
 		return defaultBlExternalTaxesService;
 	}
 
-	public void setDefaultBlExternalTaxesService(final DefaultBlExternalTaxesService defaultBlExternalTaxesService)
-	{
+	public void setDefaultBlExternalTaxesService(
+			DefaultBlExternalTaxesService defaultBlExternalTaxesService) {
 		this.defaultBlExternalTaxesService = defaultBlExternalTaxesService;
 	}
 
