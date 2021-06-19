@@ -212,11 +212,10 @@ public class CmsPageBeforeViewHandler implements BeforeViewHandler
 			cssClasses.append(BlControllerConstants.HOME_CSS);
 		}
 		// BL-457 if it is cart page then adding css class on body tag.
-		if (BlControllerConstants.CARTPAGE.equals(page.getUid()))
+		if (BlControllerConstants.CARTPAGE.equals(page.getUid()) || BlControllerConstants.CHECKOUT_SUMMARY_PAGE.equals(page.getUid()))
 		{
 			cssClasses.append(BlControllerConstants.CARTPAGE_CSS);
 		}
-
 		cssClasses.append(CSS_CODE_PREFIX).append(page.getUid().replaceAll(regEx, "-"));
 		cssClasses.append(' ');
 		cssClasses.append(CSS_TYPE_PREFIX).append(page.getItemtype().replaceAll(regEx, "-"));

@@ -5,6 +5,7 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
@@ -55,16 +56,19 @@ public class BlCartPopulator extends CartPopulator<CartData>
 				target.setGrandTotal(grandTotal);
 			}
 		}
-		if (source.getGiftCardAmount() != null)
-		{
-			final PriceData giftDiscount = getPriceDataFactory().create(priceType,
-					BigDecimal.valueOf(source.getGiftCardAmount().doubleValue()),
-					source.getCurrency() != null ? source.getCurrency().getIsocode() : "");
-			if (giftDiscount != null)
-			{
-				target.setGiftCardDiscount(giftDiscount);
-			}
+
+		// BL-657 to add total discount with gift cart discount to display on order summary section
+		 Double totalPromotionDiscount = 0.0;
+		 Double totalGiftCardDiscount = 0.0;
+		if(null != source.getTotalDiscounts()){
+			totalPromotionDiscount = source.getTotalDiscounts();
 		}
+		if(null != source.getGiftCardAmount()){
+			totalGiftCardDiscount = source.getGiftCardAmount();
+		}
+			final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
+			target.setTotalDiscounts(createPrice(source , totalDiscount));
+
 
 		if (CollectionUtils.isNotEmpty(source.getGiftCard()))
 		{
@@ -85,6 +89,20 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	}
 
 	/**
+	 * Overriding to remove discounts from subtotal
+	 * @param source abstractOrderModel
+	 * @param target target object
+	 */
+	@Override
+	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData target)
+	{
+		super.addTotals(source,target);
+		final double subTotal = source.getSubtotal().doubleValue();
+		final PriceData subTotalPriceData = createPrice(source, Double.valueOf(subTotal));
+		target.setSubTotal(subTotalPriceData);
+	}
+
+	/**
 	 * This method overridden to calculate the totalPrice with tax
 	 */
 	@Override
@@ -97,4 +115,6 @@ public class BlCartPopulator extends CartPopulator<CartData>
     // Since we have already calculated the total with Tax , so returning cart total as total price with tax
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
+
+
 }

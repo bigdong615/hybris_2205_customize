@@ -7,6 +7,7 @@ import static de.hybris.platform.commercefacades.constants.CommerceFacadesConsta
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.gitfcard.BlGiftCardService;
 import com.bl.facades.cart.BlCartFacade;
@@ -14,6 +15,7 @@ import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorfacades.flow.impl.SessionOverrideCheckoutFlowFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
@@ -50,6 +52,8 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -361,9 +365,15 @@ public class CheckoutController extends AbstractCheckoutController
 	@ResponseBody
 	public String apply(final String code, final HttpServletRequest request, final Model model) {
 		final CartModel cartModel = blCartService.getSessionCart();
+		final Locale locale = getI18nService().getCurrentLocale();
+		if(StringUtils.isEmpty(code)){
+			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
+					getMessageSource().getMessage("text.gift.code.blank", null, locale));
+			return BlControllerConstants.ERROR;
+		}
+
 		if(cartModel != null) {
 			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
-			final Locale locale = getI18nService().getCurrentLocale();
 			final List<BLGiftCardData> blGiftCardDataList = blCartFacade.getSessionCart()
 					.getGiftCardData();
 			final List<String> giftCardDataList = new ArrayList<>();
@@ -411,9 +421,11 @@ public class CheckoutController extends AbstractCheckoutController
 			return BlControllerConstants.ERROR;
 		}
 		if (blGiftCardFacade.applyGiftCard(code)) {
+			final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+			final BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
 			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
 					getMessageSource().getMessage("text.gift.apply.success", new Object[]
-							{code}, locale));
+							{gcRedeemedAmount.abs().doubleValue()}, locale));
 			return BlControllerConstants.SUCCESS;
 		} else {
 			if (giftCardModel == null) {
@@ -443,23 +455,22 @@ public class CheckoutController extends AbstractCheckoutController
 
 	/**
 	 * It removes applied gift card from cart.
-	 *
-	 * @param code
+	 * @param giftCardForm
 	 * @param request
 	 * @param model
 	 * @return String
 	 */
 	@PostMapping(value = "/removeGiftCard")
 	@ResponseBody
-	public String remove(final String code, final HttpServletRequest request, final Model model) {
+	public String remove(final GiftCardForm giftCardForm, final HttpServletRequest request, final Model model) {
 		CartModel cartModel = blCartService.getSessionCart();
 		try {
-			blGiftCardFacade.removeGiftCard(code, cartModel);
+			blGiftCardFacade.removeGiftCard(giftCardForm.getGiftCardCode(), cartModel);
 			return BlControllerConstants.TRUE_STRING;
 		} catch (final Exception exception) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
 					"Error while removing applied gift card code: {} from cart: {} for the customer: {}",
-					code, cartModel.getCode(), cartModel.getUser().getUid(), exception);
+					giftCardForm.getGiftCardCode(), cartModel.getCode(), cartModel.getUser().getUid(), exception);
 			return BlControllerConstants.FALSE_STRING;
 		}
 	}

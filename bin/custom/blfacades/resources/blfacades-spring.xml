@@ -195,6 +195,7 @@
 		<property name="stockConverter" ref="stockConverter"/>
 		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
 		<property name="commercePriceService" ref="commercePriceService"/>
+		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
 	</bean>
 
 
@@ -348,8 +349,14 @@
     <!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
     <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
     <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
-    
-    <!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
+
+	<!-- Added to override OOB populator to populate subtotal without discount on storefront-->
+	<alias name="defaultBlMiniCartPopulator" alias="miniCartPopulator"/>
+	<bean id="defaultBlMiniCartPopulator" class="com.bl.facades.populators.BlMiniCartPopulator" parent="defaultMiniCartPopulator"/>
+
+
+
+	<!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
     <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
     <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
 
@@ -430,6 +437,10 @@
 		<property name="blRushDeliveryModeConverter" ref="blRushDeliveryModeConverter"/>
 		<property name="blShippingGroupConverter" ref="blShippingGroupConverter"/>
 		<property name="blPartnerPickUpStoreConverter" ref="blPartnerPickUpStoreConverter"/>
+		<property name="blGiftCardFacade" ref="blGiftCardFacade"/>
+		<property name="brainTreeCheckoutFacade" ref="brainTreeCheckoutFacade"/>
+		<property name="checkoutFacade" ref="checkoutFacade"/>
+		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy"/>
 	</bean>
 
 	<alias name="defaultBlFindDeliveryCostStrategy" alias="findDeliveryCostStrategy"/>
@@ -475,6 +486,22 @@
 		class="com.bl.facades.process.email.context.BlGiftCardEmailContext"
 		parent="abstractEmailContext" scope="prototype">
 	</bean>
+	<!-- BL-628: Notify me start -->
+	<bean id="productNotifyMeEmailContext" class="com.bl.facades.process.email.context.ProductNotifyMeEmailContext" parent="abstractEmailContext" scope="prototype" >
+		<property name="productConverter" ref="productConverter"/>
+	</bean>
+
+	<alias name="defaultBlProductInterestFacade" alias="blProductInterestFacade"/>
+	<bean id="defaultBlProductInterestFacade" class="com.bl.facades.customerinterestsfacades.productinterest.impl.DefaultBlProductInterestFacade" parent="productInterestFacade">
+		<property name="modelService" ref="modelService"/>
+		<property name="userService" ref="userService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="commonI18NService" ref="commonI18NService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
+	<bean id="blBackInStockNotificationEmailContext" class="com.bl.facades.process.email.context.BlBackInStockNotificationEmailContext" parent="backInStockNotificationEmailContext" scope="prototype" >
+	</bean>
+	<!-- Notify me end-->
 
 	<!-- Email Subscription changes -->
 	<alias name="defaultBlEmailSubscriptionFacade" alias="blEmailSubscriptionFacade"/>
@@ -485,6 +512,29 @@
     
     <alias name="defaultBlEmailSubscriptionPopulator" alias="blEmailSubscriptionPopulator"/>
     <bean id="defaultBlEmailSubscriptionPopulator" class="com.bl.facades.populators.BlEmailSubscriptionPopulator" />
+	
+	<!--BL-657 added to override orderAppliedVouchersPopulator -->
+	<alias name="blOrderAppliedVouchersPopulator" alias="orderAppliedVouchersPopulator"/>
+	<bean id="blOrderAppliedVouchersPopulator" class="com.bl.facades.populators.BlOrderAppliedVouchersPopulator">
+	</bean>
 
+	<!--[BL-643]: Custom Promotions-->
+	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator"/>
 
+	<alias name="defaultCartRaoConverter" alias="cartRaoConverter" />
+	<bean id="defaultCartRaoConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.ruleengineservices.rao.CartRAO" />
+		<property name="populators">
+			<list merge="true">
+				<ref bean="blCartRaoPopulator" />
+				<ref bean="cartRaoPopulator" />
+			</list>
+		</property>
+	</bean>
+
+	<!--BL-712:This class was created to customize bl specific address data.-->
+	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
+	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
+    <property name="customerAccountService" ref="customerAccountService"/>
+	</bean>
 </beans>

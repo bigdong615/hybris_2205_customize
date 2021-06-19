@@ -19,7 +19,11 @@ public enum LogErrorCodeEnum implements LogError
 	 SOLR_INDEXING_ERROR("0007", "Solr Property Indexing Error"),
 	 CART_INTERNAL_ERROR("0008", "Error while updating the cart"),
    UPS_INTEGRATION_ERROR("0009","Error occure whiling calling UPS intergration service."),
-   EMAIL_SUBSCRIPTION_INTEGRATION_ERROR("0010", "Email subscription integration Error");
+    ORDER_SOURCING_ERROR("0010","Error occur while sourcing the order"),
+  ORDER_ALLOCATION_ERROR("0011","Error occur while allocation of the order"),
+  EMAIL_SUBSCRIPTION_INTEGRATION_ERROR("0012", "Email subscription integration Error");
+
+
 
     private String code;
     private String description;

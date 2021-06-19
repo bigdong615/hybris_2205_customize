@@ -120,7 +120,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
@@ -135,6 +135,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 			// set total
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
 					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);

@@ -2,10 +2,10 @@ package com.braintree.controllers.pages;
 
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.configuration.service.BrainTreeConfigService;
-import com.braintree.constants.BraintreeaddonWebConstants;
-import com.braintree.constants.BraintreeConstants;
 import com.braintree.constants.ControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
@@ -30,8 +30,16 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.payment.AdapterException;
-import de.hybris.platform.util.localization.Localization;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,22 +48,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Map;
-
 
 @Controller
 @RequestMapping(value = "checkout/multi/summary/braintree")
 public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStepController
 {
-	private final static Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	private static final Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 
-	private final static String SUMMARY = "summary";
+	private static final String SUMMARY = "summary";
 
 	@Resource(name = "customFieldsService")
 	private CustomFieldsService customFieldsService;
@@ -65,13 +68,18 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@Resource(name = "brainTreeConfigService")
 	private BrainTreeConfigService brainTreeConfigService;
-	
+
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade blCheckoutFacade;
 	
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
 		return BlRentalDateUtils.getRentalsDuration();
 	}
+
+	public static final String REDIRECT_PREFIX = "redirect:";
+	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -80,6 +88,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException, CommerceCartModificationException
 	{
+		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+			return redirectToPaymentPageOnGiftCardRemove(redirectAttributes, removedGiftCardCodeList);
+		}
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		if (cartData.getEntries() != null && !cartData.getEntries().isEmpty())
 		{
@@ -120,12 +132,42 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return ControllerConstants.Views.Pages.MultiStepCheckout.CheckoutSummaryPage;
 	}
 
+	/**
+	 * If gift card removed from cart then it add message to model attribute for removed gift card and
+	 * redirects to payment page.
+	 * @param redirectAttributes
+	 * @param removedGiftCardCodeList
+	 */
+	private String redirectToPaymentPageOnGiftCardRemove(final RedirectAttributes redirectAttributes,
+			final List<String> removedGiftCardCodeList) {
+		try {
+			final Locale locale = getI18nService().getCurrentLocale();
+			List<String> removeGiftCardMessage = new ArrayList<>();
+			for (String gcCode : removedGiftCardCodeList) {
+				removeGiftCardMessage
+						.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+								{gcCode}, locale));
+			}
+			redirectAttributes.addFlashAttribute(BlControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
+			} catch (final Exception exception) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Error occurred while adding message to redirect attribute for removed gift card",
+					exception);
+		}
+		return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
+	}
+
 	@RequestMapping(value = "/placeOrder")
 	@RequireHardLogIn
 	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, final Model model,
                              final HttpServletRequest request, final RedirectAttributes redirectModel)
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
+		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+			return redirectToPaymentPageOnGiftCardRemove(redirectModel, removedGiftCardCodeList);
+		}
+
 		if (validateOrderForm(placeOrderForm, model))
 		{
 			return enterStep(model, redirectModel);
@@ -136,12 +178,28 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		{
 			// Invalid cart. Bounce back to the cart page.
 			return REDIRECT_PREFIX + "/cart";
-		}
-		        LOG.error("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
-                LOG.error("what is this ? placeOrderForm.getSecurityCode: " + placeOrderForm.getSecurityCode());	
-                LOG.error("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(	
-                                placeOrderForm.getCustomFields()));
-
+    }
+    LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
+    LOG.info("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(placeOrderForm.getCustomFields()));
+    CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
+    boolean isPaymentAuthorized = false;
+    if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    {
+      try
+      {
+        isPaymentAuthorized = getCheckoutFacade().authorizePayment(placeOrderForm.getSecurityCode());
+      }
+      catch (final AdapterException ae)
+      {
+        // handle a case where a wrong paymentProvider configurations on the store see getCommerceCheckoutService().getPaymentProvider()
+        LOG.error(ae.getMessage(), ae);
+      }
+      if (!isPaymentAuthorized)
+      {
+        GlobalMessages.addErrorMessage(model, "checkout.error.authorization.failed");
+        return enterStep(model, redirectModel);
+      }
+    }
 		final OrderData orderData;
 		try
 		{
