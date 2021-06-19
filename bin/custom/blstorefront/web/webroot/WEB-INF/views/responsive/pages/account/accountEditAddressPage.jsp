@@ -43,7 +43,8 @@
             <input type="checkbox" id="default-billing-address" name="defaultBillingAddress" checked><label for="default-billing-address"><span class="gray80"><spring:theme code="text.default.billing"/></span></label>
             <input type="checkbox" id="default-shipping-address" name="defaultAddress" checked><label for="default-shipping-address"><span class="gray80"><spring:theme code="text.default.shipping"/></span></label>
             <div class="text-end mt-3">
-               <a href="address-book" class="btn btn-outline"><spring:theme code="text.button.cancel" /></a>
+            <c:url var="addressBook" value="/my-account/address-book"/>
+               <a href="${addressBook}" class="btn btn-outline"><spring:theme code="text.button.cancel" /></a>
                <button class="btn btn-primary"><spring:theme code="text.button.save" /></button>
             </div>
          </form:form>

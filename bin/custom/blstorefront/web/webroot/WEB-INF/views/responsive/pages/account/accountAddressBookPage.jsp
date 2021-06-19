@@ -43,9 +43,18 @@
                         </span>
                      </c:when>
                      <c:otherwise>
+                         <c:choose>
+                         <c:when test="${address.upsStoreAddress eq 'true' || address.pickStoreAddress eq 'true' }">
+                         <button class="badge badge-outline float-md-start">
+                               <spring:theme code="text.setDefault.billing"/>
+                         </button>
+                         </c:when>
+                         <c:otherwise>
                         <button class="badge badge-outline float-md-start js-set-default-address" value="set-default-billing-address/${address.id}">
                            <spring:theme code="text.setDefault.billing"/>
                         </button>
+                         </c:otherwise>
+                         </c:choose>
                      </c:otherwise>
                   </c:choose>
                   <c:choose>
