@@ -67,6 +67,10 @@ public class BlAddressDataUtil extends AddressDataUtil {
     @Override
     public AddressData convertToVisibleAddressData(final AddressForm addressForm)
     {
-        return super.convertToVisibleAddressData(addressForm);
+        final AddressData addressData= super.convertToVisibleAddressData(addressForm);
+        BlAddressForm blAddressForm= (BlAddressForm)addressForm;
+        addressData.setEmail(blAddressForm.getEmail());
+        addressData.setCompanyName(blAddressForm.getCompanyName());
+        return addressData;
     }
 }

@@ -92,12 +92,13 @@ public class BlControllerConstants
 
 	public static final String PRODUCT_REFERENCE = "productReferences";
 	public static final String MAXIMUM_LIMIT = "productsLimit";
-	
+	public static final String ADDRESS_PAGE_IDENTIFIER = "Addresses";	
 	public static final String USER_SELECTED_PAYMENT_INFO = "userSelectedPaymentInfo";
 	public static final String SELECTED_PAYMENT_METHOD_NONCE = "selectedPaymentMethodNonce";
 	public static final String PAYMENT_INFO_BILLING_ADDRESS = "paymentInfoBillingAddress";
 	public static final String IS_SAVED_CARD_ORDER = "isSavedCardOrder";
 	public static final String CHECKOUT_SUMMARY_PAGE = "multiStepCheckoutSummaryPage";
+	
 	private BlControllerConstants()
 	{
 		//empty

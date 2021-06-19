@@ -158,6 +158,7 @@
         <property name="pickStoreAddress" type="Boolean"/>
         <property name="upsStoreAddress" type="Boolean"/>
         <property name="url" type="String"/>
+        <property name="defaultBillingAddress" type="boolean"/>
     </bean>
     <!-- Shipping End-->
 
