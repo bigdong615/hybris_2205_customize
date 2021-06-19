@@ -7,6 +7,7 @@ import de.hybris.platform.commercefacades.user.impl.DefaultUserFacade;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +17,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 
 /**
  * @author vijay vishwakarma
- *  This class was created to customize project specific address data.
+ *  This class was created to customize bl specific address data.
  */
 public class DefaultBlUserFacade extends DefaultUserFacade implements BlUserFacade {
 
@@ -62,7 +63,7 @@ public class DefaultBlUserFacade extends DefaultUserFacade implements BlUserFaca
 
         if (CollectionUtils.isNotEmpty(addresses))
         {
-            final List<AddressData> result = new ArrayList<>();
+            final List<AddressData> addressBook = new ArrayList<>();
             final AddressData defaultAddress = getDefaultAddress();
             final AddressData defaultBillingAddress = getDefaultBillingAddress();
 
@@ -70,21 +71,21 @@ public class DefaultBlUserFacade extends DefaultUserFacade implements BlUserFaca
             {
                 final AddressData addressData = getAddressConverter().convert(address);
 
-                if (defaultBillingAddress!= null && defaultBillingAddress.getId() != null && defaultBillingAddress.getId().equals(addressData.getId())){
+                if (defaultBillingAddress!= null && StringUtils.isNotEmpty(defaultBillingAddress.getId()) && StringUtils.equals(defaultBillingAddress.getId(),addressData.getId())){
                     addressData.setDefaultBillingAddress(Boolean.TRUE);
                 }
 
-                if (defaultAddress != null && defaultAddress.getId() != null && defaultAddress.getId().equals(addressData.getId()))
+                if (defaultAddress != null && StringUtils.isNotEmpty(defaultAddress.getId()) && StringUtils.equals(defaultAddress.getId(),addressData.getId()))
                 {
                     addressData.setDefaultAddress(true);
-                    result.add(0, addressData);
+                    addressBook.add(0, addressData);
                 }
                 else
                 {
-                    result.add(addressData);
+                    addressBook.add(addressData);
                 }
             }
-            return result;
+            return addressBook;
         }
         return Collections.emptyList();
     }

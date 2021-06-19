@@ -29,7 +29,7 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
     }
 
     /**
-     * This method is responsible for setting default billing address with current customer.
+     * This method is responsible for setting default billing addresses with current customers.
      */
     @Override
     public void setDefaultBillingAddress(final CustomerModel customerModel, final AddressModel addressModel)
@@ -42,14 +42,14 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
         }
         else
         {
-            final AddressModel clone = getModelService().clone(addressModel);
-            clone.setOwner(customerModel);
-            getModelService().save(clone);
+            final AddressModel cloneBillingAddress = getModelService().clone(addressModel);
+            cloneBillingAddress.setOwner(customerModel);
+            getModelService().save(cloneBillingAddress);
             final List<AddressModel> customerAddresses = new ArrayList<>();
             customerAddresses.addAll(customerModel.getAddresses());
-            customerAddresses.add(clone);
+            customerAddresses.add(cloneBillingAddress);
             customerModel.setAddresses(customerAddresses);
-            customerModel.setDefaultBillingAddress(clone);
+            customerModel.setDefaultBillingAddress(cloneBillingAddress);
         }
         getModelService().save(customerModel);
         getModelService().refresh(customerModel);

@@ -522,7 +522,7 @@
 		</property>
 	</bean>
 
-	<!--BL-712:This class was created to customize project specific address data.-->
+	<!--BL-712:This class was created to customize bl specific address data.-->
 	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
 	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
     <property name="customerAccountService" ref="customerAccountService"/>

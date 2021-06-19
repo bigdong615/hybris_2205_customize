@@ -1856,7 +1856,7 @@
             <attribute autocreate="true" qualifier="defaultBillingAddress" type="Address">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
-                <description>It holds information about default customer billing address</description>
+                <description>It holds information about customer default billing address</description>
             </attribute>
             </attributes>
             </itemtype>
