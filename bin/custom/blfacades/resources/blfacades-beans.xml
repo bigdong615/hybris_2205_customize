@@ -249,6 +249,7 @@
     <property name="rentalCart" type="java.lang.Boolean" />
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
+    <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
     <property name="extendedFreeRentalDays" type="java.lang.Integer" />
   </bean>
 
