@@ -74,51 +74,6 @@ public class StockNotificationPageController extends AbstractPageController
 	    binder.setDisallowedFields(DISALLOWED_FIELDS);
 	}
 
-	@GetMapping(value = "/open/" + PRODUCT_CODE_PATH_VARIABLE_PATTERN)
-	@RequireHardLogIn
-	public String getStockNotification(@PathVariable("productCode") final String encodedProductCode,
-			@RequestParam(value = "channel", required = false) final String channel,
-			final HttpServletRequest request,
-			final HttpServletResponse response, final Model model)
-	{
-
-		final String productCode = decodeWithScheme(encodedProductCode, UTF_8);
-		final Optional<ProductInterestData> optional = productInterestFacade
-				.getProductInterestDataForCurrentCustomer(productCode,
-						NotificationType.BACK_IN_STOCK);
-
-
-		if (optional.isPresent())
-		{
-			model.addAttribute("stockNotificationForm",
-					stockNotificationHandler.prepareStockNotifcationFormByInterest(optional.get()));
-			model.addAttribute("removeUrl",
-					"/my-account/my-stocknotification/remove/" + productCode);
-		}
-		else
-		{
-			model.addAttribute("stockNotificationForm", stockNotificationHandler
-					.prepareStockNotifcationFormByCustomer(notificationPreferenceFacade.getValidNotificationPreferences()));
-		}
-		model.addAttribute("action", "/my-account/my-stocknotification/add/" + productCode);
-		model.addAttribute("expiryDay", Config.getParameter(EXPIRY_DAY));
-        final ProductData product = productFacade.getProductForCodeAndOptions(productCode,
-                Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.CATEGORIES));
-		model.addAttribute(PRODUCT_DATA,product);
-		final List<FutureStockData> availabilities = futureStockFacade.getFutureAvailability(productCode);
-		if (!CollectionUtils.isEmpty(availabilities))
-		{
-			availabilities.sort(Comparator.comparing(FutureStockData::getDate).reversed());
-			model.addAttribute("expiryDate",availabilities.get(0));
-		}
-
-		if (PRODUCT_DETAIL_PAGE.equals(channel))
-		{
-			return BlstocknotificationaddonManagerControllerConstants.Pages.AddNotificationPage;
-		}
-		return BlstocknotificationaddonManagerControllerConstants.Pages.AddNotificationFromInterestPage;
-	}
-
 
 	@PostMapping(value = "/add/" + PRODUCT_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
