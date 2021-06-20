@@ -62,6 +62,7 @@ $contentCatalogsCustomOrderPagePath = /blinitialdata/import/coredata/contentCata
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-content_en.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/giftCardEmail_content.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/stockNotification_content.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-forgotpassword.impex"), "utf-8", 0, 0);
 
 #Mention here Order Page related impexes in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomOrderPagePath/core_order_confirmation_page.impex"), "utf-8", 0, 0);
