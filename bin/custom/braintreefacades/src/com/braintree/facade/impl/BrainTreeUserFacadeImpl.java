@@ -8,6 +8,7 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 import com.braintree.command.request.*;
 import com.braintree.command.result.*;
 import com.braintree.constants.BraintreeConstants;
+import com.braintree.constants.BraintreefacadesConstants;
 import com.braintree.jalo.BrainTreePaymentInfo;
 import com.braintreegateway.Customer;
 import com.braintreegateway.PayPalAccount;
@@ -17,6 +18,7 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.impl.DefaultUserFacade;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.commerceservices.strategies.CustomerNameStrategy;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -29,8 +31,11 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 import com.braintree.converters.BraintreePaymentMethodConverter;
 import com.braintree.customer.service.BrainTreeCustomerAccountService;
@@ -71,6 +76,18 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	@Override
 	public void addAddress(final AddressData addressData)
 	{
+	  final CartModel sessionCart = getCartService().getSessionCart();
+	  if(Objects.nonNull(sessionCart) && Objects.nonNull(sessionCart.getDeliveryAddress()))
+	  {
+	    final AddressModel deliveryAddress = sessionCart.getDeliveryAddress();
+	    addressData.setUpsStoreAddress(Objects.nonNull(addressData.getPickStoreAddress()) 
+	        ? addressData.getPickStoreAddress() : BooleanUtils.toBoolean(deliveryAddress.getUpsStoreAddress()));
+	    addressData.setPickStoreAddress(Objects.nonNull(addressData.getUpsStoreAddress()) 
+	        ? addressData.getUpsStoreAddress() : BooleanUtils.toBoolean(deliveryAddress.getPickStoreAddress()));
+	    addressData.setBillingAddress(addressData.isBillingAddress());
+	    addressData.setShippingAddress(BooleanUtils.negate(addressData.isBillingAddress()));
+	    addressData.setVisibleInAddressBook(addressData.isVisibleInAddressBook());
+	  }
 		final BrainTreeAddressRequest addressRequest = convertBrainTreeAddress(addressData);
 
 		validateParameterNotNullStandardMessage("addressData", addressData);
@@ -239,15 +256,28 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
         return ccPaymentInfos;
     }
 
-	private void addAllPaymentInfos(Collection<BrainTreePaymentInfoModel> paymentInfos, List<BrainTreePaymentInfoModel> creditCards){
-		for (final PaymentInfoModel paymentInfoModel : paymentInfos)
-		{
-			if (paymentInfoModel instanceof BrainTreePaymentInfoModel)
-			{
-				creditCards.add((BrainTreePaymentInfoModel) paymentInfoModel);
-			}
-		}
-	}
+    /**
+     * Adds the all credit card payment infos list.
+     *
+     * @param paymentInfos the payment infos
+     * @param creditCards the credit cards
+     */
+    private void addAllPaymentInfos(Collection<BrainTreePaymentInfoModel> paymentInfos, List<BrainTreePaymentInfoModel> creditCards)
+    {
+      creditCards.addAll(paymentInfos.stream().filter(paymentInfoModel -> isCCPaymentProvider(paymentInfoModel)).collect(Collectors.toList()));
+    }
+
+    /**
+     * Checks if Payment Provider is Credit Card payment.
+     *
+     * @param paymentInfoModel the payment info model
+     * @return true, if is CC payment provider
+     */
+    private boolean isCCPaymentProvider(final BrainTreePaymentInfoModel paymentInfoModel)
+    {
+      return StringUtils.isNotBlank(paymentInfoModel.getPaymentProvider())
+          && BraintreeConstants.BRAINTREE_CREDITCARD_PAYMENT.equalsIgnoreCase(paymentInfoModel.getPaymentProvider());
+    }
 
 	@Override
 	public BrainTreePaymentInfoModel addPaymentMethod(final BrainTreeSubscriptionInfoData subscriptionInfoData)

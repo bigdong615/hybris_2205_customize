@@ -173,6 +173,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
             getModelService().remove(paymentInfo.getBillingAddress());
             newAddressModel.setOwner(paymentInfo);
             getModelService().save(newAddressModel);
+            setAddressOnCustomer(newAddressModel, currentUserForCheckout, billingAddress);            
             paymentInfo.setBillingAddress(newAddressModel);
           }
           paymentInfo.setNonce(paymentMethodNonce);
@@ -219,7 +220,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
     catch (final Exception exception)
     {
       LOG.error("Error occured while updating address", exception);
-      return null;
+      throw exception;
     }
     return null;
   }
@@ -257,6 +258,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
     catch (final Exception exception)
     {
       LOG.error("Error occured while updating address", exception);
+      throw exception;
     }
     return null;
   }
@@ -286,6 +288,26 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
   {
     return Objects.nonNull(addressData) && Objects.nonNull(addressData.getCountry()) && Objects.nonNull(addressData.getRegion())
         && StringUtils.isBlank(addressData.getRegion().getIsocodeShort()) && StringUtils.isNotBlank(addressData.getCountry().getIsocode());
+  }
+  
+  /**
+   * Sets the given address on customer.
+   *
+   * @param paymentBillingAddressModel the payment billing address model
+   * @param customerModel the customer model
+   * @param billingAddressData the billing address data
+   */
+  private void setAddressOnCustomer(final AddressModel paymentBillingAddressModel, final CustomerModel customerModel, 
+      final AddressData billingAddressData)
+  {
+    if(Objects.nonNull(billingAddressData))
+    {
+      final AddressModel addressOnUser = getModelService().clone(paymentBillingAddressModel, AddressModel.class);
+      addressOnUser.setBrainTreeAddressId(StringUtils.EMPTY);
+      addressOnUser.setVisibleInAddressBook(billingAddressData.isVisibleInAddressBook());
+      addressOnUser.setOwner(customerModel);
+      getCustomerAccountService().saveAddressEntry(customerModel, addressOnUser);
+    }
   }
 
 	public boolean setPaymentDetails(final String paymentInfoId, final String paymentMethodNonce) {
