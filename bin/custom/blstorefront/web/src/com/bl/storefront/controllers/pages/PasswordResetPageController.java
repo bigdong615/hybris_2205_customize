@@ -188,7 +188,7 @@ public class PasswordResetPageController extends AbstractPageController
 				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "updatePwd.token.invalid");
 			}
 		}
-		return REDIRECT_LOGIN;
+		return REDIRECT_HOME;
 	}
 
 	/**
