@@ -51,10 +51,7 @@
 					</button>
 				</c:when>
 				<c:otherwise>
-				<div class="page-loader-new-layout">
-            <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img"/>
-        </div>
-        <c:choose>
+				<c:choose>
 				  <c:when test="${allowAddToCart || isRentalCart}">
                 <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
                      <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>

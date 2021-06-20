@@ -10,7 +10,9 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url var="homepageUrl" value="/" />
 <template:page pageTitle="${pageTitle}">
-
+<div class="page-loader-new-layout">
+    <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+</div>
 <div class="screen"></div>
     <section id="confirmationWindow">
         <div class="container">
@@ -31,6 +33,11 @@
         <div class="container">
             <div id="featured" class="row justify-content-center mt-5">
                 <div class="col-lg-11 col-xl-9">
+                    <div class="modal fade" id="addToCart" tabindex="-1"
+                    			aria-hidden="true">
+                    			<div class="modal-dialog modal-dialog-centered modal-lg"
+                    				id="addToCartModalDialog"></div>
+                    </div>
                     <cms:pageSlot position="HomePageFeaturedGearSectionSlot" var="feature">
                     		<cms:component component="${feature}" />
                     </cms:pageSlot>
