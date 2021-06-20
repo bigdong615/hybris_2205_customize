@@ -499,6 +499,8 @@
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
+	<bean id="blBackInStockNotificationEmailContext" class="com.bl.facades.process.email.context.BlBackInStockNotificationEmailContext" parent="backInStockNotificationEmailContext" scope="prototype" >
+	</bean>
 	<!-- Notify me end-->
 
 	<!--BL-657 added to override orderAppliedVouchersPopulator -->
@@ -519,5 +521,10 @@
 			</list>
 		</property>
 	</bean>
-	
+
+	<!--BL-712:This class was created to customize bl specific address data.-->
+	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
+	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
+    <property name="customerAccountService" ref="customerAccountService"/>
+	</bean>
 </beans>
