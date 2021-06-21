@@ -14,6 +14,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractCategoryPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.util.MetaSanitizerUtil;
+import de.hybris.platform.catalog.model.KeywordModel;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.model.pages.CategoryPageModel;
 import de.hybris.platform.commercefacades.product.data.CategoryData;
@@ -34,9 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -51,7 +51,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     private BlCartFacade blCartFacade;
 
     @ResponseBody
-    @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
+    @GetMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets")
     public FacetRefinement<SearchStateData> getFacets(@PathVariable("categoryCode") final String categoryCode,
                                                       @RequestParam(value = "q", required = false) final String searchQuery,
                                                       @RequestParam(value = "page", defaultValue = "0") final int page,
@@ -61,7 +61,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
     @ResponseBody
-    @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/results", method = RequestMethod.GET)
+    @GetMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/results")
     public SearchResultsData<ProductData> getResults(@PathVariable("categoryCode") final String categoryCode,
                                                      @RequestParam(value = "q", required = false) final String searchQuery,
                                                      @RequestParam(value = "page", defaultValue = "0") final int page,
@@ -252,7 +252,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 final SearchStateData searchState = new SearchStateData();
                 searchState.setQuery(searchQueryData);
 
-                final PageableData pageableData = createPageableData(page, getSearchPageSize(), sortCode, showMode);
+                final PageableData pageableData = createPageableData(page, getSearchPageSize(), sortCode, showMode); // NOSONAR
                 searchPageData = getProductSearchFacade().categorySearch(categoryCode, searchState, pageableData);
 
             }
@@ -346,7 +346,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private void setMetaData(final CategoryModel category , final Model model) {
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
-            category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
+            category.getKeywords().stream().map(KeywordModel::getKeyword).collect(
                 Collectors.toSet()));
         final String metaDescription = MetaSanitizerUtil.sanitizeDescription(category.getDescription());
         setUpMetaData(model, metaKeywords, metaDescription);

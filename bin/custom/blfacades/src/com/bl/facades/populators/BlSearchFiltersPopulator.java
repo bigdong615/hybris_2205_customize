@@ -215,7 +215,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
           if(null != target.getPageableData() && null != target.getPageableData().getSort()) {
            sortName = target.getPageableData().getSort();
           }
-          else if(null != target.getSearchQueryData().getSort()) {
+          else if(null != target.getSearchQueryData() && null != target.getSearchQueryData().getSort()) {
              sortName = target.getSearchQueryData().getSort();
           }
 
