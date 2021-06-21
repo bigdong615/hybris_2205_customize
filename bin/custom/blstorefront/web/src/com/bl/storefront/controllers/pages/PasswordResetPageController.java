@@ -48,6 +48,7 @@ public class PasswordResetPageController extends AbstractPageController
 	private static final String REDIRECT_LOGIN = "redirect:/login";
 	private static final String REDIRECT_HOME = "redirect:/";
 	private static final String UPDATE_PWD_CMS_PAGE = "updatePassword";
+	private static final String ERROR_MESSAGE = "Can not send reset password link due to invalid email:";
 
 	@Resource(name = "customerFacade")
 	private CustomerFacade customerFacade;
@@ -67,7 +68,7 @@ public class PasswordResetPageController extends AbstractPageController
 	}
 
 	@RequestMapping(value = "/request", method = RequestMethod.POST)
-	public String passwordRequest(@Valid final ForgottenPwdForm form, final BindingResult bindingResult, final Model model)
+	public String passwordRequest( final ForgottenPwdForm form, final BindingResult bindingResult, final Model model)
 			throws CMSItemNotFoundException
 	{
 		if (bindingResult.hasErrors())
@@ -83,6 +84,8 @@ public class PasswordResetPageController extends AbstractPageController
 			catch (final UnknownIdentifierException unknownIdentifierException)
 			{
 				LOG.warn("Email: " + form.getEmail() + " does not exist in the database.");
+			}catch(Exception e){
+				LOG.debug(ERROR_MESSAGE+form.getEmail(),e);
 			}
 			model.addAttribute(BlControllerConstants.USER_EMAIL_STRING,form.getEmail());
 			return ControllerConstants.Views.Fragments.Password.ForgotPasswordValidationMessage;
@@ -188,7 +191,7 @@ public class PasswordResetPageController extends AbstractPageController
 				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "updatePwd.token.invalid");
 			}
 		}
-		return REDIRECT_LOGIN;
+		return REDIRECT_HOME;
 	}
 
 	/**
