@@ -33,6 +33,7 @@
 	<property name="serialfinalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
+      <property name="isWatching" type="java.lang.Boolean"/>
   </bean>
 
 
@@ -59,6 +60,7 @@
   <!--BL-166 : Add accelerator facades specific product options -->
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
+    <value>REQUIRED_SERIAL_DATA</value>
   </enum>
 
   <!--BL-174 : This DTO contains date related information(for temporary purpose once local storage code is ready
@@ -77,6 +79,11 @@
 	<property name="serialId" type="String"/>
   </bean>
   
+  <bean class="com.bl.facades.product.data.AvailabilityMessage">
+  	<property name="messageCode" type="String"/>
+  	<property name="arguments" type="java.util.List&lt;String>"/>
+  </bean>
+  
   <!-- Adding custom attributes in existing DTO of OrderEntryData -->
   <bean class="de.hybris.platform.commercefacades.order.data.OrderEntryData">
   	<property name="gearGuardWaiverPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
@@ -84,6 +91,7 @@
 	<property name="gearGuardWaiverSelected" type="java.lang.Boolean"/>
 	<property name="gearGuardProFullWaiverSelected" type="java.lang.Boolean"/>
 	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
+	<property name="availabilityMessage" type="com.bl.facades.product.data.AvailabilityMessage"/>
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -94,6 +102,14 @@
       <property name="pickUpPersonLastName" type="java.lang.String"/>
       <property name="pickUpPersonEmail" type="java.lang.String"/>
       <property name="pickUpPersonPhone" type="java.lang.String"/>
+      <property name="statusUpdate" type="Boolean"/>
+      <property name="deliveryNotes" type="String"/>
+      <property name="isRentalCart" type="java.lang.Boolean"/>
+      <property name="promotionAmountMap" type="java.util.Map&lt;String,java.math.BigDecimal>"/>
+      <property name="giftCode" type="String"/>
+      <property name="grandTotal" type="PriceData"/>
+      <property name="giftCardDiscount" type="PriceData"/>
+      <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
   </bean>
 
     <!-- Shipping -->
@@ -105,11 +121,14 @@
         <property name="shippingMethodType" type="String"/>
         <property name="carrier" type="String"/>
         <property name="warehouse" type="String"/>
+        <property name="businessTypeDelivery" type="Boolean"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
         <property name="code" type="String"/>
         <property name="name" type="String"/>
+        <property name="shippingType" type="String"/>
+        <property name="defaultShippingGroup" type="Boolean"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlPartnerPickUpStoreData">
@@ -135,6 +154,11 @@
 
     <bean class="de.hybris.platform.commercefacades.user.data.AddressData">
         <property name="addressType" type="String"/>
+        <property name="openingDaysDetails" type="java.util.Map&lt;String, String>"/>
+        <property name="pickStoreAddress" type="Boolean"/>
+        <property name="upsStoreAddress" type="Boolean"/>
+        <property name="url" type="String"/>
+        <property name="defaultBillingAddress" type="boolean"/>
     </bean>
     <!-- Shipping End-->
 
@@ -142,6 +166,12 @@
   <bean class="com.bl.facades.locator.data.UPSLocatorRequestData">
     <property name="zipcode" type="String"/>
     <property name="countryCode" type="String"/>
+  </bean>
+
+  <bean class="com.bl.facades.locator.data.DistanceData">
+    <property name="unitCode" type="String"/>
+    <property name="unitDescription" type="String"/>
+    <property name="value" type="String"/>
   </bean>
 
   <bean class="com.bl.facades.locator.data.UpsStoreData">
@@ -154,6 +184,8 @@
     <property name="politicalDivision2" type="String"/>
     <property name="postcodePrimaryLow" type="String"/>
     <property name="postcodeExtendedLow" type="String"/>
+    <property name="contactNumber" type="String"/>
+    <property name="distance" type="com.bl.facades.locator.data.DistanceData"/>
   </bean>
 
   <bean class="com.bl.facades.locator.data.UpsLocatorResposeData">
@@ -163,6 +195,62 @@
     <property name="result" type="java.util.List&lt;UpsStoreData>"/>
   </bean>
   <!-- UPS Locator end -->
+
+  <!-- UPS Address Validator response data -->
+  <bean class="com.bl.facades.ups.address.data.AVSResposeData">
+    <property name="statusCode" type="String"/>
+    <property name="statusMessage" type="String"/>
+    <property name="errorDescription" type="String"/>
+    <property name="result"
+      type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.AddressData>"/>
+  </bean>
+  
+      <!-- FedEx Same day Delivery -->
+    <bean class="com.bl.facades.fexEx.data.SameDayCityResData">
+	    <property name="serviceApplicable" type="Boolean"/>
+	    <property name="errorCode" type="java.lang.Integer"/>
+	    <property name="errorResponse" type="String"/>
+  	</bean>
+  	
+  	 <bean class="com.bl.facades.fexEx.data.SameDayCityReqData">
+	    <property name="warehouseZipCode" type="String"/>
+	    <property name="deliveryAddressZipCode" type="String"/>
+  	</bean>
+
+
+  <!--Added this property to segregate the Rental and Used Gear code on PLP and SLP to improve performance -->
+
+  <bean class="de.hybris.platform.commerceservices.search.resultdata.SearchResultValueData">
+    <property name="blPage" type="String"/>
+  </bean>
+  
+  <bean class="de.hybris.platform.commerceservices.service.data.CommerceCartParameter">
+		  <property name="isFromAddToCartPopup" type="Boolean"/>
+	</bean>
+
+  <!--BL-563 Gift Card-->
+  <bean class="com.bl.facades.giftcard.data.BLGiftCardData">
+      <property name="code" type="String"/>
+      <property name="amount" type="java.lang.Double"/>
+      <property name="redeemamount" type="java.lang.Double"/>
+      <property name="balanceamount" type="java.lang.Double"/>
+      <property name="reedemDate" type="java.util.Date" />
+      <property name="cartId" type="String" />
+      <property name="url" type="String" />
+      <property name="currency" type="de.hybris.platform.commercefacades.storesession.data.CurrencyData" />
+      <property name="amountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
+      <property name="balanceamountc" type="de.hybris.platform.commercefacades.product.data.PriceData" />
+      <property name="indicator" type="String" />
+  </bean>
+
+  <!--[Bl-643]: Custom Promotions-->
+  <bean class="de.hybris.platform.ruleengineservices.rao.CartRAO" extends="de.hybris.platform.ruleengineservices.rao.AbstractOrderRAO">
+    <property name="rentalDurationDays" type="java.lang.Integer" />
+    <property name="rentalCart" type="java.lang.Boolean" />
+    <property name="rentalArrivalDate" type="java.util.Date" />
+    <property name="rentalToDate" type="java.util.Date" />
+    <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
+  </bean>
 
 </beans>
 

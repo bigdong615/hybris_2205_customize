@@ -22,6 +22,14 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; FooterSlot                         ;                                                                   ;                           ; footer
                               ; FooterSubscriptionSlot             ;                                                                   ;                           ; wide
                               ; FooterCopyRightslot                ;                                                                   ;                           ; wide
+                              ; MyAccountSlot                      ;                                                                   ;                           ; navigation
+                              ; MobileHeaderLinkForSupportSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderLinkForAccountSlot           ;                                                                       ;                           ; headerlink
+                              ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
+                              ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
+                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+
+
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                       ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='RentalCartPageTemplate'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite
@@ -32,6 +40,13 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; FooterSlot-RentalCartPage                    ; FooterSlot                    ;                                                                           ; FooterSlot                               ; true
                                      ;                         ; FooterSubscriptionSlot-RentalCartPage        ; FooterSubscriptionSlot        ;                                                                           ; FooterSubscriptionSlot                   ; true
                                      ;                         ; FooterCopyRightslot-RentalCartPage           ; FooterCopyRightslot           ;                                                                           ; FooterCopyRightslot                      ; true
+                                     ;                         ; MyAccountSlot-RentalCartPage                  ; MyAccountSlot         ;                                                                           ; MyAccountSlot                            ; true
+                                     ;                         ; MobileHeaderLinkForSupportSlot-RentalCartPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
+                                     ;                         ; MobileHeaderLinkForAccountSlot-RentalCartPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true
+                                     ;                         ; MobileHeaderBottomInfo-RentalCartPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
+                                     ;                         ; MobileMiniCartSlot-RentalCartPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
+                                     ;                         ; SocialMediaSectionSlot-RentalCartPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+
 
 ########################### Define Content slots for page######################
 #INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='homepage'] ; contentSlot(uid,$contentCV)[unique=true]

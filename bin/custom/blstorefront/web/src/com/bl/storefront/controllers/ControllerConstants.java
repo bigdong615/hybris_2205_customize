@@ -166,6 +166,7 @@ public interface ControllerConstants
 			interface Cart // NOSONAR
 			{
 				String AddToCartPopup = "fragments/cart/addToCartPopup"; // NOSONAR
+				String AddToCartWarningPopup = "fragments/cart/addToCartWarningPopup"; // NOSONAR
 				String MiniCartPanel = "fragments/cart/miniCartPanel"; // NOSONAR
 				String MiniCartErrorPanel = "fragments/cart/miniCartErrorPanel"; // NOSONAR
 				String CartPopup = "fragments/cart/cartPopup"; // NOSONAR
@@ -191,10 +192,11 @@ public interface ControllerConstants
 				String ForgotPasswordValidationMessage = "fragments/password/forgotPasswordValidationMessage"; // NOSONAR
 			}
 
-			interface Login{
-				String LoginRequestPopup="fragments/login/loginRequestPopup";
-				String CreateAccountPopup="fragments/login/createAccountPopup";
-		}
+			interface Login {
+
+				String LoginPopup = "fragments/login/loginPopup";
+				String CreateAccountPopup = "fragments/login/createAccountPopup";
+			}
 
 			interface Product // NOSONAR
 			{

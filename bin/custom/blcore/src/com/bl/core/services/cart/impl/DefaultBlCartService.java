@@ -1,17 +1,31 @@
 package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.store.services.BaseStoreService;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -26,8 +40,10 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   private static final Logger LOGGER = Logger.getLogger(DefaultBlCartService.class);
 
   private CommerceCartService commerceCartService;
-  
-  private CommerceCartCalculationStrategy commerceCartCalculationStrategy;
+	private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
+	private BlCommerceStockService blCommerceStockService;
+	private BaseStoreService baseStoreService;
+	private BlDatePickerService blDatePickerService;
 
   /**
    * {@inheritDoc}
@@ -78,7 +94,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		if (BooleanUtils.isFalse(cartModel.getCalculated()))
 		{
 			final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
-			getCommerceCartCalculationStrategy().recalculateCart(parameter);
+			getBlCheckoutCartCalculationStrategy().calculateCart(parameter);
 		}
 	}
 
@@ -99,7 +115,29 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 			getModelService().save(cartEntryModel);
 			getModelService().save(cartModel);
 			final CommerceCartParameter parameter = getCommerceCartParameter(cartModel);
-			getCommerceCartCalculationStrategy().recalculateCart(parameter);
+			getBlCheckoutCartCalculationStrategy().recalculateCart(parameter);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setRentalDatesOnCart(final Date rentalStartDate, final Date rentalEndDate)
+	{
+		final CartModel cartModel = getSessionCart();
+		final String cartCode = cartModel.getCode();
+		cartModel.setRentalStartDate(rentalStartDate);
+		cartModel.setRentalEndDate(rentalEndDate);
+		try 
+		{			
+			getModelService().save(cartModel);
+			BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG, "Setting Rental Start Date: {} and End Date: {} on Cart: {}", rentalStartDate, rentalEndDate, cartCode);
+		}
+		catch(final Exception exception)
+		{
+			BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception, 
+					"Error while saving rental Start Date: {} and End Date: {} on cart - {}", rentalStartDate, rentalEndDate, cartCode);
 		}
 	}
 
@@ -114,6 +152,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final CommerceCartParameter parameter = new CommerceCartParameter();
 		parameter.setCart(cartModel);
 		parameter.setEnableHooks(Boolean.TRUE);
+		parameter.setRecalculate(true);
 		return parameter;
 	}
 
@@ -158,6 +197,23 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		cartEntryModel.setNoDamageWaiverSelected(noGearGuardWaiverSelected);
 		cartEntryModel.setCalculated(Boolean.FALSE);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
+			final RentalDateDto rentalDatesFromSession)
+	{
+		final List<String> lProductCodes = cartData.getEntries().stream().map(cartEntry -> cartEntry.getProduct().getCode())
+				.collect(Collectors.toList());
+		final Date lastDateToCheck = BlDateTimeUtils.getFormattedStartDay(BlDateTimeUtils.getNextYearsSameDay()).getTime();
+		final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+		final Date startDate = BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_TWO_DAYS,
+				rentalDatesFromSession.getSelectedFromDate(), blackOutDates);
+		final Date endDate = BlDateTimeUtils.getRentalEndDate(blackOutDates, rentalDatesFromSession, lastDateToCheck);
+		return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
+	}
 
   public CommerceCartService getCommerceCartService() {
     return commerceCartService;
@@ -166,21 +222,68 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
   public void setCommerceCartService(CommerceCartService commerceCartService) {
     this.commerceCartService = commerceCartService;
   }
-  
-  /**
-	 * @return the commerceCartCalculationStrategy
+
+	/**
+	 * @return blCheckoutCartCalculationStrategy
 	 */
-	public CommerceCartCalculationStrategy getCommerceCartCalculationStrategy()
-	{
-		return commerceCartCalculationStrategy;
+	public CommerceCartCalculationStrategy getBlCheckoutCartCalculationStrategy() {
+		return blCheckoutCartCalculationStrategy;
 	}
 
 	/**
-	 * @param commerceCartCalculationStrategy the commerceCartCalculationStrategy to set
+	 * @param blCheckoutCartCalculationStrategy
 	 */
-	public void setCommerceCartCalculationStrategy(final CommerceCartCalculationStrategy commerceCartCalculationStrategy)
-	{
-		this.commerceCartCalculationStrategy = commerceCartCalculationStrategy;
+	public void setBlCheckoutCartCalculationStrategy(
+			CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
+		this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
 	}
-	
+
+	/**
+	 * @return the blCommerceStockService
+	 */
+	public BlCommerceStockService getBlCommerceStockService()
+	{
+		return blCommerceStockService;
+	}
+
+	/**
+	 * @param blCommerceStockService the blCommerceStockService to set
+	 */
+	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
+	}
+
+	/**
+	 * @return the baseStoreService
+	 */
+	public BaseStoreService getBaseStoreService()
+	{
+		return baseStoreService;
+	}
+
+	/**
+	 * @param baseStoreService the baseStoreService to set
+	 */
+	public void setBaseStoreService(BaseStoreService baseStoreService)
+	{
+		this.baseStoreService = baseStoreService;
+	}
+
+	/**
+	 * @return the blDatePickerService
+	 */
+	public BlDatePickerService getBlDatePickerService()
+	{
+		return blDatePickerService;
+	}
+
+	/**
+	 * @param blDatePickerService the blDatePickerService to set
+	 */
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	{
+		this.blDatePickerService = blDatePickerService;
+	}
+
 }

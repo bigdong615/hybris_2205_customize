@@ -46,7 +46,10 @@
                     <c:if test ="${mediaLi.format eq 'product'}">
                        <c:url value="${mediaLi.url}" var="primaryImageUrl" />
                        <c:set value="this is alternate" var="altTextHtml"/>
-                       <li class="splide__slide""><img src="${fn:escapeXml(primaryImageUrl)}"/></li>
+                       <li class="splide__slide"">
+                         <!-- BL-534-->
+						 <c:url var="rentUrl" value="/rent/product/${product.code}"/>
+                       <a href="${rentUrl}"> <img src="${fn:escapeXml(primaryImageUrl)}"/> </a></li>
                     </c:if>
                  </c:forEach>
               </ul>
@@ -62,7 +65,7 @@
  <p class="overline">${product.manufacturer}</p>
  <h6 class="product">
           <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-           <a href="${rentUrl}"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
+           <a href="${rentUrl}" role="button"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
   </h6>
 		<ycommerce:testId code="product_wholeProduct">
 
@@ -73,8 +76,15 @@
 					</c:forEach>
 				</div>
 			</c:if>
-
-			<h6 class="price"><product:productListerItemPrice product="${product}"/><span class="period">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span></h6>
+			<h6 class="price"><product:productListerItemPrice product="${product}"/>
+          <c:choose>
+             <c:when test="${rentalDate.selectedFromDate ne null and rentalDate.selectedToDate ne null}">
+                 <span class="period">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
+             </c:when>
+             <c:otherwise>
+                  <span class="period">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span></h6>
+             </c:otherwise>
+          </c:choose>
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">
@@ -96,7 +106,7 @@
 		<c:set var="addToCartText" value="${addToCartText}" scope="request"/>
 		<c:set var="addToCartUrl" value="${addToCartUrl}" scope="request"/>
 		<c:set var="isGrid" value="true" scope="request"/>
-		<div class="addtocart">
+		<div class="addtocart btnwidth">
 			<div class="actions-container-for-${fn:escapeXml(component.uid)} <c:if test="${ycommerce:checkIfPickupEnabledForStore() and product.availableForPickup}"> pickup-in-store-available</c:if>">
 				<action:actions element="div" parentComponent="${component}"/>
 			</div>

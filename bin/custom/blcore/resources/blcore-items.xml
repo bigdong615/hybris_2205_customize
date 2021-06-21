@@ -5,29 +5,16 @@
 <items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
 
     <collectiontypes>
-        <collectiontype code="GenderList" elementtype="Gender" autocreate="true" generate="true" type="list"/>
-        <collectiontype code="SwatchColorSet" elementtype="SwatchColorEnum" autocreate="true" generate="true"
-                        type="set"/>
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
+		<collectiontype code="serialProductCodes" elementtype="java.lang.String" autocreate="true"
+      generate="false" type="set"/>
+        <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
+        <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
     </collectiontypes>
 
     <enumtypes>
-        <enumtype generate="true" code="SwatchColorEnum" autocreate="true" dynamic="true">
-            <value code="BLACK"/>
-            <value code="BLUE"/>
-            <value code="BROWN"/>
-            <value code="GREEN"/>
-            <value code="GREY"/>
-            <value code="ORANGE"/>
-            <value code="PINK"/>
-            <value code="PURPLE"/>
-            <value code="RED"/>
-            <value code="SILVER"/>
-            <value code="WHITE"/>
-            <value code="YELLOW"/>
-        </enumtype>
         <enumtype generate="true" code="BatteryMaterialEnum" autocreate="true" dynamic="true">
             <value code="LITHIUM_ION"/>
             <value code="LITHIUM_METAL"/>
@@ -127,9 +114,23 @@
             <value code="FASTER"/>
             <value code="FASTEST"/>
         </enumtype>
+
+        <enumtype generate="true" code="ShippingCostEnum" autocreate="true" dynamic="true">
+            <value code="UPS_STANDARD_ROUND_TRIP"/>
+            <value code="UPS_STANDARD_AM_ROUND_TRIP"/>
+            <value code="UPS_OVERNIGHT_ROUND_TRIP"/>
+            <value code="UPS_OVERNIGHT_SAVER_ROUND_TRIP"/>
+            <value code="FEDEX_STANDARD_ROUND_TRIP"/>
+            <value code="FEDEX_OVERNIGHT_ROUND_TRIP"/>
+        </enumtype>
         <!-- BL-542 End-->
 
     </enumtypes>
+
+    <maptypes>
+        <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
+    </maptypes>
+
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
             <sourceElement qualifier="blProduct" type="BlProduct" cardinality="one">
@@ -183,7 +184,7 @@
 
         <relation code="ZoneDeliveryMode2ShippingCostRel" autocreate="true" generate="true" localized="false">
             <sourceElement qualifier="zoneDeliveryMode" type="ZoneDeliveryMode" cardinality="one">
-                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
             </sourceElement>
             <targetElement qualifier="shippingCost" type="ShippingCost" cardinality="many" ordered="false">
                 <modifiers read="true" write="true" search="true" optional="true"/>
@@ -191,82 +192,37 @@
         </relation>
         <!-- BL-542 End-->
 
+      <!-- Gift card Start-->
+      <relation code="GiftCard2Movement" generate="true" localized="false"
+        autocreate="true">
+        <sourceElement qualifier="giftCard" type="GiftCard"
+          cardinality="one" />
+        <targetElement qualifier="movements" type="GiftCardMovement"
+          cardinality="many" collectiontype="list" />
+      </relation>
+
+      <relation code="GiftCard2Order" generate="true" localized="false"
+        autocreate="true">
+        <deployment table="GiftCard2OrderRel" typecode="25671" />
+        <sourceElement qualifier="giftCard" type="GiftCard"
+          cardinality="many" collectiontype="list" />
+        <targetElement qualifier="order" type="AbstractOrder"
+          cardinality="many" collectiontype="list" />
+      </relation>
+
+      <relation code="GiftCard2Customer" generate="true" localized="false"
+        autocreate="true">
+        <sourceElement qualifier="giftCard" type="GiftCard"
+          cardinality="many" collectiontype="list" />
+        <targetElement qualifier="customer" type="Customer"
+          cardinality="one" />
+      </relation>
+      <!-- Gift card End-->
+
     </relations>
 
 
     <itemtypes>
-        <!-- Add your item definitions here -->
-        <!-- TypeGroups are for structure of this file only -->
-        <typegroup name="Apparel">
-            <itemtype code="ApparelProduct" extends="Product"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ApparelProduct">
-                <description>Base apparel product extension that contains additional attributes.</description>
-                <attributes>
-                    <attribute qualifier="genders" type="GenderList">
-                        <description>List of genders that the ApparelProduct is designed for</description>
-                        <modifiers/>
-                        <persistence type="property"/>
-                    </attribute>
-                </attributes>
-            </itemtype>
-
-            <itemtype code="ApparelStyleVariantProduct" extends="VariantProduct"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ApparelStyleVariantProduct">
-                <description>Apparel style variant type that contains additional attribute describing variant style.
-                </description>
-                <attributes>
-                    <attribute qualifier="style" type="localized:java.lang.String"
-                               metatype="VariantAttributeDescriptor">
-                        <description>Color/Pattern of the product.</description>
-                        <modifiers/>
-                        <persistence type="property"/>
-                    </attribute>
-
-                    <attribute qualifier="swatchColors" type="SwatchColorSet">
-                        <description>A normalized color mapping to a standardized front-end navigable name.
-                        </description>
-                        <modifiers/>
-                        <persistence type="property"/>
-                    </attribute>
-                </attributes>
-
-            </itemtype>
-
-            <itemtype code="ApparelSizeVariantProduct" extends="ApparelStyleVariantProduct"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ApparelSizeVariantProduct">
-                <description>Apparel size variant type that contains additional attribute describing variant size.
-                </description>
-                <attributes>
-                    <attribute qualifier="size" type="localized:java.lang.String"
-                               metatype="VariantAttributeDescriptor">
-                        <description>Size of the product.</description>
-                        <modifiers/>
-                        <persistence type="property"/>
-                    </attribute>
-                </attributes>
-            </itemtype>
-        </typegroup>
-
-        <typegroup name="Electronics">
-            <itemtype code="ElectronicsColorVariantProduct" extends="VariantProduct"
-                      autocreate="true" generate="true"
-                      jaloclass="com.bl.core.jalo.ElectronicsColorVariantProduct">
-                <description>Electronics color variant type that contains additional attribute describing variant color.
-                </description>
-                <attributes>
-                    <attribute qualifier="color" type="localized:java.lang.String"
-                               metatype="VariantAttributeDescriptor">
-                        <description>Color of the product.</description>
-                        <modifiers/>
-                        <persistence type="property"/>
-                    </attribute>
-                </attributes>
-            </itemtype>
-        </typegroup>
-
 		<!-- Custom CMS ItemTypes -->
 		<typegroup name="cms">
 			<itemtype code="CustomPromoMessageComponent" extends="CMSParagraphComponent" autocreate="true" generate="true" >
@@ -480,6 +436,25 @@
 				jaloclass="de.hybris.platform.acceleratorcms.jalo.components.SupportNavigationComponent">
 				<description>Custom Navigation component for Support navigation node on header.</description>
 			</itemtype>
+
+            <itemtype code="BannerComponent" autocreate="false" generate="false">
+              <attributes>
+                    <attribute type="MediasList" qualifier="medias">
+                         <modifiers read="true" write="true" optional="true"/>
+                         <persistence type="property"/>
+                     </attribute>
+               </attributes>
+            </itemtype>
+
+      <itemtype code="Media"  autocreate="false" generate="false">
+        <attributes>
+          <attribute autocreate="true" qualifier="redirectUrl" type="java.lang.String">
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="true"/>
+            <description>Redirect Url</description>
+          </attribute>
+        </attributes>
+      </itemtype>
 		</typegroup>
 
         <typegroup name="borrowLenses">
@@ -565,7 +540,7 @@
                      </attribute>
                      <attribute qualifier="mpn" type="java.lang.String">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" optional="false"/>
+                         <modifiers read="true" write="true" optional="false" initial="true"/>
                          <description>Manufactuer's part number</description>
                      </attribute>
                      <attribute qualifier="titleTag" type="java.lang.String">
@@ -575,7 +550,7 @@
                      </attribute>
                      <attribute qualifier="upc" type="java.lang.String">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" optional="false"/>
+                         <modifiers read="true" write="true" optional="false" initial="true"/>
                          <description>UPC code for the BL Product</description>
                      </attribute>
                      <attribute qualifier="techEngNotes" type="java.lang.String">
@@ -600,7 +575,7 @@
                      </attribute>
                      <attribute qualifier="procurementSource" type="java.lang.String">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" optional="false"/>
+                         <modifiers read="true" write="true" optional="false" initial="true"/>
                          <description>Link or number for the item at the source we can purchase replacements</description>
                      </attribute>
                      <attribute qualifier="alternativeProduct" type="java.lang.String">
@@ -661,7 +636,7 @@
                      </attribute>
                      <attribute qualifier="productType" type="ProductTypeEnum">
                          <persistence type="property" />
-                         <modifiers read="true" write="true" optional="false"/>
+                         <modifiers read="true" write="true" optional="false" initial="true"/>
                          <description>The type of Product</description>
                      </attribute>
                      <attribute qualifier="shortDescription" type="java.lang.String">
@@ -702,7 +677,7 @@
                      </attribute>
                      <attribute qualifier="numberSystem" type="NumberingSystemEnum">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="false"/>
+                         <modifiers read="true" write="true" optional="false" initial="true"/>
                          <description>Determines how we track inventory</description>
                      </attribute>
                      <!--Shipping Attributes-->
@@ -728,7 +703,7 @@
                      </attribute>
                      <attribute qualifier="procurementCost" type="java.math.BigDecimal">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="false"/>
+                         <modifiers read="true" write="true" optional="false" initial="true"/>
                          <description>Starting base price for the sku for used gear sales of all serials</description>
                      </attribute>
                      <attribute qualifier="constrained" type="java.lang.Boolean">
@@ -750,7 +725,8 @@
                          <description>Determines the product is Discontinued</description>
                      </attribute>
                      <attribute qualifier="manufacturerAID" type="java.lang.String" redeclare="true">
-                         <modifiers read="true" write="true" search="true" optional="false"/>
+                         <modifiers read="true" write="true" search="true" optional="false"
+                           initial="true"/>
                          <persistence type="property"/>
                          <custom-properties>
                              <property name="hmcIndexField"><value>"thefield"</value></property>
@@ -794,7 +770,7 @@
                    </attribute>
                    <attribute qualifier="retailPrice" type="java.lang.Double">
                      <persistence type="property"/>
-                     <modifiers read="true" write="true" optional="false"/>
+                     <modifiers read="true" write="true" optional="false" initial="true"/>
                      <description>Price, What the item currently sells for</description>
                    </attribute>
                    <attribute qualifier="bufferedInventoryPercentage" autocreate="true"
@@ -804,6 +780,38 @@
                      <modifiers read="true" write="true" search="true" optional="true"/>
                      <persistence type="property"/>
                    </attribute>
+                   <attribute qualifier="productStatus" type="java.lang.String">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Defines Status of SKU</description>
+                   </attribute>
+                   <attribute qualifier="createdDate" type="java.util.Date">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Date on which the SKU is created</description>
+                   </attribute>
+                   <attribute qualifier="isAccounting" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is Accounting</description>
+                   </attribute>
+                   <attribute qualifier="discounted" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="true" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is discounted</description>
+                   </attribute>
+                   <attribute qualifier="forSaleBasePrice" type="java.math.BigDecimal">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Starting base price for the sku for used gear sales of all serials</description>
+                   </attribute>
+                   <attribute qualifier="forSaleDiscount" type="java.lang.Integer">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Additional Discount for used gear</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -812,23 +820,19 @@
                  <attributes>
                    <attribute qualifier="serialStatus" type="SerialStatusEnum">
                      <persistence type="property" />
-                     <modifiers read="true" write="true" optional="false"/>
+                     <modifiers read="true" write="true" optional="false" initial="true"/>
                      <description>The status assigned to Serial Product</description>
                    </attribute>
                      <attribute qualifier="barcode" type="java.lang.String">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" unique="true" optional="false"/>
+                         <modifiers read="true" write="true" unique="true" optional="false"
+                           initial="true"/>
                          <description>Serial barcode assigned specifically to the serial</description>
                      </attribute>
                      <attribute qualifier="warehouseLocation" type="Warehouse">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" unique="true" optional="true"/>
                          <description>Determines the warehouse where the products are kept</description>
-                     </attribute>
-                     <attribute qualifier="forSaleBasePrice" type="java.math.BigDecimal">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="false"/>
-                         <description>Starting base price for the sku for used gear sales of all serials</description>
                      </attribute>
                      <attribute qualifier="isBufferedInventory" type="java.lang.Boolean">
                        <persistence type="property" />
@@ -851,11 +855,6 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>Calculated based on incentivized discount and for sale base price and condition rating score</description>
                      </attribute>
-                     <attribute qualifier="forSaleDiscount" type="java.lang.Integer">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>Additional Discount for used gear</description>
-                     </attribute>
                    <attribute qualifier="ownedBy" type="java.lang.String">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="true"/>
@@ -867,10 +866,10 @@
                      <description>Total amount spent on repairs on this serial to date,should update with every repair</description>
                    </attribute>
                    <attribute qualifier="noDaysRented" type="java.lang.long">
-                     <persistence type="dynamic" attributeHandler="serialProductTotalRentedDaysHandler" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>The total no of days the serial was rented for all orders</description>
-                   </attribute>
+					<persistence type="property"/>
+					<modifiers read="true" write="true" optional="true"/>
+					<description>The total no of days the serial was rented for all orders</description>
+				  </attribute>
                    <attribute qualifier="noDaysNotInService" type="java.lang.long">
                      <persistence type="dynamic" attributeHandler="serialProductNotInServiceHandler" />
                      <modifiers read="true" write="true" optional="true"/>
@@ -890,11 +889,6 @@
                      <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Generic notes about the serial</description>
-                   </attribute>
-                   <attribute qualifier="forSaleNotes" type="java.lang.String">
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Sales Note on the Serial</description>
                    </attribute>
                    <attribute qualifier="purchaseOrder" type="java.lang.String">
                      <persistence type="property" />
@@ -1016,7 +1010,7 @@
               </attribute>
               <attribute type="java.lang.String" qualifier="serialProductCode">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" unique="false" optional="false"/>
+                <modifiers read="true" write="true" unique="false" optional="false" initial="true"/>
                 <description>This is for serial product</description>
               </attribute>
               <attribute qualifier="reservedStatus" type="java.lang.Boolean">
@@ -1046,7 +1040,7 @@
               </attribute>
               <attribute qualifier="serialStatus" type="SerialStatusEnum">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false"/>
+                <modifiers read="true" write="true" optional="false" initial="true"/>
                 <description>The status of the Serial Product</description>
               </attribute>
             </attributes>
@@ -1062,7 +1056,6 @@
 
           <itemtype code="BlStockCreationCronJob" extends="CronJob">
             <description>This type represents a cron job that creates Stock.</description>
-            <deployment table="BlStockCreationJob" typecode="12212"/>
             <attributes>
               <attribute qualifier="startDate" type="java.util.Date">
                 <persistence type="property"/>
@@ -1089,22 +1082,22 @@
             <attributes>
               <attribute qualifier="uid" type="java.lang.String">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false" unique="true"/>
+                <modifiers read="true" write="true" optional="false" unique="true" initial="true"/>
                 <description>Localized Video title</description>
               </attribute>
               <attribute qualifier="videoTitle" type="java.lang.String">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false"/>
+                <modifiers read="true" write="true" optional="false" initial="true"/>
                 <description>Localized Video title</description>
               </attribute>
               <attribute qualifier="videoLink" type="java.lang.String">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false"/>
+                <modifiers read="true" write="true" optional="false" initial="true"/>
                 <description>Localized video link</description>
               </attribute>
               <attribute qualifier="videoDuration" type="java.lang.Long">
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false"/>
+                <modifiers read="true" write="true" optional="false" initial="true"/>
                 <description>video duration need to be put in second</description>
               </attribute>
             </attributes>
@@ -1133,7 +1126,7 @@
                     </attribute>
                     <attribute qualifier="inventoryType" type="InventoryLocationTypeEnum">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
                         <description>The type of Product</description>
                     </attribute>
                     <attribute qualifier="active" type="java.lang.Boolean">
@@ -1163,17 +1156,17 @@
                 <attributes>
                     <attribute qualifier="serialProduct" type="BLSerialProduct">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
                         <description>BLSerialProduct in scan History</description>
                     </attribute>
                     <attribute qualifier="scanUser" type="User">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
                         <description>User who scanned the inventory</description>
                     </attribute>
                     <attribute qualifier="scanTime" type="java.util.Date">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" optional="false"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
                         <description>Time when user scanned inventory</description>
                     </attribute>
                 </attributes>
@@ -1187,7 +1180,8 @@
                 <attributes>
                     <attribute qualifier="blScanConfigKey" type="java.lang.String">
                         <persistence type="property"/>
-                        <modifiers read="true" write="true" unique="true" optional="false"/>
+                        <modifiers read="true" write="true" unique="true" optional="false"
+                          initial="true"/>
                         <description>Config Key</description>
                     </attribute>
                     <attribute qualifier="blScanConfigValue" type="java.lang.String">
@@ -1197,6 +1191,145 @@
                     </attribute>
                 </attributes>
             </itemtype>
+
+            <!--Gift Card Start-->
+          <itemtype code="GiftCardEmailProcess" extends="StoreFrontCustomerProcess"
+            autocreate="true" generate="true">
+            <description>Represents process that is used for sending Gift Card email.</description>
+            <attributes>
+              <attribute qualifier="customerEmail" type="java.lang.String">
+                <persistence type="property" />
+                <description>Customer Email</description>
+              </attribute>
+              <attribute qualifier="giftcard" type="GiftCard">
+                <persistence type="property" />
+                <description>Gift Card for which email is sent</description>
+              </attribute>
+            </attributes>
+          </itemtype>
+
+          <itemtype code="GiftCard" autocreate="true" generate="true">
+            <deployment table="GiftCard" typecode="25239" />
+            <attributes>
+              <attribute qualifier="code" type="java.lang.String">
+                <description>Gift card code</description>
+                <modifiers write="true" read="true" optional="false" search="true" unique="true" />
+                <persistence type="property" />
+              </attribute>
+              <attribute qualifier="amount" type="java.lang.Double">
+                <description>Gift card amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="currency" type="Currency">
+                <description>Currency type of gift card</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute type="java.util.Date" qualifier="startDate">
+                <description>Gift card start date</description>
+                <modifiers write="true" read="true" optional="true"
+                  search="true" />
+                <persistence type="property" />
+              </attribute>
+              <attribute type="java.util.Date" qualifier="endDate">
+                <description>Gift card end date</description>
+                <modifiers write="true" read="true" optional="true"
+                  search="true" />
+                <persistence type="property" />
+              </attribute>
+              <attribute qualifier="active" type="java.lang.Boolean">
+                <description>It defines gift card is active or not</description>
+                <persistence type="property" />
+                <modifiers search="false" optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute qualifier="email" type="java.lang.Boolean">
+                <description>It defines whether email should be sent to user or not</description>
+                <persistence type="property" />
+                <modifiers search="false" optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute qualifier="issuer" type="java.lang.String">
+                <description>Gift card issuer, who created the gift card</description>
+                <persistence type="property" />
+                <modifiers search="false" optional="true" />
+              </attribute>
+              <attribute autocreate="true" qualifier="balance" type="java.lang.Double">
+                <description>Dynamic attribute for balance amount</description>
+                <modifiers write="false" />
+                <persistence type="dynamic" attributeHandler="giftCardbalance" />
+              </attribute>
+              <attribute qualifier="isPurchased" type="java.lang.Boolean">
+                <description>It defines that gift card is purchased or not</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="true" optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute qualifier="customerEmail" type="java.lang.String">
+                <description>Email of the user to whom an email should be sent</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="true" optional="true" />
+              </attribute>
+              <attribute qualifier="name" type="java.lang.String">
+                <description>Name of the user to whom a gift card has been issued</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="true" optional="true" />
+              </attribute>
+              <attribute qualifier="message" type="java.lang.String">
+                <description>Gift card message</description>
+                <persistence type="property" />
+                <modifiers write="true" read="true" search="false" optional="true" />
+              </attribute>
+            </attributes>
+          </itemtype>
+
+          <itemtype code="GiftCardMovement" autocreate="true"
+            generate="true">
+            <deployment table="GiftCardMovement" typecode="25240" />
+            <attributes>
+              <attribute qualifier="transactionId" type="java.lang.String">
+                <description>Gift card movement id</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true" optional="false" />
+              </attribute>
+              <attribute qualifier="amount" type="java.lang.Double">
+                <description>Gift card movement amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="currency" type="Currency">
+                <description>Currency of the gift card movement amount</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="order" type="Order">
+                <description>Gift card assigned to order</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+              </attribute>
+              <attribute qualifier="committed" type="java.lang.Boolean">
+                <description>It defines whether a gift card has been used or not</description>
+                <persistence type="property" />
+                <modifiers read="true" write="true" search="true"
+                  optional="true" />
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+              </attribute>
+              <attribute type="java.util.Date" qualifier="redeemDate">
+                <description>If defines, on which date a gift card has been used</description>
+                <modifiers write="true" read="true" optional="true"
+                  search="true" />
+                <persistence type="property" />
+              </attribute>
+            </attributes>
+          </itemtype>
+          <!--Gift Card End-->
+
          </typegroup>
          
         <typegroup name="Pricing">
@@ -1207,12 +1340,12 @@
              <attributes>
                <attribute qualifier="productType" type="ProductTypeEnum">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Type of the Product</description>
                </attribute>
                <attribute qualifier="tier" type="PricingTierEnum">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>This attribute is defined to </description>
                </attribute>
                <attribute qualifier="greaterThan" type="java.lang.Double">
@@ -1239,12 +1372,12 @@
              <attributes>
                <attribute qualifier="pricingRatio" type="java.lang.Double">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Pricing Ratio per duration</description>
                </attribute>
                <attribute qualifier="duration" type="DurationEnum">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Duration in days</description>
                </attribute>
              </attributes>
@@ -1256,12 +1389,12 @@
              <attributes>
                <attribute qualifier="pricingRatio" type="java.lang.Double">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Pricing Ratio per duration</description>
                </attribute>
                <attribute qualifier="duration" type="DurationEnum">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Duration in days</description>
                </attribute>
              </attributes>
@@ -1283,12 +1416,12 @@
              <attributes>
                <attribute qualifier="damageWaiverGearType" type="RentalGearType">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Damage Waiver Gear Type</description>
                </attribute>
                <attribute qualifier="waiverPercentage" type="java.lang.Double">
                  <persistence type="property"/>
-                 <modifiers read="true" write="true" optional="false"/>
+                 <modifiers read="true" write="true" optional="false" initial="true"/>
                  <description>Damage Waiver Price Percent</description>
                </attribute>
              </attributes>
@@ -1309,28 +1442,36 @@
 	                 	<description>Gear Guard Pro Full Value Waiver Price for Rental Gear</description>         				
          			</attribute>
          			<attribute qualifier="gearGuardWaiverSelected" type="java.lang.Boolean">
-	         			<persistence type="property"/>
+                <defaultvalue>java.lang.Boolean.TRUE</defaultvalue>
+                <persistence type="property"/>
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if Gear Guard Value Waiver is selected for Rental Gear</description>         				
          			</attribute>
          			<attribute qualifier="gearGuardProFullWaiverSelected" type="java.lang.Boolean">
-	         			<persistence type="property"/>
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                <persistence type="property"/>
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if Gear Guard Pro Full Value Waiver is selected for Rental Gear</description>         				
          			</attribute>
          			<attribute qualifier="noDamageWaiverSelected" type="java.lang.Boolean">
-	         			<persistence type="property"/>
+                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                <persistence type="property"/>
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if No Damage Waiver is selected for Rental Gear</description>         				
          			</attribute>
-         		</attributes>
+					<attribute qualifier="serialProductCodes" type="serialProductCodes">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true"/>
+						<description>Serial products for the entry</description>
+					</attribute>
+				</attributes>
          	</itemtype>
          </typegroup>
 
         <!-- BL-542 -->
         <typegroup name="Shipping">
             <itemtype code="ShippingGroup" extends="GenericItem" autocreate="true" generate="true">
-                <deployment table="shippingGroup" typecode="12209" />
+                        <deployment table="shippingGroup" typecode="12209" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
@@ -1343,6 +1484,11 @@
                     <attribute qualifier="shippingType" type="ShippingTypeEnum" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="defaultShippingGroup" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -1392,6 +1538,15 @@
                         <modifiers read="true" write="true" search="true" optional="false" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
+                    <attribute qualifier="payByCustomer" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.TRUE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="shippingCostCode" type="ShippingCostEnum" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -1417,6 +1572,11 @@
                     <attribute qualifier="internalStoreAddress" type="Address" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="warehousePickUp" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -1449,11 +1609,6 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                    <attribute qualifier="warehousePickUp" type="boolean">
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" optional="false" />
-                        <defaultvalue>Boolean.FALSE</defaultvalue>
-                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -1481,6 +1636,10 @@
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                     <attribute qualifier="amount" type="java.lang.Double" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="shippingCostCode" type="ShippingCostEnum" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
@@ -1525,6 +1684,53 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="statusUpdate" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="deliveryNotes" type="java.lang.String" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
+                    <attribute qualifier="rentalStartDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						            <description>Selected rental start date</description>
+                    </attribute>
+                    <attribute qualifier="rentalEndDate" type="java.util.Date">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+						            <description>Selected rental end date</description>
+                    </attribute>
+                  <attribute qualifier="actualRentalStartDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Actual rental start date</description>
+                  </attribute>
+                  <attribute qualifier="actualRentalEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>Actual rental end date</description>
+                  </attribute>
+                    <attribute qualifier="isRentalCart" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify cart type rental or used gear</description>
+                    </attribute>
+                    <attribute qualifier="giftCardAmount" type="java.lang.Double">
+                      <description>Gift Card Amount</description>
+                      <modifiers read="true" write="true" search="false"
+                      optional="true" />
+                      <persistence type="property" />
+                    </attribute>
+                    <attribute qualifier="grandTotal" type="java.lang.Double">
+                      <description>Grand Total</description>
+                      <modifiers read="true" write="true" search="false"
+                      optional="true" />
+                      <persistence type="property" />
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -1537,10 +1743,94 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="openingDaysDetails" type="OpeningDaysMap">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true"/>
+                    </attribute>
+                    <attribute qualifier="pickStoreAddress" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="upsStoreAddress" type="java.lang.Boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
 
+		<typegroup name="StateWarehouseMapping">
+		  <itemtype code="BlStateWarehouseMapping" autocreate="true" generate="true"
+			jaloclass="com.bl.core.jalo.BlStateWarehouseMapping">
+			<description>This table is for storing configuration related to InventoryScan.</description>
+			<deployment table="blStateWarehouseMapping" typecode="12214"/>
+			<attributes>
+			  <attribute qualifier="stateID" type="java.lang.Integer">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" unique="true" optional="false"/>
+				<description>State ID</description>
+			  </attribute>
+			  <attribute qualifier="name" type="java.lang.String">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Name of states</description>
+			  </attribute>
+			  <attribute qualifier="code" type="Region">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Region codes</description>
+			  </attribute>
+			  <attribute qualifier="isActive" type="java.lang.Integer">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Particular mapping is Active or not</description>
+			  </attribute>
+			  <attribute qualifier="region" type="java.lang.String">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Region name</description>
+			  </attribute>
+			  <attribute qualifier="warehouse" type="Warehouse">
+				<persistence type="property"/>
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Allocated Warehouse</description>
+			  </attribute>
+			</attributes>
+		  </itemtype>
+		</typegroup>
+
+		<typegroup name="Warehouse">
+		  <itemtype code="Warehouse" autocreate="false" generate="false">
+			<description>Extending Warehouse type with additional attributes for BL.</description>
+			<attributes>
+			  <attribute type="java.lang.String" qualifier="cutOffTime">
+				<modifiers read="true" write="true" optional="true"/>
+				<description>Cutoff time for the warehouse.</description>
+				<persistence type="property"/>
+			  </attribute>
+			  <attribute type="boolean" qualifier="active">
+				<modifiers read="true" write="true" optional="false"/>
+				<description>Warehouse that is active or not.</description>
+				<persistence type="property"/>
+				<defaultvalue>Boolean.FALSE</defaultvalue>
+			  </attribute>
+			</attributes>
+		  </itemtype>
+		</typegroup>
+		<typegroup name="Consignment">
+		  <itemtype code="ConsignmentEntry" autocreate="false" generate="false">
+			<description>Extending ConsignmentEntry type with additional attributes.</description>
+			<attributes>
+			  <attribute type="serialProductCodes" qualifier="serialProductCodes">
+				<modifiers read="true" write="true"/>
+				<persistence type="property"/>
+			  </attribute>
+			</attributes>
+		  </itemtype>
+		</typegroup>
+	
         <typegroup name="BaseStore">
             <itemtype code="BaseStore" autocreate="false" generate="false">
                 <description>Extending BaseStore type with additional attributes.</description>
@@ -1549,9 +1839,27 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
-                </attributes>
+                    <attribute type="BlackOutDates" qualifier="blackOutDates">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <description>List of BlackOut Dates</description>
+                    </attribute>
+                </attributes>                
             </itemtype>
         </typegroup>
         <!-- BL-542 End-->
+        <!-- BL-718 : For setting default Billing address. -->
+        <typegroup name="Customer">
+            <itemtype code="Customer" autocreate="false" generate="false">
+            <description>Extending Customer type with additional attributes.</description>
+            <attributes>
+            <attribute autocreate="true" qualifier="defaultBillingAddress" type="Address">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>It holds information about customer default billing address</description>
+            </attribute>
+            </attributes>
+            </itemtype>
+        </typegroup>
 	</itemtypes>
 </items>

@@ -22,7 +22,25 @@
 						<cms:component component="${logo}"/>
 					</cms:pageSlot>
  <div class="mobile-right d-inline-block d-lg-none">  
-            <div class="nav-account"><a href="#">My Account</a></div>
+            <li class="nav-item dropdown  nav-account">
+                 <a class="nav-link dropdown-toggle" href="#" id="accountdropdown" data-bs-toggle="dropdown" aria-expanded="false"><spring:theme code="text.account.yourAccount"/></a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountdropdown">
+                   <h5><spring:theme code="text.account.yourAccount"/></h5>
+                    <ul>
+                      <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                        <li><a class="dropdown-item js-signUp-popup"  data-link="<c:url value='/login/register'/>" href="#" data-bs-toggle="modal"
+                         data-bs-target="#signUp"><spring:theme code="text.header.account.create.account" /></a></li>
+           	            <li><a class="dropdown-item js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#" data-bs-toggle="modal"
+           	             data-bs-target="#signIn"><spring:theme code="text.header.account.sign.in" /></a></li>
+                      </sec:authorize>
+                      <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                      <c:url value="/logout" var="signoutUrl" />
+                        <li><a class="dropdown-item" href="${signoutUrl}"><spring:theme code="text.header.account.sign.out" /></a></li>
+                      </sec:authorize>
+                      </ul>
+                  </div>
+
+            </li>
             <!-- BL-380 : Mini Cart Section for Mobile Device -->
             <div class="nav-cart">
 	            <cms:pageSlot position="MobileMiniCartSlot" var="component">
@@ -99,32 +117,25 @@
 
 <!-- modal for sign in -->
    <div class="modal fade signinbox" id="signIn" aria-hidden="true" aria-labelledby="..." tabindex="-1">
-   <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+      </div>
    </div>
-  </div>
     <!-- modal for sign up -->
     <div class="modal fade signinbox" id="signUp" aria-hidden="true" aria-labelledby="..." tabindex="-1">
-     <div class="modal-dialog modal-dialog-centered modal-sm">
-     </div>
+       <div class="modal-dialog modal-dialog-centered modal-sm">
+       </div>
     </div>
+
+    <!-- Get notify modal start-->
+    <div class="modal fade signinbox" id="getNotified" tabindex="-1" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered modal-sm">
+       </div>
+    </div>
+   <!-- Get notify modal end -->
 
     <!-- modal for forgot password -->
         <div class="modal fade signinbox" id="forgotPass" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title text-center"><img class="logo" src="${themeResourcePath}/assets/bl-logo@2x.png"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <h5>Forgot Password</h5>
-                  <p class="body14">Enter your email for us to send a lost password reminder.</p>
-                  <form>
-                    <input type="text" class="form-control mb-3" placeholder="Your Email">
-                    <button type="submit" class="btn btn-block btn-primary mt-4">Send Password</button>
-                    <p class="body14 text-center mb-0 mt-4"><a href="#">Sign In</a></p>
-                  </form>
-              </div>
-            </div>
-          </div>
+           <div class="modal-dialog modal-dialog-centered modal-sm">
+
+           </div>
         </div>

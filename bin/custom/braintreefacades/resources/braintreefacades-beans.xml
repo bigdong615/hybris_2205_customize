@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2000-2013 hybris AG
+ All rights reserved.
+
+ This software is the confidential and proprietary information of hybris
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with hybris.
+-->
+
+<!--
+	ATTENTION: This is just an example file. You have to edit it according to your needs.
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+
+    <bean class="de.hybris.platform.commercefacades.user.data.AddressData">
+		<property name="brainTreeAddressId" type="java.lang.String"/>
+	</bean>
+
+	<bean class="com.braintree.hybris.data.BrainTreeSubscriptionInfoData">
+		<property name="nonce" type="java.lang.String" />
+		<property name="paymentProvider" type="java.lang.String" />
+		<property name="addressData"
+			type="de.hybris.platform.commercefacades.user.data.AddressData" />
+		<property name="cardNumber" type="java.lang.String" />
+		<property name="cardType" type="java.lang.String" />
+		<property name="email" type="java.lang.String" />
+		<property name="deviceData" type="java.lang.String" />
+		<property name="liabilityShifted" type="java.lang.Boolean" />
+		<property name="savePaymentInfo" type="boolean"/>
+		<property name="shouldBeSaved" type="boolean"/>
+		<property name="paymentMethodToken" type="java.lang.String"/>
+		<property name="imageSource" type="java.lang.String"/>
+		<property name="expirationMonth" type="java.lang.String"/>
+		<property name="expirationYear" type="java.lang.String"/>
+		<property name="cardholder" type="java.lang.String"/>
+		<property name="cvv" type="java.lang.String"/>
+		<property name="defaultPaymentMethod" type="java.lang.Boolean"/>
+		<property name="paymentMethodId" type="java.lang.String"/>
+        <property name="intent" type="java.lang.String"/>
+        <property name="amount" type="java.lang.String"/>
+        <property name="braintreeAddressId" type="java.lang.String"/>
+	</bean>
+
+	<bean class="com.braintree.hybris.data.PayPalAddressData">
+		<property name="recipientName" type="java.lang.String" />
+		<property name="type" type="java.lang.String" />
+		<property name="streetAddress" type="java.lang.String" />
+		<property name="extendedAddress" type="java.lang.String" />
+		<property name="locality" type="java.lang.String" />
+		<property name="countryCodeAlpha2 " type="java.lang.String" />
+		<property name="postalCode" type="java.lang.String" />
+		<property name="region" type="java.lang.String" />
+		<property name="phone" type="java.lang.String" />
+		<property name="line1" type="java.lang.String" />
+		<property name="line2" type="java.lang.String" />
+		<property name="city" type="java.lang.String" />
+		<property name="countryCode" type="java.lang.String" />
+		<property name="state" type="java.lang.String" />
+	</bean>
+
+    <bean class="com.braintree.hybris.data.PayPalConfigurationData">
+        <property name="advancedFraudTools" type="java.lang.Boolean" />
+        <property name="secure3d" type="java.lang.Boolean"/>
+        <property name="environment" type="java.lang.String"/>
+        <property name="skip3dSecureLiabilityResult" type="java.lang.Boolean" />
+        <property name="dbaName" type="java.lang.String"/>
+        <property name="singleUse" type="java.lang.Boolean" />
+        <property name="storeInVault" type="java.lang.String"/>
+        <property name="locale" type="java.lang.String" />
+        <property name="currency" type="java.lang.String" />
+        <property name="intent" type="java.lang.String" />
+        <property name="applePayEnabled" type="java.lang.String"/>
+    </bean>
+
+	<bean class="com.braintree.hybris.data.PayPalCheckoutData" extends="PayPalConfigurationData">
+		<property name="amount" type="java.lang.Double" />
+		<property name="currency" type="java.lang.String" />
+		<property name="shippingAddressOverride" type="com.braintree.hybris.data.PayPalAddressData" />
+		<property name="enableShippingAddress" type="java.lang.Boolean" />
+	</bean>
+
+	<bean class="com.braintree.hybris.data.PayPalDetails">
+		<property name="email" type="java.lang.String" />
+		<property name="username" type="java.lang.String" />
+		<property name="payerId" type="java.lang.String" />
+		<property name="firstName" type="java.lang.String" />
+		<property name="lastName" type="java.lang.String" />
+		<property name="phone" type="java.lang.String" />
+		<property name="countryCode" type="java.lang.String" />
+		<property name="shippingAddress" type="com.braintree.hybris.data.PayPalAddressData" />
+		<property name="billingAddress" type="com.braintree.hybris.data.PayPalAddressData" />
+	</bean>
+
+	<bean class="com.braintree.hybris.data.PayPalExpressResponse">
+		<property name="nonce" type="java.lang.String" />
+		<property name="details" type="com.braintree.hybris.data.PayPalDetails" />
+        <property name="type" type="java.lang.String"/>
+    </bean>
+
+	<bean class="com.braintree.hybris.data.BrainTreePaymentInfoData">
+		<property name="email" type="java.lang.String" />
+		<property name="paymentType" type="java.lang.String" />
+		<property name="cardType" type="java.lang.String" />
+		<property name="cardNumber" type="java.lang.String" />
+	</bean>
+
+	<bean class="com.braintree.hybris.data.PayPalMiniCartResponse">
+		<property name="clientToken" type="java.lang.String" />
+		<property name="checkoutData" type="com.braintree.hybris.data.PayPalCheckoutData" />
+	</bean>
+
+    <bean class="com.braintree.hybris.data.BraintreeTransactionEntryData">
+        <property name="id" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="status" type="java.lang.String"/>
+        <property name="date" type="java.lang.String"/>
+        <property name="customer" type="java.lang.String"/>
+        <property name="paymentInfo" type="java.lang.String"/>
+        <property name="amount" type="java.lang.String"/>
+        <property name="total" type="java.math.BigDecimal"/>
+        <property name="currencyIsoCode" type="java.lang.String"/>
+        <property name="details" type="com.braintree.hybris.data.BraintreeTransactionEntryDetailData"/>
+        <property name="riskDecision" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.braintree.hybris.data.BraintreeTransactionEntryDetailData">
+        <property name="transactionInfo" type="com.braintree.hybris.data.BraintreeTransactionOriginEntryData"/>
+        <property name="paymentInfo" type="com.braintree.hybris.data.BraintreeTransactionEntryPaymentData"/>
+        <property name="paymentPayPalInfo" type="com.braintree.hybris.data.BraintreeTransactionEntryPayPalData"/>
+        <property name="customerInfo" type="com.braintree.hybris.data.BraintreeTransactionEntryCustomerData"/>
+    </bean>
+
+    <bean class="com.braintree.hybris.data.BraintreeTransactionEntryCustomerData">
+        <property name="customerID" type="java.lang.String"/>
+        <property name="name" type="java.lang.String"/>
+        <property name="email" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.braintree.hybris.data.BraintreeTransactionEntryPaymentData">
+        <property name="paymentType" type="java.lang.String"/>
+        <property name="cardType" type="java.lang.String"/>
+        <property name="cardholderName" type="java.lang.String"/>
+        <property name="creditCardNumber" type="java.lang.String"/>
+        <property name="expirationDate" type="java.lang.String"/>
+        <property name="token" type="java.lang.String"/>
+        <property name="uniqueNumberIdentifier" type="java.lang.String"/>
+    </bean>
+    <bean class="com.braintree.hybris.data.BraintreeTransactionEntryPayPalData">
+        <property name="paymentType" type="java.lang.String"/>
+        <property name="token" type="java.lang.String"/>
+        <property name="payerEmail" type="java.lang.String"/>
+        <property name="payerID" type="java.lang.String"/>
+        <property name="payerFirstName" type="java.lang.String"/>
+        <property name="payerLastName" type="java.lang.String"/>
+        <property name="payeeEmail" type="java.lang.String"/>
+        <property name="paymentID" type="java.lang.String"/>
+        <property name="authorizationUniqueTransactionID" type="java.lang.String"/>
+        <property name="payPalDebugID" type="java.lang.String"/>
+        <property name="payPalCustomField" type="java.lang.String"/>
+        <property name="payPalSellerProtectionStatus" type="java.lang.String"/>
+        <property name="payPalCaptureID" type="java.lang.String"/>
+        <property name="payPalRefundID" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.braintree.hybris.data.BraintreeTransactionOriginEntryData">
+        <property name="merchant" type="java.lang.String"/>
+        <property name="merchantAccount" type="java.lang.String"/>
+        <property name="amount" type="java.lang.String"/>
+        <property name="transactionDate" type="java.lang.String"/>
+		<property name="status" type="java.lang.String"/>
+        <property name="settlementBatch" type="java.lang.String"/>
+        <property name="processorAuthorizationCode" type="java.lang.String"/>
+        <property name="cvvResponse" type="java.lang.String"/>
+        <property name="avsResponse" type="java.lang.String"/>
+        <property name="refund" type="java.lang.String"/>
+        <property name="riskDecision" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.braintree.hybris.data.BraintreeTransactionData">
+        <property name="transactionEntries" type="java.util.List&lt;com.braintree.hybris.data.BraintreeTransactionEntryData&gt;"/>
+    </bean>
+
+    <bean class="com.braintree.hybris.data.BrainTreeResponseResultData">
+        <property name="success" type="boolean"/>
+        <property name="transactionId" type="java.lang.String"/>
+        <property name="transactionEntryData" type="BraintreeTransactionEntryData"/>
+        <property name="errorMessage" type="java.lang.String"/>
+        <property name="errorCode" type="java.lang.String"/>
+    </bean>
+
+    <bean class="com.braintree.hybris.data.BraintreeCustomerEntryData">
+        <property name="id" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="email" type="java.lang.String"/>
+        <property name="brayntreeCustomerId" type="java.lang.String"/>
+        <property name="customer" type="java.lang.String"/>
+    </bean>
+
+    <bean class="de.hybris.platform.commercefacades.order.data.CCPaymentInfoData">
+        <property name="paymentMethodToken" type="String"/>
+        <property name="cardholderName" type="String"/>
+        <property name="payer" type="String"/>
+        <property name="paymentMethodNonce" type="String"/>
+    </bean>
+</beans>

@@ -1,48 +1,31 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.model.ProductVideoModel;
-import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.product.data.ProductVideoData;
-import com.bl.facades.product.data.SerialProductData;
 
-import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.ImageData;
-import de.hybris.platform.commercefacades.product.data.PriceData;
-import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /*
- * This populator is used for populating bl related specific product attribute.
+ * This populator is used for populating bl Rental Product related specific product attribute.
  *  @author  Vijay Vishwakarma
  */
-public class BlProductPopulator implements Populator<BlProductModel, ProductData> {
+public class BlProductPopulator extends AbstractBlProductPopulator implements Populator<BlProductModel, ProductData> {
 
     private Converter<MediaModel, ImageData> imageConverter;
 
     private ModelService modelService;
     private Populator<BlProductModel, ProductData> blProductTagPopulator;
-    private PriceDataFactory priceDataFactory;
-    private CommonI18NService commonI18NService;
 
     @Override
     public void populate(final BlProductModel source, final ProductData target) {
@@ -52,10 +35,6 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
         target.setShortDescription(source.getShortDescription());
         target.setRentalVideosLink(
                 populateVideo(CollectionUtils.emptyIfNull(source.getRentalVideosLink())));
-        target.setUsedIncludes(source.getUsedIncludes());
-        target.setForSale(BooleanUtils.toBoolean(source.getForSale()));
-        target.setUsedGearVideosLink(
-                populateVideo(CollectionUtils.emptyIfNull(source.getUsedGearVideosLink())));
         target.setRentalNote(source.getDisplayNotes());
         final Collection<MediaModel> dataSheets = (Collection<MediaModel>) getModelService()
                 .getAttributeValue(source,
@@ -66,28 +45,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
         target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
-        target.setUsedDescription(source.getUsedDescription());  
-        //populates list of serial product data assigned to SKU
-        populateSerialProducts(source,target);
         getBlProductTagPopulator().populate(source, target);
-    }
-
-    /*
-     * This method used to populate video related information.
-     */
-    private List<ProductVideoData> populateVideo(final Collection<ProductVideoModel> populateVideos) {
-        final List<ProductVideoData> videoDataList = new ArrayList<>();
-        populateVideos.forEach(productVideoModel -> {
-                    ProductVideoData productVideoData = new ProductVideoData();
-                    productVideoData.setVideoName(productVideoModel.getVideoTitle());
-                    productVideoData.setVideoUrl(productVideoModel.getVideoLink());
-                    productVideoData.setVideoDuration(
-                            DurationFormatUtils.formatDuration(productVideoModel.getVideoDuration() * 1000,
-                                    BlFacadesConstants.TIME_FORMAT_STRING));
-                    videoDataList.add(productVideoData);
-                }
-        );
-        return videoDataList;
     }
 
     /*
@@ -102,63 +60,7 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
         }
         target.setDataSheet(imageList);
     }
-
-    /*
-     * This method is used for populating serial product.
-     */
-    private void populateSerialProducts(final BlProductModel source, final ProductData target) {
-   	 final List<SerialProductData> serialProductDataList = new ArrayList<>();
-   	 final List<BlSerialProductModel> blSerialProductModels = (List<BlSerialProductModel>) CollectionUtils.emptyIfNull(source.getSerialProducts());
-        blSerialProductModels.forEach(serialProductModel -> {
-                    SerialProductData serialProductData = new SerialProductData();
-            if (serialProductModel.getConditionRatingOverallScore() != null) {
-                serialProductData
-                    .setConditionRating(
-                        serialProductModel.getConditionRatingOverallScore() + BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
-            } else {
-                serialProductData.setConditionRating(BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
-            }
-                    serialProductData.setSerialId(serialProductModel.getProductId());
-                    if(PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice())) {
-                  	  serialProductData.setFinalSalePrice(getProductPriceData(serialProductModel.getFinalSalePrice()));
-                    }
-                    if(PredicateUtils.notNullPredicate().evaluate(serialProductModel.getIncentivizedPrice())) {
-                  	  serialProductData.setFinalIncentivizedPrice(getProductPriceData(serialProductModel.getIncentivizedPrice()));
-                  	  target.setHasIncentivizedPrice(Boolean.TRUE);
-                    }
-                    serialProductDataList.add(serialProductData);
-                }
-        );
-        sortSerialBasedOnConditionRating(serialProductDataList);
-        target.setSerialproducts(serialProductDataList);
-    }
     
-    /**
-     * Sorting serial products in Ascending Order based on condition rating.
-     *
-     * @param serialProductDataList the serial product data list
-     * @return the list
-     */
-    private List<SerialProductData> sortSerialBasedOnConditionRating(final List<SerialProductData> serialProductDataList)
-    {
-   	 if (CollectionUtils.isNotEmpty(serialProductDataList))
-       {
-         Comparator<SerialProductData> serialProductDataComparator=Comparator.comparing(SerialProductData::getConditionRating);
-         Collections.sort(serialProductDataList, serialProductDataComparator);
-       }
-       return serialProductDataList;
-   }
-
-  /**
-     * Gets the product price data.
-     *
-     * @param priceValue the price value
-     * @return the product price data
-     */
-    private PriceData getProductPriceData(final BigDecimal priceValue){
-   		return getPriceDataFactory().create(PriceDataType.BUY, priceValue, getCommonI18NService().getCurrentCurrency());
-   		}
-
     public ModelService getModelService() {
         return modelService;
     }
@@ -183,39 +85,6 @@ public class BlProductPopulator implements Populator<BlProductModel, ProductData
     public void setBlProductTagPopulator(Populator<BlProductModel, ProductData> blProductTagPopulator) {
         this.blProductTagPopulator = blProductTagPopulator;
     }
-
-	/**
-	 * @return the priceDataFactory
-	 */
-	public PriceDataFactory getPriceDataFactory()
-	{
-		return priceDataFactory;
-	}
-
-	/**
-	 * @param priceDataFactory the priceDataFactory to set
-	 */
-	public void setPriceDataFactory(PriceDataFactory priceDataFactory)
-	{
-		this.priceDataFactory = priceDataFactory;
-	}
-
-	/**
-	 * @return the commonI18NService
-	 */
-	public CommonI18NService getCommonI18NService()
-	{
-		return commonI18NService;
-	}
-
-	/**
-	 * @param commonI18NService the commonI18NService to set
-	 */
-	public void setCommonI18NService(CommonI18NService commonI18NService)
-	{
-		this.commonI18NService = commonI18NService;
-	}
-
 
 }
 

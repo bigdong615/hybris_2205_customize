@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2000-2015 hybris AG
+ All rights reserved.
+
+ This software is the confidential and proprietary information of hybris
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with hybris.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd">
+           
+    <context:annotation-config/>
+
+	<!-- Order Process Actions -->
+
+	<bean id="abstractOrderAction" class="com.braintree.actions.order.AbstractOrderAction"  abstract="true" parent="abstractAction">
+		<property name="timeService" ref="timeService"/>
+	</bean>
+
+	<bean id="checkOrderAction" class="com.braintree.actions.order.CheckOrderAction"  parent="abstractAction">
+		<property name="checkOrderService" ref="checkOrderService"/>
+	</bean>
+
+	<bean id="cancelWholeOrderAuthorizationAction" class="com.braintree.actions.order.CancelWholeOrderAuthorizationAction"
+            parent="abstractAction">
+		<property name="paymentService" ref="paymentService"/>
+    </bean>
+
+	<bean id="sendOrderPlacedNotificationAction" class="com.braintree.actions.order.SendOrderPlacedNotificationAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="sendPaymentFailedNotificationAction" class="com.braintree.actions.order.SendPaymentFailedNotificationAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="checkTransactionReviewStatusAction" class="com.braintree.actions.order.CheckTransactionReviewStatusAction"  parent="abstractAction">
+		<property name="ticketBusinessService" ref="ticketBusinessService"/>
+	</bean>
+
+	<bean id="fraudCheckOrderAction" class="com.braintree.actions.order.FraudCheckOrderAction"  parent="abstractOrderAction">
+		<property name="fraudService" ref="fraudService"/>
+		<property name="providerName" value="Mockup_3rdPartyProvider"/>
+	</bean>
+
+	<bean id="prepareOrderForManualCheckAction" class="com.braintree.actions.order.PrepareOrderForManualCheckAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="sendFraudErrorNotificationAction" class="com.braintree.actions.order.SendFraudErrorNotificationAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="checkAuthorizeOrderPaymentAction" class="com.braintree.actions.order.CheckAuthorizeOrderPaymentAction"  parent="abstractAction"/>
+
+	<bean id="sendAuthorizationFailedNotificationAction" class="com.braintree.actions.order.SendAuthorizationFailedNotificationAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="reserveOrderAmountAction" class="com.braintree.actions.order.ReserveOrderAmountAction"  parent="abstractAction"/>
+
+	<bean id="fraudCheckOrderInternalAction" class="com.braintree.actions.order.FraudCheckOrderInternalAction"  parent="abstractOrderAction">
+		<property name="fraudService" ref="fraudService"/>
+		<property name="providerName" value="hybris"/>
+	</bean>
+
+	<bean id="brainTreeOrderManualCheckedAction" class="com.braintree.actions.order.OrderManualCheckedAction"  parent="abstractOrderAction"/>
+
+	<bean id="splitOrderAction" class="com.braintree.actions.order.SplitOrderAction"  parent="abstractAction">
+		<property name="orderSplittingService" ref="orderSplittingService"/>
+		<property name="businessProcessService" ref="businessProcessService"/>
+	</bean>
+
+	<bean id="subprocessesCompletedAction" class="com.braintree.actions.order.SubprocessesCompletedAction"  parent="abstractAction"/>
+
+	<bean id="sendOrderCompletedNotificationAction" class="com.braintree.actions.order.SendOrderCompletedNotificationAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<bean id="scheduleForCleanUpAction" class="com.braintree.actions.order.ScheduleForCleanUpAction"  parent="abstractAction">
+		<property name="timeService" ref="timeService"/>
+	</bean>
+
+	<bean id="notifyCustomerAboutFraudAction" class="com.braintree.actions.order.NotifyCustomerAboutFraudAction"  parent="abstractAction">
+		<property name="eventService" ref="eventService"/>
+	</bean>
+
+	<alias alias="takePaymentAction" name="brainTreeTakePaymentAction" />
+	<bean id="brainTreeTakePaymentAction" class="com.braintree.actions.order.BrainTreeTakePaymentAction" parent="abstractAction">
+		<property name="paymentService" ref="paymentService" />
+		<property name="configService" ref="brainTreeConfigService" />
+	</bean>
+
+	<bean id="brainTreeGoToSubmitForSettlementAction" class="com.braintree.actions.order.BrainTreeGoToSubmitForSettlementAction" parent="abstractAction">
+		<property name="brainTreeConfigService" ref="brainTreeConfigService" />
+	</bean>
+
+
+</beans>

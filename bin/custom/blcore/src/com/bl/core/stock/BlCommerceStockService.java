@@ -6,8 +6,12 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import com.bl.core.data.StockResult;
+import com.bl.facades.product.data.RentalDateDto;
+import java.util.Set;
 
 
 /**
@@ -26,6 +30,18 @@ public interface BlCommerceStockService
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
 	 */
 	Collection<StockLevelModel> getStockForDate(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate);
+
+	/**
+	 * This is to get the stock details for a collection of SKUs for the given date range
+	 *
+	 * @param productCodes the product code
+	 * @param warehouse the warehouse
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
+	 */
+	Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes, final WarehouseModel warehouse,
 			final Date startDate, final Date endDate);
 
 	/**
@@ -69,15 +85,96 @@ public interface BlCommerceStockService
 			final Date startDate, final Date endDate);
 
 	/**
-	 * It checks whether the serial product is not assigned to any rental orders
+	 * It checks whether the serial product is not assigned to any rental orders.
 	 *
-	 * @param serialProductCode
-	 *           the serial product code
-	 * @param productCode
-	 *           the sku product code
-	 * @param productCode
-	 *           the sku product code
+	 * @param serialProductCode           the serial product code
+	 * @param productCode           the sku product code
 	 * @return boolean
 	 */
 	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode);
+
+	/**
+	 * Gets the next availability date for the product against the quantity to check.
+	 *
+	 * @param productCode
+	 *           the product code
+	 * @param dates
+	 *           the dates
+	 * @param warehouses
+	 *           the warehouses
+	 * @param qtyToCheck
+	 *           the qty to check
+	 * @return the next availability date
+	 */
+	public Date getNextAvailabilityDate(final String productCode, final RentalDateDto dates,
+			final Collection<WarehouseModel> warehouses, final int qtyToCheck);
+
+	/**
+	 * Gets the list of stocks for product codes and dates.
+	 *
+	 * @param productCodes
+	 *           the product codes
+	 * @param warehouses
+	 *           the warehouses
+	 * @param startDate
+	 *           the start date
+	 * @param endDate
+	 *           the end date
+	 * @return the stock for product codes and date
+	 */
+	Collection<StockLevelModel> getStockForProductCodesAndDate(final List<String> productCodes,
+			final List<WarehouseModel> warehouses, final Date startDate, final Date endDate);
+
+	/**
+	 * Grouping the products availability by product codes.
+	 *
+	 * @param startDate
+	 *           the start date
+	 * @param endDate
+	 *           the end date
+	 * @param lProductCodes
+	 *           the l product codes
+	 * @param warehouses
+	 *           the warehouses
+	 * @return the map
+	 */
+	Map<String, Long> groupByProductsAvailability(final Date startDate, final Date endDate, final List<String> lProductCodes,
+			final List<WarehouseModel> warehouses);
+
+	/**
+	 * Gets the next availability date for the product on checkout by subtracting one day from available date.
+	 *
+	 * @param productCode
+	 *           the product code
+	 * @param rentalDates
+	 *           the rental dates
+	 * @param warehouses
+	 *           the warehouses
+	 * @param qtyToCheck
+	 *           the qty to check
+	 * @return the next availability date
+	 */
+	String getNextAvailabilityDateInCheckout(final String productCode, final RentalDateDto rentalDates,
+			final Collection<WarehouseModel> warehouses, final int qtyToCheck);
+
+	/**
+	 * Gets the next availability date for the product on PDP.
+	 *
+	 * @param productCode
+	 *           the product code
+	 * @param rentalDate
+	 *           the rental date
+	 * @return the next availability date for PDP
+	 */
+	String getNextAvailabilityDateInPDP(final String productCode, final RentalDateDto rentalDate);
+	
+	/**
+	 * This method returns the map of sku product with their stock levels. It takes all stock levels
+	 * and group it by product sku with their respective stock levels and add it in Map.
+	 *
+	 * @param stockLevels the stockLevels
+	 * @return map of stock levels group by product codes.
+	 */
+	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
+			final Collection<StockLevelModel> stockLevels);
 }

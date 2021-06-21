@@ -68,7 +68,7 @@ public void populateLocatorRequest(final LocatorRequest locatorRequest,final UPS
   locatorRequest.setTranslate(translate);
 
   UnitOfMeasurementType unit = new UnitOfMeasurementType();
-  unit.setCode("MI");
+  unit.setCode(measurementUnit);
   locatorRequest.setUnitOfMeasurement(unit);
 
   LocationSearchCriteriaType location = new LocationSearchCriteriaType();

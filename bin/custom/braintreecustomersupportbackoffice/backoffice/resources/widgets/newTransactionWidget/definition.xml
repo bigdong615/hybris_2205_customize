@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<widget-definition id="com.braintreecustomerbackoffice.widgets.newTransactionWidget"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+	<name>New transaction widget</name>
+	<description>New transaction widget.</description>
+	<defaultTitle>New transaction</defaultTitle>
+	<author>braintree</author>
+	<version>0.1</version>
+
+	<view src="newTransactionWidget.html" />
+
+	<sockets>
+		<input id="incomingMsg" type="java.lang.String" />
+		<output id="newTransactionOutput" type="java.lang.String" />
+	</sockets>
+
+</widget-definition>

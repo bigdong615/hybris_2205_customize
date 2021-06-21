@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:noNamespaceSchemaLocation="items.xsd">
+
+	<itemtypes>
+		<itemtype code="BrainTreeBackofficeTransactionDetail" autocreate="true" generate="true">
+			<deployment table="btboTransactionDetail" typecode="11011"/>
+			<attributes>
+				<attribute qualifier="braintreeTransactionDetailID" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailMerchant" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailMerchantAccount" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailAmount" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailTransactionDate" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailStatus" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailType" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailSettlementBatch" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailProcessorAuthorizationCode" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailCvvResponse" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailAvsResponse" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionCustomerID" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionCustomerEmail" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailPaymentType" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailCreditCartInfo" type="TransactionCreditCardInfo">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailPayPalInfo" type="TransactionPayPalInfo">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailLinkedOrder" type="Order">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailRefund" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailRiskDecision" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailDateFrom" type="java.util.Date">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+				<attribute qualifier="braintreeTransactionDetailDateTo" type="java.util.Date">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true" />
+				</attribute>
+			</attributes>
+		</itemtype>
+		<itemtype code="BrainTreeBackofficeTransactionCustomer" autocreate="true" generate="true">
+			<description>Customer Information attributes</description>
+			<deployment table="btboTransactionCustomer" typecode="11012"/>
+			<attributes>
+				<attribute qualifier="braintreeTransactionCustomerID" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true"/>
+				</attribute>
+				<attribute qualifier="braintreeTransactionCustomerName" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true"/>
+				</attribute>
+				<attribute qualifier="braintreeTransactionCustomerEmail" type="java.lang.String">
+					<persistence type="property"></persistence>
+					<modifiers read="true" write="true" optional="true"/>
+				</attribute>
+			</attributes>
+		</itemtype>
+	</itemtypes>
+</items>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+
 -->
 <extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
                                                                                                                                                                                                                                                                                                                                                                                                                                                 	
    <extension abstractclassprefix="Generated" classprefix="BlStorefront" name="blstorefront" usemaven="false"> 
-    
-	   <requires-extension name="selectivecartsplitlistaddon"/>
+
 	   <requires-extension name="personalizationaddon"/>
 	   <requires-extension name="smarteditaddon"/>
 	   <requires-extension name="promotionenginesamplesaddon"/>
@@ -20,7 +20,6 @@
 	   <requires-extension name="personalizationsampledataaddon"/>
 	   <requires-extension name="pcmbackofficesamplesaddon"/>
 	   <requires-extension name="notificationaddon"/>
-	   <requires-extension name="customerinterestsaddon"/>
 	   <requires-extension name="customercouponsamplesaddon"/>
 	   <requires-extension name="customercouponaddon"/>
 	   <requires-extension name="consignmenttrackingaddon"/>
@@ -28,9 +27,21 @@
 	   <requires-extension name="adaptivesearchsamplesaddon"/>
 	   <requires-extension name="acceleratorstorefrontcommons"/>
 	   <requires-extension name="blfacades"/>
-	   
-	   <webmodule jspcompile="false" webroot="/blstorefront"/>
-	   <meta key="extgen-template-extension" value="true"/>
-   
-   </extension>
+		 <requires-extension name="textfieldconfiguratortemplateaddon"/>
+		 <requires-extension name="stocknotificationaddon"/>
+		 <requires-extension name="personalizationsampledataaddon"/>
+		 <requires-extension name="pcmbackofficesamplesaddon"/>
+     <requires-extension name="notificationaddon"/>
+     <requires-extension name="customerinterestsaddon"/>
+     <requires-extension name="customercouponsamplesaddon"/>
+     <requires-extension name="customercouponaddon"/>
+     <requires-extension name="consignmenttrackingaddon"/>
+     <requires-extension name="assistedservicepromotionaddon"/>
+     <requires-extension name="adaptivesearchsamplesaddon"/>
+     <requires-extension name="acceleratorstorefrontcommons"/>
+     <requires-extension name="blfacades"/>
+     <requires-extension name="braintreeaddon"/>
+     <webmodule jspcompile="false" webroot="/blstorefront"/>
+     <meta key="extgen-template-extension" value="true"/>
+	 </extension>
 </extensioninfo>

@@ -11,4 +11,4 @@ INSERT_UPDATE CatalogVersion; catalog(id)[unique=true] ; version[unique=true]; r
                             ; blProductCatalog; Staged              ; backofficeproductmanagergroup   ; backofficeproductmanagergroup
                             ; blProductCatalog; Online              ; backofficeproductmanagergroup   ; backofficeproductmanagergroup
                             ; blClassification; 1.0                 ;backofficeproductmanagergroup    ; backofficeproductmanagergroup
-                            ; blClassification; 1.0                 ;blbackofficeproductmanager       ; blproductmanager
+                            ; blClassification; 1.0                 ;blproductmanager       ; blproductmanager

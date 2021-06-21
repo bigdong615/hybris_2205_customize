@@ -43,7 +43,10 @@
                                                           <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY'}">
                                                                 <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
                                                                 <c:set value="this is alternate" var="altTextHtml"/>
-                                                                     <li class="splide__slide"><img src="${primaryImagePdpUrl}"></li>
+                                                                <!--BL-534: added <a> tag-->
+                                                                    <li class="splide__slide">
+                                                                      <c:url var="rentalPDPUrl" value="/rent/product/${productReference.target.code}"/>
+                                                                       <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}"></a</li> 
                                                           </c:if>
                                                        </c:forEach>
                                                        </ul>
@@ -71,9 +74,9 @@
                                                           </c:when>
                                                            <c:otherwise>
                                                                 <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
-                                                                    <input type="hidden" maxlength="3" size="1" id="qty" name="qty" class="qty js-qty-selector-input" value="1">
-                                                                    <input type="hidden" name="productCodePost" id="productCodePost" value="${productReference.target.code}">
-                                                                    <button id="addToCartButton" type="submit" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-enable-btn" data-bs-toggle="modal" data-bs-target="#addToCart">
+                                                                  <!--BL-605 removed bootstrap class from below-->
+                                                                    <button type="button" class="btn btn-primary btn-block js-add-to-cart" data-bs-toggle="modal"
+                                                                       data-bs-target="#addToCart" data-product-code="${product.code}">
                                                                       <spring:theme code="pdp.rental.product.recommendation.section.addtorental.text" />
                                                                     </button>
                                                                 </form>

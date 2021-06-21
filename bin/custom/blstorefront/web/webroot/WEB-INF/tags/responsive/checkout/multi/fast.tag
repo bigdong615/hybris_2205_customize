@@ -23,27 +23,48 @@
         <div class="collapse show" id="ship-it-expand" data-bs-parent="#shippingOptions">
             <div class="tab-container">
                 <div class="tab-navigation">
-                  <select id="ship-it-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfShipItShippingMethod()">
-                    <option value="SHIP_HOME_HOTEL_BUSINESS"><spring:theme code="text.checkout.multi.order.delivery.fast.ship.to.address.group"/></option>
-                    <option value="SHIP_HOLD_UPS_OFFICE"><spring:theme code="text.checkout.multi.order.delivery.fast.ship.to.ups.location.group"/></option>
-                  </select>
+                    <select id="ship-it-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfShipItShippingMethod()">
+                        <c:forEach items="${shippingGroup}" var="entry" varStatus="loop">
+                            <c:if test="${entry.shippingType eq 'FAST'}">
+                                <c:choose>
+                                    <c:when test="${entry.defaultShippingGroup}">
+                                        <option value="${entry.code}" selected="selected"> ${entry.name} </option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${entry.code}"> ${entry.name} </option>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
+                        </c:forEach>
+                    </select>
                 </div>
                 <div id="tab-SHIP_HOME_HOTEL_BUSINESS" class="ship-it-tab-content">
                     <checkout:addressForm />
-                    <b class="mt-4"><spring:theme code="text.ship.it.available.delivery.methods"/></b>
-                    <div id="shipToHomeShippingMethods"></div>
-                </div>
-                <div id="tab-SHIP_HOLD_UPS_OFFICE" class="ship-it-tab-content">
-                    <b class="mt-4"><spring:theme code="text.ship.it.ups.find.nearest.location"/></b>
-                    <div class="input-group mt-2 mb-5">
-                      <input id="ship-it-ups-zip-code" type="text" class="form-control" placeholder="Zip code">
-                      <div class="input-group-append">
-                        <button class="btn btn-secondary" type="button" onClick="onClickOfFindStore()">
-                            <spring:theme code="text.ship.it.ups.find.store"/>
-                        </button>
-                      </div>
+                    <div id="ship-it-save-address-div">
+                        <input type="checkbox" id="ship-it-save-address" checked>
+                        <label for="ship-it-save-address">
+                            <span class="gray80"><spring:theme code="text.add.new.shipping.save.address"/></span>
+                        </label>
                     </div>
-                    <div id="ship-it-SHIP_HOLD_UPS_OFFICE">
+                    <b class="mt-4"><spring:theme code="text.ship.it.available.delivery.methods"/></b>
+                    <div id="shipToHomeShippingMethods" class="sub-option"></div>
+                </div>
+                <div id="tab-SHIP_UPS_OFFICE" class="ship-it-tab-content">
+                    <div id="shipToUPSShippingMethods">
+
+                    </div>
+                    <div id="checkZipForUPSPickup" style="display:none;">
+                        <b class="mt-4"><spring:theme code="text.ship.it.ups.find.nearest.location"/></b>
+                        <div class="input-group mt-2 mb-5">
+                          <input id="ship-it-ups-zip-code" type="text" class="form-control" placeholder="Zip code">
+                          <div class="input-group-append">
+                            <button class="btn btn-secondary" type="button" onClick="onClickOfFindStore()">
+                                <spring:theme code="text.ship.it.ups.find.store"/>
+                            </button>
+                          </div>
+                        </div>
+                    </div>
+                    <div id="ship-it-SHIP_UPS_OFFICE">
 
                     </div>
                     <div id="changeUPSStoreButton" class="text-end mb-4">
@@ -78,6 +99,7 @@
                     </div>
                 </div>
                 <div id="ship-it-notification"></div>
+                <div id="ship-it-am-notification"></div>
             </div>
         </div>
     </div>

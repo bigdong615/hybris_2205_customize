@@ -6,7 +6,6 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.storefront.controllers.pages.checkout.BlAddressCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
-import com.bl.storefront.forms.BlPickUpByForm;
 import com.bl.storefront.util.BlAddressDataUtil;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateQuoteCheckoutStep;
@@ -42,383 +41,298 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/checkout/multi/delivery-address")
-public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepController implements BlAddressCheckoutStepController
-{
-	private static final String DELIVERY_ADDRESS = "delivery-address";
-	private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
+public class DeliveryAddressCheckoutStepController extends AbstractCheckoutStepController implements BlAddressCheckoutStepController {
+    private static final String DELIVERY_ADDRESS = "delivery-address";
+    private static final String SHOW_SAVE_TO_ADDRESS_BOOK_ATTR = "showSaveToAddressBook";
 
-	@Resource(name = "blAddressDataUtil")
-	private BlAddressDataUtil addressDataUtil;
+    @Resource(name = "blAddressDataUtil")
+    private BlAddressDataUtil addressDataUtil;
 
-	@Resource(name = "checkoutFacade")
-	private BlCheckoutFacade checkoutFacade;
+    /**
+     * This method gets called when the "Use this Address" button is clicked. It sets the selected delivery address on
+     * the checkout facade - if it has changed, and reloads the page highlighting the selected delivery address.
+     *
+     * @param selectedAddressCode - the id of the delivery address.
+     * @return - a URL to the page to load.
+     */
+    @GetMapping(value = "/select")
+    @RequireHardLogIn
+    @ResponseBody
+    public String doSelectDeliveryAddress(@RequestParam("selectedAddressCode") final String selectedAddressCode,
+                                          final RedirectAttributes redirectAttributes) {
+        final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
+        if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
+            return getCheckoutStep().onValidation(validationResults);
+        }
+        if (StringUtils.isNotBlank(selectedAddressCode)) {
+            final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
+            final boolean hasSelectedAddressData = selectedAddressData != null;
+            if (hasSelectedAddressData) {
+                setDeliveryAddress(selectedAddressData);
+            }
+        }
+        return "SUCCESS";
+    }
 
-	/**
-	 * This method gets called when the "Use this Address" button is clicked. It sets the selected delivery address on
-	 * the checkout facade - if it has changed, and reloads the page highlighting the selected delivery address.
-	 *
-	 * @param selectedAddressCode
-	 *           - the id of the delivery address.
-	 *
-	 * @return - a URL to the page to load.
-	 */
-	@GetMapping(value = "/select")
-	@RequireHardLogIn
-	@ResponseBody
-	public String doSelectDeliveryAddress(@RequestParam("selectedAddressCode") final String selectedAddressCode,
-										  final RedirectAttributes redirectAttributes)
-	{
-		final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
-		if (getCheckoutStep().checkIfValidationErrors(validationResults))
-		{
-			return getCheckoutStep().onValidation(validationResults);
-		}
-		if (StringUtils.isNotBlank(selectedAddressCode))
-		{
-			final AddressData selectedAddressData = getCheckoutFacade().getDeliveryAddressForCode(selectedAddressCode);
-			final boolean hasSelectedAddressData = selectedAddressData != null;
-			if (hasSelectedAddressData)
-			{
-				setDeliveryAddress(selectedAddressData);
-			}
-		}
-		return "SUCCESS";
-	}
+    protected void setDeliveryAddress(final AddressData selectedAddressData) {
+        final AddressData cartCheckoutDeliveryAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
+        if (isAddressIdChanged(cartCheckoutDeliveryAddress, selectedAddressData)) {
+            getCheckoutFacade().setDeliveryAddress(selectedAddressData);
+            if (cartCheckoutDeliveryAddress != null && !cartCheckoutDeliveryAddress.isVisibleInAddressBook()) {
+            	// temporary address should be removed
+                getUserFacade().removeAddress(cartCheckoutDeliveryAddress);
+            }
+        }
+    }
 
-	protected void setDeliveryAddress(final AddressData selectedAddressData)
-	{
-		final AddressData cartCheckoutDeliveryAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
-		if (isAddressIdChanged(cartCheckoutDeliveryAddress, selectedAddressData))
-		{
-			getCheckoutFacade().setDeliveryAddress(selectedAddressData);
-			if (cartCheckoutDeliveryAddress != null && !cartCheckoutDeliveryAddress.isVisibleInAddressBook())
-			{ // temporary address should be removed
-				getUserFacade().removeAddress(cartCheckoutDeliveryAddress);
-			}
-		}
-	}
+    @PostMapping(value = "/add")
+    @RequireHardLogIn
+    @ResponseBody
+    public String add(@RequestBody final AddressForm addressForm, final BindingResult bindingResult, final Model model,
+                      final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
+        final CartData cartData = getCheckoutFacade().getCheckoutCart();
+        getAddressValidator().validate(addressForm, bindingResult);
+        populateCommonModelAttributes(model, cartData, addressForm);
+        if (bindingResult.hasErrors()) {
+            GlobalMessages.addErrorMessage(model, "address.error.formentry.invalid");
+            return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
+        }
+        final AddressData newAddress = addressDataUtil.convertToAddressData(addressForm);
+        processAddressVisibilityAndDefault(addressForm, newAddress);
 
-	@PostMapping(value = "/addPickUpDetails")
-	@RequireHardLogIn
-	@Override
-	@ResponseBody
-	public String savePickUpByFormOnCart(@RequestBody final BlPickUpByForm blPickUpByForm, final BindingResult bindingResult,
-										 final Model model, final RedirectAttributes redirectModel) {
-		if (blPickUpByForm != null) {
-			getCheckoutFacade().savePickUpInfoOnCart(blPickUpByForm);
-			return "SUCCESS";
-		}
-		return "ERROR";
-	}
+        // Verify the address data.
+        final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
+                .verifyAddressData(newAddress);
+        final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
+                model, redirectModel, bindingResult, getAddressVerificationFacade().isCustomerAllowedToIgnoreAddressSuggestions(),
+                "checkout.multi.address.updated");
 
-	@PostMapping(value = "/removeDeliveryDetails")
-	@RequireHardLogIn
-	@Override
-	@ResponseBody
-	public String removeDeliveryDetailsFromCart() {
-		return getCheckoutFacade().removeDeliveryDetails();
-	}
+        if (addressRequiresReview) {
+            return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
+        }
 
-	@PostMapping(value = "/add")
-	@RequireHardLogIn
-	@ResponseBody
-	public String add(@RequestBody final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
-					  final RedirectAttributes redirectModel) throws CMSItemNotFoundException
-	{
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
+        getUserFacade().addAddress(newAddress);
 
-		getAddressValidator().validate(addressForm, bindingResult);
-		populateCommonModelAttributes(model, cartData, addressForm);
+        final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
+        // Set the new address as the selected checkout delivery address
+        getCheckoutFacade().setDeliveryAddress(newAddress);
+        if (previousSelectedAddress != null && !previousSelectedAddress.isVisibleInAddressBook()) { // temporary address should be removed
+            getUserFacade().removeAddress(previousSelectedAddress);
+        }
 
-		if (bindingResult.hasErrors())
-		{
-			GlobalMessages.addErrorMessage(model, "address.error.formentry.invalid");
-			return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
-		}
+        // Set the new address as the selected checkout delivery address
+        getCheckoutFacade().setDeliveryAddress(newAddress);
 
-		final AddressData newAddress = addressDataUtil.convertToAddressData(addressForm);
+        return getCheckoutStep().nextStep();
+    }
 
-		processAddressVisibilityAndDefault(addressForm, newAddress);
+    protected void processAddressVisibilityAndDefault(final AddressForm addressForm, final AddressData newAddress) {
+        if (addressForm.getSaveInAddressBook() != null) {
+            newAddress.setVisibleInAddressBook(addressForm.getSaveInAddressBook().booleanValue());
+            if (addressForm.getSaveInAddressBook().booleanValue() && CollectionUtils.isEmpty(getUserFacade().getAddressBook())) {
+                newAddress.setDefaultAddress(true);
+            }
+        } else if (getCheckoutCustomerStrategy().isAnonymousCheckout()) {
+            newAddress.setDefaultAddress(true);
+            newAddress.setVisibleInAddressBook(true);
+        }
+    }
 
-		// Verify the address data.
-		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
-				.verifyAddressData(newAddress);
-		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
-				model, redirectModel, bindingResult, getAddressVerificationFacade().isCustomerAllowedToIgnoreAddressSuggestions(),
-				"checkout.multi.address.updated");
+    @Override
+    @GetMapping(value = "/add")
+    @RequireHardLogIn
+    @PreValidateQuoteCheckoutStep
+    @PreValidateCheckoutStep(checkoutStep = DELIVERY_ADDRESS)
+    public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        getCheckoutFacade().setDeliveryAddressIfAvailable();
+        final CartData cartData = getCheckoutFacade().getCheckoutCart();
 
-		if (addressRequiresReview)
-		{
-			return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
-		}
+        populateCommonModelAttributes(model, cartData, new AddressForm());
 
-		getUserFacade().addAddress(newAddress);
+        return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+    }
 
-		final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
-		// Set the new address as the selected checkout delivery address
-		getCheckoutFacade().setDeliveryAddress(newAddress);
-		if (previousSelectedAddress != null && !previousSelectedAddress.isVisibleInAddressBook())
-		{ // temporary address should be removed
-			getUserFacade().removeAddress(previousSelectedAddress);
-		}
+    @GetMapping(value = "/edit")
+    @RequireHardLogIn
+    public String editAddressForm(@RequestParam("editAddressCode") final String editAddressCode, final Model model,
+                                  final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
+        if (getCheckoutStep().checkIfValidationErrors(validationResults)) {
+            return getCheckoutStep().onValidation(validationResults);
+        }
 
-		// Set the new address as the selected checkout delivery address
-		getCheckoutFacade().setDeliveryAddress(newAddress);
+        AddressData addressData = null;
+        if (StringUtils.isNotEmpty(editAddressCode)) {
+            addressData = getCheckoutFacade().getDeliveryAddressForCode(editAddressCode);
+        }
 
-		return getCheckoutStep().nextStep();
-	}
+        final AddressForm addressForm = new AddressForm();
+        final boolean hasAddressData = addressData != null;
+        if (hasAddressData) {
+            addressDataUtil.convert(addressData, addressForm);
+        }
 
-	protected void processAddressVisibilityAndDefault(final AddressForm addressForm, final AddressData newAddress)
-	{
-		if (addressForm.getSaveInAddressBook() != null)
-		{
-			newAddress.setVisibleInAddressBook(addressForm.getSaveInAddressBook().booleanValue());
-			if (addressForm.getSaveInAddressBook().booleanValue() && CollectionUtils.isEmpty(getUserFacade().getAddressBook()))
-			{
-				newAddress.setDefaultAddress(true);
-			}
-		}
-		else if (getCheckoutCustomerStrategy().isAnonymousCheckout())
-		{
-			newAddress.setDefaultAddress(true);
-			newAddress.setVisibleInAddressBook(true);
-		}
-	}
+        final CartData cartData = getCheckoutFacade().getCheckoutCart();
+        populateCommonModelAttributes(model, cartData, addressForm);
 
-	@Override
-	@GetMapping(value = "/add")
-	@RequireHardLogIn
-	@PreValidateQuoteCheckoutStep
-	@PreValidateCheckoutStep(checkoutStep = DELIVERY_ADDRESS)
-	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
-	{
-		getCheckoutFacade().setDeliveryAddressIfAvailable();
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
+        if (addressData != null) {
+            model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.valueOf(!addressData.isVisibleInAddressBook()));
+        }
 
-		populateCommonModelAttributes(model, cartData, new AddressForm());
+        return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+    }
 
-		return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
-	}
+    @PostMapping(value = "/edit")
+    @RequireHardLogIn
+    public String edit(final AddressForm addressForm, final BindingResult bindingResult, final Model model,
+                       final RedirectAttributes redirectModel) throws CMSItemNotFoundException {
+        getAddressValidator().validate(addressForm, bindingResult);
 
-	@GetMapping(value = "/edit")
-	@RequireHardLogIn
-	public String editAddressForm(@RequestParam("editAddressCode") final String editAddressCode, final Model model,
-			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
-	{
-		final ValidationResults validationResults = getCheckoutStep().validate(redirectAttributes);
-		if (getCheckoutStep().checkIfValidationErrors(validationResults))
-		{
-			return getCheckoutStep().onValidation(validationResults);
-		}
+        final CartData cartData = getCheckoutFacade().getCheckoutCart();
+        populateCommonModelAttributes(model, cartData, addressForm);
 
-		AddressData addressData = null;
-		if (StringUtils.isNotEmpty(editAddressCode))
-		{
-			addressData = getCheckoutFacade().getDeliveryAddressForCode(editAddressCode);
-		}
+        if (bindingResult.hasErrors()) {
+            GlobalMessages.addErrorMessage(model, "address.error.formentry.invalid");
+            return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+        }
 
-		final AddressForm addressForm = new AddressForm();
-		final boolean hasAddressData = addressData != null;
-		if (hasAddressData)
-		{
-			addressDataUtil.convert(addressData, addressForm);
-		}
+        final AddressData newAddress = addressDataUtil.convertToAddressData(addressForm);
 
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
-		populateCommonModelAttributes(model, cartData, addressForm);
+        processAddressVisibility(addressForm, newAddress);
 
-		if (addressData != null)
-		{
-			model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.valueOf(!addressData.isVisibleInAddressBook()));
-		}
+        newAddress.setDefaultAddress(CollectionUtils.isEmpty(getUserFacade().getAddressBook())
+                || getUserFacade().getAddressBook().size() == 1 || Boolean.TRUE.equals(addressForm.getDefaultAddress()));
 
-		return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
-	}
+        // Verify the address data.
+        final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
+                .verifyAddressData(newAddress);
+        final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
+                model, redirectModel, bindingResult, getAddressVerificationFacade().isCustomerAllowedToIgnoreAddressSuggestions(),
+                "checkout.multi.address.updated");
 
-	@PostMapping(value = "/edit")
-	@RequireHardLogIn
-	public String edit(final AddressForm addressForm, final BindingResult bindingResult, final Model model,
-			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
-	{
-		getAddressValidator().validate(addressForm, bindingResult);
+        if (addressRequiresReview) {
+            if (StringUtils.isNotEmpty(addressForm.getAddressId())) {
+                final AddressData addressData = getCheckoutFacade().getDeliveryAddressForCode(addressForm.getAddressId());
+                if (addressData != null) {
+                    model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.valueOf(!addressData.isVisibleInAddressBook()));
+                    model.addAttribute("edit", Boolean.TRUE);
+                }
+            }
 
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
-		populateCommonModelAttributes(model, cartData, addressForm);
+            return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
+        }
 
-		if (bindingResult.hasErrors())
-		{
-			GlobalMessages.addErrorMessage(model, "address.error.formentry.invalid");
-			return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
-		}
+        getUserFacade().editAddress(newAddress);
+        getCheckoutFacade().setDeliveryModeIfAvailable();
+        getCheckoutFacade().setDeliveryAddress(newAddress);
 
-		final AddressData newAddress = addressDataUtil.convertToAddressData(addressForm);
+        return getCheckoutStep().nextStep();
+    }
 
-		processAddressVisibility(addressForm, newAddress);
+    protected void processAddressVisibility(final AddressForm addressForm, final AddressData newAddress) {
 
-		newAddress.setDefaultAddress(CollectionUtils.isEmpty(getUserFacade().getAddressBook())
-				|| getUserFacade().getAddressBook().size() == 1 || Boolean.TRUE.equals(addressForm.getDefaultAddress()));
+        if (addressForm.getSaveInAddressBook() == null) {
+            newAddress.setVisibleInAddressBook(true);
+        } else {
+            newAddress.setVisibleInAddressBook(Boolean.TRUE.equals(addressForm.getSaveInAddressBook()));
+        }
+    }
 
-		// Verify the address data.
-		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
-				.verifyAddressData(newAddress);
-		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
-				model, redirectModel, bindingResult, getAddressVerificationFacade().isCustomerAllowedToIgnoreAddressSuggestions(),
-				"checkout.multi.address.updated");
+    @RequestMapping(value = "/remove", method = {RequestMethod.GET, RequestMethod.POST}) //NOSONAR
+    @RequireHardLogIn
+    public String removeAddress(@RequestParam("addressCode") final String addressCode, final RedirectAttributes redirectModel,
+                                final Model model) throws CMSItemNotFoundException {
+        if (getCheckoutFacade().isRemoveAddressEnabledForCart()) {
+            final AddressData addressData = new AddressData();
+            addressData.setId(addressCode);
+            getUserFacade().removeAddress(addressData);
+            GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
+                    "account.confirmation.address.removed");
+        }
+        final ContentPageModel multiCheckoutSummaryPage = getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL);
+        storeCmsPageInModel(model, multiCheckoutSummaryPage);
+        setUpMetaDataForContentPage(model, multiCheckoutSummaryPage);
+        model.addAttribute("addressForm", new AddressForm());
 
-		if (addressRequiresReview)
-		{
-			if (StringUtils.isNotEmpty(addressForm.getAddressId()))
-			{
-				final AddressData addressData = getCheckoutFacade().getDeliveryAddressForCode(addressForm.getAddressId());
-				if (addressData != null)
-				{
-					model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.valueOf(!addressData.isVisibleInAddressBook()));
-					model.addAttribute("edit", Boolean.TRUE);
-				}
-			}
+        return getCheckoutStep().currentStep();
+    }
 
-			return ControllerConstants.Views.Pages.MultiStepCheckout.AddEditDeliveryAddressPage;
-		}
+    @PostMapping(value = "/select")
+    @RequireHardLogIn
+    public String doSelectSuggestedAddress(final AddressForm addressForm, final RedirectAttributes redirectModel) {
+        final Set<String> resolveCountryRegions = org.springframework.util.StringUtils
+                .commaDelimitedListToSet(Config.getParameter("resolve.country.regions"));
 
-		getUserFacade().editAddress(newAddress);
-		getCheckoutFacade().setDeliveryModeIfAvailable();
-		getCheckoutFacade().setDeliveryAddress(newAddress);
+        final AddressData selectedAddress = addressDataUtil.convertToAddressData(addressForm);
+        final CountryData countryData = selectedAddress.getCountry();
 
-		return getCheckoutStep().nextStep();
-	}
+        if (!resolveCountryRegions.contains(countryData.getIsocode())) {
+            selectedAddress.setRegion(null);
+        }
 
-	protected void processAddressVisibility(final AddressForm addressForm, final AddressData newAddress)
-	{
+        if (addressForm.getSaveInAddressBook() != null) {
+            selectedAddress.setVisibleInAddressBook(addressForm.getSaveInAddressBook().booleanValue());
+        }
 
-		if (addressForm.getSaveInAddressBook() == null)
-		{
-			newAddress.setVisibleInAddressBook(true);
-		}
-		else
-		{
-			newAddress.setVisibleInAddressBook(Boolean.TRUE.equals(addressForm.getSaveInAddressBook()));
-		}
-	}
+        if (Boolean.TRUE.equals(addressForm.getEditAddress())) {
+            getUserFacade().editAddress(selectedAddress);
+        } else {
+            getUserFacade().addAddress(selectedAddress);
+        }
 
-	@RequestMapping(value = "/remove", method = { RequestMethod.GET, RequestMethod.POST }) //NOSONAR
-	@RequireHardLogIn
-	public String removeAddress(@RequestParam("addressCode") final String addressCode, final RedirectAttributes redirectModel,
-			final Model model) throws CMSItemNotFoundException
-	{
-		if (getCheckoutFacade().isRemoveAddressEnabledForCart())
-		{
-			final AddressData addressData = new AddressData();
-			addressData.setId(addressCode);
-			getUserFacade().removeAddress(addressData);
-			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
-					"account.confirmation.address.removed");
-		}
-		final ContentPageModel multiCheckoutSummaryPage = getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL);
-		storeCmsPageInModel(model, multiCheckoutSummaryPage);
-		setUpMetaDataForContentPage(model, multiCheckoutSummaryPage);
-		model.addAttribute("addressForm", new AddressForm());
+        final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
+        // Set the new address as the selected checkout delivery address
+        getCheckoutFacade().setDeliveryAddress(selectedAddress);
+        if (previousSelectedAddress != null && !previousSelectedAddress.isVisibleInAddressBook()) { // temporary address should be removed
+            getUserFacade().removeAddress(previousSelectedAddress);
+        }
 
-		return getCheckoutStep().currentStep();
-	}
+        GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "checkout.multi.address.added");
 
-	@PostMapping(value = "/select")
-	@RequireHardLogIn
-	public String doSelectSuggestedAddress(final AddressForm addressForm, final RedirectAttributes redirectModel)
-	{
-		final Set<String> resolveCountryRegions = org.springframework.util.StringUtils
-				.commaDelimitedListToSet(Config.getParameter("resolve.country.regions"));
+        return getCheckoutStep().nextStep();
+    }
 
-		final AddressData selectedAddress = addressDataUtil.convertToAddressData(addressForm);
-		final CountryData countryData = selectedAddress.getCountry();
+    @GetMapping(value = "/back")
+    @RequireHardLogIn
+    @Override
+    public String back(final RedirectAttributes redirectAttributes) {
+        return getCheckoutStep().previousStep();
+    }
 
-		if (!resolveCountryRegions.contains(countryData.getIsocode()))
-		{
-			selectedAddress.setRegion(null);
-		}
+    @GetMapping(value = "/next")
+    @RequireHardLogIn
+    @Override
+    public String next(final RedirectAttributes redirectAttributes) {
+        return getCheckoutStep().nextStep();
+    }
 
-		if (addressForm.getSaveInAddressBook() != null)
-		{
-			selectedAddress.setVisibleInAddressBook(addressForm.getSaveInAddressBook().booleanValue());
-		}
+    protected String getBreadcrumbKey() {
+        return "checkout.multi." + getCheckoutStep().getProgressBarId() + ".breadcrumb";
+    }
 
-		if (Boolean.TRUE.equals(addressForm.getEditAddress()))
-		{
-			getUserFacade().editAddress(selectedAddress);
-		}
-		else
-		{
-			getUserFacade().addAddress(selectedAddress);
-		}
+    protected CheckoutStep getCheckoutStep() {
+        return getCheckoutStep(DELIVERY_ADDRESS);
+    }
 
-		final AddressData previousSelectedAddress = getCheckoutFacade().getCheckoutCart().getDeliveryAddress();
-		// Set the new address as the selected checkout delivery address
-		getCheckoutFacade().setDeliveryAddress(selectedAddress);
-		if (previousSelectedAddress != null && !previousSelectedAddress.isVisibleInAddressBook())
-		{ // temporary address should be removed
-			getUserFacade().removeAddress(previousSelectedAddress);
-		}
-
-		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "checkout.multi.address.added");
-
-		return getCheckoutStep().nextStep();
-	}
-
-	@GetMapping(value = "/back")
-	@RequireHardLogIn
-	@Override
-	public String back(final RedirectAttributes redirectAttributes)
-	{
-		return getCheckoutStep().previousStep();
-	}
-
-	@GetMapping(value = "/next")
-	@RequireHardLogIn
-	@Override
-	public String next(final RedirectAttributes redirectAttributes)
-	{
-		return getCheckoutStep().nextStep();
-	}
-
-	protected String getBreadcrumbKey()
-	{
-		return "checkout.multi." + getCheckoutStep().getProgressBarId() + ".breadcrumb";
-	}
-
-	protected CheckoutStep getCheckoutStep()
-	{
-		return getCheckoutStep(DELIVERY_ADDRESS);
-	}
-
-	protected void populateCommonModelAttributes(final Model model, final CartData cartData, final AddressForm addressForm)
-			throws CMSItemNotFoundException
-	{
-		model.addAttribute("cartData", cartData);
-		model.addAttribute("addressForm", addressForm);
-		model.addAttribute("deliveryAddresses", getDeliveryAddresses(cartData.getDeliveryAddress()));
-		model.addAttribute("noAddress", Boolean.valueOf(getCheckoutFlowFacade().hasNoDeliveryAddress()));
-		model.addAttribute("addressFormEnabled", Boolean.valueOf(getCheckoutFacade().isNewAddressEnabledForCart()));
-		model.addAttribute("removeAddressEnabled", Boolean.valueOf(getCheckoutFacade().isRemoveAddressEnabledForCart()));
-		model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.TRUE);
-		model.addAttribute(WebConstants.BREADCRUMBS_KEY, getResourceBreadcrumbBuilder().getBreadcrumbs(getBreadcrumbKey()));
-		model.addAttribute("metaRobots", "noindex,nofollow");
-		if (StringUtils.isNotBlank(addressForm.getCountryIso()))
-		{
-			model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(addressForm.getCountryIso()));
-			model.addAttribute("country", addressForm.getCountryIso());
-		}
-		prepareDataForPage(model);
-		final ContentPageModel multiCheckoutSummaryPage = getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL);
-		storeCmsPageInModel(model, multiCheckoutSummaryPage);
-		setUpMetaDataForContentPage(model, multiCheckoutSummaryPage);
-		setCheckoutStepLinksForModel(model, getCheckoutStep());
-	}
-
-	@Override
-	public BlCheckoutFacade getCheckoutFacade() {
-		return checkoutFacade;
-	}
-
-	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
-		this.checkoutFacade = checkoutFacade;
-	}
+    protected void populateCommonModelAttributes(final Model model, final CartData cartData, final AddressForm addressForm)
+            throws CMSItemNotFoundException {
+        model.addAttribute("cartData", cartData);
+        model.addAttribute("addressForm", addressForm);
+        model.addAttribute("deliveryAddresses", getDeliveryAddresses(cartData.getDeliveryAddress()));
+        model.addAttribute("noAddress", Boolean.valueOf(getCheckoutFlowFacade().hasNoDeliveryAddress()));
+        model.addAttribute("addressFormEnabled", Boolean.valueOf(getCheckoutFacade().isNewAddressEnabledForCart()));
+        model.addAttribute("removeAddressEnabled", Boolean.valueOf(getCheckoutFacade().isRemoveAddressEnabledForCart()));
+        model.addAttribute(SHOW_SAVE_TO_ADDRESS_BOOK_ATTR, Boolean.TRUE);
+        model.addAttribute(WebConstants.BREADCRUMBS_KEY, getResourceBreadcrumbBuilder().getBreadcrumbs(getBreadcrumbKey()));
+        model.addAttribute("metaRobots", "noindex,nofollow");
+        if (StringUtils.isNotBlank(addressForm.getCountryIso())) {
+            model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(addressForm.getCountryIso()));
+            model.addAttribute("country", addressForm.getCountryIso());
+        }
+        prepareDataForPage(model);
+        final ContentPageModel multiCheckoutSummaryPage = getContentPageForLabelOrId(MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL);
+        storeCmsPageInModel(model, multiCheckoutSummaryPage);
+        setUpMetaDataForContentPage(model, multiCheckoutSummaryPage);
+        setCheckoutStepLinksForModel(model, getCheckoutStep());
+    }
 }

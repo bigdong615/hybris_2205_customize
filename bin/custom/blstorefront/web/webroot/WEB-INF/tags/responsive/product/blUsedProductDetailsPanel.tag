@@ -7,6 +7,8 @@
 <%@ taglib  prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
 
+<c:url value="/cart/add" var="addToCartUrl"/>
+
  <div class="screen"></div>
      <cms:pageSlot position="SearchBoxBl" var="component">
      		<cms:component component="${component}"/>
@@ -44,25 +46,38 @@
                                         </tr>
                                     	</thead>
 		                                  <tbody>
-		                                     <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
+                                          <c:if test="${(allowAddToCart ne 'true') && (isRentalCart eq 'true') && (isUsedGearCart ne 'true')}">
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                                              </div>
+                                          </c:if>
+                                        <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+		                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
 		                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
 		                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
 		                                            <td><format:price priceData="${serialProduct.finalSalePrice}"/></td>
 		                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
 		                                            <td class="text-end">
-		                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart"><spring:theme code="basket.add.to.basket"/></a></td>
+		                                            <!-- BL-537 : Added  class js-usedProduct-button -->
+		                                             <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart"
+                                                		  data-product-code="${product.code}" data-serial="${serialProduct.serialId}">
+                                                 <spring:theme code="basket.add.to.basket"/>
+                                                 </button></td>
 		                                        </tr>
-		                                       </c:forEach>
+		                                      </c:forEach>
+		                                    </form>
 		                                    </tbody>
                                 	</c:otherwise>
                                 </c:choose>
                                 </table>
-                                <c:if test="${product.serialproducts.size() >3}">
-                                <p class="mt-4"><a href="#" id="showmore"><spring:theme code="pdp.show.more.button.text"/></a>
-                                </c:if>
+                               <c:if test="${product.serialproducts.size() >3}"> 
+                                 <!--BL-573  and BL-572  added class showmore-margintop and mt-2 -->
+                                <p class="mt-2"><a href="#" id="showmore" class="showmore-margintop"><spring:theme code="pdp.show.more.button.text"/></a>
+                                </c:if> 
                                 <c:if test="${product.forRent}">
                                 <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-                                <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
+                              <!--  BL:573 and  572 mt-4 added -->
+                                <a href="${rentUrl}" class="btn btn-sm btn-secondary float-end mt-4"><spring:theme code="pdp.product.rent.instead.button.text"/></a></p>
                                 </c:if>
                             </div>
                         </div>
@@ -75,21 +90,10 @@
                <div class="container">
                    <div class="row justify-content-center">
                        <div class="col-lg-11 col-xl-9">
-                           <h5>Buying used gear is easy</h5>
-                           <div class="row mt-5">
-                               <div class="col-6 col-md-3 text-center">
-                                   <h6>Inspected & cleaned by our experts</h6>
-                               </div>
-                               <div class="col-6 col-md-3 text-center">
-                                   <h6>We guarantee your gear will work perfectly</h6>
-                               </div>
-                               <div class="col-6 col-md-3 text-center">
-                                   <h6>Know what to expect with condition details</h6>
-                               </div>
-                               <div class="col-6 col-md-3 text-center">
-                                   <h6>Try it yourself with easy returns</h6>
-                               </div>
-                           </div>
+                          <cms:pageSlot position="buyingUsedGearEasySection"
+                       							var="feature">
+                       							<cms:component component="${feature}" />
+                       		</cms:pageSlot>
                        </div>
                    </div>
                </div>

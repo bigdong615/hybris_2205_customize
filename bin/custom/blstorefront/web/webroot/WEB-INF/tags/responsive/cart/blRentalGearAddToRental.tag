@@ -4,6 +4,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ attribute name="productData" required="false" type="de.hybris.platform.commercefacades.product.data.ProductData" %>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -20,9 +21,28 @@
 	</spring:url>
      <c:choose>
      			<c:when test="${product.isUpcoming eq true}">
-					<button type="submit" class="btn btn-primary dis" aria-disabled="false">
-						<spring:theme code="text.notify.me" />
-					</button>
+     			 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                 <button type="submit" class="btn btn-primary dis btnwidthplp js-login-popup" data-link="<c:url value='/login/loginpopup'/>"
+                   data-bs-toggle="modal"  data-bs-target="#signIn" aria-disabled="false">
+                  <spring:theme code="text.get.notified" />
+                  </button>
+     			  </sec:authorize>
+     			  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+     			  <c:choose>
+                     <c:when test="${product.isWatching}">
+                        <button type="submit" class="btn btn-primary dis btnwidthplp removeInterestbtn"  data-box-productcode="${product.code}"
+                               data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
+                    			<spring:theme code="text.remove.notified.button.text"/>
+       					</button>
+                     </c:when>
+                     <c:otherwise>
+                      <button type="submit" class="btn btn-primary dis btnwidthplp arrival-notification"  data-box-productcode="${product.code}"
+                                data-bs-toggle="modal" data-bs-target="#getNotified" aria-disabled="false">
+                          			<spring:theme code="text.get.notified" />
+                      </button>
+                     </c:otherwise>
+                  </c:choose>
+     			   </sec:authorize>
 				</c:when>
 				<c:when test="${product.isDiscontinued or product.stock.stockLevelStatus.code eq 'outOfStock'}">
 					<button type="submit" class="btn btn-outline btn-disabled"
@@ -31,15 +51,24 @@
 					</button>
 				</c:when>
 				<c:otherwise>
-					<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-               			<div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-            		</div>
+				<div class="page-loader-new-layout">
+            <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+        </div>
+        <c:choose>
+				  <c:when test="${allowAddToCart || isRentalCart}">
+                <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                     <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                </div>
+          </c:when>
+          <c:otherwise>
+                <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                     <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                </div>
+          </c:otherwise>
+        </c:choose>
 					  <form:form id="addToCartForm${fn:escapeXml(product.code)}" action="${addToCartUrl}" method="post" class="add_to_cart_form">
-                		<input type="hidden" name="productCodePost" value="${fn:escapeXml(product.code)}"/>
-                		<input type="hidden" name="productNamePost" value="${fn:escapeXml(product.name)}"/>
-                		<input type="hidden" name="productPostPrice" value="${fn:escapeXml(product.price.value)}"/>
-						    <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addToCart">
-							    <spring:theme code="text.add.to.rental" />
+                <button type="button" class="btn btn-primary js-add-to-cart btnwidthplp" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
+                      <spring:theme code="text.add.to.rental" />
 						    </button>
 						</form:form>
 				</c:otherwise>

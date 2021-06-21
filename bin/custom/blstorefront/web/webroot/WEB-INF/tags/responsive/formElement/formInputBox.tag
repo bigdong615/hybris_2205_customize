@@ -1,7 +1,8 @@
 <%@ tag body-content="empty" trimDirectiveWhitespaces="true"%>
 <%@ attribute name="idKey" required="true" type="java.lang.String"%>
+<%@ attribute name="labelKey" required="false" type="java.lang.String"%>
 <%@ attribute name="path" required="true" type="java.lang.String"%>
-
+<%@ attribute name="mandatory" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="inputCSS" required="false" type="java.lang.String"%>
 <%@ attribute name="placeholder" required="false" type="java.lang.String"%>
 <%@ attribute name="tabindex" required="false" rtexprvalue="true"%>
@@ -13,6 +14,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
+<%@ attribute name="labelCSS" required="false" type="java.lang.String"%>
+<%@ attribute name="styleCSS" required="false" type="java.lang.String"%>
+
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -21,6 +25,6 @@
 		<spring:theme code="${placeholder}" var="placeHolderMessage" htmlEscape="false"/>
 		<form:input cssClass="${fn:escapeXml(inputCSS)} " id="${idKey}" path="${path}"
 					tabindex="${tabindex}" autocomplete="${autocomplete}" placeholder="${placeHolderMessage}"
-					disabled="${disabled}" maxlength="${maxlength}"/>
+					disabled="${disabled}" maxlength="${maxlength}" style="${styleCSS}"/>
 	</ycommerce:testId>
 </template:errorSpanField>

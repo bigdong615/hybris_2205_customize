@@ -1,5 +1,6 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
@@ -51,9 +52,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
 		calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
-		updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
-		updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
-		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+		//updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
+		//updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
+		//updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.FORRENT);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.FORRENT) && //NOSONAR
-			blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE) && Boolean.TRUE.equals(blSerialProduct
+			SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus()) && Boolean.TRUE.equals(blSerialProduct
 						.getForSale()) && Boolean.FALSE.equals(blSerialProduct.getForRent())) {
 					getBlStockService().findAndDeleteStockRecords(blSerialProduct);
 				}
@@ -118,9 +119,9 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		try {
 			final Object initialValue = getInitialValue(blSerialProduct, BlSerialProduct.SERIALSTATUS);
 			if (null != initialValue && ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS)) {
-				if (blSerialProduct.getSerialStatus().equals(SerialStatusEnum.ACTIVE)) {
+				if (SerialStatusEnum.ACTIVE.equals(blSerialProduct.getSerialStatus())) {
 					updateStockRecordsAsAvailable(blSerialProduct, initialValue);
-				} else if(initialValue.equals(SerialStatusEnum.ACTIVE)){
+				} else if(SerialStatusEnum.ACTIVE.equals(initialValue)){
 					getBlStockService().findAndUpdateStockRecords(blSerialProduct, true);
 				}
 			}
@@ -177,7 +178,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				&& isForSalePriceCalculationRequired(blSerialProduct, ctx))
 		{
 			blSerialProduct.setFinalSalePrice(getBlPricingService().calculateFinalSalePriceForSerial(
-					blSerialProduct.getForSaleBasePrice(), blSerialProduct.getConditionRatingOverallScore()));
+					blSerialProduct.getBlProduct().getForSaleBasePrice(), blSerialProduct.getConditionRatingOverallScore()));
 		}
 	}
 
@@ -190,8 +191,11 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private boolean hasForSaleBaseAndConditionalRating(final BlSerialProductModel blSerialProduct)
 	{
+		BigDecimal forSaleBasePrice = BigDecimal.ZERO;
 		final Double conditionRatingOverallScore = blSerialProduct.getConditionRatingOverallScore();
-		final BigDecimal forSaleBasePrice = blSerialProduct.getForSaleBasePrice();
+		if(blSerialProduct.getBlProduct() != null) {
+			forSaleBasePrice = blSerialProduct.getBlProduct().getForSaleBasePrice();
+		}
 
 		return Objects.nonNull(forSaleBasePrice) && Objects.nonNull(conditionRatingOverallScore)
 				&& forSaleBasePrice.compareTo(BigDecimal.ZERO) > 0 && conditionRatingOverallScore > 0.0D;
@@ -209,7 +213,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private boolean isForSalePriceCalculationRequired(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
 		return ctx.isNew(blSerialProduct) || Objects.isNull(blSerialProduct.getFinalSalePrice())
-				|| ctx.isModified(blSerialProduct, BlSerialProductModel.FORSALEBASEPRICE)
 				|| ctx.isModified(blSerialProduct, BlSerialProductModel.CONDITIONRATINGOVERALLSCORE);
 	}
 
@@ -223,11 +226,12 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void calculateIncentivizedPriceForSerial(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
-		if (Objects.nonNull(blSerialProduct.getFinalSalePrice()) && Objects.nonNull(blSerialProduct.getForSaleDiscount()))
+		BlProductModel skuProduct = blSerialProduct.getBlProduct();
+		if (Objects.nonNull(blSerialProduct.getFinalSalePrice()) && Objects.nonNull(skuProduct) && Objects.nonNull(skuProduct.getForSaleDiscount()))
 		{
 			final BigDecimal finalSalePrice = blSerialProduct.getFinalSalePrice().setScale(BlCoreConstants.DECIMAL_PRECISION,
 					BlCoreConstants.ROUNDING_MODE);
-			final Integer forSaleDiscount = blSerialProduct.getForSaleDiscount();
+			final Integer forSaleDiscount = skuProduct.getForSaleDiscount();
 			if (finalSalePrice.compareTo(BigDecimal.ZERO) > 0 && forSaleDiscount > 0
 					&& isIncentivizedCalculationRequired(blSerialProduct, ctx))
 			{
@@ -255,8 +259,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 		return Objects.isNull(blSerialProduct.getIncentivizedPrice())
 				|| blSerialProduct.getIncentivizedPrice().compareTo(BigDecimal.ZERO) == 0
-				|| ctx.isModified(blSerialProduct, BlSerialProductModel.FINALSALEPRICE)
-				|| ctx.isModified(blSerialProduct, BlSerialProductModel.FORSALEDISCOUNT);
+				|| ctx.isModified(blSerialProduct, BlSerialProductModel.FINALSALEPRICE) ;
 	}
 
 	/**

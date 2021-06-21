@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.facades.cart.BlCartFacade;
 import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
@@ -32,6 +33,9 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
+
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.storefront.controllers.ControllerConstants;
 
 import java.io.UnsupportedEncodingException;
@@ -48,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -108,6 +112,15 @@ public class AbstractBlProductPageController extends AbstractPageController
 
 	@Resource(name = "futureStockFacade")
 	private FutureStockFacade futureStockFacade;
+	
+	@Resource(name = "blCommerceStockService")
+	private BlCommerceStockService blCommerceStockService;
+	
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
+
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
 
 	/*
 	 * This method is used for render pdp.
@@ -398,28 +411,22 @@ public class AbstractBlProductPageController extends AbstractPageController
 
 		getRequestContextData(request).setProduct(productModel);
 
-		final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
-				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
-				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
-				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
-				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA) );
-
-		options.addAll(extraOptions);
-
-		final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, options);
-
+		final ProductData productData = productFacade.getProductForCodeAndOptions(productCode, extraOptions);
 		sortVariantOptionData(productData);
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, productBreadcrumbBuilder.getBreadcrumbs(productCode));
-
+    final String currentCartType = blCartFacade.identifyCartType();
+    if(StringUtils.isNotEmpty(currentCartType)){
+      model.addAttribute(currentCartType,true);
+    }
 		if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
 		{
 			model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,
 					Boolean.valueOf(CollectionUtils.isNotEmpty(productData.getVariantMatrix())));
 		}
 	}
-
+	
 	protected void populateProductData(final ProductData productData, final Model model)
 	{
 		model.addAttribute("galleryImages", getGalleryImages(productData));
@@ -514,6 +521,36 @@ public class AbstractBlProductPageController extends AbstractPageController
 		return cmsPageService.getPageForProduct(productModel, getCmsPreviewService().getPagePreviewCriteria());
 	}
 
+	/**
+	 * @return the blCommerceStockService
+	 */
+	public BlCommerceStockService getBlCommerceStockService()
+	{
+		return blCommerceStockService;
+	}
 
+	/**
+	 * @param blCommerceStockService the blCommerceStockService to set
+	 */
+	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
+	}
+
+	/**
+	 * @return the blDatePickerService
+	 */
+	public BlDatePickerService getBlDatePickerService()
+	{
+		return blDatePickerService;
+	}
+
+	/**
+	 * @param blDatePickerService the blDatePickerService to set
+	 */
+	public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+	{
+		this.blDatePickerService = blDatePickerService;
+	}
 
 }

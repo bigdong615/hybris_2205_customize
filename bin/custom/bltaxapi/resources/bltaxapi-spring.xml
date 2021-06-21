@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="bltaxapiSystemSetup" class="com.bl.tax.setup.BltaxapiSystemSetup">
+        <!-- constructor arg injection example -->
+        <constructor-arg ref="bltaxapiService"/>
+    </bean>
+
+    <bean id="bltaxapiService" class="com.bl.tax.service.impl.DefaultBltaxapiService">
+        <!-- setter injection example -->
+        <property name="modelService" ref="modelService"/>
+        <property name="mediaService" ref="mediaService"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+    </bean>
+
+  <!--Added for custom RestTemplate for adding Logging for request and response -->
+  <bean id="blRestTemplate" class="com.bl.tax.resttemplate.BlRestTemplate"/>
+
+  <!--Added for Avalara Tax request headers-->
+  <bean id="defaultBlTaxService" class="com.bl.tax.service.impl.DefaultBlTaxService" abstract="true">
+    <property name="blRestTemplate" ref="blRestTemplate"/>
+    <property name="userName" value="${bl.security.http.basic.auth.username}"/>
+    <property name="password" value="${bl.security.http.basic.auth.password}"/>
+    <property name="blResponseDetailsAndLoggingPopulator" ref="blResponseDetailsAndLoggingPopulator"/>
+  </bean>
+
+  <!--Added for Avalara Request and Response -->
+  <bean id="defaultBlAvalaraTaxService" class="com.bl.tax.service.impl.DefaultBlAvalaraTaxService" parent="defaultBlTaxService">
+    <property name="servicePathUrl" value="${bl.avalara.tax.service.url}"/>
+    <property name="requestPopulator" ref="blTaxServiceRequestPopulator"/>
+    <property name="responsePopulator" ref="blTaxServiceResponsePopulator"/>
+    <property name="blAvalaraTaxPopulator" ref="blAvalaraTaxPopulator"/>
+
+  </bean>
+
+  <!--Added for creating request for avalar tax -->
+  <bean id="blTaxServiceRequestPopulator" class="com.bl.tax.populators.BlTaxServiceRequestPopulator">
+    <property name="productService" ref="productService"/>
+    <property name="blDatePickerService" ref="blDatePickerService"/>
+    <property name="defaultWarehouseService" ref="warehouseService"/>
+  </bean>
+
+  <!--Added for creating response for avalar tax -->
+  <bean id="blTaxServiceResponsePopulator" class="com.bl.tax.populators.BlTaxServiceResponsePopulator">
+    <property name="defaultBlTaxValueConversionService" ref="defaultBlTaxValueConversionService"/>
+  </bean>
+
+  <!--Added for calculating line item and order tax from response -->
+  <bean id="blAvalaraTaxPopulator" class="com.bl.tax.populators.BlAvalaraTaxPopulator">
+    <property name="blAvalaraTaxCalculationService" ref="blAvalaraTaxCalculationService"/>
+  </bean>
+
+  <!--Added for caluclation strategy for avalara tax -->
+  <alias name="blCalculateExternalTaxesStratergy" alias="calculateExternalTaxesStrategy" />
+  <bean id="blCalculateExternalTaxesStratergy"
+    class="com.bl.tax.stratergy.BlCalculateExternalTaxesStratergy" scope="tenant">
+    <property name="defaultBlAvalaraTaxService" ref="defaultBlAvalaraTaxService"/>
+    <property name="modelService" ref="modelService"/>
+  </bean>
+
+  <!--Override OOB startegy to use custom condition for calculating tax -->
+  <alias name="blDetermineExternalTaxStrategy" alias="decideExternalTaxesStrategy" />
+  <bean id="blDetermineExternalTaxStrategy" class="com.bl.tax.stratergy.BlDetermineExternalTaxStrategy">
+  </bean>
+
+  <!-- Calculate shipping and line item  tax -->
+  <bean id="defaultBlTaxValueConversionService" class="com.bl.tax.service.impl.DefaultBlTaxValueConversionService"/>
+
+  <!-- To Populate Taxes on order summary on shiiping page-->
+  <bean id="blOrderTaxPopulator" class="com.bl.tax.populators.BlOrderTaxPopulator"
+  parent="defaultCartPopulator"/>
+
+  <bean parent="modifyPopulatorList">
+    <property name="list" ref="extendedCartConverter"/>
+    <property name="add" ref="blOrderTaxPopulator"/>
+  </bean>
+
+
+  <bean id="blResponseDetailsAndLoggingPopulator" class="com.bl.tax.populators.BlResponseDetailsAndLoggingPopulator"/>
+
+  <bean id="blAvalaraTaxCalculationService" class="com.bl.tax.service.impl.BlAvalaraTaxCalculationService"/>
+
+  <!--Added to calculate tax by overriding OOB strategy-->
+  
+  <alias name="defaultBlApplyExternalTaxesStrategy" alias="applyExternalTaxesStrategy"/>
+  <bean id="defaultBlApplyExternalTaxesStrategy" class="com.bl.tax.stratergy.DefaultBlApplyExternalTaxesStrategy"/>
+
+
+</beans>

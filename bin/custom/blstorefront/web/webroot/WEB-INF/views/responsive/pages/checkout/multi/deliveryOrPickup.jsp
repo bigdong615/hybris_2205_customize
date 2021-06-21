@@ -13,6 +13,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
+<c:url value="/cart" var="cart" />
 
 <template:page pageTitle="${pageTitle}">
     <section id="cartProcess" class="cart cart-rental">
@@ -47,16 +48,36 @@
                                     <checkout:fastest/>
                                 </div>
                             </div><!-- End Accordion -->
+                            <div id="showErrorForInputValidation">
+
+                            </div>
                             <div class="cart-actions">
-                                <a href="/blstorefront/bl/en/" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                <a href="${cart}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
                                     <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                 </button>
                             </div>
-                            <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                            <div id="statusUpdateTestMessage">
+
+                            </div>
+                            <div class="page-loader-new-layout">
+                            	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+                            </div>
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                             <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+                            <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+                                                          <div class="notification notification-error">
+                                                                  ${fn:escapeXml(errorMsg)}
+                                                           </div>
+                                                         </c:if>
+                            <c:if test="${not empty giftCardCodeRemove}">
+                                <div class="notification notification-warning">${giftCardCodeRemove}</div>
+                            </c:if>
+                            <c:if test="${isGiftCardRemoved eq 'true'}">
+                                <div class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
+                            </c:if>
+                                                         <div class="notification notification-error d-none"id="errorMessages_voucher" />
                             <%-- <div class="notification notification-warning">This is a cart warning.</div>
                             <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                             <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
@@ -71,5 +92,51 @@
             </div>
         </div>
     </section>
-
+<div class="modal fade" id="editWarning" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><spring:theme code="shipping.interception.change.date.warning.wait"/></h5>
+            <button type="button" class="btn-close" aria-label="Close" id="shippingCloseIconModal"></button>
+          </div>
+          <div class="modal-body"> 
+          <input type="hidden" value="" id="rentalStartDate">
+          <input type="hidden" value="" id="rentalEndDate">
+              <p class="body14"><spring:theme code="shipping.interception.change.date.warning.message"/></p>
+              <a href="#" class="btn btn-primary btn-block my-4" id="shippingChangeRentalDate"><spring:theme code="shipping.interception.change.date.warning.continue"/></a>
+              <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" id="shippingCloseModal"><spring:theme code="shipping.interception.change.date.warning.cancel"/></a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="avsCheck" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><spring:theme code="shipping.avs.integration.address.popup.header"/></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="whatYouEnteredBody">
+                        <p class="body14"> <b> <spring:theme code="shipping.avs.integration.address.popup.enter"/></b>
+                            <div id="whatYouEntered"> </div>
+                        </p>
+                    </div>
+                    <div id="whatWeSuggestBody">
+                        <p class="body14"><b> <spring:theme code="shipping.avs.integration.address.popup.suggest"/></b>
+                            <div id="whatWeSuggest"> </div>
+                        </p>
+                    </div>
+                    <a href="#" class="btn btn-primary btn-block my-4" onClick="onClickOfSaveSuggestedAddress()">
+                        <spring:theme code="shipping.avs.integration.address.popup.suggested"/>
+                    </a>
+                    <p class="text-center mb-0">
+                        <a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close" onClick="onClickOfSaveEnteredAddress()">
+                            <spring:theme code="shipping.avs.integration.address.popup.entered"/>
+                        </a>
+                    </p>
+              </div>
+            </div>
+        </div>
+    </div>
 </template:page>

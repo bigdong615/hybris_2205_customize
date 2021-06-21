@@ -24,6 +24,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMPTY_STRING = "";
 	public static final String CODE = "code";
 	public static final String BRANDS = "Brands";
+
+	public static final String COUPON_APPLIED_MSG = "coupon_applied_msg";
+
+
 	public static final String DEFAULT_SORT_CODE = "default.sorting.code";
 	public static final String FACTED_CATEGORY_NAME = "facted.plp.category.name";
 	public static final String BL_PAGE_TYPE = "blPageType";
@@ -42,6 +46,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String USED = "Used";
 	public static final String CATEGORY_MAP = "usedgear.rentalgear.map";
 	public static final String RENTAL_GEAR = "rentalgear";
+	public static final String RENTAL_SUMMARY_DATE = "rentalSummary";
 	public static final String IS_VIDEO = "isVideo";
 	public static final String IS_NEW = "isNew";
 	public static final String TRUE = "true";
@@ -136,8 +141,45 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int CONDITION_RATING_FOUR = 4;
 	public static final int CONDITION_RATING_THREE = 3;
 	public static final int CONDITION_RATING_TWO = 2;
+
+	public static final String PRICE_ASC = "price-asc";
+	public static final String PRICE_DESC = "price-desc";
+	public static final String MIN_SERIAL_PRICE = "minSerialfinalSalePrice";
+	public static final String PRICE_VALUE = "priceValue";
+
 	public static final String INTERNAL_SERVER_ERROR_CODE = "500";
 	public static final String FAILURE_STRING = "Failure";
+	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
+	public static final String RESIDENTIAL_ADDRESS_TYPE_CODE = "2";
+	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
+
+	public static final String BL_IMAGE = "blimage";
+	public static final String MEDIA_FORMAT = "300Wx300H";
+
+	public static final String ISO_CODE_SHORT ="isoCodeShort";
+	public static final String CODES ="codes";
+	public static final String ONLINE ="Online";
+	public static final String SERIAL_PRODUCT_CODES ="serialProductCodes";
+	public static final String PRODUCT_CODES ="productCodes";
+	public static final String CONSIGNMENT_PROCESS_PREFIX ="cons";
+
+	public static final String LENSES ="lenses";
+	public static final String CAMERAS ="cameras";
+	public static final String PRODUCTION ="production";
+	public static final int SKIP_TWO_DAYS = 2;
+	public static final String GIFT_CARD = "giftcard-";
+	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
+	public static final String HYPHEN = "-";
+
+	//Promotion Condition Translator
+	public static final String RENTAL_ARRIVAL_DATE = "rentalArrivalDate";
+	public static final String OPERATOR = "operator";
+	public static final String IS_RENTAL_CART = "rentalCart";
+	public static final String RENTAL_VALUE = "value";
+	public static final String RENTAL_DURATION = "rentalDuration";
+	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
+	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
+	public static final String FREE_RENTAL_DATES = "freeRentalDates";
 
 	private BlCoreConstants()
 	{

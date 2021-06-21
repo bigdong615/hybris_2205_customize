@@ -1,4 +1,4 @@
-#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs cms-content_searchpage_sample.impex =========================");
+f#% impex.info("=============================== Importing content from BLInitialData sampledata/contentCatalogs cms-content_searchpage_sample.impex =========================");
 $contentCatalog = blContentCatalog
 $contentCV = catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]), CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 

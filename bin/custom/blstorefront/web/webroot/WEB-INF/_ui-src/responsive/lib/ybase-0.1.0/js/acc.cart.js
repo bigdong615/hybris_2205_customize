@@ -6,7 +6,7 @@ ACC.cart = {
         "bindCartPage",
         "bindMultiDEntryRemoval",
         "bindMultidCartProduct",
-        ["bindApplyVoucher", $("#js-voucher-apply-btn").length != 0],
+        ["bindApplyVoucher", $(".js-voucher-apply-btn").length != 0],
         ["bindToReleaseVoucher", $("#js-applied-vouchers").length != 0]
     ],
 
@@ -297,7 +297,7 @@ ACC.cart = {
         $('#ajaxCart').text($("#cartTotalsTemplate").tmpl(cartData));
         ACC.quote.bindQuoteDiscount();
     },
-    
+
     updateEntryNumbersForCartMenuData: function (entry) {
     	var entryNumbers = "";
         $.each(entry.entries, function(index, subEntry) {
@@ -306,7 +306,7 @@ ACC.cart = {
         	}
         	entryNumbers = entryNumbers + subEntry.entryNumber;
         });
-        $('.js-execute-entry-action-button').data('actionEntryNumbers',entryNumbers); 
+        $('.js-execute-entry-action-button').data('actionEntryNumbers',entryNumbers);
     },
 
     getProductQuantity: function (gridContainer, mapData, i) {
@@ -371,7 +371,8 @@ ACC.cart = {
 
     bindApplyVoucher: function () {
 
-        $("#js-voucher-apply-btn").on("click", function (e) {
+        $(".js-voucher-apply-btn").on("click", function (e) {
+         e.preventDefault();
             ACC.cart.handleApplyVoucher(e);
         });
 
@@ -384,16 +385,28 @@ ACC.cart = {
     },
 
     handleApplyVoucher: function (e) {
-        var voucherCode = $.trim($("#js-voucher-code-text").val());
+        var voucherCode = $.trim($(".js-voucher-code-text").val());
         if (voucherCode != '' && voucherCode.length > 0) {
             $("#applyVoucherForm").submit();
         }
+        else {
+          $("#errorMessages_voucher").removeClass("d-none");
+            $("#errorMessages_voucher").html("Please enter your coupon code and click apply");
+            $(".js-voucher-code-text").addClass("error");
+        }
     },
 
-    bindToReleaseVoucher: function () {
+    /*bindToReleaseVoucher: function () {
         $('.js-release-voucher-remove-btn').on("click", function (event) {
             $(this).closest('form').submit();
         });
-    }
-
+    }*/
 };
+// BL-657 added for remove coupon code
+       $('.js-cart-release-voucher-remove-btn').on("click", function(e) {
+            e.preventDefault();
+            var entryNumber = $(this).attr('id');
+            var form = $('#'+ entryNumber);
+            form.submit();
+       });
+

@@ -1,8 +1,8 @@
 package com.bl.integration.services.impl;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.locator.data.UPSLocatorRequestData;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
+import com.bl.integration.constants.BlintegrationConstants;
 import com.bl.integration.populators.BlLocatorRequestPopulator;
 import com.bl.integration.populators.BlLocatorResponsePopulator;
 import com.bl.integration.request.jaxb.LocatorRequest;
@@ -89,13 +89,13 @@ public class DefaultBlUPSLocatorService  implements BlUPSLocatorService {
       }
     } catch (JAXBException e) {
       populateResponseExceptionData(upsLocatorResposeData,e);
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling Marshaling :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling Marshaling :{}",e.getMessage());
     } catch (RestClientException e) {
       populateResponseExceptionData(upsLocatorResposeData,e);
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling calling UPS API :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling calling UPS API :{}",e.getMessage());
     } catch (Exception e) {
       populateResponseExceptionData(upsLocatorResposeData,e);
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure from UPS service :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure from UPS service :{}",e.getMessage());
     }
     return upsLocatorResposeData;
   }
@@ -116,7 +116,7 @@ public class DefaultBlUPSLocatorService  implements BlUPSLocatorService {
       strWriter.flush();
       xmlRequest = strWriter.getBuffer().toString();
     } catch (IOException e) {
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_LOCATOR_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling create buffer :{}",e.getMessage());
+      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR, LogErrorCodeEnum.UPS_INTEGRATION_ERROR.getCode(),e,"Some error occure whiling create buffer :{}",e.getMessage());
     }
      return xmlRequest;
   }
@@ -158,8 +158,8 @@ public class DefaultBlUPSLocatorService  implements BlUPSLocatorService {
    *  This method used for populating Exception.
    */
   private void populateResponseExceptionData(UpsLocatorResposeData upsLocatorResposeData,Exception e){
-    upsLocatorResposeData.setStatusCode(BlCoreConstants.INTERNAL_SERVER_ERROR_CODE);
-    upsLocatorResposeData.setStatusMessage(BlCoreConstants.FAILURE_STRING);
+    upsLocatorResposeData.setStatusCode(BlintegrationConstants.INTERNAL_SERVER_ERROR_CODE);
+    upsLocatorResposeData.setStatusMessage(BlintegrationConstants.FAILURE_STRING);
     upsLocatorResposeData.setErrorDescription(e.getMessage());
   }
 }
