@@ -114,6 +114,7 @@ var CONST = {
 jQuery(document).ready(function ($) {
 	$('.page-loader-new-layout').show();
     var deviceData;
+    var paypalDeviceData;
     var client;
     var paymentMethodResponse;
     $("#save-address").prop('checked', true);
