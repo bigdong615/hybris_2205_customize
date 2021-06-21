@@ -13,10 +13,8 @@
 <items 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:noNamespaceSchemaLocation="items.xsd">
 
 	<itemtypes>
-
-		<!--Same piece of code is present in another file of braintreefulfilmentprocess so commented out  -->
 		
-        <!-- <itemtype code="ConsignmentProcess" autocreate="false" generate="false" >
+        <itemtype code="ConsignmentProcess" autocreate="false" generate="false" >
             <attributes>
                 <attribute qualifier="done" type="boolean">
                     <description>Mark process as done</description>
@@ -39,7 +37,7 @@
                 </attribute>
 
             </attributes>
-        </itemtype> -->
+        </itemtype>
 
 	</itemtypes>
 </items>

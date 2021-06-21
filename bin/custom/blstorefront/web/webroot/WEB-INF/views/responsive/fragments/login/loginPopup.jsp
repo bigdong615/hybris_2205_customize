@@ -27,7 +27,7 @@
             <spring:theme code="login.rememberme"/>
           </small>
         </label>
-        <a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password float-end">
+        <a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password float-end" data-link="<c:url value='/login/pw/request'/>">
           <small>
             <spring:theme code="login.link.forgottenPwd"/>
           </small>
