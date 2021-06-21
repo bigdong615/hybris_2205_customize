@@ -12,16 +12,17 @@
 <c:if test="${not empty facetData.values}">
 	<ycommerce:testId code="facetNav_title_${facetData.name}">
 	<c:set var="facetid" value="${facetData.name}"/>
-  <c:if test="${fn:contains(facetData.name, '/')}">
-     <c:set var = "facetid" value = "${fn:replace(facetid, '/', '')}" />
-  </c:if>
-  <c:if test="${fn:contains(facetData.name, '&')}">
-     <c:set var = "facetid" value = "${fn:replace(facetid, '&', '')}" />
-  </c:if>
-  <c:if test="${fn:contains(facetData.name, ' ')}">
-     <c:set var = "facetid" value = "${fn:replace(facetid, ' ', '')}" />
-  </c:if>
-<hr>
+<c:if test="${fn:contains(facetData.name, '/')}">
+   <c:set var = "facetid" value = "${fn:replace(facetid, '/', '')}" />
+</c:if>
+<c:if test="${fn:contains(facetData.name, '&')}">
+   <c:set var = "facetid" value = "${fn:replace(facetid, '&', '')}" />
+</c:if>
+<c:if test="${fn:contains(facetData.name, ' ')}">
+   <c:set var = "facetid" value = "${fn:replace(facetid, ' ', '')}" />
+</c:if>
+<!-- BL:581 added hr tag -->
+	<hr>
  <p><a class="filter-expand" data-bs-toggle="collapse" href="#${facetid}" role="button" aria-expanded="false" aria-controls="${facetid}">${facetData.name}</a></p>
 
 	<div class="facet js-facet collapse" id="${facetid}">
@@ -117,8 +118,6 @@
 				</span>
 			</c:if>
 		</div>
-	</div>	
-<!-- BL:581 added hr tag -->
-	<hr class="js-hr-tag">
+	</div>
 	</ycommerce:testId>
 </c:if>
