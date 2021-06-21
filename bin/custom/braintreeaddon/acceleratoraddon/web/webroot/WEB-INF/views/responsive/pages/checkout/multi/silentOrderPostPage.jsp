@@ -237,8 +237,8 @@
 																	 data-email="${deliveryAddress.email}"
 																	 data-address-id="${deliveryAddress.id}"></div>
 																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
-																   	<input type="checkbox" class="form-control" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
-																   	<label for="ccUseDeliveryAddress">
+																   	<input type="checkbox" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
+																   	<label for="ccUseDeliveryAddress" class="${hideUseShipping}">
 																   		<span class="gray80"><spring:theme code="checkout.multi.sop.useMyDeliveryAddress" /></span>
 																   	</label>     
 															</c:if> 
@@ -297,6 +297,7 @@
 							</div>
 							<%-- Error message secion --%>
 							<cart:blGiftCard cartData="${cartData}"/>
+							<!-- Uncomment hr tag to add more sections after hr tag on payment page -->
 							<!-- <hr class="my-5"> -->
 							<div id="validationMessage"></div>
                             <div id="allFieldvalidationMessage"></div>

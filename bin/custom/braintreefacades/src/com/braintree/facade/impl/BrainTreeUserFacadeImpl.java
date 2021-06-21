@@ -84,9 +84,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	        ? addressData.getPickStoreAddress() : BooleanUtils.toBoolean(deliveryAddress.getUpsStoreAddress()));
 	    addressData.setPickStoreAddress(Objects.nonNull(addressData.getUpsStoreAddress()) 
 	        ? addressData.getUpsStoreAddress() : BooleanUtils.toBoolean(deliveryAddress.getPickStoreAddress()));
-	    addressData.setBillingAddress(addressData.isBillingAddress());
 	    addressData.setShippingAddress(BooleanUtils.negate(addressData.isBillingAddress()));
-	    addressData.setVisibleInAddressBook(addressData.isVisibleInAddressBook());
 	  }
 		final BrainTreeAddressRequest addressRequest = convertBrainTreeAddress(addressData);
 

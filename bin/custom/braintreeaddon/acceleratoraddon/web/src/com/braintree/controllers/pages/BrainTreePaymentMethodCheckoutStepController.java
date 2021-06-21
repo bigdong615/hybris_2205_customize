@@ -9,8 +9,10 @@ import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.checkout.steps.PaymentMethodCheckoutStepController;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,7 +56,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
     }
     catch(final Exception exception)
     {
-      LOG.error("Error occured while setting selected creditcard on user", exception);
+      BlLogger.logMessage(LOG, Level.ERROR, "Error occured while setting selected creditcard on user", exception);
       GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
     }
     return getCheckoutStep().currentStep();
@@ -83,7 +85,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
     }
     catch(final Exception exception)
     {
-      LOG.error("Error occured while setting selected creditcard on user with updating address", exception);
+      BlLogger.logMessage(LOG, Level.ERROR, "Error occured while setting selected creditcard on user with updating address", exception);
       GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
       return getCheckoutStep().currentStep();
     }
