@@ -198,7 +198,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
 				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
-				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
+				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()) 
+						&& BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(cartData.getPaymentInfo().getSubscriptionId()))
 				{
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
 					model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
