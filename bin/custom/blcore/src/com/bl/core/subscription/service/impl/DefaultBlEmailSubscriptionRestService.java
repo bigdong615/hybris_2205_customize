@@ -140,7 +140,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 							+ getConfigurationService().getConfiguration().getString(CREATE_CONTACT_API);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Create contact for suscription rest url :- " + createContactUrl);
+					"Create contact for subscription rest url :- " + createContactUrl);
 
 			final ContactResponse response = restTemplate()
 					.postForObject(createContactUrl, subscriptionCreateContactRequest,

@@ -1,185 +1,176 @@
 package com.bl.core.subscription.models;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.annotation.Generated;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+		"operationStatus",
+		"rowsAffected",
+		"contactKey",
+		"contactID",
+		"contactTypeID",
+		"isNewContactKey",
+		"requestServiceMessageID",
+		"responseDateTime",
+		"hasErrors",
+		"resultMessages",
+		"serviceMessageID"
+})
+@Generated("jsonschema2pojo")
+public class ContactResponse {
 
-/**
- * ContactResponse for subscribing the emails.
- *
- * @author Sunil Sahu
- */
-public class ContactResponse{
+	@JsonProperty("operationStatus")
 	private String operationStatus;
-	private int rowsAffetcted;
+	@JsonProperty("rowsAffected")
+	private Long rowsAffected;
+	@JsonProperty("contactKey")
 	private String contactKey;
-	private int contactId;
-	private int contactTypeID;
-	private boolean isNewContactKey;
+	@JsonProperty("contactID")
+	private Long contactID;
+	@JsonProperty("contactTypeID")
+	private Long contactTypeID;
+	@JsonProperty("isNewContactKey")
+	private Boolean isNewContactKey;
+	@JsonProperty("requestServiceMessageID")
 	private String requestServiceMessageID;
-	private boolean hasErrors;
-	private List<Object> resultMessages;
+	@JsonProperty("responseDateTime")
+	private String responseDateTime;
+	@JsonProperty("hasErrors")
+	private Boolean hasErrors;
+	@JsonProperty("resultMessages")
+	private List<Object> resultMessages = null;
+	@JsonProperty("serviceMessageID")
 	private String serviceMessageID;
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	 /**
-	  * @return the operationStatus
-	  */
-	public String getOperationStatus()
-	{
+	@JsonProperty("operationStatus")
+	public String getOperationStatus() {
 		return operationStatus;
 	}
-	/**
-	 * @return the rowsAffetcted
-	 */
-	public int getRowsAffetcted()
-	{
-		return rowsAffetcted;
-	}
-	/**
-	 * @return the contactKey
-	 */
-	public String getContactKey()
-	{
-		return contactKey;
-	}
-	/**
-	 * @return the contactId
-	 */
-	public int getContactId()
-	{
-		return contactId;
-	}
-	/**
-	 * @return the contactTypeID
-	 */
-	public int getContactTypeID()
-	{
-		return contactTypeID;
-	}
-	/**
-	 * @return the isNewContactKey
-	 */
-	public boolean isNewContactKey()
-	{
-		return isNewContactKey;
-	}
-	/**
-	 * @return the requestServiceMessageID
-	 */
-	public String getRequestServiceMessageID()
-	{
-		return requestServiceMessageID;
-	}
-	/**
-	 * @return the hasErrors
-	 */
-	public boolean isHasErrors()
-	{
-		return hasErrors;
-	}
-	/**
-	 * @return the resultMessages
-	 */
-	public List<Object> getResultMessages()
-	{
-		return resultMessages;
-	}
-	/**
-	 * @return the serviceMessageID
-	 */
-	public String getServiceMessageID()
-	{
-		return serviceMessageID;
-	}
 
-
-
-	/**
-	 * @param operationStatus
-	 *           the operationStatus to set
-	 */
-	public void setOperationStatus(final String operationStatus)
-	{
+	@JsonProperty("operationStatus")
+	public void setOperationStatus(String operationStatus) {
 		this.operationStatus = operationStatus;
 	}
 
-	/**
-	 * @param rowsAffetcted
-	 *           the rowsAffetcted to set
-	 */
-	public void setRowsAffetcted(final int rowsAffetcted)
-	{
-		this.rowsAffetcted = rowsAffetcted;
+	@JsonProperty("rowsAffected")
+	public Long getRowsAffected() {
+		return rowsAffected;
 	}
 
-	/**
-	 * @param contactKey
-	 *           the contactKey to set
-	 */
-	public void setContactKey(final String contactKey)
-	{
+	@JsonProperty("rowsAffected")
+	public void setRowsAffected(Long rowsAffected) {
+		this.rowsAffected = rowsAffected;
+	}
+
+	@JsonProperty("contactKey")
+	public String getContactKey() {
+		return contactKey;
+	}
+
+	@JsonProperty("contactKey")
+	public void setContactKey(String contactKey) {
 		this.contactKey = contactKey;
 	}
 
-	/**
-	 * @param contactId
-	 *           the contactId to set
-	 */
-	public void setContactId(final int contactId)
-	{
-		this.contactId = contactId;
+	@JsonProperty("contactID")
+	public Long getContactID() {
+		return contactID;
 	}
 
-	/**
-	 * @param contactTypeID
-	 *           the contactTypeID to set
-	 */
-	public void setContactTypeID(final int contactTypeID)
-	{
+	@JsonProperty("contactID")
+	public void setContactID(Long contactID) {
+		this.contactID = contactID;
+	}
+
+	@JsonProperty("contactTypeID")
+	public Long getContactTypeID() {
+		return contactTypeID;
+	}
+
+	@JsonProperty("contactTypeID")
+	public void setContactTypeID(Long contactTypeID) {
 		this.contactTypeID = contactTypeID;
 	}
 
-	/**
-	 * @param isNewContactKey
-	 *           the isNewContactKey to set
-	 */
-	public void setNewContactKey(final boolean isNewContactKey)
-	{
+	@JsonProperty("isNewContactKey")
+	public Boolean getIsNewContactKey() {
+		return isNewContactKey;
+	}
+
+	@JsonProperty("isNewContactKey")
+	public void setIsNewContactKey(Boolean isNewContactKey) {
 		this.isNewContactKey = isNewContactKey;
 	}
 
-	/**
-	 * @param requestServiceMessageID
-	 *           the requestServiceMessageID to set
-	 */
-	public void setRequestServiceMessageID(final String requestServiceMessageID)
-	{
+	@JsonProperty("requestServiceMessageID")
+	public String getRequestServiceMessageID() {
+		return requestServiceMessageID;
+	}
+
+	@JsonProperty("requestServiceMessageID")
+	public void setRequestServiceMessageID(String requestServiceMessageID) {
 		this.requestServiceMessageID = requestServiceMessageID;
 	}
 
-	/**
-	 * @param hasErrors
-	 *           the hasErrors to set
-	 */
-	public void setHasErrors(final boolean hasErrors)
-	{
+	@JsonProperty("responseDateTime")
+	public String getResponseDateTime() {
+		return responseDateTime;
+	}
+
+	@JsonProperty("responseDateTime")
+	public void setResponseDateTime(String responseDateTime) {
+		this.responseDateTime = responseDateTime;
+	}
+
+	@JsonProperty("hasErrors")
+	public Boolean getHasErrors() {
+		return hasErrors;
+	}
+
+	@JsonProperty("hasErrors")
+	public void setHasErrors(Boolean hasErrors) {
 		this.hasErrors = hasErrors;
 	}
 
-	/**
-	 * @param resultMessages
-	 *           the resultMessages to set
-	 */
-	public void setResultMessages(final List<Object> resultMessages)
-	{
+	@JsonProperty("resultMessages")
+	public List<Object> getResultMessages() {
+		return resultMessages;
+	}
+
+	@JsonProperty("resultMessages")
+	public void setResultMessages(List<Object> resultMessages) {
 		this.resultMessages = resultMessages;
 	}
 
-	/**
-	 * @param serviceMessageID
-	 *           the serviceMessageID to set
-	 */
-	public void setServiceMessageID(final String serviceMessageID)
-	{
+	@JsonProperty("serviceMessageID")
+	public String getServiceMessageID() {
+		return serviceMessageID;
+	}
+
+	@JsonProperty("serviceMessageID")
+	public void setServiceMessageID(String serviceMessageID) {
 		this.serviceMessageID = serviceMessageID;
 	}
+
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
+
 }

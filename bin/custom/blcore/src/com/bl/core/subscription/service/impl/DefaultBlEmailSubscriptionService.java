@@ -55,17 +55,17 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	 */
 	private void saveContactInHybris(final ContactResponse contactResponse) {
 
-		if (contactResponse.isNewContactKey()) {
+		if (contactResponse.getIsNewContactKey()) {
 
 			final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
 					.create(BlStoredEmailSubscriptionModel.class);
-			emailSubscriptionModel.setContactId(String.valueOf(contactResponse.getContactId()));
+			emailSubscriptionModel.setContactId(String.valueOf(contactResponse.getContactID()));
 			emailSubscriptionModel.setContactKey(contactResponse.getContactKey());
 
 			getModelService().save(emailSubscriptionModel);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Email contact saved for subscription with id [{%s}] and with key [{%s}]",
-					contactResponse.getContactId(), contactResponse.getContactKey());
+					contactResponse.getContactID(), contactResponse.getContactKey());
 		} else {
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Email contact already exist with key [{%s}]", contactResponse.getContactKey());

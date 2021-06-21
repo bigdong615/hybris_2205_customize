@@ -38,11 +38,11 @@ public class BlEmailSubscriptionPopulator {
 
 		final Value emailValue = new Value();
 		emailValue.setName("Email Address");
-		emailValue.setValueData(emailId);
+		emailValue.setValue(emailId);
 
 		final Value htmlValue = new Value();
 		htmlValue.setName("HTML Enabled");
-		htmlValue.setValueData(true);
+		htmlValue.setValue(true);
 
 		values.add(emailValue);
 		values.add(htmlValue);

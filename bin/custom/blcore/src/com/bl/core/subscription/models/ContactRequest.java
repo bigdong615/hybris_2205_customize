@@ -1,48 +1,59 @@
 package com.bl.core.subscription.models;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.annotation.Generated;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+		"contactKey",
+		"attributeSets"
+})
+@Generated("jsonschema2pojo")
+public class ContactRequest {
 
-/**
- * ContactRequest for subscribing the emails.
- *
- * @author Sunil Sahu
- */
-public class ContactRequest{
+	@JsonProperty("contactKey")
 	private String contactKey;
-	private List<AttributeSet> attributeSets;
+	@JsonProperty("attributeSets")
+	private List<AttributeSet> attributeSets = null;
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-	/**
-	 * @return the contactKey
-	 */
-	public String getContactKey()
-	{
+	@JsonProperty("contactKey")
+	public String getContactKey() {
 		return contactKey;
 	}
 
-	/**
-	 * @param contactKey
-	 *           the contactKey to set
-	 */
-	public void setContactKey(final String contactKey)
-	{
+	@JsonProperty("contactKey")
+	public void setContactKey(String contactKey) {
 		this.contactKey = contactKey;
 	}
 
-	/**
-	 * @return the attributeSets
-	 */
-	public List<AttributeSet> getAttributeSets()
-	{
+	@JsonProperty("attributeSets")
+	public List<AttributeSet> getAttributeSets() {
 		return attributeSets;
 	}
 
-	/**
-	 * @param attributeSets
-	 *           the attributeSets to set
-	 */
-	public void setAttributeSets(final List<AttributeSet> attributeSets)
-	{
+	@JsonProperty("attributeSets")
+	public void setAttributeSets(List<AttributeSet> attributeSets) {
 		this.attributeSets = attributeSets;
 	}
+
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
+
 }
