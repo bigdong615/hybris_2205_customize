@@ -5,7 +5,6 @@ import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
 import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.transaction.service.BrainTreeTransactionService;
-import de.hybris.platform.core.PK;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.dto.TransactionStatus;

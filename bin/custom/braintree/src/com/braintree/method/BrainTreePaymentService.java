@@ -41,14 +41,10 @@ import de.hybris.platform.braintree.data.BrainTreeWebhookNotificationRequest;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.payment.AdapterException;
-import de.hybris.platform.payment.commands.factory.CommandNotSupportedException;
 import de.hybris.platform.payment.commands.request.AuthorizationRequest;
-import de.hybris.platform.payment.commands.request.CaptureRequest;
 import de.hybris.platform.payment.commands.request.CreateSubscriptionRequest;
 import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.commands.result.AuthorizationResult;
-import de.hybris.platform.payment.commands.result.CaptureResult;
 import de.hybris.platform.payment.commands.result.SubscriptionResult;
 import de.hybris.platform.payment.methods.PaymentMethod;
 
@@ -56,12 +52,11 @@ import de.hybris.platform.payment.methods.PaymentMethod;
 public interface BrainTreePaymentService extends PaymentMethod
 {
 
-	SubscriptionResult createCustomerSubscription(final CreateSubscriptionRequest subscriptionRequest) throws AdapterException;
+	SubscriptionResult createCustomerSubscription(final CreateSubscriptionRequest subscriptionRequest);
 
-	BrainTreeGenerateClientTokenResult generateClientToken(final BrainTreeGenerateClientTokenRequest clientTokenRequest)
-			throws AdapterException;
+	BrainTreeGenerateClientTokenResult generateClientToken(final BrainTreeGenerateClientTokenRequest clientTokenRequest);
 
-	BrainTreeFindCustomerResult findCustomer(final BrainTreeCustomerRequest findCustomerRequest) throws AdapterException;
+	BrainTreeFindCustomerResult findCustomer(final BrainTreeCustomerRequest findCustomerRequest);
 
 	String generateClientToken();
 

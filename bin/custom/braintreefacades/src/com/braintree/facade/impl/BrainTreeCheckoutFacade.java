@@ -573,15 +573,25 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 							StringUtils.EMPTY);
 					final BrainTreeVoidResult voidResult = brainTreePaymentService
 							.voidTransaction(voidRequest);
-					if (TransactionStatus.ACCEPTED.equals(voidResult.getTransactionStatus())) {
-							cart.setIsAuthorizationVoided(Boolean.TRUE);
-							getModelService().save(cart);
-					}
+					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart);
 				}
 			}
 		} catch (final Exception ex) {
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
 					+ "for order {} ", cart.getCode(), ex);
+		}
+	}
+
+	/**
+	 * @param transactionStatus
+	 * @param cart
+	 * This is used to set the isAuthorized flag of order
+	 */
+	private void setAuthorizedFlagInOrder(TransactionStatus transactionStatus,
+			CartModel cart) {
+		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
+			cart.setIsAuthorizationVoided(Boolean.TRUE);
+			getModelService().save(cart);
 		}
 	}
 

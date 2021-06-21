@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 public class BlAuthorizePaymentJob extends AbstractJobPerformable<CronJobModel>
 {
-	private static final Logger LOG = Logger.getLogger(BlAutomatedStockCreationJob.class);
+	private static final Logger LOG = Logger.getLogger(BlAuthorizePaymentJob.class);
 	private BlPaymentService blPaymentService;
 
 	/**

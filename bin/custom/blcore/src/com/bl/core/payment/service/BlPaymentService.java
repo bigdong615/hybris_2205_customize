@@ -1,6 +1,5 @@
 package com.bl.core.payment.service;
 
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 
 /**
@@ -16,6 +15,7 @@ public interface BlPaymentService
 
 	/**
 	 * This is to capture the authorized transaction
+	 * @param order model
 	 */
 	public void capturePaymentForOrder(final OrderModel order);
 }

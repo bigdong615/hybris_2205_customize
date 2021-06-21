@@ -39,7 +39,6 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 	public static final String ENVIRONMENT_SANDBOX = "sandbox";
 	public static final String ENVIRONMENT_PRODUCTION = "production";
 	public static final String BRAINTREE_3D_SECURE = "braintree.3d.secure";
-	@Deprecated
 	public static final String BRAINTREE_PAYMENT = "CreditCard";
 	public static final String BRAINTREE_CREDITCARD_PAYMENT = "CreditCard";
 	public static final String PAYPAL_PAYMENT = "PayPalAccount";

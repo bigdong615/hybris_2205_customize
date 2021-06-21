@@ -435,6 +435,9 @@ public class BrainTreeConfigService
 				|| getApplePayEnabled() || getGooglePayEnabled();
 	}
 
+	/**
+	 * This is used to get the amount to be authorized at the time of placing the order
+	 */
 	public BigDecimal getAuthAMountToVerifyCard()
 	{
 		return getConfiguration().getBigDecimal(AUTH_AMOUNT_TO_VERIFY_CARD);

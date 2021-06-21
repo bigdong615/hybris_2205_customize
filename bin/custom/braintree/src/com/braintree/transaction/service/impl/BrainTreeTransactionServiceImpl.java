@@ -136,6 +136,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean captureAuthorizationTransaction(final OrderModel orderModel, final BigDecimal amount,
 			final String requestId)

@@ -1,5 +1,9 @@
 package com.braintree.method.impl;
 
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_AUTHENTICATION_TOKEN;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_PROVIDER_NAME;
+import static com.braintree.constants.BraintreeConstants.CARD_NUMBER_MASK;
+
 import com.braintree.command.request.BrainTreeAddressRequest;
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
 import com.braintree.command.request.BrainTreeCloneTransactionRequest;
@@ -74,31 +78,25 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.payment.commands.AuthorizationCommand;
-import de.hybris.platform.payment.commands.CaptureCommand;
 import de.hybris.platform.payment.commands.CreateSubscriptionCommand;
 import de.hybris.platform.payment.commands.factory.CommandFactory;
 import de.hybris.platform.payment.commands.factory.CommandFactoryRegistry;
 import de.hybris.platform.payment.commands.factory.CommandNotSupportedException;
 import de.hybris.platform.payment.commands.request.AuthorizationRequest;
-import de.hybris.platform.payment.commands.request.CaptureRequest;
 import de.hybris.platform.payment.commands.request.CreateSubscriptionRequest;
 import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.commands.result.AuthorizationResult;
-import de.hybris.platform.payment.commands.result.CaptureResult;
 import de.hybris.platform.payment.commands.result.SubscriptionResult;
 import de.hybris.platform.payment.dto.BillingInfo;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import static com.braintree.constants.BraintreeConstants.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 
 public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
@@ -295,7 +293,6 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 
 	@Override
 	public SubscriptionResult createCustomerSubscription(final CreateSubscriptionRequest subscriptionRequest)
-			throws AdapterException
 	{
 		try
 		{
@@ -313,7 +310,6 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 
 	@Override
 	public BrainTreeGenerateClientTokenResult generateClientToken(final BrainTreeGenerateClientTokenRequest clientTokenRequest)
-			throws AdapterException
 	{
 		try
 		{
@@ -331,7 +327,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	}
 
 	@Override
-	public BrainTreeFindCustomerResult findCustomer(final BrainTreeCustomerRequest findCustomerRequest) throws AdapterException
+	public BrainTreeFindCustomerResult findCustomer(final BrainTreeCustomerRequest findCustomerRequest)
 	{
 		try
 		{

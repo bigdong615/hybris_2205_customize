@@ -11,7 +11,6 @@ import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
-import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -47,7 +46,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import de.hybris.platform.payment.AdapterException;
+
 
 
 @Controller
@@ -103,7 +102,6 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 				entry.setProduct(product);
 			}
 		}
-		BrainTreePaymentInfoData brainTreePaymentInfoData = brainTreePaymentFacade.getBrainTreePaymentInfoData();
 		model.addAttribute("cartData", cartData);
 		model.addAttribute("allItems", cartData.getEntries());
 		model.addAttribute("deliveryAddress", cartData.getDeliveryAddress());

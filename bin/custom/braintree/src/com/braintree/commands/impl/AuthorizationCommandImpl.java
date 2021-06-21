@@ -179,11 +179,8 @@ public class AuthorizationCommandImpl extends AbstractCommand<AuthorizationReque
 
 		Boolean submitForSettlement = brainTreeAuthorizationRequest.getSubmitForSettlement();
 // As the auth transaction will not be settled immediately, commenting out the below code
-//		if (isAvailableSubmitForSettlement(brainTreeAuthorizationRequest) || isAvailableSubmitForSettlementForPaymentProvider(
-//				brainTreeAuthorizationRequest))
-//		{
-//			submitForSettlement = Boolean.TRUE;
-//		}
+/*		if (isAvailableSubmitForSettlement(brainTreeAuthorizationRequest) || isAvailableSubmitForSettlementForPaymentProvider( //NOSONAR
+				brainTreeAuthorizationRequest)){submitForSettlement = Boolean.TRUE;} */ //NOSONAR
 
 		if (isVenmoPayment(brainTreeAuthorizationRequest)
 				&& StringUtils.isNotEmpty(brainTreeAuthorizationRequest.getVenmoProfileId()))
