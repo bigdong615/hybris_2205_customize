@@ -165,16 +165,10 @@
 																			 <input id="userSelectedPaymentInfo_year" type="hidden" value="${userSelectedPaymentInfo.expiryYear}"/>
 																		</c:if> --%>  
 																		<%-- <c:if test="${payPalCheckoutData.storeInVault}"> --%>
-																		<c:if test="true">
-																			<div class="form-additionals" id="savePaymentInfoComponent">
-																				 <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-																					  <formElement:formCheckbox idKey="savePaymentInfo"
-																					   labelKey="checkout.multi.sop.savePaymentInfo"
-																					   path="savePaymentInfo" inputCSS="" labelCSS=""
-																						mandatory="false"/>
-																				  </sec:authorize>
-																			</div>	
-																		</c:if>
+																		<input type="checkbox" checked class="form-control" id="savePaymentInfo" name="savePaymentInfo"/>
+																			<label for="savePaymentInfo">
+																				<span class="gray80"><spring:theme code="checkout.multi.sop.savePaymentInfo" /></span>
+																			</label> 
 																	</div>
 																</div>
 															</div>
@@ -229,6 +223,7 @@
 															
 														
 														<div class="collapse" id="billing-address-form-expand">
+														<div class="mb-5">
 															<c:if test="${cartData.deliveryItemsQuantity > 0}">
 																<div id="useDeliveryAddressData"
 																	 data-firstname="${deliveryAddress.firstName}"
@@ -242,18 +237,16 @@
 																	 data-email="${deliveryAddress.email}"
 																	 data-address-id="${deliveryAddress.id}"></div>
 																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
-																	<formElement:formCheckbox path="useDeliveryAddress"
-																						  idKey="ccUseDeliveryAddress"
-																						  labelKey="checkout.multi.sop.useMyDeliveryAddress"
-																						  tabindex="11"
-																						  inputCSS="${hideUseShipping}"
-																						  labelCSS="${hideUseShipping}" />
-																	<label for="ccUseDeliveryAddress"></label>
+																   	<input type="checkbox" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
+																   	<label for="ccUseDeliveryAddress" class="${hideUseShipping}">
+																   		<span class="gray80"><spring:theme code="checkout.multi.sop.useMyDeliveryAddress" /></span>
+																   	</label>     
 															</c:if> 
 															<input type="hidden" name="paypal_email" id="paypal_email" /> 
 														    <input type="hidden" name="billTo_country" id="address.country" value="US">
 														    
 															<div id="billingAddressForm" class="billingAddressForm"></div>
+															</div>
 															<a href="#" class="gray80" id="showSavedAddresses" data-bs-toggle="collapse" data-bs-target="#billing-address-saved" aria-expanded="false" aria-controls="billing-address-saved">+ Use a saved billing address</a>
 														</div>
 														<div class="form-additionals"></div>
@@ -304,10 +297,11 @@
 							</div>
 							<%-- Error message secion --%>
 							<cart:blGiftCard cartData="${cartData}"/>
-							<hr class="my-5">
+							<!-- Uncomment hr tag to add more sections after hr tag on payment page -->
+							<!-- <hr class="my-5"> -->
 							<div id="validationMessage"></div>
                             <div id="allFieldvalidationMessage"></div>
-							<hr class="mt-5">
+							<!-- <hr class="mt-5"> -->
 							<div class="cart-actions">
                                 <a href="#" class="gray80">Back to renting</a>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
