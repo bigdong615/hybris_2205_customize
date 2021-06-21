@@ -59,7 +59,7 @@ name='order-process' processClass='de.hybris.platform.orderprocessing.model.Orde
     <transition name='OK' to='sourceOrder'/>
 </action>
 
-<action id='sourceOrder' bean='sourceOrderAction'>
+<action id='sourceOrder' bean='blSourceOrderAction'>
     <transition name='OK' to='waitForOrderAction'/>
 </action>
 
