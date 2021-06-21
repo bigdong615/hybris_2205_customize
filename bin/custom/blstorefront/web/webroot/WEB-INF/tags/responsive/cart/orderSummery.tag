@@ -79,8 +79,21 @@
               </tr>
           </tbody>
       </table>
+	
+	 <c:if test= "${currentStepUrl eq '/checkout/multi/summary/view'}">
+	<div class="cart-actions">
+		<form:form action="${placeOrderUrl}" id="placeOrderForm1"
+			modelAttribute="placeOrderForm">
 
- <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+			<button id="placeOrder" type="submit"
+				class="btn btn-block btn-primary mt-4">
+				<spring:theme code="checkout.summary.placeOrder"
+					text="Place Your Order" />
+			</button>
+		</form:form>
+	</div>
+	</c:if>
+	<c:if test ="${not empty fn:escapeXml(errorMsg)}">
     <c:set var="errormsgvalid" value="error"/>
  </c:if>
  <c:url value="/cart/voucher/apply" var="voucherUrl"/>
