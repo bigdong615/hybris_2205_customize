@@ -116,16 +116,21 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       if ((!serialStocks.isEmpty()) && serialStocks.stream()
           .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
 
+        this.getModelService().save(consignment);
         serialStocks.forEach(stock -> stock.setReservedStatus(true));
         this.getModelService().saveAll(serialStocks);
-        //consignment.setOrder(order);
-        this.getModelService().save(consignment);
+
         return consignment;
+
       } else {
+
         order.setStatus(OrderStatus.SUSPENDED);
         order.setConsignments(null);
         order.getEntries().stream().forEach(entry -> entry.setConsignmentEntries(null));
         getModelService().save(order);
+        BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+            "At the time of consignment creation, the availability of the allocated serial products not found.");
+
         throw new BlSourcingException("Error while allocating the order.");
       }
 
