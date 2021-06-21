@@ -120,7 +120,7 @@
             //      $('#shipToHomeShippingMethods').html(shippingModes);
             //  } 
             if(data != null && data.length != 0) {
-                let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="selectpicker btn btn-block btn-outline text-start my-4" '+
+                let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="btn btn-block btn-outline text-start my-4" '+
                                        'onchange="onChangeOfShipItShipToHome(this)">';
                 let numberSelected = 0;
                 for (let i = 0; i < data.length; i++) {
