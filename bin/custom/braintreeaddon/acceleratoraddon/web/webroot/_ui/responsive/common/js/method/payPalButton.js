@@ -3,7 +3,8 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
     if (checkIntentOption(paypalIntent) === false) {
         var globalErrorsComponent = $(CONST.MARK_PAYPAL_BUTTON);
         globalErrorsComponent.empty();
-        globalErrorsComponent.append(createErrorDiv(ACC.addons.braintreeaddon['braintree.message.incorect.intent']))
+        globalErrorsComponent.append(createErrorDiv(ACC.addons.braintreeaddon['braintree.message.incorect.intent']));
+        $('.page-loader-new-layout').hide();
 
     } else {
         if ($(CONST.MARK_PAYPAL_BUTTON).is(":empty")) 
@@ -30,6 +31,7 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
 				});
 			});
         }
+		
     }
 }
 
@@ -130,7 +132,9 @@ function renderVaultFlowPayPalButtons(paypalCheckoutInstance, payPalButtonContai
                 console.error('Error: ' + err, err);
                 handlePayPalClientError(err);
             }
-        }).render(payPalButtonContainer);
+        }).render(payPalButtonContainer).then(function(){
+        	$('.page-loader-new-layout').hide();
+        });
     }
     catch (err) {
         handlePayPalButtonError(err.message);
