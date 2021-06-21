@@ -86,6 +86,10 @@ public class BlControllerConstants
 	public static final String GIFT_CARD_FORM = "giftCardForm";
 	public static final String IS_GIFT_CARD_REMOVE = "isGiftCardRemoved";
 
+	public static final String AUDIO_CATEGORY = "audio";
+	public static final String LIGHTING_CATEGORY = "lighting";
+	public static final String PRODUCTION_CATEGORY = "production";
+
 	public static final String VOUCHER_FORM = "voucherForm";
 	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";
 	public static final String PAYMENT_METHOD_CHECKOUT_URL = "/checkout/multi/payment-method/add";
