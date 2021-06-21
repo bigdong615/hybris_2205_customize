@@ -162,7 +162,6 @@
       <!-- <extension name='braintreecscockpit' /> -->
       <extension name='braintreecustomersupportbackoffice' />
       <extension name='braintreefacades' />
-      <extension name='braintreefulfilmentprocess' />
       <extension name='braintreehac' />
 
   </extensions>
