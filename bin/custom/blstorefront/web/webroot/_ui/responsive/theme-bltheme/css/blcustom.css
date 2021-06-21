@@ -187,6 +187,8 @@ padding: 0px 4px !important;
 letter-spacing: 1px;
 height: 19px;
 line-height: 16px;
+border-radius:0 ;
+border: none;
 opacity: 1;
 cursor: pointer;
 }
@@ -197,6 +199,12 @@ padding:0;
 outline:none;
 border:none;
 }
+.quantity span{
+outline:none;
+border:none;
+border-radius: 0;
+cursor: pointer;
+}
 .quantity .btn:hover{
 border:none;
 background:none;
@@ -204,7 +212,6 @@ outline:none !important;
 }
 .quantity .input-group-btn{
 background-color:rgba(193,226,227,.5);
-border: 1px solid rgba(193,226,227,.5);
 border-radius: 0px;
 color: #fff;
 width: 25px;
@@ -219,4 +226,25 @@ font-size: 21px;
 content: "+";
 color:#52BFC0;
 font-size: 21px;
+}
+/*BL-712*/
+.boldCustom {
+  font-weight: bold;
+  }
+  #accountContent input::-webkit-input-placeholder {
+       color:#b2b2b2; /*Change the placeholder color*/
+       opacity: 0.5; /*Change the opacity between 0 and 1*/
+  }
+ #accountContent input::placeholder {
+   color:#b2b2b2;
+  }
+
+.shortInput {
+    width: calc(40% - 15px);
+}
+.selectBoxDivWidth{
+    width:60%;
+}
+.selectBoxSize{
+    width:100%;
 }

@@ -6,6 +6,7 @@ import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
+import de.hybris.platform.commercefacades.product.impl.DefaultProductFacade;
 import de.hybris.platform.commerceservices.product.data.ReferenceData;
 import de.hybris.platform.converters.ConfigurablePopulator;
 import de.hybris.platform.core.model.product.ProductModel;
@@ -18,8 +19,10 @@ import java.util.List;
  *
  * @param <REF_TARGET>
  *           generic type parameter for the product model type
+ * It is a custom implementation of OOTB class for Product Reference Section
+ * @author Sahana SB
  */
-public class DefaultBlProductFacade<REF_TARGET> implements BlProductFacade {
+public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade implements BlProductFacade{
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
   private Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> referenceDataProductReferenceConverter;
@@ -56,18 +59,6 @@ public class DefaultBlProductFacade<REF_TARGET> implements BlProductFacade {
     return referenceDataProductReferenceConverter;
   }
 
-  public void setReferenceDataProductReferenceConverter(
-      Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> referenceDataProductReferenceConverter) {
-    this.referenceDataProductReferenceConverter = referenceDataProductReferenceConverter;
-  }
 
-  public ConfigurablePopulator<REF_TARGET, ProductData, ProductOption> getReferenceProductConfiguredPopulator() {
-    return referenceProductConfiguredPopulator;
-  }
-
-  public void setReferenceProductConfiguredPopulator(
-      ConfigurablePopulator<REF_TARGET, ProductData, ProductOption> referenceProductConfiguredPopulator) {
-    this.referenceProductConfiguredPopulator = referenceProductConfiguredPopulator;
-  }
 }
 

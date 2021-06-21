@@ -11,6 +11,10 @@ import de.hybris.platform.core.model.product.ProductModel;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * It is a custom implementation of OOTB class for Product Reference Section
+ *  * @author Sahana SB
+ */
 public class DefaultBlCommerceProductReferenceService extends
     DefaultCommerceProductReferenceService implements
     BlCommerceProductReferenceService<ProductReferenceTypeEnum, ProductModel> {

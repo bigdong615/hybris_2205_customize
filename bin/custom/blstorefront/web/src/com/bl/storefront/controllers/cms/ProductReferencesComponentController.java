@@ -37,6 +37,7 @@ public class ProductReferencesComponentController extends
     protected void fillModel(final HttpServletRequest request, final Model model, final ProductReferencesComponentModel component) {
         final ProductModel currentProduct = getRequestContextData(request).getProduct();
         if (currentProduct != null) {
+            //BL-174 Customized OOTB method for the Product Reference Section.
             final List<ProductReferenceData> productReferences = defaultBlProductFacade.getProductReferencesForCode(currentProduct,PRODUCT_OPTIONS, component.getMaximumNumberProducts());
 
             model.addAttribute("title", component.getTitle());

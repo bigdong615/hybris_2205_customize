@@ -41,7 +41,7 @@
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
                   <div class="col-md-7 mt-4"><b>${product.name}</b>
                   <c:if test="${not empty rentalDate.selectedFromDate}">
-                    <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate} (${rentalDate.numberOfDays} days)</span>
+                    <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
                   </c:if>
                   </div>
                   <div class="col-md-3 mt-4 text-md-end">
@@ -57,7 +57,7 @@
                         	<div class="input-group">
                         		<span class="input-group-btn">
                         			<button type="button" class="btn btn-default btn-number"
-                        				disabled="disabled" data-type="minus" data-field="quant[1]">
+                        				data-type="minus" data-field="quant[1]">
                         				<span class="glyphicon glyphicon-minus"></span>
                         			</button>
                         		</span> <input type="text" name="quant[1]" class="form-control input-number"

@@ -51,6 +51,7 @@ small { font-size: 12px; }
 caption, .caption { font-size: 12px; }
 button, .btn { font-size: 14px; text-transform: uppercase; }
 .overline { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+.modal .overline { font-size: 12px; }
 p a, a { color: #3d3c3c; }
 p a:hover, a:hover { color: #e64b4f; }
 a:focus, a:active, button:focus, button:active { outline: none!important; box-shadow: none!important; }
@@ -218,9 +219,10 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 
 /* Notifications */
 .notification { margin-top: 20px; display: block; padding: 16px; border-left: 4px solid; border-radius: 6px; padding-left: 50px; background-position: 12px 18px; background-repeat: no-repeat; font-size: 14px; }
+.notification p { font-size: 14px; }
 .notification ul { margin-top: 1rem;}
 .notification ul li, .notification ol li { font-size: 14px; }
-.notification-error {text-transform: capitalize;background-color: #FCEDED; border-left-color: #e64b4f; color: #e64b4f; background-image: url(../assets/notification-error.svg); }
+.notification-error {background-color: #FCEDED; border-left-color: #e64b4f; color: #e64b4f; background-image: url(../assets/notification-error.svg); }
 .notification-error a { color: #e64b4f; }
 .notification-warning { background-color: #F6E0B6; border-left-color: #E97D1E; color: #E97D1E; background-image: url(../assets/notification-warning.svg); }
 .notification-warning a { color: #E97D1E; }
@@ -230,6 +232,7 @@ body:not(.home) .embed-responsive-item { position: absolute; top: 0; left: 0; wi
 .notification-tip.check { background-image: url(../assets/notification-tip-check.svg); }
 .notification-tip.cc { background-image: url(../assets/notification-tip-cc.svg); background-position: 12px 18px; }
 .notification-tip.link { background-image: url(../assets/notification-tip-link.svg); }
+.notification-tip.info { background-image: url(../assets/notification-top-info.svg); }
 .notification.no-orders { border-left: none; text-align: center; margin: 30px auto; max-width: 500px; padding: 80px; background-color: #ededed; border-radius: 12px; }
 /* Sliders */
 .splide { margin-bottom: 60px; }
@@ -607,6 +610,63 @@ footer .social a:hover { opacity: .7; }
 .signinbox a { color: #52bfc0; }
 /* Damage Waiver */
 #damageWaivers img { width: 50px; height: auto; }
+
+/* My Account */
+#myAccount { padding: 60px 0; background-color: white; border-top: 1px solid #D4D3D3; border-bottom: 1px solid #D4D3D3; padding-bottom: 50px; margin-top: 10px; }
+#accountMenu > h6 { padding-left: 40px; background: url(../assets/icon-account-teal.svg) no-repeat left center; }
+#accountMenu p a { text-decoration: none; }
+#accountMenu p a.active { font-weight: 700; }
+#accountContent h1 { font-size: 34px; line-height: 40px; }
+.order-block, .extend-order { padding: 30px 0 20px; border-top: 1px solid #D4D3D3; }
+#accountContent .order-block:nth-child(1) { border-top: none; }
+.order-block i.icon-dots { display: inline-block; width:36px; height: 42px; }
+.icon-dots { background: url(../assets/icon-dots.svg) center no-repeat; }
+.icon-check-teal { display: inline-block; width: 24px; height: 12px; background: url(../assets/icon-check-teal.svg) center no-repeat; }
+.order-block .rental-arrow { margin-top: 24%; }
+.order-block .dropdown-toggle::after { display: none; }
+#accountContent .dropdown-menu { padding: 15px; box-shadow: 0 0 12px rgba(0,0,0,.2); width: 100%; }
+#accountContent .dropdown-menu li { padding: 4px 0; }
+#accountContent .dropdown-menu li a { color: #3d3c3c; text-decoration: none; }
+#accountContent .dropdown-menu li a:hover { color: #e64b4f; }
+input[type="file"] { display: none; }
+.custom-file-upload { transition: .2s; border-radius: .25rem; font-size: 14px; text-transform: uppercase; text-decoration: none; padding: 10px 16px 10px 36px; letter-spacing: 1px; background: url(../assets/icon-clip.svg) 12px center no-repeat transparent; border: 1px solid #cccccc; color: #3d3c3c; display: inline-block; cursor: pointer; }
+.custom-file-upload:hover { background-color: #f3f3f3; border: 1px solid #4b4a4b; }
+.icon-license { display: inline-block; width: 48px; height: 48px; background: url(../assets/icon-license.png) center no-repeat; background-size: 48px; }
+.icon-doc { display: inline-block; width: 36px; height: 48px; background: url(../assets/icon-doc.png) center no-repeat; background-size: 36px; }
+.file-upload .body14 { line-break: anywhere; }
+#addressList .card:hover, #cardList .card:hover { box-shadow: none; -webkit-box-shadow: none; }
+#addressList .card .badges, #cardList .card .badges { position: absolute; left: 10px; top: 10px; right: 10px; }
+#addressList .card .badges .badge, #cardList .card .badges .badge { margin-bottom: 6px; top: auto; left: auto; font-size: 10px; }
+.badges button.badge-outline { text-transform: none; background-color: transparent; border: 1px solid #d4d4d3; color: #212529; }
+.badges button.badge-outline:hover { background-color: #efefef; }
+#addressList .card .badge, #cardList .card .badge { position: relative; }
+.saved-address .card { height: 280px; padding-top: 60px; }
+.saved-card .card { height: 230px; padding-top: 60px; }
+.saved-address .card b, .saved-card .card b { display: block; }
+.saved-address .card a, .saved-card .card a { color: #52bfc0; margin-right: 15px; }
+.saved-address .card a:hover, .saved-card .card a:hover { color: #e64b4f; transition: .2s; }
+.address-actions, .card-actions { position: absolute; bottom: 30px; left: 30px; right: 30px;}
+.cc-image { max-width: 100%; height: auto; }
+#editAddress input::placeholder { color: #212529; }
+#accountContent img { width: 100%; height: auto; }
+#accountContent .select-wrapper { position: relative; display: block; }
+#accountContent .select-wrapper:after { content:''; display: block; position: absolute; right: 20px; top: 50%; border: none; width: 6px; height: 4px; background: url(../assets/nav-arrow.svg) center no-repeat; margin-top: -2px; margin-left: .5em; }
+#accountMobileNav .dropdown-toggle::after { right: 20px; top: 20px; position: absolute; }
+#accountMobileNav .dropdown-menu { width: 100%; padding: 0; }
+#accountMobileNav .dropdown-menu li { border-bottom: 1px solid #d4d3d3; }
+#accountMobileNav .dropdown-menu li:last-child { border-bottom: none; }
+#accountMobileNav .dropdown-menu li a { padding: 15px; }
+#newCard .dropdown a { letter-spacing: normal; font-size: 1rem; text-transform: none; }
+#accountContent input[type=text], #accountContent select.form-control { padding: 10px; }
+#accountContent .dropdown-toggle:after { position: absolute; top: 50%; right: 20px; margin-top: -2px; }
+input[type=text].secure { background: url(../assets/icon-lock.svg) 97% center no-repeat; }
+.rental-images img { max-width: 100%; height: auto; }
+input#rental-litepicker, input#rental-mobile-litepicker { padding-right: 40px!important; background: url(../assets/icon-calendar.svg) no-repeat 97% center; max-width: 300px; }
+#accountContent .dropdown button { padding: 10px 35px 10px 10px; letter-spacing: normal; font-size: 1rem; text-transform: none; }
+#accountContent .product-block b { display: block; }
+.dropdown .btn-outline:hover { background: transparent; }
+.rental-arrow { max-width: 12px; }
+
 
 @media screen and (min-width: 992px) and (max-width: 1199px) {
     .nav-item > a { font-size: 14px; }

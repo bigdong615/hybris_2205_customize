@@ -83,6 +83,7 @@ public class CreatePaymentMethodCommandImpl extends
 			result.setCardNumber(card.getMaskedNumber());
 			result.setCardholderName(card.getCardholderName());
 			result.setImageSource(card.getImageUrl());
+      result.setBraintreeAddressId(card.getBillingAddress().getId());
 			getLoggingHandler().handleResult("[PAYMENT METHOD]", card);
 		}
 		else if (brainTreeResult.getTarget() instanceof VenmoAccount)
