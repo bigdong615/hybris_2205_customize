@@ -600,7 +600,6 @@ public class AccountPageController extends AbstractSearchPageController
 
 		if (bindingResult.hasErrors())
 		{
-			//GlobalMessages.addErrorMessage(model, FORM_GLOBAL_ERROR);
 			final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
 			storeCmsPageInModel(model, updatePasswordPage);
 			setUpMetaDataForContentPage(model, updatePasswordPage);
