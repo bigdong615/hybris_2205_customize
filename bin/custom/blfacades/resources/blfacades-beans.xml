@@ -159,6 +159,7 @@
         <property name="pickStoreAddress" type="Boolean"/>
         <property name="upsStoreAddress" type="Boolean"/>
         <property name="url" type="String"/>
+        <property name="defaultBillingAddress" type="boolean"/>
     </bean>
     <!-- Shipping End-->
 
@@ -249,6 +250,7 @@
     <property name="rentalCart" type="java.lang.Boolean" />
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
+    <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
   </bean>
 
 </beans>

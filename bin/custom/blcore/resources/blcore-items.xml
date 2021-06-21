@@ -1750,12 +1750,12 @@
                     </attribute>
                     <attribute qualifier="pickStoreAddress" type="java.lang.Boolean">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                     <attribute qualifier="upsStoreAddress" type="java.lang.Boolean">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" optional="false" />
+                        <modifiers read="true" write="true" search="true" optional="true" />
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                 </attributes>
@@ -1854,5 +1854,18 @@
             </itemtype>
         </typegroup>
         <!-- BL-542 End-->
+        <!-- BL-718 : For setting default Billing address. -->
+        <typegroup name="Customer">
+            <itemtype code="Customer" autocreate="false" generate="false">
+            <description>Extending Customer type with additional attributes.</description>
+            <attributes>
+            <attribute autocreate="true" qualifier="defaultBillingAddress" type="Address">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <description>It holds information about customer default billing address</description>
+            </attribute>
+            </attributes>
+            </itemtype>
+        </typegroup>
 	</itemtypes>
 </items>
