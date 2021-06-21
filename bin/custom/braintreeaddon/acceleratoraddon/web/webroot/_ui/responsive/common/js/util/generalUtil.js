@@ -30,7 +30,7 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
     var realToken = createHiddenParameter("CSRFToken", token);
 
     // collect device data for advanced fraud tools
-    var collectDeviceData = createHiddenParameter("device_data", this.deviceData);
+    var collectDeviceData = createHiddenParameter("device_data", this.paypalDeviceData);
     payPalForm.append($(isSavePaymentInfo));
     payPalForm.append($(collectDeviceData));
     payPalForm.append($(paymentType));

@@ -15,6 +15,19 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
 			},
 			function (clientErr, clientInstance)
 			{
+				braintree.dataCollector.create({
+    			client: clientInstance,
+  				}, function (err, dataCollectorInstance) {
+    				if (err) 
+    				{
+      					// Handle error
+      					console.log('Error while getting data collection for device');
+      					return;
+    				}
+    				// At this point, you should access the dataCollectorInstance.deviceData value and provide it
+    				// to your server, e.g. by injecting it into your form as a hidden input
+    				paypalDeviceData = dataCollectorInstance.deviceData;
+  				});
 				braintree.paypalCheckout.create(
 				{
 					client: clientInstance
