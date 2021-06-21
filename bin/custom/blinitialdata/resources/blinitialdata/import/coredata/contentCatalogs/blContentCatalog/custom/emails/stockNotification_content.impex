@@ -6,7 +6,6 @@ $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCata
 $wideContent=CMSParagraphComponent
 
 $emailPackageName=com.bl.facades.process.email.context
-$backInStockEmailPackageName=de.hybris.platform.stocknotificationfacades.process.email.context
 $emailResource=jar:com.bl.blstocknotificationaddon.constants.BlstocknotificationaddonManagerConstants&/blstocknotificationaddon/import/contentCatalogs/blContentCatalog/emails
 
 # Language
@@ -59,8 +58,8 @@ INSERT_UPDATE RendererTemplate	;code[unique=true]			         ;contextClass						
 
 # Email velocity templates
 INSERT_UPDATE RendererTemplate;code[unique=true];contextClass;rendererType(code)[default='velocity']
-                              ;bl_Email_Product_Back_In_Stock_Body;$backInStockEmailPackageName.BackInStockNotificationEmailContext
-                              ;bl_Email_Product_Back_In_Stock_Subject;$backInStockEmailPackageName.BackInStockNotificationEmailContext
+                              ;bl_Email_Product_Back_In_Stock_Body;$emailPackageName.BlBackInStockNotificationEmailContext
+                              ;bl_Email_Product_Back_In_Stock_Subject;$emailPackageName.BlBackInStockNotificationEmailContext
 
 UPDATE RendererTemplate;code[unique=true];templateScript[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator]
                        ;bl_Email_Product_Back_In_Stock_Body;$emailResource/email-productBackInStockBody.vm

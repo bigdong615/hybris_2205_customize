@@ -3,6 +3,8 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.facades.customer.BlUserFacade;
 import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
@@ -35,7 +37,6 @@ import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.ProductOption;
-import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
@@ -85,6 +86,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
@@ -160,8 +162,8 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "acceleratorCheckoutFacade")
 	private CheckoutFacade checkoutFacade;
 
-	@Resource(name = "userFacade")
-	private UserFacade userFacade;
+	@Resource(name = "blUserFacade")
+	private BlUserFacade userFacade;
 
 	@Resource(name = "customerFacade")
 	private CustomerFacade customerFacade;
@@ -196,7 +198,7 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "customerConsentDataStrategy")
 	protected CustomerConsentDataStrategy customerConsentDataStrategy;
 
-	@Resource(name = "addressDataUtil")
+	@Resource(name = "blAddressDataUtil")
 	private AddressDataUtil addressDataUtil;
 
 	protected PasswordValidator getPasswordValidator()
@@ -619,6 +621,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String getAddressBook(final Model model) throws CMSItemNotFoundException
 	{
 		model.addAttribute(ADDRESS_DATA_ATTR, userFacade.getAddressBook());
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		final ContentPageModel addressBookPage = getContentPageForLabelOrId(ADDRESS_BOOK_CMS_PAGE);
 		storeCmsPageInModel(model, addressBookPage);
 		setUpMetaDataForContentPage(model, addressBookPage);
@@ -630,6 +633,7 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequireHardLogIn
 	public String addAddress(final Model model) throws CMSItemNotFoundException
 	{
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		model.addAttribute(COUNTRY_DATA_ATTR, checkoutFacade.getCountries(CountryType.SHIPPING));
 		populateModelRegionAndCountry(model, Locale.US.getCountry());
 		final BlAddressForm addressForm = getPreparedAddressForm();
@@ -671,7 +675,6 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-		newAddress.setEmail(addressForm.getEmail());
 		if (CollectionUtils.isEmpty(userFacade.getAddressBook()))
 		{
 			newAddress.setDefaultAddress(true);
@@ -680,7 +683,7 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			newAddress.setDefaultAddress(addressForm.getDefaultAddress() != null && addressForm.getDefaultAddress().booleanValue());
 		}
-
+		newAddress.setDefaultBillingAddress(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue());
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -724,6 +727,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String editAddress(@PathVariable("addressCode") final String addressCode, final Model model)
 			throws CMSItemNotFoundException
 	{
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		final BlAddressForm addressForm = new BlAddressForm();
 		model.addAttribute(COUNTRY_DATA_ATTR, checkoutFacade.getCountries(CountryType.SHIPPING));
 		model.addAttribute(ADDRESS_FORM_ATTR, addressForm);
@@ -766,6 +770,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String editAddress(final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		addressForm.setCountryIso(Locale.US.getCountry());
 		getAddressValidator().validate(addressForm, bindingResult);
 		final ContentPageModel addEditAddressPage = getContentPageForLabelOrId(ADD_EDIT_ADDRESS_CMS_PAGE);
@@ -856,7 +861,8 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@RequestMapping(value = "/set-default-address/" + ADDRESS_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
 	@RequireHardLogIn
-	public String setDefaultAddress(@PathVariable("addressCode") final String addressCode, final RedirectAttributes redirectModel)
+	public @ResponseBody
+	String setDefaultAddress(@PathVariable("addressCode") final String addressCode, final RedirectAttributes redirectModel)
 	{
 		final AddressData addressData = new AddressData();
 		addressData.setDefaultAddress(true);
@@ -865,7 +871,25 @@ public class AccountPageController extends AbstractSearchPageController
 		userFacade.setDefaultAddress(addressData);
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
 				"account.confirmation.default.address.changed");
-		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
+		return BlControllerConstants.SUCCESS;
+	}
+
+	/**
+	 * This method is responsible for setting default billing address.
+	 */
+	@RequestMapping(value = "/set-default-billing-address/" + ADDRESS_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@RequireHardLogIn
+	public @ResponseBody
+	String setDefaultBillingAddress(@PathVariable("addressCode") final String addressCode, final RedirectAttributes redirectModel)
+	{
+		final AddressData addressData = new AddressData();
+		addressData.setDefaultBillingAddress(true);
+		addressData.setVisibleInAddressBook(true);
+		addressData.setId(addressCode);
+		userFacade.setDefaultBillingAddress(addressData);
+		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
+				"account.confirmation.default.address.changed");
+		return BlControllerConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/payment-details", method = RequestMethod.GET)
