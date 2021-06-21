@@ -11,23 +11,11 @@
 
 <c:if test="${not empty facetData.values}">
 	<ycommerce:testId code="facetNav_title_${facetData.name}">
+ <p><a class="filter-expand" data-bs-toggle="collapse" href="#${facetData.name}" role="button" aria-expanded="false" aria-controls="${facetData.name}">${facetData.name}</a></p>
 
-	<c:set var="facetid" value="${facetData.name}"/>
-<c:if test="${fn:contains(facetData.name, '/')}">
-   <c:set var = "facetid" value = "${fn:replace(facetid, '/', '')}" />
-</c:if>
-<c:if test="${fn:contains(facetData.name, '&')}">
-   <c:set var = "facetid" value = "${fn:replace(facetid, '&', '')}" />
-</c:if>
-<c:if test="${fn:contains(facetData.name, ' ')}">
-   <c:set var = "facetid" value = "${fn:replace(facetid, ' ', '')}" />
-</c:if>
-
- <p><a class="filter-expand" data-bs-toggle="collapse" href="#${facetid}" role="button" aria-expanded="false" aria-controls="${facetid}">${facetData.name}</a></p>
-	<!-- BL:581 added hr tag --> 
-	<hr>
-	<div class="facet js-facet collapse" id="${facetid}">
+	<div class="facet js-facet collapse" id="${facetData.name}">
 		<div class="facet__values js-facet-values js-facet-form">
+
 			<c:if test="${not empty facetData.topValues}">
 			
 				<ul class="facet__list js-facet-list js-facet-top-values checkbox-list">
