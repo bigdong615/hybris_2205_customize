@@ -95,30 +95,54 @@
             $('.page-loader-new-layout').show();
          },
          success: function (data) {
-             if(data != null && data.length != 0) {
-                 let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="selectpicker mt-2" '+
-                                        'onchange="onChangeOfShipItShipToHome(this)">';
-                 let numberSelected = 0;
-                 for (let i = 0; i < data.length; i++) {
-                     shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '" data-subtext="' + data[i].deliveryCost.formattedValue + '">' + data[i].name;
-                     if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
-                         shippingModes ;
-                     }
-                     shippingModes += '</option>';
-                     if(i == 0) {
-                        $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
-                        calculateCartTotal();
-                        if(data[i].businessTypeDelivery == true) {
-                            let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
-                            $('#ship-it-am-notification').html(notification);
-                            $('#ship-it-am-notification').show();
-                        }
-                     }
-                 }
+            //  if(data != null && data.length != 0) {
+            //      let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="selectpicker mt-2" '+
+            //                             'onchange="onChangeOfShipItShipToHome(this)">';
+            //      let numberSelected = 0;
+            //      for (let i = 0; i < data.length; i++) {
+            //          shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '" data-subtext="' + data[i].deliveryCost.formattedValue + '">' + data[i].name;
+            //          if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
+            //              shippingModes ;
+            //          }
+            //          shippingModes += '</option>';
+            //          if(i == 0) {
+            //             $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+            //             calculateCartTotal();
+            //             if(data[i].businessTypeDelivery == true) {
+            //                 let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
+            //                 $('#ship-it-am-notification').html(notification);
+            //                 $('#ship-it-am-notification').show();
+            //             }
+            //          }
+            //      }
                  
-                 shippingModes += '</select>';
-                 $('#shipToHomeShippingMethods').html(shippingModes);
-             } else {
+            //      shippingModes += '</select>';
+            //      $('#shipToHomeShippingMethods').html(shippingModes);
+            //  } 
+            if(data != null && data.length != 0) {
+                let shippingModes = '<select id="ship-it-shipping-methods-select-box" class="selectpicker btn btn-block btn-outline text-start my-4" '+
+                                       'onchange="onChangeOfShipItShipToHome(this)">';
+                let numberSelected = 0;
+                for (let i = 0; i < data.length; i++) {
+                    shippingModes += '<option value="' + data[i].code + '" businesstype="' + data[i].businessTypeDelivery + '">' + data[i].name;
+                    if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
+                        shippingModes += '<span class="float-end">' + data[i].deliveryCost.formattedValue + '</span>';
+                    }
+                    shippingModes += '</option>';
+                    if(i == 0) {
+                       $('#cart-shipping-cost').text(data[i].deliveryCost.formattedValue);
+                       calculateCartTotal();
+                       if(data[i].businessTypeDelivery == true) {
+                           let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
+                           $('#ship-it-am-notification').html(notification);
+                           $('#ship-it-am-notification').show();
+                       }
+                    }
+                }
+                shippingModes += '</select>';
+                $('#shipToHomeShippingMethods').html(shippingModes);
+            }
+            else {
              	 $('#cart-shipping-cost').text('-');
                  showErrorNotification('Rental Dates not eligible for the selected shipping option!!', false);
              }
