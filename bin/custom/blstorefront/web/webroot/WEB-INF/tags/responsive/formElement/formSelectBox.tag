@@ -13,7 +13,7 @@
 <%@ attribute name="selectedValue" required="false" type="java.lang.String" %>
 <%@ attribute name="tabindex" required="false" rtexprvalue="true" %>
 <%@ attribute name="disabled" required="false" type="java.lang.Boolean" %>
-
+<%@ attribute name="divCSS" required="false" type="java.lang.String" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
@@ -37,7 +37,7 @@
 						<form:errors path="${path}"/>
 					</span>
         </label> -->
-        <div class="control">
+        <div class="control ${divCSS }">
             <form:select id="${idKey}" path="${path}" cssClass="${fn:escapeXml(selectCSSClass)}" tabindex="${tabindex}" disabled="${disabled}" style="${styleCSS}">
                 <c:if test="${skipBlank == null || skipBlank == false}">
                     <option value="" disabled="disabled" ${empty selectedValue ? 'selected="selected"' : ''}>
