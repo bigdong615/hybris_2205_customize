@@ -110,6 +110,7 @@
       <property name="grandTotal" type="PriceData"/>
       <property name="giftCardDiscount" type="PriceData"/>
       <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
+      <property name="rentalDates" type="com.bl.facades.product.data.RentalDateDto"/>
   </bean>
 
     <!-- Shipping -->
