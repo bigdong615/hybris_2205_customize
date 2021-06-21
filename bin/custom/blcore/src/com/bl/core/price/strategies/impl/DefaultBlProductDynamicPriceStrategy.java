@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -37,6 +38,7 @@ import com.bl.logging.impl.LogErrorCodeEnum;
  */
 public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPriceStrategy
 {
+
 	private static final Logger LOG = Logger.getLogger(DefaultBlProductDynamicPriceStrategy.class);
 	private BlPricingRatioService blPricingRatioService;
 
@@ -152,7 +154,7 @@ public class DefaultBlProductDynamicPriceStrategy implements BlProductDynamicPri
 	{
 		int lowestDuration = 0;
 		int highestDuration = 0;
-		final int noOfDays = rentalDays.intValue();
+		final int noOfDays = rentalDays.intValue() <=3 ? 3 : rentalDays.intValue();
 
 		//if the ratio duration matched with the duration we have in DB then returning the dynamic price for the particular durations price ratio
 		if (ratioMap.containsKey(noOfDays))

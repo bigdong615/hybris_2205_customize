@@ -142,11 +142,18 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       return REDIRECT_TO_PAYMENT_METHOD;
     }
 
-    if (Boolean.TRUE.toString().equals(saveBillingAddress))
+    if (StringUtils.isBlank(selectedBillingAddressId))
     {
-      final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm);
-      newAddress.setVisibleInAddressBook(Boolean.TRUE);
-      getUserFacade().addAddress(newAddress);
+      try
+      {
+        final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm);
+        newAddress.setVisibleInAddressBook(StringUtils.isNotBlank(saveBillingAddress) && Boolean.TRUE.toString().equals(saveBillingAddress));
+        getUserFacade().addAddress(newAddress);
+      }
+      catch (final Exception exception)
+      {
+        LOG.error("Error occurred while adding new billing address", exception);
+      }
     }
 
     List<PaymentErrorField> errorFields = Lists.newArrayList();
@@ -315,6 +322,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     subscriptionInfo.setDeviceData(deviceData);
     subscriptionInfo.setCardType(cardType);
     subscriptionInfo.setNonce(nonce);
+    subscriptionInfo.setSavePaymentInfo(isPaymentInfoSaved);
     subscriptionInfo.setEmail(email);
     subscriptionInfo.setShouldBeSaved(isPaymentInfoSaved);
     subscriptionInfo.setCardholder(cardholder);

@@ -10,6 +10,7 @@ public class BrainTreeCreatePaymentMethodResult extends BrainTreeAbstractResult
 	private String expirationMonth;
 	private String expirationYear;
 	private String email;
+  private String braintreeAddressId;
 
 	public String getPaymentMethodToken()
 	{
@@ -97,7 +98,23 @@ public class BrainTreeCreatePaymentMethodResult extends BrainTreeAbstractResult
 		return "BrainTreeCreatePaymentMethodResult [paymentMethodToken=" + paymentMethodToken + ", imageSource=" + imageSource
 				+ ", cardType=" + cardType + ", cardNumber="
 				+ cardNumber + ", cardholderName=" + cardholderName + ", expirationMonth=" + expirationMonth + ", expirationYear="
-				+ expirationYear + ", email=" + email + "]";
+        + expirationYear + ", email=" + email + ", brainTreeAddressId=" + braintreeAddressId + "]";
 	}
+
+  /**
+   * @return the braintreeAddressId
+   */
+  public String getBraintreeAddressId()
+  {
+    return braintreeAddressId;
+  }
+
+  /**
+   * @param braintreeAddressId the braintreeAddressId to set
+   */
+  public void setBraintreeAddressId(String braintreeAddressId)
+  {
+    this.braintreeAddressId = braintreeAddressId;
+  }
 
 }
