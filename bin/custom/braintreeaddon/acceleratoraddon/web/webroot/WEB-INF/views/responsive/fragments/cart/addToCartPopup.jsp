@@ -41,7 +41,7 @@
                   <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
                   <div class="col-md-7 mt-4"><b>${product.name}</b>
                   <c:if test="${not empty rentalDate.selectedFromDate}">
-                    <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate} (${rentalDate.numberOfDays} days)</span>
+                    <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
                   </c:if>
                   </div>
                   <div class="col-md-3 mt-4 text-md-end">
@@ -53,11 +53,24 @@
                           <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                           <input type="hidden" name="quantity" value="${entry.quantity}" />
                         <spring:theme code="text.quantity"/>
-                        <select class="mt-3 select js-select js-component-init js-update-quantity" id="shopping-cart-qty_${entry.entryNumber}" name="shopping-cart-qty">
-                           <c:forEach var="item" begin="1" end="10">
-                             <option value="${item}" ${item == quantity ? 'selected="selected"' : ''}>${item}</option>
-                           </c:forEach>
-                       </select>
+                        <div class="quantity">
+                        	<div class="input-group">
+                        		<span class="input-group-btn">
+                        			<button type="button" class="btn btn-default btn-number"
+                        				data-type="minus" data-field="quant[1]">
+                        				<span class="glyphicon glyphicon-minus"></span>
+                        			</button>
+                        		</span> <input type="text" name="quant[1]" class="form-control input-number"
+                        			value="1" min="1" max="99"
+                        			entryNumber="${entry.entryNumber}"> <span
+                        			class="input-group-btn">
+                        			<button type="button" class="btn btn-default btn-number"
+                        				data-type="plus" data-field="quant[1]">
+                        				<span class="glyphicon glyphicon-plus"></span>
+                        			</button>
+                        		</span>
+                        	</div>
+                        </div>
                       </form:form>
                   </div>
               </div>

@@ -43,6 +43,7 @@
 		<property name="paymentMethodId" type="java.lang.String"/>
         <property name="intent" type="java.lang.String"/>
         <property name="amount" type="java.lang.String"/>
+        <property name="braintreeAddressId" type="java.lang.String"/>
 	</bean>
 
 	<bean class="com.braintree.hybris.data.PayPalAddressData">

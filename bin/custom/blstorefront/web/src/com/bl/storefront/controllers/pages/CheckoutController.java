@@ -7,6 +7,7 @@ import static de.hybris.platform.commercefacades.constants.CommerceFacadesConsta
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.gitfcard.BlGiftCardService;
 import com.bl.facades.cart.BlCartFacade;
@@ -51,6 +52,8 @@ import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -418,9 +421,11 @@ public class CheckoutController extends AbstractCheckoutController
 			return BlControllerConstants.ERROR;
 		}
 		if (blGiftCardFacade.applyGiftCard(code)) {
+			final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+			final BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
 			sessionService.setAttribute(BlCoreConstants.COUPON_APPLIED_MSG,
 					getMessageSource().getMessage("text.gift.apply.success", new Object[]
-							{code}, locale));
+							{gcRedeemedAmount.abs().doubleValue()}, locale));
 			return BlControllerConstants.SUCCESS;
 		} else {
 			if (giftCardModel == null) {

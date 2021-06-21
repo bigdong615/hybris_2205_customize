@@ -21,6 +21,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkou
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.PlaceOrderForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
@@ -28,6 +29,7 @@ import de.hybris.platform.commercefacades.product.ProductOption;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.payment.AdapterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,12 +53,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "checkout/multi/summary/braintree")
 public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStepController
 {
-	private final static Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	private static final Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 
-	private final static String SUMMARY = "summary";
+	private static final String SUMMARY = "summary";
 
 	@Resource(name = "customFieldsService")
 	private CustomFieldsService customFieldsService;
@@ -77,6 +79,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	}
 
 	public static final String REDIRECT_PREFIX = "redirect:";
+	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -175,12 +178,28 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		{
 			// Invalid cart. Bounce back to the cart page.
 			return REDIRECT_PREFIX + "/cart";
-		}
-		        LOG.error("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
-                LOG.error("what is this ? placeOrderForm.getSecurityCode: " + placeOrderForm.getSecurityCode());	
-                LOG.error("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(	
-                                placeOrderForm.getCustomFields()));
-
+    }
+    LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
+    LOG.info("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(placeOrderForm.getCustomFields()));
+    CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
+    boolean isPaymentAuthorized = false;
+    if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    {
+      try
+      {
+        isPaymentAuthorized = getCheckoutFacade().authorizePayment(placeOrderForm.getSecurityCode());
+      }
+      catch (final AdapterException ae)
+      {
+        // handle a case where a wrong paymentProvider configurations on the store see getCommerceCheckoutService().getPaymentProvider()
+        LOG.error(ae.getMessage(), ae);
+      }
+      if (!isPaymentAuthorized)
+      {
+        GlobalMessages.addErrorMessage(model, "checkout.error.authorization.failed");
+        return enterStep(model, redirectModel);
+      }
+    }
 		final OrderData orderData;
 		try
 		{
