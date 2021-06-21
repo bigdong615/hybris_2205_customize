@@ -98,7 +98,8 @@ public class BlControllerConstants
 	public static final String PAYMENT_INFO_BILLING_ADDRESS = "paymentInfoBillingAddress";
 	public static final String IS_SAVED_CARD_ORDER = "isSavedCardOrder";
 	public static final String CHECKOUT_SUMMARY_PAGE = "multiStepCheckoutSummaryPage";
-	
+	public static final String UPDATE_PASSWORD_PAGE_IDENTIFIER = "Change Password";
+
 	private BlControllerConstants()
 	{
 		//empty
