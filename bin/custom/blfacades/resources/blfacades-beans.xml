@@ -250,6 +250,9 @@
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
+    <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
+    <property name="orderDeliveryMode" type="String" />
+    <property name="freeDeliveryCost" type="java.lang.Boolean" />
   </bean>
 
 </beans>

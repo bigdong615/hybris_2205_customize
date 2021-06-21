@@ -8,6 +8,7 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ruleengineservices.rao.CartRAO;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -29,6 +30,10 @@ public class BlCartRaoPopulator implements Populator<CartModel, CartRAO> {
         target.setRentalToDate(getFormattedDate(rentalDatesFromSession.getSelectedToDate()));
       }
     }
+    target.setTotalIncludingDamageWaiver(
+        BigDecimal.valueOf(source.getSubtotal() + source.getTotalDamageWaiverCost()));
+    target.setOrderDeliveryMode(source.getDeliveryMode() != null ? source.getDeliveryMode().getCode(): null);
+
   }
 
   /**
