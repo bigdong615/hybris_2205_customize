@@ -24,6 +24,10 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
 
+  /**
+   *
+   * {@inheritDoc}
+   */
   @Override
   public List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct,
       final List<ProductOption> options, final Integer limit) {
