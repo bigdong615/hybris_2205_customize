@@ -23,7 +23,6 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
 
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
-  private Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> referenceDataProductReferenceConverter;
 
   public List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct,
       final List<ProductOption> options, final Integer limit) {
@@ -33,11 +32,13 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
     final List<ProductReferenceData> result = new ArrayList<>();
 
     for (final ReferenceData<ProductReferenceTypeEnum, REF_TARGET> reference : references) {
-      final ProductReferenceData productReferenceData = getReferenceDataProductReferenceConverter()
-          .convert(reference);
-      getReferenceProductConfiguredPopulator()
-          .populate(reference.getTarget(), productReferenceData.getTarget(), options);
-      result.add(productReferenceData);
+      Object productReference = getReferenceDataProductReferenceConverter().convert(reference);
+      if (productReference instanceof ProductReferenceData) {
+        final ProductReferenceData productReferenceData = (ProductReferenceData) productReference;
+        getReferenceProductConfiguredPopulator()
+            .populate(reference.getTarget(), productReferenceData.getTarget(), options);
+        result.add(productReferenceData);
+      }
     }
 
     return result;
@@ -51,11 +52,6 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
   public void setBlCommerceProductReferenceService(
       BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService) {
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
-  }
-
-  @Override
-  public Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> getReferenceDataProductReferenceConverter() {
-    return referenceDataProductReferenceConverter;
   }
 
 }
