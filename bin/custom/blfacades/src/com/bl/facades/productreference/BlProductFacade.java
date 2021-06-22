@@ -11,6 +11,11 @@ import java.util.List;
  */
 public interface BlProductFacade extends ProductFacade{
 
+  /**
+   *
+   * This method fetches all the product references on the current product
+   *
+   */
   List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct, final List<ProductOption> options, final Integer limit);
 
 
