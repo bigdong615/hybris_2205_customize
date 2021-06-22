@@ -51,6 +51,16 @@ public class DefaultBlUserFacade extends DefaultUserFacade implements BlUserFaca
         }
     }
 
+
+    @Override
+    public void editAddress(final AddressData addressData)
+    {
+        super.editAddress(addressData);
+        if(addressData.isDefaultBillingAddress()){
+            setDefaultBillingAddress(addressData);
+        }
+    }
+
     /**
      * This method is override to get default billing address whiling fetching address book.
      */

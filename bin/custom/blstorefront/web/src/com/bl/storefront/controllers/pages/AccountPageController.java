@@ -716,7 +716,7 @@ public class AccountPageController extends AbstractSearchPageController
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "account.confirmation.address.added",
 				null);
 
-		return REDIRECT_TO_EDIT_ADDRESS_PAGE + newAddress.getId();
+		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
 	}
 
 	protected void setUpAddressFormAfterError(final BlAddressForm addressForm, final Model model)
@@ -795,12 +795,12 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-       newAddress.setEmail(addressForm.getEmail());
+
 		if (Boolean.TRUE.equals(addressForm.getDefaultAddress()) || userFacade.getAddressBook().size() <= 1)
 		{
 			newAddress.setDefaultAddress(true);
 		}
-
+		newAddress.setDefaultBillingAddress(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue());
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -823,7 +823,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "account.confirmation.address.updated",
 				null);
-		return REDIRECT_TO_EDIT_ADDRESS_PAGE + newAddress.getId();
+		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
 	}
 
 	@RequestMapping(value = "/select-suggested-address", method = RequestMethod.POST)

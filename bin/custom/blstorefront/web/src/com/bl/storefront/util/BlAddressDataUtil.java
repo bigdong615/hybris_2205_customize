@@ -50,18 +50,30 @@ public class BlAddressDataUtil extends AddressDataUtil {
         }
     }
 
+    private void fillExtendedAttributesToAddressForm( final AddressData addressData,AddressForm addressForm) {
+        if(addressForm instanceof BlAddressForm) {
+            final BlAddressForm blAddressForm = (BlAddressForm) addressForm;
+            blAddressForm.setEmail(addressData.getEmail());
+            blAddressForm.setCompanyName(addressData.getCompanyName());
+            blAddressForm.setAddressType(addressData.getAddressType());
+            blAddressForm.setUpsStoreAddress(addressData.getUpsStoreAddress());
+
+        }
+    }
+
     @Override
     public void convertBasic(final AddressData source, final AddressForm target)
     {
         super.convertBasic(source, target);
-        fillExtendedAttributes(target, source);
+       // fillExtendedAttributes(target, source);
     }
 
     @Override
     public void convert(final AddressData source, final AddressForm target)
     {
         super.convert(source, target);
-        fillExtendedAttributes(target, source);
+       fillExtendedAttributesToAddressForm(source,target);
+       // fillExtendedAttributes(target, source);
     }
 
     @Override
