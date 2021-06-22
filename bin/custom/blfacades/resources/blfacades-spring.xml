@@ -527,7 +527,6 @@
 	<bean id="blProductFacade" class="com.bl.facades.productreference.impl.DefaultBlProductFacade">
 		<property name="blCommerceProductReferenceService" ref="blCommerceProductReferenceService"/>
 		<property name="referenceDataProductReferenceConverter" ref="referenceDataProductReferenceConverter"/>
-		<property name="referenceProductConfiguredPopulator" ref="productConfiguredPopulator"/>
 	</bean>
 
 	<!--BL-174:created to send custom parameter for the product reference section  .-->
