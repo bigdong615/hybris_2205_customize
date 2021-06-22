@@ -39,7 +39,19 @@
 									</c:otherwise>
 								</c:choose>
 								
-								<span class="bookmark"></span>
+								<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                                                               <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
+                                                               <c:choose>
+                                                                  <c:when test="${product.isBookMarked}">
+                                                                   <span class="bookmark bookmark-checked js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
+                                                                    data-bookmark-value="${product.isBookMarked}">${product.isBookMarked}</span>
+                                                                  </c:when>
+                                                                  <c:otherwise>
+                                                                   <span class="bookmark js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
+                                                                   data-bookmark-value="${product.isBookMarked}">${product.isBookMarked}</span>
+                                                                  </c:otherwise>
+                                                               </c:choose>
+                </form>
 								<div class="card-slider splide">
 									<div class="splide__track">
 										<ul class="splide__list">

@@ -6,7 +6,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/" var="homeUrl" />
-
+${productData.code}yyyyyyyy
 <a href="${homeUrl}"><spring:theme code="breadcrumb.home" /></a> &gt;
 <c:forEach items="${breadcrumbs}" var="breadcrumb" varStatus="status">
 
@@ -18,18 +18,17 @@
 			<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
        <input type="hidden" name="productCodePost" id="productCodePost" value="${productData.code}">
        <c:choose>
-        <c:when test="${productReference.target.isBookMarked}">
+        <c:when test="${productData.isBookMarked}">
           <span class="bookmark bookmark-checked js-add-to-wishlist bookmarkicons" data-product-code="${productData.code}"
-          data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+          data-bookmark-value="${productData.isBookMarked}">${productData.isBookMarked}</span>
         </c:when>
        <c:otherwise>
-        <span class="bookmark js-add-to-wishlist bookmarkicons" data-product-code="${productReference.target.code}"
-        data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+        <span class="bookmark js-add-to-wishlist bookmarkicons" data-product-code="${productData.code}"
+        data-bookmark-value="${productData.isBookMarked}">${productData.isBookMarked}</span>
        </c:otherwise>
       </c:choose>
       </form>
 
-			<span class="bookmark float-right">${productData.isBookMarked}i am here</span>
 			</c:when>
 			<c:when test="${breadcrumb.url eq '#'}">
 					<a href="#">${fn:escapeXml(breadcrumb.name)}</a>&gt;
