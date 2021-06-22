@@ -77,6 +77,10 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                      //On empty cart page, add class on close & continue shopping button of add to rental modal.
+                                      $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
+                                      $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
+                                      reloadEmptyCartPageOnModalClose();
                                       mixedProductInterception(productCode, serialCode);
                                       updateQuantity();
                                       addToCartFromModal();
@@ -391,14 +395,14 @@ $('.btn-number').click(function(e){
 	if (!isNaN(currentVal)) {
 		if(type == 'minus') {
       if(currentVal > input.attr('min')) {
-				input.val(currentVal - 1).change();
+        input.val(currentVal - 1).change();
 			}
 			if(parseInt(input.val()) == input.attr('min')) {
 				$(this).attr('disabled', true);
 			}
     } else if(type == 'plus') {
       if(currentVal < input.attr('max')) {
-				input.val(currentVal + 1).change();
+        input.val(currentVal + 1).change();
 			}
 			if(parseInt(input.val()) == input.attr('max')) {
 				$(this).attr('disabled', true);
@@ -508,4 +512,11 @@ function addProductToCart(productCode, serialCode){
   				errorThrown);
   	}
   });
+}
+
+//BL-466 reload page, when user closes add to rental modal from empty cart page.
+function reloadEmptyCartPageOnModalClose(){
+$('.emptyCart-modalClose').click(function(e){
+  window.location.reload();
+});
 }
