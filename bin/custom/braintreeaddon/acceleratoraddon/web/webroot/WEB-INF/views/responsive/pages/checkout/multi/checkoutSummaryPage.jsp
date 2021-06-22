@@ -168,7 +168,9 @@
                                 
                                 <multi-checkout-paypal:paymentInfo cartData="${cartData}" paymentInfo="${cartData.paymentInfo}" brainTreePaymentInfo="${brainTreePaymentInfoData}" />
                             </div>
-                                
+                            <c:if test="${not empty cartData.giftCardData}">
+                                <multi-checkout-paypal:paymentInfoGiftCard cartData="${cartData}"/>
+                            </c:if>
                             <div class="reviewCart">
                                 <h5 class="mb-4">Rental Terms Agreement</h5>
                                 <div class="row mb-4">
