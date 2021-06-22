@@ -8,7 +8,7 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.SolrFacetSearc
 import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearchQueryData;
 
 /**
- * This Interface created for custom method to populate custon parameter
+ * This Interface created for custom method to set custom parameter
  * @author Manikandan
  */
 public interface BlSolrFacetSearchProductSearchStrategy<ITEM> extends

@@ -10,14 +10,13 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearc
 import de.hybris.platform.commerceservices.search.solrfacetsearch.impl.DefaultSolrProductSearchService;
 
 /**
- * This Class class created to override OOB service to populate custom parameter
+ * This Class class created to override OOB service to set custom parameter
  * @author Manikandan
  */
 public class DefaultBlSolrProductSearchService<ITEM> extends
     DefaultSolrProductSearchService<ITEM> implements BlProductSearchService<ITEM> {
 
   private DefaultBlSolrFacetSearchProductSearchStrategy<ITEM>  defaultBlSolrFacetSearchProductSearchStrategy;
-
 
   /**
    * {@inheritDoc}
