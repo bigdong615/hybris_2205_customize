@@ -34,6 +34,7 @@
 	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
     <property name="isBookMarked" type="java.lang.Boolean"/>
+      <property name="isWatching" type="java.lang.Boolean"/>
   </bean>
 
 
@@ -111,6 +112,7 @@
       <property name="grandTotal" type="PriceData"/>
       <property name="giftCardDiscount" type="PriceData"/>
       <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
+      <property name="rentalDates" type="com.bl.facades.product.data.RentalDateDto"/>
   </bean>
 
     <!-- Shipping -->
@@ -159,6 +161,7 @@
         <property name="pickStoreAddress" type="Boolean"/>
         <property name="upsStoreAddress" type="Boolean"/>
         <property name="url" type="String"/>
+        <property name="defaultBillingAddress" type="boolean"/>
     </bean>
     <!-- Shipping End-->
 
@@ -249,6 +252,7 @@
     <property name="rentalCart" type="java.lang.Boolean" />
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
+    <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
   </bean>
 
 </beans>

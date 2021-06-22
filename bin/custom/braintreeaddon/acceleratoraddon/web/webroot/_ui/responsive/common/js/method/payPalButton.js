@@ -3,20 +3,48 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
     if (checkIntentOption(paypalIntent) === false) {
         var globalErrorsComponent = $(CONST.MARK_PAYPAL_BUTTON);
         globalErrorsComponent.empty();
-        globalErrorsComponent.append(createErrorDiv(ACC.addons.braintreeaddon['braintree.message.incorect.intent']))
+        globalErrorsComponent.append(createErrorDiv(ACC.addons.braintreeaddon['braintree.message.incorect.intent']));
+        $('.page-loader-new-layout').hide();
 
     } else {
-        if ($(CONST.MARK_PAYPAL_BUTTON).is(":empty")) {
-            braintree.paypalCheckout.create({
-                client: client
-            }, function (paypalCheckoutErr, paypalCheckoutInstance) {
-                let commit = paypalIntent === CONST.INTENT_SALE && userAction === 'true';
-                loadSDK(paypalCheckoutInstance, paypalIntent, commit, paypalOptions.flow, function () {
-                    console.log("PayPal Sdk was loaded");
-                    payPalCheckoutRenderButton(paypalCheckoutInstance, CONST.MARK_PAYPAL_BUTTON, paypalOptions, commit, payPalButtonConfigObj);
-                })
-            });
+        if ($(CONST.MARK_PAYPAL_BUTTON).is(":empty")) 
+		{
+			braintree.client.create(
+			{
+				authorization: clientToken
+			},
+			function (clientErr, clientInstance)
+			{
+				braintree.dataCollector.create({
+    			client: clientInstance,
+  				}, function (err, dataCollectorInstance) {
+    				if (err) 
+    				{
+      					// Handle error
+      					console.log('Error while getting data collection for device');
+      					return;
+    				}
+    				// At this point, you should access the dataCollectorInstance.deviceData value and provide it
+    				// to your server, e.g. by injecting it into your form as a hidden input
+    				paypalDeviceData = dataCollectorInstance.deviceData;
+  				});
+				braintree.paypalCheckout.create(
+				{
+					client: clientInstance
+				}, 
+				function (paypalCheckoutErr, paypalCheckoutInstance) 
+				{
+					let commit = paypalIntent === CONST.INTENT_SALE && userAction === 'true';
+					loadSDK(paypalCheckoutInstance, paypalIntent, commit, paypalOptions.flow, 
+						function () 
+						{
+							console.log("PayPal Sdk was loaded");
+							payPalCheckoutRenderButton(paypalCheckoutInstance, CONST.MARK_PAYPAL_BUTTON, paypalOptions, commit, payPalButtonConfigObj);
+						})
+				});
+			});
         }
+		
     }
 }
 
@@ -117,7 +145,9 @@ function renderVaultFlowPayPalButtons(paypalCheckoutInstance, payPalButtonContai
                 console.error('Error: ' + err, err);
                 handlePayPalClientError(err);
             }
-        }).render(payPalButtonContainer);
+        }).render(payPalButtonContainer).then(function(){
+        	$('.page-loader-new-layout').hide();
+        });
     }
     catch (err) {
         handlePayPalButtonError(err.message);

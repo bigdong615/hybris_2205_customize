@@ -1,11 +1,13 @@
 package com.bl.Ordermanagement.strategy.impl;
 
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
+import com.bl.core.constants.GeneratedBlCoreConstants.Attributes.StockLevel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderEntryModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.store.BaseStoreModel;
@@ -15,7 +17,10 @@ import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.sourcing.strategy.AbstractSourcingStrategy;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -48,6 +53,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     populateContextWithUnAllocatedMap(sourcingContext);
 
     if (isSourcingNoSplittingPossible(sourcingContext, sourcingLocation)) {
+      
        sourcingLocation.setCompleteSourcePossible(true);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
           sourcingLocation.getWarehouse().getCode());
@@ -62,6 +68,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
          final SourcingLocation otherSourcingLocation = blSourcingLocationService
               .createSourcingLocation(sourcingContext, warehouse);
           if (isSourcingNoSplittingPossible(sourcingContext, otherSourcingLocation)) {
+            
             otherSourcingLocation.setCompleteSourcePossible(true);
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Complete sourcing possible from warehouse {}",
                 otherSourcingLocation.getWarehouse().getCode());
@@ -71,6 +78,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
       }
 
     }
+
   }
 
   /**
@@ -108,7 +116,6 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
       final Long availableQty = getAvailabilityForProduct(entry.getProduct(), sourcingLocation);
       return ((OrderEntryModel) entry).getQuantity() <= availableQty;
     });
-
   }
 
   /**
@@ -124,7 +131,7 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     final Map<String, Long> unAllocatedMap = sourcingContext.getUnallocatedMap();
 
     final Long oldUnAllocatedQty = unAllocatedMap.get(entry.getProduct().getCode()+"_"+entry.getEntryNumber());
-    final Map<String, Long> allocatedMap = new HashMap<>();
+    final Map<String, Long> allocatedMap = (null != sourcingLocation.getAllocatedMap()) ? sourcingLocation.getAllocatedMap() : new HashMap<>();
     final Long allocatableQty = (oldUnAllocatedQty > 0) && (oldUnAllocatedQty > availableQty) ? availableQty : oldUnAllocatedQty;
 
     allocatedMap.put(entry.getProduct().getCode() + "_" + entry.getEntryNumber(), allocatableQty);
@@ -146,8 +153,12 @@ public class BlNoSplittingStrategy extends AbstractSourcingStrategy {
     Long stockLevel = 0L;
     if (MapUtils.isNotEmpty(sourcingLocation.getAvailabilityMap())
         && sourcingLocation.getAvailabilityMap().get(productModel.getCode()) != null) {
-      stockLevel = Long
-          .valueOf(sourcingLocation.getAvailabilityMap().get(productModel.getCode()).size());
+     List<StockLevelModel> stockLevelList = sourcingLocation.getAvailabilityMap().get(productModel.getCode());
+      Set<String> serialProductCodes = stockLevelList.stream().map(stock -> stock.getSerialProductCode()).collect(
+          Collectors.toSet());
+
+      stockLevel = Long.valueOf(serialProductCodes.size());
+
     }
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock size {} found for product code {} from warehouse {} ",

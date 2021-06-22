@@ -1075,6 +1075,21 @@
       </editorArea:editorArea>
   </context>
 
+
+	<context type="Consignment" component="warehousingbackoffice-refine-by" merge-by="module">
+		<rb:refine-by xmlns:rb="http://www.hybris.com/warehousingbackoffice/config/warehousingrefineby">
+			<rb:field-list name="fieldList" merge-mode="MERGE">
+
+					<rb:search-field name="deliveryMode" label="warehousingbackoffice.refineby.consignment.deliverymode" merge-mode="REPLACE">
+
+         </rb:search-field>
+
+			</rb:field-list>
+		</rb:refine-by>
+	</context>
+
+
+
 </config>
 
 

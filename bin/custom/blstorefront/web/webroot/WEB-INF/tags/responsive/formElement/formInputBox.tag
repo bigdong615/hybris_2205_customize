@@ -15,6 +15,7 @@
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ attribute name="labelCSS" required="false" type="java.lang.String"%>
+<%@ attribute name="styleCSS" required="false" type="java.lang.String"%>
 
 
 <spring:htmlEscape defaultHtmlEscape="true" />
@@ -24,6 +25,6 @@
 		<spring:theme code="${placeholder}" var="placeHolderMessage" htmlEscape="false"/>
 		<form:input cssClass="${fn:escapeXml(inputCSS)} " id="${idKey}" path="${path}"
 					tabindex="${tabindex}" autocomplete="${autocomplete}" placeholder="${placeHolderMessage}"
-					disabled="${disabled}" maxlength="${maxlength}"/>
+					disabled="${disabled}" maxlength="${maxlength}" style="${styleCSS}"/>
 	</ycommerce:testId>
 </template:errorSpanField>

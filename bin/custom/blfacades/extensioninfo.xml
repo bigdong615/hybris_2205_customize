@@ -16,7 +16,8 @@
         <requires-extension name="blintegration"/>
 
         <requires-extension name="blcore"/>
-
+        <requires-extension name="customerinterestsfacades"/>
+        <requires-extension name="stocknotificationfacades"/>
         <requires-extension name="braintreefacades"/>
 
         <requires-extension name="wishlist"/>

@@ -179,10 +179,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RENTAL_DURATION = "rentalDuration";
 	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
 	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
-
 	public static final String SUCCESS = "Success";
 	public static final String ERROR = "Error";
-
+	public static final String FREE_RENTAL_DATES = "freeRentalDates";
 
 	private BlCoreConstants()
 	{

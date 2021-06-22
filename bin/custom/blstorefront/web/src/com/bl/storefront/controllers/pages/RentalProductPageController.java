@@ -11,13 +11,13 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -38,6 +38,10 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
+
+  @Resource(name = "stockNotificationFacade")
+  private StockNotificationFacade stockNotificationFacade;
+
 
   /**
    * This common method created to get rental duration for rental products from BlRentalDateUtils class
@@ -62,23 +66,24 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, null);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-      model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
     if(Objects.nonNull(rentalDatesFromSession))
     {
-   	 final String nextAvailableDate = getBlCommerceStockService().getNextAvailabilityDateInPDP(productCode, rentalDatesFromSession);
-   	 if(StringUtils.isNotBlank(nextAvailableDate))
-   	 {
-   		 model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
-   	 }
+      final String nextAvailableDate = getBlCommerceStockService().getNextAvailabilityDateInPDP(productCode, rentalDatesFromSession);
+      if(StringUtils.isNotBlank(nextAvailableDate))
+      {
+        model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
+      }
     }
-      final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
-				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
-				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
-				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
-				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA , ProductOption.REQUIRED_WISHLIST));
+    final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
+        ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
+        ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
+        ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
+        ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA,ProductOption.REQUIRED_WISHLIST) );
     model.addAttribute("productData" , productData);
-      return productDetail(encodedProductCode, options, productData, model, request, response);
+    model.addAttribute(BlControllerConstants.IS_WATCHING, stockNotificationFacade.isWatchingProduct(productData));
+    return productDetail(encodedProductCode, options, productData, model, request, response);
   }
-  
+
 }

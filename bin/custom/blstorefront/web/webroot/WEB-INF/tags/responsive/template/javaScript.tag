@@ -106,6 +106,7 @@
 		</c:forEach>
 		
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
+        <script src="${commonResourcePathHtml}/js/select-script.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
@@ -1441,6 +1442,48 @@
                               buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                         });
                   </script>
+        		</c:if>
+        		
+        		<!-- Order Confirmation Page -->
+        		<c:if test="${cmsPage.uid eq 'orderConfirmation'}">
+        			
+        			<script>
+        
+        // Mobile Menu styles - #my-menu is required for ALL pages
+        document.addEventListener(
+            "DOMContentLoaded", () => {
+                new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],          
+                } );
+            }
+        );
+        // Initialize Mega menu rollover - required for ALL pages
+        $('.menu-large').hover(
+            function(){ $('.screen').addClass('show') },
+            function(){ $('.screen').removeClass('show') }
+        );
+        
+        // Initialize Blog Slider - required for ANY page with the Blog slider
+        new Splide( '#blog-slider', {
+            perPage: 3,
+            breakpoints: {
+                '991': {
+                    perPage: 2,
+                },
+                '640': {
+                    perPage: 1,
+                },
+            },
+            rewind : true,
+            gap: 20,
+            padding: 10,
+            keyboard: false,
+        } ).mount();
+    </script>
         		</c:if>
 	</c:otherwise>
 </c:choose>
