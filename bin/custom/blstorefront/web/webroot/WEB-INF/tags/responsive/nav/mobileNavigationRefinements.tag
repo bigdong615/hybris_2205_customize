@@ -11,14 +11,14 @@
 	<c:choose>
 		<c:when test="${pageType == 'CATEGORY'}">
 		<c:if test="${clearAllQuery ne null}">
-              <c:url var= "clearUrl" value ="${clearAllQuery}"/>
-        </c:if>
-        <c:if test="${clearAllQuery eq null && breadcrumbs.size()>1}">
-             <c:url var= "clearUrl" value ="${breadcrumbs[1].url}"/>
-        </c:if>
-        <c:if test="${clearAllQuery eq null && breadcrumbs.size()<2}">
-            <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
-        </c:if>
+          <c:url var= "clearUrl" value ="${clearAllQuery}"/>
+    </c:if>
+    <c:if test="${clearAllQuery eq null && breadcrumbs.size()>1}">
+         <c:url var= "clearUrl" value ="${breadcrumbs[1].url}"/>
+    </c:if>
+    <c:if test="${clearAllQuery eq null && breadcrumbs.size()<2}">
+        <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
+    </c:if>
 		<h6>
 		<a href="#filter-menu" class="filter-button"><i
 			class="icon-filter"></i> Filters</a><a class="clear-filters" href="${clearUrl}"><spring:theme
@@ -36,9 +36,9 @@
 	 <ul>
 	 <li>
 	 <span>
-     	<c:forEach items="${pageData.facets}" var="facet">
-         <nav:mobileFacetNavigationRefinements  facetData="${facet}"/>
-      </c:forEach>
+      <c:forEach items="${pageData.facets}" var="facet">
+                 <nav:mobileFacetNavigationRefinements  facetData="${facet}"/>
+        </c:forEach>
                 </span>
                 </li>
 	 </ul>
