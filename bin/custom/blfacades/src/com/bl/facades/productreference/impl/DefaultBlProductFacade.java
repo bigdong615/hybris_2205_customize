@@ -8,7 +8,6 @@ import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
 import de.hybris.platform.commercefacades.product.impl.DefaultProductFacade;
 import de.hybris.platform.commerceservices.product.data.ReferenceData;
 import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
 import java.util.ArrayList;
 import java.util.List;
 
