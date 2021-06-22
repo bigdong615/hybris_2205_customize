@@ -43,7 +43,16 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String ADDRESS_TYPE_UNKNOWN = "UNKNOWN";
 	public static final String RESIDENTIAL_ADDRESS_TYPE_CODE = "2";
 	public static final String BUSINESS_ADDRESS_TYPE_CODE = "1";
-	
+
+	public static final String REQUEST_OPTION = "nonvalidate";
+	public static final String CUSTOMER_CONTEXT = "JAX-WS Test Client";
+
+	public static final String CLIENT_SIDE_ERROR = "400";
+	public static final String CLIENT_SIDE_ERROR_DESCRIPTION = "Client Trasportation Error";
+	public static final String LABEL_IMAGE_FORMAT_CODE = "ZPL";
+	public static final String LABEL_IMAGE_FORMAT_DESCRIPTION = "ZPL";
+	public static final String LABEL_SPECIFICATION_HTTPUSERAGENT = "Mozilla/4.5";
+
 	private BlintegrationConstants()
 	{
 		//empty to avoid instantiating this constant class

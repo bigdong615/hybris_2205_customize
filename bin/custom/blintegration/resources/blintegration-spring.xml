@@ -140,4 +140,28 @@
   <bean id="defaultFedExSameDayServiceImpl"
     class="com.bl.integration.services.impl.DefaultFedExSameDayServiceImpl"/>
 
+   <bean id="blUPSSecurityPopulator"
+    class="com.bl.integration.populators.BLUPSSecurityPopulator"/>    
+    
+  <alias name="defaultBLShipmentCreationService" alias="blShipmentCreationService"/>
+  <bean id="defaultBLShipmentCreationService"
+    class="com.bl.integration.services.impl.DefaultBLShipmentCreationService">
+    <property name="blUPSShipmentCreateRequestPopulator" ref="blUPSShipmentCreateRequestPopulator"/>
+    <property name="blUPSShipmentCreateResponsePopulator" ref="blUPSShipmentCreateResponsePopulator"/>
+    <property name="blFedExShipmentCreateRequestPopulator" ref="blFedExShipmentCreateRequestPopulator"/>
+    <property name="blUPSSecurityPopulator" ref="blUPSSecurityPopulator"/>
+  </bean>
+    
+  <bean id="blUPSShipmentCreateRequestPopulator"
+		class="com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateRequestPopulator" />
+
+  <bean id="blUPSShipmentCreateResponsePopulator"
+		class="com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateResponsePopulator" />	
+		
+	<bean id="blFedExShippingDataPopulator"
+    class="com.bl.integration.populators.BLFedExShippingDataPopulator"/>
+    
+    <bean id="blFedExShipmentCreateRequestPopulator"
+		class="com.bl.integration.shipping.ups.converters.populator.BLFedExShipmentCreateRequestPopulator" />
+
 </beans>
