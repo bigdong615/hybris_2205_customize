@@ -104,6 +104,7 @@ public class BlControllerConstants
 	public static final String CHECKOUT_SUMMARY_PAGE = "multiStepCheckoutSummaryPage";
 	public static final String ORDER_CONFIRMATION_PAGE = "orderConfirmation";
 	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
+	public static final String UPDATE_EMAIL_IDENTIFIER = "Change Email";
 	
 	private BlControllerConstants()
 	{
