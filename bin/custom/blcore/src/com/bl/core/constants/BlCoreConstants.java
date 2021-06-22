@@ -181,7 +181,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
 	public static final String FREE_RENTAL_DATES = "freeRentalDates";
 	public static final String TOTAL_INCLUDING_DAMAGE_WAIVER = "totalIncludingDamageWaiver";
-	public static final String TOTAL_WITH_DAMAGE_WAIVER = "totalWithDamageWaiver";
+	public static final String TOTAL_WITH_DAMAGE_WAIVER = "totalwithDamageWaiver";
 
 	private BlCoreConstants()
 	{

@@ -6,7 +6,7 @@ INSERT_UPDATE RuleConditionDefinition;id[unique=true]  ;name[lang=$lang];breadcr
                                      ;y_rental_duration_condition;Rental Duration ;Rental Duration {rentalDurationOperator} {rentalDuration}  days;         ;false         ;ruleRentalDurationConditionTranslator   ;            ;cart
                                      ;y_rental_cart_condition;Rental Cart Condition;Is Rental Product Promotion {value}      ;         ;false         ;ruleRentalCartConditionTranslator   ;            ;cart
                                      ;y_rental_arrival_date_condition;Rental Arrival Date Condition;Rental Arrival Date {operator} {rentalArrivalDate}   ;         ;false         ;ruleRentalArrivalDateConditionTranslator   ;            ;cart
-                                     ;y_total_with_damage_waiver ; Total Damage Waiver; Total Including Damage Waiver Cost{operator} {totalwithDamageWaiver} ; false         ; ruleTotalDamageWaiverConditionTranslator ;                     ; cart
+                                     ;y_total_with_damage_waiver ; Total Damage Waiver; Total Including Damage Waiver Cost{operator} {totalwithDamageWaiver} ; ;false         ; ruleTotalDamageWaiverConditionTranslator ;                     ; cart
                                      ;y_qualifying_delivery_mode      ; Qualifying Delivery Mode                  ; Qualifying Delivery Modes includes {deliveryModes}            ;         ; false         ; ruleQualifyingDeliveryModesConditionTranslator ;                     ; cart
 
 

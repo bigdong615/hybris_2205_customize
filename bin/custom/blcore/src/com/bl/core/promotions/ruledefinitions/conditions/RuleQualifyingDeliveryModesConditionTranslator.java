@@ -42,7 +42,7 @@ public class RuleQualifyingDeliveryModesConditionTranslator implements RuleCondi
       return new RuleIrFalseCondition();
     }   else {
       List<String> qualifyingDeliveryModes = (List) ruleParameterData.getValue();
-      qualifyingDeliveryModes.add("ANY_ZONE");
+      //qualifyingDeliveryModes.add("ANY_ZONE");
       if (CollectionUtils.isEmpty(qualifyingDeliveryModes)) {
         return new RuleIrFalseCondition();
       } else {
