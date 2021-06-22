@@ -17,16 +17,15 @@ import java.util.List;
 /**
  * Default implementation of {@link BlProductFacade}.
  *
- * @param <REF_TARGET>
- *           generic type parameter for the product model type
- * It is a custom implementation of OOTB class for Product Reference Section
+ * @param <REF_TARGET> generic type parameter for the product model type It is a custom
+ * implementation of OOTB class for Product Reference Section
  * @author Sahana SB
  */
-public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade implements BlProductFacade{
+public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
+
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
   private Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> referenceDataProductReferenceConverter;
-  private ConfigurablePopulator<REF_TARGET, ProductData, ProductOption> referenceProductConfiguredPopulator;
 
   public List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct,
       final List<ProductOption> options, final Integer limit) {
@@ -46,6 +45,7 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
     return result;
   }
 
+
   public BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> getBlCommerceProductReferenceService() {
     return blCommerceProductReferenceService;
   }
@@ -55,10 +55,10 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
   }
 
+  @Override
   public Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> getReferenceDataProductReferenceConverter() {
     return referenceDataProductReferenceConverter;
   }
-
 
 }
 
