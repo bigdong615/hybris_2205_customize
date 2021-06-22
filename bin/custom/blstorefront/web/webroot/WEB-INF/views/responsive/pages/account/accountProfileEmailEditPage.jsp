@@ -4,50 +4,35 @@
 <%@ taglib prefix="formElement" tagdir="/WEB-INF/tags/responsive/formElement" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-<div class="account-section-header">
-	<div class="row">
-		<div class="container-lg col-md-6">
-			<spring:theme code="text.account.update.email.address"/>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="container-lg col-md-6">
-		<div class="account-section-content">
-			<div class="account-section-form">
-				<form:form action="update-email" method="post" modelAttribute="updateEmailForm">
-					<formElement:formInputBox idKey="profile.email" labelKey="profile.email" path="email" inputCSS="text" mandatory="true"/>
-					<formElement:formInputBox idKey="profile.checkEmail"  labelKey="profile.checkEmail" path="chkEmail" inputCSS="text" mandatory="true"/>
-					<formElement:formPasswordBox idKey="profile.pwd" labelKey="profile.pwd" path="password" inputCSS="text form-control" mandatory="true"/>
-					<input type="hidden" id="recaptchaChallangeAnswered" value="${fn:escapeXml(requestScope.recaptchaChallangeAnswered)}"/>
-					<div class="form_field-elements control-group js-recaptcha-captchaaddon"></div>
-					<div class="form-actions">
-						<div class="row">
-							<div class="col-sm-6 col-sm-push-6">
-								<div class="accountActions">
-									<ycommerce:testId code="email_saveEmail_button">
-										<button type="submit" class="btn btn-primary btn-block">
-											<spring:theme code="text.account.profile.saveUpdates" />
-										</button>
-									</ycommerce:testId>
-								</div>
-							</div>
-							<div class="col-sm-6 col-sm-pull-6">
-								<div class="accountActions">
-									<ycommerce:testId code="email_cancelEmail_button">
-										<button type="button" class="btn btn-default btn-block backToHome">
-											<spring:theme code="text.account.profile.cancel" />
-										</button>
-									</ycommerce:testId>
-								</div>
-							</div>
-						</div>
-					</div>
-				</form:form>
-			</div>
-		</div>
-	</div>
-</div>
+<div id="accountContent" class="col-lg-8 offset-lg-1">
+                    <h1><spring:theme code="text.account.update.email.address"/></h1>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <form:form action="update-email" method="post" modelAttribute="updateEmailForm" class="my-4">
+                                <formElement:formInputBox idKey="profile.email" path="email" inputCSS="form-control mb-3" mandatory="true" placeholder="Current Email"/>
+                                <formElement:formInputBox idKey="profile.checkEmail" path="chkEmail" inputCSS="form-control mb-3" mandatory="true" placeholder="New Email"/>
+                                <formElement:formPasswordBox idKey="profile.pwd" path="password" inputCSS="form-control" mandatory="true" placeholder="Password"/>
+                               <div class="form-actions text-end mt-3">
+                                         	                  <ycommerce:testId code="email_cancelEmail_button">
+                                               		              <button type="button" class="btn btn-outline backToHome">
+                                               		              <spring:theme code="text.account.profile.cancel" />
+                                               		              </button>
+                                                             </ycommerce:testId>
+                                         		                <ycommerce:testId code="email_saveEmail_button">
+                                         					               <button type="submit" class="btn btn-primary js-change-email-validation">
+                                         					               <spring:theme code="text.account.profile.saveUpdates" />
+                                         					               </button>
+                                         		                </ycommerce:testId>
+                               </div>
+                                	<c:if test="${not empty successMsgEmail}">
+                                      	<div class="notification notification-tip check mt-4">${successMsgEmail}</div>
+                                  </c:if>
+                            </form:form>
+                        </div>
+                    </div>
+ </div>

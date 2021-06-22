@@ -238,3 +238,13 @@ font-size: 21px;
  #accountContent input::placeholder {
    color:#b2b2b2;
   }
+
+.shortInput {
+    width: calc(40% - 15px);
+}
+.selectBoxDivWidth{
+    width:60%;
+}
+.selectBoxSize{
+    width:100%;
+}
