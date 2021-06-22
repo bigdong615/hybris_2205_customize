@@ -18,11 +18,13 @@ import java.util.List;
  * implementation of OOTB class for Product Reference Section
  * @author Sahana SB
  */
-public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
+public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade implements
+    BlProductFacade {
 
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
 
+  @Override
   public List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct,
       final List<ProductOption> options, final Integer limit) {
     final List<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>> references = getBlCommerceProductReferenceService()
@@ -31,15 +33,12 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
     final List<ProductReferenceData> result = new ArrayList<>();
 
     for (final ReferenceData<ProductReferenceTypeEnum, REF_TARGET> reference : references) {
-      Object productReference = getReferenceDataProductReferenceConverter().convert(reference);
-      if (productReference instanceof ProductReferenceData) {
-        final ProductReferenceData productReferenceData = (ProductReferenceData) productReference;
-        getReferenceProductConfiguredPopulator()
-            .populate(reference.getTarget(), productReferenceData.getTarget(), options);
-        result.add(productReferenceData);
-      }
+      final ProductReferenceData productReferenceData = (ProductReferenceData) getReferenceDataProductReferenceConverter()
+          .convert(reference);
+      getReferenceProductConfiguredPopulator()
+          .populate(reference.getTarget(), productReferenceData.getTarget(), options);
+      result.add(productReferenceData);
     }
-
     return result;
   }
 
@@ -52,6 +51,6 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
       BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService) {
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
   }
-
 }
+
 

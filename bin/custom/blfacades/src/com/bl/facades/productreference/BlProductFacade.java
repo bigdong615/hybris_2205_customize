@@ -11,6 +11,10 @@ import java.util.List;
  */
 public interface BlProductFacade extends ProductFacade{
 
+  /**
+   *this method is used to send the custom parameter to get the Product reference section
+   *
+   */
   List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct, final List<ProductOption> options, final Integer limit);
 
 
