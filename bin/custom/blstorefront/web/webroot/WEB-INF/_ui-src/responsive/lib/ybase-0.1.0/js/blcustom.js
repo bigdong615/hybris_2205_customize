@@ -355,6 +355,7 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
                                      success: function (response) {
                                       var index = $( ".js-add-to-cart-popup" ).index( this );
                                       document.getElementById(popUpId).innerHTML= "Added";
+                                      document.getElementById(popUpId).setAttribute("disabled", true);
                                      },
                                       complete: function() {
                                         $('.page-loader-new-layout').hide();

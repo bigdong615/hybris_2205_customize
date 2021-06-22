@@ -96,7 +96,7 @@ public class BlControllerConstants
 
 	public static final String PRODUCT_REFERENCE = "productReferences";
 	public static final String MAXIMUM_LIMIT = "productsLimit";
-	public static final String ADDRESS_PAGE_IDENTIFIER = "Addresses";	
+	public static final String ADDRESS_PAGE_IDENTIFIER = "Addresses";
 	public static final String USER_SELECTED_PAYMENT_INFO = "userSelectedPaymentInfo";
 	public static final String SELECTED_PAYMENT_METHOD_NONCE = "selectedPaymentMethodNonce";
 	public static final String PAYMENT_INFO_BILLING_ADDRESS = "paymentInfoBillingAddress";
@@ -105,6 +105,7 @@ public class BlControllerConstants
 	public static final String UPDATE_PASSWORD_PAGE_IDENTIFIER = "Change Password";
 	public static final String ORDER_CONFIRMATION_PAGE = "orderConfirmation";
 	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
+	public static final String UPDATE_EMAIL_IDENTIFIER = "Change Email";
 	
 	private BlControllerConstants()
 	{

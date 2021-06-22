@@ -522,6 +522,17 @@
 		</property>
 	</bean>
 
+	<!--BL-174:created to send custom parameter for the product reference section  .-->
+	<alias name="blProductFacade" alias="blProductFacade"/>
+	<bean id="blProductFacade" class="com.bl.facades.productreference.impl.DefaultBlProductFacade" parent="productFacade">
+		<property name="blCommerceProductReferenceService" ref="blCommerceProductReferenceService"/>
+	</bean>
+
+	<!--BL-174:created to send custom parameter for the product reference section  .-->
+	<alias name="blCommerceProductReferenceService" alias="blCommerceProductReferenceService"/>
+	<bean id="blCommerceProductReferenceService" class="com.bl.facades.productreference.service.DefaultBlCommerceProductReferenceService" parent="commerceProductReferenceService">
+	</bean>
+
 	<!--BL-712:This class was created to customize bl specific address data.-->
 	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
 	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
