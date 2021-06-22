@@ -44,7 +44,7 @@
                       </a>
                    </li>
                    <li>
-                      <a href="${baseUrl}/update-password" class="dropdown-item">
+                      <a href="${baseUrl}/update-password" class="dropdown-item ${blPageType eq 'Change Password'? 'boldCustom' : ''}"">
                          <spring:theme code= "text.update.password" />
                       </a>
                    </li>
@@ -96,7 +96,10 @@
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/update-password">
+                   <a href="${baseUrl}/update-password"
+                   <c:if test="${blPageType eq 'Change Password'}">
+                      <c:out value="class=active"/>
+                   </c:if>>
                       <spring:theme code= "text.update.password" />
                    </a>
                 </p>

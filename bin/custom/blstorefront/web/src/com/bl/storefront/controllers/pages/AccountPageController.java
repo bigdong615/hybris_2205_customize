@@ -568,7 +568,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String updatePassword(final Model model) throws CMSItemNotFoundException
 	{
 		final UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
-
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_PASSWORD_PAGE_IDENTIFIER);
 		model.addAttribute("updatePasswordForm", updatePasswordForm);
 
 		final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
@@ -609,7 +609,6 @@ public class AccountPageController extends AbstractSearchPageController
 
 		if (bindingResult.hasErrors())
 		{
-			GlobalMessages.addErrorMessage(model, FORM_GLOBAL_ERROR);
 			final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
 			storeCmsPageInModel(model, updatePasswordPage);
 			setUpMetaDataForContentPage(model, updatePasswordPage);
@@ -619,8 +618,7 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 		else
 		{
-			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-					"text.account.confirmation.password.updated", null);
+			redirectAttributes.addFlashAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
 			return REDIRECT_TO_PASSWORD_UPDATE_PAGE;
 		}
 	}
