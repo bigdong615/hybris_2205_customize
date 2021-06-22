@@ -7,6 +7,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.solrfacetsearch.BlProductSearchFacade;
 import de.hybris.platform.acceleratorcms.model.components.SearchBoxComponentModel;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.customer.CustomerLocationService;
@@ -63,7 +64,8 @@ public class SearchPageController extends AbstractSearchPageController
 	private static final String NO_RESULTS_CMS_PAGE_ID = "searchEmpty";
 
 	@Resource(name = "productSearchFacade")
-	private ProductSearchFacade<ProductData> productSearchFacade;
+	private BlProductSearchFacade<ProductData> productSearchFacade;
+//	private ProductSearchFacade<ProductData> productSearchFacade;
 
 	@Resource(name = "searchBreadcrumbBuilder")
 	private SearchBreadcrumbBuilder searchBreadcrumbBuilder;
@@ -258,7 +260,7 @@ public class SearchPageController extends AbstractSearchPageController
 	@ResponseBody
 	@RequestMapping(value = "/autocomplete/" + COMPONENT_UID_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
 	public AutocompleteResultData getAutocompleteSuggestions(@PathVariable final String componentUid,
-			@RequestParam("term") final String term) throws CMSItemNotFoundException
+			@RequestParam("term") final String term ,	@RequestParam(value="blPageType" ,required = false) final String blPageType) throws CMSItemNotFoundException
 	{
 		final AutocompleteResultData resultData = new AutocompleteResultData();
 
@@ -271,10 +273,9 @@ public class SearchPageController extends AbstractSearchPageController
 
 		if (component.isDisplayProducts())
 		{
-			resultData.setProducts(subList(productSearchFacade.textSearch(term, SearchQueryContext.SUGGESTIONS).getResults(),
+			resultData.setProducts(subList(productSearchFacade.textSearch(term, SearchQueryContext.SUGGESTIONS , blPageType).getResults(),
 					component.getMaxProducts()));
 		}
-
 		return resultData;
 	}
 

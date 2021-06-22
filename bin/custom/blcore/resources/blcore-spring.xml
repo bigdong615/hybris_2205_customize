@@ -856,4 +856,16 @@
 		<property name="key" value="defaultBlRuleFreeRentalDatesRAOAction"/>
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
+
+	<!--BL-82 Added for creating custom method for populating the custom parameter -->
+
+	<alias name="defaultBlSolrFacetSearchProductSearchStrategy" alias="commerceSolrFacetSearchProductSearchStrategy" />
+	<bean id="defaultBlSolrFacetSearchProductSearchStrategy" class="com.bl.core.services.strategy.impl.DefaultBlSolrFacetSearchProductSearchStrategy" parent="defaultCommerceSolrFacetSearchProductSearchStrategy">
+	</bean>
+
+	<alias name="defaultBlSolrProductSearchService" alias="defaultCommerceProductSearchService" />
+	<bean id="defaultBlSolrProductSearchService" class="com.bl.core.services.solrfacetsearch.impl.DefaultBlSolrProductSearchService" parent="defaultCommerceSolrProductSearchService">
+<property name="defaultBlSolrFacetSearchProductSearchStrategy" ref="commerceSolrFacetSearchProductSearchStrategy"/>
+	</bean>
+
 </beans>
