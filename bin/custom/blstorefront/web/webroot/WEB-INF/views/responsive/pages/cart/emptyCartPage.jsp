@@ -33,7 +33,7 @@
         <div class="container">
             <div id="featured" class="row justify-content-center mt-5">
                 <div class="col-lg-11 col-xl-9">
-                    <div class="modal fade" id="addToCart" tabindex="-1"
+                    <div class="modal fade js-emptyCartPage" id="addToCart" tabindex="-1"
                     			aria-hidden="true">
                     			<div class="modal-dialog modal-dialog-centered modal-lg"
                     				id="addToCartModalDialog"></div>
