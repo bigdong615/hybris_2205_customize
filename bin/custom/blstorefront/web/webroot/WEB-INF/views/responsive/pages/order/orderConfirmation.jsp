@@ -4,6 +4,7 @@
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 
 <template:page pageTitle="${pageTitle}">
 	<div class="screen"></div>
@@ -22,7 +23,7 @@
 						  <div class="notification notification-tip check d-inline-block mb-5">
 						    <c:forEach items="${orderData.giftCardData}" var="gift" varStatus="loop">
 							    <b><spring:theme code="order.confirmation.page.gift.card" arguments="${fn:escapeXml(gift.code)}"/></b>
-							    <spring:theme code="order.confirmation.page.remaining.balance" arguments="${gift.balanceamount}"/></br>
+							    <spring:theme code="order.confirmation.page.remaining.balance"/>&nbsp;<format:price priceData="${gift.balanceamount}"/></br>
 						    </c:forEach>
 						  </div>
 						</c:if>
