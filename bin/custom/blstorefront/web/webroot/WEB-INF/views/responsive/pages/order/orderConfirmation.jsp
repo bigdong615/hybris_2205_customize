@@ -13,7 +13,9 @@
 					<div id="orderConfirmation" class="text-center">
 						<h1><spring:theme code="order.confirmation.page.thanks.message"/></h1>
 						<h5 class="mb-5">
-							<spring:theme code="order.confirmation.page.order.number" arguments="${orderCode}"/><br>(Jan 31 - Feb 2)
+							<spring:theme code="order.confirmation.page.order.number" arguments="${orderCode}"/>
+							<br>
+							(${orderData.rentalDates.selectedFromDate} - ${orderData.rentalDates.selectedToDate})
 						</h5>
 						<div class="notification notification-tip check d-inline-block mb-5">
 							<b><spring:theme code="order.confirmation.page.gift.card" arguments="BL30OFF"/></b> 

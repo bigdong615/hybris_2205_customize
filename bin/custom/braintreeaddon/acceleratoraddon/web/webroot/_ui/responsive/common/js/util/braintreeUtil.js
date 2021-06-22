@@ -134,7 +134,8 @@ function createErrorDiv(message) {
 
 function resetHostedFields() {
     $(CONST.NUMBER_ID).empty();
-    $(CONST.EXPIRATION_DATE_ID).empty();
+    $(CONST.EXPIRATION_YEAR_ID).empty();
+    $(CONST.EXPIRATION_MONTH_ID).empty();
     $(CONST.CVV_ID).empty();
     $(CONST.CARD_HOLDER_ID).empty();
 }
