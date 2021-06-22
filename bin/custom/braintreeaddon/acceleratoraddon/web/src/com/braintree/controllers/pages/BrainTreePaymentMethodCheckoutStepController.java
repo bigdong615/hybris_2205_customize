@@ -64,13 +64,13 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
 
   @RequestMapping(value = "/reviewSavedPayment", method = RequestMethod.POST)
   @RequireHardLogIn
-  public String doSelectSavedPaymentMethod(@RequestParam("savedCCCardId") final String savedCCCardId,
+  public String doSelectSavedPaymentMethod(@RequestParam("savedCCCardId") final String savedCCCardId,@RequestParam("company_name") final String companyName,
       @RequestParam("savedCCCardNonce") final String savedCCCardNonce, @Valid final SopPaymentDetailsForm sopPaymentDetailsForm, 
       @RequestParam(value = "selected_Billing_Address_Id") final String selectedBillingAddressId, final Model model, final RedirectAttributes redirectAttributes)
   {
     try
     {
-      final AddressData newBillingAddressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm);
+      final AddressData newBillingAddressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm, companyName);
       if (StringUtils.isNotBlank(savedCCCardId))
       {
         if (StringUtils.isNotBlank(savedCCCardNonce))
@@ -99,7 +99,8 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
    * @param sopPaymentDetailsForm the sop payment details form
    * @return the address data
    */
-  private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm)
+  private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm,
+      final String companyName)
   {
     if (StringUtils.isBlank(selectedAddressId))
     {
@@ -113,6 +114,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
       address.setTitleCode(sopPaymentDetailsForm.getBillTo_titleCode());
       address.setFirstName(sopPaymentDetailsForm.getBillTo_firstName());
       address.setLastName(sopPaymentDetailsForm.getBillTo_lastName());
+      address.setCompanyName(companyName);
       address.setTown(sopPaymentDetailsForm.getBillTo_city());
       address.setLine1(sopPaymentDetailsForm.getBillTo_street1());
       address.setLine2(sopPaymentDetailsForm.getBillTo_street2());
