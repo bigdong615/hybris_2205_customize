@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.bl.core.model.UPSShipmentPackageResultModel;
 import com.bl.facades.shipment.data.FedExShippingRequestData;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.populators.BLFedExShippingDataPopulator;
@@ -67,16 +66,11 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		packagingInfo.setLabelURL(upsResponse.getLabelURL());
 		packagingInfo.setShipmentIdentificationNumber(upsResponse.getShipmentIdentificationNumber());
 		packagingInfo.setTotalShippingPrice(upsResponse.getTotalCharges());
+		final UPSShipmentPackageResult shipmentPackage = upsResponse.getPackages().get(0);
+		packagingInfo.setTrackingNumber(shipmentPackage.getTrackingNumber());
+		packagingInfo.setHTMLImage(shipmentPackage.getHTMLImage());
+		packagingInfo.setGraphicImage(shipmentPackage.getGraphicImage());
 
-		final UPSShipmentPackageResultModel upsShipmentPackge = new UPSShipmentPackageResultModel();
-		for (final UPSShipmentPackageResult shipmentPackage : upsResponse.getPackages())
-		{
-			upsShipmentPackge.setTrackingNumber(shipmentPackage.getTrackingNumber());
-			upsShipmentPackge.setGraphicImage(shipmentPackage.getGraphicImage());
-			upsShipmentPackge.setHTMLImage(shipmentPackage.getHTMLImage());
-		}
-
-		packagingInfo.setShipmentPackages(upsShipmentPackge);
 		getModelService().save(packagingInfo);
 		getModelService().refresh(packagingInfo);
 	}

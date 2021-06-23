@@ -1877,21 +1877,12 @@
 					<description>Shipment identification number</description>
 					<persistence type="property" />
 				</attribute>
-				<attribute qualifier="shipmentPackages" type="UPSShipmentPackageResult">
-					<description>Total Shipping Price</description>
-					<persistence type="property" />
-				</attribute>
-				</attributes>
-			</itemtype>
-			
-			<itemtype code="UPSShipmentPackageResult" generate="true"
-			autocreate="true">
-			<deployment table="upsShipmentPackageResult" typecode="12212" />
-			<attributes>
+				
 				<attribute qualifier="trackingNumber" type="java.lang.String">
 					<description>Shipment Package tracking number</description>
 					<persistence type="property" />
 				</attribute>
+				
 				<attribute qualifier="graphicImage" type="java.lang.String">
 					<description>Graphic Image</description>
 					<persistence type="property">
@@ -1912,6 +1903,7 @@
 						</columntype>
 					</persistence>
 				</attribute>
+				
 				<attribute qualifier="hTMLImage" type="java.lang.String">
 					<description>Html image</description>
 					<persistence type="property">
@@ -1932,12 +1924,11 @@
 						</columntype>
 					</persistence>	
 				</attribute>
-			</attributes>
-		</itemtype>
+				</attributes>
+			</itemtype>
 		</typegroup>
 		
 	<typegroup name="Consignment">
-
 	<itemtype code="Consignment" autocreate="false" generate="false">
                 <description>Extending Consignment type with additional attributes.</description>
                 <attributes>
