@@ -374,6 +374,7 @@ ACC.address = {
            	}
            });
 
+        /*Validating address field */
     	function validateField(attribute, fieldName) {
         	if (attribute && attribute.trim() != '' && attribute.length < 255) {
         		fieldName.removeClass('error');
@@ -383,7 +384,7 @@ ACC.address = {
         	count = count + 1;
         	return false;
         }
-
+        /* Validate email data*/
         function validateEmail(email, fieldName) {
         	if (email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
         		fieldName.removeClass('error');
@@ -393,7 +394,7 @@ ACC.address = {
         	count = count + 1;
         	return false;
         }
-
+        /*Validating phone number*/
         function validatePhone(phone, fieldName) {
         	if (phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
         		fieldName.removeClass('error');

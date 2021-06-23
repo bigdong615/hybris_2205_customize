@@ -50,6 +50,11 @@ public class BlAddressDataUtil extends AddressDataUtil {
         }
     }
 
+    /**
+     * This method was created to populate extended attribute of address data to address form.
+     * @param addressData
+     * @param addressForm
+     */
     private void fillExtendedAttributesToAddressForm( final AddressData addressData,AddressForm addressForm) {
         if(addressForm instanceof BlAddressForm) {
             final BlAddressForm blAddressForm = (BlAddressForm) addressForm;

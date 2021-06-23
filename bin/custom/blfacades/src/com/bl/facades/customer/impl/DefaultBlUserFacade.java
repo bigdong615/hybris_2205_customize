@@ -51,7 +51,10 @@ public class DefaultBlUserFacade extends DefaultUserFacade implements BlUserFaca
         }
     }
 
-
+    /**
+     * This method is override to set default billing address whiling edit address.
+     * @param addressData
+     */
     @Override
     public void editAddress(final AddressData addressData)
     {
