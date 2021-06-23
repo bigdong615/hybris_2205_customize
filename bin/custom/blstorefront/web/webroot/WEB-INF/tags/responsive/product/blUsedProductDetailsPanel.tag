@@ -8,7 +8,9 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
 
 <c:url value="/cart/add" var="addToCartUrl"/>
-
+<div class="page-loader-new-layout">
+     <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img"/>
+</div>
  <div class="screen"></div>
      <cms:pageSlot position="SearchBoxBl" var="component">
      		<cms:component component="${component}"/>
