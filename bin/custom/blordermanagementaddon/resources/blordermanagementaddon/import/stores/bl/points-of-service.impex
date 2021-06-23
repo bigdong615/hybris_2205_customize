@@ -1,0 +1,28 @@
+# -----------------------------------------------------------------------
+# [y] hybris Platform
+#
+# Copyright (c) 2018 SAP SE or an SAP affiliate company.
+# All rights reserved.
+#
+# This software is the confidential and proprietary information of SAP
+# ("Confidential Information"). You shall not disclose such Confidential
+# Information and shall use it only in accordance with the terms of the
+# license agreement you entered into with SAP.
+# -----------------------------------------------------------------------
+# ImpEx for Electronics Store
+ 
+$defaultPassword=1234
+ 
+INSERT_UPDATE StoreEmployeeGroup ; UID[unique=true]      ; locname[lang=en]             ; store(name)       
+                                 ; walthamstoreemployees ; Waltham Store Employee Group ; BL WALTHAM POS    
+                                 ; carlosstoreemployees  ; Carlos Store Employee Group  ; BL SAN CARLOS POS 
+                                 
+INSERT_UPDATE Employee ; uid[unique=true]       ; name                     ; groups(uid)                               ; loginDisabled [default=false] ; password[default=$defaultPassword] 
+                       ; WalthamWarehouseAgent1 ; Waltham Warehouse Agent1 ; warehouseagentgroup,walthamstoreemployees 
+                       ; WalthamWarehouseAgent2 ; Waltham Warehouse Agent2 ; warehouseagentgroup,walthamstoreemployees 
+                       ; CarlosWarehouseAgent1  ; Carlos Warehouse Agent1  ; warehouseagentgroup,carlosstoreemployees  
+                       ; CarlosWarehouseAgent2  ; Carlos Warehouse Agent2  ; warehouseagentgroup,carlosstoreemployees  
+                       
+INSERT_UPDATE PoS2WarehouseRel ; source(name)[unique=true] ; target(code)[unique=true] 
+                               ; BL WALTHAM POS            ; warehouse_ma              
+                               ; BL SAN CARLOS POS         ; warehouse_ca              

@@ -59,7 +59,7 @@ public class OrderManualCheckedAction extends AbstractOrderAction<OrderProcessMo
 		//If order is cancelled, moving the order process to end state
 		if (OrderStatus.CANCELLED.equals(order.getStatus()))
 		{
-			return Transition.OK;   // TEMPORARY code added, Transition.CANCELLED
+			return Transition.CANCELLED;   // TEMPORARY code added, Transition.CANCELLED
 		}
 
 		ServicesUtil.validateParameterNotNull(order.getFraudulent(), "Fraudulent value in order cannot be null");

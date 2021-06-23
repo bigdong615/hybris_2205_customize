@@ -215,7 +215,7 @@
 	</bean>
 
 	<bean id="generateForgottenPasswordEmail" parent="abstractGenerateEmailAction">
-		<property name="frontendTemplateName" value="ForgottenPasswordEmailTemplate"/>
+		<property name="frontendTemplateName" value="BlForgottenPasswordEmailTemplate"/>
 	</bean>
 
 	<bean id="generateOrderConfirmationEmail" parent="abstractGenerateEmailAction">

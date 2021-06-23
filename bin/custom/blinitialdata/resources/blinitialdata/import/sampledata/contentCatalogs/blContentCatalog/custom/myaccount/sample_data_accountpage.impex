@@ -15,6 +15,8 @@ INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;
                                  ;;BookmarksComponent    ; Bookmarks Component   ; accountBookmarksPage.jsp ;;BookmarksComponent
                                  ;;VerificationImagesComponent ; Verification Images Component ; accountVerificationImagesPage.jsp ;; VerificationImagesComponent
                                  ;;CreditCartsComponent    ; Credit Carts Component   ; accountCreditCartsPage.jsp ;;CreditCartsComponent
+                                 ;;UpdateEmailComponent;Update Email Component;accountProfileEmailEditPage.jsp;;UpdateEmailComponent
+
 
 # CMS View Order Action
 INSERT_UPDATE ViewOrderAction;$contentCV[unique=true];uid[unique=true];url;name;&actionRef
@@ -31,6 +33,7 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
                          ;;BodyContentSlot-bookmarks ;Body Content Slot for Bookmarks;true;BookmarksComponent;;;
                          ;;BodyContentSlot-verificationImages;Body Content Slot for Verification Images;true;VerificationImagesComponent;;;
                          ;;BodyContentSlot-creditCarts;Body Content Slot for Credit Carts;true;CreditCartsComponent;;;
+                         ;;BodyContent-update-email;Body Content Slot for Update Email;true;UpdateEmailComponent;;;
 
 
 # ContentSlotForPage
@@ -43,3 +46,4 @@ INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];positi
                                 ;;BodyContent-bookmarks  ;BodyContent; bookmarks ;BodyContentSlot-bookmarks;;;
                                 ;;BodyContent-verificationImages  ;BodyContent; verificationImages ;BodyContentSlot-verificationImages;;;
                                 ;;BodyContent-creditCarts  ;BodyContent; creditCarts ;BodyContentSlot-creditCarts;;;
+                                ;;BodyContent-update-email;BodyContent;update-email;BodyContent-update-email;;;
