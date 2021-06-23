@@ -12,7 +12,6 @@ $jarResourceCms=$config-jarResourceCmsValue
 INSERT_UPDATE PageTemplate ; $contentCV[unique=true] ; uid[unique=true] ; name               ; frontendTemplateName ; velocityTemplate[translator=de.hybris.platform.commerceservices.impex.impl.FileLoaderValueTranslator] ; restrictedPageTypes(code) ; active[default=true]
                            ;                         ; EmptyCartPageTemplate ; Empty Cart Page Template ; cart/emptyCartPage      ; $jarResourceCms/structure-view/structure_EmptyCartPageTemplate.vm                                          ; CategoryPage,ContentPage
 
-
 ###  Define Content SlotNames  ###
 INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(uid,$contentCV)[unique=true][default='EmptyCartPageTemplate'] ; validComponentTypes(code) ; compTypeGroup(code)
                               ; PromoBannerSlot                    ;                                                                   ;                           ; wide
@@ -47,9 +46,8 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
 
 
 ########################### Define Content slots for page######################
-#INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='homepage'] ; contentSlot(uid,$contentCV)[unique=true]
-#                                ;                         ; HomePageHeroBannerSlot-LandingPage              ; HomePageHeroBannerSlot             ;                                                       ; HomePageHeroBannerSlot                   ; true
-
+INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                               ; position[unique=true]              ; page(uid,$contentCV)[unique=true][default='emptyCartPage'] ; contentSlot(uid,$contentCV)[unique=true]
+                                 ;                         ;HomePageFeaturedGearSectionSlot-EmptyCartPage   ;HomePageFeaturedGearSectionSlot     ;                                                            ; HomePageFeaturedGearSectionSlot          ; true
 
 ###  Create Content Page (Empty Cart Page)  ###
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true] ; name      ; masterTemplate(uid,$contentCV) ; label    ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] ; homepage[default='false']
