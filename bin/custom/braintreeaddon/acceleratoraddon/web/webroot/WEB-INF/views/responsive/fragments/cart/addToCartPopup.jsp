@@ -133,9 +133,6 @@
                                                                                            <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
                                                                                       </c:when>
                                                                                        <c:otherwise>
-                                                                                       <div class="page-loader-new-layout">
-                                                                                                  <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
-                                                                                             </div>
                                                                                             <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                                                                                 <button type="button" class="btn btn-primary btn-block js-add-to-cart-popup" id="modalCard-${loopindex.index}" data-bs-toggle="modal"
                                                                                                    data-bs-target="#addToCart" data-product-code="${productReference.target.code}">
