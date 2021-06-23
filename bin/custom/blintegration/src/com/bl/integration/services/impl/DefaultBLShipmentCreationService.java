@@ -61,8 +61,6 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 	private BLUPSSecurityPopulator blUPSSecurityPopulator;
 
-	private DefaultUPSIntegrationService upsIntegrationService;
-
 	@Value("${blintegration.ups.shipment.endpoint.url}")
 	private String endpointURL;
 

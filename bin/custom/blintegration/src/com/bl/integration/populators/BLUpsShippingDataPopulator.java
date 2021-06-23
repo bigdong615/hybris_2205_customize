@@ -202,8 +202,7 @@ public class BLUpsShippingDataPopulator
 	{
 		final UpsShipmentServiceData serviceDataForPackagingType = new UpsShipmentServiceData();
 		if (consignment.getOptimizedShippingType() != null
-				&& StringUtils.isNotBlank(consignment.getOptimizedShippingType().getCode())
-				&& StringUtils.equals(consignment.getOptimizedShippingType().getCode(), ""))
+				&& StringUtils.isNotBlank(consignment.getOptimizedShippingType().getCode()))
 		{
 			serviceDataForPackagingType.setCode(consignment.getOptimizedShippingType().getServiceTypeCode());
 			serviceDataForPackagingType.setDescription(consignment.getOptimizedShippingType().getServiceTypeDesc());
