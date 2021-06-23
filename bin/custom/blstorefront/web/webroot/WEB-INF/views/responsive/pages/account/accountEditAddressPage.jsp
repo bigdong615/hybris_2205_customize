@@ -44,13 +44,13 @@
             </div>
             <formElement:formInputBox idKey="address.email" labelKey="" placeholder="address.email" path="email" inputCSS="form-control mb-3" mandatory="true" />
             <formElement:formInputBox idKey="address.phone" labelKey="" placeholder="address.phone" path="phone" inputCSS="form-control mb-3" mandatory="true" />
-            <input type="checkbox" id="default-billing-address" name="defaultBillingAddress"  >
+            <input type="checkbox" id="default-billing-address" name="defaultBillingAddress" ${addressForm.defaultBillingAddress eq 'true' ? 'checked':''} >
             <label for="default-billing-address">
                <span class="gray80">
                   <spring:theme code="text.default.billing"/>
                </span>
             </label>
-            <input type="checkbox" id="default-shipping-address" name="defaultAddress"  >
+            <input type="checkbox" id="default-shipping-address" name="defaultAddress" ${addressForm.defaultAddress eq 'true' ? 'checked':''} >
             <label for="default-shipping-address">
                <span class="gray80">
                   <spring:theme code="text.default.shipping"/>

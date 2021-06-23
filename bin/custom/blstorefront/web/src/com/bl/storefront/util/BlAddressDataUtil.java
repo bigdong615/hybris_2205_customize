@@ -57,7 +57,7 @@ public class BlAddressDataUtil extends AddressDataUtil {
             blAddressForm.setCompanyName(addressData.getCompanyName());
             blAddressForm.setAddressType(addressData.getAddressType());
             blAddressForm.setUpsStoreAddress(addressData.getUpsStoreAddress());
-
+            blAddressForm.setDefaultBillingAddress(addressData.isDefaultBillingAddress());
         }
     }
 
@@ -65,7 +65,7 @@ public class BlAddressDataUtil extends AddressDataUtil {
     public void convertBasic(final AddressData source, final AddressForm target)
     {
         super.convertBasic(source, target);
-       // fillExtendedAttributes(target, source);
+
     }
 
     @Override
@@ -73,7 +73,6 @@ public class BlAddressDataUtil extends AddressDataUtil {
     {
         super.convert(source, target);
        fillExtendedAttributesToAddressForm(source,target);
-       // fillExtendedAttributes(target, source);
     }
 
     @Override

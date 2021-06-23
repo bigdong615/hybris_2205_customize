@@ -122,7 +122,6 @@ public class AccountPageController extends AbstractSearchPageController
 	// Internal Redirects
 	private static final String REDIRECT_TO_ADDRESS_BOOK_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_ADDRESS_BOOK_URL;
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
-	private static final String REDIRECT_TO_EDIT_ADDRESS_PAGE = REDIRECT_PREFIX + "/my-account/edit-address/";
 	private static final String REDIRECT_TO_UPDATE_EMAIL_PAGE = REDIRECT_PREFIX + "/my-account/update-email";
 	private static final String REDIRECT_TO_UPDATE_PROFILE = REDIRECT_PREFIX + "/my-account/update-profile";
 	private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE = REDIRECT_PREFIX + "/my-account/update-password";
@@ -690,7 +689,11 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			newAddress.setDefaultAddress(addressForm.getDefaultAddress() != null && addressForm.getDefaultAddress().booleanValue());
 		}
-		newAddress.setDefaultBillingAddress(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue());
+		if(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue()){
+			newAddress.setDefaultBillingAddress(Boolean.TRUE);
+			newAddress.setBillingAddress(Boolean.TRUE);
+		}
+
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -798,7 +801,11 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			newAddress.setDefaultAddress(true);
 		}
-		newAddress.setDefaultBillingAddress(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue());
+		if(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue()){
+			newAddress.setDefaultBillingAddress(Boolean.TRUE);
+			newAddress.setBillingAddress(Boolean.TRUE);
+		}
+		
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,

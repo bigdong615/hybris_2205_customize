@@ -329,13 +329,15 @@ ACC.address = {
                     	});
                 });
 
-
+           /* This method is written for address form validation*/
            var count = 0;
            $(document).on("click", ".js-validate-address-form-data", function (e) {
            	e.preventDefault();
            	count = 0;
            	$('#js-add-address-Validation').html("");
            	$('#js-add-address-Validation').removeClass('notification notification-error');
+
+           	// Fetching input form object.
            	var firstName = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.firstName"]');
            	var lastName = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.surname"]');
            	var line1 = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.line1"]');
@@ -344,7 +346,7 @@ ACC.address = {
            	var regionIso = $('.accountAddressAdd #editAddress').find('.form-group').find('select[id="state"]');
            	var email = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.email"]');
            	var phone = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.phone"]');
-
+             //Validating form data
            	validateField(firstName.val(), firstName);
            	validateField(lastName.val(), lastName);
            	validateField(line1.val(), line1);
