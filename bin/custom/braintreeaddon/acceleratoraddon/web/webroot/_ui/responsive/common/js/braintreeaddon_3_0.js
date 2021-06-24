@@ -1085,7 +1085,7 @@ $('ul#saved-payment-action').on('click','li',function(e){
 	}	
 });
 $("#addNewCardForm").on("click",function(e)
-{
+{	
 	newCardEvent(e);
 	$("#savedCards").html("Select or Enter New Card");
 	$("#savedCCCardId").val('');
@@ -1099,10 +1099,13 @@ function newCardEvent(event)
 	event.preventDefault();
 	$("#submit_silentOrderPostForm").show();
 	$("#submit_silentOrderSavedForm").hide();
+	if($("#savedCCCardId") != '' && $("#savedCCCardId").val() != '')
+	{
+		$("#savedAddresses").html("Select or Enter New Address");
+		$("#savedBillingAddressId").val('');
+	}
 	$("#savedCCCardId").val('');
 	$("#savedCCCardNonce").val('');	
-	$("#savedAddresses").html("Select or Enter New Address");
-	$("#savedBillingAddressId").val('');
 	initializeBTclientSDK();
 	$(CONST.PAYMENT_METHOD_BT_ID).addClass("reInitialize");
 }

@@ -105,4 +105,29 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
    	 }
    	 return null;
     }
+
+    /**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public AddressData getDefaultBillingAddress()
+ 	{
+ 		try
+ 		{
+ 			final CustomerModel currentUser = getCurrentSessionCustomer();
+ 			if (Objects.nonNull(currentUser) && !getUserService().isAnonymousUser(currentUser))
+ 			{
+ 				final AddressModel defaultPaymentAddress = currentUser.getDefaultPaymentAddress();
+ 				return Objects.nonNull(defaultPaymentAddress) && BooleanUtils.isTrue(defaultPaymentAddress.getBillingAddress())
+ 						? getAddressConverter().convert(defaultPaymentAddress)
+ 						: null;
+ 			}
+ 		}
+ 		catch (final Exception exception)
+ 		{
+ 			BlLogger.logMessage(LOG, Level.ERROR, "Error while getting default billing address from current session customer",
+ 					exception);
+ 		}
+ 		return null;
+ 	}
 }
