@@ -70,7 +70,7 @@ ${ctx.messages.getMessage('paragraphFirst', ${ctx.productData.name})}
 
 <h3 style="font-family: Tahoma,helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); line-height: 1.2em; font-weight: 800; font-style: normal;text-align:center;">
 
-${ctx.productData.name}<br />
+<a href="${ctx.productPageURL}">${ctx.productData.name}<br /></a>
 
 <a href="${ctx.productPageURL}">
 #foreach($image in $ctx.productData.images) #if($image.imageType == "PRIMARY" && $image.format == "thumbnail" )
@@ -81,7 +81,7 @@ ${ctx.productData.name}<br />
 
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-${ctx.messages.getMessage('paragraphSecond', "<a href=""#"">your account's</a>",${ctx.productData.name})}
+${ctx.messages.getMessage('paragraphSecond', "<a href=""${ctx.addressUrl}"">your account's</a>",${ctx.productData.name})}
 </p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
@@ -90,7 +90,7 @@ ${ctx.messages.getMessage('paragraphThird', "<a href=""https://www.borrowlenses.
 
 <p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
 ${ctx.messages.signature}<br/>
-<a href="${ctx.messages.siteUrl}">${ctx.messages.siteName}</a><br/>
+<a href="${ctx.secureBaseUrl}">${ctx.messages.siteName}</a><br/>
 </p></td></tr></table></td></tr></table></td></tr></table></td></tr></table>
 
 <table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><style>

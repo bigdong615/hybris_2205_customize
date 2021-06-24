@@ -56,15 +56,9 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
 			final SerialProductData serialProductData = new SerialProductData();
-			if (serialProductModel.getConditionRatingOverallScore() != null)
-			{
-				serialProductData.setConditionRating(
-						serialProductModel.getConditionRatingOverallScore() + BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
-			}
-			else
-			{
-				serialProductData.setConditionRating(BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
-			}
+			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
+			serialProductData.setCosmetic(serialProductModel.getCosmetic());
+			serialProductData.setFunctional(serialProductModel.getFunctional());
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
 			{

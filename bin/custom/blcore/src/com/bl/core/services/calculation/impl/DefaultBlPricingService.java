@@ -17,6 +17,7 @@ import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -211,6 +212,21 @@ public class DefaultBlPricingService implements BlPricingService {
           .parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
     }
     return pricePercent;
+  }
+
+  /**
+   * calculate conditional rating on the basis of cosmetic and functional rating.
+   * @param cosmeticRating
+   * @param functionalRating
+   * @return
+   */
+  @Override
+  public float getCalculatedConditionalRating(float cosmeticRating,float functionalRating){
+    float calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
+    float calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
+    BigDecimal bigDecimal = new BigDecimal(Float.toString(calculatedCosmeticValue+calculatedFunctionalValue));
+    bigDecimal = bigDecimal.setScale(1, RoundingMode.HALF_UP);
+    return bigDecimal.floatValue();
   }
 
 
