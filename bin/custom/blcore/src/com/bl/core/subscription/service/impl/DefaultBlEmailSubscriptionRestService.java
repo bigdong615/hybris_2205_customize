@@ -232,11 +232,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	}
 
 	public ObjectMapper getMapper() {
-		return mapper;
-	}
-
-	public void setMapper(final ObjectMapper mapper) {
-		this.mapper = mapper;
+		return new ObjectMapper();
 	}
 
 }
