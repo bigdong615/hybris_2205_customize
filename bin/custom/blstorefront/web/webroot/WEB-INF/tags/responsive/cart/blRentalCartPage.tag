@@ -59,6 +59,7 @@
                                   </sec:authorize>
 
                               </div>
+
                               <!--BL-533 changes -->
                               <p class="mt-5 d-none body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
@@ -82,7 +83,15 @@
                               <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                               <div class="order-actions my-4">
                                   <a href="#" alt="Print Order"><i class="icon-print"></i></a>
-                                  <a href="#"><i class="icon-save" alt="Save Order"></i></a>
+                                   <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                                           <a class="js-login-popup" data-link="<c:url value='/login/loginpopup'/>" href="#"
+                                                  data-bs-toggle="modal" data-bs-target="#signIn"><i class="icon-save" alt="Save Order"></i></a>
+                                   </sec:authorize>
+                                    <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                                         <a href="#" data-bs-toggle="modal" data-bs-target="#saveCartModal"><i class="icon-save" alt="Save Order"></i></a>
+                                     </sec:authorize>
+
+
                                   <a href="#" alt="Trash Order" class="clear-cart-page" data-bs-toggle="modal" data-bs-target="#clearCartWarning"><i class="icon-trash"></i></a>
                               </div>
                           </div>
@@ -92,6 +101,8 @@
           </div>
      </section>
 	<cart:damageWaiverInfo/>
+
+
     
   <div class="modal fade" id="clearCartWarning" tabindex="-1"
   	aria-hidden="true">
@@ -119,3 +130,5 @@
   		</div>
   	</div>
   </div>
+
+

@@ -72,23 +72,16 @@ ACC.savedcarts = {
     },
 
     bindPostRestoreSavedCartLink: function () {
-        var keepRestoredCart = true;
-        var preventSaveActiveCart = false;
+        var keepRestoredCart = false;
+        var preventSaveActiveCart = true;
 
-        $(document).on("click", '.js-keep-restored-cart', function (event) {
-            keepRestoredCart = $(this).prop('checked');
-        });
-
-        $(document).on("click", '.js-prevent-save-active-cart', function (event) {
-            preventSaveActiveCart = $(this).prop('checked');
-        });
 
         $(document).on("click", '.js-save-cart-restore-btn', function (event) {
         	
             event.preventDefault();
             var cartName = $('#activeCartName').val();
             var url = $(this).data('restore-url');
-            var postData = {preventSaveActiveCart: preventSaveActiveCart, keepRestoredCart: keepRestoredCart, cartName: cartName};
+            var postData = {preventSaveActiveCart: true, keepRestoredCart: keepRestoredCart, cartName: cartName};
             
             ACC.common.checkAuthenticationStatusBeforeAction(function(){
             	$.post(url, postData, undefined, 'html').done(function (result, data, status) {
@@ -206,15 +199,7 @@ ACC.savedcarts = {
 			remain = maxchars - parseInt(tlength);
         	$('#remain').text(value+' : '+remain);
 		});
-		
-         $('#saveCartDescription').keyup(function() {
-			var maxchars = 255;
-			var value=$('#localized_val').attr('value');
-			var tlength = $(this).val().length;
-			remain = maxchars - parseInt(tlength);
-        	$('#remainTextArea').text(value+' : '+remain);
-		});
-		
+
 		$(document).on("click",'#saveCart #saveCartButton', function (e) {
 			e.preventDefault();
 			saveCart = true;
