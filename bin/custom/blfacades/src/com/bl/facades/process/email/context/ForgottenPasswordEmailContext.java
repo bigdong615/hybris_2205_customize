@@ -3,11 +3,13 @@
  */
 package com.bl.facades.process.email.context;
 
+import com.bl.logging.BlLogger;
 import de.hybris.platform.acceleratorservices.model.cms2.pages.EmailPageModel;
 import de.hybris.platform.commerceservices.model.process.ForgottenPasswordProcessModel;
 import de.hybris.platform.commerceservices.model.process.StoreFrontCustomerProcessModel;
 import de.hybris.platform.util.Config;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
@@ -31,7 +33,7 @@ public class ForgottenPasswordEmailContext extends CustomerEmailContext
 		 try {
 			 expiresInMinutes = StringUtils.isNotEmpty(passwordExpireTime) ? Integer.parseInt(passwordExpireTime) : expiresInMinutes;
 		 }catch (NumberFormatException e){
-			 LOG.error("Some error occurs due invalid forgotPassword.link.expiry.time :"+passwordExpireTime ,e);
+			 BlLogger.logMessage(LOG, Level.ERROR,"Some error occurs due invalid forgotPassword.link.expiry.time :"+passwordExpireTime,e);
 		 }
 		return expiresInMinutes;
 	}
