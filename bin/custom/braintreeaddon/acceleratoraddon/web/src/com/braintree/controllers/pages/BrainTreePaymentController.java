@@ -84,6 +84,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
   public String enterStep(@RequestParam(value = "bt_payment_method_nonce") final String nonce,
       @RequestParam(value = "use_delivery_address") final String useBillingAddress,
       @RequestParam(value = "save_billing_address") final String saveBillingAddress,
+      @RequestParam(value = "company_name") final String companyName,
       @RequestParam(value = "selected_Billing_Address_Id") final String selectedBillingAddressId,
       @RequestParam(value = "payment_type") final String paymentProvider, @RequestParam(value = "paypal_email") final String payPalEmail,
       @RequestParam(value = "card_type") final String cardType, @RequestParam(value = "card_details") final String cardDetails,
@@ -139,7 +140,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     {
       try
       {
-        final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm);
+        final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm, companyName);
         newAddress.setVisibleInAddressBook(StringUtils.isNotBlank(saveBillingAddress) && Boolean.TRUE.toString().equals(saveBillingAddress));
         getUserFacade().addAddress(newAddress);
       }
@@ -166,7 +167,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     }
     else
     {
-      final AddressData addressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm);
+      final AddressData addressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm, companyName);
       if (Objects.isNull(addressData))
       {
         
@@ -276,7 +277,8 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     setCheckoutStepLinksForModel(model, getCheckoutStep());
   }
 
-  private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm)
+  private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm, 
+      final String companyName)
   {
     if (StringUtils.isNotBlank(selectedAddressId))
     {
@@ -292,6 +294,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     address.setTitleCode(sopPaymentDetailsForm.getBillTo_titleCode());
     address.setFirstName(sopPaymentDetailsForm.getBillTo_firstName());
     address.setLastName(sopPaymentDetailsForm.getBillTo_lastName());
+    address.setCompanyName(companyName);
     address.setTown(sopPaymentDetailsForm.getBillTo_city());
     address.setLine1(sopPaymentDetailsForm.getBillTo_street1());
     address.setLine2(sopPaymentDetailsForm.getBillTo_street2());

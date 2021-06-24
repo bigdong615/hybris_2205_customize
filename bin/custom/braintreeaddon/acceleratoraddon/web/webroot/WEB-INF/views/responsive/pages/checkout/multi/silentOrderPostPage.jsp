@@ -268,6 +268,9 @@
 								</div>
 								<!-- Paypal section -->
 								<div class="accordion-item payProduct">
+									<c:if test="${not empty userSelectedPayPalPaymentInfo}">
+										<input type="hidden" id="isPayPalPresent" name="isPayPalPresent" value="true"/>
+									</c:if>
 									<div class="row">											
 										<div class="col-1 text-center pt-2">
 											<button class="btn-checkbox" type="button"
