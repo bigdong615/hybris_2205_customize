@@ -64,7 +64,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
 
   @RequestMapping(value = "/reviewSavedPayment", method = RequestMethod.POST)
   @RequireHardLogIn
-  public String doSelectSavedPaymentMethod(@RequestParam("savedCCCardId") final String savedCCCardId,@RequestParam("company_name") final String companyName,
+  public String doSelectSavedPaymentMethod(@RequestParam("savedCCCardId") final String savedCCCardId, @RequestParam("company_name") final String companyName,
       @RequestParam("savedCCCardNonce") final String savedCCCardNonce, @Valid final SopPaymentDetailsForm sopPaymentDetailsForm, 
       @RequestParam(value = "selected_Billing_Address_Id") final String selectedBillingAddressId, final Model model, final RedirectAttributes redirectAttributes)
   {
