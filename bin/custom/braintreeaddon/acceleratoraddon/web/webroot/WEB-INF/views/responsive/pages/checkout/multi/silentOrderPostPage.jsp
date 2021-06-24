@@ -39,8 +39,7 @@
 		<div class="container">
 			<div id="cartSteps" class="row justify-content-center">
 				<div class="col-xl-10">
-					<span class="step1 complete"><i class="icon-check"></i> Your
-						Rental</span><span class="step2 complete"><i class="icon-check"></i>
+					<span class="step1 complete"><i class="icon-check"></i><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.checkout.multi.order.rental"/></c:when><c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise></c:choose></span><span class="step2 complete"><i class="icon-check"></i>
 						Delivery or Pickup</span><span class="step3 active"><i
 						class="number">3</i> Payment</span><span class="step4"><i
 						class="number">4</i> Review</span>
@@ -303,7 +302,7 @@
                             <div id="allFieldvalidationMessage"></div>
 							<!-- <hr class="mt-5"> -->
 							<div class="cart-actions">
-                                <a href="#" class="gray80">Back to renting</a>
+                                <a href="#" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
                                 <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
                             </div>
