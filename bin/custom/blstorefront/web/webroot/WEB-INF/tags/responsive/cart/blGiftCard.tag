@@ -18,7 +18,7 @@
 	<div class="row">
 		<div class="col-12">
 				<b class="mt-4"><spring:theme code="text.gift.title"/></b>
-				<div class="notification notification-warning">
+				<div class="notification notification-warning" style="font-size: 13px;">
         		<spring:theme code="text.gift.card.disclaimer"/>
         </div>
         <form:form method="post" id="giftCardForm" action="${giftCardUrl}">
@@ -34,11 +34,11 @@
 					<input type="hidden" name="appliedGC" value="${cartData.giftCardData}"/>
 				</form:form>
 				<c:if test="${not empty coupon_applied_msg}">
-					<div class="notification notification-warning">${coupon_applied_msg}</div>
+					<div class="notification notification-warning" style="font-size: 13px;">${coupon_applied_msg}</div>
 				</c:if>
 				<c:if test="${not empty giftCardCodeRemove}">
         		<c:forEach items="${giftCardCodeRemove}" var="giftCardRemoved">
-                <div class="notification notification-warning">${giftCardRemoved}</div>
+                <div class="notification notification-warning" style="font-size: 13px;">${giftCardRemoved}</div>
             </c:forEach>
         </c:if>
     </div>

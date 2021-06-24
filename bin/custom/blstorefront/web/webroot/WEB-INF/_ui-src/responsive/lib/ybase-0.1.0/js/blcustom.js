@@ -1,15 +1,5 @@
-jQuery(document).ready(function () {
-	$(".hidebutton").hide();
-	if($(".hidebutton").length <= 0){
-		$(".hide-after-login").hide();
-	}
-	
-});
-
 //BL-467 clear cart functionality from cart page.
- $('.clear-cart-continue').on("click", function(event) {
-     clearInterval(z);
- 	 localStorage.removeItem('saved_countdown');
+$('.clear-cart-continue').on("click", function(event) {
 	$.ajax({
 		url : ACC.config.encodedContextPath + '/cart/emptyCart',
 		type : "GET",
@@ -53,12 +43,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	cartQuantity.val(0);
             	initialCartQuantity.val(0);
             	$(".shopping-cart__item-remove").attr("disabled", "disabled");
-              if((document.getElementsByClassName("shopping-cart__item-remove").length==1))
-            	{
-            		clearInterval(z);
-            		localStorage.removeItem('saved_countdown');
-            		fetchdata();
-            	}
             	form.submit();
        });
 
@@ -73,11 +57,10 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	damageWaiverUpdateForm.submit();
  });
 
-		 
  //BL-454 add to cart
  $('.js-add-to-cart').on("click",function(e) {
                        e.preventDefault();
-                       var productCode = $(this).attr('data-product-code');
+                        var productCode = $(this).attr('data-product-code');
                         var serialCode = $(this).attr('data-serial');
                         if(serialCode == '' || serialCode == undefined){
                         serialCode = "serialCodeNotPresent";
@@ -86,19 +69,30 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    url: ACC.config.encodedContextPath + "/cart/add",
                                    type: 'POST',
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                   beforeSend: function(){
+                                       $('.page-loader-new-layout').show();
+                                   },
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                      //On empty cart page, add class on close & continue shopping button of add to rental modal.
+                                      $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
+                                      $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
+                                      reloadEmptyCartPageOnModalClose();
+                                      mixedProductInterception(productCode, serialCode);
                                       updateQuantity();
                                       addToCartFromModal();
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
-                                      
+                                   },
+                                   complete : function() {
+                                      $('.page-loader-new-layout').hide();
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
+                                         $('.page-loader-new-layout').hide();
                                          $('.modal-backdrop').addClass('remove-popup-background');
                                          // log the error to the console
                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
@@ -373,6 +367,10 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
                                      success: function (response) {
                                       var index = $( ".js-add-to-cart-popup" ).index( this );
                                       document.getElementById(popUpId).innerHTML= "Added";
+                                      document.getElementById(popUpId).setAttribute("disabled", true);
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                          ACC.minicart.updateMiniCartDisplay();
+                                      }
                                      },
                                       complete: function() {
                                         $('.page-loader-new-layout').hide();
@@ -397,14 +395,14 @@ $('.btn-number').click(function(e){
 	if (!isNaN(currentVal)) {
 		if(type == 'minus') {
       if(currentVal > input.attr('min')) {
-				input.val(currentVal - 1).change();
+        input.val(currentVal - 1).change();
 			}
 			if(parseInt(input.val()) == input.attr('min')) {
 				$(this).attr('disabled', true);
 			}
     } else if(type == 'plus') {
       if(currentVal < input.attr('max')) {
-				input.val(currentVal + 1).change();
+        input.val(currentVal + 1).change();
 			}
 			if(parseInt(input.val()) == input.attr('max')) {
 				$(this).attr('disabled', true);
@@ -465,133 +463,60 @@ $(".input-number").keydown(function (e) {
 	}
 });
 
-//Added code for used gear addToCart 
-$('.bl-serial-add').click(function (e)
-	{
-	 e.preventDefault();
-	 var submitForm = $('#serialSubmitForm');
-	 var csrfTokan = createHiddenParameter("CSRFToken",$(ACC.config.CSRFToken));	
-	 var productCode = createHiddenParameter("productCodePost",$(this).attr('data-product-code'));
-     var serialCode = createHiddenParameter("serialProductCodePost", $(this).attr('data-serial'));
-     
-     if(serialCode == '' || serialCode == undefined){
-    serialCode = "serialCodeNotPresent";
-    }
-    
-     submitForm.append($(productCode)); 
-     submitForm.append($(serialCode));
-     submitForm.append($(csrfTokan));
-     submitForm.submit();
-    
-     startUsedGearCartTimer();
-
-  });
-
-function createHiddenParameter(name, value) {
-    var input = $(HTML.INPUT).attr(HTML.TYPE, "hidden").attr("name", name).val(
-        value);
-    return input;
+//BL-454 It triggers, when user clicks on continue button from mixed product interception modal.
+function mixedProductInterception(productCode, serialCode){
+$('#mixedProductInterception').on("click", function(event) {
+  $.ajax({
+		url : ACC.config.encodedContextPath + '/cart/emptyCart',
+		type : "GET",
+		beforeSend: function(){
+         $('.page-loader-new-layout').show();
+     },
+		success : function(data) {
+			addProductToCart(productCode, serialCode);
+		},
+		error : function(xht, textStatus, ex) {
+		  $('.page-loader-new-layout').hide();
+			console.log("Error while removing cart entries");
+		}
+	});
+});
 }
 
-//BL -471 Used Gear cart timer
+function addProductToCart(productCode, serialCode){
+  $.ajax({
+  	url : ACC.config.encodedContextPath + "/cart/add",
+  	type : 'POST',
+  	data : {
+  		productCodePost : productCode,
+  		serialProductCodePost : serialCode
+  	},
+  	success : function(response) {
+  	  $('.page-loader-new-layout').hide();
+  	  $('#addToCartModalDialog').addClass('modal-lg');
+  		$('#addToCartModalDialog').html(response.addToCartLayer);
+  		if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+  			ACC.minicart.updateMiniCartDisplay();
+  		}
+  		updateQuantity();
+  		addToCartFromModal();
+  		if (document.getElementById("addToCart-gear-sliders") != null) {
+  			setTimeout(modalBodyContent, 100);
+  		}
+  	},
+  	error : function(jqXHR, textStatus, errorThrown) {
+  	  $('.page-loader-new-layout').hide();
+  		$('.modal-backdrop').addClass('remove-popup-background');
+  		// log the error to the console
+  		console.log("The following error occurred: " + jqXHR, textStatus,
+  				errorThrown);
+  	}
+  });
+}
 
-$('.usedgear-signout').on("click", function (e) {
-	fetchdata();
-	clearInterval(z);
-	localStorage.removeItem('saved_countdown');
-	
+//BL-466 reload page, when user closes add to rental modal from empty cart page.
+function reloadEmptyCartPageOnModalClose(){
+$('.emptyCart-modalClose').click(function(e){
+  window.location.reload();
 });
-
-function startUsedGearCartTimer() {
-		
-		localStorage.setItem('StartCartTimer',"StartCartTimer");	
-	}
-	var timeStop="false";
-
-	var storeCartTime = localStorage.getItem('StartCartTimer');
-	if(  storeCartTime == "StartCartTimer")
-	{
-	    localStorage.removeItem('saved_countdown');
-	    localStorage.removeItem('StartCartTimer');
-		var timercount= document.getElementById("timer-count").getAttribute("value") ;
-		var newTimer =new Date().getTime() + (timercount)*1000 +2000;
-	   
-	}
-
-	var saved_countdown = localStorage.getItem('saved_countdown');
-	if(saved_countdown==null)
-	{
-	var new_countdown= new Date().getTime() + (timercount)*1000 +2000;
-	localStorage.setItem('saved_countdown',new_countdown);
-	}
-
-	else{
-		newTimer = saved_countdown ;
-	}
-
-	timeStop = localStorage.getItem('timeStop');
-	if(timeStop=="true"){
-	    clearInterval(z);
-	    localStorage.removeItem('timeStop');
-	    localStorage.removeItem('saved_countdown');
-	}
-
-	if(isNaN(newTimer) )
-	{
-		localStorage.removeItem('saved_countdown');
-		 clearInterval(z);
-	}
-	else if(timeStop==null){
-	var z= setInterval(updateCountdown,1000);
-	}
-
-	function updateCountdown(){
-	  var now = new Date().getTime();
-
-
-	// Find the distance between now and the allowed time
-	var distance =newTimer - now;
-
-	let minutes = Math.floor(distance/60000);
-
-	// Time counter
-	var counter = Math.floor((distance % (1000 * 60)) / 1000);
-	counter =counter<10?'0'+counter:counter;
-
-	// If the count down is over, write some text
-	if (minutes<0) {
-	clearInterval(z);
-	localStorage.removeItem('saved_countdown');
-	fetchdata();
-	}
-	
-	
-
-	if(minutes<0){
-		document.getElementById("usedTimer").innerHTML = "Expired";
-	}
-	else{
-	document.getElementById("usedTimer").innerHTML = `${minutes}:${counter}`;
-	}
-
-	};
-
-	function fetchdata(){
-	var timerStop = true;
-	$.ajax({
-	url: ACC.config.encodedContextPath + "/cart/cartTimerOut",
-	type: "POST",
-	data:{usedGearTimerEnd: timerStop},
-	success: function(response){
-	// Perform operation on the return value
-	window.location.href = ACC.config.encodedContextPath + "/cart";
-	localStorage.setItem("timeStop","true");
-	},
-	error: function (xht, textStatus, ex) {
-	console.log("Error while removing cart entries");
-	}
-	});
-
-	}
-	
-	
+}

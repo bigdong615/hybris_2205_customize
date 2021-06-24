@@ -141,7 +141,7 @@
     				<a href="#" class="remove-gift-card"
     					id="removeGiftCardForm${loop.index}" data-index="${loop.index}"><spring:theme
     						code="text.remove" /></a>
-    				<span class="float-end">${gift.redeemamount}</span>
+    				<span class="float-end"><format:price priceData="${gift.redeemamount}"/></span>
     			</c:if>
     		</p>
     	</form:form>

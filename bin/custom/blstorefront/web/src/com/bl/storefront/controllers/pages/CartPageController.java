@@ -725,7 +725,7 @@ public class CartPageController extends AbstractCartPageController
 				}
 				else
 				{
-					voucherFacade.applyVoucher(form.getVoucherCode());
+					voucherFacade.applyVoucher(StringUtils.upperCase(form.getVoucherCode()));
 					redirectAttributes.addFlashAttribute("successMsg",
 							getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
 							{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));

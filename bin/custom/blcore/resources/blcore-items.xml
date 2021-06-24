@@ -867,10 +867,11 @@
                      <description>Total amount spent on repairs on this serial to date,should update with every repair</description>
                    </attribute>
                    <attribute qualifier="noDaysRented" type="java.lang.long">
-					<persistence type="property"/>
-					<modifiers read="true" write="true" optional="true"/>
-					<description>The total no of days the serial was rented for all orders</description>
-				  </attribute>
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <defaultvalue>0L</defaultvalue>
+                     <description>The total no of days the serial was rented for all orders</description>
+                   </attribute>
                    <attribute qualifier="noDaysNotInService" type="java.lang.long">
                      <persistence type="dynamic" attributeHandler="serialProductNotInServiceHandler" />
                      <modifiers read="true" write="true" optional="true"/>
@@ -985,6 +986,12 @@
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Redeclaring attribute to set optional true for Serial Products</description>
+                   </attribute>
+                   <attribute qualifier="forSale" type="java.lang.Boolean" redeclare="true">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" search="true" optional="false" />
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>If the item is available for sale in used gear</description>
                    </attribute>
                  </attributes>
              </itemtype>

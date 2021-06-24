@@ -17,7 +17,8 @@
                
       <!-- you should add all required extensions to this list, except platform extensions which are automatically required -->         
       <requires-extension name="payment"/>
-	  <requires-extension name="commerceservices"/>      
+	  <requires-extension name="commerceservices"/>
+	  <requires-extension name="bllogging"/>      
       
 
       <coremodule generated="true" manager="com.braintree.jalo.BraintreeManager" packageroot="com.braintree"/>
