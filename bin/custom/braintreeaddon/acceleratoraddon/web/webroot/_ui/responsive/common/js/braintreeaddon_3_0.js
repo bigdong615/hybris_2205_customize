@@ -886,6 +886,7 @@ function createHostedFields(clientInstance) {
 							var cardDetails = createHiddenParameter(CONST.CARD_DETAILS, payload.details.lastTwo);
 							var isLiabilityShifted = '';
 							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
+							var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
 							
 							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
 							submitForm.find("input[name='billTo_country']").val("US");
@@ -903,6 +904,7 @@ function createHostedFields(clientInstance) {
 							var cardholder = createHiddenParameter(CONST.CARDHOLDER, $(CONST.CARD_HOLDER_ID).val());
 	
 							submitForm.append($(deviceData));
+							submitForm.append($(comapanyName));
 							submitForm.append($(useDelivery));
 							submitForm.append($(saveBillingAddress));
 							submitForm.append($(savedBillingAddressId));
@@ -1122,11 +1124,13 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		var savedBillingAddressId = createHiddenParameter("selected_Billing_Address_Id", $("#savedBillingAddressId").val());
 		var savedCCCardId = createHiddenParameter("savedCCCardId", savedCardForm.find('input[id="savedCCCardId"]').val());
 		var savedCCCardNonce = createHiddenParameter("savedCCCardNonce", savedCardForm.find('input[id="savedCCCardNonce"]').val());
+		var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
 		formToSubmit.find('select[name="billTo_state"]').prop('disabled', false);
 		formToSubmit.find("input[name='billTo_country']").val("US");
 		formToSubmit.append($(savedBillingAddressId));
 		formToSubmit.append($(savedCCCardId));
 		formToSubmit.append($(savedCCCardNonce));
+		formToSubmit.append($(comapanyName));
 		var actionUrl = savedCardForm.attr('action');
 		formToSubmit.attr('action',actionUrl);
 		formToSubmit.submit();
