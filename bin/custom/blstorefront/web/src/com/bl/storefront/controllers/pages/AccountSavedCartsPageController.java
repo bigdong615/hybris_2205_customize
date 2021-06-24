@@ -114,6 +114,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		setUpMetaDataForContentPage(model, savedCartsPage);
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, accountBreadcrumbBuilder.getBreadcrumbs("text.account.savedCarts"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		model.addAttribute("saveCartForm" , new SaveCartForm());
 		return getViewForPage(model);
 	}
 
@@ -215,7 +216,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 
 	@RequestMapping(value = "/" + SAVED_CART_CODE_PATH_VARIABLE_PATTERN + "/edit", method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String savedCartEdit(@PathVariable("cartCode") final String cartCode, final SaveCartForm form,
+	public String savedCartEdit(@PathVariable(value = "cartCode") final String cartCode, final SaveCartForm form,
 			final BindingResult bindingResult, final RedirectAttributes redirectModel) throws CommerceSaveCartException
 	{
 		saveCartFormValidator.validate(form, bindingResult);
@@ -249,7 +250,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 						{ form.getName() });
 			}
 		}
-		return REDIRECT_TO_SAVED_CARTS_PAGE + "/" + cartCode;
+		return REDIRECT_TO_SAVED_CARTS_PAGE;
 	}
 
 	@RequestMapping(value = "/{cartId}/restore", method = RequestMethod.GET)
@@ -311,10 +312,9 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		return String.valueOf(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{cartId}/delete", method = RequestMethod.DELETE)
-	@ResponseStatus(value = HttpStatus.OK)
+	@RequestMapping(value = "/{cartId}/delete")
 	@RequireHardLogIn
-	public @ResponseBody String deleteSaveCartForId(@PathVariable(value = "cartId") final String cartId)
+	public String deleteSaveCartForId(@PathVariable(value = "cartId") final String cartId)
 			throws CommerceSaveCartException
 	{
 		try
@@ -328,6 +328,6 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 			LOG.error("Error while deleting the saved cart with cartId " + cartId + " because of " + ex);
 			return getMessageSource().getMessage("text.delete.savedcart.error", null, getI18nService().getCurrentLocale());
 		}
-		return String.valueOf(HttpStatus.OK);
+		return REDIRECT_TO_SAVED_CARTS_PAGE;
 	}
 }
