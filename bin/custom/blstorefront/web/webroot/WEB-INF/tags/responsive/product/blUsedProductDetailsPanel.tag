@@ -7,8 +7,9 @@
 <%@ taglib  prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
-<c:url value="/cart/add" var="addToCartUrl"/>
+<c:url value="/cart/usedgearadd" var="addToCartUrl"/>
 
  <div class="screen"></div>
      <cms:pageSlot position="SearchBoxBl" var="component">
@@ -52,30 +53,38 @@
                                                    <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
                                               </div>
                                           </c:if>
-                                        <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
+                                        <form:form  id="serialSubmitForm" action="${addToCartUrl}" method="get">
 		                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
+		                                      <%-- <input type="hidden" name="productCode" value="${product.code}" />
+		                                      <input type="hidden" name="serialCode" value="${serialProduct.serialId}" /> --%>
+		                                      <c:if test="${serialProduct.serialStatus ne 'SOLD' }">
 		                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
+		                                          
+		                                          
 		                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
 		                                            <td><format:price priceData="${serialProduct.finalSalePrice}"/></td>
 		                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
 		                                            <td class="text-end">
 		                                            <!-- BL-537 : Added  class js-usedProduct-button -->
+		                                            
+		                                            
+		                                            <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+		                                             <c:set value=" hidebutton" var="hidebutton"/>
+		                                            </sec:authorize>
+		                                            
 		                                             <c:choose>
 		                                            <c:when test="${serialProduct.serialStatus eq 'ACTIVE' }">
-		                                               <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')"> 
-		                                             <button type="button" data-link="<c:url value='/login/loginpopup'/>" class="btn btn-primary  js-login-popup" data-bs-toggle="modal" data-bs-target="#signIn">
+		                                              
+		                                             <button type="button" data-link="<c:url value='/login/loginpopup'/>" class="btn btn-primary  js-login-popup hide-after-login"  data-bs-toggle="modal" data-bs-target="#signIn" data-click="serial_entry_${loop.index }">
                                                           <spring:theme code="basket.add.to.basket"/>
                                                  
                                                      </button>
-                                                   </sec:authorize>  
-                                                 
-                                                  <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">  
-		                                             <button type="button" class="btn btn-primary js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart"
+ 		                                             <button type="button"  class="btn btn-primary bl-serial-add  serial_entry_${loop.index }  ${hidebutton}" 
                                                 		  data-product-code="${product.code}" data-serial="${serialProduct.serialId}">
                                                           <spring:theme code="basket.add.to.basket"/>
                                                  
                                                  </button>
-                                                 </sec:authorize> 
+                                               
                                                  </c:when>
                                                  <c:when test="${serialProduct.serialStatus eq 'ADDED_TO_CART' }">
 		                                             <button type="button" class="btn btn-primary js-add-to-cart js-disable-btn" aria-disabled="true" disabled="disabled">
@@ -89,8 +98,9 @@
                                                  </c:otherwise>
                                                  </c:choose></td>
 		                                        </tr>
+		                                        </c:if>
 		                                      </c:forEach>
-		                                    </form>
+		                                    </form:form>
 		                                    </tbody>
                                 	</c:otherwise>
                                 </c:choose>

@@ -96,6 +96,7 @@
 	<c:if test ="${not empty fn:escapeXml(errorMsg)}">
     <c:set var="errormsgvalid" value="error"/>
  </c:if>
+ <c:if test= "${currentStepUrl  ne '/checkout/multi/summary/view'}">
  <c:url value="/cart/voucher/apply" var="voucherUrl"/>
  <form:form action="${voucherUrl}" modelAttribute="voucherForm" method="POST" id="applyVoucherForm">
     <spring:theme code="text.checkout.multi.order.summary.promocode.placeholder" var="voucherplaceholder"/>
@@ -108,6 +109,7 @@
        </div>
     </div>
  </form:form>
+ </c:if>
  <small class="gray60"><spring:theme code="text.checkout.multi.order.summary.msg"/></small>
  <c:url value="/cart/voucher/remove" var="voucherRemoveUrl"/>
  <c:forEach items="${cartData.appliedVouchers}" var="voucher" varStatus="loop">

@@ -60,7 +60,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		if (CollectionUtils.isNotEmpty(cartModel.getEntries()))
 		{
 
-			if (cartModel.getIsRentalCart().equals(Boolean.FALSE))
+			if (BooleanUtils.isFalse(cartModel.getIsRentalCart()))
 			{
 				setUsedGearSerialProductStatus(cartModel);
 			}

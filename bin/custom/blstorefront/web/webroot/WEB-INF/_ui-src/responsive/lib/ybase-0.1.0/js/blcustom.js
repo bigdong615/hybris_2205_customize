@@ -1,3 +1,11 @@
+jQuery(document).ready(function () {
+	$(".hidebutton").hide();
+	if($(".hidebutton").length <= 0){
+		$(".hide-after-login").hide();
+	}
+	
+});
+
 //BL-467 clear cart functionality from cart page.
  $('.clear-cart-continue').on("click", function(event) {
      clearInterval(z);
@@ -65,10 +73,11 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	damageWaiverUpdateForm.submit();
  });
 
+		 
  //BL-454 add to cart
  $('.js-add-to-cart').on("click",function(e) {
                        e.preventDefault();
-                        var productCode = $(this).attr('data-product-code');
+                       var productCode = $(this).attr('data-product-code');
                         var serialCode = $(this).attr('data-serial');
                         if(serialCode == '' || serialCode == undefined){
                         serialCode = "serialCodeNotPresent";
@@ -78,7 +87,6 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    type: 'POST',
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
                                    success: function (response) {
-                                       if(serialCode == 'serialCodeNotPresent') { 
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
@@ -88,11 +96,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
-                                       }else{
-                                		  $('#addToCartModalDialog').html(response.addToCartLayer);
-                                 		 window.location = ACC.config.encodedContextPath + '/cart';
-                                 		 startUsedGearCartTimer();
-                                	  }
+                                      
                                    },
                                    error: function (jqXHR, textStatus, errorThrown) {
                                          $('.modal-backdrop').addClass('remove-popup-background');
@@ -461,6 +465,34 @@ $(".input-number").keydown(function (e) {
 	}
 });
 
+//Added code for used gear addToCart 
+$('.bl-serial-add').click(function (e)
+	{
+	 e.preventDefault();
+	 var submitForm = $('#serialSubmitForm');
+	 var csrfTokan = createHiddenParameter("CSRFToken",$(ACC.config.CSRFToken));	
+	 var productCode = createHiddenParameter("productCodePost",$(this).attr('data-product-code'));
+     var serialCode = createHiddenParameter("serialProductCodePost", $(this).attr('data-serial'));
+     
+     if(serialCode == '' || serialCode == undefined){
+    serialCode = "serialCodeNotPresent";
+    }
+    
+     submitForm.append($(productCode)); 
+     submitForm.append($(serialCode));
+     submitForm.append($(csrfTokan));
+     submitForm.submit();
+    
+     startUsedGearCartTimer();
+
+  });
+
+function createHiddenParameter(name, value) {
+    var input = $(HTML.INPUT).attr(HTML.TYPE, "hidden").attr("name", name).val(
+        value);
+    return input;
+}
+
 //BL -471 Used Gear cart timer
 
 $('.usedgear-signout').on("click", function (e) {
@@ -536,7 +568,7 @@ function startUsedGearCartTimer() {
 	
 
 	if(minutes<0){
-		document.getElementById("usedTimer").innerHTML = "0:00";
+		document.getElementById("usedTimer").innerHTML = "Expired";
 	}
 	else{
 	document.getElementById("usedTimer").innerHTML = `${minutes}:${counter}`;
@@ -561,3 +593,5 @@ function startUsedGearCartTimer() {
 	});
 
 	}
+	
+	
