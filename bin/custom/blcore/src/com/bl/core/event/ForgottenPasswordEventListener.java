@@ -34,7 +34,7 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 		return businessProcessService;
 	}
 
-	@Required
+	@Required  // NOSONAR
 	public void setBusinessProcessService(final BusinessProcessService businessProcessService)
 	{
 		this.businessProcessService = businessProcessService;
@@ -52,7 +52,7 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 	 * @param modelService
 	 *           the modelService to set
 	 */
-	@Required
+	@Required  // NOSONAR
 	public void setModelService(final ModelService modelService)
 	{
 		this.modelService = modelService;
@@ -61,8 +61,18 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 	@Override
 	protected void onSiteEvent(final ForgottenPwdEvent event)
 	{
-		final LanguageModel language =  getCommonI18NService().getCurrentLanguage();
-		final BaseSiteModel baseSite = getBaseSiteService().getCurrentBaseSite();
+		final LanguageModel language ;
+		final BaseSiteModel baseSite;
+		if(event.getSite() != null){
+			baseSite=event.getSite();
+		}else{
+		 baseSite = getBaseSiteService().getCurrentBaseSite();
+	     }
+		if(event.getLanguage() != null){
+			language = event.getLanguage();
+		}else {
+			language = getCommonI18NService().getCurrentLanguage();
+		}
 		final ForgottenPasswordProcessModel forgottenPasswordProcessModel = (ForgottenPasswordProcessModel) getBusinessProcessService()
 				.createProcess("forgottenPassword-" + event.getCustomer().getUid() + "-" + System.currentTimeMillis(),
 						"forgottenPasswordEmailProcess");
