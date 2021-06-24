@@ -61,25 +61,13 @@ public class ForgottenPasswordEventListener extends AbstractAcceleratorSiteEvent
 	@Override
 	protected void onSiteEvent(final ForgottenPwdEvent event)
 	{
-		final LanguageModel language ;
-		final BaseSiteModel baseSite;
-		if(event.getSite() != null){
-			baseSite=event.getSite();
-		}else{
-		 baseSite = getBaseSiteService().getCurrentBaseSite();
-	     }
-		if(event.getLanguage() != null){
-			language = event.getLanguage();
-		}else {
-			language = getCommonI18NService().getCurrentLanguage();
-		}
 		final ForgottenPasswordProcessModel forgottenPasswordProcessModel = (ForgottenPasswordProcessModel) getBusinessProcessService()
 				.createProcess("forgottenPassword-" + event.getCustomer().getUid() + "-" + System.currentTimeMillis(),
 						"forgottenPasswordEmailProcess");
-		forgottenPasswordProcessModel.setSite(baseSite);
+		forgottenPasswordProcessModel.setSite(event.getSite() != null ? event.getSite() : getBaseSiteService().getCurrentBaseSite());
 		forgottenPasswordProcessModel.setCustomer(event.getCustomer());
 		forgottenPasswordProcessModel.setToken(event.getToken());
-		forgottenPasswordProcessModel.setLanguage(language);
+		forgottenPasswordProcessModel.setLanguage(event.getLanguage() != null ? event.getLanguage() : getCommonI18NService().getCurrentLanguage());
 		forgottenPasswordProcessModel.setCurrency(event.getCurrency());
 		forgottenPasswordProcessModel.setStore(event.getBaseStore());
 		getModelService().save(forgottenPasswordProcessModel);
