@@ -106,6 +106,8 @@
 	      class="com.bl.core.event.ForgottenPasswordEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
+		<property name="commonI18NService" ref="commonI18NService" />
+		<property name="baseSiteService" ref="baseSiteService" />
 	</bean>
 	<bean id="submitOrderEventListener" class="com.bl.core.event.SubmitOrderEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="businessProcessService" ref="businessProcessService"/>

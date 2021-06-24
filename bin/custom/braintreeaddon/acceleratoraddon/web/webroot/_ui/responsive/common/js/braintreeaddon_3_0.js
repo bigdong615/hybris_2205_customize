@@ -112,7 +112,6 @@ var CONST = {
 
 
 jQuery(document).ready(function ($) {
-	$('.page-loader-new-layout').show();
     var deviceData;
     var paypalDeviceData;
     var client;
@@ -131,6 +130,11 @@ jQuery(document).ready(function ($) {
 		$("#submit_silentOrderPostForm").hide();
 		$("#paymentMethodBT").click();
 	}
+	else if($("#isPayPalPresent") != '' && $("#isPayPalPresent").val() != '' && $("#isPayPalPresent").val() === 'true')
+	{
+		$("#paymentMethodPayPal").click();
+		$("#submit_silentOrderPostForm").hide();
+	}	
 	else
 	{
 		$("#submit_silentOrderSavedForm").hide();
@@ -188,7 +192,6 @@ jQuery(document).ready(function ($) {
     if (typeof isCreditMessagesEnabled != 'undefined' && typeof shoppingCart == 'undefined') {
         configurePageForCreditMessage();
     }
-	$('.page-loader-new-layout').hide();
 });
 
 $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
@@ -886,6 +889,7 @@ function createHostedFields(clientInstance) {
 							var cardDetails = createHiddenParameter(CONST.CARD_DETAILS, payload.details.lastTwo);
 							var isLiabilityShifted = '';
 							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
+							var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
 							
 							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
 							submitForm.find("input[name='billTo_country']").val("US");
@@ -903,6 +907,7 @@ function createHostedFields(clientInstance) {
 							var cardholder = createHiddenParameter(CONST.CARDHOLDER, $(CONST.CARD_HOLDER_ID).val());
 	
 							submitForm.append($(deviceData));
+							submitForm.append($(comapanyName));
 							submitForm.append($(useDelivery));
 							submitForm.append($(saveBillingAddress));
 							submitForm.append($(savedBillingAddressId));
@@ -1107,28 +1112,37 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 	$('#validationMessage').empty();
 	$("#allFieldvalidationMessage").empty();
 	$('.page-loader-new-layout').show();
-	var billingFormErrorCounts = validateBillingAddressFields();
-	if(billingFormErrorCounts > 0)
+	if($("#paymentMethodPayPal").is(":checked"))
 	{
-		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
-							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
-					$('#validationMessage').append(validationDiv);
-		$('.page-loader-new-layout').hide();
+		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
 	}
 	else
 	{
-		var savedCardForm = $("#submitSavedCardForm");
-		var formToSubmit = $('#' + CONST.BRAINTREE_PAYMENT_FORM_ID);
-		var savedBillingAddressId = createHiddenParameter("selected_Billing_Address_Id", $("#savedBillingAddressId").val());
-		var savedCCCardId = createHiddenParameter("savedCCCardId", savedCardForm.find('input[id="savedCCCardId"]').val());
-		var savedCCCardNonce = createHiddenParameter("savedCCCardNonce", savedCardForm.find('input[id="savedCCCardNonce"]').val());
-		formToSubmit.find('select[name="billTo_state"]').prop('disabled', false);
-		formToSubmit.find("input[name='billTo_country']").val("US");
-		formToSubmit.append($(savedBillingAddressId));
-		formToSubmit.append($(savedCCCardId));
-		formToSubmit.append($(savedCCCardNonce));
-		var actionUrl = savedCardForm.attr('action');
-		formToSubmit.attr('action',actionUrl);
-		formToSubmit.submit();
+		var billingFormErrorCounts = validateBillingAddressFields();
+		if(billingFormErrorCounts > 0)
+		{
+			var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
+								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
+						$('#validationMessage').append(validationDiv);
+			$('.page-loader-new-layout').hide();
+		}
+		else
+		{
+			var savedCardForm = $("#submitSavedCardForm");
+			var formToSubmit = $('#' + CONST.BRAINTREE_PAYMENT_FORM_ID);
+			var savedBillingAddressId = createHiddenParameter("selected_Billing_Address_Id", $("#savedBillingAddressId").val());
+			var savedCCCardId = createHiddenParameter("savedCCCardId", savedCardForm.find('input[id="savedCCCardId"]').val());
+			var savedCCCardNonce = createHiddenParameter("savedCCCardNonce", savedCardForm.find('input[id="savedCCCardNonce"]').val());
+			var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
+			formToSubmit.find('select[name="billTo_state"]').prop('disabled', false);
+			formToSubmit.find("input[name='billTo_country']").val("US");
+			formToSubmit.append($(savedBillingAddressId));
+			formToSubmit.append($(savedCCCardId));
+			formToSubmit.append($(savedCCCardNonce));
+			formToSubmit.append($(comapanyName));
+			var actionUrl = savedCardForm.attr('action');
+			formToSubmit.attr('action',actionUrl);
+			formToSubmit.submit();
+		}
 	}
 });
