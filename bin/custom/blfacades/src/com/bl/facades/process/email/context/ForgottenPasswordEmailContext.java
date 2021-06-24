@@ -24,9 +24,7 @@ public class ForgottenPasswordEmailContext extends CustomerEmailContext
 	private static final Logger LOG = Logger.getLogger(ForgottenPasswordEmailContext.class);
 	private int expiresInMinutes = 30;
 	private String token;
-
-
-
+	
 	public int getExpiresInMinutes()
 	{
 		 String passwordExpireTime = Config.getParameter("forgotPassword.link.expiry.time");
