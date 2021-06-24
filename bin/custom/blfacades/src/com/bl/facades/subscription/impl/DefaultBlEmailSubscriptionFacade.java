@@ -26,7 +26,7 @@ public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFaca
 	public void subscribe(final String emailId) {
 
 		final ContactRequest contactRequest = new ContactRequest();
-		blEmailSubscriptionPopulator.poupulateContactRequest(emailId, contactRequest);
+		blEmailSubscriptionPopulator.populate(emailId, contactRequest);
 		// call API to create contact
 		blEmailSubscriptionService.subscribe(contactRequest);
 	}

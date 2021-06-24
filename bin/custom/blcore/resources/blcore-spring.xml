@@ -842,6 +842,11 @@
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
+	<alias name="defaultBlStoredEmailSubscriptionDao" alias="blStoredEmailSubscriptionDao"/>
+	<bean id="defaultBlStoredEmailSubscriptionDao" class="com.bl.core.dao.subscription.impl.DefaultBlStoredEmailSubscriptionDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
 	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
 	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
 	<bean id="defaultRuleRentalDurationConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalDurationConditionTranslator" />

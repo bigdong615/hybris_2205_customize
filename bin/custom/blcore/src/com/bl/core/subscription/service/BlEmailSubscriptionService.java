@@ -11,14 +11,13 @@ import com.bl.core.subscription.models.ContactRequest;
  *
  * @author Sunil Sahu
  */
-public interface BlEmailSubscriptionService
-{
+public interface BlEmailSubscriptionService {
+
 	/**
 	 * Subscribe the email contact.
 	 *
-	 * @param contactRequest
-	 *           - contactRequest containing the email id to be subscribed.
+	 * @param contactRequest - contactRequest containing the email id to be subscribed.
 	 */
-	public void subscribe(ContactRequest contactRequest);
+	public void subscribe(final ContactRequest contactRequest);
 
 }

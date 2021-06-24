@@ -44,6 +44,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	private static final String SUBSCRIPTION_ACCESS_SCOPE = "email.subscription.access.scope";//  email_read email_write email_send
 
 	private ConfigurationService configurationService;
+	private ObjectMapper mapper;
 
 	/**
 	 * {@inheritDoc}
@@ -51,11 +52,28 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	@Override
 	public ContactResponse subscribeEmail(final ContactRequest contactRequest) {
 
-		//1. call first api to get accesstoken
-		final String accessToken = getAccessToken();
+		final String accessToken;
+		try {
 
-		//2. call second api to create contact
-		return createContact(accessToken, contactRequest);
+			//1. call first api to get accesstoken
+			accessToken = getAccessToken();
+
+			//2. call second api to create contact
+			if (StringUtils.isNotBlank(accessToken)) {
+				return createContact(accessToken, contactRequest);
+			} else {
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+						"Could not get access token.");
+				return null;
+			}
+		} catch (Exception ex) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					LogErrorCodeEnum.EMAIL_SUBSCRIPTION_INTEGRATION_ERROR.getCode(),
+					"Error while fetching access token.",
+					ex);
+		}
+
+		return null;
 	}
 
 	/**
@@ -65,7 +83,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	 */
 	private String getAccessToken() {
 
-		String accessToken = "";
+		String accessToken = BlCoreConstants.EMPTY_STRING;
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 				"Get access token call for email subscription starts.");
 
@@ -77,7 +95,8 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 					getSubscriptionAccessTokenRequest(),
 					headers);
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Request for get access token api call :- " + subscriptionAccessTokenRequest);
+					"Request for get access token api call :- " + getMapper().writerWithDefaultPrettyPrinter()
+							.writeValueAsString(subscriptionAccessTokenRequest));
 
 			final String accessTokenUrl =
 					getConfigurationService().getConfiguration().getString(SUBSCRIPTION_AUTH_BASE_URL)
@@ -86,19 +105,21 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 			BlLogger
 					.logFormatMessageInfo(LOG, Level.DEBUG, "Get access token rest url :- " + accessTokenUrl);
 
-			final SubscriptionAccessTokenResponse response = restTemplate().postForObject(accessTokenUrl,
+			final SubscriptionAccessTokenResponse response = getRestTemplate().postForObject(accessTokenUrl,
 					subscriptionAccessTokenRequest,
 					SubscriptionAccessTokenResponse.class);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Response from get access token api call :- " + response);
+					"Response from get access token api call :- " +
+							getMapper().writerWithDefaultPrettyPrinter()
+									.writeValueAsString(response));
 
 			if (null != response && StringUtils.isBlank(response.getErrorDescription())) {
 				accessToken = response.getAccessToken();
 
 			} else if (null != response && StringUtils.isNotBlank(response.getErrorDescription())){
 				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-						"Got error response for getting acceess token, error is : [{%s}]",
+						"Got error response for getting acceess token, error is : {}",
 						response.getErrorDescription());
 			}
 
@@ -133,7 +154,8 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 					contactRequest, headers);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Request for create contact api call :- " + subscriptionCreateContactRequest);
+					"Request for create contact api call :- " + getMapper().writerWithDefaultPrettyPrinter()
+							.writeValueAsString(subscriptionCreateContactRequest));
 
 			final String createContactUrl =
 					getConfigurationService().getConfiguration().getString(SUBSCRIPTION_REST_BASE_URL)
@@ -142,23 +164,16 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 					"Create contact for subscription rest url :- " + createContactUrl);
 
-			final ContactResponse response = restTemplate()
+			final ContactResponse response = getRestTemplate()
 					.postForObject(createContactUrl, subscriptionCreateContactRequest,
 							ContactResponse.class);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Response got from create contact api call :- " + response);
+					"Response got from create contact api call :- " + getMapper()
+							.writerWithDefaultPrettyPrinter()
+							.writeValueAsString(response));
 
-			if (null != response
-					&& StringUtils.equalsIgnoreCase(BlCoreConstants.SUBSCRIPTION_API_OPERATION_STATUS,
-					response.getOperationStatus())) {
-
-				return response;
-			} else {
-
-				BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "Got error response for rest url [{%s}]",
-						createContactUrl);
-			}
+			return response;
 
 		} catch (final Exception e) {
 
@@ -175,7 +190,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	 *
 	 * @return RestTemplate
 	 */
-	private RestTemplate restTemplate() {
+	private RestTemplate getRestTemplate() {
 
 		final RestTemplate restTemplate = new RestTemplate();
 		final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -214,6 +229,14 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 
 	public void setConfigurationService(final ConfigurationService configurationService) {
 		this.configurationService = configurationService;
+	}
+
+	public ObjectMapper getMapper() {
+		return mapper;
+	}
+
+	public void setMapper(final ObjectMapper mapper) {
+		this.mapper = mapper;
 	}
 
 }

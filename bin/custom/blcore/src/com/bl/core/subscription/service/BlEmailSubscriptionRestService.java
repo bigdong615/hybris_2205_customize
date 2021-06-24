@@ -12,15 +12,13 @@ import com.bl.core.subscription.models.ContactResponse;
  *
  * @author Sunil Sahu
  */
-public interface BlEmailSubscriptionRestService
-{
+public interface BlEmailSubscriptionRestService {
+
 	/**
 	 * Subscribe the emailId by calling REST APIs.
 	 *
-	 * @param contactRequest
-	 *           - Request containing email id to be subscribed.
+	 * @param contactRequest - Request containing email id to be subscribed.
 	 * @return contactResponse - ContactResponse from API call.
-	 *
 	 */
-	ContactResponse subscribeEmail(ContactRequest contactRequest);
+	ContactResponse subscribeEmail(final ContactRequest contactRequest);
 }

@@ -1349,7 +1349,7 @@
                  </attribute>
                  <attribute qualifier="contactId" type="java.lang.String">
                      <persistence type="property"/>
-                     <modifiers read="true" write="true" unique="true"  optional="true"/>
+                     <modifiers read="true" write="true" optional="true"/>
                      <description>Contact id for EmailSubscription</description>
                  </attribute>
                </attributes>

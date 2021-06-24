@@ -8,15 +8,13 @@ package com.bl.facades.subscription;
  *
  * @author Sunil Sahu
  */
-public interface BlEmailSubscriptionFacade
-{
+public interface BlEmailSubscriptionFacade {
 
 	/**
 	 * Subscribe the email id.
 	 *
-	 * @param emailId
-	 *           - email id to be subscribed.
+	 * @param emailId - email id to be subscribed.
 	 */
-	public void subscribe(String emailId);
+	public void subscribe(final String emailId);
 
 }
