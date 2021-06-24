@@ -311,4 +311,10 @@ font-size: 21px;
     right:inherit !important;
   }
 }
- 
+.icon-date-forward {
+    background: url(../assets/icon-arrow.svg) center no-repeat;
+}
+.rental-terms {
+    padding-bottom: 15px;
+    text-align: right;
+}

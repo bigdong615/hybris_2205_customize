@@ -1,11 +1,14 @@
 package com.braintree.controllers.pages;
 
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.configuration.service.BrainTreeConfigService;
+import com.braintree.constants.BraintreeaddonConstants;
 import com.braintree.constants.ControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
@@ -30,11 +33,9 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.payment.AdapterException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+
+import java.util.*;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections4.CollectionUtils;
@@ -72,6 +73,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	@Resource(name = "checkoutFacade")
 	private BlCheckoutFacade blCheckoutFacade;
 	
+	@Resource(name = "blDatePickerService")
+  	private BlDatePickerService blDatePickerService;
+	
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -105,11 +109,12 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		}
 		BrainTreePaymentInfoData brainTreePaymentInfoData = brainTreePaymentFacade.getBrainTreePaymentInfoData();
 		model.addAttribute("cartData", cartData);
+		model.addAttribute("currentPage", BlControllerConstants.REVIEW_PAGE);
 		model.addAttribute("allItems", cartData.getEntries());
 		model.addAttribute("deliveryAddress", cartData.getDeliveryAddress());
 		model.addAttribute("deliveryMode", cartData.getDeliveryMode());
 		model.addAttribute("paymentInfo", cartData.getPaymentInfo());
-
+		setFormattedRentalDates(model);
         model.addAttribute("shipsFromPostalCode", "");
 
 		// Only request the security code if the SubscriptionPciOption is set to Default.
@@ -130,6 +135,37 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		model.addAttribute("metaRobots", "noindex,nofollow");
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
 		return ControllerConstants.Views.Pages.MultiStepCheckout.CheckoutSummaryPage;
+	}
+
+	/**
+	 * Sets the formatted rental dates on checkout summary page (Checkout Step 4).
+	 *
+	 * @param model the new formatted rental dates
+	 */
+	private void setFormattedRentalDates(final Model model)
+	{
+		final RentalDateDto rentalDateDto = getBlDatePickerService().getRentalDatesFromSession();
+		if(Objects.nonNull(rentalDateDto))
+		{
+			final String formattedRentalStartDate = getFormattedDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN));
+			model.addAttribute(BlControllerConstants.FORMATTED_RENTAL_START_DATE,formattedRentalStartDate);
+			final String formattedRentalEndDate = getFormattedDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(),
+			    BlControllerConstants.DATE_FORMAT_PATTERN));
+			model.addAttribute(BlControllerConstants.FORMATTED_RENTAL_END_DATE,formattedRentalEndDate);
+		}
+	}
+
+	/**
+	 * Gets the formatted date in EEEE, MMM d format.
+	 * Example - Wednesday, Jan 31
+	 *
+	 * @param date the date
+	 * @return the formatted date
+	 */
+	private String getFormattedDate(final Date date)
+	{
+		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.REVIEW_PAGE_DATE_FORMAT);
 	}
 
 	/**
@@ -332,4 +368,20 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public void setBrainTreeConfigService(BrainTreeConfigService brainTreeConfigService) {
 		this.brainTreeConfigService = brainTreeConfigService;
 	}
+	
+	/**
+   * @return the blDatePickerService
+   */
+  public BlDatePickerService getBlDatePickerService()
+  {
+    return blDatePickerService;
+  }
+
+  /**
+   * @param blDatePickerService the blDatePickerService to set
+   */
+  public void setBlDatePickerService(BlDatePickerService blDatePickerService)
+  {
+    this.blDatePickerService = blDatePickerService;
+  }
 }
