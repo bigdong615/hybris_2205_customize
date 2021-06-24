@@ -15,7 +15,6 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 
 import de.hybris.platform.site.BaseSiteService;
-import de.hybris.platform.store.services.BaseStoreService;
 import org.springframework.beans.factory.annotation.Required;
 
 
