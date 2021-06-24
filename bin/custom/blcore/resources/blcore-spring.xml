@@ -835,6 +835,7 @@
 	<bean id="defaultBlEmailSubscriptionService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionService">
 		<property name="modelService" ref="modelService"/>
 		<property name="blEmailSubscriptionRestService" ref="blEmailSubscriptionRestService"/>
+		<property name="blStoredEmailSubscriptionDao" ref="blStoredEmailSubscriptionDao"/>
 	</bean>
 	
 	<alias name="defaultBlEmailSubscriptionRestService" alias="blEmailSubscriptionRestService"/>
