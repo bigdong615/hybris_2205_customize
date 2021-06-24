@@ -24,6 +24,7 @@ ${fn:escapeXml(address.line1)}
 <br>
 ${fn:escapeXml(address.town)},&nbsp;${fn:escapeXml(address.region.isocodeShort)}&nbsp;${fn:escapeXml(address.postalCode)}
 <br>
+<!-- To display country please uncomment the below line -->
 <%-- ${fn:escapeXml(address.country.name)}&nbsp;${fn:escapeXml(address.postalCode)}
 <br/> --%>
 ${fn:escapeXml(address.phone)}

@@ -1484,15 +1484,13 @@
     </script>
         		</c:if>
     	<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'review') == true}">
-        		<input type="hidden" id="isFromReviewPage" value="true">
-        			<script>
-        			$(document).ready(function() {
-        				
+        	<input type="hidden" id="isFromReviewPage" value="true">
+        		<script>
+        			$(document).ready(function() {			
         				$(".reviewEdit").click(function(e) {
-        					e.preventDefault();
+							e.preventDefault();
         					var sectionSelected = this.getAttribute("data-section");
-        					var redirectUrl = this.getAttribute("data-redirect-url");
-        					
+        					var redirectUrl = this.getAttribute("data-redirect-url");        					
         					$("#urlToRedirect").val(redirectUrl);
         					$("#clickedSection").val(sectionSelected);
         				});
@@ -1532,8 +1530,6 @@
                         });
                     }); 
         			
-        			
-                    
                     function resetDateValues(e)
                     {
                     	e.preventDefault();
@@ -1545,88 +1541,91 @@
                     	$('#editWarning').modal('hide');
                     }
                  // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-                        //BL-520 - disable previous dates
-                           let date = new Date();
-                           let dd = String(date.getDate() - 1).padStart(2, '0');
-                           let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
-                           let yyyy = date.getFullYear();
-                           let today = mm + '/' + dd + '/' + yyyy;
+                 // BL-520 - disable previous dates
+                    let date = new Date();
+                    let dd = String(date.getDate() - 1).padStart(2, '0');
+                    let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                    let yyyy = date.getFullYear();
+                    let today = mm + '/' + dd + '/' + yyyy;
 
-                        //BL-520 - disable dates after one year from today's date
-                           let oneYearFromNow = new Date();
-                           let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-                           const disallowedDates = [['2001-01-01', today]];
+                 // BL-520 - disable dates after one year from today's date
+                    let oneYearFromNow = new Date();
+                    let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                    const disallowedDates = [['2001-01-01', today]];
                         
-                        // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
-                        const summarypicker = new Litepicker({
-                            element: document.getElementById('summary-litepicker'),
-                            plugins: ['mobilefriendly'],
-                            singleMode: false,
-                            numberOfMonths: 2,
-                            numberOfColumns: 2,
-                            autoApply: false,
-                            format: "MMM D, YYYY",
-                            resetButton: () => {
-                				 let btn = document.createElement('button');
-                				 btn.innerText = 'Reset Dates';
-                				 btn.className = 'reset-button';
-                				 btn.addEventListener('click', (evt) => {
-                				 evt.preventDefault();
-                				 $.ajax({
-                                    url: ACC.config.encodedContextPath + '/resetDatepicker',
-                                    type: "GET",
-                                    success: function (data) {
-                                    	if(data=='success')
-                                        window.location.reload();
-                                    },
-                                    error: function (xhr, textStatus, error) {
-
-                                    }
-                                });
-                				});
-                				return btn;
-                				},
-                            setup: (picker) => {
-                      			picker.on('button:apply', (date1, date2) => {
-                      			// var isFromSummaryPage = $("#isFromSummaryPage").val();
-                                    if($("#isFromReviewPage").val() === 'true'){
-                      			      $("#rentalStartDate").val(date1.toDateString());
-                                      $("#rentalEndDate").val(date2.toDateString());
-                                      $("#clickedSection").val('summaryRentalDate');
-                                      $('#editWarning').modal('show');
-                                      }else{
-                      			$.ajax({
-                                    url: ACC.config.encodedContextPath + '/datepicker',
-                                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
-                                    type: "GET",
-                                    success: function (data) {
-                                    	if(data=='success')
-                                        window.location.reload();
-                                    },
-                                    error: function (xhr, textStatus, error) {
-
-                                    }
-                                });
-                                }
-                      			});
-                      			},
+                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                    const summarypicker = new Litepicker({
+                        element: document.getElementById('summary-litepicker'),
+                        plugins: ['mobilefriendly'],
+                        singleMode: false,
+                        numberOfMonths: 2,
+                        numberOfColumns: 2,
+                        autoApply: false,
+                        format: "MMM D, YYYY",
+                        resetButton: () => {
+							let btn = document.createElement('button');
+							btn.innerText = 'Reset Dates';
+							btn.className = 'reset-button';
+							btn.addEventListener('click', (evt) => {
+								evt.preventDefault();
+								$.ajax({
+									url: ACC.config.encodedContextPath + '/resetDatepicker',
+									type: "GET",
+									success: function (data) {
+										if(data=='success')
+										window.location.reload();
+									},
+									error: function (xhr, textStatus, error) {
+	
+									}
+								});
+							});
+							return btn;
+						},
+                        setup: (picker) => {
+                      		picker.on('button:apply', (date1, date2) => {
+							 //	var isFromSummaryPage = $("#isFromSummaryPage").val();
+								if($("#isFromReviewPage").val() === 'true')
+								{
+									$("#rentalStartDate").val(date1.toDateString());
+									$("#rentalEndDate").val(date2.toDateString());
+									$("#clickedSection").val('summaryRentalDate');
+									$('#editWarning').modal('show');
+								}
+								else
+								{
+									$.ajax({
+										url: ACC.config.encodedContextPath + '/datepicker',
+										data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+										type: "GET",
+										success: function (data) {
+											if(data=='success')
+											window.location.reload();
+										},
+										error: function (xhr, textStatus, error) {
+	
+										}
+									});
+								}
+							});
+                      	},
                       //BL-520 - disable weekends in the calendar
-                               lockDaysFilter: (day) => {
-                                       const d = day.getDay();
-                                       return [6, 0].includes(d);
-                                     },
-                               lockDays: disallowedDates,
+                        lockDaysFilter: (day) => {
+                            const d = day.getDay();
+                            return [6, 0].includes(d);
+                        },
+                        lockDays: disallowedDates,
                       //Limit days selection to 90 days
-                              maxDays: 90,
+                        maxDays: 90,
                       //Disable dates after one year from today
-                              maxDate: disableDatesOneYearFomNow,
+                        maxDate: disableDatesOneYearFomNow,
                       //Set Sunday to be the first day in the calendar's header
-                              firstDay: 0,
+                        firstDay: 0,
                       //Change the defaul button values
-                              buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
-                        });
-                  </script>
-        		</c:if>
+                        buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                    });
+                </script>
+		</c:if>
 	</c:otherwise>
 </c:choose>
 
