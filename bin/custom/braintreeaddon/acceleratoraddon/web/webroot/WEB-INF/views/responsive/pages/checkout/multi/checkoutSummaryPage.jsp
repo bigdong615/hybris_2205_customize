@@ -16,6 +16,7 @@
 <%@ taglib prefix="checkout"
 	tagdir="/WEB-INF/tags/responsive/checkout/multi"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>	
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 
 <spring:url value="/checkout/multi/summary/braintree/placeOrder" var="placeOrderUrl"/>
@@ -76,7 +77,7 @@
         <div class="container">
             <div id="cartSteps" class="row justify-content-center">
                 <div class="col-xl-10">
-                    <span class="step1 complete"><i class="icon-check"></i> Your Rental</span><span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span><span class="step3 complete"><i class="icon-check"></i> Payment</span><span class="step4 active"><i class="number">4</i> Review</span>
+                    <span class="step1 complete"><i class="icon-check"></i><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.checkout.multi.order.rental"/></c:when><c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise></c:choose></span><span class="step2 complete"><i class="icon-check"></i> Delivery or Pickup</span><span class="step3 complete"><i class="icon-check"></i> Payment</span><span class="step4 active"><i class="number">4</i> Review</span>
                 </div>
             </div>
             <div class="row justify-content-center">
@@ -310,7 +311,7 @@
 
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
-                           <cart:orderSummeryForReview cartData="${cartData}"
+                           <cart:orderSummery cartData="${cartData}"
 								emptyCart="${emptyCart}" />
                             <div class="order-actions my-4"><a href="#" alt="Print Order"><i class="icon-print"></i></a></div>
                         </div>
