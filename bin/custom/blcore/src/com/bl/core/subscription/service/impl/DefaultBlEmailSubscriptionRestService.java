@@ -44,7 +44,6 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	private static final String SUBSCRIPTION_ACCESS_SCOPE = "email.subscription.access.scope";//  email_read email_write email_send
 
 	private ConfigurationService configurationService;
-	private ObjectMapper mapper;
 
 	/**
 	 * {@inheritDoc}
