@@ -221,12 +221,12 @@ public class DefaultBlPricingService implements BlPricingService {
    * @return
    */
   @Override
-  public float getCalculatedConditionalRating(float cosmeticRating,float functionalRating){
+  public Double getCalculatedConditionalRating(float cosmeticRating,float functionalRating){
     float calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
     float calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
     BigDecimal bigDecimal = new BigDecimal(Float.toString(calculatedCosmeticValue+calculatedFunctionalValue));
     bigDecimal = bigDecimal.setScale(1, RoundingMode.HALF_DOWN);
-    return bigDecimal.floatValue();
+    return bigDecimal.doubleValue();
   }
 
 
