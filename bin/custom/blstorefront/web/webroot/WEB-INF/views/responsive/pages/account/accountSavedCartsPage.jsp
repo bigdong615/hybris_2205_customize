@@ -114,6 +114,7 @@
 </div>
 
 
+<!-- Remove Modals -->
   <div class="modal fade" id="removeCart" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
           <div class="modal-content">
@@ -131,3 +132,8 @@
           </div>
         </div>
       </div>
+
+  <div class="modal fade signinbox" id="restorePopUp" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+       <div class="modal-dialog modal-dialog-centered modal-sm">
+       </div>
+    </div>

@@ -8,10 +8,18 @@ ACC.savedcarts = {
         ["bindUpdateUploadingSavedCarts", $(".js-uploading-saved-carts-update").length != 0],
        ["bindRenameSavedCartForm", $(".js-rename-saved-carts").length != 0],
        ["binddeleteCartForm", $(".js-remove-saved-carts").length != 0],
+       "bindRestoreCartForm"
     ],
     
     $savedCartRestoreBtn: {},
     $currentCartName: {},
+
+    bindRestoreCartForm: function () {
+                $(".js-save-cart-restore").click(function (event) {
+                event.preventDefault();
+                 alert("hjjj");
+                });
+            },
 
     bindRenameSavedCartForm: function () {
             $(".js-rename-saved-carts").click(function (event) {
@@ -19,9 +27,11 @@ ACC.savedcarts = {
              var cartId = $(this).data('savedcart-id');
              var cartName = $(this).data('savedcart-name');
            /*  var url = "/my-account/saved-carts/" + cartId + "/edit";*/
+           if(cartName !=='' && cartName !== 'undefined') {
              $('#renameCartIdUrl').val(cartId);
              document.getElementById("renameCartForm").action = cartId;
               $('#renameSaveCartName').attr('placeholder', cartName);
+              }
             });
         },
 
@@ -43,23 +53,15 @@ ACC.savedcarts = {
             var cartId = $(this).data('savedcart-id');
             var url = ACC.config.encodedContextPath +'/my-account/saved-carts/'+encodeURIComponent(cartId)+'/restore';
             var popupTitleHtml = ACC.common.encodeHtml(popupTitle);
+            $.ajax({
+            				url: url,
+            				success: function (result) {
+            					$('#restorePopUp').html(result);
+            					setTimeout(function(){$("#restorePopUp").modal('show');},500);
+            				}
+            			})
 
-            ACC.common.checkAuthenticationStatusBeforeAction(function(){
-            	$.get(url, undefined, undefined, 'html').done(function (data) {
-            		ACC.colorbox.open(popupTitleHtml, {
-            			html: data,
-            			width: 500,
-            			onComplete: function () {
-            				ACC.common.refreshScreenReaderBuffer();
-            				ACC.savedcarts.bindRestoreModalHandlers();
-            				ACC.savedcarts.bindPostRestoreSavedCartLink();
-            			},
-            			onClosed: function () {
-            				ACC.common.refreshScreenReaderBuffer();
-            			}
-            		});
-            	});
-            });
+
         });
     },
 

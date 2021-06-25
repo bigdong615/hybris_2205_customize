@@ -272,8 +272,8 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	}
 
 	@RequireHardLogIn
-	@RequestMapping(value = "/{cartId}/restore", method = RequestMethod.POST)
-	public @ResponseBody String postRestoreSaveCartForId(@PathVariable(value = "cartId") final String cartId,
+	@RequestMapping(value = "/{cartId}/restorCart")
+	public String postRestoreSaveCartForId(@PathVariable(value = "cartId") final String cartId,
 			final RestoreSaveCartForm restoreSaveCartForm, final BindingResult bindingResult) throws CommerceSaveCartException
 	{
 		try
@@ -309,7 +309,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 			LOG.error("Error while restoring the cart for cartId " + cartId + " because of " + ex);
 			return getMessageSource().getMessage("text.restore.savedcart.error", null, getI18nService().getCurrentLocale());
 		}
-		return String.valueOf(HttpStatus.OK);
+		return BlControllerConstants.REDIRECT_CART_URL;
 	}
 
 	@RequestMapping(value = "/{cartId}/delete")
