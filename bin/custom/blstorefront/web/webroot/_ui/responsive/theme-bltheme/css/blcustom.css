@@ -41,6 +41,7 @@ BL-31 Added for error message in login and create account popup
 .sortDropdownForListPage {
   border: none;
   background: transparent;
+  padding: 0 7px 0 7px;
   color: #3d3c3c;
 }
 /*for BL-494 */
@@ -247,4 +248,89 @@ font-size: 21px;
 }
 .selectBoxSize{
     width:100%;
+}
+ 
+.product-sort{ 
+  display: inline-flex;
+  vertical-align: middle;
+  right:0px !important;
+}
+.product-sort .btn-group{
+  position: relative !important;
+    background: none !important;
+    border: none !important;
+    outline: none;
+}
+.product-sort .btn :hover{
+  background:none ;
+  outline: none;
+  padding: 0;
+  border: none;
+}
+.product-sort .btn{
+  background:none !important ;
+  outline: none;
+  padding: 0;
+  border: none;
+  letter-spacing: inherit;
+}
+.product-sort span{
+  text-transform: capitalize;
+  display:contents !important;
+}
+.product-sort .dropdown-menu {
+  margin: 0 !important;
+  padding:7px 0 7px 0 !important;
+}
+.product-sort .dropdown-menu li {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.product-sort .dropdown-menu>li>a {
+  display: block;
+  padding: 5px 0 5px 13px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #3d3c3c !important; 
+  white-space: nowrap;
+  cursor: pointer; 
+}
+.product-sort .dropdown-menu>li:focus, .dropdown-menu>li>a:hover{
+  background: none !important;
+  outline: none;
+  color: #e64b4f !important;
+}
+.product-sort .dropdown-menu[style] {
+  left: auto!important;
+  right: 0 !important;
+}
+@media only screen and (max-width: 767px) and (min-width: 0px){
+.product-sort .dropdown-menu[style] {
+    left: inherit !important;
+    right:inherit !important;
+  }
+}
+.icon-date-forward {
+    background: url(../assets/icon-arrow.svg) center no-repeat;
+}
+.rental-terms {
+    padding-bottom: 15px;
+    text-align: right;
+}
+.scroll-over-text{
+  overflow-y: scroll;
+  height:160px;
+}
+::-webkit-scrollbar {
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge add Firefox */
+.scroll-over-text {
+  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox */
 }

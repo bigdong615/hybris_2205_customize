@@ -69,18 +69,30 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                    url: ACC.config.encodedContextPath + "/cart/add",
                                    type: 'POST',
                                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                                   beforeSend: function(){
+                                       $('.page-loader-new-layout').show();
+                                   },
                                    success: function (response) {
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                      //On empty cart page, add class on close & continue shopping button of add to rental modal.
+                                      $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
+                                      $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
+                                      reloadEmptyCartPageOnModalClose();
+                                      mixedProductInterception(productCode, serialCode);
                                       updateQuantity();
                                       addToCartFromModal();
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
                                    },
+                                   complete : function() {
+                                      $('.page-loader-new-layout').hide();
+                                   },
                                    error: function (jqXHR, textStatus, errorThrown) {
+                                         $('.page-loader-new-layout').hide();
                                          $('.modal-backdrop').addClass('remove-popup-background');
                                          // log the error to the console
                                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
@@ -356,6 +368,9 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
                                       var index = $( ".js-add-to-cart-popup" ).index( this );
                                       document.getElementById(popUpId).innerHTML= "Added";
                                       document.getElementById(popUpId).setAttribute("disabled", true);
+                                      if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                          ACC.minicart.updateMiniCartDisplay();
+                                      }
                                      },
                                       complete: function() {
                                         $('.page-loader-new-layout').hide();
@@ -380,14 +395,14 @@ $('.btn-number').click(function(e){
 	if (!isNaN(currentVal)) {
 		if(type == 'minus') {
       if(currentVal > input.attr('min')) {
-				input.val(currentVal - 1).change();
+        input.val(currentVal - 1).change();
 			}
 			if(parseInt(input.val()) == input.attr('min')) {
 				$(this).attr('disabled', true);
 			}
     } else if(type == 'plus') {
       if(currentVal < input.attr('max')) {
-				input.val(currentVal + 1).change();
+        input.val(currentVal + 1).change();
 			}
 			if(parseInt(input.val()) == input.attr('max')) {
 				$(this).attr('disabled', true);
@@ -448,3 +463,60 @@ $(".input-number").keydown(function (e) {
 	}
 });
 
+//BL-454 It triggers, when user clicks on continue button from mixed product interception modal.
+function mixedProductInterception(productCode, serialCode){
+$('#mixedProductInterception').on("click", function(event) {
+  $.ajax({
+		url : ACC.config.encodedContextPath + '/cart/emptyCart',
+		type : "GET",
+		beforeSend: function(){
+         $('.page-loader-new-layout').show();
+     },
+		success : function(data) {
+			addProductToCart(productCode, serialCode);
+		},
+		error : function(xht, textStatus, ex) {
+		  $('.page-loader-new-layout').hide();
+			console.log("Error while removing cart entries");
+		}
+	});
+});
+}
+
+function addProductToCart(productCode, serialCode){
+  $.ajax({
+  	url : ACC.config.encodedContextPath + "/cart/add",
+  	type : 'POST',
+  	data : {
+  		productCodePost : productCode,
+  		serialProductCodePost : serialCode
+  	},
+  	success : function(response) {
+  	  $('.page-loader-new-layout').hide();
+  	  $('#addToCartModalDialog').addClass('modal-lg');
+  		$('#addToCartModalDialog').html(response.addToCartLayer);
+  		if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+  			ACC.minicart.updateMiniCartDisplay();
+  		}
+  		updateQuantity();
+  		addToCartFromModal();
+  		if (document.getElementById("addToCart-gear-sliders") != null) {
+  			setTimeout(modalBodyContent, 100);
+  		}
+  	},
+  	error : function(jqXHR, textStatus, errorThrown) {
+  	  $('.page-loader-new-layout').hide();
+  		$('.modal-backdrop').addClass('remove-popup-background');
+  		// log the error to the console
+  		console.log("The following error occurred: " + jqXHR, textStatus,
+  				errorThrown);
+  	}
+  });
+}
+
+//BL-466 reload page, when user closes add to rental modal from empty cart page.
+function reloadEmptyCartPageOnModalClose(){
+$('.emptyCart-modalClose').click(function(e){
+  window.location.reload();
+});
+}

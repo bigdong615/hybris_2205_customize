@@ -234,8 +234,8 @@
   <bean class="com.bl.facades.giftcard.data.BLGiftCardData">
       <property name="code" type="String"/>
       <property name="amount" type="java.lang.Double"/>
-      <property name="redeemamount" type="java.lang.Double"/>
-      <property name="balanceamount" type="java.lang.Double"/>
+      <property name="redeemamount" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+      <property name="balanceamount" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
       <property name="reedemDate" type="java.util.Date" />
       <property name="cartId" type="String" />
       <property name="url" type="String" />

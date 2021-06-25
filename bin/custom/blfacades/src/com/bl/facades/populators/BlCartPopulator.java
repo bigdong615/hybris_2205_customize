@@ -84,8 +84,8 @@ public class BlCartPopulator extends CartPopulator<CartData>
 				final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
 				//rounding off double value to 2 decimal places
 				BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
-				blGiftCardData.setRedeemamount(gcRedeemedAmount.doubleValue());
-				blGiftCardData.setBalanceamount(giftCardModel.getBalance());
+				blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
+				blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
 				blGiftCardDataList.add(blGiftCardData);
 			}
 			target.setGiftCardData(blGiftCardDataList);

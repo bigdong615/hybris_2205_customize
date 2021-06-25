@@ -198,15 +198,12 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
 				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
-				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()) 
-						&& BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(cartData.getPaymentInfo().getSubscriptionId()))
+				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
 				{
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
-					model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
-					model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
-					model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
-					model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
+					setPaymentDetailForPage(paymentInfo, model);					
 				}
+				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)
@@ -232,7 +229,28 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
 	}
-
+	
+	/**
+	 * Sets the payment detail for payment page if already selected.
+	 *
+	 * @param paymentInfo the payment info
+	 * @param model the model
+	 */
+	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
+	{
+		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
+			model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
+			model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
+			model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
+		}
+		else if(BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
+		}
+	}
+	
 	/**
 	 * If gift card removed from cart then it add message to model attribute for removed gift card.
 	 * @param model
