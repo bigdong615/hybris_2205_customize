@@ -203,6 +203,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
 					setPaymentDetailForPage(paymentInfo, model);					
 				}
+				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)

@@ -114,6 +114,7 @@ public class BlControllerConstants
 	public static final String USER_SELECTED_PAYPAL_PAYMENT_INFO = "userSelectedPayPalPaymentInfo";
 	public static final String PAYPAL_CHECKOUT = "BrainTreePayPalExpress";
 	public static final String REVIEW_PAGE = "Review";
+	public static final String DEFAULT_BILLING_ADDRESS = "defaultBillingAddress";
 	
 	private BlControllerConstants()
 	{
