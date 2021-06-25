@@ -1,5 +1,17 @@
 package com.braintree.transaction.service.impl;
 
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_PAYMENT;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_PROVIDER_NAME;
+import static com.braintree.constants.BraintreeConstants.FAKE_REQUEST_ID;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_PAYMENT;
+import static com.braintree.constants.BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
+import static com.braintree.constants.BraintreeConstants.PROPERTY_LEVEL2_LEVEL3;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
+import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAuthorizationRequest;
 import com.braintree.command.request.BrainTreeCreatePaymentMethodRequest;
 import com.braintree.command.request.BrainTreeFindMerchantAccountRequest;
@@ -14,9 +26,11 @@ import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.enums.BrainTreeCardType;
+import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.hybris.data.BraintreeTransactionEntryData;
 import com.braintree.method.BrainTreePaymentService;
 import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.order.submitForSettlement.service.BraintreeSubmitForSettlementService;
 import com.braintree.payment.dto.BraintreeInfo;
 import com.braintree.paypal.converters.impl.BillingAddressConverter;
 import com.braintree.transaction.service.BrainTreePaymentTransactionService;
@@ -49,9 +63,6 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.DiscountValue;
 import de.hybris.platform.util.TaxValue;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -61,17 +72,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.braintree.constants.BraintreeConstants.BRAINTREE_PAYMENT;
-import static com.braintree.constants.BraintreeConstants.BRAINTREE_PROVIDER_NAME;
-import static com.braintree.constants.BraintreeConstants.FAKE_REQUEST_ID;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_PAYMENT;
-import static com.braintree.constants.BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
-import static com.braintree.constants.BraintreeConstants.PROPERTY_LEVEL2_LEVEL3;
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionService
@@ -93,6 +96,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private CommonI18NService commonI18NService;
 	private BrainTreeConfigService brainTreeConfigService;
 	private CustomFieldsService customFieldsService;
+	private BraintreeSubmitForSettlementService braintreeSubmitForSettlementService;
 
 	@Override
 	public boolean createAuthorizationTransaction()
@@ -104,9 +108,43 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	public boolean createAuthorizationTransaction(Map<String, String> customFields)
 	{
 		final CartModel cart = cartService.getSessionCart();
-		final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields,
-				getTotalAmount(cart, null), Boolean.FALSE);
-		return handleAuthorizationResult(result, cart);
+		try {
+			final BrainTreeAuthorizationResult result = brainTreeAuthorize(cart, customFields,
+				getBrainTreeConfigService().getAuthAMountToVerifyCard(), Boolean.FALSE);
+			return handleAuthorizationResult(result, cart);
+		} catch(final Exception ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR,
+				"Error occurred while creating authorization for the cart {} while placing an order", cart.getCode(), ex);
+		}
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean createAuthorizationTransactionOfOrder(final AbstractOrderModel orderModel)
+	{
+		try {
+			final BrainTreeAuthorizationResult result = brainTreeAuthorize(orderModel, getCustomFields(),
+					getTotalAmount(orderModel, null), Boolean.FALSE);
+			return handleAuthorizationResult(result, orderModel);
+		} catch(final Exception ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR,
+					"Error occurred while creating authorization for the order {}", orderModel.getCode(), ex);
+		}
+			return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean captureAuthorizationTransaction(final OrderModel orderModel, final BigDecimal amount,
+			final String requestId)
+			throws BraintreeErrorException {
+				return getBraintreeSubmitForSettlementService()
+						.submitForSettlement(orderModel, amount, requestId);
 	}
 
 	private boolean handleAuthorizationResult(BrainTreeAuthorizationResult result, AbstractOrderModel cart)
@@ -116,7 +154,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		{
 			paymentTransactionEntry = createTransactionEntry(PaymentTransactionType.AUTHORIZATION, cart, result);
 			saveIntent(cart);
-			savePaymentTransaction(paymentTransactionEntry);
+			savePaymentTransaction(paymentTransactionEntry, cart);
 			if (result.getAndroidPayDetails() != null)
 			{
 				brainTreePaymentService.updatePaymentInfo(cart.getPaymentInfo(), result.getAndroidPayDetails());
@@ -143,6 +181,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		modelService.save(brainTreePaymentInfo);
 	}
 
+	/**
+	 * To authorize the order
+	 * @param cart
+	 * @param  customFields
+	 * @param totalAmount
+	 * @param submitForSettlement
+	 * @return BrainTreeAuthorizationResult
+	 */
 	private BrainTreeAuthorizationResult brainTreeAuthorize(final AbstractOrderModel cart, Map<String, String> customFields,
 			BigDecimal totalAmount, final Boolean submitForSettlement)
 	{
@@ -1186,5 +1232,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	public void setCustomFieldsService(CustomFieldsService customFieldsService)
 	{
 		this.customFieldsService = customFieldsService;
+	}
+
+	public BraintreeSubmitForSettlementService getBraintreeSubmitForSettlementService() {
+		return braintreeSubmitForSettlementService;
+	}
+
+	public void setBraintreeSubmitForSettlementService(
+			BraintreeSubmitForSettlementService braintreeSubmitForSettlementService) {
+		this.braintreeSubmitForSettlementService = braintreeSubmitForSettlementService;
 	}
 }
