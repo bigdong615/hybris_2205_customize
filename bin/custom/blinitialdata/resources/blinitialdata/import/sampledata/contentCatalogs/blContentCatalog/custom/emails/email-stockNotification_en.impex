@@ -20,7 +20,7 @@ UPDATE EmailPage;$contentCV[unique=true];uid[unique=true];fromEmail[lang=$lang];
 
 INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];content[lang=$lang]
                                    ;; BlSiteLogoEmailComponent ;  "<tr style=""valign: bottom;"">
- <td width=""50%"" rowspan=""2""><a href=""https://www.borrowlenses.com""><img border=""0"" width=""100%"" alt=""Borrow Lenses"" src=""https://cdn.static-bl.com/images/newsletter/logo.png"" style=""display: block; width: 100%;"" border=""0""></a></td>
+ <td width=""50%"" rowspan=""2""><a href=""${ctx.secureBaseUrl}""><img border=""0"" width=""100%"" alt=""Borrow Lenses"" src=""https://cdn.static-bl.com/images/newsletter/logo.png"" style=""display: block; width: 100%;"" border=""0""></a></td>
  <td width=""50%""><img src=""https://cdn.static-bl.com/images/newsletter/spc.png"" height=""40""></td></tr>
  <tr><td style=""font-family: Tahoma, Arial, sans-serif; font-size: 10px; text-align: right; display: block; width: 100%; valign: bottom;"">&nbsp;</td>
 </tr>"
@@ -44,12 +44,12 @@ INSERT_UPDATE CMSParagraphComponent;$contentCV[unique=true];uid[unique=true];con
 </td></tr></table>"
 
                                    ;;BlBottomContentComponent ; "<div style=""margin-top: 10px; padding: 4px 8px; font-family: helvetica,arial,sans-serif; text-align: center; background-color: #ededf0;"">
-  <a href=""https://www.borrowlenses.com/content/contact_info"" style=""font-family: sans-serif;text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;"">Expert Help</a> |
-  <a href=""https://www.borrowlenses.com/AccountHistory.do"" style=""text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;"">My Account</a>
+  <a href=""${ctx.secureBaseUrl}/contactus"" style=""font-family: sans-serif;text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;"">Expert Help</a> |
+  <a href=""${ctx.secureBaseUrl}/my-account/orders"" style=""text-decoration:none;color:#000000;padding:0 5px;display:inline-block;font-weight:normal;line-height:100%;"">My Account</a>
 </div>
 
 <div style=""margin-top: 10px; padding: 4px 8px; font-family: helvetica,arial,sans-serif; text-align: center;"">
-<a href=""https://www.borrowlenses.com"" style=""font-size:18px;color:#000000;display:block;text-decoration:none;font-weight:normal;line-height:100%;"">www.borrowlenses.com</a><br />
+<a href=""${ctx.secureBaseUrl}"" style=""font-size:18px;color:#000000;display:block;text-decoration:none;font-weight:normal;line-height:100%;"">www.borrowlenses.com</a><br />
 
 <span style=""font-family: helvetica,arial,sans-serif; text-align: center; font-size: 12px; color: #000; display: block; margin-bottom: 25px;"">
 

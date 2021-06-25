@@ -85,7 +85,7 @@ ${ctx.messages.getMessage('paragraphSecond', "<a href=""${ctx.addressUrl}"">your
 </p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-${ctx.messages.getMessage('paragraphThird', "<a href=""https://www.borrowlenses.com/new-arrivals"">recently arrived</a>")}
+${ctx.messages.getMessage('paragraphThird', "<a href=""${ctx.recentUrl}"">recently arrived</a>")}
 </p>
 
 <p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">

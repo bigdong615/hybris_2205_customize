@@ -83,7 +83,7 @@ ${ctx.messages.productForceInStockAvaiable}
 </p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-${ctx.messages.getMessage('shopNow', "<a href=""https://www.borrowlenses.com/new-arrivals"">latest and upcoming arrivals</a>")}
+${ctx.messages.getMessage('shopNow', "<a href=""${ctx.recentUrl}"">latest and upcoming arrivals</a>")}
 </p>
 
 <p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
