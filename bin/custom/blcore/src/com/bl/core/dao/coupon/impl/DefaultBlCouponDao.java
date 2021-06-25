@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Ritika
  */
 public class DefaultBlCouponDao extends DefaultCouponDao {
-  private static final String CASE_SENISTIVE_CHECK = "COLLATE SQL_Latin1_General_CP1_CS_AS";
+  private static final String CASE_SENISTIVE_CHECK = " COLLATE SQL_Latin1_General_CP1_CS_AS";
 
 
   public DefaultBlCouponDao(){
