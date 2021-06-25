@@ -140,8 +140,13 @@
   <bean id="defaultFedExSameDayServiceImpl"
     class="com.bl.integration.services.impl.DefaultFedExSameDayServiceImpl"/>
 
-   <bean id="blUPSSecurityPopulator"
-    class="com.bl.integration.populators.BLUPSSecurityPopulator"/>    
+ <!-- Bl UPS and FedEx Shipment Start -->
+ 
+   <alias name="defaultBlCreateShipmentFacade" alias="blCreateShipmentFacade"/>
+  <bean id="defaultBlCreateShipmentFacade"
+    class="com.bl.integration.facades.impl.DefaultBlCreateShipmentFacade">
+    <property name="modelService" ref="modelService" />
+  </bean>  
     
   <alias name="defaultBLShipmentCreationService" alias="blShipmentCreationService"/>
   <bean id="defaultBLShipmentCreationService"
@@ -151,6 +156,9 @@
     <property name="blFedExShipmentCreateRequestPopulator" ref="blFedExShipmentCreateRequestPopulator"/>
     <property name="blUPSSecurityPopulator" ref="blUPSSecurityPopulator"/>
   </bean>
+  
+  <bean id="blUPSSecurityPopulator"
+    class="com.bl.integration.populators.BLUPSSecurityPopulator"/>   
     
   <bean id="blUPSShipmentCreateRequestPopulator"
 		class="com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateRequestPopulator" />
@@ -160,6 +168,9 @@
 		
 	<bean id="blFedExShippingDataPopulator"
     class="com.bl.integration.populators.BLFedExShippingDataPopulator"/>
+    
+  <bean id="blUpsShippingDataPopulator"
+    class="com.bl.integration.populators.BLUpsShippingDataPopulator"/>
     
     <bean id="blFedExShipmentCreateRequestPopulator"
 		class="com.bl.integration.shipping.ups.converters.populator.BLFedExShipmentCreateRequestPopulator" />

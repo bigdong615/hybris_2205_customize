@@ -25,14 +25,11 @@ import com.bl.facades.shipment.data.FedExLocationData;
 import com.bl.facades.shipment.data.FedExNotificationsData;
 import com.bl.facades.shipment.data.FedExPackageData;
 import com.bl.facades.shipment.data.FedExPickupDetailData;
-import com.bl.facades.shipment.data.FedExRecipientData;
-import com.bl.facades.shipment.data.FedExRestrictionData;
 import com.bl.facades.shipment.data.FedExSMSlData;
 import com.bl.facades.shipment.data.FedExServiceData;
 import com.bl.facades.shipment.data.FedExShipperData;
 import com.bl.facades.shipment.data.FedExShippingRequestData;
 import com.bl.facades.shipment.data.FedExTotalDeclaredValueData;
-import com.bl.facades.shipment.data.FedExVisibilityReleasesData;
 import com.bl.facades.shipment.data.FedExWeightData;
 
 
@@ -49,19 +46,12 @@ public class BLFedExShippingDataPopulator
 	{
 		final FedExShippingRequestData fedExShippingRequestData = new FedExShippingRequestData();
 
-		final FedExRestrictionData fedExRestrictionData = new FedExRestrictionData();
-		fedExRestrictionData.setNoHAL(false);
-		fedExRestrictionData.setNoRecipientRedirect(false);
-		fedExRestrictionData.setNoRemoteSignature(false);
-
 		/** Creating Service Data **/
-		final List<Object> specialServices = new ArrayList<>();
 
 		final FedExServiceData fedExServiceData = new FedExServiceData();
+		// Need to change
 		fedExServiceData.setServiceType("LM");
-		fedExServiceData.setSignatureService("ASR");
-		fedExServiceData.setSpecialServices(specialServices);
-		fedExServiceData.setRestrictions(fedExRestrictionData);
+		fedExServiceData.setSignatureService("SERVICE_DEFAULT");
 
 		fedExShippingRequestData.setService(fedExServiceData);
 
@@ -92,9 +82,11 @@ public class BLFedExShippingDataPopulator
 		fedExLocationData.setHoursOfOperationEnd(1459897586589l);
 
 		fedExPickupDetailData.setLocation(fedExLocationData);
+		//  		Start time of the delivery window minus 40 mins (in expected format)
+		//    	Only used for SDD or Rush
+
 		fedExPickupDetailData.setReadyTime(1461700301796l);
-		fedExPickupDetailData.setLocalTimeZone("US/Central");
-		fedExPickupDetailData.setInstructions("Handle with care");
+		fedExPickupDetailData.setLocalTimeZone("America/Los_Angeles");
 
 		fedExShippingRequestData.setPickupDetail(fedExPickupDetailData);
 
@@ -124,55 +116,28 @@ public class BLFedExShippingDataPopulator
 		deliveryLocationData.setHoursOfOperationStart(1459897586589l);
 		deliveryLocationData.setHoursOfOperationEnd(1459897586589l);
 
-		fedExDeliveryDetailData.setInstructions("Fragile");
+		fedExDeliveryDetailData.setInstructions(consignment.getOrder().getDeliveryNotes());
 		fedExDeliveryDetailData.setLocation(deliveryLocationData);
 
 		fedExShippingRequestData.setDeliveryDetail(fedExDeliveryDetailData);
 
 		final FedExShipperData fedExShipperData = new FedExShipperData();
-		fedExShipperData.setAccountNumber("AC0019212");
+		fedExShipperData.setAccountNumber("400000002");
 
-		final FedExDisplayImageData fedExDisplayImageData = new FedExDisplayImageData();
-		fedExDisplayImageData.setLarge("http://content.retailer.com/logos/logo-12-l.jpg");
-		fedExDisplayImageData.setMedium("http://content.retailer.com/logos/logo-12-m.jpg");
-		fedExDisplayImageData.setSmall("http://content.retailer.com/logos/logo-12-s.jpg");
-		fedExShipperData.setDisplayImage(fedExDisplayImageData);
-
-		fedExShipperData.setDisplayName("Shane’s Shoe Store");
+		fedExShipperData.setDisplayName("San Carlos Warehouse / Waltham Warehouse");
 
 		final AddressData shipperContactData = new AddressData();
-		shipperContactData.setFirstName("Shane");
-		shipperContactData.setCompanyName("SHANES SHOES LLC");
-		shipperContactData.setPhone("874-610-2122");
-		shipperContactData.setEmail("shane.doe@retailer.com");
+		shipperContactData.setFirstName("Returns Department ");
+		shipperContactData.setCompanyName("Borrowlenses");
+		shipperContactData.setPhone("844-853-6737");
 		fedExShipperData.setContact(shipperContactData);
 
-		final AddressData shipperSupportData = new AddressData();
-		shipperSupportData.setPhone("1-800-555-5121");
-		shipperSupportData.setEmail("support@retailer.com");
-		shipperSupportData.setUrl("www.retailer.com/support");
-		fedExShipperData.setSupportContact(shipperSupportData);
 		fedExShippingRequestData.setShipper(fedExShipperData);
 
-		final FedExRecipientData fedExRecipientData = new FedExRecipientData();
-		fedExRecipientData.setDisplayName("John Doe");
-
-		final FedExDisplayImageData recipientImageData = new FedExDisplayImageData();
-		recipientImageData.setLarge("http://retailer.com/profiles/234234/profileImage-large.jpg");
-		recipientImageData.setMedium("http://retailer.com/profiles/234234/profileImage-medium.jpg");
-		recipientImageData.setSmall("http://retailer.com/profiles/234234/profileImage-small.jpg");
-		fedExRecipientData.setDisplayImage(recipientImageData);
-
-		final AddressData recipientAddressData = new AddressData();
-		recipientAddressData.setFirstName("John Doe");
-		recipientAddressData.setPhone("978-335-3273");
-		recipientAddressData.setEmail("john.doe@gmail.com");
-		fedExRecipientData.setContact(recipientAddressData);
-		fedExShippingRequestData.setRecipient(fedExRecipientData);
 
 		final FedExTotalDeclaredValueData fedExTotalDeclaredValueData = new FedExTotalDeclaredValueData();
 		fedExTotalDeclaredValueData.setCurrencyCode("USD");
-		fedExTotalDeclaredValueData.setAmount(40);
+		fedExTotalDeclaredValueData.setAmount(100);
 		fedExShippingRequestData.setTotalDeclaredValue(fedExTotalDeclaredValueData);
 
 		final List<FedExPackageData> packageList = new ArrayList<>();
@@ -206,8 +171,6 @@ public class BLFedExShippingDataPopulator
 		fedExWeightData.setValue(2);
 		packageData.setWeight(fedExWeightData);
 		fedExShippingRequestData.setPackages(packageList);
-
-		fedExShippingRequestData.setContentDescription("Brand Name Shoes");
 
 		final FedExExternalReferencesData fedExExternalReferencesData = new FedExExternalReferencesData();
 		fedExExternalReferencesData.setPoNumber("75024");
@@ -248,15 +211,6 @@ public class BLFedExShippingDataPopulator
 		fedExNotificationsData.setSms(smsList);
 		fedExShippingRequestData.setNotifications(fedExNotificationsData);
 
-		final FedExVisibilityReleasesData visibilityReleases = new FedExVisibilityReleasesData();
-		visibilityReleases.setReleaseTimestamp(1459897586589l);
-		visibilityReleases.setShowShipperDisplayName(true);
-		visibilityReleases.setShowShipperDisplayImage(true);
-		visibilityReleases.setShowShipmentDisplayName(true);
-		visibilityReleases.setShowShipmentDisplayImage(true);
-		visibilityReleases.setShowPickupLocation(true);
-
-		fedExShippingRequestData.setVisibilityReleases(visibilityReleases);
 		return fedExShippingRequestData;
 
 	}

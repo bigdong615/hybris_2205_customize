@@ -261,6 +261,7 @@
 	</bean>
 	
 	<bean class="com.bl.facades.shipment.data.ShipmentData">
+		<property name="returnService" type="com.bl.facades.shipment.data.ReturnServiceData"/>
 		<property name="shipper" type="com.bl.facades.shipment.data.ShipperData"/>
 		<property name="shipTo" type="com.bl.facades.shipment.data.ShipToData"/>
 		<property name="shipFrom" type="com.bl.facades.shipment.data.ShipFromData"/>
@@ -273,6 +274,11 @@
 		<property name="labelImageFormat" type="com.bl.facades.shipment.data.UpsShipmentServiceData"/>
 		<property name="httpUserAgent" type="String"/>
 	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.ReturnServiceData">
+		<property name="code" type="String"/>
+		<property name="description" type="String"/>
+	</bean>	
 	
 	<bean class="com.bl.facades.shipment.data.ShipperData">
 		<property name="name" type="String" />

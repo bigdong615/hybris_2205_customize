@@ -61,6 +61,12 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 	private BLUPSSecurityPopulator blUPSSecurityPopulator;
 
+	@Value("${blintegration.fedex.api.key}")
+	private String fedExapiKey;
+
+	@Value("${blintegration.fedex.shipment.url}")
+	private String fedExapiURL;
+
 	@Value("${blintegration.ups.shipment.endpoint.url}")
 	private String endpointURL;
 
@@ -136,16 +142,16 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		URIBuilder builder;
 		try
 		{
-			builder = new URIBuilder("https://api.test.samedaycity.fedex.com/shipment/v1/shipment");
+			builder = new URIBuilder(fedExapiURL);
 			final URI uri = builder.build();
 			final HttpPost request = new HttpPost(uri);
 			request.setHeader("Content-Type", "application/json");
-			request.setHeader("X-Api-Key", "71fcf31cdf13458992fbcc65856f3023");
+			request.setHeader(BlintegrationConstants.X_API_KEY, fedExapiKey);
 
 			final Gson gson = new Gson();
 			final String json = gson.toJson(fedExShipemtnReq);
 
-			final StringEntity reqEntity = new StringEntity(json, "utf-8");
+			final StringEntity reqEntity = new StringEntity(json, BlintegrationConstants.UTF_8_CODE);
 			request.setEntity(reqEntity);
 
 			return httpclient.execute(request);
@@ -179,7 +185,6 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	private ShipmentResponse createUPSShipmentResponse(final ShipmentRequest shipmentRequest, final UPSSecurity upsSecurity)
 			throws ShipmentErrorMessage
 	{
-		final ShipmentResponse shipResponse = new ShipmentResponse();
 		final ShipService shipService = new ShipService();
 		final ShipPortType shipPort = shipService.getShipPort();
 		final BindingProvider bp = (BindingProvider) shipPort;

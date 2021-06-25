@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.bl.facades.shipment.data.DimensionsTypeData;
 import com.bl.facades.shipment.data.PackageTypeData;
 import com.bl.facades.shipment.data.PackageWeightTypeData;
+import com.bl.facades.shipment.data.ReturnServiceData;
 import com.bl.facades.shipment.data.ShipFromData;
 import com.bl.facades.shipment.data.ShipToData;
 import com.bl.facades.shipment.data.ShipmentData;
@@ -29,6 +30,7 @@ import com.bl.facades.shipment.data.ShipperData;
 import com.bl.facades.shipment.data.UpsPaymentInformation;
 import com.bl.facades.shipment.data.UpsShipmentServiceData;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
+import com.bl.integration.constants.BlintegrationConstants;
 
 
 /**
@@ -167,8 +169,13 @@ public class BLUpsShippingDataPopulator
 
 		/** Creating UPS Shipment Service Data **/
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
-		upsShipmentServiceData.setCode("08");
-		upsShipmentServiceData.setDescription("UPS Expedited");
+
+		if (consignmentModel.getOptimizedShippingType() != null
+				&& StringUtils.isNotBlank(consignmentModel.getOptimizedShippingType().getCode()))
+		{
+			upsShipmentServiceData.setCode(consignmentModel.getOptimizedShippingType().getServiceTypeCode());
+			upsShipmentServiceData.setDescription(consignmentModel.getOptimizedShippingType().getServiceTypeDesc());
+		}
 
 		/** Creating UPS Payment Data **/
 		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
@@ -181,6 +188,12 @@ public class BLUpsShippingDataPopulator
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
 		populatePackage(packageDataList, consignmentModel);
 
+		/** Creating UPS Return Data List **/
+		final ReturnServiceData returnServiceData = new ReturnServiceData();
+		returnServiceData.setCode(BlintegrationConstants.RETURNSERVICE_CODE);
+		returnServiceData.setDescription(BlintegrationConstants.RETURNSERVICE_DESCRIPTION);
+
+		shipmentData.setReturnService(returnServiceData);
 		shipmentData.setShipper(shipperData);
 		shipmentData.setShipFrom(shipFromData);
 		shipmentData.setShipTo(shipToData);
@@ -201,12 +214,9 @@ public class BLUpsShippingDataPopulator
 	private void populatePackage(final List<PackageTypeData> packageDataList, final ConsignmentModel consignment)
 	{
 		final UpsShipmentServiceData serviceDataForPackagingType = new UpsShipmentServiceData();
-		if (consignment.getOptimizedShippingType() != null
-				&& StringUtils.isNotBlank(consignment.getOptimizedShippingType().getCode()))
-		{
-			serviceDataForPackagingType.setCode(consignment.getOptimizedShippingType().getServiceTypeCode());
-			serviceDataForPackagingType.setDescription(consignment.getOptimizedShippingType().getServiceTypeDesc());
-		}
+
+		serviceDataForPackagingType.setCode(BlintegrationConstants.PACAKAGING_TYPE_CODE);
+		serviceDataForPackagingType.setDescription(BlintegrationConstants.PACAKAGING_TYPE_DESCIPTION);
 
 		final UpsShipmentServiceData serviceDataForUnit = new UpsShipmentServiceData();
 		serviceDataForUnit.setCode(dimensionTypeCode);
@@ -217,7 +227,6 @@ public class BLUpsShippingDataPopulator
 		final PackageWeightTypeData packageWeight = new PackageWeightTypeData();
 		packageWeight.setUnitOfMeasurement(serviceDataForUnit);
 		packageWeight.setWeight(consignment.getPackagingInfo().getGrossWeight());
-		// Need to check for package weight
 		packageData.setPackagingType(serviceDataForPackagingType);
 		packageData.setPackageWeight(packageWeight);
 

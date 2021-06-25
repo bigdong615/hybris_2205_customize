@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.bl.facades.shipment.data.FedExShippingRequestData;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.populators.BLFedExShippingDataPopulator;
 import com.bl.integration.populators.BLUpsShippingDataPopulator;
@@ -55,9 +54,8 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 		else
 		{
-			final FedExShippingRequestData fedExShipmentRequest = blFedExShippingDataPopulator
-					.populateFedExShipmentRequest(packagingInfo.getConsignment());
-			getBlShipmentCreationService().createFedExShipment(fedExShipmentRequest);
+			getBlShipmentCreationService().createFedExShipment(
+					getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo.getConsignment()));
 		}
 	}
 
@@ -124,6 +122,23 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	public void setBlShipmentCreationService(final DefaultBLShipmentCreationService blShipmentCreationService)
 	{
 		this.blShipmentCreationService = blShipmentCreationService;
+	}
+
+	/**
+	 * @return the blFedExShippingDataPopulator
+	 */
+	public BLFedExShippingDataPopulator getBlFedExShippingDataPopulator()
+	{
+		return blFedExShippingDataPopulator;
+	}
+
+	/**
+	 * @param blFedExShippingDataPopulator
+	 *           the blFedExShippingDataPopulator to set
+	 */
+	public void setBlFedExShippingDataPopulator(final BLFedExShippingDataPopulator blFedExShippingDataPopulator)
+	{
+		this.blFedExShippingDataPopulator = blFedExShippingDataPopulator;
 	}
 
 }

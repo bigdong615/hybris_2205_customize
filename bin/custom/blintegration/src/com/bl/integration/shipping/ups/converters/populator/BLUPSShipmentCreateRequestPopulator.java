@@ -28,6 +28,7 @@ import com.bl.integration.ups.ship.v1.pojo.PackageType;
 import com.bl.integration.ups.ship.v1.pojo.PackageWeightType;
 import com.bl.integration.ups.ship.v1.pojo.PackagingType;
 import com.bl.integration.ups.ship.v1.pojo.PaymentInfoType;
+import com.bl.integration.ups.ship.v1.pojo.ReturnServiceType;
 import com.bl.integration.ups.ship.v1.pojo.ServiceType;
 import com.bl.integration.ups.ship.v1.pojo.ShipAddressType;
 import com.bl.integration.ups.ship.v1.pojo.ShipFromType;
@@ -112,48 +113,53 @@ public class BLUPSShipmentCreateRequestPopulator
 		final ShipmentServiceOptions shpServiceOptions = new ShipmentServiceOptions();
 
 		final LabelDeliveryType labelDelivery = new LabelDeliveryType();
-		labelDelivery.setLabelLinksIndicator("1");
+		labelDelivery.setLabelLinksIndicator(BlintegrationConstants.LABEL_INDICATOR);
 		shpServiceOptions.setLabelDelivery(labelDelivery);
 		shipmentType.setShipmentServiceOptions(shpServiceOptions);
 
 		/** Creating Package Data **/
 
-		final List packageList = shipmentType.getPackage();
-		for (final PackageTypeData packageType : shipmentData.getShipmentPackage())
-		{
-			final PackagingType codeDescriptionForPackagingType = new PackagingType();
-			codeDescriptionForPackagingType.setCode(packageType.getPackagingType().getCode());
-			codeDescriptionForPackagingType.setDescription(packageType.getPackagingType().getDescription());
+		final List<PackageType> packageList = shipmentType.getPackage();
+		final PackageTypeData packageType = shipmentData.getShipmentPackage().get(0);
 
-			final PackageType pkg1 = new PackageType();
+		final PackagingType codeDescriptionForPackagingType = new PackagingType();
+		codeDescriptionForPackagingType.setCode(packageType.getPackagingType().getCode());
+		codeDescriptionForPackagingType.setDescription(packageType.getPackagingType().getDescription());
 
-			final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();
-			shipUnitOfMeasurementType.setCode(packageType.getDimensions().getUnitOfMeasurement().getCode());
-			shipUnitOfMeasurementType.setDescription(packageType.getDimensions().getUnitOfMeasurement().getDescription());
+		final PackageType pkg1 = new PackageType();
 
-			final DimensionsType dimensionType = new DimensionsType();
-			dimensionType.setHeight(packageType.getDimensions().getHeight());
-			dimensionType.setLength(packageType.getDimensions().getLength());
-			dimensionType.setWidth(packageType.getDimensions().getWidth());
-			dimensionType.setUnitOfMeasurement(shipUnitOfMeasurementType);
+		final ShipUnitOfMeasurementType shipUnitOfMeasurementType = new ShipUnitOfMeasurementType();
+		shipUnitOfMeasurementType.setCode(packageType.getDimensions().getUnitOfMeasurement().getCode());
+		shipUnitOfMeasurementType.setDescription(packageType.getDimensions().getUnitOfMeasurement().getDescription());
 
-			pkg1.setPackaging(codeDescriptionForPackagingType);
-			pkg1.setDimensions(dimensionType);
+		final DimensionsType dimensionType = new DimensionsType();
+		dimensionType.setHeight(packageType.getDimensions().getHeight());
+		dimensionType.setLength(packageType.getDimensions().getLength());
+		dimensionType.setWidth(packageType.getDimensions().getWidth());
+		dimensionType.setUnitOfMeasurement(shipUnitOfMeasurementType);
 
-			final PackageWeightType pkgWeight = new PackageWeightType();
+		pkg1.setPackaging(codeDescriptionForPackagingType);
+		pkg1.setDimensions(dimensionType);
 
-			final ShipUnitOfMeasurementType codeDescriptionForUnitOfMeasurement = new ShipUnitOfMeasurementType();
-			codeDescriptionForUnitOfMeasurement.setCode(packageType.getPackageWeight().getUnitOfMeasurement().getCode());
-			codeDescriptionForUnitOfMeasurement
-					.setDescription(packageType.getPackageWeight().getUnitOfMeasurement().getDescription());
+		final PackageWeightType pkgWeight = new PackageWeightType();
 
-			pkgWeight.setUnitOfMeasurement(codeDescriptionForUnitOfMeasurement);
-			pkgWeight.setWeight(packageType.getPackageWeight().getWeight());
-			pkg1.setPackageWeight(pkgWeight);
-			pkg1.setDescription("Package 1");
-			packageList.add(pkg1);
-		}
+		final ShipUnitOfMeasurementType codeDescriptionForUnitOfMeasurement = new ShipUnitOfMeasurementType();
+		codeDescriptionForUnitOfMeasurement.setCode(packageType.getPackageWeight().getUnitOfMeasurement().getCode());
+		codeDescriptionForUnitOfMeasurement.setDescription(packageType.getPackageWeight().getUnitOfMeasurement().getDescription());
 
+		pkgWeight.setUnitOfMeasurement(codeDescriptionForUnitOfMeasurement);
+		pkgWeight.setWeight(packageType.getPackageWeight().getWeight());
+		pkg1.setPackageWeight(pkgWeight);
+		pkg1.setDescription(BlintegrationConstants.PACKAGE_DESCRIPTION);
+		packageList.add(pkg1);
+
+		/** Creating Return Service Data **/
+
+		final ReturnServiceType returnService = new ReturnServiceType();
+		returnService.setCode(shipmentType.getReturnService().getCode());
+		returnService.setDescription(shipmentType.getReturnService().getDescription());
+
+		shipmentType.setReturnService(returnService);
 
 		/** Creating LabelSpecification Data **/
 		final LabelSpecificationType labelSpecType = new LabelSpecificationType();
@@ -167,9 +173,10 @@ public class BLUPSShipmentCreateRequestPopulator
 		labelSpecType.setHTTPUserAgent(BlintegrationConstants.LABEL_SPECIFICATION_HTTPUSERAGENT);
 		labelSpecType.setLabelStockSize(labelStockSizeType);
 		shipmentRequest.setLabelSpecification(labelSpecType);
-		/** ***********Label Specification********************* */
 
-		shipmentType.setDescription("Some Goods");
+		/** ***********Shipment Description********************* */
+
+		shipmentType.setDescription(BlintegrationConstants.SHIPMENT_DESCRIPTION);
 
 		shipmentRequest.setShipment(shipmentType);
 
