@@ -872,4 +872,10 @@
 		<property name="key" value="defaultBlRuleFreeRentalDatesRAOAction"/>
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
+
+	<!--Added for promo code case sensitivity check-->
+	<alias name="defaultBlCouponDao" alias="couponDao" />
+	<bean id="defaultBlCouponDao" class="com.bl.core.dao.coupon.impl.DefaultBlCouponDao" parent="defaultCouponDao"/>
+
 </beans>
+
