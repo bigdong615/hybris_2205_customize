@@ -1738,11 +1738,7 @@
                       optional="true" />
                       <persistence type="property" />
                     </attribute>
-                    <attribute  qualifier="freeShippingDeliverMode" type="DeliveryMode">
-                      <persistence type="property"/>
-                      <modifiers read="true" write="true" search="true" optional="true"/>
-                    </attribute>
-                </attributes>
+                  </attributes>
             </itemtype>
         </typegroup>
 

@@ -69,7 +69,6 @@ public class DefaultBlShippingActionStrategy extends AbstractRuleActionStrategy<
             final Double deliveryCostToReplace = order.getDeliveryCost();
             if(shipmentModel != null && order.getDeliveryMode() != null && order.getDeliveryMode().getCode().equals(shipmentModel.getCode())) {
               order.setDeliveryCost(shipmentRAO.getMode().getCost().doubleValue());
-              order.setFreeShippingDeliverMode(shipmentModel);
               RuleBasedFreeDeliveryModeActionModel actionModel = this.createPromotionAction(promoResult, action);
               this.handleActionMetadata(action, actionModel);
               actionModel.setDeliveryMode(shipmentModel);
@@ -98,7 +97,6 @@ public class DefaultBlShippingActionStrategy extends AbstractRuleActionStrategy<
       RuleBasedFreeDeliveryModeActionModel action = (RuleBasedFreeDeliveryModeActionModel)item;
       AbstractOrderModel order = this.getPromotionResultUtils().getOrder(action.getPromotionResult());
       order.setDeliveryCost(action.getReplacedDeliveryCost().doubleValue());
-      order.setFreeShippingDeliverMode(null);
       this.undoInternal(action);
       this.getModelService().save(order);
     }

@@ -223,16 +223,16 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	/**
 	 *
 	 * This method is to evaluate if free shipping promo applied
-	 * @return
+	 * @return true if applied
 	 */
 	public boolean isFreeShippingPromoApplied(final AbstractOrderModel cartModel) {
 
     final AbstractPromotionModel freeShippingPromotion = getPromotionDao().findPromotionByCode(Config.getString("free.shipping.promotion.code","free_shipping"));
-		if(freeShippingPromotion!= null) {
-			Optional<PromotionSourceRuleModel> freeShippingRule = freeShippingPromotion.getPromotionGroup().getPromotionSourceRules().stream().findAny(sourceRule -> RuleStatus.PUBLISHED.equals(sourceRule.getStatus()));
+		if(freeShippingPromotion!= null && freeShippingPromotion.getPromotionGroup()!= null && CollectionUtils.isNotEmpty(freeShippingPromotion.getPromotionGroup().getPromotionSourceRules())) {
+			Optional<PromotionSourceRuleModel> freeShippingRule = freeShippingPromotion.getPromotionGroup().getPromotionSourceRules().stream().filter(sourceRule -> RuleStatus.PUBLISHED.equals(sourceRule.getStatus())).findAny();
 			double subTotalWithDamageWaiver =	cartModel.getSubtotal() + cartModel.getTotalDamageWaiverCost();
 			int threshold = Config.getInt("free.shipping.promotion.subtotal.with.total.damage.waiver", 150);
-			if (freeShippingRule != null && BooleanUtils.isTrue(freeShippingPromotion.getEnabled())
+			if (freeShippingRule.isPresent()  && BooleanUtils.isTrue(freeShippingPromotion.getEnabled())
 					&& subTotalWithDamageWaiver >= threshold) {
 				return true;
 
