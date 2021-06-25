@@ -10,17 +10,22 @@ import de.hybris.platform.servicelayer.util.ServicesUtil;
 import java.math.BigDecimal;
 
 /**
+ * Added method to change Delivery cost to 0
  * @author Ritika
  */
 public class DefaultBlRuleEngineCalculationService extends DefaultRuleEngineCalculationService {
 
+
+  public DefaultBlRuleEngineCalculationService() {
+    //DO nothing
+  }
   /**
    * Change selected delivery mode cost to 0
    * @param cartRao
    * @param mode
    * @return
    */
-  public ShipmentRAO changeDeliveryCost(CartRAO cartRao, DeliveryModeRAO mode) {
+  public ShipmentRAO changeDeliveryCost(final CartRAO cartRao, final DeliveryModeRAO mode) {
     ServicesUtil.validateParameterNotNull(cartRao, "cart rao must not be null");
     ServicesUtil.validateParameterNotNull(mode, "mode must not be null");
     ServicesUtil.validateParameterNotNull(mode.getCost(), "mode cost must not be null");

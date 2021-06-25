@@ -1,16 +1,13 @@
 package com.bl.core.services.cart;
 
+import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.order.CartService;
-import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import com.bl.facades.product.data.RentalDateDto;
 
 /**
  * It provides cart related functionality.
@@ -63,5 +60,10 @@ public interface BlCartService extends CartService {
 	 */
 	Map<String, Long> getAvailabilityForRentalCart(final CartData cartData, final List<WarehouseModel> warehouses,
 			final RentalDateDto rentalDatesFromSession);
-	
+
+	/**
+	 * Is Free Shipping Promo Applied on the cart
+	 * @return
+	 */
+	public boolean isFreeShippingPromoApplied(final AbstractOrderModel abstractOrderModel);
 }

@@ -536,6 +536,7 @@
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
+		<property name="promotionDao" ref="promotionDao"/>
 	</bean>
 
 
@@ -840,29 +841,6 @@
 	<alias alias="ruleRentalArrivalDateConditionTranslator" name="defaultRuleRentalArrivalDateConditionTranslator" />
 	<bean id="defaultRuleRentalArrivalDateConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalArrivalDateConditionTranslator" />
 
-	<!--[BL-652] -->
-	<alias alias="ruleTotalDamageWaiverConditionTranslator" name="defaultRuleTotalDamageWaiverConditionTranslator" />
-	<bean id="defaultRuleTotalDamageWaiverConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleTotalDamageWaiverConditionTranslator" />
-
-	<alias alias="ruleQualifyingDeliveryModesConditionTranslator" name="defaultRuleQualifyingDeliveryModesConditionTranslator" />
-	<bean id="defaultRuleQualifyingDeliveryModesConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleQualifyingDeliveryModesConditionTranslator" />
-
-	<alias alias="blFreeDeliveryCostAction" name="defaultBlFreeDeliveryCostAction" />
-	<bean id="defaultBlFreeDeliveryCostAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
-		<property name="raoAction" ref="blRuleFreeDeliveryCostRAOAction"/>
-	</bean>
-
-	<alias alias="blRuleFreeDeliveryCostRAOAction" name="defaultBlRuleFreeDeliveryCostRAOAction" />
-	<bean id="defaultBlRuleFreeDeliveryCostRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlRuleFreeDeliveryCostRAOAction">
-		<property name="defaultBlRuleEngineCalculationService" ref="ruleEngineCalculationService"/>
-		<property name="deliveryModeService" ref="deliveryModeService"/>
-		<property name="modelService" ref="modelService"/>
-		<property name="cartService" ref="cartService"/>
-	</bean>
-
-	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
-	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
-	</bean>
 
 	<!-- [BL-655]: Custom Actions for rental products promotion-->
 	<alias alias="ruleFreeRentalDatesAction" name="defaultRuleFreeRentalDatesAction" />
@@ -880,4 +858,35 @@
 		<property name="key" value="defaultBlRuleFreeRentalDatesRAOAction"/>
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
+
+	<!--[Bl-652] condition and Actions-->
+	<alias alias="ruleTotalDamageWaiverConditionTranslator" name="defaultRuleTotalDamageWaiverConditionTranslator" />
+	<bean id="defaultRuleTotalDamageWaiverConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleTotalDamageWaiverConditionTranslator" />
+
+	<alias name="defaultBlShippingActionStrategy" alias="blShippingActionStrategy"/>
+	<bean id="defaultBlShippingActionStrategy" parent="abstractRuleActionStrategy" class="com.bl.core.promotions.promotionengineservices.action.impl.DefaultBlShippingActionStrategy" >
+		<property name="deliveryModeDao" ref="deliveryModeDao"/>
+		<property name="promotionAction" value="com.bl.core.model.RuleBasedFreeDeliveryModeActionModel"/>
+	</bean>
+	<alias alias="ruleFreeDeliveryModesAction" name="defaultRuleFreeDeliveryModesAction" />
+	<bean id="defaultRuleFreeDeliveryModesAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="ruleFreeDeliveryModesRAOAction"/>
+	</bean>
+	<alias alias="ruleFreeDeliveryModesRAOAction" name="defaultBlRuleFreeDeliveryModesRAOAction" />
+	<bean id="defaultBlRuleFreeDeliveryModesRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlRuleFreeDeliveryModesRAOAction">
+		<property name="defaultBlRuleEngineCalculationService" ref="ruleEngineCalculationService"/>
+		<property name="deliveryModeService" ref="deliveryModeService"/>
+	</bean>
+	<bean id="blFreeDeliveryModesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+		<property name="key" value="defaultBlRuleFreeDeliveryModesRAOAction"/>
+		<property name="value" ref="blShippingActionStrategy"/>
+	</bean>
+	<bean id="freeDeliveryModesStrategiesMapping" depends-on="actionStrategies" parent="listMergeDirective">
+		<property name="add" ref="defaultBlShippingActionStrategy" />
+	</bean>
+
+	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
+	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
+	</bean>
+
 </beans>

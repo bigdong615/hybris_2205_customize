@@ -2,6 +2,7 @@ package com.bl.facades.populators;
 
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
@@ -29,6 +30,7 @@ import org.apache.log4j.Logger;
 public class BlCartPopulator extends CartPopulator<CartData>
 {
 	private static final Logger LOG = Logger.getLogger(BlCartPopulator.class);
+	private BlCartService cartService;
 
 	/**
 	 * {@inheritDoc}
@@ -45,6 +47,8 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
 		target.setIsRentalCart(source.getIsRentalCart());
+		//[BL-656]
+		target.setHasFreeShippingPromo(getCartService().isFreeShippingPromoApplied(source));
 
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
@@ -117,4 +121,11 @@ public class BlCartPopulator extends CartPopulator<CartData>
   }
 
 
+	public BlCartService getCartService() {
+		return cartService;
+	}
+
+	public void setCartService(BlCartService cartService) {
+		this.cartService = cartService;
+	}
 }

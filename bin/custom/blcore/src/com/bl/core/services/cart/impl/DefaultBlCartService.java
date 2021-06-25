@@ -7,22 +7,26 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
-
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.promotionengineservices.dao.PromotionDao;
+import de.hybris.platform.promotionengineservices.model.PromotionSourceRuleModel;
+import de.hybris.platform.promotions.model.AbstractPromotionModel;
+import de.hybris.platform.ruleengineservices.enums.RuleStatus;
 import de.hybris.platform.store.services.BaseStoreService;
-
+import de.hybris.platform.util.Config;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +48,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	private BlCommerceStockService blCommerceStockService;
 	private BaseStoreService baseStoreService;
 	private BlDatePickerService blDatePickerService;
+	private PromotionDao promotionDao;
 
   /**
    * {@inheritDoc}
@@ -215,6 +220,27 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		return getBlCommerceStockService().groupByProductsAvailability(startDate, endDate, lProductCodes, warehouses);
 	}
 
+	/**
+	 *
+	 * This method is to evaluate if free shipping promo applied
+	 * @return
+	 */
+	public boolean isFreeShippingPromoApplied(final AbstractOrderModel cartModel) {
+
+    final AbstractPromotionModel freeShippingPromotion = getPromotionDao().findPromotionByCode(Config.getString("free.shipping.promotion.code","free_shipping"));
+		if(freeShippingPromotion!= null) {
+			Optional<PromotionSourceRuleModel> freeShippingRule = freeShippingPromotion.getPromotionGroup().getPromotionSourceRules().stream().findAny(sourceRule -> RuleStatus.PUBLISHED.equals(sourceRule.getStatus()));
+			double subTotalWithDamageWaiver =	cartModel.getSubtotal() + cartModel.getTotalDamageWaiverCost();
+			int threshold = Config.getInt("free.shipping.promotion.subtotal.with.total.damage.waiver", 150);
+			if (freeShippingRule != null && BooleanUtils.isTrue(freeShippingPromotion.getEnabled())
+					&& subTotalWithDamageWaiver >= threshold) {
+				return true;
+
+			}
+		}
+		return false;
+	}
+
   public CommerceCartService getCommerceCartService() {
     return commerceCartService;
   }
@@ -286,4 +312,11 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		this.blDatePickerService = blDatePickerService;
 	}
 
+	public PromotionDao getPromotionDao() {
+		return promotionDao;
+	}
+
+	public void setPromotionDao(PromotionDao promotionDao) {
+		this.promotionDao = promotionDao;
+	}
 }

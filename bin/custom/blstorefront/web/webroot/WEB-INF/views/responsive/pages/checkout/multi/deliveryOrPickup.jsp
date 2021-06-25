@@ -71,17 +71,23 @@
                                                                   ${fn:escapeXml(errorMsg)}
                                                            </div>
                                                          </c:if>
+
                             <c:if test="${not empty giftCardCodeRemove}">
                                 <div class="notification notification-warning">${giftCardCodeRemove}</div>
                             </c:if>
                             <c:if test="${isGiftCardRemoved eq 'true'}">
                                 <div class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
                             </c:if>
-                                                         <div class="notification notification-error d-none"id="errorMessages_voucher" />
-                            <%-- <div class="notification notification-warning">This is a cart warning.</div>
-                            <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
-                            <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
-                            <div class="order-actions my-4">
+                                  <c:if test="${cartData.hasFreeShippingPromo}">
+                                      <div class="notification notification-tip truck"><spring:theme code="text.free.shipping.promo.applied.message"/></div>
+                                  </c:if>
+                                  <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
+
+                            <div class="notification notification-error d-none"id="errorMessages_voucher" />
+
+                            <%-- <div class="notification notification-warning">This is a cart warning.</div>--%>
+                            23456789
+                             <div class="order-actions my-4">
                                  <a href="#" alt="Print Order"><i class="icon-print"></i></a>
                                  <a href="#"><i class="icon-save" alt="Save Order"></i></a>
                                  <%--<a href="${emptyCart}" alt="Trash Order" class="clear-cart-page" disabled="disabled"><i class="icon-trash"></i></a>--%>

@@ -32,9 +32,8 @@ public class BlCartRaoPopulator implements Populator<CartModel, CartRAO> {
     }
     target.setTotalIncludingDamageWaiver(
         BigDecimal.valueOf(source.getSubtotal() + source.getTotalDamageWaiverCost()));
-    target.setOrderDeliveryMode(source.getDeliveryMode() != null ? source.getDeliveryMode().getCode(): null);
 
-  }
+ }
 
   /**
    * Get the formatted date

@@ -29,7 +29,14 @@ import java.util.Map.Entry;
 public class RuleTotalDamageWaiverConditionTranslator  extends AbstractRuleConditionTranslator {
 
 
-  public RuleIrCondition translate(RuleCompilerContext context, RuleConditionData condition, RuleConditionDefinitionData conditionDefinition) {
+  /**
+   * Translator to read and map condition values
+   * @param context
+   * @param condition
+   * @param conditionDefinition
+   * @return
+   */
+  public RuleIrCondition translate(final RuleCompilerContext context,final RuleConditionData condition,final RuleConditionDefinitionData conditionDefinition) {
     Map<String, RuleParameterData> conditionParameters = condition.getParameters();
     RuleParameterData operatorParameter = conditionParameters.get(BlCoreConstants.OPERATOR);
     RuleParameterData valueParameter = conditionParameters.get(BlCoreConstants.TOTAL_WITH_DAMAGE_WAIVER);
@@ -46,13 +53,27 @@ public class RuleTotalDamageWaiverConditionTranslator  extends AbstractRuleCondi
     return IrConditions.empty();
   }
 
-  protected RuleIrGroupCondition getTotalDamageWaiverConditions(RuleCompilerContext context, AmountOperator operator, Map<String, BigDecimal> value) {
+  /**
+   * Checking condition for damage waiver cost
+   * @param context
+   * @param operator
+   * @param value
+   * @return
+   */
+  protected RuleIrGroupCondition getTotalDamageWaiverConditions(final RuleCompilerContext context,final AmountOperator operator, final Map<String, BigDecimal> value) {
     RuleIrGroupCondition irDamageWaiverTotalCondition = RuleIrGroupConditionBuilder.newGroupConditionOf(RuleIrGroupOperator.OR).build();
     this.addDamageWaiverTotal(context, operator, value, irDamageWaiverTotalCondition);
     return irDamageWaiverTotalCondition;
   }
 
-  protected void addDamageWaiverTotal(RuleCompilerContext context, AmountOperator operator, Map<String, BigDecimal> value, RuleIrGroupCondition irCartTotalCondition) {
+  /**
+   * Add damage waiver cost
+   * @param context
+   * @param operator
+   * @param value
+   * @param irCartTotalCondition
+   */
+  protected void addDamageWaiverTotal(final RuleCompilerContext context, AmountOperator operator,final Map<String, BigDecimal> value, final RuleIrGroupCondition irCartTotalCondition) {
     String cartRaoVariable = context.generateVariable(CartRAO.class);
     Iterator<Entry<String, BigDecimal>> var7 = value.entrySet().iterator();
 
@@ -61,14 +82,11 @@ public class RuleTotalDamageWaiverConditionTranslator  extends AbstractRuleCondi
       if (this.verifyAllPresent(entry.getKey(), entry.getValue())) {
         RuleIrGroupCondition irCurrencyGroupCondition = RuleIrGroupConditionBuilder.newGroupConditionOf(RuleIrGroupOperator.AND).build();
         List<RuleIrCondition> ruleIrConditions = irCurrencyGroupCondition.getChildren();
-        ruleIrConditions.add(RuleIrAttributeConditionBuilder.newAttributeConditionFor(cartRaoVariable).withAttribute("currencyIsoCode").withOperator(
+        ruleIrConditions.add(RuleIrAttributeConditionBuilder.newAttributeConditionFor(cartRaoVariable).withAttribute(BlCoreConstants.CURRENCY_ISOCODE).withOperator(
             RuleIrAttributeOperator.EQUAL).withValue(entry.getKey()).build());
         ruleIrConditions.add(RuleIrAttributeConditionBuilder.newAttributeConditionFor(cartRaoVariable).withAttribute(BlCoreConstants.TOTAL_INCLUDING_DAMAGE_WAIVER).withOperator(RuleIrAttributeOperator.valueOf(operator.name())).withValue(entry.getValue()).build());
         irCartTotalCondition.getChildren().add(irCurrencyGroupCondition);
       }
     }
-
   }
-
-
 }
