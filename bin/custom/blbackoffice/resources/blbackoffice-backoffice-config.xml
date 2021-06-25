@@ -40,14 +40,13 @@
         </n:explorer-tree>
     </context>
 
-		<context component="cs-explorer-tree" module="customersupportbackoffice"
-			 principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole"
-			 merge-by="module">
-		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
-						 title="customer_support">
-			<n:type-node code="GiftCard" id="GiftCard" />
-		</n:explorer-tree>
-	</context>
+		<context component="explorer-tree">
+			<n:explorer-tree>
+					<n:navigation-node id="BLGiftCard">
+							<n:type-node code="GiftCard" id="GiftCard" />
+					</n:navigation-node>
+			</n:explorer-tree>
+		</context>
 
 	<context type="GiftCard" component="editorareaactions" parent="GenericItem">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
