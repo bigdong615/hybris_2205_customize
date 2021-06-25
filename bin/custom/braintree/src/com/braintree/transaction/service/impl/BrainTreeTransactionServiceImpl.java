@@ -241,8 +241,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		String shipsFromPostalCode = null;
 		String venmoProfileId = null;
 
-		LOG.info("prepareAuthorizationRequest, order number: " + cart.getCode());
-		LOG.info(
+		LOG.error("prepareAuthorizationRequest, order number: " + cart.getCode());
+		LOG.error(
 				"cart.totalPrice: " + cart.getTotalPrice() + ", authAmount: " + authAmount + ", total tax: " + cart.getTotalTax());
 
 		if (paymentInfo instanceof BrainTreePaymentInfoModel)
