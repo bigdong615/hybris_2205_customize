@@ -69,6 +69,11 @@ public class BLUpsShippingDataPopulator
 	@Value("${blintegration.ups.shipment.dimension.type.description}")
 	private String dimensionTypeDescription;
 
+	@Value("${blintegration.ups.shipment.return.service.code}")
+	private String returnServiceCode;
+
+	@Value("${blintegration.ups.shipment.return.service.description}")
+	private String returnServiceDescription;
 
 	@Resource(name = "addressConverter")
 	private Converter<AddressModel, AddressData> addressConverter;
@@ -190,8 +195,8 @@ public class BLUpsShippingDataPopulator
 
 		/** Creating UPS Return Data List **/
 		final ReturnServiceData returnServiceData = new ReturnServiceData();
-		returnServiceData.setCode(BlintegrationConstants.RETURNSERVICE_CODE);
-		returnServiceData.setDescription(BlintegrationConstants.RETURNSERVICE_DESCRIPTION);
+		returnServiceData.setCode(returnServiceCode);
+		returnServiceData.setDescription(returnServiceDescription + "-" + consignmentModel.getOrder().getCode());
 
 		shipmentData.setReturnService(returnServiceData);
 		shipmentData.setShipper(shipperData);
