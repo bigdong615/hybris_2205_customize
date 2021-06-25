@@ -119,7 +119,8 @@ public class BlControllerConstants
 	public static final String REDIRECT_PREFIX = "redirect:";
 
 	public static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
-	
+	public static final String SAVE_CART_FORM = "saveCartForm";
+
 	private BlControllerConstants()
 	{
 		//empty
