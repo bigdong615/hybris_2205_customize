@@ -138,9 +138,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final int DIVIDE_BY_HUNDRED = 100;
 
-	public static final int CONDITION_RATING_FOUR = 4;
-	public static final int CONDITION_RATING_THREE = 3;
-	public static final int CONDITION_RATING_TWO = 2;
+	public static final int CONDITION_RATING_HIGH = 9;
+	public static final int CONDITION_RATING_MEDIUM = 8;
+	public static final int CONDITION_RATING_LOW = 7;
 
 	public static final String PRICE_ASC = "price-asc";
 	public static final String PRICE_DESC = "price-desc";

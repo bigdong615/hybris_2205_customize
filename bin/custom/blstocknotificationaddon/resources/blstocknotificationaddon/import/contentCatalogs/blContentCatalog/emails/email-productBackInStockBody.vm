@@ -83,12 +83,12 @@ ${ctx.messages.productForceInStockAvaiable}
 </p>
 
 <p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
-${ctx.messages.getMessage('shopNow', "<a href=""#"">latest and upcoming arrivals</a>")}
+${ctx.messages.getMessage('shopNow', "<a href=""${ctx.recentUrl}"">latest and upcoming arrivals</a>")}
 </p>
 
 <p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
 ${ctx.messages.signature}<br/>
-<a href="${ctx.messages.siteUrl}">${ctx.messages.siteName}</a><br/>
+<a href="${ctx.secureBaseUrl}">${ctx.messages.siteName}</a><br/>
 </p></td></tr></table></td></tr></table></td></tr></table></td></tr></table>
 
 <table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><style>
