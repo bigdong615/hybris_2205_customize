@@ -40,4 +40,12 @@ public interface BlPricingService {
    * @return
    */
   BigDecimal calculateFinalSalePriceForSerial(final BigDecimal forSaleBasePrice,final Double conditionRatingOverallScore);
+
+  /**
+   * calculate conditional rating on the basis of cosmetic and functional rating.
+   * @param cosmeticRating
+   * @param functionalRating
+   * @return
+   */
+  Double getCalculatedConditionalRating(final float cosmeticRating,final float functionalRating);
 }
