@@ -364,6 +364,8 @@
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="manufacturerAID"/>
 						<wz:property qualifier="conditionRatingOverallScore"/>
+						<wz:property qualifier="cosmeticRating"/>
+						<wz:property qualifier="functionalRating"/>
 						<wz:property qualifier="forSale"/>
 						<wz:property qualifier="procurementSource"/>
 					</wz:property-list>

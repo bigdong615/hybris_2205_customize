@@ -20,7 +20,7 @@ public class BlBrainTreeConvertUtils
   public static BrainTreeAddressRequest convertBrainTreeAddress(final String customerID, final AddressData address)
   {
     final BrainTreeAddressRequest addressRequest = new BrainTreeAddressRequest(customerID);
-    addressRequest.setCompany(address.getTitle());
+    addressRequest.setCompany(address.getCompanyName());
     addressRequest.setStreetAddress(address.getLine1());
     addressRequest.setExtendedAddress(address.getLine2());
     addressRequest.setFirstName(address.getFirstName());

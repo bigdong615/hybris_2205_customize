@@ -191,15 +191,28 @@
 																			</div>
 																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
 																		</c:when>
+																		<c:when test="${not empty defaultBillingAddress and empty billingAddresses}">
+																			<b class="mt-4">Saved Billing Addresses</b>
+																			<div class="dropdown my-2">
+																				
+																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+																						${defaultBillingAddress.formattedAddress }
+																					</a>
+																				
+																			</div>
+																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+																		</c:when>
 																		<c:otherwise>
 																		<c:if test="${not empty billingAddresses and billingAddresses.size() > 0 }">
 																			<b class="mt-4">Saved Billing Addresses</b>
 																	<div class="dropdown my-2">
-																		<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${paymentInfoBillingAddress.id }"/>
 																		<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
 																			<c:choose>
 																				<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
 																					${paymentInfoBillingAddress.formattedAddress }
+																				</c:when>
+																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
+																					${defaultBillingAddress.formattedAddress }
 																				</c:when>
 																				<c:otherwise>
 																					Select Saved Billing Address
@@ -251,6 +264,11 @@
 														<div class="form-additionals"></div>
 													</form:form>
 												</ycommerce:testId>
+												<c:set var="selectedAddressId" value="${defaultBillingAddress.id }"/>
+												<c:if test="${not empty paymentInfoBillingAddress}">
+													<c:set var="selectedAddressId" value="${paymentInfoBillingAddress.id }"/>
+												</c:if>
+												<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${selectedAddressId}"/>
 												<form:form name="submitSavedCardForm" method="POST" id="submitSavedCardForm" action="${reviewSavedPaymentAction}">
 													<input type="hidden" id="savedCCCardId" name="savedCCCardId" value="${userSelectedPaymentInfo.id}"/>
 													<input type="hidden" id="savedCCCardNonce" name="savedCCCardNonce" value="${userSelectedPaymentInfo.paymentMethodNonce}"/>
@@ -267,6 +285,9 @@
 								</div>
 								<!-- Paypal section -->
 								<div class="accordion-item payProduct">
+									<c:if test="${not empty userSelectedPayPalPaymentInfo}">
+										<input type="hidden" id="isPayPalPresent" name="isPayPalPresent" value="true"/>
+									</c:if>
 									<div class="row">											
 										<div class="col-1 text-center pt-2">
 											<button class="btn-checkbox" type="button"
