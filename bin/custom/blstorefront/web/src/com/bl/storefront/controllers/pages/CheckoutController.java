@@ -373,8 +373,7 @@ public class CheckoutController extends AbstractCheckoutController
 		}
 
 		if(cartModel != null) {
-			final String giftCardCode = StringUtils.upperCase(code);
-			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(giftCardCode);
+			final GiftCardModel giftCardModel = blGiftCardFacade.getGiftCard(code);
 			final List<BLGiftCardData> blGiftCardDataList = blCartFacade.getSessionCart()
 					.getGiftCardData();
 			final List<String> giftCardDataList = new ArrayList<>();
@@ -384,11 +383,11 @@ public class CheckoutController extends AbstractCheckoutController
 				}
 			}
 			try {
-				return handleGiftCardStatus(giftCardCode, locale, giftCardDataList, cartModel, giftCardModel);
+				return handleGiftCardStatus(code, locale, giftCardDataList, cartModel, giftCardModel);
 			} catch (final Exception exception) {
 				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
 						"Error occurred while applying gift card code: {} on cart: {} for the customer: {}",
-						giftCardCode,
+						code,
 						cartModel.getCode(), cartModel.getUser().getUid(), exception);
 			}
 		}
