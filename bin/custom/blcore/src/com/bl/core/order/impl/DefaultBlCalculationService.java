@@ -127,7 +127,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			// subtotal
 			final double subtotal = order.getSubtotal().doubleValue();
 			//totalDamageWaiverCost
-			if(order.getIsRentalCart().equals(Boolean.TRUE))
+			if(BooleanUtils.isTrue(order.getIsRentalCart()))
 			{
 			 totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 					? order.getTotalDamageWaiverCost().doubleValue()
