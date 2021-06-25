@@ -170,7 +170,7 @@ public class DefaultBlPricingService implements BlPricingService {
         .getEnumerationValue(DurationEnum.class, duration);
     final Map<String, Object> queryParams = new HashMap<>();
     queryParams.put(PriceRowModel.DURATION, durationEnum);
-    queryParams.put(PriceRowModel.PRODUCT, blProductModel);
+    queryParams.put(PriceRowModel.PRODUCT, blProductModel); // NOSONAR
     List<PriceRowModel> resultSet = getPriceRowGenericDao().find(queryParams);
     return CollectionUtils.isNotEmpty(resultSet) ? resultSet.get(0) : null;
   }

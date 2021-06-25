@@ -19,7 +19,6 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.SerialProductData;
 
 
