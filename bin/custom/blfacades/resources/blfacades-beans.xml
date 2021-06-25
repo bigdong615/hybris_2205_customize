@@ -77,8 +77,8 @@
     <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="serialId" type="String"/>
-     <property name="cosmetic" type="float"/>
-     <property name="functional" type="float"/>
+     <property name="cosmeticRating" type="float"/>
+     <property name="functionalRating" type="float"/>
   </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">

@@ -47,5 +47,5 @@ public interface BlPricingService {
    * @param functionalRating
    * @return
    */
-  Double getCalculatedConditionalRating(float cosmeticRating,float functionalRating);
+  Double getCalculatedConditionalRating(final float cosmeticRating,final float functionalRating);
 }

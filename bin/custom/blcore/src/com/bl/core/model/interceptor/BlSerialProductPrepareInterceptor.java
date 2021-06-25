@@ -270,7 +270,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	 */
 	private void updateConditionalOverallRating(final BlSerialProductModel blSerialProduct){
       blSerialProduct.setConditionRatingOverallScore(
-      		getBlPricingService().getCalculatedConditionalRating(blSerialProduct.getCosmetic(),blSerialProduct.getFunctional()));
+      		getBlPricingService().getCalculatedConditionalRating(blSerialProduct.getCosmeticRating(),blSerialProduct.getFunctionalRating()));
 	}
 	/**
 	 *

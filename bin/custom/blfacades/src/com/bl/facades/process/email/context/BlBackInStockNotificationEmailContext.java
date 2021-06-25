@@ -16,7 +16,7 @@ public class BlBackInStockNotificationEmailContext extends BackInStockNotificati
     {
         super.init(businessProcessModel, emailPageModel);
         this.setProductPageURL(getBaseSiteurlData());
-        recentUrl = getRecentArricalUrl();
+        recentUrl = getRecentArrivalUrl();
     }
 
     /**
@@ -31,7 +31,7 @@ public class BlBackInStockNotificationEmailContext extends BackInStockNotificati
      * This method is responsible for providing recent arrival url.
      * @return
      */
-    private String getRecentArricalUrl(){
+    private String getRecentArrivalUrl(){
         return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, RECENT_ARRIVAL_LINK);
     }
 

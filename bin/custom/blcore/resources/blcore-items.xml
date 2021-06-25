@@ -992,15 +992,15 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
-                     <attribute qualifier="cosmetic" type="float">
+                     <attribute qualifier="cosmeticRating" type="float">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
-                         <description>T</description>
+                         <description>To store cosmetic rating data</description>
                      </attribute>
-                     <attribute qualifier="functional" type="float">
+                     <attribute qualifier="functionalRating" type="float">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
-                         <description>T</description>
+                         <description>To store functional rating data</description>
                      </attribute>
                  </attributes>
              </itemtype>

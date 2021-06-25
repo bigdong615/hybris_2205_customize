@@ -38,7 +38,7 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
         productData = getProductConverter().convert(businessProcessModel.getProduct());
         this.setProductPageURL(getBaseSiteurlData());
         addressUrl = getAddressBookUrl();
-        recentUrl = getRecentArricalUrl();
+        recentUrl = getRecentArrivalUrl();
         setEmailLocale(businessProcessModel);
         updateBaseUrl(businessProcessModel, emailLocale);
         updateTitle(businessProcessModel, emailLocale);
@@ -139,7 +139,7 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
      * This method is responsible for providing recent arrival url.
      * @return
      */
-    private String getRecentArricalUrl(){
+    private String getRecentArrivalUrl(){
         return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, RECENT_ARRIVAL_LINK);
     }
 

@@ -195,18 +195,18 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private int getPricePercentageByRating(final Double conditionRatingOverallScore) {
     int pricePercent = 0;
-    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_FOUR) {
+    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_HIGH) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovefour.price.percentage"));
-    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_THREE 
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_FOUR) {
+    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_MEDIUM
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_HIGH) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovethree.price.percentage"));
-    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_TWO 
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_THREE) {
+    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_LOW
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_MEDIUM) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowthree.price.percentage"));
-    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_TWO 
+    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_LOW
    		 && conditionRatingOverallScore > 0) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
@@ -221,9 +221,9 @@ public class DefaultBlPricingService implements BlPricingService {
    * @return
    */
   @Override
-  public Double getCalculatedConditionalRating(float cosmeticRating,float functionalRating){
-    float calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
-    float calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
+  public Double getCalculatedConditionalRating(final float cosmeticRating, final float functionalRating){
+    final float calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
+    final float calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
     BigDecimal bigDecimal = new BigDecimal(Float.toString(calculatedCosmeticValue+calculatedFunctionalValue));
     bigDecimal = bigDecimal.setScale(1, RoundingMode.HALF_DOWN);
     return bigDecimal.doubleValue();

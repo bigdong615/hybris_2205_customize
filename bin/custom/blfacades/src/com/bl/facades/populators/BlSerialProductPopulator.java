@@ -56,8 +56,8 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		blSerialProductModels.forEach(serialProductModel -> {
 			final SerialProductData serialProductData = new SerialProductData();
 			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
-			serialProductData.setCosmetic(serialProductModel.getCosmetic());
-			serialProductData.setFunctional(serialProductModel.getFunctional());
+			serialProductData.setCosmeticRating(serialProductModel.getCosmeticRating());
+			serialProductData.setFunctionalRating(serialProductModel.getFunctionalRating());
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
 			{

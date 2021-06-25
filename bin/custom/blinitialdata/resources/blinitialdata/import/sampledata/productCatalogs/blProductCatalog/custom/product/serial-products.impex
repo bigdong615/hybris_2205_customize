@@ -86,7 +86,7 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocL
                       ;;207730 ;2586;1Z19E596NY92262106;warehouse_ca;;;;;9536469;;;3.1
                       ;;220232 ;1926;BIN SML C679;warehouse_ca;;;;CAM FD01 S02;9605590;;;3.9
 
-UPDATE BlSerialProduct;$catalogVersion;code[unique=true]; cosmetic ; functional
+UPDATE BlSerialProduct;$catalogVersion;code[unique=true]; cosmeticRating ; functionalRating
                       ;              ;5122708           ;  2.3     ;8.1
                       ;              ;6051076           ;  2.5     ;9.1
                       ;              ;6128205           ;  3.3     ;9.5
