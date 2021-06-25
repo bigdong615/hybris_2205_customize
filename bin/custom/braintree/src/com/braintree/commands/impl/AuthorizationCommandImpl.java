@@ -5,7 +5,7 @@ import com.braintree.command.request.beans.BrainTreeLineItemBean;
 import com.braintree.command.result.BrainTreeAuthorizationResult;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.enums.BrainTreePaymentMethod;
-import com.braintreegateway.PaymentMethod;
+
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionLineItem;
@@ -76,8 +76,6 @@ public class AuthorizationCommandImpl extends AbstractCommand<AuthorizationReque
 
 			setAdditionalParameters(brainTreeAuthorizationRequest, request);
 
-			LOG.error(
-					"if Level2 enabled: " + configurationService.getConfiguration().getBoolean(PROPERTY_LEVEL2_LEVEL3, Boolean.FALSE));
 			if (configurationService.getConfiguration().getBoolean(PROPERTY_LEVEL2_LEVEL3, Boolean.FALSE))
 			{
 				//                validate Level2 fields, if valid then apply to request
@@ -180,12 +178,9 @@ public class AuthorizationCommandImpl extends AbstractCommand<AuthorizationReque
 		}
 
 		Boolean submitForSettlement = brainTreeAuthorizationRequest.getSubmitForSettlement();
-
-		if (isAvailableSubmitForSettlement(brainTreeAuthorizationRequest) || isAvailableSubmitForSettlementForPaymentProvider(
-				brainTreeAuthorizationRequest))
-		{
-			submitForSettlement = Boolean.TRUE;
-		}
+// As the auth transaction will not be settled immediately, commenting out the below code
+/*		if (isAvailableSubmitForSettlement(brainTreeAuthorizationRequest) || isAvailableSubmitForSettlementForPaymentProvider( //NOSONAR
+				brainTreeAuthorizationRequest)){submitForSettlement = Boolean.TRUE;} */ //NOSONAR
 
 		if (isVenmoPayment(brainTreeAuthorizationRequest)
 				&& StringUtils.isNotEmpty(brainTreeAuthorizationRequest.getVenmoProfileId()))
