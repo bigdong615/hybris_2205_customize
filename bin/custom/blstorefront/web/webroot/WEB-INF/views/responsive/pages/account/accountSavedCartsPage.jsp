@@ -15,14 +15,14 @@
 <c:set var="searchUrl" value="/my-account/saved-carts?sort=${ycommerce:encodeUrl(searchPageData.pagination.sort)}"/>
 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
-	<h1>Saved Carts</h1>
+	<h1><spring:theme code="text.saved.cart"/></h1>
 	<c:choose>
 	<c:when test="${empty searchPageData.results}">
       <div class="account-section-content content-empty">
           <hr>
             <div class="notification no-orders">
-                       <p><strong>You don't have any saved carts.</strong></p>
-                       <p>You can save your rental cart to use at a later time.</p>
+                       <p><strong><spring:theme code="text.empty.savedcart"/></strong></p>
+                       <p><spring:theme code="text.empty.savedcart.paragraph"/></p>
             </div>
 
       </div>
@@ -44,7 +44,8 @@
 						</div>
 					</div>
 					<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-						<a href="#" class="js-restore-saved-cart restore-item-link btn btn-primary" data-savedcart-id="${fn:escapeXml(savedCart.code)}" data-restore-popup-title="<spring:theme code='text.account.savedcart.restore.popuptitle'/>"> <span class="hidden-xs">Use This Cart</span> </a>
+						<a href="#" class="js-restore-saved-cart restore-item-link btn btn-primary" data-savedcart-id="${fn:escapeXml(savedCart.code)}"
+						 data-restore-popup-title="<spring:theme code='text.account.savedcart.restore.popuptitle'/>"> <span class="hidden-xs"><spring:theme code="text.savedcart.button.restore"/></span> </a>
 					</div>
 					<div class="col-6 col-md-1">
 						<div class="btn-group"> <a id="btn-rental-${loop.index}" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
@@ -52,9 +53,9 @@
 							<c:url var="savedEditUrl" value="/my-account/saved-carts/${fn:escapeXml(savedCart.code)}/edit" />
 							  <c:url var="removeSavedUrl" value="/my-account/saved-carts/${fn:escapeXml(savedCart.code)}/delete" />
 								<li><a href="#" data-bs-toggle="modal" class ="js-rename-saved-carts" data-savedcart-id="${savedEditUrl}" data-bs-target="#renameCart"
-								data-savedcart-name="${fn:escapeXml(savedCart.name)}">Rename</a></li>
+								data-savedcart-name="${fn:escapeXml(savedCart.name)}"><spring:theme code="text.savedcart.button.rename"/></a></li>
 								<li>
-								<li><a href="#" data-bs-toggle="modal" class="js-remove-saved-carts" data-savedcart-id="${removeSavedUrl}"  data-bs-target="#removeCart">Remove</a></li>
+								<li><a href="#" data-bs-toggle="modal" class="js-remove-saved-carts" data-savedcart-id="${removeSavedUrl}"  data-bs-target="#removeCart"><spring:theme code="text.savedcart.button.remove"/></a></li>
 								</li>
 							</ul>
 						</div>
@@ -74,7 +75,7 @@
 	<div class="modal-dialog modal-dialog-centered modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Rename Cart</h5>
+				<h5 class="modal-title"><spring:theme code="text.savedcart.rename"/></h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
@@ -119,15 +120,16 @@
         <div class="modal-dialog modal-dialog-centered modal-sm">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Wait!</h5>
+              <h5 class="modal-title"><spring:theme code="text.savedcart.warning.wait"/></h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-             <p>Are you sure you want to delete this saved cart forever?</p>
+             <p><spring:theme code="text.savedcart.delete.warning"/></p>
              <input type="hidden"  id="removeCartIdUrl" value="" var="removeCartIdAction"/>
              <c:url var="savedEditUrl" value="/my-account/saved-carts/${removeCartIdAction}/delete" />
-                 <a id="removecartUrl" href="${savedEditUrl}" class="btn btn-block btn-primary mt-4 ">Continue</a>
-                  <p class="body14 text-center mb-0 mt-4"><a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close" >Cancel</a></p>
+                 <a id="removecartUrl" href="${savedEditUrl}" class="btn btn-block btn-primary mt-4 "><spring:theme code="text.savedcart.profile.continue"/></a>
+                  <p class="body14 text-center mb-0 mt-4"><a href="#" class="lightteal" data-bs-dismiss="modal" aria-label="Close">
+                  <spring:theme code="text.savedcart.profile.cancel"/></a></p>
             </div>
           </div>
         </div>

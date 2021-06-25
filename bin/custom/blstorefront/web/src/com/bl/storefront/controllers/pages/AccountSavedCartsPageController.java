@@ -216,7 +216,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 
 	@RequestMapping(value = "/" + SAVED_CART_CODE_PATH_VARIABLE_PATTERN + "/edit", method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String savedCartEdit(@PathVariable(value = "cartCode") final String cartCode, final SaveCartForm form,
+	public String savedCartEdit(@PathVariable("cartCode") final String cartCode, final SaveCartForm form,
 			final BindingResult bindingResult, final RedirectAttributes redirectModel) throws CommerceSaveCartException
 	{
 		saveCartFormValidator.validate(form, bindingResult);

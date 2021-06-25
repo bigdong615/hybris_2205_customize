@@ -17,7 +17,6 @@ ACC.savedcarts = {
     bindRestoreCartForm: function () {
                 $(".js-save-cart-restore").click(function (event) {
                 event.preventDefault();
-                 alert("hjjj");
                 });
             },
 
@@ -26,7 +25,6 @@ ACC.savedcarts = {
             event.preventDefault();
              var cartId = $(this).data('savedcart-id');
              var cartName = $(this).data('savedcart-name');
-           /*  var url = "/my-account/saved-carts/" + cartId + "/edit";*/
            if(cartName !=='' && cartName !== 'undefined') {
              $('#renameCartIdUrl').val(cartId);
              document.getElementById("renameCartForm").action = cartId;
@@ -39,7 +37,6 @@ ACC.savedcarts = {
                     $(".js-remove-saved-carts").click(function (event) {
                     event.preventDefault();
                      var cartId = $(this).data('savedcart-id');
-                   /*  $('#removeCartIdUrl').val(cartId);*/
                     $('#removeCartIdUrl').val(cartId);
                      document.getElementById("removecartUrl").href = cartId;
                     });

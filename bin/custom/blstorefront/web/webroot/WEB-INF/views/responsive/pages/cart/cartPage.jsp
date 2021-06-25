@@ -33,12 +33,12 @@
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
           <div class="modal-header">
-          <h5>Wait!</h5>
+          <h5><spring:theme code="text.savedcart.warning.wait"/></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
               <spring:url value="/cart/save" var="saveCartUrl" htmlEscape="false"/>
-              <p>Saving these items will remove them from your current cart and place them in your account to order later. Are you sure you want to proceed?</p>
+              <p><spring:theme code="text.savecart.warning"/></p>
               <form:form action="${saveCartUrl}" id="saveCartForm" modelAttribute="saveCartForm" autocomplete="off">
          <div class="form-group">
 				<c:if test="${not empty messageKey}">
@@ -58,7 +58,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <button type="submit" class="btn btn-primary btn-block save-cart-button" id="saveCartButton">
-                                <spring:theme code="basket.save.cart.action.save"/>
+                                <spring:theme code="basket.save.cart.action.continue"/>
                             </button>
                             <br>
                             <p class="text-center mb-0"><a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close" id="cancelSaveCartButton">

@@ -13,7 +13,7 @@
           </div>
       <div class="modal-body">
          <p>
-      Your saved cart will replace any items you currently have in your cart. Are you ready to use this saved cart?
+     <spring:theme code="text.saved.cart.restore" />
       </p>
       <div class="modal-actions">
 
