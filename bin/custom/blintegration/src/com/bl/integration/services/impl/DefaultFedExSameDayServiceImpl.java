@@ -63,12 +63,15 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 			final URI uri = builder.build();
 			request = new HttpGet(uri);
 			request.setHeader(BlintegrationConstants.X_API_KEY, apiKey);
-
-			BlLogger.logMessage(LOG, Level.DEBUG, request.toString());
+			BlLogger.logMessage(LOG, Level.INFO,
+					"**** FEDEX Same day Request " + "WarehouseZipCode" + sameDayCityReqData.getWarehouseZipCode()
+							+ "DeliveryAddress ZipCode" + sameDayCityReqData.getDeliveryAddressZipCode());
+			BlLogger.logMessage(LOG, Level.INFO, "FedEx Request: " + request.toString());
 
 			final HttpResponse response = httpClient.execute(request);
 
-			BlLogger.logMessage(LOG, Level.DEBUG, response.toString());
+			BlLogger.logMessage(LOG, Level.INFO, "**** FEDEX Same day Response ");
+			BlLogger.logMessage(LOG, Level.INFO, "FedEx Reponse: " + response.toString());
 
 			final String result = EntityUtils.toString(response.getEntity());
 
@@ -88,6 +91,7 @@ public class DefaultFedExSameDayServiceImpl implements BlFedExSameDayService
 				{
 					final JSONObject jsonObj = new JSONObject(result);
 					sameDayCityResData.setServiceApplicable(jsonObj.getBoolean("available"));
+					BlLogger.logMessage(LOG, Level.INFO, "**** Same day city call SUCCESS ****" + jsonObj.getBoolean("available"));
 					return sameDayCityResData;
 				}
 

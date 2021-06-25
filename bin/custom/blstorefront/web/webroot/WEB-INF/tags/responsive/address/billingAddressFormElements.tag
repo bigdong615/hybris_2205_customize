@@ -17,6 +17,7 @@
      
 		<formElement:formInputBox idKey="address.firstName" placeholder="address.firstName" labelKey="" path="billTo_firstName" inputCSS="form-control" mandatory="true" />
 		<formElement:formInputBox idKey="address.lastName" labelKey="" placeholder="address.lastName" path="billTo_lastName" inputCSS="form-control" mandatory="true" />
+		<input type="text" name="address.companyName" id="address.companyName" class="form-control" placeholder='<spring:theme code="address.companyName" />'/>
 		<formElement:formInputBox idKey="address.line1" labelKey="" placeholder="address.street1" path="billTo_street1" inputCSS="form-control" mandatory="true" />
 		<formElement:formInputBox idKey="address.line2" labelKey="" placeholder="address.street2" path="billTo_street2" inputCSS="form-control" mandatory="false"/>
 		<formElement:formInputBox idKey="address.townCity" labelKey="" placeholder="address.townCity" path="billTo_city" inputCSS="form-control" mandatory="true" />
