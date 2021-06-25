@@ -16,7 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 public class DefaultBlGiftCardDao extends DefaultGenericDao<GiftCardModel> implements BlGiftCardDao {
 
   private static final String CASE_SENISTIVE_CHECK = " COLLATE SQL_Latin1_General_CP1_CS_AS";
-  private String giftCard = "SELECT {mp:pk} FROM {GiftCard AS mp} WHERE {mp:code} = ?giftId ";
+  private String giftCard = "SELECT {mp:pk} FROM {GiftCard AS mp} WHERE {mp:code} = ?giftId";
 
 
   public DefaultBlGiftCardDao()
