@@ -3,6 +3,7 @@ package com.braintree.facade.impl;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAddressRequest;
 import com.braintree.command.result.BrainTreeAddressResult;
+import com.braintree.command.result.BrainTreeVoidResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.converters.utils.BlBrainTreeConvertUtils;
@@ -30,10 +31,16 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.dto.TransactionStatus;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
+import java.util.List;
+import java.util.Optional;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -543,6 +550,48 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		{
 			getModelService().remove(cartModel);
 			getModelService().refresh(orderModel);
+		}
+	}
+
+	/**
+	 * It voids the auth transaction of the order
+	 */
+	public void voidAuthTransaction() {
+		final CartModel cart = cartService.getSessionCart();
+  	try {
+			final String merchantTransactionCode = cart.getUser().getUid();
+			List<PaymentTransactionModel> transactions = cart.getPaymentTransactions();
+			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
+				List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
+				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
+						.filter(transactionEntry ->
+								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION))
+						.findFirst();
+				if (authEntry.isPresent()) {
+					final VoidRequest voidRequest = new VoidRequest(merchantTransactionCode,
+							authEntry.get().getRequestId(), StringUtils.EMPTY,
+							StringUtils.EMPTY);
+					final BrainTreeVoidResult voidResult = brainTreePaymentService
+							.voidTransaction(voidRequest);
+					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart);
+				}
+			}
+		} catch (final Exception ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
+					+ "for order {} ", cart.getCode(), ex);
+		}
+	}
+
+	/**
+	 * @param transactionStatus
+	 * @param cart
+	 * This is used to set the isAuthorized flag of order
+	 */
+	private void setAuthorizedFlagInOrder(TransactionStatus transactionStatus,
+			CartModel cart) {
+		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
+			cart.setIsAuthorizationVoided(Boolean.TRUE);
+			getModelService().save(cart);
 		}
 	}
 
