@@ -124,7 +124,10 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
     private String getBaseSiteurlData(){
        return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, RENTAL_PDP_URL_PREFIX+productData.getCode());
     }
-
+    /**
+     * This method is responsible for providing account address book url.
+     * @return
+     */
     private String getAddressBookUrl(){
         return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, ADDRESS_BOOK_URL);
     }
