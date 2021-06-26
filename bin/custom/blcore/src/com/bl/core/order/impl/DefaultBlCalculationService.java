@@ -121,7 +121,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
 
-         double totalDamageWaiverCost = 0.0;
+            double totalDamageWaiverCost = 0.0;
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
