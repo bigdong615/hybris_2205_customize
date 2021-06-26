@@ -1,5 +1,15 @@
+jQuery(document).ready(function () {
+	$(".hidebutton").hide();
+	if($(".hidebutton").length <= 0){
+		$(".hide-after-login").hide();
+	}
+	
+});
+
 //BL-467 clear cart functionality from cart page.
-$('.clear-cart-continue').on("click", function(event) {
+ $('.clear-cart-continue').on("click", function(event) {
+     clearInterval(z);
+ 	 localStorage.removeItem('saved_countdown');
 	$.ajax({
 		url : ACC.config.encodedContextPath + '/cart/emptyCart',
 		type : "GET",
@@ -43,6 +53,12 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	cartQuantity.val(0);
             	initialCartQuantity.val(0);
             	$(".shopping-cart__item-remove").attr("disabled", "disabled");
+              if((document.getElementsByClassName("shopping-cart__item-remove").length==1))
+            	{
+            		clearInterval(z);
+            		localStorage.removeItem('saved_countdown');
+            		fetchdata();
+            	}
             	form.submit();
        });
 
@@ -585,3 +601,136 @@ $('.emptyCart-modalClose').click(function(e){
   window.location.reload();
 });
 }
+
+//Added code for used gear addToCart 
+$('.bl-serial-add').click(function (e)
+	{
+	 e.preventDefault();
+	 var submitForm = $('#serialSubmitForm');
+	 var csrfTokan = createHiddenParameter("CSRFToken",$(ACC.config.CSRFToken));	
+	 var productCode = createHiddenParameter("productCodePost",$(this).attr('data-product-code'));
+     var serialCode = createHiddenParameter("serialProductCodePost", $(this).attr('data-serial'));
+     
+     if(serialCode == '' || serialCode == undefined){
+    serialCode = "serialCodeNotPresent";
+    }
+    
+     submitForm.append($(productCode)); 
+     submitForm.append($(serialCode));
+     submitForm.append($(csrfTokan));
+     submitForm.submit();
+    
+     startUsedGearCartTimer();
+
+  });
+
+function createHiddenParameter(name, value) {
+    var input = $(HTML.INPUT).attr(HTML.TYPE, "hidden").attr("name", name).val(
+        value);
+    return input;
+}
+
+//BL -471 Used Gear cart timer
+
+$('.usedgear-signout').on("click", function (e) {
+	fetchdata();
+	clearInterval(z);
+	localStorage.removeItem('saved_countdown');
+	
+});
+
+function startUsedGearCartTimer() {
+		
+		localStorage.setItem('StartCartTimer',"StartCartTimer");	
+	}
+	var timeStop="false";
+
+	var storeCartTime = localStorage.getItem('StartCartTimer');
+	if(  storeCartTime == "StartCartTimer")
+	{
+	    localStorage.removeItem('saved_countdown');
+	    localStorage.removeItem('StartCartTimer');
+		var timercount= document.getElementById("timer-count").getAttribute("value") ;
+		var newTimer =new Date().getTime() + (timercount)*1000 +2000;
+	   
+	}
+
+	var saved_countdown = localStorage.getItem('saved_countdown');
+	if(saved_countdown==null)
+	{
+	var new_countdown= new Date().getTime() + (timercount)*1000 +2000;
+	localStorage.setItem('saved_countdown',new_countdown);
+	}
+
+	else{
+		newTimer = saved_countdown ;
+	}
+
+	timeStop = localStorage.getItem('timeStop');
+	if(timeStop=="true"){
+	    clearInterval(z);
+	    localStorage.removeItem('timeStop');
+	    localStorage.removeItem('saved_countdown');
+	}
+
+	if(isNaN(newTimer) )
+	{
+		localStorage.removeItem('saved_countdown');
+		 clearInterval(z);
+	}
+	else if(timeStop==null){
+	var z= setInterval(updateCountdown,1000);
+	}
+
+	function updateCountdown(){
+	  var now = new Date().getTime();
+
+
+	// Find the distance between now and the allowed time
+	var distance =newTimer - now;
+
+	let minutes = Math.floor(distance/60000);
+
+	// Time counter
+	var counter = Math.floor((distance % (1000 * 60)) / 1000);
+	counter =counter<10?'0'+counter:counter;
+
+	// If the count down is over, write some text
+	if (minutes<0) {
+	clearInterval(z);
+	localStorage.removeItem('saved_countdown');
+	fetchdata();
+	}
+	
+	
+
+	if(minutes<0){
+		document.getElementById("usedTimer").innerHTML = "Expired";
+	}
+	else{
+	document.getElementById("usedTimer").innerHTML = `${minutes}:${counter}`;
+	}
+
+	};
+
+	function fetchdata(){
+	var timerStop = true;
+	$.ajax({
+	url: ACC.config.encodedContextPath + "/cart/cartTimerOut",
+	type: "POST",
+	data:{usedGearTimerEnd: timerStop},
+	success: function(response){
+	// Perform operation on the return value
+	window.location.href = ACC.config.encodedContextPath + "/cart";
+	localStorage.setItem("timeStop","true");
+	},
+	error: function (xht, textStatus, ex) {
+	console.log("Error while removing cart entries");
+	}
+	});
+
+	}
+	
+
+
+
