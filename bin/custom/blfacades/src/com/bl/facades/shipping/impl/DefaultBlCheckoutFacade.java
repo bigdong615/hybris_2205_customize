@@ -438,9 +438,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public Collection<BlRushDeliveryModeData> getBlRushDeliveryModesForUsedGear(final String deliveryMode,final boolean payByCustomer) {
-                                                                     
-
-        final Collection<BlRushDeliveryModeModel> blRushDeliveryModeModels = getBlZoneDeliveryModeService().getBlRushDeliveryModesForUsedGear(
+   
+   	 final Collection<BlRushDeliveryModeModel> blRushDeliveryModeModels = getBlZoneDeliveryModeService().getBlRushDeliveryModesForUsedGear(
                 deliveryMode, payByCustomer);
         if (CollectionUtils.isNotEmpty(blRushDeliveryModeModels)) {
             final Collection<BlRushDeliveryModeData> resultDeliveryData = new ArrayList<>();
@@ -694,7 +693,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 				? getBlZoneDeliveryModeService().checkCartEntriesAvailability(getRentalStartDate(), getRentalEndDate(),
 						(ZoneDeliveryModeModel) deliveryModeModel)
 				: Boolean.FALSE;
-		}else{
+		}
+		else
+		{
 			return Boolean.TRUE;
 		}
 	}
