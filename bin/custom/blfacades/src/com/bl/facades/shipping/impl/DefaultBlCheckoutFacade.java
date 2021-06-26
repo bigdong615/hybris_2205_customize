@@ -176,10 +176,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
           BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG);
           return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
       }
-		 
-		 	
-	
-	 }
+	}
 
 	/**
      * This method will call appropriate method according to shipping group
@@ -249,13 +246,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     */
    private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeDataForUsedGear(boolean payByCustomer) {
        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
-       
-       
-           final Collection<BlRushDeliveryModeData> blRushDeliveryModeData = getBlRushDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.NYC,payByCustomer);
-                   
-           return CollectionUtils.isNotEmpty(blRushDeliveryModeData) ? blRushDeliveryModeData : Collections.emptyList();
-                   
-        
+       final Collection<BlRushDeliveryModeData> blRushDeliveryModeData = getBlRushDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.NYC,payByCustomer);
+       return CollectionUtils.isNotEmpty(blRushDeliveryModeData) ? blRushDeliveryModeData : Collections.emptyList();
    }
 
     /**
@@ -286,8 +278,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * {@inheritDoc}
      */
     @Override
-    public Collection<ZoneDeliveryModeData> getAllShipToHomeDeliveryModesForUsedGear(final boolean payByCustomer)
-                                                                           {
+    public Collection<ZoneDeliveryModeData> getAllShipToHomeDeliveryModesForUsedGear(final boolean payByCustomer){
         final Collection<ZoneDeliveryModeModel> deliveryModeModels = getBlZoneDeliveryModeService()
                 .getAllShipToHomeDeliveryModesWithoutRentalDates(payByCustomer);
         if (CollectionUtils.isNotEmpty(deliveryModeModels)) {
@@ -403,7 +394,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     /**
      * This method will get the partner delivery methods
      *
-     * @param resultDeliveryData            resultant list
+     * @param resultDeliveryData resultant list
      * @param blPickUpZoneDeliveryModeModel model
      */
     private void getResultantPartnerDeliveryMethods(final Collection<BlPickUpZoneDeliveryModeData> resultDeliveryData,

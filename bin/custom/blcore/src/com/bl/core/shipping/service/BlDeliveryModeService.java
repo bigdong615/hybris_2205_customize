@@ -170,7 +170,7 @@ public interface BlDeliveryModeService {
 
 
     /**
-     * method with contain business logic for Partner-PickUp to fetch all modes
+     * Method contain business logic for Partner-PickUp to fetch all modes
      * @param payByCustomer to get customer related delivery modes
      * @return Collection object with delivery-modes differentiating in Partner-PickUp Stores
      */
