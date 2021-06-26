@@ -163,10 +163,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         cartModel.setIsRentalCart(Boolean.TRUE);
       } else {
         cartModel.setIsRentalCart(Boolean.FALSE);
-        
-         //Added code for serial status changes
-			blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
-			getModelService().save(blSerialProductModel);
+          //Added code for serial status changes
+		  blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
+		  getModelService().save(blSerialProductModel);
       }
     }
     getModelService().save(cartModel);
