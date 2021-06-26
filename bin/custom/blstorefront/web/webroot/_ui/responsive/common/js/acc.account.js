@@ -8,11 +8,13 @@ ACC.account = {
 		/* This function is responsible for providing form object for the login popup*/
 		$(document).on("click", ".js-login-popup", function (e) {
 			e.preventDefault();
+			var serialClick = $(this).data('click');
 			$('#signIn').html("");
 			$.ajax({
 				url: $(this).data("link"),
 				success: function (result) {
 					$('#signIn').html(result);
+					$('#serialClick').val(serialClick);
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
@@ -141,7 +143,15 @@ ACC.account = {
 							$("#errorMessages_login").removeClass("d-none");
 							$("#errorMessages_login").html("Your Email or Password was incorrect");
 						} else {
-							location.reload();
+							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+							if(serialId == "" || serialId  == undefined)
+							{
+								location.reload();
+							}else{
+								$('.' + serialId).click();
+							}	
+							
+							
 						}
 					},
 					error: function (e) {
