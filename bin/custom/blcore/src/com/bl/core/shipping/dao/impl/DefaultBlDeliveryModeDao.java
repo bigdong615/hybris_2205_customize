@@ -43,19 +43,30 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     @Override
     public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModes(final String carrier, final String mode, final String pstCutOffTime,
                                                                         final boolean payByCustomer) {
-        final StringBuilder barcodeList = new StringBuilder("select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, {CarrierEnum as ce} " +
-                "where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +
-                "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.payByCustomer} = ?payByCustomer");
+        final StringBuilder barcodeList = queryForShipToHomeDeliveryMode(mode);
         if (pstCutOffTime != null) {
             barcodeList.append(" and {zdm.cutOffTime} > ?pstCutOffTime");
         }
-        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-        query.addQueryParameter("carrier", carrier);
-        query.addQueryParameter("mode", mode);
-        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+        final FlexibleSearchQuery query = getShipToHomeDeliveryCommonAttributes(carrier, mode, payByCustomer, barcodeList);
         if (pstCutOffTime != null) {
             query.addQueryParameter(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME, pstCutOffTime);
         }
+        final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_SHIP_TO_HOME_ZONE_DELIVERY_MODE + carrier);
+        return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+    }
+
+	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
+                                                                        final boolean payByCustomer) {
+        final StringBuilder barcodeList = queryForShipToHomeDeliveryMode(mode);
+        
+        final FlexibleSearchQuery query = getShipToHomeDeliveryCommonAttributes(carrier, mode, payByCustomer, barcodeList);
+        
         final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_SHIP_TO_HOME_ZONE_DELIVERY_MODE + carrier);
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
@@ -74,10 +85,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         if (pstCutOffTime != null) {
             barcodeList.append(" and {zdm.cutOffTime} > ?pstCutOffTime");
         }
-        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-        query.addQueryParameter("carrier", carrier);
-        query.addQueryParameter("mode", mode);
-        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+        final FlexibleSearchQuery query = getShipToHomeDeliveryCommonAttributes(carrier, mode, payByCustomer, barcodeList);
         if (pstCutOffTime != null) {
             query.addQueryParameter(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME, pstCutOffTime);
         }
@@ -134,18 +142,29 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     @Override
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModes(final String mode, final String pstCutOffTime,
                                                                                          final boolean payByCustomer) {
-        final StringBuilder barcodeList = new StringBuilder("select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
-                "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
-                " {pickZone.code} like '%" + mode + "%' and {pickZone.payByCustomer} = ?payByCustomer");
+        final StringBuilder barcodeList = queryForPartnerZoneUPSStoreDeliveryModes(mode);
         if (pstCutOffTime != null) {
             barcodeList.append(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME_CONST);
         }
-        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-        query.addQueryParameter("mode", mode);
-        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+        final FlexibleSearchQuery query = getPartnerZoneUPSStoreCommonAttributes(mode, payByCustomer, barcodeList);
         if (pstCutOffTime != null) {
             query.addQueryParameter(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME, pstCutOffTime);
         }
+        final Collection<BlPickUpZoneDeliveryModeModel> results = getFlexibleSearchService().<BlPickUpZoneDeliveryModeModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_PARTNER_PICKUP_UPS_STORE_ZONE_DELIVERY_MODE);
+        return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+    }
+
+	  /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode, final boolean payByCustomer) {
+                                                                                         
+        final StringBuilder barcodeList = queryForPartnerZoneUPSStoreDeliveryModes(mode);
+        
+        final FlexibleSearchQuery query = getPartnerZoneUPSStoreCommonAttributes(mode, payByCustomer, barcodeList);
+       
         final Collection<BlPickUpZoneDeliveryModeModel> results = getFlexibleSearchService().<BlPickUpZoneDeliveryModeModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_PARTNER_PICKUP_UPS_STORE_ZONE_DELIVERY_MODE);
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
@@ -163,9 +182,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         if (pstCutOffTime != null) {
             barcodeList.append(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME_CONST);
         }
-        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-        query.addQueryParameter("mode", mode);
-        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+        final FlexibleSearchQuery query = getPartnerZoneUPSStoreCommonAttributes(mode, payByCustomer, barcodeList);
         if (pstCutOffTime != null) {
             query.addQueryParameter(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME, pstCutOffTime);
         }
@@ -180,14 +197,11 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     @Override
     public Collection<BlRushDeliveryModeModel> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime,
                                                                       final boolean payByCustomer) {
-        final StringBuilder barcodeList = new StringBuilder("select {rush.pk} from {BlRushDeliveryMode as rush}, {DeliveryTypeEnum as dt} " +
-                "where {dt.pk} = {rush.deliveryType} and {dt.code} = ?deliveryMode and {rush.active} = 1 and {rush.payByCustomer} = ?payByCustomer");
+        final StringBuilder barcodeList = queryForBlRushDeliveryModes();
         if (pstCutOffTime != null) {
             barcodeList.append(" and {rush.cutOffTime} > ?pstCutOffTime");
         }
-        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-        query.addQueryParameter("deliveryMode", deliveryMode);
-        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+        final FlexibleSearchQuery query = getBlRushDeliveryModesCommonAttributes(deliveryMode, payByCustomer, barcodeList);
         if (pstCutOffTime != null) {
             query.addQueryParameter(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME, pstCutOffTime);
         }
@@ -200,12 +214,23 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
      * {@inheritDoc}
      */
     @Override
+    public Collection<BlRushDeliveryModeModel> getBlRushDeliveryModesForUsedGear(final String deliveryMode,final boolean payByCustomer) {
+                                                                      
+        final StringBuilder barcodeList = queryForBlRushDeliveryModes();
+        
+        final FlexibleSearchQuery query = getBlRushDeliveryModesCommonAttributes(deliveryMode, payByCustomer, barcodeList);
+        
+        final Collection<BlRushDeliveryModeModel> results = getFlexibleSearchService().<BlRushDeliveryModeModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_RUSH_ZONE_DELIVERY_MODE + deliveryMode);
+        return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public BlRushDeliveryModeModel getBlRushDeliveryModeForWarehouseZipCode(final String deliveryMode, final boolean payByCustomer) {
-        final StringBuilder barcodeList = new StringBuilder("select {rush.pk} from {BlRushDeliveryMode as rush}, {DeliveryTypeEnum as dt} " +
-                "where {dt.pk} = {rush.deliveryType} and {dt.code} = ?deliveryMode and {rush.active} = 1 and {rush.payByCustomer} = ?payByCustomer");
-        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-        query.addQueryParameter("deliveryMode", deliveryMode);
-        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+        final StringBuilder barcodeList = queryForBlRushDeliveryModes();
+        final FlexibleSearchQuery query = getBlRushDeliveryModesCommonAttributes(deliveryMode, payByCustomer, barcodeList);
         final Collection<BlRushDeliveryModeModel> results = getFlexibleSearchService().<BlRushDeliveryModeModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_RUSH_ZONE_DELIVERY_MODE + deliveryMode);
         return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
@@ -253,6 +278,55 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
   				.getResult();
   		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
   	}
+    
+   private StringBuilder queryForShipToHomeDeliveryMode(final String mode)
+ 	{
+ 		final StringBuilder barcodeList = new StringBuilder("select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, {CarrierEnum as ce} " +
+                 "where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +
+                 "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.payByCustomer} = ?payByCustomer");
+ 		return barcodeList;
+ 	}
+   
+   private StringBuilder queryForPartnerZoneUPSStoreDeliveryModes(final String mode)
+	{
+		final StringBuilder barcodeList = new StringBuilder("select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
+                "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
+                " {pickZone.code} like '%" + mode + "%' and {pickZone.payByCustomer} = ?payByCustomer");
+		return barcodeList;
+	}
+   
+   private StringBuilder queryForBlRushDeliveryModes()
+	{
+		final StringBuilder barcodeList = new StringBuilder("select {rush.pk} from {BlRushDeliveryMode as rush}, {DeliveryTypeEnum as dt} " +
+                "where {dt.pk} = {rush.deliveryType} and {dt.code} = ?deliveryMode and {rush.active} = 1 and {rush.payByCustomer} = ?payByCustomer");
+		return barcodeList;
+	}
+   
+   private FlexibleSearchQuery getShipToHomeDeliveryCommonAttributes(final String carrier, final String mode, final boolean payByCustomer,
+ 			final StringBuilder barcodeList)
+ 	{
+ 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+         query.addQueryParameter("carrier", carrier);
+         query.addQueryParameter("mode", mode);
+         query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+ 		return query;
+ 	}
+   
+   private FlexibleSearchQuery getPartnerZoneUPSStoreCommonAttributes(final String mode, final boolean payByCustomer, final StringBuilder barcodeList)
+	{
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("mode", mode);
+        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+		return query;
+	}
+   
+   private FlexibleSearchQuery getBlRushDeliveryModesCommonAttributes(final String deliveryMode, final boolean payByCustomer, final StringBuilder barcodeList)
+	{
+		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("deliveryMode", deliveryMode);
+        query.addQueryParameter(BlDeliveryModeLoggingConstants.PAY_BY_CUSTOMER, payByCustomer);
+		return query;
+	}
     
     @Override
     public FlexibleSearchService getFlexibleSearchService() {
