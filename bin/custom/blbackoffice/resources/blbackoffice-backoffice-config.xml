@@ -455,7 +455,7 @@
 		</as:advanced-search>
 	</context>
 
-	<context merge-by="type" type="BlPricingLogic" component="listview">B
+	<context merge-by="type" type="BlPricingLogic" component="listview">
 		<lv:list-view>
 			<lv:column qualifier="productType"/>
 			<lv:column qualifier="tier"/>
