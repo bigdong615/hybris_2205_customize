@@ -165,16 +165,10 @@
 																			 <input id="userSelectedPaymentInfo_year" type="hidden" value="${userSelectedPaymentInfo.expiryYear}"/>
 																		</c:if> --%>  
 																		<%-- <c:if test="${payPalCheckoutData.storeInVault}"> --%>
-																		<c:if test="true">
-																			<div class="form-additionals" id="savePaymentInfoComponent">
-																				 <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
-																					  <formElement:formCheckbox idKey="savePaymentInfo"
-																					   labelKey="checkout.multi.sop.savePaymentInfo"
-																					   path="savePaymentInfo" inputCSS="" labelCSS=""
-																						mandatory="false"/>
-																				  </sec:authorize>
-																			</div>	
-																		</c:if>
+																		<input type="checkbox" checked class="form-control" id="savePaymentInfo" name="savePaymentInfo"/>
+																			<label for="savePaymentInfo">
+																				<span class="gray80"><spring:theme code="checkout.multi.sop.savePaymentInfo" /></span>
+																			</label> 
 																	</div>
 																</div>
 															</div>
@@ -198,15 +192,28 @@
 																			</div>
 																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
 																		</c:when>
+																		<c:when test="${not empty defaultBillingAddress and empty billingAddresses}">
+																			<b class="mt-4">Saved Billing Addresses</b>
+																			<div class="dropdown my-2">
+																				
+																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+																						${defaultBillingAddress.formattedAddress }
+																					</a>
+																				
+																			</div>
+																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+																		</c:when>
 																		<c:otherwise>
 																		<c:if test="${not empty billingAddresses and billingAddresses.size() > 0 }">
 																			<b class="mt-4">Saved Billing Addresses</b>
 																	<div class="dropdown my-2">
-																		<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${paymentInfoBillingAddress.id }"/>
 																		<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
 																			<c:choose>
 																				<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
 																					${paymentInfoBillingAddress.formattedAddress }
+																				</c:when>
+																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
+																					${defaultBillingAddress.formattedAddress }
 																				</c:when>
 																				<c:otherwise>
 																					Select Saved Billing Address
@@ -229,6 +236,7 @@
 															
 														
 														<div class="collapse" id="billing-address-form-expand">
+														<div class="mb-5">
 															<c:if test="${cartData.deliveryItemsQuantity > 0}">
 																<div id="useDeliveryAddressData"
 																	 data-firstname="${deliveryAddress.firstName}"
@@ -242,23 +250,26 @@
 																	 data-email="${deliveryAddress.email}"
 																	 data-address-id="${deliveryAddress.id}"></div>
 																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
-																	<formElement:formCheckbox path="useDeliveryAddress"
-																						  idKey="ccUseDeliveryAddress"
-																						  labelKey="checkout.multi.sop.useMyDeliveryAddress"
-																						  tabindex="11"
-																						  inputCSS="${hideUseShipping}"
-																						  labelCSS="${hideUseShipping}" />
-																	<label for="ccUseDeliveryAddress"></label>
+																   	<input type="checkbox" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/>
+																   	<label for="ccUseDeliveryAddress" class="${hideUseShipping}">
+																   		<span class="gray80"><spring:theme code="checkout.multi.sop.useMyDeliveryAddress" /></span>
+																   	</label>     
 															</c:if> 
 															<input type="hidden" name="paypal_email" id="paypal_email" /> 
 														    <input type="hidden" name="billTo_country" id="address.country" value="US">
 														    
 															<div id="billingAddressForm" class="billingAddressForm"></div>
+															</div>
 															<a href="#" class="gray80" id="showSavedAddresses" data-bs-toggle="collapse" data-bs-target="#billing-address-saved" aria-expanded="false" aria-controls="billing-address-saved">+ Use a saved billing address</a>
 														</div>
 														<div class="form-additionals"></div>
 													</form:form>
 												</ycommerce:testId>
+												<c:set var="selectedAddressId" value="${defaultBillingAddress.id }"/>
+												<c:if test="${not empty paymentInfoBillingAddress}">
+													<c:set var="selectedAddressId" value="${paymentInfoBillingAddress.id }"/>
+												</c:if>
+												<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${selectedAddressId}"/>
 												<form:form name="submitSavedCardForm" method="POST" id="submitSavedCardForm" action="${reviewSavedPaymentAction}">
 													<input type="hidden" id="savedCCCardId" name="savedCCCardId" value="${userSelectedPaymentInfo.id}"/>
 													<input type="hidden" id="savedCCCardNonce" name="savedCCCardNonce" value="${userSelectedPaymentInfo.paymentMethodNonce}"/>
@@ -275,6 +286,9 @@
 								</div>
 								<!-- Paypal section -->
 								<div class="accordion-item payProduct">
+									<c:if test="${not empty userSelectedPayPalPaymentInfo}">
+										<input type="hidden" id="isPayPalPresent" name="isPayPalPresent" value="true"/>
+									</c:if>
 									<div class="row">											
 										<div class="col-1 text-center pt-2">
 											<button class="btn-checkbox" type="button"
@@ -304,10 +318,11 @@
 							</div>
 							<%-- Error message secion --%>
 							<cart:blGiftCard cartData="${cartData}"/>
-							<hr class="my-5">
+							<!-- Uncomment hr tag to add more sections after hr tag on payment page -->
+							<!-- <hr class="my-5"> -->
 							<div id="validationMessage"></div>
                             <div id="allFieldvalidationMessage"></div>
-							<hr class="mt-5">
+							<!-- <hr class="mt-5"> -->
 							<div class="cart-actions">
                                 <a href="#" class="gray80">Back to renting</a>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
@@ -330,6 +345,7 @@
 			</div>
 		</div>	
 	</section>
+	<cart:damageWaiverInfo/>
 	<div class="modal fade" id="editWarning" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-sm">
 			<div class="modal-content">

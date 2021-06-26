@@ -19,7 +19,6 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
-import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.SerialProductData;
 
 
@@ -56,15 +55,9 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
 			final SerialProductData serialProductData = new SerialProductData();
-			if (serialProductModel.getConditionRatingOverallScore() != null)
-			{
-				serialProductData.setConditionRating(
-						serialProductModel.getConditionRatingOverallScore() + BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
-			}
-			else
-			{
-				serialProductData.setConditionRating(BlFacadesConstants.DEFAULT_CONDITIONAL_RATING);
-			}
+			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
+			serialProductData.setCosmeticRating(serialProductModel.getCosmeticRating());
+			serialProductData.setFunctionalRating(serialProductModel.getFunctionalRating());
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
 			{

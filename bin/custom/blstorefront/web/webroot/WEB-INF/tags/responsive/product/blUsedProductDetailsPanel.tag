@@ -8,7 +8,9 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format" %>
 
 <c:url value="/cart/add" var="addToCartUrl"/>
-
+<div class="page-loader-new-layout">
+     <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img"/>
+</div>
  <div class="screen"></div>
      <cms:pageSlot position="SearchBoxBl" var="component">
      		<cms:component component="${component}"/>
@@ -54,7 +56,9 @@
                                         <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
 		                                      <c:forEach items="${product.serialproducts}" var= "serialProduct"  varStatus="loop">
 		                                         <tr class= " ${loop.index >= 3 ? 'hide-product-row' : ''}">
-		                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
+		                                            <td><a href="#" data-bs-toggle="modal" data-bs-target="#sku52678"
+		                                            data-cosmetic="${serialProduct.cosmeticRating}" data-functional="${serialProduct.functionalRating}" data-condition-rating="${serialProduct.conditionRating}"
+		                                           data-serial-id = "${serialProduct.serialId}" class="js-conditional-rating-popup">${serialProduct.conditionRating}</a></td>
 		                                            <td><format:price priceData="${serialProduct.finalSalePrice}"/></td>
 		                                            <td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
 		                                            <td class="text-end">
