@@ -994,8 +994,7 @@ public class CartPageController extends AbstractCartPageController
 			getBlCartFacade().removeCartEntries();
 			return REDIRECT_CART_URL;
 		}
-
-		return StringUtils.EMPTY;
+			return StringUtils.EMPTY;
 	}
 
 	/**
