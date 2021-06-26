@@ -33,9 +33,7 @@ public interface BlDeliveryModeDao {
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group
      * depending on the selected carrier.
      * @param carrier ie., UPS or FedEx
-     * 
-     * 
-     *
+     * @param mode i.e., standard 
      * @return Collection of ZoneDeliveryModeModel
      */
     Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode, final boolean payByCustomer);
@@ -116,7 +114,7 @@ public interface BlDeliveryModeDao {
      * @param deliveryMode to specify SF or NYC Shipping group
      * @return Collection of BlRushDeliveryModeModel
      */
-    Collection<BlRushDeliveryModeModel> getBlRushDeliveryModesForUsedGear(final String deliveryMode,final boolean payByCustomer);
+    Collection<BlRushDeliveryModeModel> getBlRushDeliveryModesForUsedGear(final String deliveryMode, final boolean payByCustomer);
 
 
     /**

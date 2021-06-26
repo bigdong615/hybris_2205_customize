@@ -67,11 +67,11 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
     @Resource(name = "fedExSameDayServiceImpl")
     BlFedExSameDayService blFedExSameDayService;
-    
+
     private BlCommerceStockService blCommerceStockService;
-    
+
     private BlCartService blCartService;
-    
+
     private BaseStoreService baseStoreService;
 
     @Value("${shipping.sf.zip.code}")
@@ -98,16 +98,15 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                         final String pstCutOffTime, final boolean payByCustomer) {
         return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModes(carrier, mode, pstCutOffTime, payByCustomer);
     }
-    
+
     /**
- 	 * {@inheritDoc}
- 	 */
- 	@Override
- 	public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
- 			                                                                         final boolean payByCustomer) {
- 	
- 			return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModesForUsedGear(carrier, mode, payByCustomer);
- 	}
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
+                                                                                   final boolean payByCustomer) {
+        return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModesForUsedGear(carrier, mode, payByCustomer);
+    }
 
     /**
      * {@inheritDoc}
@@ -120,6 +119,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
@@ -142,33 +142,28 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         }
         return allDeliveryModes;
     }
-    
-    
+
+
     /**
- 	 * {@inheritDoc}
- 	 *
- 	 * @return
- 	 */
- 	@Override
- 	public Collection<ZoneDeliveryModeModel> getAllShipToHomeDeliveryModesWithoutRentalDates(final boolean payByCustomer)
- 	{
-
-
- 		final Collection<ZoneDeliveryModeModel> allDeliveryModes = new ArrayList<>();
- 		final Collection<ZoneDeliveryModeModel> upsZoneDeliveryModes = getShipToHomeDeliveryModesWithoutRentalDates(
- 				String.valueOf(CarrierEnum.UPS), payByCustomer);
- 		if (CollectionUtils.isNotEmpty(upsZoneDeliveryModes))
- 		{
- 			allDeliveryModes.addAll(upsZoneDeliveryModes);
- 		}
- 		final Collection<ZoneDeliveryModeModel> fedexZoneDeliveryModes = getShipToHomeDeliveryModesWithoutRentalDates(
- 				String.valueOf(CarrierEnum.FEDEX), payByCustomer);
- 		if (CollectionUtils.isNotEmpty(fedexZoneDeliveryModes))
- 		{
- 			allDeliveryModes.addAll(fedexZoneDeliveryModes);
- 		}
- 		return allDeliveryModes;
- 	}
+     * {@inheritDoc}
+     *
+     * @return
+     */
+    @Override
+    public Collection<ZoneDeliveryModeModel> getAllShipToHomeDeliveryModesWithoutRentalDates(final boolean payByCustomer) {
+        final Collection<ZoneDeliveryModeModel> allDeliveryModes = new ArrayList<>();
+        final Collection<ZoneDeliveryModeModel> upsZoneDeliveryModes = getShipToHomeDeliveryModesWithoutRentalDates(
+                String.valueOf(CarrierEnum.UPS), payByCustomer);
+        if (CollectionUtils.isNotEmpty(upsZoneDeliveryModes)) {
+            allDeliveryModes.addAll(upsZoneDeliveryModes);
+        }
+        final Collection<ZoneDeliveryModeModel> fedexZoneDeliveryModes = getShipToHomeDeliveryModesWithoutRentalDates(
+                String.valueOf(CarrierEnum.FEDEX), payByCustomer);
+        if (CollectionUtils.isNotEmpty(fedexZoneDeliveryModes)) {
+            allDeliveryModes.addAll(fedexZoneDeliveryModes);
+        }
+        return allDeliveryModes;
+    }
 
     /**
      * {@inheritDoc}
@@ -183,34 +178,33 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final String pstCutOffTime = BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST);
         final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()),
                 rentalStart);
-            if (result >= BlInventoryScanLoggingConstants.TWO) {
-                return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+        if (result >= BlInventoryScanLoggingConstants.TWO) {
+            return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD,
+                    null, payByCustomer);
+        } else if (result == BlInventoryScanLoggingConstants.ONE) {
+            final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
+            if (currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
+                return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                         null, payByCustomer);
-            } else if (result == BlInventoryScanLoggingConstants.ONE) {
-                final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
-                if(currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
-                    return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
-                            null, payByCustomer);
-                } else {
-                    return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
-                            pstCutOffTime, payByCustomer);
-                }
+            } else {
+                return getShipToHomeDeliveryModes(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
+                        pstCutOffTime, payByCustomer);
             }
+        }
         return Collections.emptyList();
     }
-    
 
- 	/**
- 	 * {@inheritDoc}
- 	 *
- 	 * @return
- 	 */
- 	@Override
- 	public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesWithoutRentalDates(final String carrier,
- 			final boolean payByCustomer)
- 	{
- 		return getShipToHomeDeliveryModesForUsedGear(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
- 	}
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return
+     */
+    @Override
+    public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesWithoutRentalDates(final String carrier,
+                                                                                          final boolean payByCustomer) {
+        return getShipToHomeDeliveryModesForUsedGear(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
+    }
 
     /**
      * {@inheritDoc}
@@ -220,17 +214,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                                                                                          final boolean payByCustomer) {
         return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModes(mode, pstCutOffTime, payByCustomer);
     }
-    
-    /**
- 	 * {@inheritDoc}
- 	 */
- 	@Override
- 	public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode,
- 			final boolean payByCustomer)
- 	{
 
- 		return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModesForUsedGear(mode, payByCustomer);
- 	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode,
+                                                                                                    final boolean payByCustomer) {
+
+        return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModesForUsedGear(mode, payByCustomer);
+    }
 
     /**
      * {@inheritDoc}
@@ -257,26 +250,25 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                     null, payByCustomer);
         } else if (result == BlInventoryScanLoggingConstants.ONE) {
             final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, new Date().toString());
-            if(currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
+            if (currentDayOfWeek.equals(DayOfWeek.SUNDAY) || currentDayOfWeek.equals(DayOfWeek.SATURDAY)) {
                 return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                         null, payByCustomer);
             } else {
                 return getPartnerZoneUPSStoreDeliveryModes(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_OVERNIGHT,
                         pstCutOffTime, payByCustomer);
             }
-        } 
+        }
         return Collections.emptyList();
     }
 
-    
+
     /**
- 	 * {@inheritDoc}
- 	 */
- 	@Override
- 	public Collection<BlPickUpZoneDeliveryModeModel> getPartnerPickUpDeliveryModesWithoutRentalDates(final boolean payByCustomer)
- 	{
- 		return getPartnerZoneUPSStoreDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
- 	}
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerPickUpDeliveryModesWithoutRentalDates(final boolean payByCustomer) {
+        return getPartnerZoneUPSStoreDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
+    }
 
     /**
      * {@inheritDoc}
@@ -289,17 +281,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 .filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
     }
 
-    
-    /**
- 	 * {@inheritDoc}
- 	 */
- 	@Override
- 	public Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithoutRentalDatesForUPSStore(
- 			final boolean payByCustomer)
- 	{
 
- 		return getPartnerPickUpDeliveryModesWithoutRentalDates(payByCustomer);
- 	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithoutRentalDatesForUPSStore(
+            final boolean payByCustomer) {
+        return getPartnerPickUpDeliveryModesWithoutRentalDates(payByCustomer);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -315,14 +306,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModes(final String partnerZone, final String rentalStart,
-                                                                                final String rentalEnd, final boolean payByCustomer) {
+                                                                                 final String rentalEnd, final boolean payByCustomer) {
         final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao().
                 getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
-        if(CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
+        if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
             final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>(blPickUpZoneDeliveryModeModels);
             final int result = checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date())
                     , rentalStart);
-            for(BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
+            for (BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel : blPickUpZoneDeliveryModeModels) {
                 checkDeliveryModeValidityOfTypePartner(newBlPickUpZoneDeliveryModeModels, result, pickUpZoneDeliveryModeModel);
             }
             return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels.stream()
@@ -330,50 +321,47 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         }
         return Collections.emptyList();
     }
-    
-    
-    /**
- 	 * {@inheritDoc}
- 	 */
- 	@Override
- 	public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForUsedGear(final String partnerZone,
- 			final boolean payByCustomer)
- 	{
- 		final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao()
- 				.getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
- 		if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels))
- 		{
- 			final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>(
- 					blPickUpZoneDeliveryModeModels);
- 			return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels
- 					: Collections.emptyList();
 
- 		}
- 		return Collections.emptyList();
- 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForUsedGear(final String partnerZone,
+                                                                                            final boolean payByCustomer) {
+        final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao()
+                .getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
+        if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels)) {
+            final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>(
+                    blPickUpZoneDeliveryModeModels);
+            return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels
+                    : Collections.emptyList();
+
+        }
+        return Collections.emptyList();
+    }
 
     /**
      * This method will check conditions for partner delivery locations
      *
      * @param blPickUpZoneDeliveryModeModels collection to remove unwanted records
-     * @param result business days difference
-     * @param pickUpZoneDeliveryModeModel current model to check with condition
+     * @param result                         business days difference
+     * @param pickUpZoneDeliveryModeModel    current model to check with condition
      */
     private void checkDeliveryModeValidityOfTypePartner(final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels,
                                                         final int result, final BlPickUpZoneDeliveryModeModel pickUpZoneDeliveryModeModel) {
-        if(pickUpZoneDeliveryModeModel.isWarehousePickUp()) {
-            if(result == BlInventoryScanLoggingConstants.ZERO && !BlDateTimeUtils.compareTimeWithCutOff(
-                    pickUpZoneDeliveryModeModel.getCutOffTime())){
+        if (pickUpZoneDeliveryModeModel.isWarehousePickUp()) {
+            if (result == BlInventoryScanLoggingConstants.ZERO && !BlDateTimeUtils.compareTimeWithCutOff(
+                    pickUpZoneDeliveryModeModel.getCutOffTime())) {
                 blPickUpZoneDeliveryModeModels.remove(pickUpZoneDeliveryModeModel);
             }
         } else {
-            if(result <= BlInventoryScanLoggingConstants.TWO){
+            if (result <= BlInventoryScanLoggingConstants.TWO) {
                 blPickUpZoneDeliveryModeModels.remove(pickUpZoneDeliveryModeModel);
             }
         }
     }
-    
-   
+
 
     /**
      * {@inheritDoc}
@@ -395,40 +383,38 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 deliveryMode, pstCutOffTime, payByCustomer).stream().filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd))
                 .collect(Collectors.toList());
     }
-    
-    /**
- 	 * {@inheritDoc}
- 	 */
- 	@Override
- 	public Collection<BlRushDeliveryModeModel> getBlRushDeliveryModesForUsedGear(final String deliveryMode,
- 			final boolean payByCustomer)
- 	{
 
- 		return getBlZoneDeliveryModeDao().getBlRushDeliveryModesForUsedGear(deliveryMode, payByCustomer);
- 	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<BlRushDeliveryModeModel> getBlRushDeliveryModesForUsedGear(final String deliveryMode,
+                                                                                 final boolean payByCustomer) {
+
+        return getBlZoneDeliveryModeDao().getBlRushDeliveryModesForUsedGear(deliveryMode, payByCustomer);
+    }
 
 
     /**
      * {@inheritDoc}
      */
     @Override
- 	public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost,
- 			final ZoneDeliveryModeModel deliveryMethod)
- 	{
- 		return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
+    public ShippingCostModel getShippingCostForCalculatedDeliveryCost(final String calculatedCost,
+                                                                      final ZoneDeliveryModeModel deliveryMethod) {
+        return getBlZoneDeliveryModeDao().getShippingCostForCalculatedDeliveryCost(calculatedCost,
                 deliveryMethod.getShippingCostCode().getCode());
- 	}
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public double getShippingCostAmount(final AbstractOrderModel order, final DeliveryModeModel deliveryMode) {
-   	 BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getShippingCostAmount", deliveryMode.getCode());
-        if(deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getShippingCostAmount", deliveryMode.getCode());
+        if (deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
             final BlPickUpZoneDeliveryModeModel zoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) deliveryMode;
             return getAmountForAppropriateZoneModel(order, zoneDeliveryModeModel);
-        } else if(deliveryMode instanceof BlRushDeliveryModeModel) {
+        } else if (deliveryMode instanceof BlRushDeliveryModeModel) {
             final BlRushDeliveryModeModel zoneDeliveryModeModel = (BlRushDeliveryModeModel) deliveryMode;
             return getAmountForAppropriateZoneModel(order, zoneDeliveryModeModel);
         } else if (deliveryMode instanceof ZoneDeliveryModeModel) {
@@ -440,13 +426,13 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
     /**
      * {@inheritDoc}
+     *
      * @return
      */
     @Override
     public double getAmountForAppropriateZoneModel(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
-   	    BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getAmountForAppropriateZoneModel", zoneDeliveryModeModel.getCode());
-   	    if (zoneDeliveryModeModel.isPayByCustomer())
-   	    {
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getAmountForAppropriateZoneModel", zoneDeliveryModeModel.getCode());
+        if (zoneDeliveryModeModel.isPayByCustomer()) {
             return getPayByCustomerShippingCost(order, zoneDeliveryModeModel);
         }
         return BlInventoryScanLoggingConstants.ZERO;
@@ -455,29 +441,29 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     /**
      * This method will get cosy for only pay by customer delivery methods
      *
-     * @param order model
+     * @param order                 model
      * @param zoneDeliveryModeModel delivery model
      * @return shipping amount
      */
     private double getPayByCustomerShippingCost(AbstractOrderModel order, ZoneDeliveryModeModel zoneDeliveryModeModel) {
-        for(ZoneDeliveryModeValueModel valueModel : zoneDeliveryModeModel.getValues()) {
-      	  BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost", valueModel.getPk());
-            if(!valueModel.isFixedAmount()) {
-           BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost : Inside", valueModel.getPk());
+        for (ZoneDeliveryModeValueModel valueModel : zoneDeliveryModeModel.getValues()) {
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost", valueModel.getPk());
+            if (!valueModel.isFixedAmount()) {
+                BlLogger.logFormatMessageInfo(LOG, Level.INFO, "getPayByCustomerShippingCost : Inside", valueModel.getPk());
                 final Map<String, Double> calculatedValueMap;
                 try {
                     calculatedValueMap = getCalculatedWeightForDelivery(order);
                     final Double shippingCostModel = getShippingAmount(order, zoneDeliveryModeModel, calculatedValueMap);
                     return shippingCostModel != null ? Math.max(shippingCostModel, valueModel.getMinimum()) :
                             valueModel.getMinimum();
-                } catch(Exception e) {
-                    BlLogger.logMessage(LOG, Level.ERROR,"Exception while calculating delivery cost");
+                } catch (Exception e) {
+                    BlLogger.logMessage(LOG, Level.ERROR, "Exception while calculating delivery cost");
                 }
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"ShippingCostModel is null, Shipping amount: {} ",
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "ShippingCostModel is null, Shipping amount: {} ",
                         BlInventoryScanLoggingConstants.ZERO);
                 return (double) BlInventoryScanLoggingConstants.ZERO;
             } else {
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping fixed amount: {} ", valueModel.getValue());
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping fixed amount: {} ", valueModel.getValue());
                 return valueModel.getValue();
             }
         }
@@ -486,22 +472,23 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
     /**
      * This method will give shipping amount
-     * @param order order
+     *
+     * @param order                 order
      * @param zoneDeliveryModeModel shipping method
-     * @param calculatedValueMap calculated value map
+     * @param calculatedValueMap    calculated value map
      * @return shipping cost
      */
     private Double getShippingAmount(final AbstractOrderModel order, final ZoneDeliveryModeModel zoneDeliveryModeModel,
                                      final Map<String, Double> calculatedValueMap) {
-        if(!(order instanceof CartModel)) {
+        if (!(order instanceof CartModel)) {
             order.setTotalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT));
             order.setDimensionalWeight(calculatedValueMap.get(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT));
         }
         final ShippingCostModel shippingCostModel = getShippingCostForCalculatedDeliveryCost(String.valueOf(Math.max(
                 calculatedValueMap.get(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT), calculatedValueMap.get(
                         BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT))), zoneDeliveryModeModel);
-        if(shippingCostModel != null) {
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Shipping calculated amount: {} ",
+        if (shippingCostModel != null) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ",
                     shippingCostModel.getAmount());
             return shippingCostModel.getAmount();
         }
@@ -522,15 +509,15 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         int maxHeight = BlInventoryScanLoggingConstants.ZERO;
         int sumWidth = BlInventoryScanLoggingConstants.ZERO;
         try {
-            if(order instanceof CartModel) {
+            if (order instanceof CartModel) {
                 final CartModel cart = (CartModel) order;
                 abstractOrderEntryModels = cart.getEntries();
             } else {
                 abstractOrderEntryModels = order.getEntries();
             }
-            for(AbstractOrderEntryModel entry : abstractOrderEntryModels) {
+            for (AbstractOrderEntryModel entry : abstractOrderEntryModels) {
                 final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-                if(blSerialProduct != null) {
+                if (blSerialProduct != null) {
                     totalWeight = getBigDecimal(totalWeight, blSerialProduct);
                     sumWidth = getSumWidth(sumWidth, blSerialProduct.getWidth());
                     maxHeight = getMaxHeight(maxHeight, blSerialProduct.getHeight());
@@ -539,20 +526,21 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
             }
             final double dimensionalWeight = ((double) (maxHeight * sumWidth * maxLength) /
                     getBlZoneDeliveryModeDao().getDimensionalFactorForDeliveryFromStore(BlDeliveryModeLoggingConstants.STORE));
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Total weight: {} ", totalWeight.doubleValue());
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Dimensional weight: {} ", dimensionalWeight);
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total weight: {} ", totalWeight.doubleValue());
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Dimensional weight: {} ", dimensionalWeight);
 
             valueMap.put(BlDeliveryModeLoggingConstants.TOTAL_WEIGHT, totalWeight.doubleValue());
             valueMap.put(BlDeliveryModeLoggingConstants.DIMENSIONAL_WEIGHT, dimensionalWeight);
-        } catch(Exception e) {
-            BlLogger.logMessage(LOG, Level.ERROR,"Exception while calculating delivery cost");
+        } catch (Exception e) {
+            BlLogger.logMessage(LOG, Level.ERROR, "Exception while calculating delivery cost");
         }
         return valueMap;
     }
 
     /**
      * This method will calulate total weight
-     * @param totalWeight weight
+     *
+     * @param totalWeight     weight
      * @param blSerialProduct product
      * @return big decimal
      */
@@ -565,7 +553,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * This method will calculate sum of all products width
      *
      * @param sumWidth width
-     * @param width width
+     * @param width    width
      * @return value
      */
     private int getSumWidth(final int sumWidth, final Integer width) {
@@ -574,8 +562,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
     /**
      * This method will calculate max height
+     *
      * @param maxHeight height
-     * @param height height
+     * @param height    height
      * @return height value
      */
     private int getMaxHeight(final int maxHeight, final Integer height) {
@@ -584,8 +573,9 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
     /**
      * This method will calculate max length
+     *
      * @param maxLength length
-     * @param length length
+     * @param length    length
      * @return length value
      */
     private int getMaxLength(final int maxLength, final Integer length) {
@@ -596,23 +586,23 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * This method will check delivery mode's model instance and send appropriate model further.
      *
      * @param deliveryMode model
-     * @param rentalStart start date
-     * @param rentalEnd the rental end
+     * @param rentalStart  start date
+     * @param rentalEnd    the rental end
      * @return boolean for current delivery mode to disable or not
      */
     public boolean checkDaysToSkipForDeliveryMode(final DeliveryModeModel deliveryMode, final String rentalStart, final String rentalEnd) {
         final DayOfWeek currentDayOfWeek = BlDateTimeUtils.getDayOfWeek(BlDeliveryModeLoggingConstants.ZONE_PST, rentalStart);
-        if(deliveryMode instanceof ZoneDeliveryModeModel && checkCartEntriesAvailability(rentalStart, rentalEnd, (ZoneDeliveryModeModel)deliveryMode)) {
-      	  if(deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
-              final BlPickUpZoneDeliveryModeModel zoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) deliveryMode;
-              return getResultForDayToSkip(currentDayOfWeek, zoneDeliveryModeModel);
-          } else if(deliveryMode instanceof BlRushDeliveryModeModel) {
-              final BlRushDeliveryModeModel zoneDeliveryModeModel = (BlRushDeliveryModeModel) deliveryMode;
-              return getResultForDayToSkip(currentDayOfWeek, zoneDeliveryModeModel);
-          } else if (deliveryMode instanceof ZoneDeliveryModeModel) {
-              final ZoneDeliveryModeModel zoneDeliveryModeModel = (ZoneDeliveryModeModel) deliveryMode;
-              return getResultForDayToSkip(currentDayOfWeek, zoneDeliveryModeModel);
-          }
+        if (deliveryMode instanceof ZoneDeliveryModeModel && checkCartEntriesAvailability(rentalStart, rentalEnd, (ZoneDeliveryModeModel) deliveryMode)) {
+            if (deliveryMode instanceof BlPickUpZoneDeliveryModeModel) {
+                final BlPickUpZoneDeliveryModeModel zoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) deliveryMode;
+                return getResultForDayToSkip(currentDayOfWeek, zoneDeliveryModeModel);
+            } else if (deliveryMode instanceof BlRushDeliveryModeModel) {
+                final BlRushDeliveryModeModel zoneDeliveryModeModel = (BlRushDeliveryModeModel) deliveryMode;
+                return getResultForDayToSkip(currentDayOfWeek, zoneDeliveryModeModel);
+            } else if (deliveryMode instanceof ZoneDeliveryModeModel) {
+                final ZoneDeliveryModeModel zoneDeliveryModeModel = (ZoneDeliveryModeModel) deliveryMode;
+                return getResultForDayToSkip(currentDayOfWeek, zoneDeliveryModeModel);
+            }
         }
         return false;
     }
@@ -620,15 +610,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     /**
      * This mwthod will check current day against days to skip for delivery mode and if current day matches then that
      * delivery mode will be disabled for the day
-     * @param currentDayOfWeek today
+     *
+     * @param currentDayOfWeek      today
      * @param zoneDeliveryModeModel delivery mode
      * @return boolean, where delivery mode will be disabled or not
      */
     private boolean getResultForDayToSkip(final DayOfWeek currentDayOfWeek, final ZoneDeliveryModeModel zoneDeliveryModeModel) {
         final Collection<de.hybris.platform.cronjob.enums.DayOfWeek> dayOfWeeks = zoneDeliveryModeModel.getDaysToSkip();
-        for(de.hybris.platform.cronjob.enums.DayOfWeek day : dayOfWeeks) {
-            if(day.getCode().equals(currentDayOfWeek.toString())) {
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Current day is present in days to skip: {} ", currentDayOfWeek);
+        for (de.hybris.platform.cronjob.enums.DayOfWeek day : dayOfWeeks) {
+            if (day.getCode().equals(currentDayOfWeek.toString())) {
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Current day is present in days to skip: {} ", currentDayOfWeek);
                 return false;
             }
         }
@@ -640,14 +631,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public boolean checkSFOrNYCPinCodeValidity(final String pinCode, final String deliveryType) {
-        if(validateZip(pinCode)) {
+        if (validateZip(pinCode)) {
             try {
                 final SameDayCityResData sameDayCityResData = getBlFedExSameDayService().getAvailability(getSameDayCityReqData(pinCode,
                         BlDeliveryModeLoggingConstants.SF.equals(deliveryType) ? sf : nyc));
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Checking same day fedex integration pinCode validity");
-                return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable(): Boolean.FALSE;
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Checking same day fedex integration pinCode validity");
+                return sameDayCityResData.getServiceApplicable() != null ? sameDayCityResData.getServiceApplicable() : Boolean.FALSE;
             } catch (URISyntaxException e) {
-                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Exception in Checking same day fedex integration pinCode validity", e);
+                BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception in Checking same day fedex integration pinCode validity", e);
                 return false;
             }
         }
@@ -661,7 +652,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      * @return zipCode
      */
     private String getPOSAddress(final Collection<PointOfServiceModel> pos) {
-        if(CollectionUtils.isNotEmpty(pos)) {
+        if (CollectionUtils.isNotEmpty(pos)) {
             for (PointOfServiceModel model : pos) {
                 final AddressModel addressModel = model.getAddress();
                 if (addressModel != null) {
@@ -687,7 +678,6 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     }
 
     /**
-     *
      * @param zipCode entered zipCode
      * @return true if success
      */
@@ -700,72 +690,67 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     @Override
     public boolean checkCartEntriesAvailability(final String rentalStart, final String rentalEnd,
-       final ZoneDeliveryModeModel deliveryModeModel) 
-    {
-   	 final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
+                                                final ZoneDeliveryModeModel deliveryModeModel) {
+        final AtomicBoolean isAvailable = new AtomicBoolean(Boolean.TRUE);
 
-   	 if (Objects.nonNull(deliveryModeModel))
-    	{
-    		final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
-    		final Date rentalStartDate = getRentalStartDate(rentalStart, numberOfDaysToSkip);
-    		final Date rentalEndDate = getRentalEndDate(rentalEnd, numberOfDaysToSkip);
-   		final Set<WarehouseModel> lWareHouses = Objects.nonNull(deliveryModeModel.getWarehouse())
-   				? Sets.newHashSet(deliveryModeModel.getWarehouse()) 
-   						: Sets.newHashSet(getBaseStoreService().getCurrentBaseStore().getWarehouses());
-   		final CartModel cartModel = getBlCartService().getSessionCart();
-   		cartModel.getEntries().forEach(cartEntry -> {
-   			final StockResult stockForEntireDuration = getBlCommerceStockService().getStockForEntireDuration(
-   					cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate, rentalEndDate);
-   			if(stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity())
-   			{
-   				isAvailable.set(Boolean.FALSE);
-   				return;
-   			}
-   			
-   		});
-   		return isAvailable.get();
-   	} 
-   	 return isAvailable.get();
+        if (Objects.nonNull(deliveryModeModel)) {
+            final int numberOfDaysToSkip = deliveryModeModel.getNumberOfDaysToSkip().intValue();
+            final Date rentalStartDate = getRentalStartDate(rentalStart, numberOfDaysToSkip);
+            final Date rentalEndDate = getRentalEndDate(rentalEnd, numberOfDaysToSkip);
+            final Set<WarehouseModel> lWareHouses = Objects.nonNull(deliveryModeModel.getWarehouse())
+                    ? Sets.newHashSet(deliveryModeModel.getWarehouse())
+                    : Sets.newHashSet(getBaseStoreService().getCurrentBaseStore().getWarehouses());
+            final CartModel cartModel = getBlCartService().getSessionCart();
+            cartModel.getEntries().forEach(cartEntry -> {
+                final StockResult stockForEntireDuration = getBlCommerceStockService().getStockForEntireDuration(
+                        cartEntry.getProduct().getCode(), lWareHouses, rentalStartDate, rentalEndDate);
+                if (stockForEntireDuration.getAvailableCount() < cartEntry.getQuantity()) {
+                    isAvailable.set(Boolean.FALSE);
+                    return;
+                }
+
+            });
+            return isAvailable.get();
+        }
+        return isAvailable.get();
     }
-    
+
     /**
      * Gets the rental start date by subtracting number of days to skip for selected delivery mode.
      *
-     * @param rentalStartDate the rental start date
+     * @param rentalStartDate    the rental start date
      * @param numberOfDaysToSkip the number of days to skip
      * @return the rental start date
      */
-    private Date getRentalStartDate(final String rentalStartDate, int numberOfDaysToSkip)
-    {
-   	 LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalStartDate, BlCoreConstants.DATE_FORMAT);
-       int subtractedDays = 0;
-       while (subtractedDays < numberOfDaysToSkip) {
-      	 startDate = startDate.minusDays(1);
-           if (!(startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-               ++subtractedDays;
-           }
-       }
-       return Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    private Date getRentalStartDate(final String rentalStartDate, int numberOfDaysToSkip) {
+        LocalDate startDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalStartDate, BlCoreConstants.DATE_FORMAT);
+        int subtractedDays = 0;
+        while (subtractedDays < numberOfDaysToSkip) {
+            startDate = startDate.minusDays(1);
+            if (!(startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+                ++subtractedDays;
+            }
+        }
+        return Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
-    
+
     /**
      * Gets the rental end date by adding number of days to skip for selected delivery mode..
      *
-     * @param rentalEndDate the rental end date
+     * @param rentalEndDate     the rental end date
      * @param numberOfDaysToAdd the number of days to add
      * @return the rental end date
      */
-    private Date getRentalEndDate(final String rentalEndDate, int numberOfDaysToAdd)
-    {
-   	 LocalDate endDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalEndDate, BlCoreConstants.DATE_FORMAT);
-   	 int addedDays = 0;
-       while (addedDays < numberOfDaysToAdd) {
-      	 endDate = endDate.plusDays(1);
-           if (!(endDate.getDayOfWeek() == DayOfWeek.SATURDAY || endDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-               ++addedDays;
-           }
-       }
-       return Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    private Date getRentalEndDate(final String rentalEndDate, int numberOfDaysToAdd) {
+        LocalDate endDate = BlDateTimeUtils.convertStringDateToLocalDate(rentalEndDate, BlCoreConstants.DATE_FORMAT);
+        int addedDays = 0;
+        while (addedDays < numberOfDaysToAdd) {
+            endDate = endDate.plusDays(1);
+            if (!(endDate.getDayOfWeek() == DayOfWeek.SATURDAY || endDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+                ++addedDays;
+            }
+        }
+        return Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     /**
@@ -774,19 +759,18 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     @Override
     public int checkDateForRental(final String currentDay, final String rentalStart) {
         final int days = BlDateTimeUtils.getDaysBetweenBusinessDays(currentDay, rentalStart);
-        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Business days difference: {} ", days);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Business days difference: {} ", days);
         return days;
     }
-    
+
     /**
- 	 * {@inheritDoc}
- 	 */
- 	
- 	@Override
- 	public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes()
- 	{
- 		return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
- 	}
+     * {@inheritDoc}
+     */
+
+    @Override
+    public Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes() {
+        return getBlZoneDeliveryModeDao().getAllBlDeliveryModes();
+    }
 
     public BlDeliveryModeDao getBlZoneDeliveryModeDao() {
         return blDeliveryModeDao;
@@ -812,51 +796,45 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         this.blFedExSameDayService = blFedExSameDayService;
     }
 
-	/**
-	 * @return the blCommerceStockService
-	 */
-	public BlCommerceStockService getBlCommerceStockService()
-	{
-		return blCommerceStockService;
-	}
+    /**
+     * @return the blCommerceStockService
+     */
+    public BlCommerceStockService getBlCommerceStockService() {
+        return blCommerceStockService;
+    }
 
-	/**
-	 * @param blCommerceStockService the blCommerceStockService to set
-	 */
-	public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService)
-	{
-		this.blCommerceStockService = blCommerceStockService;
-	}
+    /**
+     * @param blCommerceStockService the blCommerceStockService to set
+     */
+    public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
+        this.blCommerceStockService = blCommerceStockService;
+    }
 
-	/**
-	 * @return the blCartService
-	 */
-	public BlCartService getBlCartService()
-	{
-		return blCartService;
-	}
+    /**
+     * @return the blCartService
+     */
+    public BlCartService getBlCartService() {
+        return blCartService;
+    }
 
-	/**
-	 * @param blCartService the blCartService to set
-	 */
-	public void setBlCartService(BlCartService blCartService)
-	{
-		this.blCartService = blCartService;
-	}
+    /**
+     * @param blCartService the blCartService to set
+     */
+    public void setBlCartService(BlCartService blCartService) {
+        this.blCartService = blCartService;
+    }
 
-	/**
-	 * @return the baseStoreService
-	 */
-	public BaseStoreService getBaseStoreService()
-	{
-		return baseStoreService;
-	}
+    /**
+     * @return the baseStoreService
+     */
+    public BaseStoreService getBaseStoreService() {
+        return baseStoreService;
+    }
 
-	/**
-	 * @param baseStoreService the baseStoreService to set
-	 */
-	public void setBaseStoreService(BaseStoreService baseStoreService)
-	{
-		this.baseStoreService = baseStoreService;
-	}
+    /**
+     * @param baseStoreService the baseStoreService to set
+     */
+    public void setBaseStoreService(BaseStoreService baseStoreService) {
+        this.baseStoreService = baseStoreService;
+    }
 }

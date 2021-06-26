@@ -84,11 +84,13 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 			return modification;
 		}
 
-		//Added conditon for used gear product
+	   // Stock quantity for this cartEntry
+		final long cartEntryLevel = cartEntryModel.getQuantity().longValue();
+
+		//Added condition for used gear product
+		
 		if (BooleanUtils.isFalse(cartModel.getIsRentalCart()))
 		{
-			final long cartEntryLevel = cartEntryModel.getQuantity().longValue();
-
 			return returnSuccessModification(cartEntryModel, cartEntryLevel);
 		}
 
@@ -107,9 +109,7 @@ public class DefaultBlCartValidationStrategy extends DefaultCartValidationStrate
 			modification.setEntry(cartEntryModel);
 			return modification;
 		}
-		// Stock quantity for this cartEntry
-		final long cartEntryLevel = cartEntryModel.getQuantity().longValue();
-
+		
 		return returnSuccessModification(cartEntryModel, cartEntryLevel);
 
 	}

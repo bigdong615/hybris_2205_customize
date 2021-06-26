@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.core.order.hook.impl;
 
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
@@ -40,7 +37,6 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 
 		for (final AbstractOrderEntryModel entry : order.getEntries())
 		{
-
 			if (entry.getProduct() instanceof BlSerialProductModel)
 			{
 				final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();

@@ -66,8 +66,8 @@ public interface BlCartService extends CartService {
 			final RentalDateDto rentalDatesFromSession);
 	
 
-	/** Change usedGear serial product status when cart session Timeout
-	 *
+	/** 
+	 * Change usedGear serial product status when cart session Timeout
 	 * @param cartModel
 	 */
 	void setUsedGearSerialProductStatus(final CartModel cartModel);
