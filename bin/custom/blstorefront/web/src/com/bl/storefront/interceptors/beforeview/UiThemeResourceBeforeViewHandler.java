@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -49,12 +52,14 @@ public class UiThemeResourceBeforeViewHandler implements BeforeViewHandler
 
 	@Resource(name = "uiExperienceService")
 	private UiExperienceService uiExperienceService;
+	
+	private BaseStoreService baseStoreService;
 
 	@Override
 	public void beforeView(final HttpServletRequest request, final HttpServletResponse response, final ModelAndView modelAndView)
 	{
 		final CMSSiteModel currentSite = cmsSiteService.getCurrentSite();
-
+		final BaseStoreModel baseStore = getBaseStoreService().getCurrentBaseStore();
 		final String siteName = currentSite.getUid();
 		final String themeName = uiThemeUtils.getThemeNameForCurrentSite();
 		final String uiExperienceCode = uiExperienceService.getUiExperienceLevel().getCode();
@@ -69,7 +74,11 @@ public class UiThemeResourceBeforeViewHandler implements BeforeViewHandler
 		final String commonResourcePath = siteRootUrl + "/" + COMMON;
 		final String encodedContextPath = request.getContextPath();
 		final LanguageModel currentLanguage = commerceCommonI18NService.getCurrentLanguage();
+		//Added attribute for used gear timer functionality
+		final String usedGearTimer = baseStore.getUsedGearCartTimer() != null ? baseStore.getUsedGearCartTimer()
+				: StringUtils.EMPTY;
 
+		modelAndView.addObject("usedGearTimer", usedGearTimer);
 		modelAndView.addObject("contextPath", contextPath);
 		modelAndView.addObject("sharedResourcePath", sharedResourcePath);
 		modelAndView.addObject("siteResourcePath", siteResourcePath);
@@ -102,4 +111,22 @@ public class UiThemeResourceBeforeViewHandler implements BeforeViewHandler
 		modelAndView.addObject("addOnThemeCssPaths", uiThemeUtils.getAddOnThemeCSSPaths(request));
 		modelAndView.addObject("addOnJavaScriptPaths", uiThemeUtils.getAddOnJSPaths(request));
 	}
+	
+	/**
+	 * @return the baseStoreService
+	 */
+	public BaseStoreService getBaseStoreService()
+	{
+		return baseStoreService;
+	}
+
+	/**
+	 * @param baseStoreService
+	 *           the baseStoreService to set
+	 */
+	public void setBaseStoreService(final BaseStoreService baseStoreService)
+	{
+		this.baseStoreService = baseStoreService;
+	}
+
 }
