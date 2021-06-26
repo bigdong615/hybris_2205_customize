@@ -875,6 +875,23 @@
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
 
+	<!--Added for promo code case sensitivity check-->
+	<alias name="defaultBlCouponDao" alias="couponDao" />
+	<bean id="defaultBlCouponDao" class="com.bl.core.dao.coupon.impl.DefaultBlCouponDao" parent="defaultCouponDao"/>
+	
+	<!-- [BL-471]: Serial status change -->
+
+	<alias name="defaultUsedGearSerialStatusChangeHook" alias="usedGearSerialStatusChangeHook" />
+	<bean id="defaultUsedGearSerialStatusChangeHook"
+		class="com.bl.core.order.hook.impl.BlUsedGearSerialStatusChangeHook">
+		<property name="modelService" ref="modelService" />
+	</bean>
+	
+	<bean id="commerceUsedGearSerialStatusHookMergeDirective"
+		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="usedGearSerialStatusChangeHook" />
+	</bean>
+
 	<!--[Bl-652] condition and Actions-->
 	<alias alias="ruleTotalDamageWaiverConditionTranslator" name="defaultRuleTotalDamageWaiverConditionTranslator" />
 	<bean id="defaultRuleTotalDamageWaiverConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleTotalDamageWaiverConditionTranslator" />
@@ -904,5 +921,5 @@
 	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
-
 </beans>
+

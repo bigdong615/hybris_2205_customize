@@ -20,6 +20,7 @@
         <requires-extension name="ruleengineservices"/>
         <requires-extension name="ruledefinitions"/>
         <requires-extension name="promotionengineservices"/>
+        <requires-extension name="couponservices"/>
 
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		

@@ -57,6 +57,7 @@ import de.hybris.platform.core.enums.QuoteState;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
@@ -356,7 +357,14 @@ public class CartPageController extends AbstractCartPageController
 			{				
 				if (removeEntry)
 				{
-					getCartFacade().updateCartEntry(entryNumber,	form.getQuantity().longValue());
+					final CartModel cartModel = blCartService.getSessionCart();
+					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
+
+					//Added condition to change serial status when entry remove from cart
+					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()))
+					{
+						blCartService.setUsedGearSerialProductStatus(cartModel);
+					}
 				}
 				else
 				{
@@ -705,7 +713,7 @@ public class CartPageController extends AbstractCartPageController
 				}
 				else
 				{
-					voucherFacade.applyVoucher(StringUtils.upperCase(form.getVoucherCode()));
+					voucherFacade.applyVoucher(form.getVoucherCode());
 					redirectAttributes.addFlashAttribute("successMsg",
 							getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
 							{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
@@ -967,6 +975,26 @@ public class CartPageController extends AbstractCartPageController
 		}
 
 		return REDIRECT_CART_URL;
+	}
+
+	/**
+	 * Remove cart entries when UsedGear cart timer end
+	 *
+	 * @param isUsedGearTimerEnd
+	 * @return
+	 */
+	@RequestMapping(value = "/cartTimerOut", method = RequestMethod.POST, produces = "application/json")
+	public String usedGearCartSessionTimeOut(
+			@RequestParam(value = "usedGearTimerEnd", required = false, defaultValue = "true") final boolean isUsedGearTimerEnd)
+
+	{
+		final CartData cartData = getCartFacade().getSessionCart();
+		if (isUsedGearTimerEnd && BooleanUtils.isFalse(cartData.getIsRentalCart()))
+		{
+			getBlCartFacade().removeCartEntries();
+			return REDIRECT_CART_URL;
+		}
+			return StringUtils.EMPTY;
 	}
 
 	/**
