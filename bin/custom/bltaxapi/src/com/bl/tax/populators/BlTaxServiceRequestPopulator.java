@@ -22,7 +22,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -216,14 +215,12 @@ public class BlTaxServiceRequestPopulator implements Populator<AbstractOrderMode
           ? BltaxapiConstants.SHIPPING_SALES_TAX_CODE : BltaxapiConstants.RENTAL_TAX_CODE);
       taxLines.add(shippingTaxLine);
     }
-    if(CollectionUtils.isNotEmpty(abstractOrder.getAppliedCouponCodes()) || CollectionUtils.isNotEmpty(abstractOrder.getGiftCard()))
+    if(Double.compare(abstractOrder.getTotalDiscounts(), 0.0) > 0)
     {
       discountTaxLine.setQuantity(BltaxapiConstants.QTY);
       discountTaxLine.setNumber(null != shippingTaxLine.getNumber() ? shippingTaxLine.getNumber() + 1 : 1);
-      final Double giftCardAmount = null != abstractOrder.getGiftCardAmount() ?  abstractOrder.getGiftCardAmount() : 0.0;
       final Double totalDiscount = null != abstractOrder.getTotalDiscounts() ? abstractOrder.getTotalDiscounts() :0.0;
-      final Double discountAmount = giftCardAmount + totalDiscount;
-      discountTaxLine.setAmount(- discountAmount);
+      discountTaxLine.setAmount(- totalDiscount);
       discountTaxLine.setTaxCode(BltaxapiConstants.DISCOUNT_TAX_CODE);
       taxLines.add(discountTaxLine);
     }
