@@ -85,7 +85,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         if (pstCutOffTime != null) {
             barcodeList.append(" and {zdm.cutOffTime} > ?pstCutOffTime");
         }
-        final FlexibleSearchQuery query = getShipToHomeDeliveryCommanAttributes(carrier, mode, payByCustomer, barcodeList);
+        final FlexibleSearchQuery query = getShipToHomeDeliveryCommonAttributes(carrier, mode, payByCustomer, barcodeList);
         if (pstCutOffTime != null) {
             query.addQueryParameter(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME, pstCutOffTime);
         }
