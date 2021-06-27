@@ -121,15 +121,19 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
 
+            double totalDamageWaiverCost = 0.0;
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
 			final double subtotal = order.getSubtotal().doubleValue();
 			//totalDamageWaiverCost
-			final double totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
+			if(BooleanUtils.isTrue(order.getIsRentalCart()))
+			{
+			 totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 					? order.getTotalDamageWaiverCost().doubleValue()
 					: 0.0d;
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", totalDamageWaiverCost);
+			}
 			// discounts
 			final double totalDiscounts = calculateDiscountValues(order, recalculate);
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
