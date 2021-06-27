@@ -38,7 +38,7 @@
 						<div class="row mb-4 mb-md-0 order-images">
 							<c:forEach items="${savedCart.entries}" var="entry">
 								<div class="col-4 col-md-3">
-									<product:productPrimaryImage product="${entry.product}" format="product" />
+									<product:productPrimaryImage product="${entry.product}" format="thumbnail" />
 								</div>
 							</c:forEach>
 						</div>
