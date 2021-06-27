@@ -245,7 +245,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 				Optional<PromotionSourceRuleModel> freeShippingRule = freeShippingPromotion.getPromotionGroup().getPromotionSourceRules().stream().filter(sourceRule -> RuleStatus.PUBLISHED.equals(sourceRule.getStatus())).findAny();
 				final double subTotalWithDamageWaiver =	cartModel.getSubtotal() + cartModel.getTotalDamageWaiverCost();
 				final int threshold = Config.getInt("free.shipping.promotion.subtotal.with.total.damage.waiver", 150);
-					if (freeShippingRule.isPresent()  && BooleanUtils.isTrue(freeShippingPromotion.getEnabled()) && subTotalWithDamageWaiver >= threshold) {
+					if (freeShippingRule.isPresent()  && BooleanUtils.isTrue(freeShippingPromotion.getEnabled())  && RuleStatus.PUBLISHED.equals(freeShippingRule.get().getStatus()) && subTotalWithDamageWaiver >= threshold) {
 						return true;
 
 					}
