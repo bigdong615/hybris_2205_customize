@@ -34,7 +34,7 @@
 		</c:forEach>		
 		<li class="divider"></li>
 		<c:url value="/logout" var="signoutUrl" />
-		<li><a class="dropdown-item" href="${signoutUrl}"><spring:theme code="text.header.account.sign.out" /></a></li>
+		<li><a class="dropdown-item usedgear-signout" href="${signoutUrl}"><spring:theme code="text.header.account.sign.out" /></a></li>
 		</sec:authorize>		
 	</ul>
 </div>

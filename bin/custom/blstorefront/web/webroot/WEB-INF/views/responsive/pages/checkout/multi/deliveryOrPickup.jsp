@@ -20,7 +20,7 @@
         <div class="container">
             <div id="cartSteps" class="row justify-content-center">
                 <div class="col-xl-10">
-                    <span class="step1 complete"><i class="icon-check"></i> <spring:theme code="text.checkout.multi.order.rental"/></span>
+                    <span class="step1 complete"><i class="icon-check"></i><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.checkout.multi.order.rental"/></c:when><c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise></c:choose></span>
                     <span class="step2 active"><i class="number">2</i> <spring:theme code="text.checkout.multi.order.Delivery"/></span>
                     <span class="step3"><i class="number">3</i> <spring:theme code="text.checkout.multi.order.payment"/></span>
                     <span class="step4"><i class="number">4</i> <spring:theme code="text.checkout.multi.order.review"/></span>
@@ -32,11 +32,13 @@
                         <div id="order" class="col-lg-7">
                             <h1><spring:theme code="text.checkout.multi.order.Delivery"/></h1>
                             <hr>
+                            <c:if test="${cartData.isRentalCart}">
                             <p>
                                 <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
                                 <input type="text" class="form-control cart-picker" id="litepicker"
                                 placeholder="<spring:theme code="text.rental.cart.select.date"/>">
                             </p>
+                            </c:if>
                             <div class="accordion" id="shippingOptions">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fast/>
@@ -44,15 +46,17 @@
                                 <div class="accordion-item shipProduct">
                                     <checkout:faster/>
                                 </div>
+                                <c:if test="${cartData.isRentalCart}">
                                 <div class="accordion-item shipProduct">
                                     <checkout:fastest/>
                                 </div>
+                                </c:if>
                             </div><!-- End Accordion -->
                             <div id="showErrorForInputValidation">
 
                             </div>
                             <div class="cart-actions">
-                                <a href="${cart}" class="gray80"><spring:theme code="text.rental.cart.back" /></a>
+                                <a href="${cart}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                 <button type="button" class="btn btn-sm btn-primary float-end" onClick="shippingMethodContinue()">
                                     <spring:theme code="text.checkout.multi.order.delivery.continue"/>
                                 </button>

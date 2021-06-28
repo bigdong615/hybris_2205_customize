@@ -40,6 +40,7 @@
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
+	        <value code="ADDED_TO_CART" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -992,6 +993,16 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
+                     <attribute qualifier="cosmeticRating" type="float">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store cosmetic rating data</description>
+                     </attribute>
+                     <attribute qualifier="functionalRating" type="float">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store functional rating data</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
@@ -1738,6 +1749,24 @@
                       optional="true" />
                       <persistence type="property" />
                     </attribute>
+                    <attribute qualifier="isAuthorised" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the order has been authorized or not</description>
+                    </attribute>
+                    <attribute qualifier="isCaptured" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the order has been captured or not</description>
+                    </attribute>
+                    <attribute qualifier="isAuthorizationVoided" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the auth amount used to verify the card has been voided or not</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -1851,6 +1880,11 @@
                         <modifiers read="true" write="true" search="true" initial="true" />
                         <description>List of BlackOut Dates</description>
                     </attribute>
+                    <attribute qualifier="usedGearCartTimer" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>used gear session timer value </description>
+					</attribute>
                 </attributes>                
             </itemtype>
         </typegroup>

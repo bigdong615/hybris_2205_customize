@@ -14,7 +14,6 @@ import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
-import com.braintree.hybris.data.BrainTreePaymentInfoData;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -50,11 +49,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+
 @Controller
 @RequestMapping(value = "checkout/multi/summary/braintree")
 public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStepController
 {
 	private static final Logger LOG = Logger.getLogger(BrainTreeSummaryCheckoutStepController.class);
+	public static final String REDIRECT_PREFIX = "redirect:";
+	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
@@ -82,9 +84,6 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	public static final String REDIRECT_PREFIX = "redirect:";
-	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
-
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	@RequireHardLogIn
 	@Override
@@ -107,7 +106,6 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 				entry.setProduct(product);
 			}
 		}
-		BrainTreePaymentInfoData brainTreePaymentInfoData = brainTreePaymentFacade.getBrainTreePaymentInfoData();
 		model.addAttribute("cartData", cartData);
 		model.addAttribute("currentPage", BlControllerConstants.REVIEW_PAGE);
 		model.addAttribute("allItems", cartData.getEntries());
@@ -230,7 +228,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
         // handle a case where a wrong paymentProvider configurations on the store see getCommerceCheckoutService().getPaymentProvider()
         LOG.error(ae.getMessage(), ae);
       }
-      if (!isPaymentAuthorized)
+      if(isPaymentAuthorized) {
+				brainTreeCheckoutFacade.voidAuthTransaction();
+			}
+      else
       {
         GlobalMessages.addErrorMessage(model, "checkout.error.authorization.failed");
         return enterStep(model, redirectModel);
