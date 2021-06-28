@@ -67,7 +67,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
    * @param interceptorContext
    */
   private void calculateFinalSalePriceForSerialProducts(final BlProductModel blProductModel,final Collection<BlSerialProductModel> serialProducts,final InterceptorContext interceptorContext) {
-    BigDecimal forSaleBasePrice = blProductModel.getForSaleBasePrice();
+    final BigDecimal forSaleBasePrice = blProductModel.getForSaleBasePrice();
     serialProducts.forEach(serialProduct-> {
        if(null != forSaleBasePrice && forSaleBasePrice.compareTo(BigDecimal.ZERO) > 0  && null != serialProduct.getConditionRatingOverallScore() && serialProduct.getConditionRatingOverallScore() > 0.0D) {
           serialProduct.setFinalSalePrice(getBlPricingService()
