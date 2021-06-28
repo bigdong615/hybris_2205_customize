@@ -150,7 +150,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		}
 		catch (final CommerceSaveCartException e)
 		{
-			LOG.warn("Attempted to load a saved cart that does not exist or is not visible", e);
+			BlLogger.logMessage(LOG , Level.ERROR , "Attempted to load a saved cart that does not exist or is not visible", e);
 			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "system.error.page.not.found", null);
 			return REDIRECT_TO_SAVED_CARTS_PAGE;
 		}
@@ -206,7 +206,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		}
 		catch (final CommerceSaveCartException e)
 		{
-			LOG.warn("Attempted to load a saved cart that does not exist or is not visible", e);
+			BlLogger.logMessage(LOG , Level.ERROR , "Attempted to load a saved cart that does not exist or is not visible", e);
 			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "system.error.page.not.found", null);
 			return REDIRECT_TO_SAVED_CARTS_PAGE + "/" + cartCode;
 		}
