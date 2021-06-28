@@ -1,6 +1,5 @@
 package com.bl.core.product.dao.impl;
 
-import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.catalog.enums.ArticleApprovalStatus;
 import de.hybris.platform.catalog.model.CatalogModel;
@@ -9,12 +8,10 @@ import de.hybris.platform.product.daos.impl.DefaultProductDao;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.SearchResult;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import java.util.stream.Collectors;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
@@ -47,13 +44,13 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
           " as cv} WHERE {cv:VERSION} = ?version AND {cv:catalog} in ({{SELECT {c:pk} FROM {"
           + CatalogModel._TYPECODE +
           " as c} WHERE {c:id} = ?catalog}})}})";
+
   private static final String GET_BLSERIALPRODUCTS_FOR_CODES_QUERY =
-      "SELECT {" + BlSerialProductModel.PK + "} from {"
+      "SELECT {pk} from {"
           + BlSerialProductModel._TYPECODE
           + " as p} WHERE {p:code} IN (?codes)"
           + " AND {p:approvalStatus} IN ({{SELECT {aas:PK} FROM {" + ArticleApprovalStatus._TYPECODE
-          +
-          " as aas} WHERE {aas:CODE} = (?approved)}}) "
+          + " as aas} WHERE {aas:CODE} = (?approved)}}) "
           + " AND {p:catalogVersion} IN ({{SELECT {cv:PK} FROM {" + CatalogVersionModel._TYPECODE +
           " as cv} WHERE {cv:VERSION} = ?version AND {cv:catalog} in ({{SELECT {c:pk} FROM {"
           + CatalogModel._TYPECODE +
@@ -87,28 +84,28 @@ public class DefaultBlProductDao extends DefaultProductDao implements BlProductD
   }
 
   /**
-   * It fetches all the serial products for given set of codes, need to pass single code as set, so
-   * it will work for single code also,
-   *
-   * @param serialProductCodes the product codes.
-   * @return Collection<BlSerialProductModel> the list of serial products
+   * {@inheritDoc}
    */
   @Override
   public Collection<BlSerialProductModel> getBlSerialProductsForCodes(
-      Set<String> serialProductCodes) {
+      final Set<String> serialProductCodes) {
+
     final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(
         GET_BLSERIALPRODUCTS_FOR_CODES_QUERY);
-    fQuery.addQueryParameter("codes", serialProductCodes);
+    fQuery.addQueryParameter(BlCoreConstants.CODES, serialProductCodes);
     fQuery.addQueryParameter(BlCoreConstants.APPROVED, ArticleApprovalStatus.APPROVED.getCode());
     fQuery.addQueryParameter(BlCoreConstants.PRODUCT_CATALOG, BlCoreConstants.CATALOG_VALUE);
-    fQuery.addQueryParameter(BlCoreConstants.VERSION, "Online");
-    final SearchResult result = getFlexibleSearchService().search(fQuery);
+    fQuery.addQueryParameter(BlCoreConstants.VERSION, BlCoreConstants.ONLINE);
+
+    final SearchResult<BlSerialProductModel> result = getFlexibleSearchService().search(fQuery);
     final List<BlSerialProductModel> serialProducts = result.getResult();
+
     if (CollectionUtils.isEmpty(serialProducts)) {
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No serial products found for codes: {}",
           serialProductCodes);
       return Collections.emptyList();
     }
+
     return serialProducts;
   }
 }

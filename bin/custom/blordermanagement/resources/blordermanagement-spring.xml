@@ -96,10 +96,9 @@
     <!-- Sourcing and allocation -->
     <alias name="defaultBlSourcingService" alias="blSourcingService" />
     <bean id="defaultBlSourcingService" class="com.bl.Ordermanagement.services.impl.DefaultBlSourcingService">
-        <property name="sourcingFilterProcessor" ref="sourcingFilterProcessor"/>
+        <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
         <property name="blSourcingStrategyService" ref="blSourcingStrategyService"/>
         <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
-        <property name="sourcingResultFactory" ref="sourcingResultFactory"/>
     </bean>
 
     <alias name="defaultBlAllocationService" alias="allocationService" />
@@ -116,17 +115,8 @@
         </property>
     </bean>
 
-    <bean id="sourcingFilterProcessor" class="de.hybris.platform.warehousing.sourcing.filter.SourcingFilterProcessor">
-        <property name="filters">
-            <list>
-                <ref bean="blDeliveryStateSourcingLocationFilter"/>
-            </list>
-        </property>
-    </bean>
-
     <bean name="blDeliveryStateSourcingLocationFilter"
-      class="com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter"
-      parent="abstractBaseSourcingLocationFilter">
+      class="com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter">
         <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
     </bean>
 
@@ -151,6 +141,9 @@
     <bean id="defaultBlAssignSerialService"
       class="com.bl.Ordermanagement.services.impl.DefaultBlAssignSerialService">
         <property name="blProductDao" ref="productDao"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
+        <property name="sessionService" ref="sessionService"/>
+        <property name="modelService" ref="modelService"/>
     </bean>
 
     <alias name="defaultBlNoSplittingStrategy" alias="blNoSplittingStrategy"/>
@@ -166,8 +159,6 @@
     <bean id="defaultBlNoRestrictionsStrategy"
       class="com.bl.Ordermanagement.strategy.impl.BlNoRestrictionsStrategy"
       parent="abstractSourcingStrategy">
-        <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
-        <property name="baseStoreService" ref="baseStoreService"/>
         <property name="modelService" ref="modelService"/>
         <property name="blAssignSerialService" ref="blAssignSerialService"/>
     </bean>

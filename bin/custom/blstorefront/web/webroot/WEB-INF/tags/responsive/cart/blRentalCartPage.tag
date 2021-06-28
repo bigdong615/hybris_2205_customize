@@ -10,6 +10,7 @@
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+
 <c:set value="cart/emptyCart" var="emptyCart" />
 <c:url value="/cart/updateDamageWaiver" var="cartUpdateDamageWaiverFormAction" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="cartDeliveryOrPickupAction" />
@@ -58,17 +59,31 @@
                                   </sec:authorize>
 
                               </div>
-                              <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
+                              <!--BL-533 changes -->
+                              <p class="mt-5 d-none body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+                             <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+                              <div class="notification notification-error">
+                                      ${fn:escapeXml(errorMsg)}
+                               </div>
+                             </c:if>
+                             <div class="notification notification-error d-none"id="errorMessages_voucher"></div>
+
                               <div id="cart-warning" class="notification notification-warning" style="display:none"><spring:theme code="text.date.range.not.available" /></div>
+                              <c:if test="${not empty giftCardCodeRemove}">
+                                  <div id="cart-warning" class="notification notification-warning">${giftCardCodeRemove}</div>
+                              </c:if>
+                              <c:if test="${isGiftCardRemoved eq 'true'}">
+                                 <div id="cart-warning" class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
+                              </c:if>
                               <%--<div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
                               <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                               <div class="order-actions my-4">
                                   <a href="#" alt="Print Order"><i class="icon-print"></i></a>
                                   <a href="#"><i class="icon-save" alt="Save Order"></i></a>
-                                  <a href="${emptyCart}" alt="Trash Order" class="clear-cart-page"><i class="icon-trash"></i></a>
+                                  <a href="#" alt="Trash Order" class="clear-cart-page" data-bs-toggle="modal" data-bs-target="#clearCartWarning"><i class="icon-trash"></i></a>
                               </div>
                           </div>
                       </div>
@@ -76,47 +91,31 @@
               </div>
           </div>
      </section>
-
-    <%-- Damage Waivers Modal --%>
-    <div class="modal fade" id="damageWaivers" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><spring:theme code="text.damage.Waiver.model.title"/></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-4">
-                    <div class="text-center col-md-3 col-lg-2">
-                        <img src="${themeResourcePath}/assets/gear-guard-plus.png">
-                    </div>
-                    <div class="col-md-9 col-lg-10">
-                        <p><b><spring:theme code="text.damage.Waiver.model.option.pro"/></b></p>
-                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.pro.description"/></p>
-                        <hr>
-                    </div>
-                </div>
-                <div class="row mb-4">
-                    <div class="text-center col-md-3 col-lg-2">
-                        <img src="${themeResourcePath}/assets/gear-guard.png">
-                    </div>
-                    <div class="col-md-9 col-lg-10">
-                        <p><b><spring:theme code="text.damage.Waiver.model.option.gear"/></b></p>
-                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.gear.description"/></p>
-                        <hr>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="text-center col-md-3 col-lg-2">
-                        <img src="${themeResourcePath}/assets/gear-guard-none.png">
-                    </div>
-                    <div class="col-md-9 col-lg-10">
-                        <p><b><spring:theme code="text.damage.Waiver.model.option"/></b></p>
-                        <p class="body14"><spring:theme code="text.damage.Waiver.model.option.description"/></p>
-                    </div>
-                </div>
-            </div>
-          </div>
-      </div>
+	<cart:damageWaiverInfo/>
+    
+  <div class="modal fade" id="clearCartWarning" tabindex="-1"
+  	aria-hidden="true">
+  	<div class="modal-dialog modal-dialog-centered modal-sm">
+  		<div class="modal-content">
+  			<div class="modal-header">
+  				<h5 class="modal-title">
+  					<spring:theme code="shipping.interception.change.date.warning.wait" />
+  				</h5>
+  				<button type="button" class="btn-close" data-bs-dismiss="modal"
+  					aria-label="Close"></button>
+  			</div>
+  			<div class="modal-body">
+  				<p class="body14">
+  					<spring:theme code="text.clear.cart.message" />
+  				</p>
+  				<a href="${emptyCart}" class="btn btn-primary btn-block my-4 clear-cart-continue"><spring:theme
+  						code="general.continue.button" /></a>
+  				<p class="text-center mb-0">
+  					<a href="#" class="lightteal" data-bs-dismiss="modal"
+  						aria-label="Close"><spring:theme
+  							code="text.button.cancel" /></a>
+  				</p>
+  			</div>
+  		</div>
+  	</div>
   </div>

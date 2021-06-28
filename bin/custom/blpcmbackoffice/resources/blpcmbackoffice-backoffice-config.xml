@@ -84,6 +84,7 @@
 							<wz:property qualifier="procurementCost"/>
 							<wz:property qualifier="retailPrice"/>
 							<wz:property qualifier="procurementSource"/>
+							<wz:property qualifier="forSaleBasePrice"/>
 							<wz:property qualifier="mpn"/>
 							<wz:property qualifier="upc"/>
 							<wz:property qualifier="manufacturerAID"/>
@@ -181,6 +182,7 @@
 					</ea:panel>
 					<ea:attribute qualifier="minOrderQuantity"/>
 					<ea:attribute qualifier="maxOrderQuantity"/>
+					<ea:attribute qualifier="forSaleBasePrice"/>
 					<ea:attribute qualifier="priceQuantity"/>
 					<ea:attribute description="hmc.text.product.pg" qualifier="Europe1PriceFactory_PPG"/>
 					<ea:attribute qualifier="unit"/>
@@ -198,6 +200,9 @@
 								<ea:value>true</ea:value>
 							</ea:editor-parameter>
 						</ea:attribute>
+					</ea:panel>
+					<ea:panel colspan="2" name="panel.europe1Discounts" rowspan="2">
+						<ea:attribute qualifier="forSaleDiscount"/>
 					</ea:panel>
 					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PDG"/>
 					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PTG"/>
@@ -305,8 +310,10 @@
 						<wz:property qualifier="upc"/>
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
+						<wz:property qualifier="conditionRatingOverallScore"/>
+						<wz:property qualifier="cosmeticRating"/>
+						<wz:property qualifier="functionalRating"/>
 						<wz:property qualifier="manufacturerAID"/>
-						<wz:property qualifier="forSaleBasePrice"/>
 						<wz:property qualifier="forSale"/>
 						<wz:property qualifier="procurementSource"/>
 					</wz:property-list>
@@ -391,7 +398,6 @@
 							qualifier="description"/>
 						<ea:attribute qualifier="condition"/>
 						<ea:attribute qualifier="notes"/>
-						<ea:attribute qualifier="forSaleNotes"/>
 						<ea:attribute qualifier="ownedBy"/>
 					</ea:panel>
 				</ea:section>
@@ -420,7 +426,6 @@
 				<ea:section name="hmc.section.product.pricesdiscounts">
 					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
 						<ea:attribute qualifier="procurementCost"/>
-						<ea:attribute qualifier="forSaleBasePrice"/>
 						<ea:attribute qualifier="incentivizedPrice"/>
 						<ea:attribute qualifier="finalSalePrice"/>
 						<ea:attribute qualifier="totalRepairSpend"/>
@@ -432,9 +437,6 @@
 					<ea:attribute qualifier="unit"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.discounts">
-					<ea:panel colspan="2" name="panel.europe1Discounts" rowspan="2">
-						<ea:attribute qualifier="forSaleDiscount"/>
-					</ea:panel>
 					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PDG"/>
 					<ea:attribute description="hmc.text.product.dg" qualifier="Europe1PriceFactory_PTG"/>
 				</ea:section>
@@ -498,6 +500,8 @@
 				<ea:section name="hmc.product.sections.customerreviews">
 					<ea:attribute qualifier="averageRating"/>
 					<ea:attribute qualifier="conditionRatingOverallScore"/>
+					<ea:attribute qualifier="cosmeticRating"/>
+					<ea:attribute qualifier="functionalRating"/>
 					<ea:attribute qualifier="numberOfReviews"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
 						qualifier="productReviews">

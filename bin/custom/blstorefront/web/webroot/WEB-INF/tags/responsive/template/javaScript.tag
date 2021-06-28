@@ -105,6 +105,7 @@
 		</c:forEach>
 		
 		<script src="${commonResourcePathHtml}/js/bootstrap.bundle.min.js"></script>
+        <script src="${commonResourcePathHtml}/js/select-script.js"></script>
 		<script src="${commonResourcePathHtml}/js/mmenu.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/mobilefriendly.js"></script>
@@ -135,7 +136,9 @@
         </c:if>
 
 		<c:if test="${cmsPage.uid eq 'homepage'}">
+
 		<script>
+		$('.social').eq(1).remove();
         document.addEventListener(
             "DOMContentLoaded", () => {
                  new Mmenu( "#my-menu", {
@@ -159,6 +162,7 @@
         } ).mount();
 
         //  BL-450 adding removing pagination and arrow dynamically on homepage
+        document.addEventListener( 'DOMContentLoaded', function () {
         new Splide( '#cat-slider', {
             perPage: 4,
              arrows :false,
@@ -176,6 +180,7 @@
             gap: 30,
             keyboard: false,
         } ).mount();
+         
             
            var cat_slider_image_qty = document.getElementById("cat-slider-list").getElementsByTagName("li").length;
            
@@ -223,8 +228,9 @@
         if(cat_slider_image_qty<=3 && screen.width<=540){
            document.querySelector("#cat-slider .splide__pagination").classList.add("d-none");
          }
-
+         }); 
  // code end here for BL-450 --end--
+        document.addEventListener( 'DOMContentLoaded', function () {
          new Splide( '#gear-slider', {
             perPage: 3,
             breakpoints: {
@@ -240,6 +246,8 @@
             padding: 10,
             keyboard: false,
         } ).mount();  
+        });
+        document.addEventListener( 'DOMContentLoaded', function () {
         document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 1,
@@ -251,6 +259,8 @@
             },
             keyboard: false,
           } ).mount());
+         }); 
+        document.addEventListener( 'DOMContentLoaded', function () {  
         document.querySelectorAll('.logo-slider').forEach(carousel => new Splide( carousel, {
             type   : 'loop',
             perPage: 3,
@@ -258,12 +268,16 @@
             //drag   : true,
             keyboard: false,
         } ).mount());
+        }); 
+        document.addEventListener( 'DOMContentLoaded', function () {
          new Splide( '#testimonials-slider', {
             perPage: 1,
             type: 'fade',
             arrows: false,
             keyboard: false,
         } ).mount(); 
+        }); 
+        document.addEventListener( 'DOMContentLoaded', function () {
         new Splide( '#blog-slider', {
             perPage: 3,
             breakpoints: {
@@ -277,6 +291,7 @@
             padding: 10,
             keyboard: false,
         } ).mount();
+        }); 
 
          // Added code to remove same name and id on search text box specific to device
          if ($(window).width() < 480 ) {
@@ -326,11 +341,16 @@
             $("#sortProducts").html($(this).text()+' <span class="caret"></span>');
           });
           // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+          //BL-678 changes added fixedheight
           document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
               type   : 'loop',
               perPage: 1,
               drag   : false,
+              fixedHeight :275,
               breakpoints: {
+                  '1025': {
+                      fixedHeight:200,
+                  },
                   '991': {
                       pagination: false,
                   },
@@ -600,6 +620,8 @@
                                                  keyboard: false,
                                              } ).mount();
                                              // Initialize Additional Gear Slider - required for Single Product Page
+                                             // BL-605 BL-682 :changes starts here
+
                                              new Splide( '#gear-slider', {
                                                  perPage: 4,
                                                  breakpoints: {
@@ -620,6 +642,27 @@
                                                  padding: 10,
                                                  keyboard: false,
                                              } ).mount();
+
+                                             let DontForgetCardQty= document.querySelectorAll("#gear-slider .card").length;
+                                             if (DontForgetCardQty!=0){
+                                             if(DontForgetCardQty<=4 && screen.width>991){
+                                                 document.querySelector("#gear-slider .splide__arrows").style.display="none";
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                              if(DontForgetCardQty<=3 && screen.width<=991 && screen.width>767){
+                                                 document.querySelector("#gear-slider .splide__arrows").style.display="none";
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                              if(DontForgetCardQty<=2 && screen.width<=767 && screen.width>640){
+                                                 document.querySelector("#gear-slider .splide__arrows").style.display="none";
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                              if(DontForgetCardQty==1 && screen.width<640){
+                                                  document.querySelector("#gear-slider .splide__pagination").style.display="none";
+                                             }
+                                             }
+                                             // BL-605: changes end here
+                                             
                                              // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
 
                                              // Initialize PRODUCT Calendar Litepicker - required for ANY page with the PRODUCT Calendar picker
@@ -629,7 +672,7 @@
                                                  numberOfMonths: 2,
                                                  numberOfColumns: 2,
                                                  autoApply: false,
-                                                 format: "MMM D, YYYY",
+                                                 format: "MMM D",
                                                  resetButton: () => {
 												 let btn = document.createElement('button');
 												 btn.innerText = 'Reset Dates';
@@ -691,7 +734,7 @@
                                                  numberOfMonths: 1,
                                                  numberOfColumns: 1,
                                                  autoApply: false,
-                                                 format: "MMM D, YYYY",
+                                                 format: "MMM D",
                                                  resetButton: () => {
                                      				 let btn = document.createElement('button');
                                      				 btn.innerText = 'Reset';
@@ -744,18 +787,27 @@
                                                     buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
                                              });
                                          // Initialize Product Thumbnail Slider for Product Cards - required for ANY page with Thumbnail slider in Product card
+                                         // BL-605 : fixedHeight added
                                                  document.querySelectorAll('.card-slider').forEach(carousel => new Splide( carousel, {
                                                      type   : 'loop',
                                                      perPage: 1,
+                                                     fixedHeight:200,
                                                      drag   : false,
                                                      breakpoints: {
+                                                         '1025': {
+                                                              fixedHeight:150,
+                                                         },
                                                          '991': {
                                                              pagination: false,
+                                                         },
+                                                         '640': {
+                                                             pagination: false,
+                                                             fixedHeight: 300,
                                                          },
                                                      },
                                                      keyboard: false,
                                                  } ).mount());
-
+                                          
                                          </script>
 
                                 		</c:if>
@@ -1201,8 +1253,7 @@
                         });
                   </script>
         		</c:if>
-				
-				<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage'}">
+				<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'Review') == false}">
         		<input type="hidden" id="isFromPaymentPage" value="true">
         			<script>
         			$(document).ready(function() {
@@ -1390,6 +1441,191 @@
                         });
                   </script>
         		</c:if>
+        		
+        		<!-- Order Confirmation Page -->
+        		<c:if test="${cmsPage.uid eq 'orderConfirmation'}">
+        			
+        			<script>
+        
+        // Mobile Menu styles - #my-menu is required for ALL pages
+        document.addEventListener(
+            "DOMContentLoaded", () => {
+                new Mmenu( "#my-menu", {
+                    extensions: ["fullscreen","position-front"],
+                    navbars		: [{
+                        position: "top",
+                        content : [ "close", "logo" ]
+                    }],          
+                } );
+            }
+        );
+        // Initialize Mega menu rollover - required for ALL pages
+        $('.menu-large').hover(
+            function(){ $('.screen').addClass('show') },
+            function(){ $('.screen').removeClass('show') }
+        );
+        
+        // Initialize Blog Slider - required for ANY page with the Blog slider
+        new Splide( '#blog-slider', {
+            perPage: 3,
+            breakpoints: {
+                '991': {
+                    perPage: 2,
+                },
+                '640': {
+                    perPage: 1,
+                },
+            },
+            rewind : true,
+            gap: 20,
+            padding: 10,
+            keyboard: false,
+        } ).mount();
+    </script>
+        		</c:if>
+    	<c:if test="${cmsPage.uid eq 'multiStepCheckoutSummaryPage' and fn:containsIgnoreCase(currentPage, 'review') == true}">
+        	<input type="hidden" id="isFromReviewPage" value="true">
+        		<script>
+        			$(document).ready(function() {			
+        				$(".reviewEdit").click(function(e) {
+							e.preventDefault();
+        					var sectionSelected = this.getAttribute("data-section");
+        					var redirectUrl = this.getAttribute("data-redirect-url");        					
+        					$("#urlToRedirect").val(redirectUrl);
+        					$("#clickedSection").val(sectionSelected);
+        				});
+        				
+                        $("#continueChanges").click(function(e) {
+                        	e.preventDefault();
+                        	if($("#clickedSection").val() == 'summaryRentalDate')
+                        	{
+                        		$('.page-loader-new-layout').show();
+                            	var rentalStartDate = $("#rentalStartDate").val();
+                            	var rentalEndDate = $("#rentalEndDate").val();
+                            	$.ajax({
+                                	url: ACC.config.encodedContextPath + '/datepicker',
+                                	data: {selectedFromDate: rentalStartDate, selectedToDate: rentalEndDate},
+                                	type: "GET",
+                                	success: function (data) {
+                                	    if(data=='success')
+                                	    window.location.href = ACC.config.encodedContextPath + '/cart';
+                                	},
+                                	error: function (xhr, textStatus, error) {
+	
+	                                }
+                            	});
+                        	}
+                        	else
+                        	{
+                        		window.location.href = $("#urlToRedirect").val();
+                        	}
+                        });
+                        
+                        $("#shippingCloseModal").click(function(e) {
+                        	resetDateValues(e);
+                        });
+                        
+                        $("#shippingCloseIconModal").click(function(e) {
+                        	resetDateValues(e);
+                        });
+                    }); 
+        			
+                    function resetDateValues(e)
+                    {
+                    	e.preventDefault();
+                    	$("#summary-litepicker").val('');
+                    	$("#rentalStartDate").val("");
+                    	$("#rentalEndDate").val("");
+                    	$("#urlToRedirect").val("");
+                    	$("#clickedSection").val("");
+                    	$('#editWarning').modal('hide');
+                    }
+                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                 // BL-520 - disable previous dates
+                    let date = new Date();
+                    let dd = String(date.getDate() - 1).padStart(2, '0');
+                    let mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+                    let yyyy = date.getFullYear();
+                    let today = mm + '/' + dd + '/' + yyyy;
+
+                 // BL-520 - disable dates after one year from today's date
+                    let oneYearFromNow = new Date();
+                    let disableDatesOneYearFomNow = oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                    const disallowedDates = [['2001-01-01', today]];
+                        
+                 // Initialize Calendar Litepicker - required for ANY page with the Calendar picker
+                    const summarypicker = new Litepicker({
+                        element: document.getElementById('summary-litepicker'),
+                        plugins: ['mobilefriendly'],
+                        singleMode: false,
+                        numberOfMonths: 2,
+                        numberOfColumns: 2,
+                        autoApply: false,
+                        format: "MMM D, YYYY",
+                        resetButton: () => {
+							let btn = document.createElement('button');
+							btn.innerText = 'Reset Dates';
+							btn.className = 'reset-button';
+							btn.addEventListener('click', (evt) => {
+								evt.preventDefault();
+								$.ajax({
+									url: ACC.config.encodedContextPath + '/resetDatepicker',
+									type: "GET",
+									success: function (data) {
+										if(data=='success')
+										window.location.reload();
+									},
+									error: function (xhr, textStatus, error) {
+	
+									}
+								});
+							});
+							return btn;
+						},
+                        setup: (picker) => {
+                      		picker.on('button:apply', (date1, date2) => {
+							 //	var isFromSummaryPage = $("#isFromSummaryPage").val();
+								if($("#isFromReviewPage").val() === 'true')
+								{
+									$("#rentalStartDate").val(date1.toDateString());
+									$("#rentalEndDate").val(date2.toDateString());
+									$("#clickedSection").val('summaryRentalDate');
+									$('#editWarning').modal('show');
+								}
+								else
+								{
+									$.ajax({
+										url: ACC.config.encodedContextPath + '/datepicker',
+										data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
+										type: "GET",
+										success: function (data) {
+											if(data=='success')
+											window.location.reload();
+										},
+										error: function (xhr, textStatus, error) {
+	
+										}
+									});
+								}
+							});
+                      	},
+                      //BL-520 - disable weekends in the calendar
+                        lockDaysFilter: (day) => {
+                            const d = day.getDay();
+                            return [6, 0].includes(d);
+                        },
+                        lockDays: disallowedDates,
+                      //Limit days selection to 90 days
+                        maxDays: 90,
+                      //Disable dates after one year from today
+                        maxDate: disableDatesOneYearFomNow,
+                      //Set Sunday to be the first day in the calendar's header
+                        firstDay: 0,
+                      //Change the defaul button values
+                        buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                    });
+                </script>
+		</c:if>
 	</c:otherwise>
 </c:choose>
 

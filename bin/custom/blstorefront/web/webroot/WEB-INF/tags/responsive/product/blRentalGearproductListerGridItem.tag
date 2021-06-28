@@ -31,7 +31,14 @@
 			</c:when>
 			<c:otherwise>
 				<c:if test="${product.productTagValues ne null}">
-					<span class="badge badge-limited-stock">${product.productTagValues}</span>
+				<c:choose>
+				<c:when test="${fn:containsIgnoreCase(product.productTagValues, 'New') || fn:containsIgnoreCase(product.productTagValues, 'Staff Pick') ||  fn:containsIgnoreCase(product.productTagValues, 'Great Value')}">
+					<span class="badge badge-new">${product.productTagValues}</span>
+				</c:when>
+				<c:otherwise>
+				  <span class="badge badge-limited-stock">${product.productTagValues}</span>
+				</c:otherwise>
+				</c:choose>
 				</c:if>
 			</c:otherwise>
 		</c:choose>
@@ -65,7 +72,7 @@
  <p class="overline">${product.manufacturer}</p>
  <h6 class="product">
           <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-           <a href="${rentUrl}"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
+           <a href="${rentUrl}" role="button"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
   </h6>
 		<ycommerce:testId code="product_wholeProduct">
 
@@ -106,7 +113,7 @@
 		<c:set var="addToCartText" value="${addToCartText}" scope="request"/>
 		<c:set var="addToCartUrl" value="${addToCartUrl}" scope="request"/>
 		<c:set var="isGrid" value="true" scope="request"/>
-		<div class="addtocart">
+		<div class="addtocart btnwidth">
 			<div class="actions-container-for-${fn:escapeXml(component.uid)} <c:if test="${ycommerce:checkIfPickupEnabledForStore() and product.availableForPickup}"> pickup-in-store-available</c:if>">
 				<action:actions element="div" parentComponent="${component}"/>
 			</div>

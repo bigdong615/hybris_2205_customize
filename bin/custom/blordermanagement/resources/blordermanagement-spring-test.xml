@@ -45,7 +45,7 @@
         <property name="baseStoreService" ref="baseStoreService"/>
         <property name="newestWorkflowService" ref="newestWorkflowService"/>
         <property name="workflowTemplateService" ref="workflowTemplateService"/>
-        <property name="sourceOrderAction" ref="sourceOrderAction"/>
+        <property name="sourceOrderAction" ref="blSourceOrderAction"/>
         <property name="checkOrderAction" ref="checkOrderAction"/>
         <property name="commerceStockService" ref="commerceStockService"/>
         <property name="baseStores" ref="baseStores"/>

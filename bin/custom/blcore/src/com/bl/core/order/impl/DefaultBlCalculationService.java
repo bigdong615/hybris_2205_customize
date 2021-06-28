@@ -120,21 +120,26 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	{
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
-			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+
+            double totalDamageWaiverCost = 0.0;
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
 			final double subtotal = order.getSubtotal().doubleValue();
 			//totalDamageWaiverCost
-			final double totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
+			if(BooleanUtils.isTrue(order.getIsRentalCart()))
+			{
+			 totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 					? order.getTotalDamageWaiverCost().doubleValue()
 					: 0.0d;
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", totalDamageWaiverCost);
+			}
 			// discounts
 			final double totalDiscounts = calculateDiscountValues(order, recalculate);
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 			// set total
+			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
 					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);

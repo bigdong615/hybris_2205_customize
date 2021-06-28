@@ -6,7 +6,7 @@ import de.hybris.platform.warehousing.sourcing.SourcingService;
 
 /**
  * This is used to source the order.
- * @author Moumita
+ * @author Sunil
  */
 public interface BlSourcingService extends SourcingService {
   /**
@@ -16,5 +16,5 @@ public interface BlSourcingService extends SourcingService {
    *
    * @return SourcingResults The SourcingResults
    */
-  public SourcingResults sourceOrder(AbstractOrderModel order);
+  public SourcingResults sourceOrder(final AbstractOrderModel order);
 }

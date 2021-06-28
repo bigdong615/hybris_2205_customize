@@ -5,7 +5,6 @@ import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -245,16 +244,17 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKUs
 	 */
 	@Override
-	public Collection<StockLevelModel> getStockForProductCodesAndDate(Set<String> productCodes,
-			WarehouseModel warehouse, Date startDate, Date endDate) {
+	public Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes,
+			final WarehouseModel warehouse, final Date startDate, final Date endDate) {
 		return getBlStockLevelDao().findStockLevelsForProductCodesAndDate(productCodes, warehouse, startDate, endDate);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Map<String, List<StockLevelModel>> groupByProductsAvailability(
+	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
 			final Collection<StockLevelModel> stockLevels) {
+		
 		Map<String, List<StockLevelModel>> stockLevelsProductWise = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(stockLevels)) {
 			stockLevelsProductWise = stockLevels.stream()

@@ -138,9 +138,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final int DIVIDE_BY_HUNDRED = 100;
 
-	public static final int CONDITION_RATING_FOUR = 4;
-	public static final int CONDITION_RATING_THREE = 3;
-	public static final int CONDITION_RATING_TWO = 2;
+	public static final int CONDITION_RATING_HIGH = 9;
+	public static final int CONDITION_RATING_MEDIUM = 8;
+	public static final int CONDITION_RATING_LOW = 7;
 
 	public static final String PRICE_ASC = "price-asc";
 	public static final String PRICE_DESC = "price-desc";
@@ -156,6 +156,13 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BL_IMAGE = "blimage";
 	public static final String MEDIA_FORMAT = "300Wx300H";
 
+	public static final String ISO_CODE_SHORT ="isoCodeShort";
+	public static final String CODES ="codes";
+	public static final String ONLINE ="Online";
+	public static final String SERIAL_PRODUCT_CODES ="serialProductCodes";
+	public static final String PRODUCT_CODES ="productCodes";
+	public static final String CONSIGNMENT_PROCESS_PREFIX ="cons";
+
 	public static final String LENSES ="lenses";
 	public static final String CAMERAS ="cameras";
 	public static final String PRODUCTION ="production";
@@ -167,9 +174,22 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
-	
+
 	public static final String RUSH_SAN_CARLOS = "SAME_DAY_DELIVERY";
 	public static final String RUSH_NYC_NEXT_DAY = "NEXT_DAY_RUSH_DELIVERY";
+
+	public static final String IS_AUTHORISED = "isAuthorized";
+	public static final String COUPON_ID = "couponId";
+
+	//Promotion Condition Translator
+	public static final String RENTAL_ARRIVAL_DATE = "rentalArrivalDate";
+	public static final String OPERATOR = "operator";
+	public static final String IS_RENTAL_CART = "rentalCart";
+	public static final String RENTAL_VALUE = "value";
+	public static final String RENTAL_DURATION = "rentalDuration";
+	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
+	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
+	public static final String FREE_RENTAL_DATES = "freeRentalDates";
 
 	private BlCoreConstants()
 	{

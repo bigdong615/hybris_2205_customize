@@ -5,13 +5,15 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 import de.hybris.platform.warehousing.sourcing.context.populator.SourcingLocationPopulator;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Required;
 
+/**
+ * Sourcing Location Service to create the sourcing location from warehouse.
+ *
+ * @author Sunil
+ */
 public class DefaultBlSourcingLocationService implements BlSourcingLocationService {
 
   private Set<SourcingLocationPopulator> sourcingLocationPopulators;
@@ -20,20 +22,22 @@ public class DefaultBlSourcingLocationService implements BlSourcingLocationServi
    * {@inheritDoc}
    */
   @Override
-  public SourcingLocation createSourcingLocation(SourcingContext context, WarehouseModel location) {
-    SourcingLocation sourcingLocation = new SourcingLocation();
+  public SourcingLocation createSourcingLocation(final SourcingContext context, final WarehouseModel location) {
+
+    final SourcingLocation sourcingLocation = new SourcingLocation();
     sourcingLocation.setWarehouse(location);
     sourcingLocation.setContext(context);
-    this.getSourcingLocationPopulators().forEach((populator) -> {
-      populator.populate(location, sourcingLocation);
-    });
+    this.getSourcingLocationPopulators().forEach(populator ->
+      populator.populate(location, sourcingLocation)
+    );
 
-    Set<SourcingLocation> sourcingLocations = (Set) context.getSourcingLocations();
+    final Set<SourcingLocation> sourcingLocations = (Set) context.getSourcingLocations();
+
     if (CollectionUtils.isNotEmpty(sourcingLocations)) {
       sourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(sourcingLocations);
     } else {
-      Set<SourcingLocation> newSourcingLocations =  new HashSet<SourcingLocation>();
+      final Set<SourcingLocation> newSourcingLocations = new HashSet<>();
       newSourcingLocations.add(sourcingLocation);
       context.setSourcingLocations(newSourcingLocations);
     }
@@ -45,8 +49,7 @@ public class DefaultBlSourcingLocationService implements BlSourcingLocationServi
     return this.sourcingLocationPopulators;
   }
 
-  @Required
-  public void setSourcingLocationPopulators(Set<SourcingLocationPopulator> populators) {
+  public void setSourcingLocationPopulators(final Set<SourcingLocationPopulator> populators) {
     this.sourcingLocationPopulators = populators;
   }
 }

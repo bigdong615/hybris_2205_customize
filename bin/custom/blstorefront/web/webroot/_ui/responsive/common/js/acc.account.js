@@ -8,11 +8,13 @@ ACC.account = {
 		/* This function is responsible for providing form object for the login popup*/
 		$(document).on("click", ".js-login-popup", function (e) {
 			e.preventDefault();
+			var serialClick = $(this).data('click');
 			$('#signIn').html("");
 			$.ajax({
 				url: $(this).data("link"),
 				success: function (result) {
 					$('#signIn').html(result);
+					$('#serialClick').val(serialClick);
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
@@ -29,11 +31,6 @@ ACC.account = {
 					setTimeout(function(){$("#signUp").modal('show');},500)
 				}
 			})
-		});
-
-		$(document).on("click", ".js-forgot-password", function (e) {
-			e.preventDefault();
-					setTimeout(function(){$("#forgotPass").modal('show');},500)
 		});
 
 		/** Added for BL-31 to make validation for registration **/
@@ -144,9 +141,17 @@ ACC.account = {
 					 // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
-							$("#errorMessages_login").html("Your Email or password was incorrect");
+							$("#errorMessages_login").html("Your Email or Password was incorrect");
 						} else {
-							location.reload();
+							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+							if(serialId == "" || serialId  == undefined)
+							{
+								location.reload();
+							}else{
+								$('.' + serialId).click();
+							}	
+							
+							
 						}
 					},
 					error: function (e) {
@@ -155,7 +160,7 @@ ACC.account = {
 				});
 			} else {
 				$("#errorMessages_login").removeClass("d-none");
-				$("#errorMessages_login").html("Your Email or password was incorrect");
+				$("#errorMessages_login").html("Your Email or Password was incorrect");
 			}
 		});
 

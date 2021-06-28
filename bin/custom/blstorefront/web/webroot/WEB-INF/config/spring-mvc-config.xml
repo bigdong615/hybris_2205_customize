@@ -92,7 +92,9 @@
 	<util:list id="defaultBeforeViewHandlersList"  >
 	<!-- The CmsPageBeforeViewHandler could change the target view, so it should be run first. -->
 		<bean class="com.bl.storefront.interceptors.beforeview.CmsPageBeforeViewHandler" />
-		<bean class="com.bl.storefront.interceptors.beforeview.UiThemeResourceBeforeViewHandler" />
+		<bean class="com.bl.storefront.interceptors.beforeview.UiThemeResourceBeforeViewHandler" >
+		      <property name="baseStoreService" ref="baseStoreService"/>
+		</bean>
 		<bean class="com.bl.storefront.interceptors.beforeview.SeoRobotsFollowBeforeViewHandler" >
 			<property name="robotIndexForJSONMapping">
 				<map>
@@ -366,6 +368,6 @@
 
 	<!--BL-542 Shipping-->
 	<alias name="blAddressDataUtil" alias="addressDataUtil"/>
-	<bean id="blAddressDataUtil" class="com.bl.storefront.util.BlAddressDataUtil"/>
+	<bean id="blAddressDataUtil" class="com.bl.storefront.util.BlAddressDataUtil" parent="defaultAddressDataUtil"/>
 
 </beans>

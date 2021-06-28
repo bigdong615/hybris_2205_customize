@@ -709,6 +709,12 @@
                                 <p class="body14"><span class="gray60">Holiday</span> <a href="#">remove</a><span class="float-end">2 days free</span></p>
                             </div>--%>
                                 <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+                                <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+                                                              <div class="notification notification-error">
+                                                                      ${fn:escapeXml(errorMsg)}
+                                                               </div>
+                                                             </c:if>
+                                                             <div class="notification notification-error d-none"id="errorMessages_voucher" />
                             <div class="order-actions my-4"><a href="#" alt="Print Order"><i class="icon-print"></i></a><a href="#"><i class="icon-save" alt="Save Order"></i></a><a href="#" class="disabled" alt="Trash Order"><i class="icon-trash"></i></a></div>
                         </div>
                     </div>

@@ -1,9 +1,13 @@
 package com.bl.Ordermanagement.services.impl;
 
+import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.stock.BlStockLevelDao;
+import com.bl.logging.BlLogger;
+import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.base.Strings;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
@@ -14,7 +18,6 @@ import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import de.hybris.platform.warehousing.allocation.impl.DefaultAllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
-import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,92 +26,152 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
+/**
+ * It is used to allocate the order in consignments.
+ *
+ * @author Sunil
+ */
 public class DefaultBlAllocationService extends DefaultAllocationService implements
     BlAllocationService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBlAllocationService.class);
+  private static final Logger LOG = Logger.getLogger(DefaultBlAllocationService.class);
   private BlStockLevelDao blStockLevelDao;
 
-
+  /**
+   * Create consignment.
+   *
+   * @param order  -  the order
+   * @param code   -  the consignment code
+   * @param result -  the SourcingResults
+   * @return ConsignmentModel
+   */
   @Override
-  public ConsignmentModel createConsignment(AbstractOrderModel order, String code, SourcingResult result) {
-    ServicesUtil.validateParameterNotNullStandardMessage("result", result);
-    ServicesUtil.validateParameterNotNullStandardMessage("order", order);
-    Assert.isTrue(!Strings.isNullOrEmpty(code), "Parameter code cannot be null or empty");
-    LOGGER.debug("Creating consignment for Location: '{}'", result.getWarehouse().getCode());
-    ConsignmentModel consignment = (ConsignmentModel)this.getModelService().create(ConsignmentModel.class);
-    consignment.setCode(code);
-    consignment.setOrder(order);
+  public ConsignmentModel createConsignment(final AbstractOrderModel order, final String code,
+      final SourcingResult result) {
+
+    if (MapUtils.isEmpty(result.getAllocation()) || MapUtils
+        .isEmpty(result.getSerialProductMap())) {
+      throw new BlSourcingException("Error while allocating the order.");
+    }
 
     try {
-      consignment.setFulfillmentSystemConfig(this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
-      Set<Entry<AbstractOrderEntryModel, Long>> resultEntries = result.getAllocation().entrySet();
-      Optional<PointOfServiceModel> pickupPos = resultEntries.stream().map((entry) -> {
-        return ((AbstractOrderEntryModel)entry.getKey()).getDeliveryPointOfService();
-      }).filter(Objects::nonNull).findFirst();
-      if (pickupPos.isPresent()) {
-        consignment.setStatus(ConsignmentStatus.READY);
-        consignment.setDeliveryMode(this.getDeliveryModeService().getDeliveryModeForCode("pickup"));
-        consignment.setShippingAddress(((PointOfServiceModel)pickupPos.get()).getAddress());
-        consignment.setDeliveryPointOfService((PointOfServiceModel)pickupPos.get());
-      } else {
-        consignment.setStatus(ConsignmentStatus.READY);
-        consignment.setDeliveryMode(order.getDeliveryMode());
-        consignment.setShippingAddress(order.getDeliveryAddress());
-        consignment.setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
-      }
 
-      Set<ConsignmentEntryModel> entries = (Set)resultEntries.stream().map((mapEntry) -> {
-        return this.createConsignmentEntry((AbstractOrderEntryModel)mapEntry.getKey(), (Long)mapEntry.getValue(), consignment, result);
-      }).collect(Collectors.toSet());
+      ServicesUtil.validateParameterNotNullStandardMessage("result", result);
+      ServicesUtil.validateParameterNotNullStandardMessage("order", order);
+      Assert.isTrue(!Strings.isNullOrEmpty(code), "Parameter code cannot be null or empty");
+
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Creating consignment for Location: '{}'",
+          result.getWarehouse().getCode());
+      final ConsignmentModel consignment = (ConsignmentModel) this.getModelService()
+          .create(ConsignmentModel.class);
+      consignment.setCode(code);
+      consignment.setOrder(order);
+      consignment.setStatus(ConsignmentStatus.READY);
+      consignment.setDeliveryMode(order.getDeliveryMode());
+      consignment.setShippingAddress(order.getDeliveryAddress());
+      consignment
+          .setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
+
+      consignment.setFulfillmentSystemConfig(
+          this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
+      final Set<Entry<AbstractOrderEntryModel, Long>> resultEntries = result.getAllocation()
+          .entrySet();
+//      Optional<PointOfServiceModel> pickupPos = resultEntries.stream().map(entry ->
+//          ((AbstractOrderEntryModel) entry.getKey()).getDeliveryPointOfService()
+//      ).filter(Objects::nonNull).findFirst();
+
+//      if (pickupPos.isPresent()) {
+//        consignment.setStatus(ConsignmentStatus.READY);
+//        consignment.setDeliveryMode(this.getDeliveryModeService().getDeliveryModeForCode("pickup"));
+//        consignment.setShippingAddress(((PointOfServiceModel) pickupPos.get()).getAddress());
+//        consignment.setDeliveryPointOfService(pickupPos.get());
+//      }
+
+      final Set<ConsignmentEntryModel> entries = resultEntries.stream().map(mapEntry ->
+          this.createConsignmentEntry(mapEntry.getKey(), mapEntry.getValue(), consignment, result)
+      ).collect(Collectors.toSet());
       consignment.setConsignmentEntries(entries);
       consignment.setWarehouse(result.getWarehouse());
       if (consignment.getFulfillmentSystemConfig() == null) {
         this.getWarehousingConsignmentWorkflowService().startConsignmentWorkflow(consignment);
       }
 
-      if (!consignment.getWarehouse().isExternal()) {
-        this.getInventoryEventService().createAllocationEvents(consignment);
+//      if (!consignment.getWarehouse().isExternal()) {
+//        this.getInventoryEventService().createAllocationEvents(consignment);
+//      }
+
+      final List<String> allocatedProductCodes = new ArrayList<>();
+      for (Set<String> aSet : result.getSerialProductMap().values()) {
+        allocatedProductCodes.addAll(aSet);
       }
-    } catch (AmbiguousIdentifierException var8) {
-      consignment.setStatus(ConsignmentStatus.CANCELLED);
-      LOGGER.warn("Cancelling consignment with code " + consignment.getCode() + " since only one fulfillment system configuration is allowed per consignment.");
+      final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
+          new HashSet<>(allocatedProductCodes));
+
+      if ((!serialStocks.isEmpty()) && serialStocks.stream()
+          .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+
+        this.getModelService().save(consignment);
+        serialStocks.forEach(stock -> stock.setReservedStatus(true));
+        this.getModelService().saveAll(serialStocks);
+
+        return consignment;
+
+      } else {
+
+        order.setStatus(OrderStatus.SUSPENDED);
+        order.setConsignments(null);
+        order.getEntries().stream().forEach(entry -> entry.setConsignmentEntries(null));
+        getModelService().save(order);
+        BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+            "At the time of consignment creation, the availability of the allocated serial products not found.");
+
+        throw new BlSourcingException("Error while allocating the order.");
+      }
+
+    } catch (final Exception ex) {
+      throw new BlSourcingException("Error while allocating the order.", ex);
     }
-    List<String> assignedSerialProducts = new ArrayList<>();
-        for(Set<String> aSet : result.getSerialProductMap().values()) {
-          assignedSerialProducts.addAll(aSet);
-        }
-    Collection<StockLevelModel> serialStocks = reserveSerialsAndSave(order, new HashSet<>(assignedSerialProducts));
-    serialStocks.forEach(stock -> {
-      stock.setReservedStatus(true);
-    });
-    if ((!serialStocks.isEmpty()) && serialStocks.stream().allMatch(stock -> assignedSerialProducts.contains(stock.getSerialProductCode()))) {
-      this.getModelService().saveAll(serialStocks);
-    }
-    this.getModelService().save(consignment);
-    return consignment;
+
+
   }
 
-  private Collection<StockLevelModel> reserveSerialsAndSave(AbstractOrderModel order, Set<String> serialProductCodes) {
-    return blStockLevelDao.findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getRentalStartDate(), order.getRentalEndDate());
+  private Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
+      final Set<String> serialProductCodes) {
+
+    return blStockLevelDao
+        .findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getActualRentalStartDate(),
+            order.getActualRentalEndDate());
   }
 
-  protected ConsignmentEntryModel createConsignmentEntry(AbstractOrderEntryModel orderEntry, Long quantity, ConsignmentModel consignment, SourcingResult result) {
-    LOGGER.debug("ConsignmentEntry :: Product [{}]: \tQuantity: '{}'", orderEntry.getProduct().getCode(), quantity);
-    ConsignmentEntryModel entry = (ConsignmentEntryModel)this.getModelService().create(ConsignmentEntryModel.class);
+  /**
+   * Create consignment entry.
+   * @param orderEntry
+   * @param quantity
+   * @param consignment
+   * @param result
+   * @return consignment entry
+   */
+  protected ConsignmentEntryModel createConsignmentEntry(final AbstractOrderEntryModel orderEntry,
+      Long quantity, final ConsignmentModel consignment, final SourcingResult result) {
+
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+        "ConsignmentEntry :: Product [{}]: \tQuantity: '{}'",
+        orderEntry.getProduct().getCode(), quantity);
+    final ConsignmentEntryModel entry = (ConsignmentEntryModel) this.getModelService()
+        .create(ConsignmentEntryModel.class);
     entry.setOrderEntry(orderEntry);
     entry.setQuantity(quantity);
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
-    entry.setSerialProductCodes(result.getSerialProductMap().get(orderEntry.getEntryNumber()));   //setting serial products from result
-    Set<ConsignmentEntryModel> consignmentEntries = new HashSet();
+    entry.setSerialProductCodes(result.getSerialProductMap()
+        .get(orderEntry.getEntryNumber()));   //setting serial products from result
+    final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
       orderEntry.getConsignmentEntries().forEach(consignmentEntries::add);
     }
@@ -122,7 +185,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     return blStockLevelDao;
   }
 
-  public void setBlStockLevelDao(BlStockLevelDao blStockLevelDao) {
+  public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao) {
     this.blStockLevelDao = blStockLevelDao;
   }
 

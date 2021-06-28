@@ -30,6 +30,6 @@ public interface BlProductDao extends ProductDao {
    * @return Collection<BlSerialProductModel> the list of sku products
    */
   public Collection<BlSerialProductModel> getBlSerialProductsForCodes(
-      Set<String> serialProductCodes);
+      final Set<String> serialProductCodes);
 
 }

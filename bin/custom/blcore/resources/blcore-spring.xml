@@ -106,6 +106,8 @@
 	      class="com.bl.core.event.ForgottenPasswordEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
+		<property name="commonI18NService" ref="commonI18NService" />
+		<property name="baseSiteService" ref="baseSiteService" />
 	</bean>
 	<bean id="submitOrderEventListener" class="com.bl.core.event.SubmitOrderEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="businessProcessService" ref="businessProcessService"/>
@@ -215,7 +217,7 @@
 	</bean>
 
 	<bean id="generateForgottenPasswordEmail" parent="abstractGenerateEmailAction">
-		<property name="frontendTemplateName" value="ForgottenPasswordEmailTemplate"/>
+		<property name="frontendTemplateName" value="BlForgottenPasswordEmailTemplate"/>
 	</bean>
 
 	<bean id="generateOrderConfirmationEmail" parent="abstractGenerateEmailAction">
@@ -742,6 +744,13 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 	</bean>
 
+	<alias name="blCommerceDeliveryModeStrategy" alias="commerceDeliveryModeStrategy"/>
+	<bean id="blCommerceDeliveryModeStrategy"
+		class="com.bl.core.services.strategy.impl.DefaultBlCommerceDeliveryModeStrategy"
+		parent="defaultCommerceDeliveryModeStrategy">
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+	</bean>
+
 	<alias name="defaultBlStateWarehouseMappingDao" alias="blStateWarehouseMappingDao"/>
 	<bean id="defaultBlStateWarehouseMappingDao" class="com.bl.core.dao.warehouse.impl.DefaultBlStateWarehouseMappingDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
@@ -801,6 +810,20 @@
 		<property name="giftCardService" ref="giftCardService" />
 	</bean>
 	<!--Gift card End-->
+	
+	<!-- BL-628: Notify me start -->
+	<bean id="generateProductNotifyMeEmail" parent="abstractGenerateEmailAction">
+		<property name="frontendTemplateName" value="ProductNotifyMeEmailTemplate" />
+	</bean>
+
+	<bean id="productNotifyMeEmailProcessDefinitionResource" class="de.hybris.platform.processengine.definition.ProcessDefinitionResource">
+		<property name="resource" value="classpath:/blcore/processes/productNotifyMeEmailProcess.xml" />
+	</bean>
+
+	<alias name="blBackInStockNotificationJob" alias="stockLevelStatusJob" />
+	<bean id="blBackInStockNotificationJob" class="com.bl.core.job.BlBackInStockNotificationJob" parent="defaultStockLevelStatusJob">
+	</bean>
+	<!-- Notify me end -->
 
 	<!-- Shipping Optimization-->
 	<alias name="defaultBlShippingOptimizationStrategy" alias="blShippingOptimizationStrategy"/>
@@ -824,4 +847,63 @@
         <property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
     </bean>
+
+	<alias alias="orderDao" name="defaultBlOrderDao"/>
+	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
+	</bean>
+	
+	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
+	</bean>
+
+	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
+	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
+	<bean id="defaultRuleRentalDurationConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalDurationConditionTranslator" />
+
+	<alias alias="ruleRentalCartConditionTranslator" name="defaultRuleRentalCartConditionTranslator" />
+	<bean id="defaultRuleRentalCartConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalCartConditionTranslator" />
+
+	<alias alias="ruleRentalArrivalDateConditionTranslator" name="defaultRuleRentalArrivalDateConditionTranslator" />
+	<bean id="defaultRuleRentalArrivalDateConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalArrivalDateConditionTranslator" />
+
+	<!-- [BL-655]: Custom Actions for rental products promotion-->
+	<alias alias="ruleFreeRentalDatesAction" name="defaultRuleFreeRentalDatesAction" />
+	<bean id="defaultRuleFreeRentalDatesAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="ruleFreeRentalDatesRAOAction"/>
+	</bean>
+	<alias alias="ruleFreeRentalDatesRAOAction" name="defaultBlRuleFreeRentalDatesRAOAction" />
+	<bean id="defaultBlRuleFreeRentalDatesRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlRuleFreeRentalDatesRAOAction">
+		<property name="blCommercePriceService" ref="commercePriceService"/>
+		<property name="productService" ref="productService"/>
+		<property name="orderEntryRaoToNumberedLineItemConverter" ref="orderEntryRaoToNumberedLineItemConverter"/>
+	</bean>
+
+	<bean id="blFreeRentalDatesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+		<property name="key" value="defaultBlRuleFreeRentalDatesRAOAction"/>
+		<property name="value" ref="orderTotalAdjustActionStrategy"/>
+	</bean>
+
+	<!--Added for promo code case sensitivity check-->
+	<alias name="defaultBlCouponDao" alias="couponDao" />
+	<bean id="defaultBlCouponDao" class="com.bl.core.dao.coupon.impl.DefaultBlCouponDao" parent="defaultCouponDao"/>
+	
+	<!-- [BL-471]: Serial status change -->
+
+	<alias name="defaultUsedGearSerialStatusChangeHook" alias="usedGearSerialStatusChangeHook" />
+	<bean id="defaultUsedGearSerialStatusChangeHook"
+		class="com.bl.core.order.hook.impl.BlUsedGearSerialStatusChangeHook">
+		<property name="modelService" ref="modelService" />
+	</bean>
+	
+	<bean id="commerceUsedGearSerialStatusHookMergeDirective"
+		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="usedGearSerialStatusChangeHook" />
+	</bean>
 </beans>
+

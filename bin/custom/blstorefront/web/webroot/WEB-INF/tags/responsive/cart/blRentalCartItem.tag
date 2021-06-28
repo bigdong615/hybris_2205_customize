@@ -41,18 +41,22 @@
                  <input type="hidden" name="quantity" value="${entry.quantity}" />
                  <input type="hidden" name="removeEntry" value="false" />
                 <spring:theme code="text.rental.cart.qty" />
-             <select class="mt-3 select js-select js-component-init update" id="shopping-cart-qty_${entry.entryNumber}" name="shopping-cart-qty">
-               <c:forEach var="item" begin="1" end="10">
-                    <c:choose>
-                        <c:when test="${entry.quantity == item}">
-                            <option value="${item}" selected="selected">${item}</option>
-                        </c:when>
-                           <c:otherwise>
-                              <option value="${item}">${item}</option>
-                           </c:otherwise>
-                    </c:choose>
-               </c:forEach>
-             </select>
+                <div class="quantity">
+             	    <div class="input-group">
+             		    <span class="input-group-btn">
+             			  <button type="button" class="btn btn-default btn-number"
+             				  data-type="minus" data-field="quant[1]${entry.entryNumber}" entryNumber="${entry.entryNumber}">
+             				  <span class="glyphicon glyphicon-minus"></span>
+             			  </button>
+             		    </span> <input type="text" name="quant[1]${entry.entryNumber}" class="form-control input-number"
+             			    value="${entry.quantity}" min="1" max="99" entryNumber="${entry.entryNumber}"> <span class="input-group-btn">
+             			    <button type="button" class="btn btn-default btn-number"
+             				    data-type="plus" data-field="quant[1]${entry.entryNumber}" entryNumber="${entry.entryNumber}">
+             				    <span class="glyphicon glyphicon-plus"></span>
+             			    </button>
+             		    </span>
+             	    </div>
+                </div>
            </form:form>
          </div>
      </div>

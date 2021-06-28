@@ -168,12 +168,13 @@ public interface BlCommerceStockService
 	 */
 	String getNextAvailabilityDateInPDP(final String productCode, final RentalDateDto rentalDate);
 	
-		/**
-	 * This is to get map of available stocks for SKU
+	/**
+	 * This method returns the map of sku product with their stock levels. It takes all stock levels
+	 * and group it by product sku with their respective stock levels and add it in Map.
 	 *
 	 * @param stockLevels the stockLevels
 	 * @return map of stock levels group by product codes.
 	 */
-	public Map<String, List<StockLevelModel>> groupByProductsAvailability(
+	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
 			final Collection<StockLevelModel> stockLevels);
 }

@@ -9,6 +9,8 @@ import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -22,6 +24,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMe
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.PaymentDetailsForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
@@ -32,7 +35,6 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
 import com.bl.storefront.controllers.ControllerConstants;
-import com.bl.storefront.controllers.pages.BlControllerConstants;
 
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
@@ -41,11 +43,13 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -156,9 +160,12 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
+		showMessageForRemovedGiftCard(model);
 		getCheckoutFacade().setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
 
+		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		model.addAttribute(BlControllerConstants.GIFT_CARD_FORM, new GiftCardForm());
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
@@ -190,6 +197,13 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			try
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
+				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
+				{
+					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
+					setPaymentDetailForPage(paymentInfo, model);					
+				}
+				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)
@@ -208,11 +222,51 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		model.addAttribute(CART_DATA_ATTR, cartData);
+
 		if (Boolean.TRUE.equals(cartData.getIsRentalCart()))
 		{
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
+	}
+	
+	/**
+	 * Sets the payment detail for payment page if already selected.
+	 *
+	 * @param paymentInfo the payment info
+	 * @param model the model
+	 */
+	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
+	{
+		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
+			model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
+			model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
+			model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
+		}
+		else if(BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
+		}
+	}
+	
+	/**
+	 * If gift card removed from cart then it add message to model attribute for removed gift card.
+	 * @param model
+	 */
+	private void showMessageForRemovedGiftCard(final Model model) {
+		final List<String> removedGiftCardCodeList = getCheckoutFacade().recalculateCartForGiftCard();
+		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+			final Locale locale = getI18nService().getCurrentLocale();
+			List<String> removeGiftCardMessage = new ArrayList<>();
+			for (String gcCode : removedGiftCardCodeList) {
+				removeGiftCardMessage
+						.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+								{gcCode}, locale));
+			}
+			model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
+		}
 	}
 
 	@RequestMapping(value =
@@ -475,5 +529,4 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	{
 		this.blCustomerFacade = blCustomerFacade;
 	}
-
 }

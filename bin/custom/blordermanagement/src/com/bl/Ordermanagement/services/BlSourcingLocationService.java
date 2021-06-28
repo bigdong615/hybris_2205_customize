@@ -4,6 +4,11 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
 
+/**
+ * Sourcing Location Service to create the sourcing location from warehouse.
+ *
+ * @author Sunil
+ */
 public interface BlSourcingLocationService {
 
   /**
@@ -13,5 +18,5 @@ public interface BlSourcingLocationService {
    * @param location the WarehouseModel
    * @return sourcing location.
    */
-  public SourcingLocation createSourcingLocation(SourcingContext context, WarehouseModel location);
+  public SourcingLocation createSourcingLocation(final SourcingContext context, final WarehouseModel location);
 }
