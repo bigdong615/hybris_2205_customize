@@ -2046,6 +2046,7 @@
               qualifier="deliveryCost"
               autocreate="true"
               type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
               <description>The delivery cost to apply to the order</description>
               <modifiers optional="false" />
               <persistence type="property" />
@@ -2054,6 +2055,7 @@
               qualifier="replacedDeliveryCost"
               autocreate="true"
               type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
               <description>The delivery cost that was set to order before a promotion was applied</description>
               <modifiers optional="true" />
               <persistence type="property" />

@@ -45,13 +45,13 @@ public class DefaultBlShippingActionStrategy extends AbstractRuleActionStrategy<
   public List<PromotionResultModel> apply(final AbstractRuleActionRAO action) {
     if (!(action instanceof ShipmentRAO)) {
       BlLogger.logMessage(LOG, Level.ERROR,
-          "cannot apply {}, action is not of type ShipmentRAO, but {}" + action);
+          "cannot apply, action is not of type ShipmentRAO, but" + action);
       return Collections.emptyList();
     } else {
       final ShipmentRAO changeDeliveryCostAction = (ShipmentRAO) action;
       if (!(changeDeliveryCostAction.getAppliedToObject() instanceof CartRAO)) {
         BlLogger.logMessage(LOG, Level.ERROR,
-            "cannot apply {}, appliedToObject is not of type CartRAO, but {}" + action
+            "cannot apply action as, appliedToObject is not of type CartRAO, but" + action
                 .getAppliedToObject());
         return Collections.emptyList();
       } else {
@@ -106,7 +106,7 @@ public class DefaultBlShippingActionStrategy extends AbstractRuleActionStrategy<
       return Collections.singletonList(promoResult);
     }
     else{
-      BlLogger.logMessage(LOG, Level.ERROR,"Delivery Mode for code {} not found!"+ shipmentRAO.getMode());
+      BlLogger.logMessage(LOG, Level.ERROR,"Delivery Mode for code not found for : " + shipmentRAO.getMode());
       return Collections.emptyList();
     }
   }
