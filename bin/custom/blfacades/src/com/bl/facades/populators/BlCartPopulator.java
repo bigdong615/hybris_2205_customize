@@ -116,5 +116,5 @@ public class BlCartPopulator extends CartPopulator<CartData>
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
 
-  
+
 }
