@@ -12,7 +12,8 @@
 		/*<![CDATA[*/
 		<%-- Define a javascript variable to hold the content path --%>
 		var ACC = { config: {},
-				ccError: {}};
+				ccError: {},
+				payPalError: {}};
 			ACC.config.contextPath = '${ycommerce:encodeJavaScript(contextPath)}';
 			ACC.config.encodedContextPath = '${ycommerce:encodeJavaScript(encodedContextPath)}';
 			ACC.config.commonResourcePath = '${ycommerce:encodeJavaScript(commonResourcePath)}';
@@ -40,6 +41,8 @@
 			ACC.ccError.cardCVV = '<spring:theme code="payment.cc.error.card.cvv" htmlEscape="false" javaScriptEscape="true" />';
 			ACC.ccError.allFieldsNotSelected ='<spring:theme code="payment.all.field.not.selected" htmlEscape="false" javaScriptEscape="true" />';
 			ACC.ccError.onlyGCSelected = '<spring:theme code="payment.only.giftCard.selected" htmlEscape="false" javaScriptEscape="true" />'
+			
+			ACC.payPalError.paypalPaymentFail = '<spring:theme code="text.paypal.payment.error.message" htmlEscape="false" javaScriptEscape="true" />'
 			
 			<c:if test="${request.secure}">
 				<c:url var="autocompleteUrl" value="/search/autocompleteSecure" />

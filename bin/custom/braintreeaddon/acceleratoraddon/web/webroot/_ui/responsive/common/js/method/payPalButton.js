@@ -130,19 +130,23 @@ function renderVaultFlowPayPalButtons(paypalCheckoutInstance, payPalButtonContai
             locale: braintreeLocale,
             commit: commit,
             createBillingAgreement: function () {
+            	$('#payPalErrorMessage').empty();
                 return paypalCheckoutInstance.createPayment(paypalOptions);
             },
             onApprove: function (data) {
                 return paypalCheckoutInstance.tokenizePayment(data).then(function (payload) {
                     processExpressCheckoutForm(payload, typeof payPalShouldBeSaved !== "undefined" ? payPalShouldBeSaved : false);
+                    $('#payPalErrorMessage').empty();
                 });
             },
             onCancel: function (data) {
                 console.log('User cancel PayPal flow');
             },
-
             onError: function (err) {
                 console.error('Error: ' + err, err);
+                $('#payPalErrorMessage').empty();
+                var payPalErrorMessage = $('<div class="notification notification-warning mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
+	  			$('#payPalErrorMessage').append(payPalErrorMessage);
                 handlePayPalClientError(err);
             }
         }).render(payPalButtonContainer).then(function(){
@@ -150,6 +154,9 @@ function renderVaultFlowPayPalButtons(paypalCheckoutInstance, payPalButtonContai
         });
     }
     catch (err) {
+    	$('#payPalErrorMessage').empty();
+    	var payPalErrorMessage = $('<div class="notification notification-warning mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
+	  	$('#payPalErrorMessage').append(payPalErrorMessage);
         handlePayPalButtonError(err.message);
     }
 }
