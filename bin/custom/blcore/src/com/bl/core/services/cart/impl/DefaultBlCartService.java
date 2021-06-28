@@ -50,8 +50,6 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private BlCommerceStockService blCommerceStockService;
     private BaseStoreService baseStoreService;
     private BlDatePickerService blDatePickerService;
-		private PromotionDao promotionDao;
-
     /**
      * {@inheritDoc}
      */
@@ -233,25 +231,6 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 
     }
 
-		/**
-		 *
-		 * This method is to evaluate if free shipping promo applied
-		 * @return true if applied
-		 */
-		public boolean isFreeShippingPromoApplied(final AbstractOrderModel cartModel) {
-
-			final AbstractPromotionModel freeShippingPromotion = getPromotionDao().findPromotionByCode(Config.getString("free.shipping.promotion.code","free_shipping"));
-			if(freeShippingPromotion!= null && freeShippingPromotion.getPromotionGroup()!= null && CollectionUtils.isNotEmpty(freeShippingPromotion.getPromotionGroup().getPromotionSourceRules())) {
-				Optional<PromotionSourceRuleModel> freeShippingRule = freeShippingPromotion.getPromotionGroup().getPromotionSourceRules().stream().filter(sourceRule -> RuleStatus.PUBLISHED.equals(sourceRule.getStatus())).findAny();
-				final double subTotalWithDamageWaiver =	cartModel.getSubtotal() + cartModel.getTotalDamageWaiverCost();
-				final int threshold = Config.getInt("free.shipping.promotion.subtotal.with.total.damage.waiver", 150);
-					if (freeShippingRule.isPresent()  && BooleanUtils.isTrue(freeShippingPromotion.getEnabled())  && RuleStatus.PUBLISHED.equals(freeShippingRule.get().getStatus()) && subTotalWithDamageWaiver >= threshold) {
-						return true;
-
-					}
-			}
-			return false;
-		}
 
     public CommerceCartService getCommerceCartService() {
         return commerceCartService;
@@ -317,11 +296,4 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         this.blDatePickerService = blDatePickerService;
     }
 
-		public PromotionDao getPromotionDao() {
-			return promotionDao;
-		}
-
-		public void setPromotionDao(PromotionDao promotionDao) {
-			this.promotionDao = promotionDao;
-		}
 }

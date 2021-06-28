@@ -82,9 +82,13 @@
                             <c:if test="${isGiftCardRemoved eq 'true'}">
                                 <div class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
                             </c:if>
-                                  <c:if test="${cartData.hasFreeShippingPromo}">
-                                      <div class="notification notification-tip truck"><spring:theme code="text.free.shipping.promo.applied.message"/></div>
-                                  </c:if>
+                               <c:if test="${not empty cartData.potentialOrderPromotions}">
+                                     <c:forEach items="${cartData.potentialOrderPromotions}" var="promotion">
+                                     <c:if test="${fn:containsIgnoreCase(promotion.promotionData.code, 'free_shipping')}">
+                                        <div class="notification notification-tip truck"><spring:theme code="text.free.shipping.promo.applied.message"/></div>
+                                     </c:if>
+                                     </c:forEach>
+                                 </c:if>
                                   <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
 
                             <div class="notification notification-error d-none"id="errorMessages_voucher" />

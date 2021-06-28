@@ -18,7 +18,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * This action is created to allow certin modes as free delivery modes
+ * This action is created to allow certain modes as free delivery modes
  * @author Ritika
  */
 public class BlRuleFreeDeliveryModesRAOAction extends AbstractRuleExecutableSupport {
@@ -29,7 +29,7 @@ public class BlRuleFreeDeliveryModesRAOAction extends AbstractRuleExecutableSupp
 
   @Override
   public boolean performActionInternal(final RuleActionContext context) {
-    List<String> deliveryModeCodes = (List<String>)(context.getParameter(BlCoreConstants.FREE_DELIVERY_MODES));
+    final List<String> deliveryModeCodes = (List<String>)(context.getParameter(BlCoreConstants.FREE_DELIVERY_MODES));
     BlLogger.logMessage(LOG, Level.INFO, "Delivery modes" + deliveryModeCodes.get(0));
     return this.performAction(context, deliveryModeCodes );
   }
@@ -40,11 +40,11 @@ public class BlRuleFreeDeliveryModesRAOAction extends AbstractRuleExecutableSupp
    * for applicable delivery modes
    * @param context
    * @param freeDeliveryModes
-   * @return
+   * @return true if action performed
    */
   protected boolean performAction(final RuleActionContext context,final List<String> freeDeliveryModes) {
     final CartRAO cartRao = context.getCartRao();
-    RuleEngineResultRAO result = context.getRuleEngineResultRao();
+    final RuleEngineResultRAO result = context.getRuleEngineResultRao();
     if(CollectionUtils.isNotEmpty(freeDeliveryModes)){
       BlLogger.logMessage(LOG, Level.DEBUG, "Size of Free DeliveryModes List : "+ freeDeliveryModes.size());
       for (String mode : freeDeliveryModes) {
@@ -69,7 +69,7 @@ public class BlRuleFreeDeliveryModesRAOAction extends AbstractRuleExecutableSupp
    */
   public void changeDeliveryCost(final CartRAO cartRao, final DeliveryModeRAO mode,final RuleEngineResultRAO result, RuleActionContext context) {
     this.validateRule(context);
-    ShipmentRAO shipment = getDefaultBlRuleEngineCalculationService().changeDeliveryCost(cartRao ,mode);
+    final ShipmentRAO shipment = getDefaultBlRuleEngineCalculationService().changeDeliveryCost(cartRao ,mode);
     result.getActions().add(shipment);
     this.setRAOMetaData(context, shipment);
     context.scheduleForUpdate(cartRao, result);
@@ -80,7 +80,7 @@ public class BlRuleFreeDeliveryModesRAOAction extends AbstractRuleExecutableSupp
   /**
    * Get Delivery ModeRAO by code
    * @param deliveryModeCode
-   * @return
+   * @return delivery mode from RAO
    */
   protected Predicate<DeliveryModeRAO> getDeliveryModeRAOFilter(String deliveryModeCode) {
     return deliveryModeRAO -> this.isFactDeliveryAndHasCode(deliveryModeRAO, deliveryModeCode);

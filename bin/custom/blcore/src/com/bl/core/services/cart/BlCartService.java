@@ -2,7 +2,6 @@ package com.bl.core.services.cart;
 
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commercefacades.order.data.CartData;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -67,9 +66,4 @@ public interface BlCartService extends CartService {
      */
     void setUsedGearSerialProductStatus(final CartModel cartModel);
 
-    /**
-     * Is Free Shipping Promo Applied on the cart
-     * @return
-     */
-    public boolean isFreeShippingPromoApplied(final AbstractOrderModel abstractOrderModel);
 }

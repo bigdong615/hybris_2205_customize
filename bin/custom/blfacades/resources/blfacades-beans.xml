@@ -114,7 +114,6 @@
       <property name="giftCardDiscount" type="PriceData"/>
       <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
       <property name="rentalDates" type="com.bl.facades.product.data.RentalDateDto"/>
-      <property name="hasFreeShippingPromo" type="java.lang.Boolean"/>
   </bean>
 
     <!-- Shipping -->

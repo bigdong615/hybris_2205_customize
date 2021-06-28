@@ -37,7 +37,7 @@ public class DefaultBlRuleEngineCalculationService extends DefaultRuleEngineCalc
       cart.addCharge(shipping);
     }
     recalculateTotals(cartRao, cart);
-    ShipmentRAO shipmentRAO = this.createShipmentRAO(mode);
+    final ShipmentRAO shipmentRAO = this.createShipmentRAO(mode);
     this.getRaoUtils().addAction(cartRao, shipmentRAO);
     return shipmentRAO;
   }
