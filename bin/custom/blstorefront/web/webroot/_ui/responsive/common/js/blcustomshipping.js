@@ -1065,8 +1065,12 @@
  }
 
  function validateZip(zipCode) {
-    let zipRegex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
-    return zipRegex.test(zipCode);
+    if(zipCode != null && zipCode.length != 0) {
+        let zipRegex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+        return zipRegex.test(zipCode.trim());
+    } else {
+        return false;
+    }
  }
 
  function validateField(attribute, fieldName) {
