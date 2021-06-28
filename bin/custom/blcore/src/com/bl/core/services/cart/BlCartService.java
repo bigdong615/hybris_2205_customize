@@ -1,18 +1,13 @@
 package com.bl.core.services.cart;
 
+import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.CartService;
-import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import de.hybris.platform.core.model.order.CartModel;
-
-import com.bl.facades.product.data.RentalDateDto;
 
 /**
  * It provides cart related functionality.
