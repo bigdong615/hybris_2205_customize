@@ -7,29 +7,20 @@ ACC.savedcarts = {
         ["bindSaveCartForm", $(".js-save-cart-link").length != 0 || $(".js-update-saved-cart").length != 0],
         ["bindUpdateUploadingSavedCarts", $(".js-uploading-saved-carts-update").length != 0],
        ["bindRenameSavedCartForm", $(".js-rename-saved-carts").length != 0],
-       ["binddeleteCartForm", $(".js-remove-saved-carts").length != 0],
-       "bindRestoreCartForm"
+       ["binddeleteCartForm", $(".js-remove-saved-carts").length != 0]
     ],
     
     $savedCartRestoreBtn: {},
     $currentCartName: {},
-
-    bindRestoreCartForm: function () {
-                $(".js-save-cart-restore").click(function (event) {
-                event.preventDefault();
-                });
-            },
 
     bindRenameSavedCartForm: function () {
             $(".js-rename-saved-carts").click(function (event) {
             event.preventDefault();
              var cartId = $(this).data('savedcart-id');
              var cartName = $(this).data('savedcart-name');
-           if(cartName !=='' && cartName !== 'undefined') {
              $('#renameCartIdUrl').val(cartId);
              document.getElementById("renameCartForm").action = cartId;
               $('#renameSaveCartName').attr('placeholder', cartName);
-              }
             });
         },
 

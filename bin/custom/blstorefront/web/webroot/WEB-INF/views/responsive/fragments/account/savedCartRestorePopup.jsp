@@ -1,9 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="formElement" tagdir="/WEB-INF/tags/responsive/formElement"%>
-<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
       <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">

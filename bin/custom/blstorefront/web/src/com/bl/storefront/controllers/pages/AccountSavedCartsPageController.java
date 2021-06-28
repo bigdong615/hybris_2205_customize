@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
@@ -35,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -240,7 +242,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 			}
 			catch (final CommerceSaveCartException csce)
 			{
-				LOG.error(csce.getMessage(), csce);
+				BlLogger.logMessage(LOG , Level.ERROR , csce.getMessage(), csce);
 				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
 						"text.account.saveCart.edit.error", new Object[]
 						{ form.getName() });
@@ -302,7 +304,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		}
 		catch (final CommerceSaveCartException ex)
 		{
-			LOG.error("Error while restoring the cart for cartId " + cartId + " because of " + ex);
+			BlLogger.logMessage(LOG , Level.ERROR , "Error while restoring the cart for cartId " + cartId + " because of " ,ex);
 			return getMessageSource().getMessage("text.restore.savedcart.error", null, getI18nService().getCurrentLocale());
 		}
 		return BlControllerConstants.REDIRECT_CART_URL;
@@ -321,7 +323,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		}
 		catch (final CommerceSaveCartException ex)
 		{
-			LOG.error("Error while deleting the saved cart with cartId " + cartId + " because of " + ex);
+			BlLogger.logMessage(LOG , Level.ERROR , "Error while deleting the saved cart with cartId " + cartId + " because of " + ex);
 			return getMessageSource().getMessage("text.delete.savedcart.error", null, getI18nService().getCurrentLocale());
 		}
 		return REDIRECT_TO_SAVED_CARTS_PAGE;

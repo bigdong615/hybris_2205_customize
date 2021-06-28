@@ -5,7 +5,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
-<%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
