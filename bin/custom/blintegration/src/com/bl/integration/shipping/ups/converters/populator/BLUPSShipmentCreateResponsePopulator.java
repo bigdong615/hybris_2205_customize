@@ -14,14 +14,17 @@ import com.bl.shipment.data.UPSShipmentPackageResult;
 
 
 /**
- * @author Dell
+ * @author Aditi Sharma
  *
  */
 public class BLUPSShipmentCreateResponsePopulator
 {
+	/**
+	 * @param upsResponse
+	 * @return
+	 */
 	public UPSShipmentCreateResponse convertUPSResponse(final ShipmentResponse upsResponse)
 	{
-		// check for error code
 		final UPSShipmentCreateResponse shipmentResponse = new UPSShipmentCreateResponse();
 
 		final ShipmentResultsType shipmentResult = upsResponse.getShipmentResults();

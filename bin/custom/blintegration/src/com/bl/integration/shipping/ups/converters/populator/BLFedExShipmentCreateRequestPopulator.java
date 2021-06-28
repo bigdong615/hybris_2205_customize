@@ -182,7 +182,6 @@ public class BLFedExShipmentCreateRequestPopulator
 		final Contact recipientContact = new Contact();
 		recipientContact.setPersonName(recipientData.getContact().getFirstName());
 		recipientContact.setPhoneNumber(recipientData.getContact().getPhone());
-		//recipientContact.setPhoneExtension("4571");
 		recipientContact.setEmailAddress(recipientData.getContact().getEmail());
 
 		recipientType.setContact(recipientContact);

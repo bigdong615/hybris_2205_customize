@@ -60,6 +60,10 @@ public class BLUPSShipmentCreateRequestPopulator
 	@Value("${blintegration.ups.shipment.labelSpec.code}")
 	private String labelSpecCode;
 
+	/**
+	 * @param upsShipmentRequest
+	 * @return
+	 */
 	public ShipmentRequest convertToUPSShipmentRequest(final UpsShippingRequestData upsShipmentRequest)
 	{
 		final ShipmentRequest shipmentRequest = new ShipmentRequest();
@@ -185,8 +189,9 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
-	*
-	*/
+	 * @param shipper
+	 * @param shipperData
+	 */
 	private void populateShipperData(final ShipperType shipper, final ShipperData shipperData)
 	{
 		shipper.setName(shipperData.getName());
@@ -219,8 +224,9 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
-	*
-	*/
+	 * @param shipTo
+	 * @param shipToData
+	 */
 	private void populateShipToData(final ShipToType shipTo, final ShipToData shipToData)
 	{
 		shipTo.setName(shipToData.getName());
@@ -250,8 +256,9 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
-	*
-	*/
+	 * @param shipFrom
+	 * @param shipFromData
+	 */
 	private void populateShipFromData(final ShipFromType shipFrom, final ShipFromData shipFromData)
 	{
 		shipFrom.setName(shipFromData.getName());
@@ -299,8 +306,9 @@ public class BLUPSShipmentCreateRequestPopulator
 	}
 
 	/**
-	*
-	*/
+	 * @param serviceType
+	 * @param serviceData
+	 */
 	private void populateServiceType(final ServiceType serviceType, final UpsShipmentServiceData serviceData)
 	{
 		serviceType.setCode(serviceData.getCode());

@@ -12,5 +12,8 @@ import de.hybris.platform.warehousing.model.PackagingInfoModel;
  */
 public interface BlCreateShipmentFacade
 {
+	/**
+	 * @param packagingInfo
+	 */
 	void createBlShipmentPackages(PackagingInfoModel packagingInfo);
 }

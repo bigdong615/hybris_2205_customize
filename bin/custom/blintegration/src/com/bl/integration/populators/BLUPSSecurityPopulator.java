@@ -9,7 +9,7 @@ import com.bl.integration.ups.upss.v1.pojo.UPSSecurity;
 
 
 /**
- * @author Dell
+ * @author Aditi Sharma
  *
  */
 public class BLUPSSecurityPopulator
@@ -23,6 +23,9 @@ public class BLUPSSecurityPopulator
 	@Value("${blintegration.ups.license.password}")
 	private String password;
 
+	/**
+	 * @return
+	 */
 	public UPSSecurity populateUPSSecurity()
 	{
 		final UPSSecurity upss = new UPSSecurity();

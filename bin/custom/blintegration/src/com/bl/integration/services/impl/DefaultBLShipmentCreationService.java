@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.integration.services.impl;
 
 import java.io.IOException;
@@ -70,6 +67,9 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	@Value("${blintegration.ups.shipment.endpoint.url}")
 	private String endpointURL;
 
+	/**
+	 * @param upsShipmentRequest
+	 */
 	@Override
 	public UPSShipmentCreateResponse createUPSShipment(final UpsShippingRequestData upsShipmentRequest)
 	{
@@ -122,6 +122,10 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		return null;
 	}
 
+	/**
+	 * @param fedExShipmentReqData
+	 * @return
+	 */
 	@Override
 	public String createFedExShipment(final FedExShippingRequestData fedExShipmentReqData)
 	{
@@ -135,6 +139,10 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		return null;
 	}
 
+	/**
+	 * @param fedExShipemtnReq
+	 * @return
+	 */
 	private HttpResponse createFedExShipmentResponse(final FedExShipmentRequest fedExShipemtnReq)
 	{
 		final HttpClient httpclient = HttpClients.createDefault();
@@ -170,6 +178,10 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	}
 
 
+	/**
+	 * @param upsShipmentResponseData
+	 * @param ex
+	 */
 	private void populateResponseExceptionData(final UPSShipmentCreateResponse upsShipmentResponseData, final Exception ex)
 	{
 		upsShipmentResponseData.setStatusCode(BlintegrationConstants.INTERNAL_SERVER_ERROR_CODE);

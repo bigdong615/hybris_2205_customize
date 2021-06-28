@@ -22,7 +22,7 @@ import com.bl.shipment.data.UPSShipmentPackageResult;
 
 
 /**
- * @author Dell
+ * @author Aditi Sharma
  *
  */
 public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
@@ -40,6 +40,9 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	@Resource(name = "blShipmentCreationService")
 	private DefaultBLShipmentCreationService blShipmentCreationService;
 
+	/**
+	 * @param packagingInfo
+	 */
 	@Override
 	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo)
 	{
@@ -59,6 +62,10 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		}
 	}
 
+	/**
+	 * @param upsResponse
+	 * @param packagingInfo
+	 */
 	private void saveResponseOnPackage(final UPSShipmentCreateResponse upsResponse, final PackagingInfoModel packagingInfo)
 	{
 		packagingInfo.setLabelURL(upsResponse.getLabelURL());

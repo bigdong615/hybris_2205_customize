@@ -42,6 +42,10 @@ public class BLFedExShippingDataPopulator
 	@Resource(name = "addressConverter")
 	private Converter<AddressModel, AddressData> addressConverter;
 
+	/**
+	 * @param consignment
+	 * @return
+	 */
 	public FedExShippingRequestData populateFedExShipmentRequest(final ConsignmentModel consignment)
 	{
 		final FedExShippingRequestData fedExShippingRequestData = new FedExShippingRequestData();
