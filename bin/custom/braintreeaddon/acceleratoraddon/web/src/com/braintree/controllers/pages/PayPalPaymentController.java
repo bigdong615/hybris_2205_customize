@@ -3,7 +3,6 @@
  */
 package com.braintree.controllers.pages;
 
-import com.braintree.commands.impl.BraintreeErrorTranslator;
 import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.constants.BraintreeConstants;
 import com.bl.logging.BlLogger;
@@ -31,7 +30,6 @@ import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
-import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -63,7 +61,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	protected static final String REDIRECT_URL_CART = REDIRECT_PREFIX + BraintreeaddonWebConstants.CART_URL;
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String ANONYMOUS_USER = "anonymous";
-	private static final String SAVE_PAYMENT_INFO = "isSaved";
 	private static final String DEVICE_DATA = "device_data";
 
 	private static final Logger LOG = Logger.getLogger(PayPalPaymentController.class);
@@ -105,10 +102,10 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		String deviceData = null;
 
 		try
-		{ 
+		{
 			payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
-      isSavePaymentInfo = true; /* Boolean.parseBoolean(request.getParameter(SAVE_PAYMENT_INFO)); */
-			deviceData = request.getParameter(DEVICE_DATA);
+      		isSavePaymentInfo = true;
+      		deviceData = request.getParameter(DEVICE_DATA);
 		}
 		catch (final IllegalArgumentException exception)
 		{
