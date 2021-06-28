@@ -19,11 +19,14 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.product.data.SerialProductData;
+import com.google.protobuf.DescriptorProtos.GeneratedCodeInfo;
 
 
 /**
  * This populator is used for populating bl Serial Product related specific product attribute.
+ * 
  * @author Ravikumar
  *
  */
@@ -31,6 +34,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 {
 	private PriceDataFactory priceDataFactory;
 	private CommonI18NService commonI18NService;
+	private BlCommerceStockService blCommerceStockService;
 
 	@Override
 	public void populate(final BlProductModel source, final ProductData target)
@@ -68,7 +72,12 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 				serialProductData.setFinalIncentivizedPrice(getProductPriceData(serialProductModel.getIncentivizedPrice()));
 				target.setHasIncentivizedPrice(Boolean.TRUE);
 			}
-			
+
+			//Added Check for serial product
+			final boolean isUsedGearSerialNotAssignedToRentalOrder = blCommerceStockService
+					.isUsedGearSerialNotAssignedToRentalOrder(serialProductModel.getProductId(), source.getCode());
+			serialProductData.setIsSerialNotAssignedToRentalOrder(isUsedGearSerialNotAssignedToRentalOrder);
+
 			//Added Serial status for used gear product
 			if (serialProductModel.getSerialStatus() != null)
 			{
@@ -144,4 +153,23 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	{
 		this.commonI18NService = commonI18NService;
 	}
+
+	/**
+	 * @return the blCommerceStockService
+	 */
+	public BlCommerceStockService getBlCommerceStockService()
+	{
+		return blCommerceStockService;
+	}
+
+	/**
+	 * @param blCommerceStockService
+	 *           the blCommerceStockService to set
+	 */
+	public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
+	{
+		this.blCommerceStockService = blCommerceStockService;
+	}
+
+
 }

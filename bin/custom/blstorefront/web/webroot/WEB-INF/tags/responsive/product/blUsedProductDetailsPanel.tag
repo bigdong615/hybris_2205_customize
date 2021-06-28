@@ -66,9 +66,8 @@
 											method="get">
 											<c:forEach items="${product.serialproducts}"
 												var="serialProduct" varStatus="loop">
-												<%-- <input type="hidden" name="productCode" value="${product.code}" />
-		                                      <input type="hidden" name="serialCode" value="${serialProduct.serialId}" /> --%>
-												<c:if test="${serialProduct.serialStatus ne 'SOLD' }">
+												
+												<c:if test="${serialProduct.serialStatus ne 'SOLD' and serialProduct.isSerialNotAssignedToRentalOrder eq false }">
 													<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''}">
 														<td><a href="#" data-bs-toggle="modal"
 															data-bs-target="#sku52678"
@@ -82,13 +81,13 @@
 														<td class="d-none d-md-table-cell">#
 															${serialProduct.serialId}</td>
 														<td class="text-end">
-															<!-- BL-537 : Added  class js-usedProduct-button --> <sec:authorize
+															<!-- BL-537 : Added  class js-usedProduct-button -->
+															 <sec:authorize
 																access="hasAnyRole('ROLE_ANONYMOUS')">
 																<c:set value=" hidebutton" var="hidebutton" />
-															</sec:authorize> <c:choose>
-																<c:when
-																	test="${serialProduct.serialStatus eq 'ACTIVE' }">
-
+															</sec:authorize> 
+															<c:choose>
+																<c:when test="${serialProduct.serialStatus eq 'ACTIVE' }">
 																	<button type="button"
 																		data-link="<c:url value='/login/loginpopup'/>"
 																		class="btn btn-primary  js-login-popup hide-after-login"
@@ -103,8 +102,7 @@
 																		<spring:theme code="basket.add.to.basket" />
 																	</button>
 																</c:when>
-																<c:when
-																	test="${serialProduct.serialStatus eq 'ADDED_TO_CART' }">
+																<c:when test="${serialProduct.serialStatus eq 'ADDED_TO_CART' }">
 																	<button type="button"
 																		class="btn btn-primary js-add-to-cart js-disable-btn"
 																		aria-disabled="true" disabled="disabled">

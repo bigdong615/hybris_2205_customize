@@ -19,7 +19,13 @@ import java.util.Collections;
 
 public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao implements BlDeliveryModeDao {
 
-    private static final Logger LOG = Logger.getLogger(DefaultBlDeliveryModeDao.class);
+    /**
+	 * 
+	 */
+	private static final String FLEXIBLESEARCHFORRUSHDELIVERYMODE = "select {rush.pk} from {BlRushDeliveryMode as rush}, {DeliveryTypeEnum as dt} " +
+	          "where {dt.pk} = {rush.deliveryType} and {dt.code} = ?deliveryMode and {rush.active} = 1 and {rush.payByCustomer} = ?payByCustomer";
+
+	private static final Logger LOG = Logger.getLogger(DefaultBlDeliveryModeDao.class);
 
     @Autowired
     private FlexibleSearchService flexibleSearchService;
@@ -281,24 +287,25 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     
    private StringBuilder queryForShipToHomeDeliveryMode(final String mode)
  	{
- 		final StringBuilder barcodeList = new StringBuilder("select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, {CarrierEnum as ce} " +
+ 		String FlexibleSearchForShipToHomeDeliveryMode = "select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, {CarrierEnum as ce} " +
                  "where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +
-                 "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.payByCustomer} = ?payByCustomer");
+                 "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.payByCustomer} = ?payByCustomer";
+		final StringBuilder barcodeList = new StringBuilder(FlexibleSearchForShipToHomeDeliveryMode);
  		return barcodeList;
  	}
    
    private StringBuilder queryForPartnerZoneUPSStoreDeliveryModes(final String mode)
 	{
-		final StringBuilder barcodeList = new StringBuilder("select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
+		String FlexibleSearchForPartnerZoneUPSStoreDeliveryModes = "select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
                 "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
-                " {pickZone.code} like '%" + mode + "%' and {pickZone.payByCustomer} = ?payByCustomer");
+                " {pickZone.code} like '%" + mode + "%' and {pickZone.payByCustomer} = ?payByCustomer";
+		final StringBuilder barcodeList = new StringBuilder(FlexibleSearchForPartnerZoneUPSStoreDeliveryModes);
 		return barcodeList;
 	}
    
    private StringBuilder queryForBlRushDeliveryModes()
 	{
-		final StringBuilder barcodeList = new StringBuilder("select {rush.pk} from {BlRushDeliveryMode as rush}, {DeliveryTypeEnum as dt} " +
-                "where {dt.pk} = {rush.deliveryType} and {dt.code} = ?deliveryMode and {rush.active} = 1 and {rush.payByCustomer} = ?payByCustomer");
+		final StringBuilder barcodeList = new StringBuilder(FLEXIBLESEARCHFORRUSHDELIVERYMODE);
 		return barcodeList;
 	}
    
