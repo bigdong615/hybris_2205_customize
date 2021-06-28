@@ -540,7 +540,11 @@
                                                 '" name="pickup-locations"><label for="' + data[i].code + '" onClick="onSelectOfPartnerAddress(' + data[i].code + ')"></label>';
                          partnerDelivery += '</div>' +
                                             '<div class="col-11">' +
-                                                '<p>' + data[i].name + '- <span id="' + data[i].code + '-pickUpCost">' + data[i].deliveryCost.formattedValue + ' </span><br>' +
+                                                '<p>' + data[i].name + '- <span id="' + data[i].code + '-pickUpCost">' ;
+                                                if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
+                                 partnerDelivery += data[i].deliveryCost.formattedValue ;
+                                                }
+                                 partnerDelivery += ' </span><br>' +
                                                     '<a href="' + data[i].internalStoreAddress.url + '" target="_blank">' +
                                                         data[i].internalStoreAddress.formattedAddress +
                                                     '</a><br>';
