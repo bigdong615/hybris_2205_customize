@@ -36,7 +36,7 @@ INSERT_UPDATE Vendor ; code[unique=true] ; name
                      ; default           ; Default Vendor 
                      
 # Warehouse          
-INSERT_UPDATE Warehouse ; code[unique=true] ; name ; vendor(code)[default=default] ; default[default=false] 
+INSERT_UPDATE Warehouse ; code[unique=true] ; name ; vendor(code)[default=default] ; default[default=false] ; active[default=true]
                         ; warehouse_ca      ; CA   ;                               
                         ; warehouse_ma      ; MA   ;                               
                                                  
@@ -154,12 +154,14 @@ INSERT_UPDATE BlConstrainedPricingRatio ;duration(code)[unique=true];pricingRati
 INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
 ;blStockCreationJob;blStockCreationJob
 ;blAutomatedStockCreationJob;blAutomatedStockCreationJob
+;blAuthorizePaymentJob;blAuthorizePaymentJob
 
 INSERT_UPDATE BlStockCreationCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blStockCreationCronJob ;blStockCreationJob ; ;true;;
 
 INSERT_UPDATE CronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;
 ;blAutomatedStockCreationCronJob ;blAutomatedStockCreationJob ; ;true;;
+;blAuthorizePaymentCronJob ;blAuthorizePaymentJob ; ;true;;
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
 ;blAutomatedStockCreationCronJob; 0 0 0 * * ?

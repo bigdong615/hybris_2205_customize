@@ -7,12 +7,21 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
+
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.checkout.steps.PaymentMethodCheckoutStepController;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -24,34 +33,44 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
   @Resource(name = "brainTreeCheckoutFacade")
   private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
   
+  private static final Logger LOG = Logger.getLogger(BrainTreePaymentMethodCheckoutStepController.class);
+  
   @RequestMapping(value = "/choose-cc", method = RequestMethod.POST)
   @RequireHardLogIn
   public String doSelectPaymentMethod(@RequestParam("selectedPaymentMethodId") final String selectedPaymentMethodId,
-      @RequestParam("selectedPaymentMethodNonce") final String selectedPaymentMethodNonce)
+      @RequestParam("selectedPaymentMethodNonce") final String selectedPaymentMethodNonce, final Model model, final RedirectAttributes redirectAttributes)
   {
-    if (StringUtils.isNotBlank(selectedPaymentMethodId))
+    try
     {
-      if (StringUtils.isNotBlank(selectedPaymentMethodNonce))
+      if (StringUtils.isNotBlank(selectedPaymentMethodId))
       {
-        brainTreeCheckoutFacade.setPaymentDetails(selectedPaymentMethodId, selectedPaymentMethodNonce);
+        if (StringUtils.isNotBlank(selectedPaymentMethodNonce))
+        {
+          brainTreeCheckoutFacade.setPaymentDetails(selectedPaymentMethodId, selectedPaymentMethodNonce);
+        }
+        else
+        {
+          getCheckoutFacade().setPaymentDetails(selectedPaymentMethodId);
+        }
       }
-      else
-      {
-        getCheckoutFacade().setPaymentDetails(selectedPaymentMethodId);
-      }
+    }
+    catch(final Exception exception)
+    {
+      BlLogger.logMessage(LOG, Level.ERROR, "Error occured while setting selected creditcard on user", exception);
+      GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
     }
     return getCheckoutStep().currentStep();
   }
 
   @RequestMapping(value = "/reviewSavedPayment", method = RequestMethod.POST)
   @RequireHardLogIn
-  public String doSelectSavedPaymentMethod(@RequestParam("savedCCCardId") final String savedCCCardId,
+  public String doSelectSavedPaymentMethod(@RequestParam("savedCCCardId") final String savedCCCardId, @RequestParam("company_name") final String companyName,
       @RequestParam("savedCCCardNonce") final String savedCCCardNonce, @Valid final SopPaymentDetailsForm sopPaymentDetailsForm, 
-      @RequestParam(value = "selected_Billing_Address_Id") final String selectedBillingAddressId)
+      @RequestParam(value = "selected_Billing_Address_Id") final String selectedBillingAddressId, final Model model, final RedirectAttributes redirectAttributes)
   {
     try
     {
-      final AddressData newBillingAddressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm);
+      final AddressData newBillingAddressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm, companyName);
       if (StringUtils.isNotBlank(savedCCCardId))
       {
         if (StringUtils.isNotBlank(savedCCCardNonce))
@@ -63,13 +82,14 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
           getCheckoutFacade().setPaymentDetails(savedCCCardId);
         }
       }
-      return getCheckoutStep().nextStep();
     }
     catch(final Exception exception)
     {
+      BlLogger.logMessage(LOG, Level.ERROR, "Error occured while setting selected creditcard on user with updating address", exception);
+      GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
       return getCheckoutStep().currentStep();
     }
-    
+    return getCheckoutStep().nextStep();
   }
   
   /**
@@ -79,7 +99,8 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
    * @param sopPaymentDetailsForm the sop payment details form
    * @return the address data
    */
-  private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm)
+  private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm,
+      final String companyName)
   {
     if (StringUtils.isBlank(selectedAddressId))
     {
@@ -93,6 +114,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
       address.setTitleCode(sopPaymentDetailsForm.getBillTo_titleCode());
       address.setFirstName(sopPaymentDetailsForm.getBillTo_firstName());
       address.setLastName(sopPaymentDetailsForm.getBillTo_lastName());
+      address.setCompanyName(companyName);
       address.setTown(sopPaymentDetailsForm.getBillTo_city());
       address.setLine1(sopPaymentDetailsForm.getBillTo_street1());
       address.setLine2(sopPaymentDetailsForm.getBillTo_street2());
@@ -103,6 +125,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
       address.setShippingAddress(Boolean.FALSE);
       address.setPickStoreAddress(Boolean.FALSE);
       address.setUpsStoreAddress(Boolean.FALSE);
+      address.setVisibleInAddressBook(sopPaymentDetailsForm.isSavePaymentInfo());
       return address;
     }
     return null;    

@@ -27,7 +27,7 @@
    <div class="btn-group product-sort">
       <c:if test="${not empty searchPageData.sorts}">
          <form id="sortForm${top ? '1' : '2'}" name="sortForm${top ? '1' : '2'}" method="get" action="#">
-            <select id="sortOptions${top ? '1' : '2'}" name="sort" class="form-control sortDropdownForListPage">
+            <select id="sortOptions${top ? '1' : '2'}" name="sort" class="selectpicker" onclick="select_option()">
                <c:forEach items="${searchPageData.sorts}" var="sort">
                <%-- Condition to hide the Relevance sorting option for PLP --%>
                  <c:if test="${pageType == 'CATEGORY' && sort.name ne 'Relevance'}">

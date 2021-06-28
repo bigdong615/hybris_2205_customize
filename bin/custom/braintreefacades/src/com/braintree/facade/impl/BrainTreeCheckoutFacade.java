@@ -1,7 +1,9 @@
 package com.braintree.facade.impl;
 
+import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAddressRequest;
 import com.braintree.command.result.BrainTreeAddressResult;
+import com.braintree.command.result.BrainTreeVoidResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
 import com.braintree.converters.utils.BlBrainTreeConvertUtils;
@@ -29,11 +31,18 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.payment.commands.request.VoidRequest;
 import de.hybris.platform.payment.dto.TransactionStatus;
+import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
+import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
+import java.util.List;
+import java.util.Optional;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Resource;
@@ -167,12 +176,13 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
         final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentService.completeCreateSubscription(currentUserForCheckout, paymentInfoId);
         if (paymentInfo != null)
         {
-          final AddressModel newAddressModel = updateAddressInBtIfAvailable(currentUserForCheckout, addressId, paymentInfo, billingAddress);
+          final AddressModel newAddressModel = updateAddressInBraintreeIfAvailable(currentUserForCheckout, addressId, paymentInfo, billingAddress);
           if (Objects.nonNull(newAddressModel))
           {
             getModelService().remove(paymentInfo.getBillingAddress());
             newAddressModel.setOwner(paymentInfo);
             getModelService().save(newAddressModel);
+            setAddressOnCustomer(newAddressModel, currentUserForCheckout, billingAddress);            
             paymentInfo.setBillingAddress(newAddressModel);
           }
           paymentInfo.setNonce(paymentMethodNonce);
@@ -197,7 +207,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
    * @param billingAddress the billing address
    * @return the address model
    */
-  private AddressModel updateAddressInBtIfAvailable(final CustomerModel currentUserForCheckout, final String addressId,
+  private AddressModel updateAddressInBraintreeIfAvailable(final CustomerModel currentUserForCheckout, final String addressId,
       final BrainTreePaymentInfoModel paymentInfo, final AddressData billingAddress)
   {
     try
@@ -208,18 +218,18 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
         {
           final AddressData addressData =
               getAddressConverter().convert(getCustomerAccountService().getAddressForCode(currentUserForCheckout, addressId));
-          return updateAddressOnBT(currentUserForCheckout, paymentInfo, addressData);
+          return updateAddressInBraintree(currentUserForCheckout, paymentInfo, addressData);
         }
         else if (Objects.nonNull(billingAddress))
         {
-          return updateAddressOnBT(currentUserForCheckout, paymentInfo, billingAddress);
+          return updateAddressInBraintree(currentUserForCheckout, paymentInfo, billingAddress);
         }
       }
     }
     catch (final Exception exception)
     {
-      LOG.error("Error occured while updating address", exception);
-      return null;
+      BlLogger.logMessage(LOG, Level.ERROR, "Error while updating address in braintree", exception);
+      throw exception;
     }
     return null;
   }
@@ -232,7 +242,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
    * @param addressData the address data
    * @return the address model
    */
-  private AddressModel updateAddressOnBT(final CustomerModel currentUserForCheckout, final BrainTreePaymentInfoModel paymentInfo,
+  private AddressModel updateAddressInBraintree(final CustomerModel currentUserForCheckout, final BrainTreePaymentInfoModel paymentInfo,
       final AddressData addressData)
   {
     try
@@ -256,7 +266,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
     }
     catch (final Exception exception)
     {
-      LOG.error("Error occured while updating address", exception);
+      BlLogger.logMessage(LOG, Level.ERROR, "Error while updating address in braintree", exception);
+      throw exception;
     }
     return null;
   }
@@ -286,6 +297,35 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
   {
     return Objects.nonNull(addressData) && Objects.nonNull(addressData.getCountry()) && Objects.nonNull(addressData.getRegion())
         && StringUtils.isBlank(addressData.getRegion().getIsocodeShort()) && StringUtils.isNotBlank(addressData.getCountry().getIsocode());
+  }
+  
+  /**
+   * Sets the given address on customer.
+   *
+   * @param paymentBillingAddressModel the payment billing address model
+   * @param customerModel the customer model
+   * @param billingAddressData the billing address data
+   */
+  private void setAddressOnCustomer(final AddressModel paymentBillingAddressModel, final CustomerModel customerModel, 
+      final AddressData billingAddressData)
+  {
+    if(Objects.nonNull(billingAddressData))
+    {
+      try
+      {
+        final AddressModel addressOnUser = getModelService().clone(paymentBillingAddressModel, AddressModel.class);
+        addressOnUser.setBrainTreeAddressId(StringUtils.EMPTY);
+        addressOnUser.setVisibleInAddressBook(billingAddressData.isVisibleInAddressBook());
+        addressOnUser.setOwner(customerModel);
+        getCustomerAccountService().saveAddressEntry(customerModel, addressOnUser);
+      }
+      catch(final Exception exception)
+      {
+        BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception, 
+            "Error while setting address on customer with uid - {}", customerModel.getUid());
+        throw exception;
+      }
+    }
   }
 
 	public boolean setPaymentDetails(final String paymentInfoId, final String paymentMethodNonce) {
@@ -510,6 +550,48 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		{
 			getModelService().remove(cartModel);
 			getModelService().refresh(orderModel);
+		}
+	}
+
+	/**
+	 * It voids the auth transaction of the order
+	 */
+	public void voidAuthTransaction() {
+		final CartModel cart = cartService.getSessionCart();
+  	try {
+			final String merchantTransactionCode = cart.getUser().getUid();
+			List<PaymentTransactionModel> transactions = cart.getPaymentTransactions();
+			if (CollectionUtils.isNotEmpty(transactions) && null != merchantTransactionCode) {
+				List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
+				final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
+						.filter(transactionEntry ->
+								transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION))
+						.findFirst();
+				if (authEntry.isPresent()) {
+					final VoidRequest voidRequest = new VoidRequest(merchantTransactionCode,
+							authEntry.get().getRequestId(), StringUtils.EMPTY,
+							StringUtils.EMPTY);
+					final BrainTreeVoidResult voidResult = brainTreePaymentService
+							.voidTransaction(voidRequest);
+					setAuthorizedFlagInOrder(voidResult.getTransactionStatus(), cart);
+				}
+			}
+		} catch (final Exception ex) {
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Error occurred while voiding the auth transaction "
+					+ "for order {} ", cart.getCode(), ex);
+		}
+	}
+
+	/**
+	 * @param transactionStatus
+	 * @param cart
+	 * This is used to set the isAuthorized flag of order
+	 */
+	private void setAuthorizedFlagInOrder(TransactionStatus transactionStatus,
+			CartModel cart) {
+		if (TransactionStatus.ACCEPTED.equals(transactionStatus)) {
+			cart.setIsAuthorizationVoided(Boolean.TRUE);
+			getModelService().save(cart);
 		}
 	}
 

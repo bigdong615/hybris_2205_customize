@@ -18,7 +18,7 @@
       <!-- you should add all required extensions to this list, except platform extensions which are automatically required -->         
       <requires-extension name="acceleratorfacades"/> 
 	  <requires-extension name="braintree"/>
-      
+	  <requires-extension name="blcore"/>      
 
       <coremodule generated="true" manager="com.braintree.jalo.BraintreefacadesManager" packageroot="com.braintree"/>
 					
