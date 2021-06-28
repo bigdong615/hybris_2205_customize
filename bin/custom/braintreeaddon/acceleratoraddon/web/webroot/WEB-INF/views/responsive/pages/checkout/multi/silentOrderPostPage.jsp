@@ -310,6 +310,7 @@
 														onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;">
 														<spring:theme code="braintree.text.what.is.paypal"/>?</a>
 												</div>
+												<div id="payPalErrorMessage"></div>
 											</div>
 										</div>
 									</div>
