@@ -26,6 +26,7 @@
 
 <jsp:include page="../../../../messages/braintreeErrorMessages.jsp" />
 <c:url var="savedPaymentInfoFormURL" value="/checkout/multi/payment-method/braintree/choose-cc" />
+<c:url value="/checkout/multi/delivery-method/chooseShipping" var="shippingPageUrl" />
 <c:url value="/checkout/multi/payment-method/braintree/reviewSavedPayment" var="reviewSavedPaymentAction" />
 <c:if test="${deliveryAddress.pickStoreAddress or deliveryAddress.upsStoreAddress}">
 <c:set var="hideUseShipping" value="hideUseShipping"/>
@@ -220,9 +221,13 @@
 																			</c:choose>
 																		</a>
 																		<ul class="dropdown-menu selectSavedBillingAddress" aria-labelledby="savedAddresses">
-																		
+																		<c:if test="${not empty defaultBillingAddress.formattedAddress }">
+																			<li><a class="dropdown-item" href="#" data-id="${defaultBillingAddress.id }" data-address="${defaultBillingAddress.formattedAddress }">${defaultBillingAddress.formattedAddress }</a></li>
+																		</c:if>																		
 																			<c:forEach items="${billingAddresses}" var="billingAddress">
-																			<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
+																			<c:if test="${empty defaultBillingAddress or fn:containsIgnoreCase(billingAddress.id, defaultBillingAddress.id) == false}">
+																				<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
+																			</c:if>
 																			</c:forEach>
 																		
 																		</ul>
@@ -324,7 +329,7 @@
                             <div id="allFieldvalidationMessage"></div>
 							<!-- <hr class="mt-5"> -->
 							<div class="cart-actions">
-                                <a href="#" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
+                                <a href="${shippingPageUrl}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
                                 <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
                             </div>
