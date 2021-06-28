@@ -46,7 +46,14 @@
                            
                              <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
                               <%-- <div class="notification notification-warning">This is a cart warning.</div>
-                                <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
+                               <c:if test="${not empty cartData.potentialOrderPromotions}">
+                                    <c:forEach items="${cartData.potentialOrderPromotions}" var="promotion">
+                                    <c:if test="${fn:containsIgnoreCase(promotion.promotionData.code, 'free_shipping')}">
+                                       <div class="notification notification-tip truck"><spring:theme code="text.free.shipping.promo.applied.message"/></div>
+                                    </c:if>
+                                    </c:forEach>
+                                </c:if>
+                                <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                                 <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                                 <div class="order-actions my-4"><a href="#" alt="Print Order"><i class="icon-print"></i></a><a href="#"><i class="icon-save" alt="Save Order"></i></a>
                                 <a href="#" alt="Trash Order" class="clear-cart-page" data-bs-toggle="modal" data-bs-target="#clearCartWarning"><i class="icon-trash"></i></a></div>

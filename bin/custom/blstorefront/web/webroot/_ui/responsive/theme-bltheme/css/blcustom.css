@@ -334,3 +334,6 @@ font-size: 21px;
   -ms-overflow-style: none;
   scrollbar-width: none; /* Firefox */
 }
+.paypalNotification {
+	margin-top: 45px !important;
+}
