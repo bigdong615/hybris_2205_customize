@@ -2,6 +2,8 @@ package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
@@ -12,28 +14,19 @@ import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy
 import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.promotionengineservices.dao.PromotionDao;
-import de.hybris.platform.promotionengineservices.model.PromotionSourceRuleModel;
-import de.hybris.platform.promotions.model.AbstractPromotionModel;
-import de.hybris.platform.ruleengineservices.enums.RuleStatus;
 import de.hybris.platform.store.services.BaseStoreService;
-import de.hybris.platform.util.Config;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlSerialProductModel;
 
 
 /**
