@@ -135,7 +135,7 @@ public class DefaultBlShippingActionStrategy extends AbstractRuleActionStrategy<
   protected DeliveryModeModel getDeliveryModeForCode(final String code) {
     ServicesUtil.validateParameterNotNull(code, "Parameter code cannot be null");
     final List<DeliveryModeModel> deliveryModes = this.getDeliveryModeDao().findDeliveryModesByCode(code);
-    return CollectionUtils.isNotEmpty(deliveryModes) ? deliveryModes.get(0) : null;
+    return CollectionUtils.isEmpty(deliveryModes) ? null : deliveryModes.get(0);
   }
 
   protected DeliveryModeDao getDeliveryModeDao() {
