@@ -115,7 +115,12 @@ public class BlControllerConstants
 	public static final String PAYPAL_CHECKOUT = "BrainTreePayPalExpress";
 	public static final String REVIEW_PAGE = "Review";
 	public static final String DEFAULT_BILLING_ADDRESS = "defaultBillingAddress";
-	
+
+	public static final String REDIRECT_PREFIX = "redirect:";
+
+	public static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
+	public static final String SAVE_CART_FORM = "saveCartForm";
+
 	private BlControllerConstants()
 	{
 		//empty
