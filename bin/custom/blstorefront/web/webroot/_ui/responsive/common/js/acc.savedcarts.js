@@ -19,7 +19,7 @@ ACC.savedcarts = {
             var cartId = $(this).data('savedcart-id');
             var url = ACC.config.encodedContextPath +'/my-account/saved-carts/'+encodeURIComponent(cartId)+'/restore';
             var popupTitleHtml = ACC.common.encodeHtml(popupTitle);
-            
+
             ACC.common.checkAuthenticationStatusBeforeAction(function(){
             	$.get(url, undefined, undefined, 'html').done(function (data) {
             		ACC.colorbox.open(popupTitleHtml, {
@@ -206,7 +206,7 @@ ACC.savedcarts = {
 			remain = maxchars - parseInt(tlength);
         	$('#remain').text(value+' : '+remain);
 		});
-		
+
          $('#saveCartDescription').keyup(function() {
 			var maxchars = 255;
 			var value=$('#localized_val').attr('value');
@@ -214,7 +214,7 @@ ACC.savedcarts = {
 			remain = maxchars - parseInt(tlength);
         	$('#remainTextArea').text(value+' : '+remain);
 		});
-		
+
 		$(document).on("click",'#saveCart #saveCartButton', function (e) {
 			e.preventDefault();
 			saveCart = true;
