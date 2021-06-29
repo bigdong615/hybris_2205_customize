@@ -28,7 +28,7 @@
 <c:url var="savedPaymentInfoFormURL" value="/checkout/multi/payment-method/braintree/choose-cc" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="shippingPageUrl" />
 <c:url value="/checkout/multi/payment-method/braintree/reviewSavedPayment" var="reviewSavedPaymentAction" />
-<c:if test="${deliveryAddress.pickStoreAddress or deliveryAddress.upsStoreAddress}">
+<c:if test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
 <c:set var="hideUseShipping" value="hideUseShipping"/>
 </c:if>
 <spring:eval
@@ -127,11 +127,6 @@
 																			</li>
 																		</c:if>
 																		</c:forEach>
-																		<li id="enterNewCardLi">
-																			<button class="dropdown-item" data-id="newCard" data-nonce="" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">
-																				Enter new card
-																			</button>
-																		</li>
 																	</ul>
 																	
 																</div>
@@ -295,13 +290,20 @@
 									</c:if>
 									<div class="row">											
 										<div class="col-1 text-center pt-2">
-											<button class="btn-checkbox" type="button"
-												data-bs-toggle="collapse"
-												data-bs-target="#paypal-expand"
-												aria-controls="paypal-expand" aria-expanded="false">
-												<input type="radio" class="paypalselection" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt">
-												<label for="paymentMethodPayPal"></label>
-											</button>
+											<c:choose>
+												<c:when test="${disablePayment}">
+													<button class="btn-checkbox paymentDisabled" type="button" disabled></button>
+												</c:when>
+												<c:otherwise>
+													<button class="btn-checkbox" type="button"
+														data-bs-toggle="collapse"
+														data-bs-target="#paypal-expand"
+														aria-controls="paypal-expand" aria-expanded="false">
+														<input type="radio" class="paypalselection" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt">
+														<label for="paymentMethodPayPal"></label>
+													</button>
+												</c:otherwise>
+											</c:choose>
 										</div>
 										<div class="col-11">
 											<b>PayPal <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" style="height: 44px; width: auto;"></b>

@@ -122,6 +122,8 @@ public class BlControllerConstants
 	public static final String SAVE_CART_FORM = "saveCartForm";
 	
 	public static final String PAYPAL_ERROR_MESSAGE_KEY = "text.paypal.payment.error.message";
+	public static final String DISABLE_PAYMENT = "disablePayment";
+	public static final String BILL_TO_COUNTRY = "billTo_country";
 
 	private BlControllerConstants()
 	{
