@@ -45,6 +45,11 @@
                            <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                            
                              <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+                              <c:if test ="${not empty fn:escapeXml(errorMsg)}">
+                                     <div class="notification notification-error">
+                                           ${fn:escapeXml(errorMsg)}
+                                     </div>
+                              </c:if>
                               <%-- <div class="notification notification-warning">This is a cart warning.</div>
                                <c:if test="${not empty cartData.potentialOrderPromotions}">
                                     <c:forEach items="${cartData.potentialOrderPromotions}" var="promotion">
@@ -53,6 +58,7 @@
                                     </c:if>
                                     </c:forEach>
                                 </c:if>
+
                                 <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                                 <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
                                 <div class="order-actions my-4"><a href="#" alt="Print Order"><i class="icon-print"></i></a><a href="#"><i class="icon-save" alt="Save Order"></i></a>
