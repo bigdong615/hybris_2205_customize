@@ -352,28 +352,27 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
       final Set<SourcingResult> results, final AbstractOrderEntryModel entry, final WarehouseModel warehouse,
       final Set<BlSerialProductModel> serialProducts) {
 
-    final Set<String> serialProductCodesToAssign = new HashSet<>(
+    final Set<BlSerialProductModel> serialProductsToAssign = new HashSet<>(
         (null != result.getSerialProductMap() && null != result.getSerialProductMap()
             .get(entry.getEntryNumber())) ? result.getSerialProductMap().get(entry.getEntryNumber())
             : Collections.emptySet());
-    final Set<String> serialProductCodes = serialProducts.stream()
-        .map(BlSerialProductModel::getCode)
-        .filter(code -> !serialProductCodesToAssign.contains(code))
+    final Set<BlSerialProductModel> serialProductSet = serialProducts.stream()
+        .filter(product -> !serialProductsToAssign.contains(product))
         .collect(Collectors.toSet());
-    serialProductCodesToAssign.addAll(serialProductCodes);
+    serialProductsToAssign.addAll(serialProductSet);
 
     final Map<AbstractOrderEntryModel, Long> allocationMap =
         MapUtils.isNotEmpty(result.getAllocation()) ? result.getAllocation() : new HashMap<>();
-    allocationMap.put(entry, (long) serialProductCodesToAssign.size());
+    allocationMap.put(entry, (long) serialProductsToAssign.size());
 
-    final Set<String> entrySerialProductCodes = new HashSet<>(entry.getSerialProductCodes());
-    entrySerialProductCodes.addAll(serialProductCodesToAssign);
-    entry.setSerialProductCodes(entrySerialProductCodes);
+    final Set<BlSerialProductModel> entrySerialProducts = new HashSet<>(entry.getSerialProducts());
+    entrySerialProducts.addAll(serialProductsToAssign);
+    entry.setSerialProducts(entrySerialProducts);
 
-    final Map<Integer, Set<String>> serialProductMap =
+    final Map<Integer, Set<BlSerialProductModel>> serialProductMap =
         MapUtils.isNotEmpty(result.getSerialProductMap()) ? result.getSerialProductMap()
             : new HashMap<>();
-    serialProductMap.put(entry.getEntryNumber(), serialProductCodesToAssign);
+    serialProductMap.put(entry.getEntryNumber(), serialProductsToAssign);
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
         "Serial products {} are assigned for product code {}",
