@@ -21,7 +21,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.product.data.SerialProductData;
-import com.google.protobuf.DescriptorProtos.GeneratedCodeInfo;
+
 
 
 /**
