@@ -312,7 +312,7 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam(value = "sort", required = false) final String sortCode, final Model model) throws CMSItemNotFoundException
 	{
 		// Handle paged search results
-		final PageableData pageableData = createPageableData(page, 5, sortCode, showMode); // NOSONAR
+		final PageableData pageableData = createPageableData(page, 10, sortCode, showMode); // NOSONAR
 		final SearchPageData<OrderHistoryData> searchPageData = orderFacade.getPagedOrderHistoryForStatuses(pageableData);  // NOSONAR
 		populateModel(model, searchPageData, showMode);
 		final ContentPageModel orderHistoryPage = getContentPageForLabelOrId(ORDER_HISTORY_CMS_PAGE);

@@ -502,6 +502,15 @@
 		<property name="showShipmentDisplayImage" type="Boolean"/>
 		<property name="showPickupLocation" type="Boolean"/>
 	</bean>
+
+
+	<!--Added for rental Start date and Rental End date on MyAccount Order Page -->
+	<bean class="de.hybris.platform.commercefacades.order.data.OrderHistoryData">
+		<property name="rentalStartDate" type="String"/>
+		<property name="rentalEndDate" type="String"/>
+		<property name="orderDate" type="String"/>
+		<property name="rentalCart" type="Boolean"/>
+	</bean>
 	
 
 </beans>

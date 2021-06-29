@@ -538,4 +538,10 @@
 	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
     <property name="customerAccountService" ref="customerAccountService"/>
 	</bean>
+
+	<!--Added for MyAccount Order Page -->
+	<alias name="defaultBlOrderHistoryPopulator" alias="orderHistoryPopulator"/>
+	<bean id="defaultBlOrderHistoryPopulator" class="com.bl.facades.populators.BlOrderHistoryPopulator" parent="defaultOrderHistoryPopulator">
+	</bean>
+
 </beans>
