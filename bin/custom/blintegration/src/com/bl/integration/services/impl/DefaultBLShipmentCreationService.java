@@ -112,6 +112,10 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 					upsShipmentResponseData.setErrorDescription(errorDetails.getPrimaryErrorCode().getDescription());
 					upsShipmentResponseData.setStatusMessage(ex.getMessage());
 				}
+				else
+				{
+					upsShipmentResponseData.setErrorDescription(ex.getMessage());
+				}
 			}
 			else
 			{

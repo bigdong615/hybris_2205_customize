@@ -27,30 +27,31 @@ public class BLUPSShipmentCreateResponsePopulator
 	{
 		final UPSShipmentCreateResponse shipmentResponse = new UPSShipmentCreateResponse();
 
-		final ShipmentResultsType shipmentResult = upsResponse.getShipmentResults();
-
-		shipmentResponse.setShipmentIdentificationNumber(shipmentResult.getShipmentIdentificationNumber());
-		shipmentResponse.setLabelURL(shipmentResult.getLabelURL());
-
-		if (shipmentResult.getShipmentCharges() != null && shipmentResult.getShipmentCharges().getTotalCharges() != null
-				&& shipmentResult.getShipmentCharges().getTotalCharges().getMonetaryValue() != null)
+		if (upsResponse.getShipmentResults() != null)
 		{
-			final Double totalCharges = Double.valueOf(shipmentResult.getShipmentCharges().getTotalCharges().getMonetaryValue());
-			shipmentResponse.setTotalCharges(totalCharges);
-		}
+			final ShipmentResultsType shipmentResult = upsResponse.getShipmentResults();
 
-		final List<UPSShipmentPackageResult> packageResultData = new ArrayList<>();
-		for (final PackageResultsType packageResult : shipmentResult.getPackageResults())
-		{
-			final UPSShipmentPackageResult shipmentPackage = new UPSShipmentPackageResult();
-			shipmentPackage.setGraphicImage(packageResult.getShippingLabel().getGraphicImage());
-			shipmentPackage.setHTMLImage(packageResult.getShippingLabel().getHTMLImage());
-			shipmentPackage.setTrackingNumber(packageResult.getTrackingNumber());
-			packageResultData.add(shipmentPackage);
-		}
-		shipmentResponse.setPackages(packageResultData);
+			shipmentResponse.setShipmentIdentificationNumber(shipmentResult.getShipmentIdentificationNumber());
+			shipmentResponse.setLabelURL(shipmentResult.getLabelURL());
 
+			if (shipmentResult.getShipmentCharges() != null && shipmentResult.getShipmentCharges().getTotalCharges() != null
+					&& shipmentResult.getShipmentCharges().getTotalCharges().getMonetaryValue() != null)
+			{
+				final Double totalCharges = Double.valueOf(shipmentResult.getShipmentCharges().getTotalCharges().getMonetaryValue());
+				shipmentResponse.setTotalCharges(totalCharges);
+			}
+
+			final List<UPSShipmentPackageResult> packageResultData = new ArrayList<>();
+			for (final PackageResultsType packageResult : shipmentResult.getPackageResults())
+			{
+				final UPSShipmentPackageResult shipmentPackage = new UPSShipmentPackageResult();
+				shipmentPackage.setGraphicImage(packageResult.getShippingLabel().getGraphicImage());
+				shipmentPackage.setHTMLImage(packageResult.getShippingLabel().getHTMLImage());
+				shipmentPackage.setTrackingNumber(packageResult.getTrackingNumber());
+				packageResultData.add(shipmentPackage);
+			}
+			shipmentResponse.setPackages(packageResultData);
+		}
 		return shipmentResponse;
-
 	}
 }

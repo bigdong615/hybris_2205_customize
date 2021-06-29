@@ -7,8 +7,9 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.core.model.user.AddressModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +79,9 @@ public class BLUpsShippingDataPopulator
 	@Resource(name = "addressConverter")
 	private Converter<AddressModel, AddressData> addressConverter;
 
-	public UpsShippingRequestData populateUPSShipmentRequest(final ConsignmentModel consignmentModel)
+	public UpsShippingRequestData populateUPSShipmentRequest(final PackagingInfoModel packagingInfo)
 	{
+		final WarehouseModel warehouse = packagingInfo.getConsignment().getWarehouse();
 		final UpsShippingRequestData upsRequestData = new UpsShippingRequestData();
 		AddressModel shipperAddress = new AddressModel();
 
@@ -87,9 +89,9 @@ public class BLUpsShippingDataPopulator
 
 		/** Creating Shipper Data **/
 
-		if (consignmentModel.getWarehouse() != null && consignmentModel.getWarehouse().getPointsOfService() != null)
+		if (warehouse != null && warehouse.getPointsOfService() != null)
 		{
-			shipperAddress = consignmentModel.getWarehouse().getPointsOfService().iterator().next().getAddress();
+			shipperAddress = warehouse.getPointsOfService().iterator().next().getAddress();
 		}
 		final AddressData addressData = addressConverter.convert(shipperAddress);
 
@@ -100,9 +102,9 @@ public class BLUpsShippingDataPopulator
 
 		final AddressData shipperAddressData = new AddressData();
 
-		if (consignmentModel.getWarehouse() != null)
+		if (warehouse != null && warehouse.getAccountNumber() != null)
 		{
-			shipperData.setShipperNumber(consignmentModel.getWarehouse().getAccountNumber());
+			shipperData.setShipperNumber(warehouse.getAccountNumber());
 		}
 		shipperAddressData.setLine1(addressData.getLine1());
 		shipperAddressData.setLine2(addressData.getLine2());
@@ -134,13 +136,17 @@ public class BLUpsShippingDataPopulator
 		shipFromData.setAddress(shipperAddressData);
 
 		/** Creating ShipTo Data **/
-		final AddressData shipToAddress = addressConverter.convert(consignmentModel.getOrder().getDeliveryAddress());
+		final AddressData shipToAddress = addressConverter.convert(packagingInfo.getConsignment().getOrder().getDeliveryAddress());
 
 		final AddressData shipToAddressData = new AddressData();
+		shipToAddressData.setFirstName(shipToAddress.getFirstName());
+		shipToAddressData.setLastName(shipToAddress.getLastName());
 		shipToAddressData.setLine1(shipToAddress.getLine1());
 		shipToAddressData.setLine2(shipToAddress.getLine2());
 		shipToAddressData.setTown(shipToAddress.getTown());
 		shipToAddressData.setPhone(shipToAddress.getPhone());
+		shipToAddressData.setCompanyName(shipToAddress.getCompanyName());
+
 		if (shipToAddress.getRegion() != null && shipToAddress.getRegion().getIsocode() != null)
 		{
 			final RegionData shipToRegionData = new RegionData();
@@ -175,28 +181,31 @@ public class BLUpsShippingDataPopulator
 		/** Creating UPS Shipment Service Data **/
 		final UpsShipmentServiceData upsShipmentServiceData = new UpsShipmentServiceData();
 
-		if (consignmentModel.getOptimizedShippingType() != null
-				&& StringUtils.isNotBlank(consignmentModel.getOptimizedShippingType().getCode()))
+		if (packagingInfo.getConsignment().getOptimizedShippingType() != null
+				&& StringUtils.isNotBlank(packagingInfo.getConsignment().getOptimizedShippingType().getCode()))
 		{
-			upsShipmentServiceData.setCode(consignmentModel.getOptimizedShippingType().getServiceTypeCode());
-			upsShipmentServiceData.setDescription(consignmentModel.getOptimizedShippingType().getServiceTypeDesc());
+			upsShipmentServiceData.setCode(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeCode());
+			upsShipmentServiceData.setDescription(packagingInfo.getConsignment().getOptimizedShippingType().getServiceTypeDesc());
 		}
 
 		/** Creating UPS Payment Data **/
 		final UpsPaymentInformation upsPaymentInformation = new UpsPaymentInformation();
 		upsPaymentInformation.setType(paymentInfoType);
 
-		upsPaymentInformation.setAccountNumber(consignmentModel.getWarehouse().getAccountNumber());
+		if (warehouse.getAccountNumber() != null)
+		{
+			upsPaymentInformation.setAccountNumber(warehouse.getAccountNumber());
+		}
 
 		/** Creating UPS Package Data List **/
 
 		final List<PackageTypeData> packageDataList = new ArrayList<>();
-		populatePackage(packageDataList, consignmentModel);
+		populatePackage(packageDataList, packagingInfo);
 
 		/** Creating UPS Return Data List **/
 		final ReturnServiceData returnServiceData = new ReturnServiceData();
 		returnServiceData.setCode(returnServiceCode);
-		returnServiceData.setDescription(returnServiceDescription + "-" + consignmentModel.getOrder().getCode());
+		returnServiceData.setDescription(returnServiceDescription + "-" + packagingInfo.getConsignment().getOrder().getCode());
 
 		shipmentData.setReturnService(returnServiceData);
 		shipmentData.setShipper(shipperData);
@@ -216,7 +225,7 @@ public class BLUpsShippingDataPopulator
 	 * @param packageDataList
 	 * @param consignmentEntries
 	 */
-	private void populatePackage(final List<PackageTypeData> packageDataList, final ConsignmentModel consignment)
+	private void populatePackage(final List<PackageTypeData> packageDataList, final PackagingInfoModel packagingInfo)
 	{
 		final UpsShipmentServiceData serviceDataForPackagingType = new UpsShipmentServiceData();
 
@@ -231,7 +240,7 @@ public class BLUpsShippingDataPopulator
 		final DimensionsTypeData dimensionsTypeData = new DimensionsTypeData();
 		final PackageWeightTypeData packageWeight = new PackageWeightTypeData();
 		packageWeight.setUnitOfMeasurement(serviceDataForUnit);
-		packageWeight.setWeight(consignment.getPackagingInfo().getGrossWeight());
+		packageWeight.setWeight(packagingInfo.getGrossWeight());
 		packageData.setPackagingType(serviceDataForPackagingType);
 		packageData.setPackageWeight(packageWeight);
 
@@ -239,9 +248,9 @@ public class BLUpsShippingDataPopulator
 		unitOfMeas.setCode(packageWeightCode);
 		unitOfMeas.setDescription(packageWeightDescription);
 
-		dimensionsTypeData.setHeight(consignment.getPackagingInfo().getHeight());
-		dimensionsTypeData.setLength(consignment.getPackagingInfo().getLength());
-		dimensionsTypeData.setWidth(consignment.getPackagingInfo().getWidth());
+		dimensionsTypeData.setHeight(packagingInfo.getHeight());
+		dimensionsTypeData.setLength(packagingInfo.getLength());
+		dimensionsTypeData.setWidth(packagingInfo.getWidth());
 		dimensionsTypeData.setUnitOfMeasurement(unitOfMeas);
 		packageData.setDimensions(dimensionsTypeData);
 		packageDataList.add(packageData);

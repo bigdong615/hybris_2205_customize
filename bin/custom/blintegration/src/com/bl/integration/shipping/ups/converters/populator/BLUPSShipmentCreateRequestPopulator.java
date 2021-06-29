@@ -160,8 +160,11 @@ public class BLUPSShipmentCreateRequestPopulator
 		/** Creating Return Service Data **/
 
 		final ReturnServiceType returnService = new ReturnServiceType();
-		returnService.setCode(shipmentType.getReturnService().getCode());
-		returnService.setDescription(shipmentType.getReturnService().getDescription());
+		if (shipmentData.getReturnService() != null && shipmentData.getReturnService().getCode() != null)
+		{
+			returnService.setCode(shipmentData.getReturnService().getCode());
+			returnService.setDescription(shipmentData.getReturnService().getDescription());
+		}
 
 		shipmentType.setReturnService(returnService);
 
