@@ -1050,7 +1050,8 @@
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
 	      <list-view:column qualifier="serialProductCode"/>
 	      <list-view:column qualifier="reservedStatus"/>
-	      <list-view:column qualifier="date"/>
+	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
+	      <list-view:column merge-mode="remove" qualifier="available"/>
 	    </list-view:list-view>
   	</context>
 
@@ -1077,10 +1078,6 @@
 							<editorArea:editor-parameter>
 								<editorArea:name>selectedTimeZone</editorArea:name>
 								<editorArea:value>GMT+00:00</editorArea:value>
-							</editorArea:editor-parameter>
-							<editorArea:editor-parameter>
-								<editorArea:name>displayedTimeZones</editorArea:name>
-								<editorArea:value>GMT-2,GMT-1,GMT+0,GMT+1,GMT+2</editorArea:value>
 							</editorArea:editor-parameter>
 						</editorArea:attribute>
 					</editorArea:section>
