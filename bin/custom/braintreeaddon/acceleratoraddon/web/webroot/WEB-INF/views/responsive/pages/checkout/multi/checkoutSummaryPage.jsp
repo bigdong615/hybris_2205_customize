@@ -205,6 +205,14 @@
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                            <cart:orderSummeryForReview cartData="${cartData}" emptyCart="${emptyCart}" />
+                           <c:if test="${not empty cartData.potentialOrderPromotions}">
+                               <c:forEach items="${cartData.potentialOrderPromotions}" var="promotion">
+                               <c:if test="${fn:containsIgnoreCase(promotion.promotionData.code, 'free_shipping')}">
+                                  <div class="notification notification-tip truck"><spring:theme code="text.free.shipping.promo.applied.message"/></div>
+                               </c:if>
+                               </c:forEach>
+                           </c:if>
+                            <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
 							<div class="order-actions my-4">
 								<a href="#" alt="Print Order">
 									<i class="icon-print"></i>

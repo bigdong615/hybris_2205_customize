@@ -1902,7 +1902,7 @@
             </attributes>
             </itemtype>
         </typegroup>
-        
+
         <typegroup name="PackagingInfo">
 			<itemtype code="PackagingInfo" autocreate="false" generate="false">
 				<attributes>
@@ -2026,6 +2026,42 @@
 		</itemtype>
             
         </typegroup>
-		
+
+      <typegroup name="Promotion">
+        <itemtype code="RuleBasedFreeDeliveryModeAction"
+          extends="AbstractRuleBasedPromotionAction"
+          jaloclass="com.bl.core.jalo.RuleBasedFreeDeliveryModeAction"
+          autocreate="true" generate="true">
+          <description>This action is for giving free shiiping cost for selected delivery mode</description>
+          <attributes>
+            <attribute
+              qualifier="deliveryMode"
+              autocreate="true"
+              type="DeliveryMode">
+              <description>The delivery mode to apply to the order</description>
+              <modifiers optional="false" />
+              <persistence type="property" />
+            </attribute>
+            <attribute
+              qualifier="deliveryCost"
+              autocreate="true"
+              type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+              <description>The delivery cost to apply to the order</description>
+              <modifiers optional="false" />
+              <persistence type="property" />
+            </attribute>
+            <attribute
+              qualifier="replacedDeliveryCost"
+              autocreate="true"
+              type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+              <description>The delivery cost that was set to order before a promotion was applied</description>
+              <modifiers optional="true" />
+              <persistence type="property" />
+            </attribute>
+          </attributes>
+        </itemtype>
+      </typegroup>
 	</itemtypes>
 </items>

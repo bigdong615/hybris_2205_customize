@@ -73,7 +73,7 @@
 
 <!-- DTO to store Serial Product Data -->
  <bean class="com.bl.facades.product.data.SerialProductData">
-    <property name="conditionRating" type="Double"/>
+    <property name="conditionRating" type="double"/>
     <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="serialId" type="String"/>
@@ -254,6 +254,7 @@
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
+    <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
   </bean>
   
     <!-- Creating Request Data for UPS Shipment -->
