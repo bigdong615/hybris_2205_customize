@@ -544,16 +544,18 @@
                                                 if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
                                  partnerDelivery += data[i].deliveryCost.formattedValue ;
                                                 }
+                         if(data[i].internalStoreAddress != null) {
                                  partnerDelivery += ' </span><br>' +
                                                     '<a href="' + data[i].internalStoreAddress.url + '" target="_blank">' +
                                                         data[i].internalStoreAddress.formattedAddress +
                                                     '</a><br>';
-                         if(data[i].internalStoreAddress.phone != null) {
-                             partnerDelivery += data[i].internalStoreAddress.phone;
-                         }
+
+                             if(data[i].internalStoreAddress.phone != null) {
+                                 partnerDelivery += data[i].internalStoreAddress.phone;
+                             }
                             partnerDelivery += '</p>' ;
-                         if(data[i].internalStoreAddress.openingDaysDetails != null) {
-                            partnerDelivery += '<p class="mb-0 mt-3"><span class="gray80">M-F</span> ' +
+                            if(data[i].internalStoreAddress.openingDaysDetails != null) {
+                                partnerDelivery += '<p class="mb-0 mt-3"><span class="gray80">M-F</span> ' +
                                                     data[i].internalStoreAddress.openingDaysDetails["M-F"] +
                                                 '</p>' +
                                                 '<p class="mb-0"><span class="gray80">Sat</span> ' +
@@ -562,9 +564,10 @@
                                                 '<p class="mb-0"><span class="gray80">Sun</span> ' +
                                                     data[i].internalStoreAddress.openingDaysDetails["Sun"] +
                                                 '</p>' ;
+                            }
+                            partnerDelivery += '</div>' +
+                                            '</div>';
                          }
-                         partnerDelivery += '</div>' +
-                                        '</div>';
                 }
                 $('#partnerPickUpShippingMethods').html(partnerDelivery);
                 $('#pick-up-pickup-gear').show();
