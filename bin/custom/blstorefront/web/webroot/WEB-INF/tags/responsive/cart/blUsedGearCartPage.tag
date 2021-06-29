@@ -61,7 +61,7 @@
 
                                 <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                                 <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
-                                <div class="order-actions my-4"><a href="#" alt="Print Order"><i class="icon-print"></i></a><a href="#"><i class="icon-save" alt="Save Order"></i></a>
+                                <div class="order-actions my-4">
                                 <a href="#" alt="Trash Order" class="clear-cart-page" data-bs-toggle="modal" data-bs-target="#clearCartWarning"><i class="icon-trash"></i></a></div>
                           </div>
                       </div>
