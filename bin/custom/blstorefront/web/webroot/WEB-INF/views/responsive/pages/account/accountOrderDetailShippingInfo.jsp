@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-9">
                     <div class="row">
-                        <div class="col-sm-6 col-md-4 order-billing-address">
+                        <div class="col-sm-6 col-md-4 order-billing-address 1">
                             <order:billingAddressItem order="${orderData}"/>
                         </div>
                         <c:if test="${not empty orderData.paymentInfo}">

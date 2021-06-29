@@ -27,7 +27,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      target.setRentalEndDate(convertDateToString(source.getRentalEndDate()));
    }
    target.setRentalCart(source.getIsRentalCart());
-   convertDateToString(source.getDate()); // Needs to create new attribute on data
+   target.setOrderDate(convertDateToString(source.getDate()));
   }
 
   /**

@@ -544,4 +544,13 @@
 	<bean id="defaultBlOrderHistoryPopulator" class="com.bl.facades.populators.BlOrderHistoryPopulator" parent="defaultOrderHistoryPopulator">
 	</bean>
 
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="orderConverter"/>
+		<property name="add" ref="blOrderDetailsPopulator"/>
+	</bean>
+
+	<bean id="blOrderDetailsPopulator"
+		class="com.bl.facades.populators.BlOrderDetailsPopulator">
+	</bean>
+
 </beans>

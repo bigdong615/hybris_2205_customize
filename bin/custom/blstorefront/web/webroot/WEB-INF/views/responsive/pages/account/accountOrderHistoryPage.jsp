@@ -27,8 +27,7 @@
 										<c:forEach items="${searchPageData.results}" var="order">
 											<div class="order-block">
 												<div class="row">
-												<c:choose>
-                          <c:when test="${order.rentalCart}">
+                          <c:if test="${order.rentalCart}">
 													<div class="col-5 col-md-3">
 														<p class="lightteal mb-0"><b>${order.rentalStartDate}</b></p>
 														<p class="body14">
@@ -47,19 +46,9 @@
 														<a href="#" class="btn btn-primary">
 															<spring:theme code="text.myaccount.order.extend.rent" />
 														</a>
-													</c:when>
-													<c:otherwise>
-													<div class="col-12 col-md-7">
-                                <p class="mb-0"><b>Wednesday, Jan 31</b></p>
-                                     <p class="body14">1 x Canon EOS R5 Mirrorless Digital Camera<br>
-                                            1 x Canon Camera Strap</p>
-                          </div>
-                              <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                                    <p class="my-2"><i class="icon-check-teal"></i> ${order.statusDisplay}</p>
-                              </div>
-													</c:otherwise>
-													</c:choose>
-													</div>
+													 </div>
+													</c:if>
+
 													<div class="col-6 col-md-1">
 														<div class="btn-group"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
 															<ul class="dropdown-menu" aria-labeledby="btn-rental-001">

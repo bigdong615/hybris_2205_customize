@@ -114,6 +114,9 @@
       <property name="giftCardDiscount" type="PriceData"/>
       <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
       <property name="rentalDates" type="com.bl.facades.product.data.RentalDateDto"/>
+		  <property name="rentalStartDate" type="String"/>
+		  <property name="rentalEndDate" type="String"/>
+	   	<property name="orderedDate" type="String"/>
   </bean>
 
     <!-- Shipping -->

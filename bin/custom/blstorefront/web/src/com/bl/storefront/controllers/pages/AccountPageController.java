@@ -351,6 +351,7 @@ public class AccountPageController extends AbstractSearchPageController
 		storeCmsPageInModel(model, orderDetailPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		setUpMetaDataForContentPage(model, orderDetailPage);
+		model.addAttribute("pageType" , "orderDetails");
 		return getViewForPage(model);
 	}
 
