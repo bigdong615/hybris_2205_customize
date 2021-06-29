@@ -182,6 +182,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
 	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
 	public static final String FREE_RENTAL_DATES = "freeRentalDates";
+	public static final String TOTAL_INCLUDING_DAMAGE_WAIVER = "totalIncludingDamageWaiver";
+	public static final String TOTAL_WITH_DAMAGE_WAIVER = "totalwithDamageWaiver";
+	public static final String CURRENCY_ISOCODE = "currencyIsoCode";
+	public static final String FREE_DELIVERY_MODES = "freeDeliveryModes";
 
 	private BlCoreConstants()
 	{

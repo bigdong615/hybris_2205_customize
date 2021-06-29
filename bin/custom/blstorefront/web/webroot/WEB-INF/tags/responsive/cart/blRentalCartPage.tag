@@ -8,6 +8,7 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"  %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -79,8 +80,14 @@
                               <c:if test="${isGiftCardRemoved eq 'true'}">
                                  <div id="cart-warning" class="notification notification-warning"><spring:theme code="text.gift.card.remove"/></div>
                               </c:if>
-                              <%--<div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
-                              <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
+                              <c:if test="${not empty cartData.potentialOrderPromotions}">
+                                  <c:forEach items="${cartData.potentialOrderPromotions}" var="promotion">
+                                  <c:if test="${fn:containsIgnoreCase(promotion.promotionData.code, 'free_shipping')}">
+                                     <div class="notification notification-tip truck"><spring:theme code="text.free.shipping.promo.applied.message"/></div>
+                                  </c:if>
+                                  </c:forEach>
+                              </c:if>
+                              <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
                               <div class="order-actions my-4">
                                   <a href="#" alt="Print Order"><i class="icon-print"></i></a>
                                    <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
