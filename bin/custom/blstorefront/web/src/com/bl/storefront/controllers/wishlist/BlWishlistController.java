@@ -1,18 +1,16 @@
 package com.bl.storefront.controllers.wishlist;
 
-import static de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController.REDIRECT_PREFIX;
-
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.facades.populators.BlWishListPopulator;
-import com.bl.facades.wishlist.impl.DefaultBlWishListFacade;
-import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.stock.BlCommerceStockService;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.wishlist.BlWishListFacade;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
-import de.hybris.platform.commercefacades.product.data.ProductData;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
-import de.hybris.platform.wishlist2.model.Wishlist2Model;
-import java.util.List;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
+import de.hybris.platform.commercefacades.order.data.CartModificationData;
+import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
+import de.hybris.platform.store.services.BaseStoreService;
 import javax.annotation.Resource;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,23 +18,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import com.bl.logging.BlLogger;
 
+/**
+ * This class handles the adding, removing product from wishlist and removing wishlist entries from
+ * the wishlist
+ *
+ * @author Sahana SB
+ */
 @Controller
-public class BlWishlistController {
+public class BlWishlistController extends AbstractSearchPageController {
 
-  private static final Logger LOG = LoggerFactory.getLogger(BlWishlistController.class);
-  @Resource(name = "wishlistFacade")
-  private DefaultBlWishListFacade wishlistFacade;
-
-  @Resource(name = "wishlistPopulator")
-  private BlWishListPopulator wishListPopulator;
-
-//  @Resource(name = "wishlistConverter")
-//  private Converter<Wishlist2Model, Wishlist2Data> wishlistConverter;
+  private static final Logger LOG = (Logger) LoggerFactory.getLogger(BlWishlistController.class);
 
   private static final String REDIRECT_TO_BOOKMARKS_PAGE =
       REDIRECT_PREFIX + "/my-account/bookmarks";
 
+  @Resource(name = "cartFacade")
+  private BlCartFacade blCartFacade;
+
+  @Resource(name = "wishlistFacade")
+  private BlWishListFacade wishlistFacade;
+
+  @Resource(name = "blDatePickerService")
+  private BlDatePickerService blDatePickerService;
+
+  @Resource(name = "blCommerceStockService")
+  private BlCommerceStockService blCommerceStockService;
+
+  @Resource(name = "baseStoreService")
+  private BaseStoreService baseStoreService;
+
+  /*
+   * Method to add Product to Wishlist from the Product Cards.
+   */
   @RequireHardLogIn
   @RequestMapping(value = "/wishlist/add", method = RequestMethod.POST)
   @ResponseBody
@@ -45,11 +62,14 @@ public class BlWishlistController {
       wishlistFacade.addToWishlist(code);
       return BlCoreConstants.SUCCESS;
     } catch (Exception e) {
-      LOG.error("in default wish list " + code + "already Exists", e);
+      BlLogger.logMessage(LOG, Level.ERROR, "In default wishlist Product already present ", e);
       return BlCoreConstants.ERROR;
     }
   }
 
+  /*
+   * Method to Remove Product from Wishlist from the Product Cards.
+   */
   @RequireHardLogIn
   @RequestMapping(value = "/removewishlist", method = RequestMethod.POST)
   @ResponseBody
@@ -58,11 +78,14 @@ public class BlWishlistController {
       wishlistFacade.removeWishlist(code);
       return BlCoreConstants.SUCCESS;
     } catch (Exception e) {
-      LOG.error("in default wishlist " + code + "not found OR" + code + "found more than one entry in default wish list entry");
+      BlLogger.logMessage(LOG, Level.ERROR, "In default wishlist found more than one entry ", e);
       return BlCoreConstants.ERROR;
     }
   }
 
+  /*
+   * Remove Wishlist Entry from the Accountbookmarks Page.
+   */
   @RequireHardLogIn
   @RequestMapping(value = "/removewishlistentry", method = RequestMethod.POST)
   public String removeWishlistEntry(@RequestParam("removeProductEntry") final String code) {
@@ -70,20 +93,27 @@ public class BlWishlistController {
       wishlistFacade.removeWishlist(code);
       return REDIRECT_TO_BOOKMARKS_PAGE;
     } catch (Exception e) {
-      LOG.error("in default wishlist " + code + "not found OR" + code + "found more than one entry in default wish list entry");
+      BlLogger.logMessage(LOG, Level.ERROR, "In default wishlist found more than one entry ", e);
       return REDIRECT_TO_BOOKMARKS_PAGE;
     }
   }
 
-//  private String remove(String code)
-//  {
-//    try {
-//      wishlistFacade.removeWishlist(code);
-//      return "value";
-//    } catch (Exception e) {
-//      LOG.error("in default wishlist " + code + "not found OR" + code
-//          + "found more than one entry in default wish list entry");
-//      return BlCoreConstants.ERROR;
-//    }
-//  }
+  /*
+   * Method to Add Wishlist Entry to Cart and remove it form the Wishlist entry
+   */
+  @RequestMapping(value = "/bookmark/addtorental", method = RequestMethod.POST)
+  public String addToCartAndRemoveEntry(
+      @RequestParam(value = "page", defaultValue = "0") final int page,
+      @RequestParam(value = "sort", required = false) final String sortCode, final Model model,
+      @RequestParam("addtocartremoveProductEntry") final String code) {
+    wishlistFacade.removeWishlistAddToCart(page, sortCode, code);
+    try {
+      final CartModificationData cartModification = blCartFacade.addToCart(code, 1, null);
+    } catch (CommerceCartModificationException e) {
+      e.printStackTrace();
+    }
+    return REDIRECT_TO_BOOKMARKS_PAGE;
+  }
 }
+
+

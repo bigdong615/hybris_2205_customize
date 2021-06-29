@@ -17,7 +17,7 @@
 <c:set value="image coming soon" var="altText"/>
 
 <div class="col-md-6 col-lg-4">
-<div class="card">
+<div class="card" >
 		<c:choose>
 			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
 				<span class="badge badge-limited-stock"><spring:theme
@@ -43,7 +43,22 @@
 			</c:otherwise>
 		</c:choose>
 
-		<span class="bookmark"></span>
+		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
+                <c:choose>
+    			    <c:when test="${product.isDiscontinued}">
+                       <span class="bookmark" disabled="disabled"></span>
+                   </c:when>
+                   <c:when test="${product.isBookMarked}">
+                    <span class="bookmark set js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
+                     data-bookmark-value="${product.isBookMarked}"></span>
+                   </c:when>
+                   <c:otherwise>
+                    <span class="bookmark js-add-to-wishlist bookmarkicons"  data-product-code="${product.code}"
+                    data-bookmark-value="${product.isBookMarked}"></span>
+                   </c:otherwise>
+                </c:choose>
+    </form>
   <c:choose>
      <c:when test ="${not empty product.images}">
         <div class="card-slider splide">

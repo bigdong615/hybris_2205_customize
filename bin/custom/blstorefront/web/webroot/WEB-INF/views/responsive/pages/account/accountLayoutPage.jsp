@@ -11,10 +11,11 @@
 <spring:url value="/my-account/address-book" var="addressBookUrl"/>
 <spring:url value="/my-account/payment-details" var="paymentDetailsUrl"/>
 <spring:url value="/my-account/orders" var="ordersUrl"/>
+<spring:url value="/my-account/bookmarks" var="bookmarksUrl"/>
 
 <template:page pageTitle="${pageTitle}">
 <c:url var = "baseUrl" value="/my-account"/>
-
+${blPageType}uuuuuuu
  <section id="myAccount">
     <div class="container">
        <div class="row justify-content-center">
@@ -54,7 +55,7 @@
                       </a>
                    </li>
                    <li>
-                      <a href="${baseUrl}/bookmarks" class="dropdown-item">
+                      <a href="${baseUrl}/bookmarks" class="dropdown-item ${blPageType eq 'Bookmarks'? 'boldCustom' : ''}">
                          <spring:theme code= "text.bookmarks" />
                       </a>
                    </li>
@@ -105,7 +106,10 @@
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/bookmarks">
+                   <a href="${baseUrl}/bookmarks"
+                   <c:if test="${blPageType eq 'Bookmarks'}">
+                                         <c:out value="class=active"/>
+                   </c:if>>
                       <spring:theme code= "text.bookmarks" />
                    </a>
                 </p>

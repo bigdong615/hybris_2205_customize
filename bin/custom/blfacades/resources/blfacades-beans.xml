@@ -255,6 +255,32 @@
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
   </bean>
 
+
+  <!--BL-781 For Wishlist2data -->
+  <bean class="com.bl.facades.wishlist.data.Wishlist2Data">
+    <property name="name" type="String"/>
+    <property name="decription" type="String"/>
+    <property name="isDefault" type="Boolean"/>
+    <property name="entries" type="java.util.List&lt;com.bl.facades.wishlist.data.Wishlist2EntryData&gt;"/>
+    <property name="size" type="Integer"/>
+    <property name="code" type="String"/>
+    <property name="creationDate" type="String"/>
+    <property name="totalPrice" type="double"/>
+    <property name="user" type="de.hybris.platform.commercefacades.user.data.PrincipalData"/>
+    <property name="qty" type="Integer"/>
+  </bean>
+
+  <!--BL-781 For Wishlist2EntryData -->
+  <bean class="com.bl.facades.wishlist.data.Wishlist2EntryData">
+    <property name="product" type="de.hybris.platform.commercefacades.product.data.ProductData"/>
+    <property name="desired" type="Integer"/>
+    <property name="recieved" type="Integer"/>
+    <property name="addedDate" type="String"/>
+    <property name="qty" type="Integer"/>
+    <property name="entryPk" type="Long"/>
+    <property name="totalPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+  </bean>
+
 </beans>
 
 

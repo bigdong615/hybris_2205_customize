@@ -6,7 +6,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/" var="homeUrl" />
-${productData.code}yyyyyyyy
+
 <a href="${homeUrl}"><spring:theme code="breadcrumb.home" /></a> &gt;
 <c:forEach items="${breadcrumbs}" var="breadcrumb" varStatus="status">
 
@@ -16,19 +16,21 @@ ${productData.code}yyyyyyyy
 			<a href="#">${fn:escapeXml(breadcrumb.name)} </a>
 
 			<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
-       <input type="hidden" name="productCodePost" id="productCodePost" value="${productData.code}">
-       <c:choose>
-        <c:when test="${productData.isBookMarked}">
-          <span class="bookmark bookmark-checked js-add-to-wishlist bookmarkicons" data-product-code="${productData.code}"
-          data-bookmark-value="${productData.isBookMarked}">${productData.isBookMarked}</span>
-        </c:when>
-       <c:otherwise>
-        <span class="bookmark js-add-to-wishlist bookmarkicons" data-product-code="${productData.code}"
-        data-bookmark-value="${productData.isBookMarked}">${productData.isBookMarked}</span>
-       </c:otherwise>
-      </c:choose>
+             <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
+             <c:choose>
+              <c:when test="${product.isDiscontinued}">
+                   <span class="bookmark" disabled="disabled"></span>
+               </c:when>
+              <c:when test="${product.isBookMarked}">
+                <span class="bookmark set js-add-to-wishlist" id="card-${status.index}" data-product-code="${product.code}"
+                data-bookmark-value="${product.isBookMarked}">${product.isBookMarked}hhh</span>
+              </c:when>
+             <c:otherwise>
+              <span class="bookmark js-add-to-wishlist" id="card-${status.index}" data-product-code="${product.code}"
+              data-bookmark-value="${product.isBookMarked}"></span>
+             </c:otherwise>
+            </c:choose>
       </form>
-
 			</c:when>
 			<c:when test="${breadcrumb.url eq '#'}">
 					<a href="#">${fn:escapeXml(breadcrumb.name)}</a>&gt;

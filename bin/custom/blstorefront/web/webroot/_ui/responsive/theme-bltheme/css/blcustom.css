@@ -251,3 +251,20 @@ font-size: 21px;
 
 /* for wishlist */
 .bookmark-checked{background-color:red !important;}
+.order-block form{display:inline-table;}
+.lightteal {
+    background: none;
+    border: none;
+    text-transform: capitalize;
+    cursor:pointer;
+    text-decoration:underline;
+     margin-right: 6px;
+}
+.lightteal:hover {
+    color: #e64b4f !important;
+}
+.order-block .btn-primary:hover{
+    background-color: #da474a !important;
+    border: 1px solid #da474a !important;
+    color:#fff !important;
+}
