@@ -21,7 +21,6 @@
                                                        data: {removeproductCode: productCode},
                                                        success: function (response) {
                                                        if(response === 'Success'){
-                                                       alert("produt removed");
                                                         document.getElementById(bookmarkId).classList.remove("set");
                                                        }
                                                        else{
@@ -42,7 +41,6 @@
                                           data: {productwishlistCode: productCode},
                                           success: function (response) {
                                           if(response === 'Success'){
-                                          alert("produt added");
                                            document.getElementById(bookmarkId).classList.add("set");
                                           }
                                           else{
