@@ -4,6 +4,7 @@
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <spring:url value="/my-account/update-profile" var="updateProfileUrl"/>
 <spring:url value="/my-account/update-password" var="updatePasswordUrl"/>
@@ -105,9 +106,12 @@
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/saved-carts">
-                      <spring:theme code= "text.saved.cart" />
-                   </a>
+                <a href="${baseUrl}/saved-carts"
+                                   <c:if test="${fn:startsWith(pageTitle, 'Saved Carts')}">
+                                      <c:out value="class=active"/>
+                                   </c:if>>
+                                      <spring:theme code= "text.saved.cart" />
+                                   </a>
                 </p>
                 <hr>
                 <p>

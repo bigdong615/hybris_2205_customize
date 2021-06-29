@@ -311,4 +311,29 @@ font-size: 21px;
     right:inherit !important;
   }
 }
- 
+.icon-date-forward {
+    background: url(../assets/icon-arrow.svg) center no-repeat;
+}
+.rental-terms {
+    padding-bottom: 15px;
+    text-align: right;
+}
+.scroll-over-text{
+  overflow-y: scroll;
+  height:160px;
+}
+::-webkit-scrollbar {
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge add Firefox */
+.scroll-over-text {
+  -ms-overflow-style: none;
+  scrollbar-width: none; /* Firefox */
+}
+.paypalNotification {
+	margin-top: 45px !important;
+}

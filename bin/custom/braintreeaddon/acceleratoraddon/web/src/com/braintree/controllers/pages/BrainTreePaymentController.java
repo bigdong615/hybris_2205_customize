@@ -1,12 +1,22 @@
 package com.braintree.controllers.pages;
 
+import static com.braintree.constants.BraintreeaddonWebConstants.ACCEPTED_PAYMENTS_METHODS_IMAGES_URL;
+import static com.braintree.constants.BraintreeaddonWebConstants.HOSTED_FIELDS_ENABLE;
+import static com.braintree.constants.BraintreeaddonWebConstants.PAYMENT_INFOS;
+import static com.braintree.constants.BraintreeaddonWebConstants.PAY_PAL_STANDARD_ENABLE;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.GENERAL_HEAD_ERROR;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.GENERAL_HEAD_ERROR_MESSAGE;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.IS_ADDRESS_OPEN;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PAL_CHECKOUT_DATA;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
 import com.bl.facades.customer.BlCustomerFacade;
-import com.bl.storefront.forms.BlAddressForm;
 import com.bl.storefront.util.BlAddressDataUtil;
 import com.braintree.configuration.service.BrainTreeConfigService;
-import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.constants.BraintreeConstants;
-import com.braintree.controllers.BraintreeaddonControllerConstants;
+import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import com.braintree.facade.impl.BrainTreeUserFacadeImpl;
@@ -30,6 +40,11 @@ import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.payment.AdapterException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import javax.annotation.Resource;
+import javax.validation.Valid;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -39,27 +54,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.annotation.Resource;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static com.braintree.constants.BraintreeaddonWebConstants.*;
-import static com.braintree.constants.BraintreeaddonWebConstants.ACCEPTED_PAYMENTS_METHODS_IMAGES_URL;
-import static com.braintree.constants.BraintreeaddonWebConstants.HOSTED_FIELDS_ENABLE;
-import static com.braintree.constants.BraintreeaddonWebConstants.MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL;
-import static com.braintree.constants.BraintreeaddonWebConstants.PAYMENT_INFOS;
-import static com.braintree.constants.BraintreeaddonWebConstants.PAY_PAL_STANDARD_ENABLE;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.*;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.GENERAL_HEAD_ERROR;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.GENERAL_HEAD_ERROR_MESSAGE;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.IS_ADDRESS_OPEN;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PAL_CHECKOUT_DATA;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
-import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
 @Controller
 @RequestMapping(value = "/braintree/checkout/hop")
@@ -109,15 +103,14 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     {
       sopPaymentDetailsForm.setSavePaymentInfo(false);
     }
-
-    setupAddPaymentPage(model);
-    setupParametersSilentOrderPostPage(sopPaymentDetailsForm, model, paymentProvider, String.valueOf(sopPaymentDetailsForm.isSavePaymentInfo()));
-
-    final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(nonce, paymentProvider, cardDetails, cardType, payPalEmail,
-        deviceData, liabilityShifted, sopPaymentDetailsForm.isSavePaymentInfo(), cardholder);
-
+    BrainTreeSubscriptionInfoData subscriptionInfo = null;
     try
     {
+      setupAddPaymentPage(model);
+      setupParametersSilentOrderPostPage(sopPaymentDetailsForm, model, paymentProvider, String.valueOf(sopPaymentDetailsForm.isSavePaymentInfo()));
+
+      subscriptionInfo = buildSubscriptionInfo(nonce, paymentProvider, cardDetails, cardType, payPalEmail,
+          deviceData, liabilityShifted, sopPaymentDetailsForm.isSavePaymentInfo(), cardholder);
       setupSilentOrderPostPage(sopPaymentDetailsForm, model);
     }
     catch (final Exception e)

@@ -26,6 +26,7 @@
 
 <jsp:include page="../../../../messages/braintreeErrorMessages.jsp" />
 <c:url var="savedPaymentInfoFormURL" value="/checkout/multi/payment-method/braintree/choose-cc" />
+<c:url value="/checkout/multi/delivery-method/chooseShipping" var="shippingPageUrl" />
 <c:url value="/checkout/multi/payment-method/braintree/reviewSavedPayment" var="reviewSavedPaymentAction" />
 <c:if test="${deliveryAddress.pickStoreAddress or deliveryAddress.upsStoreAddress}">
 <c:set var="hideUseShipping" value="hideUseShipping"/>
@@ -39,8 +40,7 @@
 		<div class="container">
 			<div id="cartSteps" class="row justify-content-center">
 				<div class="col-xl-10">
-					<span class="step1 complete"><i class="icon-check"></i> Your
-						Rental</span><span class="step2 complete"><i class="icon-check"></i>
+					<span class="step1 complete"><i class="icon-check"></i><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.checkout.multi.order.rental"/></c:when><c:otherwise><spring:theme code="text.checkout.multi.order.UsedGear"/></c:otherwise></c:choose></span><span class="step2 complete"><i class="icon-check"></i>
 						Delivery or Pickup</span><span class="step3 active"><i
 						class="number">3</i> Payment</span><span class="step4"><i
 						class="number">4</i> Review</span>
@@ -192,15 +192,28 @@
 																			</div>
 																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
 																		</c:when>
+																		<c:when test="${not empty defaultBillingAddress and empty billingAddresses}">
+																			<b class="mt-4">Saved Billing Addresses</b>
+																			<div class="dropdown my-2">
+																				
+																					<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+																						${defaultBillingAddress.formattedAddress }
+																					</a>
+																				
+																			</div>
+																			<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+																		</c:when>
 																		<c:otherwise>
 																		<c:if test="${not empty billingAddresses and billingAddresses.size() > 0 }">
 																			<b class="mt-4">Saved Billing Addresses</b>
 																	<div class="dropdown my-2">
-																		<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${paymentInfoBillingAddress.id }"/>
 																		<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
 																			<c:choose>
 																				<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
 																					${paymentInfoBillingAddress.formattedAddress }
+																				</c:when>
+																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
+																					${defaultBillingAddress.formattedAddress }
 																				</c:when>
 																				<c:otherwise>
 																					Select Saved Billing Address
@@ -208,9 +221,13 @@
 																			</c:choose>
 																		</a>
 																		<ul class="dropdown-menu selectSavedBillingAddress" aria-labelledby="savedAddresses">
-																		
+																		<c:if test="${not empty defaultBillingAddress.formattedAddress }">
+																			<li><a class="dropdown-item" href="#" data-id="${defaultBillingAddress.id }" data-address="${defaultBillingAddress.formattedAddress }">${defaultBillingAddress.formattedAddress }</a></li>
+																		</c:if>																		
 																			<c:forEach items="${billingAddresses}" var="billingAddress">
-																			<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
+																			<c:if test="${empty defaultBillingAddress or fn:containsIgnoreCase(billingAddress.id, defaultBillingAddress.id) == false}">
+																				<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
+																			</c:if>
 																			</c:forEach>
 																		
 																		</ul>
@@ -252,6 +269,11 @@
 														<div class="form-additionals"></div>
 													</form:form>
 												</ycommerce:testId>
+												<c:set var="selectedAddressId" value="${defaultBillingAddress.id }"/>
+												<c:if test="${not empty paymentInfoBillingAddress}">
+													<c:set var="selectedAddressId" value="${paymentInfoBillingAddress.id }"/>
+												</c:if>
+												<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${selectedAddressId}"/>
 												<form:form name="submitSavedCardForm" method="POST" id="submitSavedCardForm" action="${reviewSavedPaymentAction}">
 													<input type="hidden" id="savedCCCardId" name="savedCCCardId" value="${userSelectedPaymentInfo.id}"/>
 													<input type="hidden" id="savedCCCardNonce" name="savedCCCardNonce" value="${userSelectedPaymentInfo.paymentMethodNonce}"/>
@@ -268,6 +290,9 @@
 								</div>
 								<!-- Paypal section -->
 								<div class="accordion-item payProduct">
+									<c:if test="${not empty userSelectedPayPalPaymentInfo}">
+										<input type="hidden" id="isPayPalPresent" name="isPayPalPresent" value="true"/>
+									</c:if>
 									<div class="row">											
 										<div class="col-1 text-center pt-2">
 											<button class="btn-checkbox" type="button"
@@ -290,6 +315,7 @@
 														onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;">
 														<spring:theme code="braintree.text.what.is.paypal"/>?</a>
 												</div>
+												<div id="payPalErrorMessage"></div>
 											</div>
 										</div>
 									</div>
@@ -303,16 +329,22 @@
                             <div id="allFieldvalidationMessage"></div>
 							<!-- <hr class="mt-5"> -->
 							<div class="cart-actions">
-                                <a href="#" class="gray80">Back to renting</a>
+                                <a href="${shippingPageUrl}" class="gray80"><c:choose><c:when test="${cartData.isRentalCart}"><spring:theme code="text.rental.cart.back" /></c:when><c:otherwise><spring:theme code="text.usedGear.cart.back.plp" /></c:otherwise></c:choose></a>
                                 <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end" id="submit_silentOrderPostForm">Continue</a>
                                 <a href="#" class="btn btn-sm btn-primary float-end" id="submit_silentOrderSavedForm">Continue</a>
                             </div>
                         </div>
 						<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
 							<cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}" />
-							<%-- <div class="notification notification-warning">This is a cart warning.</div>
-                            <div class="notification notification-tip truck">Free 2-day shipping on orders over $150.</div>
-                            <div class="notification notification-tip check">Free changes or cancellation until Jan 28.</div> --%>
+							<%-- <div class="notification notification-warning">This is a cart warning.</div> --%>
+							  <c:if test="${not empty cartData.potentialOrderPromotions}">
+                   <c:forEach items="${cartData.potentialOrderPromotions}" var="promotion">
+                   <c:if test="${fn:containsIgnoreCase(promotion.promotionData.code, 'free_shipping')}">
+                      <div class="notification notification-tip truck"><spring:theme code="text.free.shipping.promo.applied.message"/></div>
+                   </c:if>
+                   </c:forEach>
+               </c:if>
+                <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
 							<div class="order-actions my-4">
 								<a href="#" alt="Print Order"><i class="icon-print"></i></a> 
 								<a href="#"><i class="icon-save" alt="Save Order"></i></a>

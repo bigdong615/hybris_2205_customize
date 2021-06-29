@@ -8,11 +8,12 @@
     hideErrorForInputValidation();
     $('#ship-it-savedAddresses option').each(function() {         
         var optionText = this.text;       
-        var newOption = optionText.substring(0,57); 
+        var newOption = optionText.substring(0,52); 
         if(screen.width<600){
             var newOption = optionText.substring(0,35); 
         }       
-        jQuery(this).text(newOption + '..');
+     //   jQuery(this).text(newOption + '..');
+        jQuery(this).text(newOption);
 
     });
 });

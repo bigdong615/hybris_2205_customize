@@ -40,6 +40,7 @@
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
+	        <value code="ADDED_TO_CART" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -992,6 +993,16 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
+                     <attribute qualifier="cosmeticRating" type="float">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store cosmetic rating data</description>
+                     </attribute>
+                     <attribute qualifier="functionalRating" type="float">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store functional rating data</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
@@ -1738,6 +1749,24 @@
                       optional="true" />
                       <persistence type="property" />
                     </attribute>
+                    <attribute qualifier="isAuthorised" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the order has been authorized or not</description>
+                    </attribute>
+                    <attribute qualifier="isCaptured" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the order has been captured or not</description>
+                    </attribute>
+                    <attribute qualifier="isAuthorizationVoided" type="java.lang.Boolean">
+                      <persistence type="property" />
+                      <modifiers optional="true" read="true" write="true" />
+                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                      <description>flag to identify whether the auth amount used to verify the card has been voided or not</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -1851,6 +1880,11 @@
                         <modifiers read="true" write="true" search="true" initial="true" />
                         <description>List of BlackOut Dates</description>
                     </attribute>
+                    <attribute qualifier="usedGearCartTimer" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>used gear session timer value </description>
+					</attribute>
                 </attributes>                
             </itemtype>
         </typegroup>
@@ -1868,5 +1902,166 @@
             </attributes>
             </itemtype>
         </typegroup>
+
+        <typegroup name="PackagingInfo">
+			<itemtype code="PackagingInfo" autocreate="false" generate="false">
+				<attributes>
+					<attribute type="java.lang.String" qualifier="labelURL">
+						<modifiers read="true" write="true" unique="false" optional="true" />
+						<persistence type="property" />
+					</attribute>
+				<attribute qualifier="totalShippingPrice" type="double">
+					<description>Total Shipping Price</description>
+					<persistence type="property" />
+				</attribute>
+				<attribute qualifier="shipmentIdentificationNumber" type="java.lang.String">
+					<description>Shipment identification number</description>
+					<persistence type="property" />
+				</attribute>
+				
+				<attribute qualifier="trackingNumber" type="java.lang.String">
+					<description>Shipment Package tracking number</description>
+					<persistence type="property" />
+				</attribute>
+				
+				<attribute qualifier="graphicImage" type="java.lang.String">
+					<description>Graphic Image</description>
+					<persistence type="property">
+						<columntype database="oracle">
+							<value>CLOB</value>
+						</columntype>
+						<columntype database="sap">
+							<value>NCLOB</value>
+						</columntype>
+						<columntype database="mysql">
+							<value>TEXT</value>
+						</columntype>
+						<columntype database="sqlserver">
+							<value>TEXT</value>
+						</columntype>
+						<columntype>
+							<value>HYBRIS.LONG_STRING</value>
+						</columntype>
+					</persistence>
+				</attribute>
+				
+				<attribute qualifier="hTMLImage" type="java.lang.String">
+					<description>Html image</description>
+					<persistence type="property">
+						<columntype database="oracle">
+							<value>CLOB</value>
+						</columntype>
+						<columntype database="sap">
+							<value>NCLOB</value>
+						</columntype>
+						<columntype database="mysql">
+							<value>TEXT</value>
+						</columntype>
+						<columntype database="sqlserver">
+							<value>TEXT</value>
+						</columntype>
+						<columntype>
+							<value>HYBRIS.LONG_STRING</value>
+						</columntype>
+					</persistence>	
+				</attribute>
+				</attributes>
+			</itemtype>
+		</typegroup>
+		
+	<typegroup name="Consignment">
+	<itemtype code="Consignment" autocreate="false" generate="false">
+                <description>Extending Consignment type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="optimizedShippingStartDate" type="java.util.Date">
+                        <description>Optimized shipping from date.</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="optimizedShippingEndDate" type="java.util.Date">
+                        <description>optimized shipping end date.</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                   <!--  <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
+                        <description>Shipping method optimization type</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute> -->
+                    <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
+                        <description>Shipping method optimization type</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            
+            	<itemtype code="OptimizedShippingMethod" generate="true"
+				autocreate="true">
+				<deployment table="optShipMethod" typecode="12215"/>
+			<attributes>
+				<attribute type="java.lang.String" qualifier="code">
+					<modifiers read="true" write="true" unique="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="name">
+					<modifiers read="true" write="true" unique="false"
+						optional="true" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String"
+					qualifier="serviceTypeCode">
+					<modifiers read="true" write="true" unique="false"
+						optional="true" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String"
+					qualifier="serviceTypeDesc">
+					<modifiers read="true" write="true" unique="false"
+						optional="true" />
+						<persistence type="property"/>
+				</attribute>
+			</attributes>
+		</itemtype>
+            
+        </typegroup>
+
+      <typegroup name="Promotion">
+        <itemtype code="RuleBasedFreeDeliveryModeAction"
+          extends="AbstractRuleBasedPromotionAction"
+          jaloclass="com.bl.core.jalo.RuleBasedFreeDeliveryModeAction"
+          autocreate="true" generate="true">
+          <description>This action is for giving free shiiping cost for selected delivery mode</description>
+          <attributes>
+            <attribute
+              qualifier="deliveryMode"
+              autocreate="true"
+              type="DeliveryMode">
+              <description>The delivery mode to apply to the order</description>
+              <modifiers optional="false" />
+              <persistence type="property" />
+            </attribute>
+            <attribute
+              qualifier="deliveryCost"
+              autocreate="true"
+              type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+              <description>The delivery cost to apply to the order</description>
+              <modifiers optional="false" />
+              <persistence type="property" />
+            </attribute>
+            <attribute
+              qualifier="replacedDeliveryCost"
+              autocreate="true"
+              type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+              <description>The delivery cost that was set to order before a promotion was applied</description>
+              <modifiers optional="true" />
+              <persistence type="property" />
+            </attribute>
+          </attributes>
+        </itemtype>
+      </typegroup>
 	</itemtypes>
 </items>

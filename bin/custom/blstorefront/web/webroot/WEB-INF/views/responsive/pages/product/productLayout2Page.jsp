@@ -3,6 +3,7 @@
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <template:page pageTitle="${pageTitle}">
    <c:choose>
@@ -19,32 +20,33 @@
          <div class="modal-dialog modal-dialog-centered modal-lg">
            <div class="modal-content">
              <div class="modal-header">
-               <h5 class="modal-title" id="sku52678-title">Used Gear Rating</h5>
+               <h5 class="modal-title" id="sku52678-title"><spring:theme code="pdp.rating.popup.header.text"/></h5>
                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
              </div>
              <div class="modal-body">
                <div class="row">
                    <div class="col-12 col-md-7">
-                       <p><b>Cosmetic <span class="float-end">8.0</span></b></p>
-                       <p class="body14 mb-5">Some wear and tear: Noticeable wear from heavy impacts, scuffs and the paint job is diminishing, but fully functional</p>
-                       <p><b>Sensor <span class="float-end">9.5</span></b></p>
-                       <p class="body14 mb-5">Very light internal dust, but images are clean</p>
+                       <p class="body14 mb-5"></p>
+                        </br>
+                       <p><b><spring:theme code="pdp.rating.popup.cosmetic.rating.text"/><span class="float-end" id="cosmetic"></span></b></p>
+                       <p class="body14 mb-5"></p>
+                       <p class="body14 mb-5"></p>
+                       <p><b><spring:theme code="pdp.rating.popup.functional.rating.text"/> <span class="float-end" id="functional"></span></b></p>
                    </div>
                    <div class="col-12 col-md-4 offset-md-1">
                        <div class="ratingCircle">
                            <div class="ratingContent">
-                               <span class="mt-5">Expert Rating</span>
-                               <span class="rating-number mt-2">9.2</span>
+                               <span class="mt-5"><spring:theme code="pdp.rating.popup.expert.rating.text"/></span>
+                               <span class="rating-number mt-2" id="conditionRating"></span>
                            </div>
                        </div>
-                       <p class="text-center mt-4"><b>Serial</b> #52678</p>
+                       <p class="text-center mt-4" id="serialId"></p>
                    </div>
-
                </div>
              </div>
              <div class="modal-footer">
-                 <p class="body14">Our used gear is always fully functional and each item is individually inspected, cleaned, and rated by our photo & video experts before being listed for sale.</p>
-                 <p class="body14">For additional details, head to our used gear FAQ.</p>
+                 <p class="body14"><spring:theme code="pdp.rating.popup.footer.text1" /></p>
+                 <p class="body14"><spring:theme code="pdp.rating.popup.footer.text2"/></p>
              </div>
            </div>
          </div>

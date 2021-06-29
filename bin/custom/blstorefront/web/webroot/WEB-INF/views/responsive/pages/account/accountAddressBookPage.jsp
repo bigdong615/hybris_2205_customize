@@ -70,6 +70,7 @@
                      </c:otherwise>
                   </c:choose>
                </div>
+               <div class="scroll-over-text">
                <c:if test="${not empty fn:escapeXml(address.companyName)}">
                   ${fn:escapeXml(address.companyName)}<br>
                </c:if>
@@ -83,6 +84,7 @@
                   ${fn:escapeXml(address.email)}<br>
                </c:if>
                ${fn:escapeXml(address.phone)}
+               </div>
                <p class="address-actions mb-0">
                   <a href="edit-address/${address.id}">
                      <spring:theme code="edit.address.button.text"/>
