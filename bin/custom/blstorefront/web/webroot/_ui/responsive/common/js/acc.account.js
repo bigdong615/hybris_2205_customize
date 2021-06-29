@@ -15,7 +15,7 @@ ACC.account = {
 				success: function (result) {
 					$('#signIn').html(result);
 					$('#serialClick').val(serialClick);
-					$('#serialSignUp').attr("data-serial",serialClick);
+					$('#serialSignUp').attr("data-serial", serialClick);
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
@@ -31,7 +31,7 @@ ACC.account = {
 				success: function (result) {
 					$('#signUp').html(result);
 					$('#serialClickSignUP').val(serialClick);
-					$('#serialSignInInstead').attr("data-click",serialClick);
+					$('#serialSignInInstead').attr("data-click", serialClick);
 					setTimeout(function(){$("#signUp").modal('show');},500)
 				}
 			})
@@ -89,8 +89,6 @@ ACC.account = {
 						} else {
 							
 							$("#errorMessages_sigin_errorbox").addClass("d-none");
-							//location.reload();
-							
 							var serialId = $('#signUppopup-validation').find('input[name="serialClickSignUP"]').val();
 							if(serialId == "" || serialId  == undefined)
 							{
