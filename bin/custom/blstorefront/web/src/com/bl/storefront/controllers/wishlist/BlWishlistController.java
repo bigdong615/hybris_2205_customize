@@ -11,15 +11,14 @@ import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.store.services.BaseStoreService;
 import javax.annotation.Resource;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import com.bl.logging.BlLogger;
 
 /**
@@ -31,8 +30,7 @@ import com.bl.logging.BlLogger;
 @Controller
 public class BlWishlistController extends AbstractSearchPageController {
 
-  private static final Logger LOG = (Logger) LoggerFactory.getLogger(BlWishlistController.class);
-
+  private static final Logger LOG = Logger.getLogger(BlWishlistController.class);
   private static final String REDIRECT_TO_BOOKMARKS_PAGE =
       REDIRECT_PREFIX + "/my-account/bookmarks";
 
