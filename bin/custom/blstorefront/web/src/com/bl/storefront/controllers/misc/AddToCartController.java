@@ -183,22 +183,22 @@ public class AddToCartController extends AbstractController {
         final long qty = form.getQty();
 
         if (qty <= 0) {
-      	  GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGS_HOLDER, getLocalizedString("basket.error.quantity.invalid"),null);
+      	  GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGS_HOLDER, getLocalizedString("basket.error.quantity.invalid"),null);
         } else {
             try {
 
                 final CartModificationData cartModification = blCartFacade.addToCart(code, qty, serialCode);
                 if (cartModification.getQuantityAdded() == 0L) {
-                   GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.noItemsAdded."),null);
+                   GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.noItemsAdded."),null);
                 } else if (cartModification.getQuantityAdded() < qty) {
-               	 GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.reducedNumberOfItemsAdded."),null);
+               	 GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.reducedNumberOfItemsAdded."),null);
                 }
             } catch (final CommerceCartModificationException ex) {
                 logDebugException(ex);
-                GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.occurred"),null);
+                GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.occurred"),null);
             } catch (final UnknownIdentifierException ex) {
                 LOG.debug(String.format("Product could not be added to cart - %s", ex.getMessage()));
-                GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.occurred"),null);
+                GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.occurred"),null);
                return REDIRECT_CART_URL;
             }
         }
