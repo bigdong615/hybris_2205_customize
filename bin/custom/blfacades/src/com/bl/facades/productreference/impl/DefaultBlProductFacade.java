@@ -8,7 +8,6 @@ import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
 import de.hybris.platform.commercefacades.product.impl.DefaultProductFacade;
 import de.hybris.platform.commerceservices.product.data.ReferenceData;
 import de.hybris.platform.core.model.product.ProductModel;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +18,17 @@ import java.util.List;
  * implementation of OOTB class for Product Reference Section
  * @author Sahana SB
  */
-public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
+public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade implements
+    BlProductFacade {
 
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
-  private Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> referenceDataProductReferenceConverter;
 
+  /**
+   *
+   * {@inheritDoc}
+   */
+  @Override
   public List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct,
       final List<ProductOption> options, final Integer limit) {
     final List<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>> references = getBlCommerceProductReferenceService()
@@ -33,13 +37,12 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
     final List<ProductReferenceData> result = new ArrayList<>();
 
     for (final ReferenceData<ProductReferenceTypeEnum, REF_TARGET> reference : references) {
-      final ProductReferenceData productReferenceData = getReferenceDataProductReferenceConverter()
+      final ProductReferenceData productReferenceData = (ProductReferenceData) getReferenceDataProductReferenceConverter()
           .convert(reference);
       getReferenceProductConfiguredPopulator()
           .populate(reference.getTarget(), productReferenceData.getTarget(), options);
       result.add(productReferenceData);
     }
-
     return result;
   }
 
@@ -52,11 +55,6 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade {
       BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService) {
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
   }
-
-  @Override
-  public Converter<ReferenceData<ProductReferenceTypeEnum, REF_TARGET>, ProductReferenceData> getReferenceDataProductReferenceConverter() {
-    return referenceDataProductReferenceConverter;
-  }
-
 }
+
 

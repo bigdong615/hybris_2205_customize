@@ -22,7 +22,6 @@ import java.util.Map;
 public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishlistDao {
 
   private UserService userService;
-  private Map<String, String> WishListSortCodes;
   private PagedFlexibleSearchService pagedFlexibleSearchService;
 
   private static final String SORT_WISHLIST_BY_DATE =
@@ -66,14 +65,6 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
 
   public void setUserService(UserService userService) {
     this.userService = userService;
-  }
-
-  public Map<String, String> getWishListSortCodes() {
-    return WishListSortCodes;
-  }
-
-  public void setWishListSortCodes(Map<String, String> wishListSortCodes) {
-    WishListSortCodes = wishListSortCodes;
   }
 
   public PagedFlexibleSearchService getPagedFlexibleSearchService() {

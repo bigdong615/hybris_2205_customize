@@ -57,7 +57,7 @@
                         	<div class="input-group">
                         		<span class="input-group-btn">
                         			<button type="button" class="btn btn-default btn-number"
-                        				data-type="minus" data-field="quant[1]">
+                        				data-type="minus" data-field="quant[1]" entryNumber="${entry.entryNumber}">
                         				<span class="glyphicon glyphicon-minus"></span>
                         			</button>
                         		</span> <input type="text" name="quant[1]" class="form-control input-number"
@@ -65,7 +65,7 @@
                         			entryNumber="${entry.entryNumber}"> <span
                         			class="input-group-btn">
                         			<button type="button" class="btn btn-default btn-number"
-                        				data-type="plus" data-field="quant[1]">
+                        				data-type="plus" data-field="quant[1]" entryNumber="${entry.entryNumber}">
                         				<span class="glyphicon glyphicon-plus"></span>
                         			</button>
                         		</span>
@@ -148,9 +148,6 @@
                                                                                            <a href="#" class="btn btn-primary"><spring:theme code="pdp.rental.product.recommendation.section.notifyme.text" /></a>
                                                                                       </c:when>
                                                                                        <c:otherwise>
-                                                                                       <div class="page-loader-new-layout">
-                                                                                                  <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
-                                                                                             </div>
                                                                                             <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                                                                                 <button type="button" class="btn btn-primary btn-block js-add-to-cart-popup" id="modalCard-${loopindex.index}" data-bs-toggle="modal"
                                                                                                    data-bs-target="#addToCart" data-product-code="${productReference.target.code}">

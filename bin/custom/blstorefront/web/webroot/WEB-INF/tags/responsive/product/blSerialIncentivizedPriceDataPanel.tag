@@ -21,7 +21,8 @@
 		varStatus="loop">
 		<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''}">
 			<td><a href="#" data-bs-toggle="modal"
-				data-bs-target="#sku52678">${serialProduct.conditionRating}</a></td>
+				data-bs-target="#sku52678" data-cosmetic="${serialProduct.cosmeticRating}" data-functional="${serialProduct.functionalRating}"
+				data-condition-rating="${serialProduct.conditionRating}" data-serial-id = "${serialProduct.serialId}" class="js-conditional-rating-popup">${serialProduct.conditionRating}</a></td>
 				<c:choose>
 					<c:when test="${not empty serialProduct.finalIncentivizedPrice}">
 						<td class="d-none d-md-table-cell"><strike><format:price priceData="${serialProduct.finalSalePrice}" /></strike></td>

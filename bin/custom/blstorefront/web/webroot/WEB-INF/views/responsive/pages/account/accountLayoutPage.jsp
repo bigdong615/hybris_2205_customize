@@ -4,6 +4,7 @@
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <spring:url value="/my-account/update-profile" var="updateProfileUrl"/>
 <spring:url value="/my-account/update-password" var="updatePasswordUrl"/>
@@ -40,12 +41,12 @@ ${blPageType}uuuuuuu
                       </a>
                    </li>
                    <li>
-                      <a href="${baseUrl}/update-email" class="dropdown-item">
+                      <a href="${baseUrl}/update-email" class="dropdown-item ${blPageType eq 'Change Email'? 'boldCustom' : ''}">
                          <spring:theme code="text.address.email"/>
                       </a>
                    </li>
                    <li>
-                      <a href="${baseUrl}/update-password" class="dropdown-item">
+                      <a href="${baseUrl}/update-password" class="dropdown-item ${blPageType eq 'Change Password'? 'boldCustom' : ''}"">
                          <spring:theme code= "text.update.password" />
                       </a>
                    </li>
@@ -88,21 +89,30 @@ ${blPageType}uuuuuuu
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/update-email">
+                   <a href="${baseUrl}/update-email"
+                   <c:if test="${blPageType eq 'Change Email'}">
+                      <c:out value="class=active"/>
+                   </c:if>>
                       <spring:theme code="text.address.email"/>
                    </a>
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/update-password">
+                   <a href="${baseUrl}/update-password"
+                   <c:if test="${blPageType eq 'Change Password'}">
+                      <c:out value="class=active"/>
+                   </c:if>>
                       <spring:theme code= "text.update.password" />
                    </a>
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/saved-carts">
-                      <spring:theme code= "text.saved.cart" />
-                   </a>
+                <a href="${baseUrl}/saved-carts"
+                                   <c:if test="${fn:startsWith(pageTitle, 'Saved Carts')}">
+                                      <c:out value="class=active"/>
+                                   </c:if>>
+                                      <spring:theme code= "text.saved.cart" />
+                                   </a>
                 </p>
                 <hr>
                 <p>
