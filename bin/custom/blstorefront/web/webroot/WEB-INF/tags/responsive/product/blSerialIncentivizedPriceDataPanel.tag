@@ -28,7 +28,8 @@
 	<form:form id="serialSubmitForm" action="${addToCartUrl}" method="get">
 		<c:forEach items="${product.serialproducts}" var="serialProduct"
 			varStatus="loop">
-		 <c:if test="${serialProduct.serialStatus ne 'SOLD' and serialProduct.isSerialNotAssignedToRentalOrder eq false }">
+		
+		 <c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true  and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
 			<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''}">
 				<td><a href="#" data-bs-toggle="modal"
 					data-bs-target="#sku52678"

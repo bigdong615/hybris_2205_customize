@@ -19,9 +19,7 @@ import java.util.Collections;
 
 public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao implements BlDeliveryModeDao {
 
-    /**
-	 * 
-	 */
+    
 	private static final String FLEXIBLESEARCHFORRUSHDELIVERYMODE = "select {rush.pk} from {BlRushDeliveryMode as rush}, {DeliveryTypeEnum as dt} " +
 	          "where {dt.pk} = {rush.deliveryType} and {dt.code} = ?deliveryMode and {rush.active} = 1 and {rush.payByCustomer} = ?payByCustomer";
 
@@ -285,6 +283,11 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
   		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
   	}
     
+   /**
+    * This method is used to fetch ShipToHomeDeliveryMode data.
+    * @param mode
+    * @return
+    */
    private StringBuilder queryForShipToHomeDeliveryMode(final String mode)
  	{
  		String FlexibleSearchForShipToHomeDeliveryMode = "select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, {CarrierEnum as ce} " +
@@ -294,6 +297,11 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
  		return barcodeList;
  	}
    
+   /**
+    * This method is used to fetch PartnerZoneUPSStoreDeliveryModes data.
+    * @param mode
+    * @return
+    */
    private StringBuilder queryForPartnerZoneUPSStoreDeliveryModes(final String mode)
 	{
 		String FlexibleSearchForPartnerZoneUPSStoreDeliveryModes = "select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
@@ -303,12 +311,24 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
 		return barcodeList;
 	}
    
+   /**
+    * This method is used to fetch RushDeliveryModes data.
+    * @return
+    */
    private StringBuilder queryForBlRushDeliveryModes()
 	{
 		final StringBuilder barcodeList = new StringBuilder(FLEXIBLESEARCHFORRUSHDELIVERYMODE);
 		return barcodeList;
 	}
    
+   /**
+    * This method is used to add carrier,mode and pay by customer value to ShipToHomeDelivery.
+    * @param carrier
+    * @param mode
+    * @param payByCustomer
+    * @param barcodeList
+    * @return
+    */
    private FlexibleSearchQuery getShipToHomeDeliveryCommonAttributes(final String carrier, final String mode, final boolean payByCustomer,
  			final StringBuilder barcodeList)
  	{
@@ -319,6 +339,13 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
  		return query;
  	}
    
+   /**
+    * This method is used to add mode and pay by customer value to PartnerZoneUPSStore.
+    * @param mode
+    * @param payByCustomer
+    * @param barcodeList
+    * @return
+    */
    private FlexibleSearchQuery getPartnerZoneUPSStoreCommonAttributes(final String mode, final boolean payByCustomer, final StringBuilder barcodeList)
 	{
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
@@ -327,6 +354,13 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
 		return query;
 	}
    
+   /**
+    * This method is used to add deliveryMode and pay by customer value to RushDeliveryModes.
+    * @param deliveryMode
+    * @param payByCustomer
+    * @param barcodeList
+    * @return
+    */
    private FlexibleSearchQuery getBlRushDeliveryModesCommonAttributes(final String deliveryMode, final boolean payByCustomer, final StringBuilder barcodeList)
 	{
 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);

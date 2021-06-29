@@ -70,12 +70,12 @@ public class BlDeliveryModeLoggingConstants {
 
     public static final String PAY_BY_CUSTOMER = "payByCustomer";
     
-    public static final String SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR = "Ship to home, hotel business";
-    public static final String BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR = "BL-Partner pickup";
-    public static final String SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR = "Ship to UPS store";
-    public static final String SAME_DAY_DELIVERY_MSG_FOR_USEDGEAR = "Rush Same Day Delivery!!";
-    public static final String NEXT_DAY_RUSH_DELIVERY_MSG_FOR_USEDGEAR = "Rush Next Day Delivery!!";
-    public static final String DEFAULT_DELIVERY_MSG_FOR_USEDGEAR = "No Predefined shipping group found!!";
+    public static final String SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR = "Ship to home, hotel business for Used Gear";
+    public static final String BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR = "BL-Partner pickup for Used Gear";
+    public static final String SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR = "Ship to UPS store for Used Gear";
+    public static final String SAME_DAY_DELIVERY_MSG_FOR_USEDGEAR = "Rush Same Day Delivery!! for Used Gear";
+    public static final String NEXT_DAY_RUSH_DELIVERY_MSG_FOR_USEDGEAR = "Rush Next Day Delivery!! for Used Gear";
+    public static final String DEFAULT_DELIVERY_MSG_FOR_USEDGEAR = "No Predefined shipping group found!! for Used Gear";
 
 
     private BlDeliveryModeLoggingConstants() {}
