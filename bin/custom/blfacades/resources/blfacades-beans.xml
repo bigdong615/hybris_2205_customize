@@ -80,6 +80,7 @@
     <property name="cosmeticRating" type="float"/>
     <property name="functionalRating" type="float"/>
     <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
+    <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
   </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">
