@@ -16,7 +16,6 @@
 
 <template:page pageTitle="${pageTitle}">
 <c:url var = "baseUrl" value="/my-account"/>
-${blPageType}uuuuuuu
  <section id="myAccount">
     <div class="container">
        <div class="row justify-content-center">
