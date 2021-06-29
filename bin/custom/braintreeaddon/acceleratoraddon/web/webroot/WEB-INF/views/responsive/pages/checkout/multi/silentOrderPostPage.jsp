@@ -337,10 +337,10 @@
 						<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
 							<cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}" />
 							<c:if test ="${not empty fn:escapeXml(errorMsg)}">
-                        <div class="notification notification-error">
+                      <div class="notification notification-error">
                            ${fn:escapeXml(errorMsg)}
-                        </div>
-               </c:if>
+                      </div>
+              </c:if>
 							<%-- <div class="notification notification-warning">This is a cart warning.</div> --%>
 							  <c:if test="${not empty cartData.potentialOrderPromotions}">
                    <c:forEach items="${cartData.potentialOrderPromotions}" var="promotion">
