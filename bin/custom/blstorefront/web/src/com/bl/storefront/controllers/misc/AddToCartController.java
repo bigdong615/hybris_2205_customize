@@ -183,7 +183,7 @@ public class AddToCartController extends AbstractController {
         final long qty = form.getQty();
 
         if (qty <= 0) {
-      	  GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGS_HOLDER, getLocalizedString("basket.error.quantity.invalid"), null);
+      	  GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.quantity.invalid"), null);
         } else {
             try {
 
