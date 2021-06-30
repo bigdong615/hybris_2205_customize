@@ -104,7 +104,7 @@ public class BlWishlistController extends AbstractSearchPageController {
       @RequestParam(value = "page", defaultValue = "0") final int page,
       @RequestParam(value = "sort", required = false) final String sortCode, final Model model,
       @RequestParam("addtocartremoveProductEntry") final String code) {
-    wishlistFacade.removeWishlistAddToCart(page, sortCode, code);
+    wishlistFacade.removeWishlist(code);
     try {
       final CartModificationData cartModification = blCartFacade.addToCart(code, 1, null);
     } catch (CommerceCartModificationException e) {

@@ -11,10 +11,7 @@
 <c:url value="/removewishlistentry" var="removeProduct" />
 <c:url value="/cart/add" var="addToCartUrl"/>
 <c:url value="/bookmark/addtorental" var="addToCartAndRemoveUrl"/>
-<!--${searchPageData.results}here....-->
-<!--<c:forEach items="${searchPageData.results}" var="wishlistData" varStatus="loopindex">
-${wishlistData.product.displayName}
-</c:forEach>-->
+${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}
 <div id="accountContent" class="col-lg-8 offset-lg-1">
                     <h1>Bookmarks</h1>
                  <c:forEach items="${searchPageData.results}" var="wishlistDatas" varStatus="loopindex">

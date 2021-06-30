@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.customer.BlUserFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
@@ -212,6 +213,11 @@ public class AccountPageController extends AbstractSearchPageController
 
   @Resource(name = "blDatePickerService")
   private BlDatePickerService blDatePickerService;
+
+  @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+  private RentalDateDto getRentalsDuration() {
+    return BlRentalDateUtils.getRentalsDuration();
+  }
 
   protected PasswordValidator getPasswordValidator()
   {

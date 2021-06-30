@@ -22,7 +22,10 @@ public interface BlWishListFacade {
    */
   void removeWishlist(final String code);
 
-  void removeWishlistAddToCart(final int pageNumber, final String sortCode, final String code);
+//  /*
+//   * This method is used to remove product to Wishlist
+//   */
+//  void removeWishlistAddToCart(final int pageNumber, final String sortCode, final String code);
 
   /*
    * This method is used to fetch WishlistEntries for the pageable data

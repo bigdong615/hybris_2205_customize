@@ -23,7 +23,7 @@
                </c:when>
               <c:when test="${product.isBookMarked}">
                 <span class="bookmark set js-add-to-wishlist" id="card-${status.index}" data-product-code="${product.code}"
-                data-bookmark-value="${product.isBookMarked}">${product.isBookMarked}hhh</span>
+                data-bookmark-value="${product.isBookMarked}"></span>
               </c:when>
              <c:otherwise>
               <span class="bookmark js-add-to-wishlist" id="card-${status.index}" data-product-code="${product.code}"
