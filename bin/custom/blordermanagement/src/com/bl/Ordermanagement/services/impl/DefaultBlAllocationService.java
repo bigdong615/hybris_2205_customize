@@ -2,6 +2,7 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
@@ -107,8 +108,9 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 //      }
 
       final List<String> allocatedProductCodes = new ArrayList<>();
-      for (Set<String> aSet : result.getSerialProductMap().values()) {
-        allocatedProductCodes.addAll(aSet);
+      for (Set<BlSerialProductModel> productSet : result.getSerialProductMap().values()) {
+        allocatedProductCodes.addAll(productSet.stream().map(BlSerialProductModel::getCode).collect(
+            Collectors.toSet()));
       }
       final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
           new HashSet<>(allocatedProductCodes));
@@ -169,7 +171,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setQuantity(quantity);
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
-    entry.setSerialProductCodes(result.getSerialProductMap()
+    entry.setSerialProducts(result.getSerialProductMap()
         .get(orderEntry.getEntryNumber()));   //setting serial products from result
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
