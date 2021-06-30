@@ -14,6 +14,6 @@
               <product:blUsedGearProductListerGridItem product="${product}"/>
         </c:when>
         <c:otherwise>
-              <product:blRentalGearproductListerGridItem product="${product}" />
+              <product:blRentalGearproductListerGridItem product="${product}"/>
         </c:otherwise>
 </c:choose>

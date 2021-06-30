@@ -107,7 +107,6 @@ public class BlControllerConstants
 	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
 	public static final String BOOKMARKS_PAGE_IDENTIFIER = "Bookmarks";
 	public static final String UPDATE_EMAIL_IDENTIFIER = "Change Email";
-
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
 	public static final String FORMATTED_RENTAL_START_DATE = "formattedRentalStartDate";
 	public static final String FORMATTED_RENTAL_END_DATE = "formattedRentalEndDate";

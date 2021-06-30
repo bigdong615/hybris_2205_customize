@@ -103,20 +103,17 @@
                                                                               </c:otherwise>
                                                                      </c:choose>
                                                                            <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
-                                                                                                                                                         <input type="hidden" name="productCodePost" id="productCodePost" value="${productReference.target.code}">
-                                                                                                                                                            <c:choose>
-                                                                                                                                                               <c:when test="${productReference.target.isDiscontinued}">
-                                                                                                                                                                    <span class="bookmark" disabled="disabled"></span>
-                                                                                                                                                               </c:when>
-                                                                                                                                                                <c:when test="${productReference.target.isBookMarked}">
-                                                                                                                                                                  <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
-                                                                                                                                                                     data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
-                                                                                                                                                                </c:when>
-                                                                                                                                                                <c:otherwise>
-                                                                                                                                                                  <span class="bookmark js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
-                                                                                                                                                                     data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
-                                                                                                                                                                </c:otherwise>
-                                                                                                                                                            </c:choose>
+                                                                              <input type="hidden" name="productCodePost" id="productCodePost" value="${productReference.target.code}">
+                                                                                   <c:choose>
+                                                                                      <c:when test="${productReference.target.isBookMarked}">
+                                                                                        <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
+                                                                                            data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+                                                                                      </c:when>
+                                                                                      <c:otherwise>
+                                                                                        <span class="bookmark js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
+                                                                                         data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+                                                                                      </c:otherwise>
+                                                                                   </c:choose>
                                                                              </form>
                                                                                <div class="card-sliders splide">
                                                                                  <div class="splide__track">

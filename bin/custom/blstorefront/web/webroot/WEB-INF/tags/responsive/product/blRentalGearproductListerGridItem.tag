@@ -17,7 +17,7 @@
 <c:set value="image coming soon" var="altText"/>
 
 <div class="col-md-6 col-lg-4">
-<div class="card" >
+<div class="card">
 		<c:choose>
 			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
 				<span class="badge badge-limited-stock"><spring:theme
