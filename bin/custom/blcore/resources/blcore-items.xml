@@ -970,7 +970,7 @@
                    <attribute qualifier="ocLocationDetails" type="BlInventoryLocation">
                        <persistence type="property"/>
                        <modifiers read="true" write="true" optional="true"/>
-                       <description>Inventory Location for serial product</description>
+                       <description>InventoryLocationModel for serial product</description>
                    </attribute>
                    <attribute qualifier="retailPrice" type="java.lang.Double" redeclare="true">
                      <persistence type="property"/>
