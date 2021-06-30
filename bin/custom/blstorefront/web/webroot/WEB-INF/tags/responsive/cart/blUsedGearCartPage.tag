@@ -38,7 +38,7 @@
                               <div class="cart-actions">
                                  <a href="${usedGearPlpUrl}" class="gray80"><spring:theme code="text.usedGear.cart.back.plp" /></a>
                                  <a href="${cartDeliveryOrPickupAction}" class="btn btn-sm btn-primary float-end">
-                                 <spring:theme code="general.continue.button" /></a>
+                                 <spring:theme code="usedGear.checkout.button" /></a>
                               </div>
                               <p class="mt-5 body14 gray60"><spring:theme code="text.rental.cart.msg" /></p>
                           </div>

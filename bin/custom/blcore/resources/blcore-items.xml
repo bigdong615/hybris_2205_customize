@@ -8,7 +8,7 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
-		<collectiontype code="serialProductCodes" elementtype="java.lang.String" autocreate="true"
+		<collectiontype code="serialProducts" elementtype="BlSerialProduct" autocreate="true"
       generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
@@ -952,16 +952,6 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>serial barcode assigned specifically to the serial</description>
                    </attribute>
-                   <attribute qualifier="ocLocation" type="java.lang.String">
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Last scanned location for the serial</description>
-                   </attribute>
-                   <attribute qualifier="lastLocationScanParent" type="java.lang.String">
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Parent location of the last scanned location for the serial</description>
-                   </attribute>
                    <attribute qualifier="withOrderID" type="java.lang.String">
                      <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
@@ -977,7 +967,7 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Asset is written off or not, set manually by inventory personnel </description>
                    </attribute>
-                   <attribute qualifier="serialInventoryLocation" type="BlInventoryLocation">
+                   <attribute qualifier="ocLocation" type="BlInventoryLocation">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Inventory Location for serial product</description>
@@ -987,12 +977,7 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Inventory HomeBase Location for serial product</description>
                    </attribute>
-                   <attribute qualifier="serialLastLocation" type="BlInventoryLocation">
-                     <persistence type="property"/>
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Last Inventory Location for serial product</description>
-                   </attribute>
-                   <attribute qualifier="serialLastParentLocation" type="BlInventoryLocation">
+                   <attribute qualifier="lastLocationScanParent" type="BlInventoryLocation">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Inventory Last Parent Location for serial product</description>
@@ -1492,7 +1477,7 @@
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if No Damage Waiver is selected for Rental Gear</description>         				
          			</attribute>
-					<attribute qualifier="serialProductCodes" type="serialProductCodes">
+					<attribute qualifier="serialProducts" type="serialProducts">
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true"/>
 						<description>Serial products for the entry</description>
@@ -1874,7 +1859,7 @@
 		  <itemtype code="ConsignmentEntry" autocreate="false" generate="false">
 			<description>Extending ConsignmentEntry type with additional attributes.</description>
 			<attributes>
-			  <attribute type="serialProductCodes" qualifier="serialProductCodes">
+			  <attribute type="serialProducts" qualifier="serialProducts">
 				<modifiers read="true" write="true"/>
 				<persistence type="property"/>
 			  </attribute>

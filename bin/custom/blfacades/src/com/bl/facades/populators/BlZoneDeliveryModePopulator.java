@@ -4,6 +4,10 @@ import de.hybris.platform.commercefacades.order.converters.populator.ZoneDeliver
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+
 public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
 
     @Override
@@ -16,5 +20,7 @@ public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
         target.setShippingMethodId(String.valueOf(source.getShippingMethodId()));
         target.setShippingMethodType(String.valueOf(source.getShippingMethodType()));
         target.setBusinessTypeDelivery(source.isBusinessTypeDelivery());
+        target.setShippingGroup(Objects.nonNull(source.getShippingGroup()) 
+      		  ? source.getShippingGroup().getCode() : StringUtils.EMPTY);
     }
 }
