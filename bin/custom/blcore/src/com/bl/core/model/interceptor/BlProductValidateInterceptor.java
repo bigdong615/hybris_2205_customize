@@ -10,6 +10,10 @@ import de.hybris.platform.servicelayer.interceptor.ValidateInterceptor;
 import java.util.Collection;
 import org.apache.commons.collections4.CollectionUtils;
 
+/**
+ * @author Vijay Vishwakarma
+ * This validater used to validate blproduct data before saving it.
+ */
 public class BlProductValidateInterceptor implements ValidateInterceptor<BlProductModel> {
 
 

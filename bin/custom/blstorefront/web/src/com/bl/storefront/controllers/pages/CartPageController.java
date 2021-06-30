@@ -184,7 +184,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
-		blCartFacade.removeDiscontinueProductFromCart(cartModel);
+		blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
 			if (CollectionUtils.isNotEmpty(giftCardModelList)) {

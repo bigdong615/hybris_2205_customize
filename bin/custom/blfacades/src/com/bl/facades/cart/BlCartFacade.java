@@ -106,5 +106,13 @@ public interface BlCartFacade extends CartFacade {
 	 * @return String
 	 */
 	String identifyCartType();
-	public void	removeDiscontinueProductFromCart(final CartModel cartModel);
+	/**
+	 * This method is used for remove discontinue product from cart.
+	 */
+	public void	removeDiscontinueProductFromCart(final CartModel cartModel,boolean isCartPage);
+/**
+ * This method used for pre-populating card data before remove discontinue entry.
+ */
+	public CartModificationData updateCartEntry(final long entryNumber, final long quantity,final CartModel cartModel)
+			throws CommerceCartModificationException;
 }
