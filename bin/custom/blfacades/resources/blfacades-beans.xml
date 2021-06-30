@@ -118,6 +118,10 @@
 		  <property name="rentalStartDate" type="String"/>
 		  <property name="rentalEndDate" type="String"/>
 	   	<property name="orderedDate" type="String"/>
+		<property name="rentalFormattedStartDate" type="String"/>
+		<property name="rentalFormattedEndDate" type="String"/>
+		<property name="orderedFormatDate" type="String"/>
+		<property name="totalRentalDays" type="String"/>
   </bean>
 
     <!-- Shipping -->
