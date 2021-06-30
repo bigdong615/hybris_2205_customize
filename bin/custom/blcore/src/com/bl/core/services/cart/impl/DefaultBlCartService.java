@@ -215,13 +215,15 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
    	 if(Objects.nonNull(cartEntry) && cartEntry.getProduct() instanceof BlSerialProductModel){
    		 doChangeSerialProductStatus(cartEntry);
    	 }
-   	 else if(Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries())){
-   		 for (final AbstractOrderEntryModel entry : cartModel.getEntries()) {
-             if (entry.getProduct() instanceof BlSerialProductModel) {
-                 doChangeSerialProductStatus(entry);
-             }
-   		 }
-   	 }
+		else if (Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries())){
+			for (final AbstractOrderEntryModel entry : cartModel.getEntries())
+			{
+				if (entry.getProduct() instanceof BlSerialProductModel)
+				{
+					doChangeSerialProductStatus(entry);
+				}
+			}
+		}
     }
 
 	/**
