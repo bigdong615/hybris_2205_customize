@@ -3,15 +3,15 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-	<context:annotation-config/>
+     <context:annotation-config/>
 
 	<!-- Spring Integration -->
 	<import resource="classpath:/blcore/integration/hot-folder-store-electronics-spring.xml"/>
@@ -20,7 +20,7 @@
 
 	<!-- SystemSetup for the BlCore -->
 	<bean id="acceleratorCoreSystemSetup" class="com.bl.core.setup.CoreSystemSetup"
-		parent="abstractCoreSystemSetup"/>
+	       parent="abstractCoreSystemSetup"/>
 
 	<bean id="blBrandCategoryNameValueProvider" parent="abstractCategoryNameValueProvider">
 		<property name="categorySource" ref="blBrandCategorySourceResolver"/>
@@ -31,14 +31,14 @@
 	</bean>
 
 	<bean id="abstractCategoryCodeValueProvider" abstract="true"
-		class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.CategoryCodeValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
+	      class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.CategoryCodeValueProvider"
+	      parent="abstractPropertyFieldValueProvider" >
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 	</bean>
 	<bean id="abstractCategoryNameValueProvider" abstract="true"
-		class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.CategoryNameValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
+	      class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.CategoryNameValueProvider"
+	      parent="abstractPropertyFieldValueProvider" >
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 	</bean>
@@ -60,8 +60,8 @@
 	</bean>
 
 	<bean id="productUrlValueProvider"
-		class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.ProductUrlValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
+	      class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.ProductUrlValueProvider"
+	      parent="abstractPropertyFieldValueProvider" >
 		<property name="urlResolver" ref="productModelUrlResolver"/>
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 		<property name="i18nService" ref="i18nService"/>
@@ -69,15 +69,15 @@
 	</bean>
 
 	<bean id="promotionCodeValueProvider"
-		class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.PromotionCodeValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
+	      class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.PromotionCodeValueProvider"
+	      parent="abstractPropertyFieldValueProvider" >
 		<property name="promotionsService" ref="promotionsService"/>
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
 
 	<bean id="promotionImageValueProvider"
-		class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.PrimaryPromotionImageValueProvider"
-		parent="abstractPropertyFieldValueProvider" >
+	      class="de.hybris.platform.commerceservices.search.solrfacetsearch.provider.impl.PrimaryPromotionImageValueProvider"
+	      parent="abstractPropertyFieldValueProvider" >
 		<property name="promotionsService" ref="promotionsService"/>
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
@@ -88,22 +88,22 @@
 		must be configured with a lookup method.
 	-->
 	<bean id="orderCancelledEventListener"
-		class="com.bl.core.event.OrderCancelledEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.OrderCancelledEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="orderRefundEventListener"
-		class="com.bl.core.event.OrderRefundEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.OrderRefundEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="customerRegistrationEventListener"
-		class="com.bl.core.event.RegistrationEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.RegistrationEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="forgottenPasswordEventListener"
-		class="com.bl.core.event.ForgottenPasswordEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.ForgottenPasswordEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 		<property name="commonI18NService" ref="commonI18NService" />
@@ -115,32 +115,32 @@
 		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 	<bean id="orderConfirmationEventListener"
-		class="com.bl.core.event.OrderConfirmationEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.OrderConfirmationEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="sendDeliveryMessageEventListener"
-		class="com.bl.core.event.SendDeliveryMessageEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.SendDeliveryMessageEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="sendReadyForPickupMessageEventListener"
-		class="com.bl.core.event.SendReadyForPickupMessageEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.SendReadyForPickupMessageEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="sendOrderPartiallyCanceledMessageEventListener"
-		class="com.bl.core.event.SendOrderPartiallyCanceledMessageEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.SendOrderPartiallyCanceledMessageEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="sendOrderPartiallyRefundedMessageEventListener"
-		class="com.bl.core.event.SendOrderPartiallyRefundedMessageEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.SendOrderPartiallyRefundedMessageEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 	<bean id="sendNotPickedUpConsignmentCanceledMessageEventListener"
-		class="com.bl.core.event.SendNotPickedUpConsignmentCanceledMessageEventListener" parent="abstractAcceleratorSiteEventListener">
+	      class="com.bl.core.event.SendNotPickedUpConsignmentCanceledMessageEventListener" parent="abstractAcceleratorSiteEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
@@ -152,60 +152,60 @@
 	<!-- Process resources definition -->
 
 	<bean id="customerRegistrationEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/customerRegistrationEmailProcess.xml"/>
 	</bean>
 	<bean id="forgottenPasswordEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/forgottenPasswordEmailProcess.xml"/>
 	</bean>
 	<bean id="orderConfirmationEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/orderConfirmationEmailProcess.xml"/>
 	</bean>
 	<bean id="sendDeliveryEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/sendDeliveryEmailProcess.xml"/>
 	</bean>
 	<bean id="sendReadyForPickupEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/sendReadyForPickupEmailProcess.xml"/>
 	</bean>
 	<bean id="sendOrderCancelledEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/sendOrderCancelledEmailProcess.xml"/>
 	</bean>
 	<bean id="sendOrderRefundEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/sendOrderRefundEmailProcess.xml"/>
 	</bean>
 	<bean id="sendOrderPartiallyCanceledEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/sendOrderPartiallyCanceledEmailProcess.xml"/>
 	</bean>
 	<bean id="sendOrderPartiallyRefundedEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/sendOrderPartiallyRefundedEmailProcess.xml"/>
 	</bean>
 	<bean id="sendNotPickedUpConsignmentCanceledEmailProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+	      class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/sendNotPickedUpConsignmentCanceledEmailProcess.xml"/>
 	</bean>
 
 	<!-- Actions -->
 	<bean id="abstractAction" class="de.hybris.platform.processengine.action.AbstractAction"
-		abstract="true">
+	      abstract="true">
 		<property name="modelService" ref="modelService"/>
 		<property name="processParameterHelper" ref="processParameterHelper"/>
 	</bean>
 
 	<bean id="sendEmail" class="de.hybris.platform.acceleratorservices.process.email.actions.SendEmailAction"
-		parent="abstractAction">
+	       parent="abstractAction">
 		<property name="emailService" ref="emailService"/>
 	</bean>
 
 	<bean id="abstractGenerateEmailAction" class="de.hybris.platform.acceleratorservices.process.email.actions.GenerateEmailAction"
-		parent="abstractAction" abstract="true">
+	      parent="abstractAction" abstract="true">
 		<property name="modelService" ref="modelService"/>
 		<property name="cmsEmailPageService" ref="cmsEmailPageService"/>
 		<property name="contextResolutionStrategy" ref="processContextResolutionStrategy"/>
@@ -251,27 +251,27 @@
 	</bean>
 
 	<bean id="removeSentEmail"
-		class="de.hybris.platform.acceleratorservices.process.email.actions.RemoveSentEmailAction"
-		parent="abstractAction">
+	      class="de.hybris.platform.acceleratorservices.process.email.actions.RemoveSentEmailAction"
+	      parent="abstractAction">
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
-	<bean id="markQuoteNotificationAsSent"
-		class="com.bl.core.actions.quote.MarkQuoteNotificationAsSentAction"
-		parent="abstractAction" abstract="true">
-		<property name="quoteService" ref="quoteService"/>
-	</bean>
+    <bean id="markQuoteNotificationAsSent"
+          class="com.bl.core.actions.quote.MarkQuoteNotificationAsSentAction"
+          parent="abstractAction" abstract="true">
+        <property name="quoteService" ref="quoteService"/>
+    </bean>
 
 	<!-- Simple Suggestion Service -->
 	<alias alias="simpleSuggestionService" name="defaultSimpleSuggestionService"/>
 	<bean id="defaultSimpleSuggestionService"
-		class="com.bl.core.suggestion.impl.DefaultSimpleSuggestionService" >
+	      class="com.bl.core.suggestion.impl.DefaultSimpleSuggestionService" >
 		<property name="simpleSuggestionDao" ref="simpleSuggestionDao"/>
 	</bean>
 	<alias alias="simpleSuggestionDao" name="defaultSimpleSuggestionDao"/>
 	<bean id="defaultSimpleSuggestionDao"
-		class="com.bl.core.suggestion.dao.impl.DefaultSimpleSuggestionDao"
-		parent="abstractItemDao" >
+	      class="com.bl.core.suggestion.dao.impl.DefaultSimpleSuggestionDao"
+	      parent="abstractItemDao" >
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
@@ -279,82 +279,82 @@
 
 	<!-- quote-->
 	<bean id="quoteBuyerSubmitEventListener" class="com.bl.core.event.QuoteBuyerSubmitEventListener"
-		parent="abstractEventListener">
+		  parent="abstractEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<bean id="quoteSalesRepSubmitEventListener" class="com.bl.core.event.QuoteSalesRepSubmitEventListener"
-		parent="abstractEventListener">
+		  parent="abstractEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<bean id="quoteSellerApprovalSubmitEventListener" class="com.bl.core.event.QuoteSellerApprovalSubmitEventListener"
-		parent="abstractEventListener">
+		  parent="abstractEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<bean id="quoteBuyerOrderPlacedEventListener" class="com.bl.core.event.QuoteBuyerOrderPlacedEventListener"
-		parent="abstractEventListener">
+		  parent="abstractEventListener">
 		<property name="commerceQuoteService" ref="commerceQuoteService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
 	<bean id="quoteToExpireSoonEventListener" class="com.bl.core.event.QuoteToExpireSoonEventListener"
-		parent="abstractEventListener">
+		  parent="abstractEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
-
+	
 	<bean id="quoteExpiredEventListener" class="com.bl.core.event.QuoteExpiredEventListener"
-		parent="abstractEventListener">
+		  parent="abstractEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<bean id="quoteCancelEventListener" class="com.bl.core.event.QuoteCancelEventListener"
-		parent="abstractEventListener">
+		  parent="abstractEventListener">
 		<property name="modelService" ref="modelService"/>
 		<property name="businessProcessService" ref="businessProcessService"/>
 	</bean>
 
 	<bean id="quoteBuyerProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+		  class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/quote/quote-buyer-process.xml"/>
 	</bean>
 
 	<bean id="quoteSalesRepProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+		  class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/quote/quote-salesrep-process.xml"/>
 	</bean>
 
 
 	<bean id="quoteSellerApprovalProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+		  class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/quote/quote-seller-approval-process.xml"/>
 	</bean>
-
+	
 	<bean id="quotePostCancellationProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+		  class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/quote/quote-post-cancellation-process.xml"/>
 	</bean>
 
 	<bean id="quoteToExpireSoonProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+		  class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/quote/quote-to-expire-soon-email-process.xml"/>
 	</bean>
-
+	
 	<bean id="quoteExpiredProcessDefinitionResource"
-		class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
+		  class="de.hybris.platform.processengine.definition.ProcessDefinitionResource" >
 		<property name="resource" value="classpath:/blcore/processes/quote/quote-expired-email-process.xml"/>
 	</bean>
 
 	<!-- Quotes email notification jobs -->
 	<bean id="quoteToExpireSoonJobPerformable"
-		class="com.bl.core.job.QuoteToExpireSoonJobPerformable"
-		parent="abstractJobPerformable">
+		  class="com.bl.core.job.QuoteToExpireSoonJobPerformable"
+		  parent="abstractJobPerformable">
 		<property name="supportedQuoteStatuses">
 			<set value-type="de.hybris.platform.core.enums.QuoteState">
 				<value>BUYER_OFFER</value>
@@ -365,10 +365,10 @@
 		<property name="configurationService" ref="configurationService" />
 		<property name="timeService" ref="timeService" />
 	</bean>
-
+	
 	<bean id="quoteExpiredJobPerformable"
-		class="com.bl.core.job.QuoteExpiredJobPerformable"
-		parent="abstractJobPerformable">
+		  class="com.bl.core.job.QuoteExpiredJobPerformable"
+		  parent="abstractJobPerformable">
 		<property name="supportedQuoteStatuses">
 			<set value-type="de.hybris.platform.core.enums.QuoteState">
 				<value>BUYER_OFFER</value>
@@ -382,24 +382,24 @@
 	<import resource="/blcore/processes/quote/quote-buyer-process-spring.xml"/>
 	<import resource="/blcore/processes/quote/quote-salesrep-process-spring.xml"/>
 	<import resource="/blcore/processes/quote/quote-seller-approval-process-spring.xml"/>
-
+	
 	<import resource="/blcore/processes/quote/quote-to-expire-soon-email-process-spring.xml"/>
 	<import resource="/blcore/processes/quote/quote-expired-email-process-spring.xml"/>
 
 	<import resource="/blcore/processes/quote/quote-post-cancellation-process-spring.xml"/>
-
+	
 	<!-- Customer cleanup -->
 	<alias name="defaultCustomerCleanupRelatedObjectsAction" alias="customerCleanupRelatedObjectsAction"/>
 	<bean id="defaultCustomerCleanupRelatedObjectsAction" class="com.bl.core.retention.impl.DefaultCustomerCleanupRelatedObjectsAction" parent="abstractExtensibleRemoveCleanupAction">
 		<property name="itemCleanupHooks" ref="customerCleanupHooks"/>
 	</bean>
-
+	
 	<!-- Cleanup the customers not owning any order currently and the current date has past deactivation date+retention date. Also removes customers audit records. -->
 	<alias name="defaultCustomerNotOwningOrdersRemoveCleanupAction" alias="customerNotOwningOrdersRemoveCleanupAction"/>
 	<bean id="defaultCustomerNotOwningOrdersRemoveCleanupAction" class="de.hybris.platform.retention.impl.DefaultExtensibleRemoveCleanupAction" parent="abstractExtensibleRemoveCleanupAction">
 		<property name="itemCleanupHooks" ref="customerCleanupHooks"/>
 	</bean>
-
+	
 	<!-- Order cleanup -->
 	<!-- Cleanup the order related objects and then remove order and its audit records. -->
 	<alias name="defaultOrderRemoveCleanupAction" alias="orderRemoveCleanupAction"/>
@@ -419,17 +419,17 @@
 		<property name="itemCleanupHooks" ref="csTicketRetentionHooks"/>
 		<property name="ticketBusinessService" ref="ticketBusinessService"/>
 	</bean>
-
+	
 	<!-- Impex Import Services to be used while system initialization or update process -->
-	<!-- BlCoreDataImportService class is used to import common data, product catalog, content catalog, store
+	<!-- BlCoreDataImportService class is used to import common data, product catalog, content catalog, store 
     	from coredata while performing system initialization or update process. -->
 	<alias name="blCoreDataImportService" alias="coreDataImportService"/>
-	<bean id="blCoreDataImportService" class="com.bl.core.dataimport.BlCoreDataImportService" parent="defaultCoreDataImportService"/>
-
-	<!-- BlSampleDataImportService class is used to import common data, product catalog, content catalog, store
-    from sampledata while performing system initialization or update process. -->
-	<alias name="blSampleDataImportService" alias="sampleDataImportService"/>
-	<bean id="blSampleDataImportService" class="com.bl.core.dataimport.BlSampleDataImportService" parent="defaultSampleDataImportService"/>
+    <bean id="blCoreDataImportService" class="com.bl.core.dataimport.BlCoreDataImportService" parent="defaultCoreDataImportService"/>
+    
+    <!-- BlSampleDataImportService class is used to import common data, product catalog, content catalog, store 
+    	from sampledata while performing system initialization or update process. -->
+    <alias name="blSampleDataImportService" alias="sampleDataImportService"/>
+    <bean id="blSampleDataImportService" class="com.bl.core.dataimport.BlSampleDataImportService" parent="defaultSampleDataImportService"/>
 
 	<!-- BL-90 Category Modeling Related changes in Category Prepare Interceptor to generate CategoryId-->
 	<alias name="blCategoryPrepareInterceptor" alias="blCategoryPrepareInterceptor"/>
@@ -538,6 +538,7 @@
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
+		<property name="promotionDao" ref="promotionDao"/>
 	</bean>
 
 
@@ -574,8 +575,8 @@
 	</bean>
 	<alias name="defaultBlPricingRatioService" alias="blPricingRatioService"/>
 	<bean id="defaultBlPricingRatioService" class="com.bl.core.services.pricingratio.impl.DefaultBlPricingRatioService">
-		<property name="blConstrainedRatioGenericDao" ref="blConstrainedRatioGenericDao"/>
-		<property name="blStandardRatioGenericDao" ref="blStandardRatioGenericDao"/>
+	<property name="blConstrainedRatioGenericDao" ref="blConstrainedRatioGenericDao"/>
+	<property name="blStandardRatioGenericDao" ref="blStandardRatioGenericDao"/>
 	</bean>
 
 	<alias name="blSerialProductPrepareInterceptor" alias="blSerialProductPrepareInterceptor"/>
@@ -588,51 +589,51 @@
 		<property name="interceptor" ref="blSerialProductPrepareInterceptor"/>
 		<property name="typeCode" value="BlSerialProduct"/>
 	</bean>
-
+	
 	<!--Bl-57 new stock related service and dao classes added-->
 	<alias alias="blStockLevelDao" name="defaultBlStockLevelDao"/>
 	<bean id="defaultBlStockLevelDao" class="com.bl.core.stock.impl.DefaultBlStockLevelDao" parent="stockLevelDao">
 	</bean>
-
+	
 	<bean id="blCommerceStockService" class="com.bl.core.stock.impl.DefaultBlCommerceStockService">
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blDatePickerService" ref="blDatePickerService" />
 	</bean>
-
-	<!-- BL-73 Created bean for discontinued product -->
+	
+	<!-- BL-73 Created bean for discontinued product -->	
 	<bean id="blRentalGearDiscontinuedProductValueProvider" class="com.bl.core.search.solrfacetsearch.provider.impl.BlRentalGearDiscontinuedProductValueProvider"
 		parent="abstractPropertyFieldValueProvider">
 		<property name="fieldNameProvider" ref="solrFieldNameProvider"/>
 	</bean>
-
+	
 	<!-- BL-483 BL Pricing Strategy file to calculate Dynamic Price -->
 	<alias name="defaultBlProductDynamicPriceStrategy" alias="blProductDynamicPriceStrategy"/>
 	<bean id="defaultBlProductDynamicPriceStrategy" class="com.bl.core.price.strategies.impl.DefaultBlProductDynamicPriceStrategy">
 		<property name="blPricingRatioService" ref="blPricingRatioService"/>
 	</bean>
-
+	
 	<!-- BL-483 Extended OOTB Commerce Price Service to get Dynamic Pricing for Rental Products on the basis of seleted Rental Days -->
 	<alias alias="commercePriceService" name="defaultBlCommercePriceService"/>
-	<bean id="defaultBlCommercePriceService" class="com.bl.core.price.service.impl.DefaultBlCommercePriceService" parent="defaultCommercePriceService">
-		<property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
-		<property name="blDatePickerService" ref="blDatePickerService"/>
-	</bean>
+    <bean id="defaultBlCommercePriceService" class="com.bl.core.price.service.impl.DefaultBlCommercePriceService" parent="defaultCommercePriceService">
+        <property name="blProductDynamicPriceStrategy" ref="blProductDynamicPriceStrategy"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
+    </bean>
 
 	<!--BL-110 Inventory Scan Tool-->
 	<bean id="blInventoryScanToolDao" name="blInventoryScanToolDao"
-		class="com.bl.core.inventory.scan.dao.impl.DefaultBlInventoryScanToolDao"/>
+		  class="com.bl.core.inventory.scan.dao.impl.DefaultBlInventoryScanToolDao"/>
 
 	<bean id="blInventoryScanToolService" name="blInventoryScanToolService"
-		class="com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService"/>
-
-	<!-- SOLR Field value Resolver for minSerialfinalSalePrice solr attribute -->
+		  class="com.bl.core.inventory.scan.service.impl.DefaultBlInventoryScanToolService"/>
+		  
+	<!-- SOLR Field value Resolver for minSerialfinalSalePrice solr attribute -->		  
 	<bean id="blSerialFinalSalePriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlSerialFinalSalePriceValueResolver"
-		parent="abstractValueResolver"/>
-
-	<!-- SOLR Field value Resolver for minSerialIncentivizedPrice solr attribute -->
-	<bean id="blSerialIncentivizedPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlSerialIncentivizedPriceValueResolver"
-		parent="abstractValueResolver"/>
+        parent="abstractValueResolver"/>
+        
+    <!-- SOLR Field value Resolver for minSerialIncentivizedPrice solr attribute -->
+    <bean id="blSerialIncentivizedPriceValueResolver" class="com.bl.core.search.solrfacetsearch.provider.impl.BlSerialIncentivizedPriceValueResolver"
+        parent="abstractValueResolver"/>
 
 	<bean id="blDatePickerService" class="com.bl.core.datepicker.impl.DefaultBlDatePickerService">
 		<property name="sessionService" ref="sessionService"/>
@@ -645,40 +646,40 @@
 	<bean id="defaultBlExternalTaxesService"
 		class="com.bl.core.services.tax.DefaultBlExternalTaxesService" parent="defaultExternalTaxesService" />
 
-	<!--BL-331 Solr Field Value Resolver -->
+ <!--BL-331 Solr Field Value Resolver -->
 
-	<bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
+  <bean id="blUsedGearProductValueResolver" class="com.bl.core.resolvers.BlUsedGearProductValueResolver" parent="abstractValueResolver"/>
 
-	<bean id="abstractBlCategoryCodeValueResolver" abstract="true" class="com.bl.core.resolvers.BlCategoryCodeValueResolver" parent="abstractValueResolver" >
-		<property name="modelService" ref="modelService"/>
-	</bean>
+  <bean id="abstractBlCategoryCodeValueResolver" abstract="true" class="com.bl.core.resolvers.BlCategoryCodeValueResolver" parent="abstractValueResolver" >
+    <property name="modelService" ref="modelService"/>
+  </bean>
 
-	<bean id="blBrandCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
-		<property name="categorySource" ref="blBrandCategorySourceResolver"/>
-	</bean>
+  <bean id="blBrandCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
+    <property name="categorySource" ref="blBrandCategorySourceResolver"/>
+  </bean>
 
-	<bean id="blBrandCategorySourceResolver" parent="abstractCategorySource">
-		<property name="rootCategory" value="brands"/>
-	</bean>
+  <bean id="blBrandCategorySourceResolver" parent="abstractCategorySource">
+    <property name="rootCategory" value="brands"/>
+  </bean>
 
-	<bean id="blCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
-		<property name="categorySource" ref="blCategorySource"/>
-	</bean>
+  <bean id="blCategoryCodeValueResolver" parent="abstractBlCategoryCodeValueResolver">
+    <property name="categorySource" ref="blCategorySource"/>
+  </bean>
 
-	<bean id="blCategorySource" parent="abstractCategorySource">
-		<property name="rootCategory" value="brands"/>
-	</bean>
+  <bean id="blCategorySource" parent="abstractCategorySource">
+    <property name="rootCategory" value="brands"/>
+  </bean>
 
-	<bean id="blGlobalValueResolver" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
-		<property name="modelService" ref="modelService"/>
-	</bean>
+  <bean id="blGlobalValueResolver" class="com.bl.core.resolvers.BlGlobalFacetValueResolver" parent="abstractValueResolver">
+    <property name="modelService" ref="modelService"/>
+  </bean>
 
 
-	<bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
-		<property name="mediaFormat" value="300Wx300H"/>
-		<property name="mediaService" ref="mediaService" />
-		<property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
-	</bean>
+  <bean id="blImageValueResolver" class="com.bl.core.resolvers.BlImageValueResolver" parent="abstractValueResolver" >
+    <property name="mediaFormat" value="300Wx300H"/>
+    <property name="mediaService" ref="mediaService" />
+    <property name="defaultBlMediaContainerService" ref="defaultBlMediaContainerService" />
+  </bean>
 
 	<bean id="blUpComingProductValueResolver" class="com.bl.core.resolvers.BlUpComingProductValueResolver" parent="abstractValueResolver"/>
 
@@ -691,7 +692,7 @@
 		<property name="defaultCommonI18NService" ref="commonI18NService"/>
 		<property name="defaultBlExternalTaxesService" ref="externalTaxesService"/>
 	</bean>
-
+	
 	<!-- BL-462 : Generic dao to get the full list of Damage Waiver Percantage defined for damage Waiver types -->
 	<alias name="defaultBlDamageWaiverGenericDao" alias="blDamageWaiverGenericDao"/>
 	<bean name="defaultBlDamageWaiverGenericDao"
@@ -703,17 +704,17 @@
 	<bean id="blStockCreationJob" class="com.bl.core.job.BlStockCreationJob" parent="abstractJobPerformable">
 		<property name="blStockService" ref="blStockService"/>
 	</bean>
-
+	
 	<bean id="blAutomatedStockCreationJob" class="com.bl.core.job.BlAutomatedStockCreationJob" parent="abstractJobPerformable">
 		<property name="blStockService" ref="blStockService"/>
 	</bean>
-
+	
 	<bean id="blStockService" class="com.bl.core.stock.impl.DefaultBlStockService">
 		<property name="modelService" ref="modelService"/>
 		<property name="productDao" ref="productDao"/>
 		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
-
+	
 	<alias alias="productDao" name="defaultBlProductDao"/>
 	<bean id="defaultBlProductDao" class="com.bl.core.product.dao.impl.DefaultBlProductDao" parent="defaultProductDao">
 	</bean>
@@ -811,7 +812,7 @@
 		<property name="giftCardService" ref="giftCardService" />
 	</bean>
 	<!--Gift card End-->
-
+	
 	<!-- BL-628: Notify me start -->
 	<bean id="generateProductNotifyMeEmail" parent="abstractGenerateEmailAction">
 		<property name="frontendTemplateName" value="ProductNotifyMeEmailTemplate" />
@@ -827,21 +828,21 @@
 	<!-- Notify me end -->
 
 	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
-	<bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
-		<property name="blDatePickerService" ref="blDatePickerService"/>
+    <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
+        <property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
-	</bean>
-
+    </bean>
+    	
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
 	</bean>
-
+	
 	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
 		<property name="orderDao" ref="orderDao"/>
 		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
 		<property name="modelService" ref="modelService"/>
 	</bean>
-
+	
 	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">
 		<property name="blPaymentService" ref="blPaymentService"/>
 	</bean>
@@ -877,7 +878,7 @@
 	<!--Added for promo code case sensitivity check-->
 	<alias name="defaultBlCouponDao" alias="couponDao" />
 	<bean id="defaultBlCouponDao" class="com.bl.core.dao.coupon.impl.DefaultBlCouponDao" parent="defaultCouponDao"/>
-
+	
 	<!-- [BL-471]: Serial status change -->
 
 	<alias name="defaultUsedGearSerialStatusChangeHook" alias="usedGearSerialStatusChangeHook" />
@@ -885,7 +886,7 @@
 		class="com.bl.core.order.hook.impl.BlUsedGearSerialStatusChangeHook">
 		<property name="modelService" ref="modelService" />
 	</bean>
-
+	
 	<bean id="commerceUsedGearSerialStatusHookMergeDirective"
 		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
 		<property name="add" ref="usedGearSerialStatusChangeHook" />
