@@ -434,34 +434,34 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	 * @param cartModel
 	 * @param isCartPage
 	 */
-	@Override
-	public void removeDiscontinueProductFromCart(final CartModel cartModel, boolean isCartPage) {
+  @Override
+  public void removeDiscontinueProductFromCart(final CartModel cartModel, boolean isCartPage) {
 
-		List<Integer> entryList = new ArrayList<Integer>();
-		cartModel.getEntries().forEach(entry -> {
-			if (entry.getProduct() != null && entry.getProduct() instanceof BlProductModel) {
-				BlProductModel blProductModel = (BlProductModel) entry.getProduct();
-				if (blProductModel.getDiscontinued() != null && blProductModel.getDiscontinued()) {
-					entryList.add(entry.getEntryNumber());
-				}
-			}
-		});
-		if (entryList.size() > 0) {
-			Collections.reverse(entryList);
-			entryList.forEach(entryNumber -> {
-				try {
-					if (isCartPage) {
-						updateCartEntry(entryNumber, 0);
-					} else {
-						updateCartEntry(entryNumber, 0, cartModel);
-					}
-				} catch (CommerceCartModificationException ex) {
-					BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
-							"Couldn't update product with the entry number: {0} . {1}", entryNumber, ex);
-				}
-			});
-		}
-	}
+    List<Integer> entryList = new ArrayList<Integer>();
+    cartModel.getEntries().forEach(entry -> {
+      if (entry.getProduct() != null && entry.getProduct() instanceof BlProductModel) {
+        BlProductModel blProductModel = (BlProductModel) entry.getProduct();
+        if (blProductModel.getDiscontinued() != null && blProductModel.getDiscontinued()) {
+          entryList.add(entry.getEntryNumber());
+        }
+      }
+    });
+    if (entryList.isEmpty()) {
+      Collections.reverse(entryList);
+      entryList.forEach(entryNumber -> {
+        try {
+          if (isCartPage) {
+            updateCartEntry(entryNumber, 0);
+          } else {
+            updateCartEntry(entryNumber, 0, cartModel);
+          }
+        } catch (CommerceCartModificationException ex) {
+          BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
+              "Couldn't update product with the entry number: {0} . {1}", entryNumber, ex);
+        }
+      });
+    }
+  }
 
 	/**
 	 * This method used for pre-populating card data before remove discontinue entry.
