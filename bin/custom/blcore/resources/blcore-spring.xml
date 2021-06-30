@@ -538,7 +538,6 @@
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="blCheckoutCartCalculationStrategy" ref="commerceCartCalculationStrategy" />
-		<property name="promotionDao" ref="promotionDao"/>
 	</bean>
 
 
