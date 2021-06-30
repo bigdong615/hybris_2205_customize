@@ -421,7 +421,7 @@
 	</bean>
 
 	<!-- Impex Import Services to be used while system initialization or update process -->
-	<!-- BlCoreDataImportService class is used to import common data, product catalog, content catalog, store 
+	<!-- BlCoreDataImportService class is used to import common data, product catalog, content catalog, store
     	from coredata while performing system initialization or update process. -->
 	<alias name="blCoreDataImportService" alias="coreDataImportService"/>
 	<bean id="blCoreDataImportService" class="com.bl.core.dataimport.BlCoreDataImportService" parent="defaultCoreDataImportService"/>
@@ -919,19 +919,6 @@
 
 	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
-	</bean>
-
-	<!-- [BL-781]: This is to fetch the wishlist entries-->
-	<alias name="defaultBlWishlistService" alias="blwishlistService"/>
-	<bean id="defaultBlWishlistService" class="com.bl.core.services.wishlist.impl.DefaultBlWishlistService" parent="defaultWishlistService">
-		<property name="wishlistDao" ref="wishlistDao"/>
-	</bean>
-
-	<!-- [BL-781]: This is to fetch the wishlist entries from the Database-->
-	<alias name="defaultBlWishlistDao" alias="wishlistDao"/>
-	<bean id="defaultBlWishlistDao" class="com.bl.core.wishlist.impl.DefaultBlWishlistDao" parent="defaultWishlistDao">
-		<property name="userService" ref="userService"/>
-		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
 </beans>
 
