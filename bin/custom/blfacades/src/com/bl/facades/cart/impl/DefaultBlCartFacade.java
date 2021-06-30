@@ -435,7 +435,7 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	 * @param isCartPage
 	 */
   @Override
-  public void removeDiscontinueProductFromCart(final CartModel cartModel, boolean isCartPage) {
+  public void removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
 
     List<Integer> entryList = new ArrayList<Integer>();
     cartModel.getEntries().forEach(entry -> {

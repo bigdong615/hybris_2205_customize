@@ -110,7 +110,7 @@ public interface BlCartFacade extends CartFacade {
 	/**
 	 * This method is used for remove discontinue product from cart.
 	 */
-	 void removeDiscontinueProductFromCart(final CartModel cartModel, boolean isCartPage);
+	 void removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage);
 
 	/**
 	 * This method used for pre-populating card data before remove discontinue entry.

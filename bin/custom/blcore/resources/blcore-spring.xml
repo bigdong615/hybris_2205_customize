@@ -921,7 +921,7 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
-	<!-- BL-633:This validater used to validate blproduct data before saving it. -->
+	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
 	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
 	</bean>
