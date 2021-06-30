@@ -337,3 +337,14 @@ font-size: 21px;
 .paypalNotification {
 	margin-top: 45px !important;
 }
+.paymentDisabled {
+	height: 16px;
+    width: 16px;
+    margin-right: 8px;
+    content: " ";
+    display: inline-block;
+    vertical-align: baseline;
+    border: 8px solid #EAEAEA;
+    margin-bottom: -2px;
+    border-radius: 50%;
+}

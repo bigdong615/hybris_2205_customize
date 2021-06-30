@@ -23,6 +23,7 @@
           inputCSS="form-control mb-2 "  placeholder="register.pwd" />
         <formElement:formPasswordBox idKey="checkPwd-form-id"
           path="checkPwd" inputCSS="form-control mb-2"  placeholder="register.checkPwd" />
+           <input type="hidden" id="serialClickSignUP" name="serialClickSignUP" value=""/>
         <ycommerce:testId code="register_Register_button">
           <button type="submit" class="btn btn-block btn-primary mt-4 js-signUp-popup-validation" value="${registerActionUrl}">
             <spring:theme code="register.submit" />
@@ -43,7 +44,7 @@
                                        <div id="errorMessages_sigin_chkPwd"></div>
            </div>
         <p class="body14 text-center mb-0 mt-4">
-          <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
+          <a class="js-login-popup" id="serialSignInInstead" data-click="" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
              data-bs-dismiss="modal">
             <spring:theme code="login.login" />
           </a>

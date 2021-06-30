@@ -338,7 +338,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                return BlDeliveryModeLoggingConstants.PIN_ERROR;
             }
         } else {
-            if(StringUtils.isNotEmpty(addressType) && businessType && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+            if(businessType && (StringUtils.isEmpty(addressType) || !addressType.equals(AddressTypeEnum.BUSINESS.getCode()))) {
                 return BlDeliveryModeLoggingConstants.AM_ERROR;
             }
         }

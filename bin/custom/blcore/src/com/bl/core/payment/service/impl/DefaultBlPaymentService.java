@@ -38,13 +38,15 @@ public class DefaultBlPaymentService implements BlPaymentService
 	{
 		final List<AbstractOrderModel> ordersToAuthorizePayment = getOrderDao().getOrdersForAuthorization();
 		ordersToAuthorizePayment.forEach(order -> {
-			final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order);
-			if(isSuccessAuth) {
-				order.setIsAuthorised(Boolean.TRUE);
-				getModelService().save(order);
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
-			} else {
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
+			if(order.getTotalPrice() > 0) {
+				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order);
+				if (isSuccessAuth) {
+					order.setIsAuthorised(Boolean.TRUE);
+					getModelService().save(order);
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
+				} else {
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
+				}
 			}
 		});
 	}
