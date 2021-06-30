@@ -52,5 +52,8 @@
 		<property name="labelService" ref="labelService" />
 	</bean>
 
+	<bean id="blStockLevelForDateCellRenderer" class="com.bl.backoffice.wizards.renderer.BlStockLevelForDateCellRenderer">
+	</bean>
+
 
 </beans>

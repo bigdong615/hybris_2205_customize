@@ -119,6 +119,7 @@ jQuery(document).ready(function ($) {
     $("#save-address").prop('checked', true);
 	if($("#paymentAddNewAddress").length <= 0)
 	{
+		$("#showSavedAddresses").hide();
 		$("#billing-address-form-expand").toggle();
 	}
 	if($("#addNewCardForm").length <= 0)

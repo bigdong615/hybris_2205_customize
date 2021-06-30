@@ -129,6 +129,7 @@
         <property name="carrier" type="String"/>
         <property name="warehouse" type="String"/>
         <property name="businessTypeDelivery" type="Boolean"/>
+        <property name="shippingGroup" type="String"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlShippingGroupData">

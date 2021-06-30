@@ -338,6 +338,18 @@ font-size: 21px;
 	margin-top: 45px !important;
 }
 
+.paymentDisabled {
+	height: 16px;
+    width: 16px;
+    margin-right: 8px;
+    content: " ";
+    display: inline-block;
+    vertical-align: baseline;
+    border: 8px solid #EAEAEA;
+    margin-bottom: -2px;
+    border-radius: 50%;
+}
+
 /* for wishlist */
 .bookmark-checked{background-color:red !important;}
 .order-block form{display:inline-table;}
@@ -356,4 +368,3 @@ font-size: 21px;
     background-color: #da474a !important;
     border: 1px solid #da474a !important;
     color:#fff !important;
-}
