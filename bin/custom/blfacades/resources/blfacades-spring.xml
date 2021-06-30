@@ -22,7 +22,7 @@
 		<property name="productConverter" ref="carouselProductConverter"/>
 		<property name="cartService" ref="cartService"/>
 	</bean>
-
+	
 	<bean id="carouselProductConverter" parent="defaultProductConverter">
 		<property name="populators">
 			<list merge="true">
@@ -31,7 +31,7 @@
 		</property>
 	</bean>
 
-	<alias name="acceleratorVariantOptionDataConverter" alias="variantOptionDataConverter"/>
+	<alias name="acceleratorVariantOptionDataConverter" alias="variantOptionDataConverter"/> 
 	<bean id="acceleratorVariantOptionDataConverter" parent="abstractPopulatingConverter">
 		<lookup-method name="createTarget" bean="variantOptionData"/>
 		<property name="populators">
@@ -43,7 +43,7 @@
 
 	<alias name="defaultAcceleratorVariantOptionDataPopulator" alias="acceleratorVariantOptionDataPopulator"/>
 	<bean id="defaultAcceleratorVariantOptionDataPopulator"  class="com.bl.facades.populators.AcceleratorVariantOptionDataPopulator"
-		parent="variantOptionDataPopulator" >
+	      parent="variantOptionDataPopulator" >
 		<property name="mediaService" ref="mediaService"/>
 		<property name="mediaContainerService" ref="mediaContainerService"/>
 		<property name="typeService" ref="typeService"/>
@@ -56,14 +56,14 @@
 	</bean>
 
 
-	<alias name="acceleratorGenderConverter" alias="genderConverter"/>
+	<alias name="acceleratorGenderConverter" alias="genderConverter"/> 
 	<bean id="acceleratorGenderConverter" parent="abstractPopulatingConverter">
 		<property name="targetClass" value="com.bl.facades.product.data.GenderData"/>
-		<property name="populators">
-			<list>
-				<ref bean="genderDataPopulator"/>
-			</list>
-		</property>
+			<property name="populators">
+				<list>
+					<ref bean="genderDataPopulator"/>
+				</list>
+			</property>
 	</bean>
 
 	<alias name="defaultGenderDataPopulator" alias="genderDataPopulator"/>
@@ -127,33 +127,33 @@
 		<property name="quoteService" ref="quoteService"/>
 		<property name="quoteConverter" ref="quoteConverter"/>
 	</bean>
-
+	
 	<bean id="deliverySentEmailContext" class="com.bl.facades.process.email.context.DeliverySentEmailContext" parent="abstractEmailContext" scope="prototype" >
 		<property name="consignmentConverter" ref="consignmentConverter"/>
 	</bean>
-
+	
 	<bean id="readyForPickupEmailContext" class="com.bl.facades.process.email.context.ReadyForPickupEmailContext" parent="abstractEmailContext" scope="prototype" >
 		<property name="consignmentConverter" ref="consignmentConverter"/>
 	</bean>
-
+	
 	<bean id="orderCancelledEmailContext" class="com.bl.facades.process.email.context.OrderCancelledEmailContext" parent="abstractEmailContext" scope="prototype" >
 		<property name="orderConverter" ref="orderConverter"/>
 	</bean>
-
+	
 	<bean id="orderRefundEmailContext" class="com.bl.facades.process.email.context.OrderRefundEmailContext" parent="abstractEmailContext" scope="prototype" >
 		<property name="orderConverter" ref="orderConverter"/>
 	</bean>
 	<bean id="consignmentCollectionReminderEmailContext" class="com.bl.facades.process.email.context.ConsignmentCollectionReminderEmailContext" parent="abstractEmailContext" scope="prototype">
-		<property name="consignmentConverter" ref="consignmentConverter"/>
-		<property name="formatFactory" ref="formatFactory"/>
-		<property name="customerServiceUncollectedConsignmentStrategy" ref="customerServiceUncollectedConsignmentStrategy" />
-		<property name="orderConverter" ref="orderConverter"/>
-	</bean>
+        <property name="consignmentConverter" ref="consignmentConverter"/>
+        <property name="formatFactory" ref="formatFactory"/>
+        <property name="customerServiceUncollectedConsignmentStrategy" ref="customerServiceUncollectedConsignmentStrategy" />
+        <property name="orderConverter" ref="orderConverter"/>
+    </bean>
 
 	<bean id="orderPartiallyModifiedEmailContext" class="com.bl.facades.process.email.context.OrderPartiallyModifiedEmailContext" parent="abstractEmailContext" scope="prototype" >
 		<property name="orderConverter" ref="orderConverter"/>
 		<property name="orderEntryConverter" ref="orderEntryConverter"/>
-		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="priceDataFactory" ref="priceDataFactory"/>		
 	</bean>
 
 	<bean id="orderPartiallyCanceledEmailContext" class="com.bl.facades.process.email.context.OrderPartiallyCanceledEmailContext" parent="orderPartiallyModifiedEmailContext" scope="prototype" >
@@ -258,12 +258,12 @@
 
 	<alias name="abstractBlProductPopulator" alias="commonBlProductPopulator"/>
 	<bean id="abstractBlProductPopulator" class="com.bl.facades.populators.AbstractBlProductPopulator"/>
-
+	
 	<!-- BL-166 :This populator is created for populating bl related specific product attribute-->
 	<bean id="blProductPopulator" class="com.bl.facades.populators.BlProductPopulator" parent="abstractBlProductPopulator">
 		<property name="imageConverter" ref="imageConverter"/>
 		<property name="modelService" ref="modelService"/>
-		<property name="blProductTagPopulator" ref="blProductTagPopulator"/>
+	    <property name="blProductTagPopulator" ref="blProductTagPopulator"/>
 	</bean>
 
 	<alias name="defaultBlSerialProductDataPopulator" alias="blSerialProductDataPopulator"/>
@@ -273,7 +273,7 @@
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 	</bean>
-
+	
 	<!-- BL-166:This bean is override to configure bl related populator-->
 	<alias name="defaultProductConfiguredPopulator" alias="productConfiguredPopulator"/>
 	<bean id="productVariantConfiguredPopulator" parent="defaultProductConfiguredPopulator">
@@ -314,7 +314,7 @@
 	<!-- BL-52 : Overrided OOTB Product Carousel Facade to add extra ProductOptions to populate Product Data. -->
 	<alias name="defaultblProductCarouselFacade" alias="productCarouselFacade"/>
 	<bean id="defaultblProductCarouselFacade" class="com.bl.facades.product.carousel.DefaultBlProductCarouselFacade" parent="defaultProductCarouselFacade"/>
-
+	
 	<!-- BL-52 : Added Existing Populator to populate Products required data in Carousel Component -->
 	<bean parent="configurablePopulatorModification">
 		<property name="target" ref="productConfiguredPopulator" />
@@ -322,44 +322,36 @@
 		<property name="key" value="REQUIRED_DATA" />
 		<property name="add" ref="blProductPopulator" />
 	</bean>
-
+	
 	<bean parent="configurablePopulatorModification">
 		<property name="target" ref="productConfiguredPopulator" />
 		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
 		<property name="key" value="REQUIRED_SERIAL_DATA" />
 		<property name="add" ref="blSerialProductDataPopulator" />
 	</bean>
-
-	<!-- BL-781 : Added Existing Populator to populate Wishlist data in Carousel Component -->
-	<bean parent="configurablePopulatorModification">
-		<property name="target" ref="productConfiguredPopulator" />
-		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
-		<property name="key" value="REQUIRED_WISHLIST" />
-		<property name="add" ref="blWishlistOptionsPopulator" />
-	</bean>
-
+	
 	<!-- To populate the stock data -->
 	<alias name="defaultBlStockPopulator" alias="blStockPopulator"/>
-	<bean id="defaultBlStockPopulator" parent="abstractPopulatingConverter"
-		class="com.bl.facades.populators.BlStockPopulator">
-		<property name="baseStoreService" ref="baseStoreService"/>
-		<property name="blCommerceStockService" ref="blCommerceStockService"/>
-		<property name="blDatePickerService" ref="blDatePickerService"/>
-	</bean>
-
+    <bean id="defaultBlStockPopulator" parent="abstractPopulatingConverter"
+          class="com.bl.facades.populators.BlStockPopulator">
+        <property name="baseStoreService" ref="baseStoreService"/>
+        <property name="blCommerceStockService" ref="blCommerceStockService"/>
+        <property name="blDatePickerService" ref="blDatePickerService"/>
+    </bean>
+	
 	<alias name="defaultStockConverter" alias="stockConverter"/>
-	<bean id="defaultStockConverter" parent="abstractPopulatingConverter">
-		<property name="targetClass" value="de.hybris.platform.commercefacades.product.data.StockData"/>
-		<property name="populators">
-			<list>
-				<ref bean="blStockPopulator"/>
-			</list>
-		</property>
-	</bean>
+    <bean id="defaultStockConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="de.hybris.platform.commercefacades.product.data.StockData"/>
+        <property name="populators">
+            <list>
+                <ref bean="blStockPopulator"/>
+            </list>
+        </property>
+    </bean>
 
-	<!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
-	<alias name="defaultBlCartPopulator" alias="cartPopulator"/>
-	<bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
+    <!-- BL-462 : Extended OOTB CartPopulator to populate custom attributes of cart required on cart page -->
+    <alias name="defaultBlCartPopulator" alias="cartPopulator"/>
+    <bean id="defaultBlCartPopulator" class="com.bl.facades.populators.BlCartPopulator" parent="defaultCartPopulator"/>
 
 	<!-- Added to override OOB populator to populate subtotal without discount on storefront-->
 	<alias name="defaultBlMiniCartPopulator" alias="miniCartPopulator"/>
@@ -368,8 +360,8 @@
 
 
 	<!-- BL-462 : Extended OOTB OrderEntryPopulator to populate custom attributes of cart entry required on cart page -->
-	<alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
-	<bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
+    <alias name="defaultBlOrderEntryPopulator" alias="orderEntryPopulator"/>
+    <bean id="defaultBlOrderEntryPopulator" class="com.bl.facades.populators.BlOrderEntryPopulator" parent="defaultOrderEntryPopulator"/>
 
 	<!--Shipping-->
 	<!--BlShippingGroupDataPopulatorConverter-->
@@ -412,7 +404,7 @@
 	<!--BlPickUpZoneDeliveryModePopulatorConverter-->
 	<alias name="defaultBlPickUpZoneDeliveryModePopulator" alias="defaultBlZoneDeliveryModePopulator"/>
 	<bean id="defaultBlPickUpZoneDeliveryModePopulator" class="com.bl.facades.populators.BlPickUpZoneDeliveryModePopulator">
-		<property name="addressConverter" ref="addressConverter"/>
+			<property name="addressConverter" ref="addressConverter"/>
 	</bean>
 
 	<alias name="defaultBlPickUpZoneDeliveryModeConverter" alias="blPickUpZoneDeliveryModeConverter"/>
@@ -456,8 +448,8 @@
 
 	<alias name="defaultBlFindDeliveryCostStrategy" alias="findDeliveryCostStrategy"/>
 	<bean id="defaultBlFindDeliveryCostStrategy"
-		class="com.bl.facades.strategy.DefaultBlFindDeliveryCostStrategy"
-		parent="defaultFindDeliveryCostStrategy"/>
+		  class="com.bl.facades.strategy.DefaultBlFindDeliveryCostStrategy"
+		  parent="defaultFindDeliveryCostStrategy"/>
 
 	<alias name="defaultBlAddressPopulator" alias="addressPopulator"/>
 	<bean id="defaultBlAddressPopulator" class="com.bl.facades.populators.BlAddressPopulator" parent="defaultAddressPopulator"/>
@@ -465,7 +457,7 @@
 	<alias name="defaultBlAddressReversePopulator" alias="addressReversePopulator"/>
 	<bean id="defaultBlAddressReversePopulator" class="com.bl.facades.populators.BlAddressReversePopulator" parent="defaultAddressReversePopulator"/>
 	<!-- ENd Shipping-->
-
+	
 	<!-- BL-542 : Adding cart populator in the converter list to populate total damage waiver price on checkout step 2. -->
 	<bean parent="modifyPopulatorList">
 		<property name="list" ref="extendedCartConverter"/>
@@ -547,7 +539,15 @@
 	<!--BL-712:This class was created to customize bl specific address data.-->
 	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
 	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
-		<property name="customerAccountService" ref="customerAccountService"/>
+    <property name="customerAccountService" ref="customerAccountService"/>
+	</bean>
+
+	<!-- BL-781 : Added Existing Populator to populate Wishlist data in Carousel Component -->
+	<bean parent="configurablePopulatorModification">
+		<property name="target" ref="productConfiguredPopulator" />
+		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
+		<property name="key" value="REQUIRED_WISHLIST" />
+		<property name="add" ref="blWishlistOptionsPopulator" />
 	</bean>
 
 	<!--BL-781:This class was created to add,remove product from wishlist.-->
@@ -563,8 +563,8 @@
 	<!--BL-781:This class was created to populate wishlist2data-->
 	<alias name="blwishlistPopulator" alias="blwishlistPopulator"/>
 	<bean id="blwishlistPopulator" class="com.bl.facades.populators.BlWishListPopulator">
-	<property name="userService" ref="userService"/>
-	<property name="blWishList2EntryConverter" ref="blWishList2EntryConverter"/>
+		<property name="userService" ref="userService"/>
+		<property name="blWishList2EntryConverter" ref="blWishList2EntryConverter"/>
 	</bean>
 
 	<!--BL-781:This class was created to populate wishlistdata-->
