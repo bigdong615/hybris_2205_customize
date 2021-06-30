@@ -5,6 +5,7 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
+import de.hybris.platform.core.model.order.CartModel;
 import java.util.Date;
 
 import com.bl.facades.product.data.RentalDateDto;
@@ -105,5 +106,5 @@ public interface BlCartFacade extends CartFacade {
 	 * @return String
 	 */
 	String identifyCartType();
-	
+	public void	removeDiscontinueProductFromCart(final CartModel cartModel);
 }

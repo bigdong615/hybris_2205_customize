@@ -920,5 +920,16 @@
 	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
+
+	<!-- BL-633: Product Modeling Related changes in Product validate Interceptor for the discontinue -->
+	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
+	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
+	</bean>
+
+	<bean id="blProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blProductValidateInterceptor"/>
+		<property name="typeCode" value="BlProduct"/>
+	</bean>
+
 </beans>
 

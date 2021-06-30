@@ -34,6 +34,7 @@
 	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
       <property name="isWatching" type="java.lang.Boolean"/>
+		<property name="alternativeProduct" type="String"/>
   </bean>
 
 

@@ -22,7 +22,9 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -426,5 +428,30 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 {
 	this.blCommerceStockService = blCommerceStockService;
 }
+
+  @Override
+	public void	removeDiscontinueProductFromCart(final CartModel cartModel){
+
+	List<Integer> entryList = new ArrayList<Integer>();
+		cartModel.getEntries().forEach( entry ->{
+			if(entry.getProduct()!= null && entry.getProduct() instanceof BlProductModel){
+				BlProductModel blProductModel = (BlProductModel)entry.getProduct();
+				if(blProductModel.getDiscontinued() !=null && blProductModel.getDiscontinued()){
+					entryList.add(entry.getEntryNumber());
+				}
+			}
+		});
+		if(entryList.size()>0){
+	          Collections.reverse(entryList);
+					entryList.forEach(entryNumber ->{
+		        try {
+			           updateCartEntry(entryNumber, 0);
+		            }catch (Exception e){
+
+		                 }
+	                });
+    }
+
+	}
 
 }

@@ -580,8 +580,23 @@
                          <description>Link or number for the item at the source we can purchase replacements</description>
                      </attribute>
                      <attribute qualifier="alternativeProduct" type="java.lang.String">
-                         <persistence type="property" />
-                         <modifiers read="true" write="true" optional="true"/>
+                         <modifiers read="true" write="true" optional="true" search="true"/>
+                       <persistence type="property">
+                         <columntype database="oracle">
+                           <value>CLOB</value>
+                         </columntype>
+                         <columntype database="sap">
+                           <value>NCLOB</value>
+                         </columntype>
+                         <columntype>
+                           <value>HYBRIS.LONG_STRING</value>
+                         </columntype>
+                       </persistence>
+                       <custom-properties>
+                         <property name="hmcIndexField">
+                           <value>"thefield"</value>
+                         </property>
+                       </custom-properties>
                          <description>Message to show for discontinued items</description>
                      </attribute>
                      <attribute qualifier="isVideo" type="java.lang.Boolean">
