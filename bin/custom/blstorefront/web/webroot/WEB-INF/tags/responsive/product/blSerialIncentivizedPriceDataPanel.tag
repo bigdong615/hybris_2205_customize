@@ -25,7 +25,15 @@
 	</tr>
 </thead>
 <tbody>
-	<form:form id="serialSubmitForm" action="${addToCartUrl}" method="get">
+	<input type="hidden" id="doReload" name="doReload" value="false" />
+	<div class="modal fade" id="addToCart" tabindex="-1"
+		style="padding-right: 17px; display: block;" aria-modal="true"
+		role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-sm"
+			id="addToCartModalDialog"></div>
+	</div>
+
+	<form:form id="serialSubmitForm" action="${addToCartUrl}" method="post">
 		<c:forEach items="${product.serialproducts}" var="serialProduct"
 			varStatus="loop">
 		
@@ -67,7 +75,7 @@
 								<spring:theme code="basket.add.to.basket" />
 							</button>
 							<button type="button"
-								class="btn btn-primary bl-serial-add  serial_entry_${loop.index }  ${hidebutton}"
+								class="btn btn-primary js-add-to-used-cart serial_entry_${loop.index }  ${hidebutton}"
 								data-product-code="${product.code}"
 								data-serial="${serialProduct.serialId}">
 								<spring:theme code="basket.add.to.basket" />
