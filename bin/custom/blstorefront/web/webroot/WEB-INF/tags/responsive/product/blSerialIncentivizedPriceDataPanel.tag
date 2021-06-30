@@ -33,7 +33,7 @@
 			id="addToCartModalDialog"></div>
 	</div>
 
-	<form:form id="serialSubmitForm" action="${addToCartUrl}" method="post">
+	<form:form id="serialSubmitForm" action="${addToCartUrl}" method="get">
 		<c:forEach items="${product.serialproducts}" var="serialProduct"
 			varStatus="loop">
 		
