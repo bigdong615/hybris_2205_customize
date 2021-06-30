@@ -1061,7 +1061,6 @@ public class AccountPageController extends AbstractSearchPageController
     model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
         ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
     return getViewForPage(model);
-
   }
 
   private void removeDiscontinuedEntries(SearchPageData<Wishlist2EntryData> searchPageData) {
@@ -1075,7 +1074,6 @@ public class AccountPageController extends AbstractSearchPageController
         }
       }
     }
-
   }
 
   @GetMapping(value = "/verificationImages")
