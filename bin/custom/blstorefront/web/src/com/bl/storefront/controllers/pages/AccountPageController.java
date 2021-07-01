@@ -1064,6 +1064,10 @@ public class AccountPageController extends AbstractSearchPageController
 
 	}
 
+	/**
+	 *  This is to remove the discontinued products from the pageable data of WishlistEntries
+	 * @param searchPageData
+	 */
 	private void removeDiscontinuedEntries(SearchPageData<Wishlist2EntryData> searchPageData) {
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
 		List<Wishlist2EntryData> wishlistEntries = searchPageData.getResults();

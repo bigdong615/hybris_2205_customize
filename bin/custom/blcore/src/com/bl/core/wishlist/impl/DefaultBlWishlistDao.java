@@ -42,6 +42,12 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
     return getPagedFlexibleSearchService().search(sortQueries, "creationtime", query, pageableData);
   }
 
+  /**
+   * To Sort the Wishlist Entries By Creation time.
+   * @param sortCode
+   * @param query
+   * @return
+   */
   protected SortQueryData createSortQueryData(final String sortCode, final String query) {
     final SortQueryData result = new SortQueryData();
     result.setSortCode(sortCode);
@@ -49,6 +55,12 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
     return result;
   }
 
+  /**
+   *  This method joins the query to fetch wishlist entries from wishlistmodel for a particular user
+   *  order by descending.
+   * @param queryClauses
+   * @return
+   */
   protected String createQuery(final String... queryClauses) {
     final StringBuilder queryBuilder = new StringBuilder();
 

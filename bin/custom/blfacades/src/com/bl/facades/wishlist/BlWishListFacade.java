@@ -12,18 +12,22 @@ import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
  */
 public interface BlWishListFacade {
 
-  /*
+  /**
    * This method is used to add product to Wishlist
+   * @param code
    */
   void addToWishlist(final String code);
 
-  /*
+  /**
    * This method is used to remove product to Wishlist
+   * @param code
    */
   void removeWishlist(final String code);
 
-  /*
+  /**
    * This method is used to fetch WishlistEntries for the pageable data
+   * @param pageableData
+   * @return
    */
   SearchPageData<Wishlist2EntryData> getWishlistEntries(final PageableData pageableData);
 
