@@ -16,18 +16,22 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
 			function (clientErr, clientInstance)
 			{
 				braintree.dataCollector.create({
-    			client: clientInstance,
-  				}, function (err, dataCollectorInstance) {
-    				if (err) 
-    				{
-      					// Handle error
-      					console.log('Error while getting data collection for device');
-      					return;
-    				}
-    				// At this point, you should access the dataCollectorInstance.deviceData value and provide it
-    				// to your server, e.g. by injecting it into your form as a hidden input
-    				paypalDeviceData = dataCollectorInstance.deviceData;
-  				});
+				client: clientInstance,
+				}, function (err, dataCollectorInstance) {
+					if (err) 
+					{
+						// Handle error
+						$('#payPalErrorMessage').empty();
+						var payPalErrorMessage = $('<div class="notification notification-error mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
+						$('#payPalErrorMessage').append(payPalErrorMessage);
+						$('.page-loader-new-layout').hide();
+						console.log('Error while getting data collection for device');
+						return;
+					}
+					// At this point, you should access the dataCollectorInstance.deviceData value and provide it
+					// to your server, e.g. by injecting it into your form as a hidden input
+					paypalDeviceData = dataCollectorInstance.deviceData;
+				});
 				braintree.paypalCheckout.create(
 				{
 					client: clientInstance
@@ -35,14 +39,26 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
 				function (paypalCheckoutErr, paypalCheckoutInstance) 
 				{
 					let commit = paypalIntent === CONST.INTENT_SALE && userAction === 'true';
-					loadSDK(paypalCheckoutInstance, paypalIntent, commit, paypalOptions.flow, 
+					try{
+						loadSDK(paypalCheckoutInstance, paypalIntent, commit, paypalOptions.flow, 
 						function () 
 						{
 							console.log("PayPal Sdk was loaded");
 							payPalCheckoutRenderButton(paypalCheckoutInstance, CONST.MARK_PAYPAL_BUTTON, paypalOptions, commit, payPalButtonConfigObj);
 						})
+					}
+					catch(error)
+					{
+						$('#payPalErrorMessage').empty();
+						var payPalErrorMessage = $('<div class="notification notification-error mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
+						$('#payPalErrorMessage').append(payPalErrorMessage);
+						$('.page-loader-new-layout').hide();
+						console.log("Error while initiating paypal button : " + error);
+						handlePayPalButtonError(err.message);
+					}
+					
 				});
-			});
+			});			
         }
 		
     }
@@ -145,7 +161,7 @@ function renderVaultFlowPayPalButtons(paypalCheckoutInstance, payPalButtonContai
             onError: function (err) {
                 console.error('Error: ' + err, err);
                 $('#payPalErrorMessage').empty();
-                var payPalErrorMessage = $('<div class="notification notification-warning mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
+                var payPalErrorMessage = $('<div class="notification notification-error mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
 	  			$('#payPalErrorMessage').append(payPalErrorMessage);
                 handlePayPalClientError(err);
             }
@@ -155,9 +171,11 @@ function renderVaultFlowPayPalButtons(paypalCheckoutInstance, payPalButtonContai
     }
     catch (err) {
     	$('#payPalErrorMessage').empty();
-    	var payPalErrorMessage = $('<div class="notification notification-warning mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
+    	var payPalErrorMessage = $('<div class="notification notification-error mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
 	  	$('#payPalErrorMessage').append(payPalErrorMessage);
-        handlePayPalButtonError(err.message);
+		$('.page-loader-new-layout').hide();
+		console.log("Error while rendering paypal button");
+        handlePayPalButtonError(err.message);        
     }
 }
 

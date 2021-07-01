@@ -1169,12 +1169,14 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 			var savedCCCardId = createHiddenParameter("savedCCCardId", savedCardForm.find('input[id="savedCCCardId"]').val());
 			var savedCCCardNonce = createHiddenParameter("savedCCCardNonce", savedCardForm.find('input[id="savedCCCardNonce"]').val());
 			var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
+			var saveBillingAddress = createHiddenParameter("save_billing_address",  $('#billingAddressForm').find('input[id="save-address"]').prop("checked"));
 			formToSubmit.find('select[name="billTo_state"]').prop('disabled', false);
 			formToSubmit.find("input[name='billTo_country']").val("US");
 			formToSubmit.append($(savedBillingAddressId));
 			formToSubmit.append($(savedCCCardId));
 			formToSubmit.append($(savedCCCardNonce));
 			formToSubmit.append($(comapanyName));
+			formToSubmit.append($(saveBillingAddress));
 			var actionUrl = savedCardForm.attr('action');
 			formToSubmit.attr('action',actionUrl);
 			formToSubmit.submit();
