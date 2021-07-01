@@ -46,7 +46,7 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
    * To Sort the Wishlist Entries By Creation time.
    * @param sortCode
    * @param query
-   * @return
+   * @return Sort Query Data
    */
   protected SortQueryData createSortQueryData(final String sortCode, final String query) {
     final SortQueryData result = new SortQueryData();
@@ -59,7 +59,7 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
    *  This method joins the query to fetch wishlist entries from wishlistmodel for a particular user
    *  order by descending.
    * @param queryClauses
-   * @return
+   * @return The Query
    */
   protected String createQuery(final String... queryClauses) {
     final StringBuilder queryBuilder = new StringBuilder();

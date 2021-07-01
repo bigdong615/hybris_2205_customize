@@ -13,7 +13,7 @@
 <c:url value="/bookmark/addtorental" var="addToCartAndRemoveUrl"/>
 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
-                    <h1>Bookmarks</h1>
+                    <h1><spring:theme code="text.account.bookmarkpage"/></h1>
                  <c:forEach items="${searchPageData.results}" var="wishlistDatas" varStatus="loopindex">
                     <div class="order-block">
                         <div class="row">
