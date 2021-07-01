@@ -528,16 +528,22 @@ function removeClass(){
                                                 '" name="pickup-locations"><label for="' + data[i].code + '" onClick="onSelectOfPartnerAddress(' + data[i].code + ')"></label>';
                          partnerDelivery += '</div>' +
                                             '<div class="col-11">' +
-                                                '<p>' + data[i].name + '- <span id="' + data[i].code + '-pickUpCost">' + data[i].deliveryCost.formattedValue + ' </span><br>' +
+                                                '<p>' + data[i].name + '- <span id="' + data[i].code + '-pickUpCost">' ;
+                                                if(data[i].deliveryCost != null && data[i].deliveryCost.formattedValue != null) {
+                                 partnerDelivery += data[i].deliveryCost.formattedValue ;
+                                                }
+                         if(data[i].internalStoreAddress != null) {
+                                 partnerDelivery += ' </span><br>' +
                                                     '<a href="' + data[i].internalStoreAddress.url + '" target="_blank">' +
                                                         data[i].internalStoreAddress.formattedAddress +
                                                     '</a><br>';
-                         if(data[i].internalStoreAddress.phone != null) {
-                             partnerDelivery += data[i].internalStoreAddress.phone;
-                         }
+
+                             if(data[i].internalStoreAddress.phone != null) {
+                                 partnerDelivery += data[i].internalStoreAddress.phone;
+                             }
                             partnerDelivery += '</p>' ;
-                         if(data[i].internalStoreAddress.openingDaysDetails != null) {
-                            partnerDelivery += '<p class="mb-0 mt-3"><span class="gray80">M-F</span> ' +
+                            if(data[i].internalStoreAddress.openingDaysDetails != null) {
+                                partnerDelivery += '<p class="mb-0 mt-3"><span class="gray80">M-F</span> ' +
                                                     data[i].internalStoreAddress.openingDaysDetails["M-F"] +
                                                 '</p>' +
                                                 '<p class="mb-0"><span class="gray80">Sat</span> ' +
@@ -546,9 +552,10 @@ function removeClass(){
                                                 '<p class="mb-0"><span class="gray80">Sun</span> ' +
                                                     data[i].internalStoreAddress.openingDaysDetails["Sun"] +
                                                 '</p>' ;
+                            }
+                            partnerDelivery += '</div>' +
+                                            '</div>';
                          }
-                         partnerDelivery += '</div>' +
-                                        '</div>';
                 }
                 $('#partnerPickUpShippingMethods').html(partnerDelivery);
                 $('#pick-up-pickup-gear').show();
@@ -1056,8 +1063,12 @@ function removeClass(){
  }
 
  function validateZip(zipCode) {
-    let zipRegex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
-    return zipRegex.test(zipCode);
+    if(zipCode != null && zipCode.length != 0) {
+        let zipRegex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+        return zipRegex.test(zipCode.trim());
+    } else {
+        return false;
+    }
  }
 
  function validateField(attribute, fieldName) {
