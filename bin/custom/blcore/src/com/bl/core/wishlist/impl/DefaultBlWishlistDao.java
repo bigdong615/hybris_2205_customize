@@ -5,6 +5,7 @@ import de.hybris.platform.commerceservices.search.flexiblesearch.PagedFlexibleSe
 import de.hybris.platform.commerceservices.search.flexiblesearch.data.SortQueryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.wishlist2.impl.daos.impl.DefaultWishlist2Dao;
@@ -24,8 +25,10 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
   private UserService userService;
   private PagedFlexibleSearchService pagedFlexibleSearchService;
 
-  private static final String SORT_WISHLIST_BY_DATE =
-      " ORDER BY {" + Wishlist2EntryModel.CREATIONTIME + "} DESC ";
+//  private static final String SORT_WISHLIST_BY_DATE =
+//      " ORDER BY {" + Wishlist2EntryModel.CREATIONTIME + "} DESC ;
+
+  private static final String SORT_WISHLIST_BY_DATE = " ORDER BY {" + Wishlist2EntryModel.CREATIONTIME + "} DESC, {" + Wishlist2EntryModel.PK + "}";
   private static final String FIND_WISHLIST_ENTRIES = "select {wle:pk} from {Wishlist2 as wl}, {Wishlist2Entry as wle} where {wle.wishlist} = {wl.pk} and {wl.user}= ?user";
 
   /**
@@ -34,12 +37,12 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
   @Override
   public SearchPageData<Wishlist2EntryModel> getWishlistEntries(final PageableData pageableData) {
     final List<SortQueryData> sortQueries;
-    final UserModel user = userService.getCurrentUser();
-    final Map<String, Object> query = new HashMap<String, Object>();
-    query.put("user", user);
-    sortQueries = Arrays.asList(createSortQueryData("creationtime",
+    final CustomerModel currentCustomer = (CustomerModel) getUserService().getCurrentUser();
+    final Map<String, Object> queryParams = new HashMap<String, Object>();
+    queryParams.put("user", currentCustomer);
+    sortQueries = Arrays.asList(createSortQueryData("byDate",
         createQuery(FIND_WISHLIST_ENTRIES, SORT_WISHLIST_BY_DATE)));
-    return getPagedFlexibleSearchService().search(sortQueries, "creationtime", query, pageableData);
+    return getPagedFlexibleSearchService().search(sortQueries, "byDate", queryParams, pageableData);
   }
 
   /**
