@@ -55,6 +55,7 @@ import de.hybris.platform.commerceservices.order.CommerceSaveCartException;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.core.enums.QuoteState;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.session.SessionService;
@@ -359,12 +360,13 @@ public class CartPageController extends AbstractCartPageController
 				if (removeEntry)
 				{
 					final CartModel cartModel = blCartService.getSessionCart();
+					Optional<AbstractOrderEntryModel> findEntry = cartModel.getEntries().stream().filter(entry -> entry.getEntryNumber() == entryNumber).findFirst();
 					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
 
 					//Added condition to change serial status when entry remove from cart
-					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()))
+					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent())
 					{
-						blCartService.setUsedGearSerialProductStatus(cartModel);
+						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
 				}
 				else
