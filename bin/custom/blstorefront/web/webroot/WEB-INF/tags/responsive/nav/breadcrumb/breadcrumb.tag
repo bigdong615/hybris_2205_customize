@@ -3,6 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 <c:url value="/" var="homeUrl" />
@@ -14,7 +15,7 @@
 		<c:choose>
 			<c:when test="${status.last}">
 			<a href="#">${fn:escapeXml(breadcrumb.name)} </a>
-
+      <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 			<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
              <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
              <c:choose>
@@ -28,6 +29,7 @@
              </c:otherwise>
             </c:choose>
       </form>
+      </sec:authorize>
 			</c:when>
 			<c:when test="${breadcrumb.url eq '#'}">
 					<a href="#">${fn:escapeXml(breadcrumb.name)}</a>&gt;

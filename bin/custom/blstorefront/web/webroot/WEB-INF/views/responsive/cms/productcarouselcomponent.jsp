@@ -9,6 +9,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -38,7 +39,8 @@
 										</c:if>
 									</c:otherwise>
 								</c:choose>
-							<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+							<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+							    <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
                          <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
                          <c:choose>
               		      <c:when test="${productisDiscontinued}">
@@ -54,6 +56,7 @@
                             </c:otherwise>
                          </c:choose>
                   </form>
+               </sec:authorize>
 								<div class="card-slider splide">
 									<div class="splide__track">
 										<ul class="splide__list">
