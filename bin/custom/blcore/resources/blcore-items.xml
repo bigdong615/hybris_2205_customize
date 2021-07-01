@@ -12,6 +12,7 @@
       generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
+      <collectiontype code="MemberList" elementtype="java.lang.String" autocreate="true" generate="false" type="set"/>
     </collectiontypes>
 
     <enumtypes>
@@ -126,6 +127,34 @@
         </enumtype>
         <!-- BL-542 End-->
 
+      <!-- BL-766 start-->
+      <enumtype generate="true" code="HomeBaseEnum" autocreate="true" dynamic="true">
+        <value code="BOS"/>
+        <value code="SFO"/>
+        <value code="ALL"/>
+      </enumtype>
+
+      <enumtype generate="true" code="OrderTypeEnum" autocreate="true" dynamic="true">
+        <value code="VIP"/>
+        <value code="FD"/>
+        <value code="SHIPPING"/>
+        <value code="USED_GEAR"/>
+      </enumtype>
+      
+      <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
+            <value code="LATE_NOTES"/>
+            <value code="ORDER_CONTACT_NOTES"/>
+            <value code="SHIPPING_NOTES"/>
+            <value code="RECEIVING_NOTES"/>
+            <value code="MISSING_ITEM_NOTES"/>
+            <value code="BROKEN_ITEM_NOTES"/>
+            <value code="ORDER_NOTES"/>
+            <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
+            <value code="VERIFICATION_NOTES"/>
+            <value code="EXCEPTION_NOTES"/>
+        </enumtype>
+      <!-- BL-766 End-->
+
     </enumtypes>
 
     <maptypes>
@@ -192,6 +221,11 @@
             </targetElement>
         </relation>
         <!-- BL-542 End-->
+
+      <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
+        <sourceElement qualifier="order" type="AbstractOrder" cardinality="one" />
+        <targetElement qualifier="orderNotes" type="Notes" cardinality="many" collectiontype="list" />
+      </relation>
 
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
@@ -1739,6 +1773,10 @@
                       optional="true" />
                       <persistence type="property" />
                     </attribute>
+                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+                    </attribute>
                     <attribute qualifier="isAuthorised" type="java.lang.Boolean">
                       <persistence type="property" />
                       <modifiers optional="true" read="true" write="true" />
@@ -1855,6 +1893,28 @@
 			  </attribute>
 			</attributes>
 		  </itemtype>
+  <!--  BL-766 start -->
+      <itemtype code="PullReadyToShipOrdersCronJob" extends="CronJob">
+        <description>This type represents a cron job that pulls the ready to ship orders data.</description>
+        <attributes>
+          <attribute qualifier="shipDate" type="java.util.Date">
+            <defaultvalue>new java.util.Date()</defaultvalue>
+            <persistence type="property"/>
+            <modifiers read="true" write="true" optional="false"/>
+            <description>The orders will be pulled from this ship date.</description>
+          </attribute>
+          <attribute type="HomeBaseEnum" qualifier="homeBaseCode">
+            <defaultvalue>em().getEnumerationValue("HomeBaseEnum","ALL")</defaultvalue>
+            <persistence type="property"/>
+            <modifiers read="true" write="true" search="true" optional="false"/>
+            <description>It contains the warehouse code to be sourced.</description>
+          </attribute>
+          <attribute qualifier="members" type="MemberList">
+          <persistence type="property"/>
+        </attribute>
+        </attributes>
+      </itemtype>
+      <!--  BL-766 end -->
 		</typegroup>
 	
         <typegroup name="BaseStore">
@@ -1983,6 +2043,10 @@
                         <modifiers read="true" write="true"/>
                         <persistence type="property"/>
                     </attribute>
+                  <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                    <persistence type="property"/>
+                    <modifiers read="true" write="true" search="true" initial="true"/>
+                  </attribute>
                 </attributes>
             </itemtype>
             
@@ -2053,5 +2117,51 @@
           </attributes>
         </itemtype>
       </typegroup>
+      
+      <typegroup name="Notes">
+        <itemtype code="Notes" autocreate="true" generate="true" >
+          <description>Table to contain all type of order notes.</description>
+          <deployment table="notes" typecode="12217"/>
+          <attributes>
+            <attribute qualifier="note" type="localized:java.lang.String">
+              <description>note that can be provided by different teams</description>
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
+              <custom-properties>
+                <property name="hmcIndexField">
+                  <value>"thefield"</value>
+                </property>
+              </custom-properties>
+            </attribute>
+            <attribute qualifier="type" type="NotesEnum">
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <description>Type of a note</description>
+              <persistence type="property"/>
+            </attribute>
+            <attribute qualifier="userID" type="java.lang.String">
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <description>contain the userID who created that note.</description>
+              <persistence type="property"/>
+            </attribute>
+            <attribute qualifier="fraud" type="boolean">
+              <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+              <description>flag to identify fraud and it will be updated by verification team on Verification_Notes.</description>
+              <persistence type="property"/>
+              <defaultvalue>false</defaultvalue>
+            </attribute>
+          </attributes>
+        </itemtype>
+      </typegroup>
+      
 	</itemtypes>
 </items>

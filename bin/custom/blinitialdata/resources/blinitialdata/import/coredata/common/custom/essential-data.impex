@@ -186,4 +186,12 @@ INSERT_UPDATE CronJob;code[unique=true];job(code);singleExecutable;sessionLangua
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
                      ;stockLevelStatusCronJob; 0 0 0 * * ?
 
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId
+                             ;pullReadyToShipOrdersJob;pullReadyToShipOrdersJob
+
+INSERT_UPDATE PullReadyToShipOrdersCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active
+                                          ;pullReadyToShipOrdersCronJob ;pullReadyToShipOrdersJob ; ;true
+
+INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
+                     ;pullReadyToShipOrdersCronJob; 0 0 0 * * ?
 

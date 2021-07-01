@@ -920,5 +920,19 @@
 	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
+
+	<!-- BL-766 start-->
+	<bean id="pullReadyToShipOrdersJob" class="com.bl.blbackoffice.job.PullReadyToShipOrdersJob" parent="abstractJobPerformable">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<alias name="defaultBlConsignmentDao" alias="blConsignmentDao"/>
+	<bean id="defaultBlConsignmentDao" class="com.bl.core.dao.warehouse.impl.DefaultBlConsignmentDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<!-- BL-766 end -->
+
 </beans>
 
