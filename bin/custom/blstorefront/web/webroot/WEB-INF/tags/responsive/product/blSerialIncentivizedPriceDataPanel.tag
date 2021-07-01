@@ -26,9 +26,7 @@
 </thead>
 <tbody>
 	<input type="hidden" id="doReload" name="doReload" value="false" />
-	<div class="modal fade" id="addToCart" tabindex="-1"
-		style="padding-right: 17px; display: block;" aria-modal="true"
-		role="dialog">
+	<div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-sm"
 			id="addToCartModalDialog"></div>
 	</div>
