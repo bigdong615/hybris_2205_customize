@@ -126,18 +126,18 @@
         </enumtype>
         <!-- BL-542 End-->
 
-		<enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
-            <value code="LATE_NOTES"/>
-            <value code="ORDER_CONTACT_NOTES"/>
-            <value code="SHIPPING_NOTES"/>
-            <value code="RECEIVING_NOTES"/>
-            <value code="MISSING_ITEM_NOTES"/>
-            <value code="BROKEN_ITEM_NOTES"/>
-            <value code="ORDER_NOTES"/>
-            <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
-            <value code="VERIFICATION_NOTES"/>
-            <value code="EXCEPTION_NOTES"/>
-        </enumtype>
+      <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
+        <value code="LATE_NOTES"/>
+        <value code="ORDER_CONTACT_NOTES"/>
+        <value code="SHIPPING_NOTES"/>
+        <value code="RECEIVING_NOTES"/>
+        <value code="MISSING_ITEM_NOTES"/>
+        <value code="BROKEN_ITEM_NOTES"/>
+        <value code="ORDER_NOTES"/>
+        <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
+        <value code="VERIFICATION_NOTES"/>
+        <value code="EXCEPTION_NOTES"/>
+      </enumtype>
         
     </enumtypes>
 
@@ -205,11 +205,12 @@
             </targetElement>
         </relation>
         <!-- BL-542 End-->
-	
-	  <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
-        <sourceElement qualifier="order" type="AbstractOrder" cardinality="one" />
-        <targetElement qualifier="orderNotes" type="Notes" cardinality="many" collectiontype="list" />
-      </relation>
+
+        <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
+          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one"/>
+          <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+            collectiontype="list"/>
+        </relation>
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
         autocreate="true">
