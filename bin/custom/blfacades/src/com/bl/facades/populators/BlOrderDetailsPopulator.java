@@ -36,7 +36,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setTotalRentalDays(String.valueOf(BlDateTimeUtils
           .getDaysBetweenDates(source.getRentalStartDate(), source.getRentalEndDate()) + 1));
     }
-
+    target.setOrderedDate(
+        convertDateToString(source.getDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE));
     target.setOrderedFormatDate(convertDateToString(source.getDate() , "MMM d , YYYY hh:mm a"));
     target.setTotalDamageWaiverCost(convertDoubleToPriceData(source.getTotalDamageWaiverCost() , source));
    target.setTaxAvalaraCalculated(convertDoubleToPriceData(source.getTotalTax() , source));

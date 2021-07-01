@@ -12,6 +12,7 @@
                         <div id="accountContent" class="col-lg-7">
                         <h1><spring:theme code="text.account.order.title.details"/></h1>
                             <hr>
+                          <c:if test="${orderData.isRentalCart}">
                             <div class="reviewCart">
                                 <h5 class="mb-4"><spring:theme code="text.myaccount.order.rental.dates"/></h5>
                                 <div class="row">
@@ -30,6 +31,7 @@
                                     </div>
                                 </div>
                             </div>
+                          </c:if>
                             <div class="reviewCart">
                                 <div class="row">
                                     <div class="col-6">
@@ -51,7 +53,14 @@
                                 </div>
                             </div>
                             <div class="reviewCart">
-                                <h5 class="mb-4"><spring:theme code="text.myaccount.order.your.rental"/></h5>
+                                <h5 class="mb-4">
+                                 <c:if test="${orderData.isRentalCart}">
+                                <spring:theme code="text.myaccount.order.your.rental"/>
+                                </c:if>
+                                <c:if test="${!orderData.isRentalCart}">
+                                Your Order
+                                </c:if>
+                                </h5>
                                <c:forEach items="${orderData.entries}" var="cartEntry" >
                                		 <div class="row mb-4">
                                				<div class="col-md-3 text-center">
@@ -61,6 +70,7 @@
                                							<p class="gray80 body14">
                                							 <b class="gray100">${cartEntry.product.name}</b>
                                							 <spring:theme code="text.myaccount.order.your.rental.qty"/> ${cartEntry.quantity}<br>
+                               							  <c:if test="${orderData.isRentalCart}">
                                		        <c:choose>
                                								<c:when test="${cartEntry.gearGuardProFullWaiverSelected}">
                                									 <spring:theme code="text.myaccount.order.damage.waiver.gear.plus"/><br>
@@ -72,6 +82,7 @@
                                										 <spring:theme code="text.myaccount.order.damage.waiver.gear.no"/><br>
                                								</c:otherwise>
                                						</c:choose>
+                               						</c:if>
                                							<spring:theme code="text.review.page.your.rental.total"/>
                                							<format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" /></p>
                                					</div>
@@ -104,7 +115,7 @@
                                 style="width: 49px;"></div>
                                     <div class="col-10 col-md-5">
                                         <p class="gray80 body14">
-                                           <b class="gray100"> ${fn:escapeXml(orderData.paymentInfo.cardType)}</b>${fn:escapeXml(orderData.paymentInfo.cardNumber)}. •.
+                                           <b class="gray100"> ${fn:escapeXml(orderData.paymentInfo.cardType)}</b>${fn:escapeXml(orderData.paymentInfo.cardNumber)} ,
                                           exp ${fn:escapeXml(orderData.paymentInfo.expiryMonth)}/${fn:escapeXml(orderData.paymentInfo.expiryYear)} <br/>
                                         </p>
                                     </div>
@@ -145,27 +156,42 @@
                                 </div>
                             </div>
                              </c:if>
+                               <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
                                 <a href="#" class="btn btn-sm btn-primary float-end"><spring:theme code="text.myaccount.order.rent.again"/></a>
                             </div>
+                            </c:if>
 
                         </div>
                         <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top mt-5 mt-md-0">
                             <div id="orderSummary" class="card">
                                 <h5><spring:theme code="text.myaccount.order.summary"/></h5>
                                 <hr>
+                                 <c:if test="${orderData.isRentalCart}">
                                 <p><b><spring:theme code="text.myaccount.order.dates"/></b>&emsp;<span class="gray80">${orderData.rentalFormattedStartDate} - ${orderData.rentalFormattedEndDate} (${orderData.totalRentalDays} Days)</span></p>
                                 <hr>
+                                  </c:if>
                                 <table id="costSummary">
                                     <tbody>
                                         <tr>
-                                            <td class="gray80"><spring:theme code="text.myaccount.order.rental.cost"/></td>
+
+                                            <td class="gray80">
+                                              <c:if test="${orderData.isRentalCart}">
+                                            <spring:theme code="text.myaccount.order.rental.cost"/>
+                                             </c:if>
+                                              <c:if test="${!orderData.isRentalCart}">
+                                                               Item Cost
+                                              </c:if>
+
+                                            </td>
                                             <td class="text-end"> <format:price priceData="${orderData.subTotal}"/></td>
                                         </tr>
+                                          <c:if test="${orderData.isRentalCart}">
                                         <tr>
                                             <td class="gray80"><spring:theme code="text.myaccount.order.rental.damege.waiver"/> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
                                             <td class="text-end"><format:price priceData="${orderData.totalDamageWaiverCost}"/></td>
                                         </tr>
+                                        </c:if>
                                         <tr>
                                             <td class="gray80"><spring:theme code="text.myaccount.order.shipping"/></td>
                                             <td class="text-end"><format:price priceData="${orderData.deliveryCost}"/></td>
@@ -186,7 +212,9 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                  <c:if test="${orderData.isRentalCart}">
                                 <button class="btn btn-block btn-primary mt-4"><spring:theme code="text.myaccount.order.rent.again"/></button>
+                                </c:if>
                             </div>
                         </div>
                     </div>
