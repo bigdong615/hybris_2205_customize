@@ -12,17 +12,24 @@
         if(screen.width<600){
             var newOption = optionText.substring(0,35); 
         }       
-       jQuery(this).text(newOption + '..');
-         
-
+        if(optionText > optionText.substring(0,52)){
+            jQuery(this).text(newOption + '..');  
+        }
     });
 });
 
 function removeClass(){ 
     $('.bootstrap-select').on('click', function(){   
-        $(this).removeClass('open');
-        });
+       $(this).removeClass('open');
+   });
   };
+
+  function hidedropdown(){ 
+    $('.container').on('click', function(){        
+       $(".sub-option").find(".bootstrap-select").removeClass('open')
+   });
+  }; 
+
  $('#ship-it-select-box').change(function () {
    dropdown = $('#ship-it-select-box').val();
    $('.ship-it-tab-content').hide();
@@ -126,6 +133,7 @@ function removeClass(){
                  $('#shipToHomeShippingMethods').html(shippingModes);
                  $('.selectpicker').selectpicker('refresh');
                  removeClass();
+                 hidedropdown();
              } 
            
             else {
@@ -216,6 +224,7 @@ function removeClass(){
                 $('#shipToUPSShippingMethods').html(shippingModes);
                 $('.selectpicker').selectpicker('refresh');
                 removeClass();
+                hidedropdown();
                 $('#checkZipForUPSPickup').show();
             } else {
             	$('#cart-shipping-cost').text('-');
@@ -696,7 +705,7 @@ function removeClass(){
         $.ajax({
             url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/checkValidZipFromFedexService',
             data: {
-                pinCode: $('#sameDayZipCheckText').val(),
+                pinCode: $('#sameDayZipCheckText').val().trim(),
                 shippingGroup: $('#same-day-select-box').val()
             },
             type: "GET",
@@ -740,6 +749,7 @@ function removeClass(){
                                $('#sameDayShippingMethods').html(sameDayShippingModes);
                                $('.selectpicker').selectpicker('refresh');
                                removeClass();
+                               hidedropdown();
                                $('#sameDayShippingMethodsNotification').show();
                                $('#same-day-address-div').show();
                                if($('#same-day-address-div #delivery-saved-addresses-dropdown').length == 1) {
@@ -1400,7 +1410,7 @@ function removeClass(){
 
   //show Price of shipping on cart
   function onChangeOfShipItShipToHome(event) {    
-     $('#cart-shipping-cost').text($ ($(".selected").find(".text-muted")).html());
+     $('#cart-shipping-cost').text($ ($("#shipToHomeShippingMethods .selected").find(".text-muted")).html());
       calculateCartTotal();
       if($('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype') == "true") {
           let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
@@ -1415,7 +1425,7 @@ function removeClass(){
   }
 
   function onChangeOfShipItShipToUPS() {
-     $('#cart-shipping-cost').text($ ($(".selected").find(".text-muted")).html());
+     $('#cart-shipping-cost').text($ ($("#shipToUPSShippingMethods .selected").find(".text-muted")).html());
      calculateCartTotal();
      if($('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').find(':selected').attr('businesstype') == "true") {
         let notification = '<div class="notification notification-warning">AM delivery is only available to business addresses. Not at the office? Select Ship and Hold at a UPS Store for AM delivery options!</div>';
@@ -1433,7 +1443,7 @@ function removeClass(){
   }
 
   function onChangeOfSameDayShippingMethodForCost() {
-    $('#cart-shipping-cost').text($ ($(".selected").find(".text-muted")).html());
+    $('#cart-shipping-cost').text($ ($("#sameDayShippingMethods .selected").find(".text-muted")).html());
     calculateCartTotal();
   }
 
