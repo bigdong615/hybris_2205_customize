@@ -22,7 +22,7 @@ public class BlWishListPopulator implements Populator<Wishlist2Model, Wishlist2D
 
 
   @Override
-  public void populate(Wishlist2Model source, Wishlist2Data target) {
+  public void populate(final Wishlist2Model source, final Wishlist2Data target) {
     if (!userService.isAnonymousUser(userService.getCurrentUser())) {
 
       target.setDecription(source.getDescription());
@@ -34,7 +34,6 @@ public class BlWishListPopulator implements Populator<Wishlist2Model, Wishlist2D
         }
         target.setEntries(entryDataList);
       }
-
     }
   }
 

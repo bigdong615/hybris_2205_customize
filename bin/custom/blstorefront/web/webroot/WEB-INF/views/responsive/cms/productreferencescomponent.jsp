@@ -39,11 +39,7 @@
                                          </c:choose>
                                                <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
                                                <input type="hidden" name="productwishlistCode" id="productCodePost" value="${productReference.target.code}">
-                                               <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
                                                <c:choose>
-                                                   <c:when test="${productReference.target.isDiscontinued}">
-                                                      <span class="bookmark" disabled="disabled"></span>
-                                                   </c:when>
                                                   <c:when test="${productReference.target.isBookMarked}">
                                                    <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
                                                     data-bookmark-value="${productReference.target.isBookMarked}"></span>

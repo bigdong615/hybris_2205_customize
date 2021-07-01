@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 /*
  * To Populate the WishlistEntryData
- *@author Sahana SB
+ * @author Sahana SB
  */
 public class BlWishlistEntryPopulator implements
     Populator<Wishlist2EntryModel, Wishlist2EntryData> {
@@ -19,7 +19,7 @@ public class BlWishlistEntryPopulator implements
   private ProductFacade productFacade;
 
   @Override
-  public void populate(Wishlist2EntryModel source, Wishlist2EntryData target)
+  public void populate(final Wishlist2EntryModel source, final Wishlist2EntryData target)
       throws ConversionException {
     target.setProduct(populateProductData(source));
     target.setEntryPk(source.getPk().getLong());
@@ -31,10 +31,8 @@ public class BlWishlistEntryPopulator implements
         .getProductForCodeAndOptions(source.getProduct().getCode(),
             Arrays.asList(ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY,
                 ProductOption.STOCK));
-
     return productData;
   }
-
 
   public ProductFacade getProductFacade() {
     return productFacade;

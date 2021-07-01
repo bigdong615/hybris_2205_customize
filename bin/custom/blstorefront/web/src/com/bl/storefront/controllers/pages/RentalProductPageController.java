@@ -66,23 +66,23 @@ public class RentalProductPageController extends AbstractBlProductPageController
         .getProductForCodeAndOptions(productCode, null);
     productData.setProductPageType(BlControllerConstants.RENTAL_PAGE_IDENTIFIER);
     model.addAttribute(BlControllerConstants.IS_RENTAL_PAGE, true);
-    model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+      model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
     final RentalDateDto rentalDatesFromSession = getBlDatePickerService().getRentalDatesFromSession();
     if(Objects.nonNull(rentalDatesFromSession))
     {
-      final String nextAvailableDate = getBlCommerceStockService().getNextAvailabilityDateInPDP(productCode, rentalDatesFromSession);
-      if(StringUtils.isNotBlank(nextAvailableDate))
-      {
-        model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
-      }
+   	 final String nextAvailableDate = getBlCommerceStockService().getNextAvailabilityDateInPDP(productCode, rentalDatesFromSession);
+   	 if(StringUtils.isNotBlank(nextAvailableDate))
+   	 {
+   		 model.addAttribute(BlControllerConstants.NEXT_AVAILABLE_DATE, nextAvailableDate);
+   	 }
     }
-    final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
-        ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
-        ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
-        ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
-        ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA,ProductOption.REQUIRED_WISHLIST) );
-    model.addAttribute(BlControllerConstants.IS_WATCHING, stockNotificationFacade.isWatchingProduct(productData));
-    return productDetail(encodedProductCode, options, productData, model, request, response);
+      final List<ProductOption> options = new ArrayList<>(Arrays.asList(ProductOption.VARIANT_FIRST_VARIANT, ProductOption.BASIC,
+				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
+				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
+				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
+				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA,ProductOption.REQUIRED_WISHLIST) );
+     model.addAttribute(BlControllerConstants.IS_WATCHING, stockNotificationFacade.isWatchingProduct(productData));
+      return productDetail(encodedProductCode, options, productData, model, request, response);
   }
 
 }

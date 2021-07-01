@@ -18,6 +18,7 @@ import org.springframework.util.ObjectUtils;
 
 /*
  *This class is to populate Product is Bookmarked or Not.
+ * @author Sahana SB
  */
 public class BlWishlistOptionsPopulator implements Populator<BlProductModel, ProductData> {
 
@@ -27,7 +28,7 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
   private ProductService productService;
 
   @Override
-  public void populate(BlProductModel source, ProductData target)
+  public void populate(final BlProductModel source, final ProductData target)
       throws ConversionException {
     if (!userService.isAnonymousUser(userService.getCurrentUser())) {
       try {

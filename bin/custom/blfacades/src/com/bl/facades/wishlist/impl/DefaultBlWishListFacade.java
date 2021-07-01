@@ -62,16 +62,6 @@ public class DefaultBlWishListFacade implements BlWishListFacade {
     getDefaultWishlistService().removeWishlistEntryForProduct(product, model);
   }
 
-//  /**
-//   * {@inheritDoc}
-//   */
-//  @Override
-//  public void removeWishlistAddToCart(final String code) {
-//    final ProductModel product = getProductService().getProductForCode(code);
-//    Wishlist2Model model = getDefaultWishlistService().getDefaultWishlist(fetchUser());
-//    getDefaultWishlistService().removeWishlistEntryForProduct(product, model);
-//  }
-
   /**
    * {@inheritDoc}
    */
