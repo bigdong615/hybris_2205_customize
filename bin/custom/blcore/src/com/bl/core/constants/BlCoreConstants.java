@@ -186,7 +186,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String TOTAL_WITH_DAMAGE_WAIVER = "totalwithDamageWaiver";
 	public static final String CURRENCY_ISOCODE = "currencyIsoCode";
 	public static final String FREE_DELIVERY_MODES = "freeDeliveryModes";
+	public static final String GIFT_CARD_CODE = "giftCardCode";
 
+	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
+	
 	private BlCoreConstants()
 	{
 		//empty

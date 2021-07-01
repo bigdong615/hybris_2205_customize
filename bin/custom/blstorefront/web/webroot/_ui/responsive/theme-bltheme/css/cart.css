@@ -502,3 +502,7 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
   .bootstrap-select.show-menu-arrow.open>.dropdown-toggle:after {
     display: block;
   }
+
+ #gift-card-apply-gift-card-number{
+  text-transform: inherit !important;
+  }

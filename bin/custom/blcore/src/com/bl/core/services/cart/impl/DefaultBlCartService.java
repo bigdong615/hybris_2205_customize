@@ -21,6 +21,7 @@ import de.hybris.platform.store.services.BaseStoreService;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -54,7 +55,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
             if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
-                setUsedGearSerialProductStatus(cartModel);
+                setUsedGearSerialProductStatus(cartModel, null);
             }
 
             final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
@@ -210,19 +211,35 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * {@inheritDoc}
      */
     @Override
-    public void setUsedGearSerialProductStatus(final CartModel cartModel) {
-        for (final AbstractOrderEntryModel entry : cartModel.getEntries()) {
-
-            if (entry.getProduct() instanceof BlSerialProductModel) {
-                final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
-                if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
-                    blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-                    getModelService().save(blSerialProductModel);
-                }
-            }
-        }
-
+    public void setUsedGearSerialProductStatus(final CartModel cartModel, final AbstractOrderEntryModel cartEntry) {
+   	 if(Objects.nonNull(cartEntry) && cartEntry.getProduct() instanceof BlSerialProductModel){
+   		 doChangeSerialProductStatus(cartEntry);
+   	 }
+		else if (Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries())){
+			for (final AbstractOrderEntryModel entry : cartModel.getEntries())
+			{
+				if (entry.getProduct() instanceof BlSerialProductModel)
+				{
+					doChangeSerialProductStatus(entry);
+				}
+			}
+		}
     }
+
+	/**
+	 * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
+	 * 
+	 * @param entry
+	 */
+	private void doChangeSerialProductStatus(final AbstractOrderEntryModel entry) {
+		final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
+		  if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
+		      blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+		      getModelService().save(blSerialProductModel);
+		  }
+	}
+    
+    
 
 
     public CommerceCartService getCommerceCartService() {
