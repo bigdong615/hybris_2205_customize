@@ -696,7 +696,7 @@ function removeClass(){
         $.ajax({
             url: ACC.config.encodedContextPath + '/checkout/multi/delivery-method/checkValidZipFromFedexService',
             data: {
-                pinCode: $('#sameDayZipCheckText').val(),
+                pinCode: $('#sameDayZipCheckText').val().trim(),
                 shippingGroup: $('#same-day-select-box').val()
             },
             type: "GET",
