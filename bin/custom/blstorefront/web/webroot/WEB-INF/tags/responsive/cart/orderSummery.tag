@@ -152,7 +152,7 @@
 					<form:input hidden="hidden" value="${fn:escapeXml(voucher)}"
 						path="voucherCode" name="voucherCode" />
 					<a href="#" class="js-cart-release-voucher-remove-btn"
-						id="removeVoucherForm${loop.index}"><small>Remove Item</small></a>
+						id="removeVoucherForm${loop.index}"><small><spring:theme code="text.remove"/></small></a>
 					<c:forEach items="${cartData.promotionAmountMap}" var="amountMap">
 						<c:if test="${amountMap.key eq voucher}">
 							<span class="float-end">-${amountMap.value}</span>
