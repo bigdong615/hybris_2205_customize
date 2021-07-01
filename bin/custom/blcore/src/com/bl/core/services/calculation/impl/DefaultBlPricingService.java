@@ -17,6 +17,7 @@ import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -169,7 +170,7 @@ public class DefaultBlPricingService implements BlPricingService {
         .getEnumerationValue(DurationEnum.class, duration);
     final Map<String, Object> queryParams = new HashMap<>();
     queryParams.put(PriceRowModel.DURATION, durationEnum);
-    queryParams.put(PriceRowModel.PRODUCT, blProductModel);
+    queryParams.put(PriceRowModel.PRODUCT, blProductModel); // NOSONAR
     List<PriceRowModel> resultSet = getPriceRowGenericDao().find(queryParams);
     return CollectionUtils.isNotEmpty(resultSet) ? resultSet.get(0) : null;
   }
@@ -194,23 +195,38 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private int getPricePercentageByRating(final Double conditionRatingOverallScore) {
     int pricePercent = 0;
-    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_FOUR) {
+    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_HIGH) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovefour.price.percentage"));
-    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_THREE 
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_FOUR) {
+    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_MEDIUM
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_HIGH) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovethree.price.percentage"));
-    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_TWO 
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_THREE) {
+    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_LOW
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_MEDIUM) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowthree.price.percentage"));
-    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_TWO 
+    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_LOW
    		 && conditionRatingOverallScore > 0) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
     }
     return pricePercent;
+  }
+
+  /**
+   * calculate conditional rating on the basis of cosmetic and functional rating.
+   * @param cosmeticRating
+   * @param functionalRating
+   * @return
+   */
+  @Override
+  public Double getCalculatedConditionalRating(final float cosmeticRating, final float functionalRating){
+    final float calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
+    final float calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
+    BigDecimal bigDecimal = new BigDecimal(Float.toString(calculatedCosmeticValue+calculatedFunctionalValue));
+    bigDecimal = bigDecimal.setScale(1, RoundingMode.HALF_DOWN);
+    return bigDecimal.doubleValue();
   }
 
 

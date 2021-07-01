@@ -22,7 +22,9 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
+import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -162,6 +165,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         cartModel.setIsRentalCart(Boolean.TRUE);
       } else {
         cartModel.setIsRentalCart(Boolean.FALSE);
+          //Added code for serial status changes
+		  blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
+		  getModelService().save(blSerialProductModel);
       }
     }
     getModelService().save(cartModel);
@@ -422,5 +428,62 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 {
 	this.blCommerceStockService = blCommerceStockService;
 }
+
+	/**
+	 * This method is used for remove discontinue product from cart.
+	 * @param cartModel
+	 * @param isCartPage
+	 */
+  @Override
+  public void removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
+
+    List<Integer> entryList = new ArrayList<Integer>();
+    cartModel.getEntries().forEach(entry -> {
+      if (entry.getProduct() != null && entry.getProduct() instanceof BlProductModel) {
+        BlProductModel blProductModel = (BlProductModel) entry.getProduct();
+        if (blProductModel.getDiscontinued() != null && blProductModel.getDiscontinued()) {
+          entryList.add(entry.getEntryNumber());
+        }
+      }
+    });
+    if (entryList.isEmpty()) {
+      Collections.reverse(entryList);
+      entryList.forEach(entryNumber -> {
+        try {
+          if (isCartPage) {
+            updateCartEntry(entryNumber, 0);
+          } else {
+            updateCartEntry(entryNumber, 0, cartModel);
+          }
+        } catch (CommerceCartModificationException ex) {
+          BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
+              "Couldn't update product with the entry number: {0} . {1}", entryNumber, ex);
+        }
+      });
+    }
+  }
+
+	/**
+	 * This method used for pre-populating card data before remove discontinue entry.
+	 * @param entryNumber
+	 * @param quantity
+	 * @param cartModel
+	 * @return
+	 * @throws CommerceCartModificationException
+	 */
+	@Override
+	public CartModificationData updateCartEntry(final long entryNumber, final long quantity,final CartModel cartModel)
+			throws CommerceCartModificationException
+	{
+		final CommerceCartParameter parameter = new CommerceCartParameter();
+		parameter.setCart(cartModel);
+		parameter.setQuantity(quantity);
+		parameter.setCreateNewEntry(false);
+		parameter.setEnableHooks(true);
+		parameter.setEnableHooks(true);
+		parameter.setEntryNumber(entryNumber);
+		final CommerceCartModification modification = getCommerceCartService().updateQuantityForCartEntry(parameter);
+		return getCartModificationConverter().convert(modification);
+	}
 
 }

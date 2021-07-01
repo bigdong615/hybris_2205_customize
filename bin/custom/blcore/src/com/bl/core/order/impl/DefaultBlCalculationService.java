@@ -121,15 +121,19 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
 
+            double totalDamageWaiverCost = 0.0;
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
 			final double subtotal = order.getSubtotal().doubleValue();
 			//totalDamageWaiverCost
-			final double totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
+			if(BooleanUtils.isTrue(order.getIsRentalCart()))
+			{
+			 totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 					? order.getTotalDamageWaiverCost().doubleValue()
 					: 0.0d;
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", totalDamageWaiverCost);
+			}
 			// discounts
 			final double totalDiscounts = calculateDiscountValues(order, recalculate);
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
@@ -191,10 +195,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private PriceValue getPriceForSkuOrSerial(final AbstractOrderModel order, final AbstractOrderEntryModel entry,
 			final ProductModel product) throws CalculationException
 	{
-		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
-		{
-			return findBasePrice(entry);
-		}
 
 		if (PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product))
 		{
@@ -204,7 +204,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				return createNewPriceValue(order.getCurrency().getIsocode(),
 						blSerialProductModel.getIncentivizedPrice().doubleValue(), BooleanUtils.toBoolean(order.getNet()));
 			}
-			if (Objects.nonNull(blSerialProductModel.getIncentivizedPrice()))
+			else if (Objects.nonNull(blSerialProductModel.getFinalSalePrice()))
 			{
 				return createNewPriceValue(order.getCurrency().getIsocode(), blSerialProductModel.getFinalSalePrice().doubleValue(),
 						BooleanUtils.toBoolean(order.getNet()));
@@ -212,6 +212,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			throw new CalculationException(
 					"No Price defined for Serial Product with Serial Id : ".concat(blSerialProductModel.getProductId()));
 		}
+		else if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		{
+			return findBasePrice(entry);
+		}
+		
 		throw new CalculationException("Product Type is not a type of SKU or Serial Product");
 	}
 
@@ -226,7 +231,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 	private PriceValue getDynamicBasePriceForRentalSKU(final PriceValue basePrice, final ProductModel product)
 	{
-		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		
+		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product) 
+				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
 			final BlProductModel blProductModel = (BlProductModel) product;
 			final BigDecimal dynamicPriceDataForProduct = getCommercePriceService()

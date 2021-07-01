@@ -48,13 +48,15 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	@Override
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
+		//updating conditional Overall rating.
+		updateConditionalOverallRating(blSerialProduct);
 		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
 		calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
-		//updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
-		//updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
-		//updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+		updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
+		updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
+		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 	}
 
 	/**
@@ -160,8 +162,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private Object getInitialValue(final BlSerialProductModel blSerialProduct, final String status) {
 		final ItemModelContextImpl itemModelCtx = (ItemModelContextImpl) blSerialProduct
 				.getItemModelContext();
-		return itemModelCtx.isLoaded(status) ? itemModelCtx
-				.getOriginalValue(status) : itemModelCtx.loadOriginalValue(status);
+		return itemModelCtx.exists() ? itemModelCtx.getOriginalValue(status) : null;
 	}
 
 	/**
@@ -263,6 +264,15 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	}
 
 	/**
+	 * Updating conditional rating on the basis of cosmetic and functional rating.
+	 * @param blSerialProduct
+	 */
+	private void updateConditionalOverallRating(final BlSerialProductModel blSerialProduct){
+      blSerialProduct.setConditionRatingOverallScore(
+      		getBlPricingService().getCalculatedConditionalRating(blSerialProduct.getCosmeticRating(),blSerialProduct.getFunctionalRating()));
+	}
+	/**
+	 *
 	 * Gets the bl pricing service.
 	 *
 	 * @return the bl pricing service

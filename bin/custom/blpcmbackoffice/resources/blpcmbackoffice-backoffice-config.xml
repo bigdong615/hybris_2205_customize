@@ -245,7 +245,7 @@
 					<ea:attribute qualifier="firmwareVersion"/>
 					<ea:attribute qualifier="lrLink"/>
 					<ea:attribute qualifier="discontinued"/>
-					<ea:attribute qualifier="alternativeProduct"/>
+					<ea:attribute qualifier="alternativeProduct" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.ids">
 				 <ea:attribute qualifier="procurementSource"/>
@@ -311,6 +311,8 @@
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="conditionRatingOverallScore"/>
+						<wz:property qualifier="cosmeticRating"/>
+						<wz:property qualifier="functionalRating"/>
 						<wz:property qualifier="manufacturerAID"/>
 						<wz:property qualifier="forSale"/>
 						<wz:property qualifier="procurementSource"/>
@@ -498,6 +500,8 @@
 				<ea:section name="hmc.product.sections.customerreviews">
 					<ea:attribute qualifier="averageRating"/>
 					<ea:attribute qualifier="conditionRatingOverallScore"/>
+					<ea:attribute qualifier="cosmeticRating"/>
+					<ea:attribute qualifier="functionalRating"/>
 					<ea:attribute qualifier="numberOfReviews"/>
 					<ea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
 						qualifier="productReviews">

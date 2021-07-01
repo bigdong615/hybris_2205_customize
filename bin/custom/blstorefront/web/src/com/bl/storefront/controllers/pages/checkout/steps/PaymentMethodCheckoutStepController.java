@@ -100,7 +100,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("months")
 	public List<SelectOption> getMonths()
 	{
-		final List<SelectOption> months = new ArrayList<SelectOption>();
+		final List<SelectOption> months = new ArrayList<>();
 
 		months.add(new SelectOption("1", "01"));
 		months.add(new SelectOption("2", "02"));
@@ -121,7 +121,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("startYears")
 	public List<SelectOption> getStartYears()
 	{
-		final List<SelectOption> startYears = new ArrayList<SelectOption>();
+		final List<SelectOption> startYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
 		for (int i = calender.get(Calendar.YEAR); i > calender.get(Calendar.YEAR) - 6; i--)
@@ -135,7 +135,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("expiryYears")
 	public List<SelectOption> getExpiryYears()
 	{
-		final List<SelectOption> expiryYears = new ArrayList<SelectOption>();
+		final List<SelectOption> expiryYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
 		for (int i = calender.get(Calendar.YEAR); i < calender.get(Calendar.YEAR) + 11; i++)
@@ -198,15 +198,14 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
 				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
-				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()) 
-						&& BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(cartData.getPaymentInfo().getSubscriptionId()))
+				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
 				{
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
-					model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
-					model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
-					model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
-					model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
+					setPaymentDetailForPage(paymentInfo, model);					
 				}
+				// adding model attribute to disable other payment excluding Credit card if Gift card is applied
+				disableOtherPayments(cartData, model);
+				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)
@@ -232,7 +231,42 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
 	}
-
+	
+	/**
+	 * Disable other payments excluding Credit Card.
+	 *
+	 * @param cart the cart
+	 * @param model the model
+	 */
+	private void disableOtherPayments(final CartData cart, final Model model){
+		model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.FALSE);
+		if(Objects.nonNull(cart) && CollectionUtils.isNotEmpty(cart.getGiftCardData()))
+		{
+			model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.TRUE);
+		}		
+	}
+	
+	/**
+	 * Sets the payment detail for payment page if already selected.
+	 *
+	 * @param paymentInfo the payment info
+	 * @param model the model
+	 */
+	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
+	{
+		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
+			model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
+			model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
+			model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
+		}
+		else if(BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
+		}
+	}
+	
 	/**
 	 * If gift card removed from cart then it add message to model attribute for removed gift card.
 	 * @param model
@@ -438,11 +472,11 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		model.addAttribute("sopCardTypes", getSopCardTypes());
 		model.addAttribute("billingAddresses", getBlCustomerFacade().getAllVisibleBillingAddressesOnUser());
 		if (MapUtils.isNotEmpty(sopPaymentDetailsForm.getParameters())
-				&& sopPaymentDetailsForm.getParameters().containsKey("billTo_country")
-				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get("billTo_country")))
+				&& sopPaymentDetailsForm.getParameters().containsKey(BlControllerConstants.BILL_TO_COUNTRY)
+				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)))
 		{
 			model.addAttribute("regions",
-					getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get("billTo_country")));
+					getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)));
 			model.addAttribute("country", sopPaymentDetailsForm.getBillTo_country());
 		}
 		if (sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null)
@@ -454,7 +488,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	protected Collection<CardTypeData> getSopCardTypes()
 	{
-		final Collection<CardTypeData> sopCardTypes = new ArrayList<CardTypeData>();
+		final Collection<CardTypeData> sopCardTypes = new ArrayList<>();
 
 		final List<CardTypeData> supportedCardTypes = getCheckoutFacade().getSupportedCardTypes();
 		for (final CardTypeData supportedCardType : supportedCardTypes)

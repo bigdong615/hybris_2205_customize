@@ -21,6 +21,7 @@
                 <n:type-node id="BlProduct" code="BlProduct"/>
                 <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 				<n:navigation-node id="BlPricingRatio">
+					<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
 					<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
 					<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
 				</n:navigation-node>
@@ -40,14 +41,13 @@
         </n:explorer-tree>
     </context>
 
-		<context component="cs-explorer-tree" module="customersupportbackoffice"
-			 principal="customersupportadministratorrole,customersupportmanagerrole,customersupportagentrole"
-			 merge-by="module">
-		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
-						 title="customer_support">
-			<n:type-node code="GiftCard" id="GiftCard" />
-		</n:explorer-tree>
-	</context>
+		<context component="explorer-tree">
+			<n:explorer-tree>
+					<n:navigation-node id="BLGiftCard">
+							<n:type-node code="GiftCard" id="GiftCard" />
+					</n:navigation-node>
+			</n:explorer-tree>
+		</context>
 
 	<context type="GiftCard" component="editorareaactions" parent="GenericItem">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -77,7 +77,7 @@
 			<list:column qualifier="currency" />
 			<list:column qualifier="active" />
 			<list:column qualifier="balance" />
-			<list:column qualifier="customer?.name" />
+			<list:column qualifier="customerEmail" />
 			<list:column qualifier="issuer" />
 			<list:column qualifier="startDate" />
 		</list:list-view>
@@ -364,6 +364,8 @@
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="manufacturerAID"/>
 						<wz:property qualifier="conditionRatingOverallScore"/>
+						<wz:property qualifier="cosmeticRating"/>
+						<wz:property qualifier="functionalRating"/>
 						<wz:property qualifier="forSale"/>
 						<wz:property qualifier="procurementSource"/>
 					</wz:property-list>
@@ -445,6 +447,23 @@
 		</wz:flow>
 	</context>
 
+	<context type="BlPricingLogic" component="advanced-search" merge-by="type" parent="GenericItem">
+		<as:advanced-search>
+			<as:field-list>
+				<as:field name="productType"/>
+			</as:field-list>
+		</as:advanced-search>
+	</context>
+
+	<context merge-by="type" type="BlPricingLogic" component="listview">
+		<lv:list-view>
+			<lv:column qualifier="productType"/>
+			<lv:column qualifier="tier"/>
+			<lv:column qualifier="greaterThan"/>
+			<lv:column qualifier="lessThan"/>
+			<lv:column qualifier="pctOfRetail"/>
+		</lv:list-view>
+	</context>
 
 	<context merge-by="type" type="BlStandardPricingRatio" component="listview">
 		<lv:list-view>
@@ -1031,7 +1050,8 @@
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
 	      <list-view:column qualifier="serialProductCode"/>
 	      <list-view:column qualifier="reservedStatus"/>
-	      <list-view:column qualifier="date"/>
+	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
+	      <list-view:column merge-mode="remove" qualifier="available"/>
 	    </list-view:list-view>
   	</context>
 
@@ -1043,6 +1063,27 @@
 	      </advanced-search:field-list>
 	    </advanced-search:advanced-search>
   	</context>
+
+		<context merge-by="type" parent="GenericItem" type="StockLevel"
+				component="editor-area">
+			<editorArea:editorArea
+				xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+				<editorArea:tab name="hmc.properties">
+					<editorArea:section name="hmc.section.stocklevel.stock">
+						<editorArea:attribute qualifier="date">
+							<editorArea:editor-parameter>
+								<editorArea:name>timeZoneReadOnly</editorArea:name>
+								<editorArea:value>false</editorArea:value>
+							</editorArea:editor-parameter>
+							<editorArea:editor-parameter>
+								<editorArea:name>selectedTimeZone</editorArea:name>
+								<editorArea:value>GMT+00:00</editorArea:value>
+							</editorArea:editor-parameter>
+						</editorArea:attribute>
+					</editorArea:section>
+				</editorArea:tab>
+			</editorArea:editorArea>
+		</context>
   	
   	<context component="cseditorareaactions" type="Order" merge-by="type">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">

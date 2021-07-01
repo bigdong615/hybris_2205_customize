@@ -311,7 +311,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     try {
       return getGiftCardDao().getGiftCard(giftCardCode);
     }catch (final Exception exception){
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Error while fetching gift card code {} from backend", giftCardCode, exception);
+      BlLogger.logMessage(LOGGER, Level.ERROR, "Error while fetching gift card code {} from backend", giftCardCode, exception);
     }
     return null;
   }

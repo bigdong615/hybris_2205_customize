@@ -26,6 +26,10 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
     private Locale emailLocale;
     private String productPageURL;
     private static final String RENTAL_PDP_URL_PREFIX = "/rent/product/";
+    private static final String ADDRESS_BOOK_URL = "/my-account/address-book";
+    private static final String RECENT_ARRIVAL_LINK = "/search/?sort=newest&q=%3Arelevance&blPageType=rentalGear#";
+    private String addressUrl;
+    private String recentUrl;
 
     @Override
     public void init(final StockNotificationProcessModel businessProcessModel, final EmailPageModel emailPageModel)
@@ -33,6 +37,8 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
         super.init(businessProcessModel, emailPageModel);
         productData = getProductConverter().convert(businessProcessModel.getProduct());
         this.setProductPageURL(getBaseSiteurlData());
+        addressUrl = getAddressBookUrl();
+        recentUrl = getRecentArrivalUrl();
         setEmailLocale(businessProcessModel);
         updateBaseUrl(businessProcessModel, emailLocale);
         updateTitle(businessProcessModel, emailLocale);
@@ -121,6 +127,22 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
     private String getBaseSiteurlData(){
        return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, RENTAL_PDP_URL_PREFIX+productData.getCode());
     }
+    /**
+     * This method is responsible for providing account address book url.
+     * @return
+     */
+    private String getAddressBookUrl(){
+        return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, ADDRESS_BOOK_URL);
+    }
+
+    /**
+     * This method is responsible for providing recent arrival url.
+     * @return
+     */
+    private String getRecentArrivalUrl(){
+        return getSiteBaseUrlResolutionService().getWebsiteUrlForSite(getBaseSite(),getUrlEncodingAttributes(), false, RECENT_ARRIVAL_LINK);
+    }
+
     public String getProductPageURL() {
         return productPageURL;
     }
@@ -128,6 +150,18 @@ public class ProductNotifyMeEmailContext extends AbstractEmailContext<StockNotif
     public void setProductPageURL(String productPageURL) {
         this.productPageURL = productPageURL;
     }
+    public String getAddressUrl() {
+        return addressUrl;
+    }
+    public void setAddressUrl(String addressUrl) {
+        this.addressUrl = addressUrl;
+    }
+    public String getRecentUrl() {
+        return recentUrl;
+    }
 
+    public void setRecentUrl(String recentUrl) {
+        this.recentUrl = recentUrl;
+    }
 }
 

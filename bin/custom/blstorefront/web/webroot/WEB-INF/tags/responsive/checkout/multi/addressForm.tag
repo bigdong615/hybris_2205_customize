@@ -15,8 +15,8 @@
 <c:if test="${not empty deliveryAddresses}">
     <div id="delivery-saved-addresses-dropdown">
         <b><spring:theme code="text.ship.it.saved.delivery.address"/></b>
-        <div class="dropdown my-2">
-            <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start my-4" onChange="onSavedAddressChange()">
+        <div class="dropdown">
+            <select id="ship-it-savedAddresses" class="form-control btn btn-block btn-outline text-start" onChange="onSavedAddressChange()">
                 <c:forEach items="${deliveryAddresses}" var="deliveryAddress" varStatus="loop">
                     <c:choose>
                         <c:when test="${deliveryAddress.defaultAddress}">
@@ -40,7 +40,7 @@
     </div>
 </c:if>
 
-<div id="delivery-shippingAddressFormDiv">
+<div id="delivery-shippingAddressFormDiv" class="mb-3">
     <b class="mt-4"><spring:theme code="text.existing.shipping.address"/></b>
     <div id="delivery-shippingAddressForm" class="mb-1">
         <form:form method="POST" modelAttribute="addressForm">

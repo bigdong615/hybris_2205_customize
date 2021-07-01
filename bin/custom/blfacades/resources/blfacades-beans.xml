@@ -34,6 +34,7 @@
 	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
       <property name="isWatching" type="java.lang.Boolean"/>
+		<property name="alternativeProduct" type="String"/>
   </bean>
 
 
@@ -73,10 +74,14 @@
 
 <!-- DTO to store Serial Product Data -->
  <bean class="com.bl.facades.product.data.SerialProductData">
-    <property name="conditionRating" type="Double"/>
+    <property name="conditionRating" type="double"/>
     <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="serialId" type="String"/>
+    <property name="cosmeticRating" type="float"/>
+    <property name="functionalRating" type="float"/>
+    <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
+    <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
   </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">
@@ -123,6 +128,7 @@
         <property name="carrier" type="String"/>
         <property name="warehouse" type="String"/>
         <property name="businessTypeDelivery" type="Boolean"/>
+        <property name="shippingGroup" type="String"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
@@ -251,7 +257,256 @@
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
+    <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
   </bean>
+  
+    <!-- Creating Request Data for UPS Shipment -->
+
+	<bean class="com.bl.facades.shipment.data.UpsShippingRequestData">
+		<property name="requestOption" type="String"/>
+		<property name="shipment" type="com.bl.facades.shipment.data.ShipmentData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.ShipmentData">
+		<property name="returnService" type="com.bl.facades.shipment.data.ReturnServiceData"/>
+		<property name="shipper" type="com.bl.facades.shipment.data.ShipperData"/>
+		<property name="shipTo" type="com.bl.facades.shipment.data.ShipToData"/>
+		<property name="shipFrom" type="com.bl.facades.shipment.data.ShipFromData"/>
+		<property name="service" type="com.bl.facades.shipment.data.UpsShipmentServiceData"/>
+		<property name="shipmentPackage" type="java.util.List&lt;com.bl.facades.shipment.data.PackageTypeData>" />
+		<property name="paymentInformation" type="com.bl.facades.shipment.data.UpsPaymentInformation" />
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.LabelSpecificationData">
+		<property name="labelImageFormat" type="com.bl.facades.shipment.data.UpsShipmentServiceData"/>
+		<property name="httpUserAgent" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.ReturnServiceData">
+		<property name="code" type="String"/>
+		<property name="description" type="String"/>
+	</bean>	
+	
+	<bean class="com.bl.facades.shipment.data.ShipperData">
+		<property name="name" type="String" />
+		<property name="shipperNumber" type="String"/>
+		<property name="attentionName" type="String"/>
+		<property name="phone" type="com.bl.facades.shipment.data.ShipmentPhoneData"/>
+		<property name="address" type="de.hybris.platform.commercefacades.user.data.AddressData" />
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.ShipToData">
+		<property name="name" type="String" />
+		<property name="attentionName" type="String"/>
+		<property name="phone" type="com.bl.facades.shipment.data.ShipmentPhoneData"/>
+		<property name="address" type="de.hybris.platform.commercefacades.user.data.AddressData" />
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.ShipFromData">
+		<property name="name" type="String" />
+		<property name="attentionName" type="String"/>
+		<property name="phone" type="com.bl.facades.shipment.data.ShipmentPhoneData"/>
+		<property name="address" type="de.hybris.platform.commercefacades.user.data.AddressData" />
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.UpsShipmentServiceData">
+		<property name="code" type="String"/>
+		<property name="description" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.PackageTypeData">
+		<property name="packagingType" type="com.bl.facades.shipment.data.UpsShipmentServiceData"/>
+		<property name="dimensions" type="com.bl.facades.shipment.data.DimensionsTypeData"/>
+		<property name="packageWeight" type="com.bl.facades.shipment.data.PackageWeightTypeData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.UpsPaymentInformation">
+		<property name="type" type="String"/>
+		<property name="accountNumber" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.ShipmentPhoneData">
+		<property name="number" type="String"/>
+		<property name="extension" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.DimensionsTypeData">
+		<property name="unitOfMeasurement" type="com.bl.facades.shipment.data.UpsShipmentServiceData"/>
+		<property name="length" type="String"/>
+		<property name="width"  type="String"/>
+		<property name="height" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.PackageWeightTypeData">
+		<property name="unitOfMeasurement" type="com.bl.facades.shipment.data.UpsShipmentServiceData"/>
+		<property name="weight" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.shipment.data.UPSShipmentCreateResponse">
+		<property name="labelURL" type="String" />
+		<property name="shipmentIdentificationNumber" type="String" />
+		<property name="totalCharges" type="Double" />
+		<property name="packages" type="java.util.List&lt;com.bl.shipment.data.UPSShipmentPackageResult>" />
+		<property name="statusCode" type="String"/>
+    	<property name="statusMessage" type="String"/>
+    	<property name="errorDescription" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.shipment.data.UPSShipmentPackageResult">
+		<property name="trackingNumber" type="String" />
+		<property name="graphicImage" type="String" />
+		<property name="hTMLImage" type="String" />
+	</bean>
+	
+	<!-- Creating Request Data for FedEx Shipment -->
+	
+	<bean class="com.bl.facades.shipment.data.FedExShippingRequestData">
+		<property name="service" type="com.bl.facades.shipment.data.FedExServiceData"/>
+		<property name="category" type="String"/>
+		<property name="pickupDetail" type="com.bl.facades.shipment.data.FedExPickupDetailData"/>
+		<property name="deliveryDetail" type="com.bl.facades.shipment.data.FedExDeliveryDetailData"/>
+		<property name="shipper" type="com.bl.facades.shipment.data.FedExShipperData"/>
+		<property name="recipient" type="com.bl.facades.shipment.data.FedExRecipientData"/>
+		<property name="totalDeclaredValue" type="com.bl.facades.shipment.data.FedExTotalDeclaredValueData"/>
+		<property name="packages" type="java.util.List&lt;com.bl.facades.shipment.data.FedExPackageData>"/>
+		<property name="contentDescription" type="String"/>
+		<property name="externalReferences" type="com.bl.facades.shipment.data.FedExExternalReferencesData"/>
+		<property name="notifications" type="com.bl.facades.shipment.data.FedExNotificationsData"/>
+		<property name="visibilityReleases" type="com.bl.facades.shipment.data.FedExVisibilityReleasesData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExServiceData">
+		<property name="serviceType" type="String"/>
+		<property name="signatureService" type="String"/>
+		<property name="specialServices" type="java.util.List&lt;Object>"/>
+		<property name="restrictions" type="com.bl.facades.shipment.data.FedExRestrictionData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExRestrictionData">
+		<property name="noHAL" type="Boolean"/>
+		<property name="noRecipientRedirect" type="Boolean"/>
+		<property name="noRemoteSignature" type="Boolean"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExPickupDetailData">
+		<property name="readyTime" type="long"/>
+		<property name="localTimeZone" type="String"/>
+		<property name="location" type="com.bl.facades.shipment.data.FedExLocationData"/>
+		<property name="instructions" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExLocationData">
+		<property name="address" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+		<property name="residential" type="Boolean"/>
+		<property name="hoursOfOperationStart" type="long"/>
+		<property name="hoursOfOperationEnd" type="long"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExDeliveryDetailData">
+		<property name="location" type="com.bl.facades.shipment.data.FedExLocationData"/>
+		<property name="instructions" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExShipperData">
+		<property name="accountNumber" type="String"/>
+		<property name="displayImage" type="com.bl.facades.shipment.data.FedExDisplayImageData"/>
+		<property name="displayName" type="String"/>
+		<property name="contact" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+		<property name="supportContact" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExDisplayImageData">
+		<property name="large" type="String"/>
+		<property name="medium" type="String"/>
+		<property name="small" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExRecipientData">
+		<property name="displayImage" type="com.bl.facades.shipment.data.FedExDisplayImageData"/>
+		<property name="displayName" type="String"/>
+		<property name="contact" type="de.hybris.platform.commercefacades.user.data.AddressData"/>
+	</bean>	
+	
+	<bean class="com.bl.facades.shipment.data.FedExTotalDeclaredValueData">
+		<property name="currencyCode" type="String"/>
+		<property name="amount" type="int"></property>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExPackageData">
+		<property name="items" type="java.util.List&lt;com.bl.facades.shipment.data.FedExItemData>"/>
+		<property name="weight" type="com.bl.facades.shipment.data.FedExWeightData"/>
+		<property name="dimensions" type="com.bl.facades.shipment.data.FedExDimensionsData"/>
+		<property name="trackingNumber" type="String"/>
+		
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExItemData">
+		<property name="name" type="String"/>
+		<property name="description" type="String"/>
+		<property name="quantity" type="int"/>
+		<property name="sku" type="String"/>
+		<property name="displayImage" type="com.bl.facades.shipment.data.FedExDisplayImageData"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExWeightData">
+		<property name="units" type="String"/>
+		<property name="value" type="int"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExDimensionsData">
+		<property name="length" type="int"/>
+		<property name="width" type="int"/>
+		<property name="height" type="int"/>
+		<property name="units" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExExternalReferencesData">
+		<property name="poNumber" type="String"/>
+		<property name="deptNumber" type="String"/>
+		<property name="rmaNumber" type="String"/>
+		<property name="invoiceNumber" type="String"/>
+		<property name="url" type="String"/>
+		<property name="other" type="String"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExNotificationsData">
+		<property name="email" type="java.util.List&lt;com.bl.facades.shipment.data.FedExEmailData>"/>
+		<property name="sms" type="java.util.List&lt;com.bl.facades.shipment.data.FedExSMSlData>"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExEmailData">
+		<property name="recipientType" type="String"/>
+		<property name="notifyOnShipment" type="Boolean"/>
+		<property name="notifyOnInTransit" type="Boolean"/>
+		<property name="notifyOnNextStop" type="Boolean"/>
+		<property name="notifyOnException" type="Boolean"/>
+		<property name="notifyOnDelivery" type="Boolean"/>
+		<property name="locale" type="String"/>
+		<property name="emailAddress" type="String"/>
+		<property name="recipientOptInTimestamp" type="long"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExSMSlData">
+		<property name="recipientType" type="String"/>
+		<property name="notifyOnShipment" type="Boolean"/>
+		<property name="notifyOnInTransit" type="Boolean"/>
+		<property name="notifyOnNextStop" type="Boolean"/>
+		<property name="notifyOnException" type="Boolean"/>
+		<property name="notifyOnDelivery" type="Boolean"/>
+		<property name="locale" type="String"/>
+		<property name="phoneNumber" type="String"/>	
+		<property name="recipientOptInTimestamp" type="long"/>
+	</bean>
+	
+	<bean class="com.bl.facades.shipment.data.FedExVisibilityReleasesData">
+		<property name="releaseTimestamp" type="long"/>
+		<property name="showShipperDisplayName" type="Boolean"/>
+		<property name="showShipperDisplayImage" type="Boolean"/>
+		<property name="showShipmentDisplayName" type="Boolean"/>
+		<property name="showShipmentDisplayImage" type="Boolean"/>
+		<property name="showPickupLocation" type="Boolean"/>
+	</bean>
+	
 
 </beans>
 
