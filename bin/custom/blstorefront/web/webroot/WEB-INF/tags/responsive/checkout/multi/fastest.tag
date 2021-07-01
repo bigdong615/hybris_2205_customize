@@ -53,7 +53,7 @@
                     </div>
                 </div>
 
-                <div id="sameDayShippingMethods">
+                <div id="sameDayShippingMethods" class="sub-option">
 
                 </div>
 
