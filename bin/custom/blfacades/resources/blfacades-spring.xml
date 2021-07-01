@@ -555,4 +555,9 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 	</bean>
 
+	<alias name="defaultBlOrderFacade" alias="blOrderFacade" />
+	<bean id="defaultBlOrderFacade" parent="orderFacade" class="com.bl.facades.order.DefaultBlOrderFacade">
+		<property name="blCartFacade" ref="cartFacade"/>
+	</bean>
+
 </beans>

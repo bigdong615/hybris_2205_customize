@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.facades.customer.BlUserFacade;
+import com.bl.facades.order.BlOrderFacade;
 import com.bl.storefront.forms.BlAddressForm;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
@@ -47,6 +48,7 @@ import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentGiv
 import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentWithdrawnException;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.commerceservices.enums.CountryType;
+import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
@@ -64,6 +66,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -81,6 +84,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -156,8 +160,10 @@ public class AccountPageController extends AbstractSearchPageController
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
+/*
 	@Resource(name = "orderFacade")
 	private OrderFacade orderFacade;
+*/
 
 	@Resource(name = "acceleratorCheckoutFacade")
 	private CheckoutFacade checkoutFacade;
@@ -200,6 +206,9 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "blAddressDataUtil")
 	private AddressDataUtil addressDataUtil;
+
+	@Resource(name = "blOrderFacade")
+	private BlOrderFacade blOrderFacade;
 
 	protected PasswordValidator getPasswordValidator()
 	{
@@ -313,7 +322,7 @@ public class AccountPageController extends AbstractSearchPageController
 	{
 		// Handle paged search results
 		final PageableData pageableData = createPageableData(page, 10, sortCode, showMode); // NOSONAR
-		final SearchPageData<OrderHistoryData> searchPageData = orderFacade.getPagedOrderHistoryForStatuses(pageableData);  // NOSONAR
+		final SearchPageData<OrderHistoryData> searchPageData = blOrderFacade.getPagedOrderHistoryForStatuses(pageableData);  // NOSONAR
 		populateModel(model, searchPageData, showMode);
 		final ContentPageModel orderHistoryPage = getContentPageForLabelOrId(ORDER_HISTORY_CMS_PAGE);
 		storeCmsPageInModel(model, orderHistoryPage);
@@ -330,7 +339,7 @@ public class AccountPageController extends AbstractSearchPageController
 	{
 		try
 		{
-			final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+			final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
 			model.addAttribute("orderData", orderDetails);
 
 			final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
@@ -361,7 +370,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String getProductVariantMatrixForResponsive(@PathVariable("orderCode") final String orderCode,
 			@RequestParam("productCode") final String productCode, final Model model)
 	{
-		final OrderData orderData = orderFacade.getOrderDetailsForCodeWithoutUser(orderCode);
+		final OrderData orderData = blOrderFacade.getOrderDetailsForCodeWithoutUser(orderCode);
 
 		final Map<String, ReadOnlyOrderGridData> readOnlyMultiDMap = orderGridFormFacade.getReadOnlyOrderGridForProductInOrder(
 				productCode, Arrays.asList(ProductOption.BASIC, ProductOption.CATEGORIES), orderData);
@@ -1052,6 +1061,25 @@ public class AccountPageController extends AbstractSearchPageController
 		setUpMetaDataForContentPage(model, savedCartPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
+	}
+
+	@RequestMapping(value = "/reorder/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@RequireHardLogIn
+	public String reorder(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
+			throws CommerceCartModificationException {
+		final String referer = request.getHeader(BlControllerConstants.REFERER);
+		if(StringUtils.isNotEmpty(orderCode)) {
+			blOrderFacade.addToCartAllOrderEnrties(orderCode);
+			return BlControllerConstants.REDIRECT_CART_URL;
+		}
+			else if (referer.contains("/my-account/orders/"))
+			{
+				return REDIRECT_PREFIX + "/my-account/orders";
+			}
+		 else if (referer.contains("/my-account/order/" + orderCode)) {
+			return REDIRECT_PREFIX + "/my-account/order/" + orderCode;
+			}
+		 return REDIRECT_PREFIX + "/my-account/orders";
 	}
 
 }
