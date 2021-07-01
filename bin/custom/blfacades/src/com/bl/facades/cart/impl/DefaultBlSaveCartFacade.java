@@ -29,10 +29,9 @@ public class DefaultBlSaveCartFacade extends DefaultSaveCartFacade implements Bl
    * @return
    */
   @Override
-  public SearchPageData<CartData> getSavedCartsForCurrentUser(final PageableData pageableData,
-      final List<OrderStatus> orderStatus)
+  public SearchPageData<CartData> getSavedCartsForCurrentUser(final PageableData pageableData, final List<OrderStatus> orderStatus) // NOSONAR
   {
-    final SearchPageData<CartData> result = new SearchPageData<>();
+    final SearchPageData<CartData> result = new SearchPageData<>(); // NOSONAR
     final SearchPageData<CartModel> savedCartModels = getCommerceSaveCartService().getSavedCartsForSiteAndUser(pageableData,
         getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser(), orderStatus);
     // remove discontinue entry from cart.

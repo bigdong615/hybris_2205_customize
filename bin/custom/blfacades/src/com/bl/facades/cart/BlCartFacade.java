@@ -110,7 +110,7 @@ public interface BlCartFacade extends CartFacade {
 	/**
 	 * This method is used for remove discontinue product from cart.
 	 */
-	 void removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage);
+	 void removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage); // NOSONAR
 
 	/**
 	 * This method used for pre-populating card data before remove discontinue entry.
@@ -120,7 +120,5 @@ public interface BlCartFacade extends CartFacade {
 	 * @return
 	 * @throws CommerceCartModificationException
 	 */
-	public CartModificationData updateCartEntry(final long entryNumber, final long quantity,
-			final CartModel cartModel)
-			throws CommerceCartModificationException;
+	public CartModificationData updateCartEntry(final long entryNumber, final long quantity, final CartModel cartModel) throws CommerceCartModificationException; // NOSONAR
 }

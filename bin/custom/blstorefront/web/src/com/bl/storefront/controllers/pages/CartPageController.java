@@ -58,7 +58,6 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
@@ -364,7 +363,7 @@ public class CartPageController extends AbstractCartPageController
 					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
 
 					//Added condition to change serial status when entry remove from cart
-					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent())
+					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
 					{
 						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
