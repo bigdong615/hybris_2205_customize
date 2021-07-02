@@ -27,11 +27,13 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductOption;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.payment.AdapterException;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -47,7 +49,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
 
 
 @Controller
@@ -96,24 +98,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			return redirectToPaymentPageOnGiftCardRemove(redirectAttributes, removedGiftCardCodeList);
 		}
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
-		if (cartData.getEntries() != null && !cartData.getEntries().isEmpty())
-		{
-			for (final OrderEntryData entry : cartData.getEntries())
-			{
-				final String productCode = entry.getProduct().getCode();
-				final ProductData product = getProductFacade().getProductForCodeAndOptions(productCode,
-						Arrays.asList(ProductOption.BASIC, ProductOption.PRICE));
-				entry.setProduct(product);
-			}
-		}
-		model.addAttribute("cartData", cartData);
-		model.addAttribute("currentPage", BlControllerConstants.REVIEW_PAGE);
-		model.addAttribute("allItems", cartData.getEntries());
-		model.addAttribute("deliveryAddress", cartData.getDeliveryAddress());
-		model.addAttribute("deliveryMode", cartData.getDeliveryMode());
-		model.addAttribute("paymentInfo", cartData.getPaymentInfo());
-		setFormattedRentalDates(model);
-        model.addAttribute("shipsFromPostalCode", "");
+    addCartDataInModel(cartData, model);
+    setFormattedRentalDates(model);
+    model.addAttribute("currentPage", BlControllerConstants.REVIEW_PAGE);
+    model.addAttribute("shipsFromPostalCode", "");
 
 		// Only request the security code if the SubscriptionPciOption is set to Default.
 		final boolean requestSecurityCode = (CheckoutPciOptionEnum.DEFAULT
@@ -340,6 +328,61 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	public String next(final RedirectAttributes redirectAttributes)
 	{
 		return getCheckoutStep().nextStep();
+	}
+	
+	@GetMapping(value = "/reviewPrint")
+  public String print(final HttpServletRequest request, final Model model) {
+	  try {
+	    final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+	    modifyTotalForReviewPrintPage(cartData);
+	    addCartDataInModel(cartData, model);
+	    setFormattedRentalDates(model);
+	    return ControllerConstants.Views.Pages.MultiStepCheckout.ReviewPrint;
+	  }
+	  catch(final Exception exception) {
+	    
+	  }
+	  return getCheckoutStep().currentStep();
+  }
+	
+	/**
+	 * Modify total (excluding shipping and tax price) for review print page.
+	 *
+	 * @param cartData the cart data
+	 */
+	private void modifyTotalForReviewPrintPage(final CartData cartData) {
+	  if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getTotalTax()) && Objects.nonNull(cartData.getDeliveryCost())) {
+	    final BigDecimal totalOfShippingAndTax = cartData.getDeliveryCost().getValue().add(cartData.getTotalTax().getValue());
+	    final BigDecimal printReviewPageTotal = cartData.getTotalPriceWithTax().getValue().subtract(totalOfShippingAndTax);
+	    final PriceData modifiedTotal = blCheckoutFacade.getModifiedTotalForPrintQuote(printReviewPageTotal);
+	    cartData.setTotalPriceWithTax(modifiedTotal);
+	  }
+	}
+	
+	/**
+	 * Adds the cart data in model.
+	 *
+	 * @param cartData the cart data
+	 * @param model the model
+	 */
+	private void addCartDataInModel(final CartData cartData, final Model model) {
+	  if(Objects.nonNull(cartData)) {
+	    if (cartData.getEntries() != null && !cartData.getEntries().isEmpty())
+	    {
+	      for (final OrderEntryData entry : cartData.getEntries())
+	      {
+	        final String productCode = entry.getProduct().getCode();
+	        final ProductData product = getProductFacade().getProductForCodeAndOptions(productCode,
+	            Arrays.asList(ProductOption.BASIC, ProductOption.PRICE));
+	        entry.setProduct(product);
+	      }
+	    }
+	    model.addAttribute("cartData", cartData);
+	    model.addAttribute("allItems", cartData.getEntries());
+	    model.addAttribute("deliveryAddress", cartData.getDeliveryAddress());
+	    model.addAttribute("deliveryMode", cartData.getDeliveryMode());
+	    model.addAttribute("paymentInfo", cartData.getPaymentInfo());
+	  }    
 	}
 
 	public CustomFieldsService getCustomFieldsService() {

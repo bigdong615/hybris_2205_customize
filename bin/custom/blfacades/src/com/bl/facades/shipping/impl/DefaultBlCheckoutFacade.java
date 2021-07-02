@@ -31,11 +31,13 @@ import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorChecko
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
+import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
@@ -778,6 +780,18 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 giftCardCode, cartModel.getCode(), cartModel.getUser().getUid(), exception);
             return null;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PriceData getModifiedTotalForPrintQuote(final BigDecimal price) {
+   	 final CurrencyModel currentCurrency = getCommonI18NService().getCurrentCurrency();
+   	 if(Objects.nonNull(currentCurrency) && Objects.nonNull(price)) {
+   		 return getPriceDataFactory().create(PriceDataType.BUY, price, currentCurrency);
+   	 }
+   	 return null;
     }
 
     public BlDeliveryModeService getBlZoneDeliveryModeService() {

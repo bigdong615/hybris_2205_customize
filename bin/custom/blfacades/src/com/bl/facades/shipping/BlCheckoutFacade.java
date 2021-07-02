@@ -11,11 +11,13 @@ import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -241,4 +243,12 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return String
      */
     List<String> recalculateCartForGiftCard();
+    
+    /**
+     * Gets the PriceData object for modified total for print quote.
+     *
+     * @param price the price
+     * @return the modified total for print quote
+     */
+    PriceData getModifiedTotalForPrintQuote(final BigDecimal price);
 }
