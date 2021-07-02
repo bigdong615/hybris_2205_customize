@@ -28,7 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = ControllerConstants.Actions.Cms.ProductReferencesComponent)
 public class ProductReferencesComponentController extends
         AbstractAcceleratorCMSComponentController<ProductReferencesComponentModel> {
-    protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY , ProductOption.STOCK);
+    protected static final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY ,
+        ProductOption.STOCK , ProductOption.REQUIRED_WISHLIST);
 
     @Resource(name = "blProductFacade")
     private DefaultBlProductFacade defaultBlProductFacade;
