@@ -4,6 +4,11 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.wishlist.BlWishListFacade;
+import com.bl.facades.wishlist.data.Wishlist2EntryData;
 import com.bl.storefront.forms.BlAddressForm;
 import com.braintree.facade.BrainTreeUserFacade;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
@@ -62,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -70,6 +76,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -199,6 +206,17 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "blAddressDataUtil")
 	private AddressDataUtil addressDataUtil;
+
+	@Resource(name = "wishlistFacade")
+	private BlWishListFacade wishlistFacade;
+
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() {
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
 	protected PasswordValidator getPasswordValidator()
 	{
@@ -1014,12 +1032,42 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@GetMapping(value = "/bookmarks")
 	@RequireHardLogIn
-	public String bookmarksPage(final Model model) throws CMSItemNotFoundException{
+	public String bookmarksPage(@RequestParam(value = "page", defaultValue = "0") final int page,
+			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
+			@RequestParam(value = "sort", required = false) final String sortCode, final Model model)
+			throws CMSItemNotFoundException {
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,
+				BlControllerConstants.BOOKMARKS_PAGE_IDENTIFIER);
+		final PageableData pageableData = createPageableData(page, 5, sortCode, showMode);
+		final SearchPageData<Wishlist2EntryData> searchPageData = wishlistFacade
+				.getWishlistEntries(pageableData);
+		removeDiscontinuedEntries(searchPageData);
+		populateModel(model, searchPageData, showMode);
 		final ContentPageModel bookmarksPage = getContentPageForLabelOrId(BOOKMARKS_CMS_PAGE);
 		storeCmsPageInModel(model, bookmarksPage);
 		setUpMetaDataForContentPage(model, bookmarksPage);
-		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		model.addAttribute("searchPageData", searchPageData);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+				ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
+
+	}
+
+	/**
+	 *  This is to remove the discontinued products from the pageable data of WishlistEntries
+	 * @param searchPageData
+	 */
+	private void removeDiscontinuedEntries(SearchPageData<Wishlist2EntryData> searchPageData) {
+		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+		List<Wishlist2EntryData> wishlistEntries = searchPageData.getResults();
+
+		if (Objects.nonNull(rentalDateDto) || CollectionUtils.isNotEmpty(wishlistEntries)) {
+			for (Wishlist2EntryData entry : wishlistEntries) {
+				if (BooleanUtils.isTrue(entry.getProduct().getIsDiscontinued())) {
+					wishlistFacade.removeWishlist(entry.getProduct().getCode());
+				}
+			}
+		}
 	}
 
 	@GetMapping(value = "/verificationImages")
