@@ -7,7 +7,7 @@
     <extension abstractclassprefix="Generated" classprefix="BlFacades" name="blfacades">
                 		
         
-        <!-- you should add all required extensions to this list, except platform
+        <!-- you should add all required extensions to this list, except platform 
 			extensions which are automatically required -->
                 		
         
