@@ -54,21 +54,21 @@
 										</tr>
 									</thead>
 									<tbody>
-										<c:if
-											test="${(allowAddToCart ne 'true') && (isRentalCart eq 'true') && (isUsedGearCart ne 'true')}">
-											<div class="modal fade" id="addToCart" tabindex="-1"
-												aria-hidden="true">
-												<div class="modal-dialog modal-dialog-centered modal-sm"
-													id="addToCartModalDialog"></div>
-											</div>
-										</c:if>
+
+										<input type="hidden" id="doReload" name="doReload"
+											value="false" />
+										<div class="modal fade" id="addToCart" tabindex="-1"
+											aria-hidden="true">
+											<div class="modal-dialog modal-dialog-centered modal-sm"
+												id="addToCartModalDialog"></div>
+										</div>
+
 										<form:form id="serialSubmitForm" action="${addToCartUrl}"
 											method="get">
 											<c:forEach items="${product.serialproducts}"
 												var="serialProduct" varStatus="loop">
-												<%-- <input type="hidden" name="productCode" value="${product.code}" />
-		                                      <input type="hidden" name="serialCode" value="${serialProduct.serialId}" /> --%>
-												<c:if test="${serialProduct.serialStatus ne 'SOLD' }">
+												
+												<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
 													<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''}">
 														<td><a href="#" data-bs-toggle="modal"
 															data-bs-target="#sku52678"
@@ -82,13 +82,13 @@
 														<td class="d-none d-md-table-cell">#
 															${serialProduct.serialId}</td>
 														<td class="text-end">
-															<!-- BL-537 : Added  class js-usedProduct-button --> <sec:authorize
+															<!-- BL-537 : Added  class js-usedProduct-button -->
+															 <sec:authorize
 																access="hasAnyRole('ROLE_ANONYMOUS')">
 																<c:set value=" hidebutton" var="hidebutton" />
-															</sec:authorize> <c:choose>
-																<c:when
-																	test="${serialProduct.serialStatus eq 'ACTIVE' }">
-
+															</sec:authorize> 
+															<c:choose>
+																<c:when test="${serialProduct.serialStatus eq 'ACTIVE' }">
 																	<button type="button"
 																		data-link="<c:url value='/login/loginpopup'/>"
 																		class="btn btn-primary  js-login-popup hide-after-login"
@@ -97,14 +97,13 @@
 																		<spring:theme code="basket.add.to.basket" />
 																	</button>
 																	<button type="button"
-																		class="btn btn-primary bl-serial-add  serial_entry_${loop.index }  ${hidebutton}"
+																		class="btn btn-primary js-add-to-used-cart  serial_entry_${loop.index }  ${hidebutton}"
 																		data-product-code="${product.code}"
 																		data-serial="${serialProduct.serialId}">
 																		<spring:theme code="basket.add.to.basket" />
 																	</button>
 																</c:when>
-																<c:when
-																	test="${serialProduct.serialStatus eq 'ADDED_TO_CART' }">
+																<c:when test="${serialProduct.serialStatus eq 'ADDED_TO_CART' }">
 																	<button type="button"
 																		class="btn btn-primary js-add-to-cart js-disable-btn"
 																		aria-disabled="true" disabled="disabled">
@@ -186,6 +185,3 @@
 		</div>
 	</div>
 </section>
-
-
-

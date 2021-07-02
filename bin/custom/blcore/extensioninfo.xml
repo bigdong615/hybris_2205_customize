@@ -17,7 +17,9 @@
         <requires-extension name="commercefacades"/>
         <requires-extension name="braintree"/>
         <requires-extension name="stocknotificationservices"/>
+        <requires-extension name="ruleengineservices"/>
         <requires-extension name="ruledefinitions"/>
+        <requires-extension name="wishlist"/>
         <requires-extension name="promotionengineservices"/>
         <requires-extension name="couponservices"/>
 

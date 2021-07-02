@@ -12,6 +12,7 @@ import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,13 +39,17 @@ public class DefaultBlPaymentService implements BlPaymentService
 	{
 		final List<AbstractOrderModel> ordersToAuthorizePayment = getOrderDao().getOrdersForAuthorization();
 		ordersToAuthorizePayment.forEach(order -> {
-			final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order);
-			if(isSuccessAuth) {
-				order.setIsAuthorised(Boolean.TRUE);
-				getModelService().save(order);
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
+			if(order.getTotalPrice() > 0) {
+				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order);
+				if (isSuccessAuth) {
+					order.setIsAuthorised(Boolean.TRUE);
+					getModelService().save(order);
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is successful for the order {}", order.getCode());
+				} else {
+					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
+				}
 			} else {
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Auth is not successful for the order {}", order.getCode());
+				setIsAuthorizedFlagForGiftCard(order);
 			}
 		});
 	}
@@ -95,6 +100,19 @@ public class DefaultBlPaymentService implements BlPaymentService
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * It sets isAuthorized flag as true when order total price is 0
+	 * @param order
+	 */
+	private void setIsAuthorizedFlagForGiftCard(AbstractOrderModel order) {
+		if(CollectionUtils.isNotEmpty(order.getGiftCard()) && (BigDecimal.valueOf(order
+				.getTotalPrice())).compareTo(BigDecimal.ZERO) == 0) {
+			order.setIsAuthorised(Boolean.TRUE);
+			getModelService().save(order);
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, "The order {} has been paid fully via Gift card", order.getCode());
+		}
 	}
 
 	/**

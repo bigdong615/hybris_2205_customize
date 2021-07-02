@@ -8,7 +8,7 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
-		<collectiontype code="serialProductCodes" elementtype="java.lang.String" autocreate="true"
+		<collectiontype code="serialProducts" elementtype="BlSerialProduct" autocreate="true"
       generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
@@ -126,6 +126,19 @@
         </enumtype>
         <!-- BL-542 End-->
 
+      <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
+        <value code="LATE_NOTES"/>
+        <value code="ORDER_CONTACT_NOTES"/>
+        <value code="SHIPPING_NOTES"/>
+        <value code="RECEIVING_NOTES"/>
+        <value code="MISSING_ITEM_NOTES"/>
+        <value code="BROKEN_ITEM_NOTES"/>
+        <value code="ORDER_NOTES"/>
+        <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
+        <value code="VERIFICATION_NOTES"/>
+        <value code="EXCEPTION_NOTES"/>
+      </enumtype>
+        
     </enumtypes>
 
     <maptypes>
@@ -193,6 +206,11 @@
         </relation>
         <!-- BL-542 End-->
 
+        <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
+          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one"/>
+          <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+            collectiontype="list"/>
+        </relation>
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
         autocreate="true">
@@ -937,16 +955,6 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>serial barcode assigned specifically to the serial</description>
                    </attribute>
-                   <attribute qualifier="ocLocation" type="java.lang.String">
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Last scanned location for the serial</description>
-                   </attribute>
-                   <attribute qualifier="lastLocationScanParent" type="java.lang.String">
-                     <persistence type="property" />
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Parent location of the last scanned location for the serial</description>
-                   </attribute>
                    <attribute qualifier="withOrderID" type="java.lang.String">
                      <persistence type="property" />
                      <modifiers read="true" write="true" optional="true"/>
@@ -962,7 +970,7 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Asset is written off or not, set manually by inventory personnel </description>
                    </attribute>
-                   <attribute qualifier="serialInventoryLocation" type="BlInventoryLocation">
+                   <attribute qualifier="ocLocation" type="java.lang.String">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Inventory Location for serial product</description>
@@ -972,15 +980,15 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Inventory HomeBase Location for serial product</description>
                    </attribute>
-                   <attribute qualifier="serialLastLocation" type="BlInventoryLocation">
-                     <persistence type="property"/>
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Last Inventory Location for serial product</description>
-                   </attribute>
-                   <attribute qualifier="serialLastParentLocation" type="BlInventoryLocation">
+                   <attribute qualifier="lastLocationScanParent" type="java.lang.String">
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Inventory Last Parent Location for serial product</description>
+                   </attribute>
+                   <attribute qualifier="ocLocationDetails" type="BlInventoryLocation">
+                       <persistence type="property"/>
+                       <modifiers read="true" write="true" optional="true"/>
+                       <description>InventoryLocationModel for serial product</description>
                    </attribute>
                    <attribute qualifier="retailPrice" type="java.lang.Double" redeclare="true">
                      <persistence type="property"/>
@@ -1477,7 +1485,7 @@
 	                 	<modifiers read="true" write="true" optional="true"/>
 	                 	<description>Flag to set if No Damage Waiver is selected for Rental Gear</description>         				
          			</attribute>
-					<attribute qualifier="serialProductCodes" type="serialProductCodes">
+					<attribute qualifier="serialProducts" type="serialProducts">
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true"/>
 						<description>Serial products for the entry</description>
@@ -1859,7 +1867,7 @@
 		  <itemtype code="ConsignmentEntry" autocreate="false" generate="false">
 			<description>Extending ConsignmentEntry type with additional attributes.</description>
 			<attributes>
-			  <attribute type="serialProductCodes" qualifier="serialProductCodes">
+			  <attribute type="serialProducts" qualifier="serialProducts">
 				<modifiers read="true" write="true"/>
 				<persistence type="property"/>
 			  </attribute>
@@ -1902,7 +1910,7 @@
             </attributes>
             </itemtype>
         </typegroup>
-        
+
         <typegroup name="PackagingInfo">
 			<itemtype code="PackagingInfo" autocreate="false" generate="false">
 				<attributes>
@@ -2026,6 +2034,88 @@
 		</itemtype>
             
         </typegroup>
-		
+
+      <typegroup name="Promotion">
+        <itemtype code="RuleBasedFreeDeliveryModeAction"
+          extends="AbstractRuleBasedPromotionAction"
+          jaloclass="com.bl.core.jalo.RuleBasedFreeDeliveryModeAction"
+          autocreate="true" generate="true">
+          <description>This action is for giving free shiiping cost for selected delivery mode</description>
+          <attributes>
+            <attribute
+              qualifier="deliveryMode"
+              autocreate="true"
+              type="DeliveryMode">
+              <description>The delivery mode to apply to the order</description>
+              <modifiers optional="false" />
+              <persistence type="property" />
+            </attribute>
+            <attribute
+              qualifier="deliveryCost"
+              autocreate="true"
+              type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+              <description>The delivery cost to apply to the order</description>
+              <modifiers optional="false" />
+              <persistence type="property" />
+            </attribute>
+            <attribute
+              qualifier="replacedDeliveryCost"
+              autocreate="true"
+              type="java.math.BigDecimal">
+              <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+              <description>The delivery cost that was set to order before a promotion was applied</description>
+              <modifiers optional="true" />
+              <persistence type="property" />
+            </attribute>
+          </attributes>
+        </itemtype>
+      </typegroup>
+      
+      <typegroup name="Notes">
+        <itemtype code="Notes" autocreate="true" generate="true" >
+          <description>Table to contain all type of order notes.</description>
+          <deployment table="notes" typecode="12217"/>
+          <attributes>
+            <attribute qualifier="note" type="localized:java.lang.String">
+              <description>note that can be provided by different teams</description>
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
+              <custom-properties>
+                <property name="hmcIndexField">
+                  <value>"thefield"</value>
+                </property>
+              </custom-properties>
+            </attribute>
+            <attribute qualifier="type" type="NotesEnum">
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <description>Type of a note</description>
+              <persistence type="property"/>
+            </attribute>
+            <attribute qualifier="userID" type="java.lang.String">
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <description>contain the userID who created that note.</description>
+              <persistence type="property"/>
+            </attribute>
+            <attribute qualifier="fraud" type="boolean">
+              <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+              <description>flag to identify fraud and it will be updated by verification team on Verification_Notes.</description>
+              <persistence type="property"/>
+              <defaultvalue>false</defaultvalue>
+            </attribute>
+          </attributes>
+        </itemtype>
+      </typegroup>
+      
 	</itemtypes>
 </items>

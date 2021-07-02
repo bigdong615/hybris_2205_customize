@@ -3,9 +3,10 @@
  */
 package com.braintree.controllers.pages;
 
-import com.braintree.commands.impl.BraintreeErrorTranslator;
 import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.constants.BraintreeConstants;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.controllers.handler.PayPalResponseExpressCheckoutHandler;
 import com.braintree.controllers.handler.PayPalUserLoginHandler;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
@@ -29,18 +30,15 @@ import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
-import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -60,7 +58,6 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	protected static final String REDIRECT_URL_CART = REDIRECT_PREFIX + BraintreeaddonWebConstants.CART_URL;
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String ANONYMOUS_USER = "anonymous";
-	private static final String SAVE_PAYMENT_INFO = "isSaved";
 	private static final String DEVICE_DATA = "device_data";
 
 	private static final Logger LOG = Logger.getLogger(PayPalPaymentController.class);
@@ -92,7 +89,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	@Resource
 	private CartService cartService;
 
-	@RequestMapping(value = "/express", method = RequestMethod.POST)
+	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
                                       final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException
 	{
@@ -104,13 +101,14 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		try
 		{
 			payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
-      isSavePaymentInfo = true; /* Boolean.parseBoolean(request.getParameter(SAVE_PAYMENT_INFO)); */
-			deviceData = request.getParameter(DEVICE_DATA);
+      		isSavePaymentInfo = true;
+      		deviceData = request.getParameter(DEVICE_DATA);
 		}
-		catch (final IllegalArgumentException exeption)
+		catch (final IllegalArgumentException exception)
 		{
-			handleErrors(exeption.getMessage(), model);
-			return CheckoutOrderPageErrorPage;
+		  BlLogger.logMessage(LOG, Level.ERROR, "Error occured while handling paypal response", exception);
+		  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
+		  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
         final DeliveryModeModel selectedDeliveryMode = cartService.getSessionCart().getDeliveryMode();
 		final String payPalEmail = payPalExpressResponse.getDetails().getEmail();
@@ -120,10 +118,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			{
 				if (StringUtils.isEmpty(payPalEmail))
 				{
-					LOG.error("Pal pal email is empty!");
-					handleErrors(getLocalizedString(BraintreeErrorTranslator.DEFAULT_MESSAGE_KEY, new Object[]
-					{ StringUtils.EMPTY }), model);
-					return CheckoutOrderPageErrorPage;
+				  BlLogger.logMessage(LOG, Level.ERROR, "Pal pal email is empty!");
+				  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
+				  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 				}
 				final String name = payPalExpressResponse.getDetails().getFirstName() != null ? payPalExpressResponse.getDetails()
 						.getFirstName() : BraintreeConstants.PAYPAL_PAYMENT;
@@ -137,9 +134,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			}
 			catch (final DuplicateUidException exception)
 			{
-				LOG.error("Guest registration failed: " + exception);
-				handleErrors(getLocalizedString(PAY_PAL_GUEST_REGISTER_ERROR), model);
-				return CheckoutOrderPageErrorPage;
+			  BlLogger.logMessage(LOG, Level.ERROR, "Paypal new registration failed", exception);
+			  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
+			  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 			}
 			payPalUserLoginHandler.isHardLogin(model);
 		}
@@ -172,10 +169,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			if (brainTreeCheckoutFacade.getCheckoutCart().getDeliveryAddress() == null
 					&& brainTreeCheckoutFacade.getCheckoutCart().getPickupOrderGroups().isEmpty())
 			{
-				LOG.error("Shipping address from pay pal is empty!");
-				final String errorMessage = getLocalizedString(PAY_PAL_ADDRESS_ERROR);
-				handleErrors(errorMessage, model);
-				return CheckoutOrderPageErrorPage;
+			  BlLogger.logMessage(LOG, Level.ERROR, "Shipping address from pay pal is empty!");
+			  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
+			  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 			}
 		}
 
@@ -212,15 +208,15 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		}
 		catch (final Exception exception)
 		{
-			final String errorMessage = getLocalizedString("braintree.billing.general.error");
-			handleErrors(errorMessage, model);
-			return CheckoutOrderPageErrorPage;
+		  BlLogger.logMessage(LOG, Level.ERROR, "Error occured while creating paypal payment subscription", exception);
+		  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
+		  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
 		return REDIRECT_PREFIX + "/checkout/multi/summary/braintree/view";
 
 	}
 
-    @RequestMapping(value = "/add-payment-method", method = RequestMethod.POST)
+    @PostMapping(value = "/add-payment-method")
     public String addPaymentMethod(final Model model, final RedirectAttributes redirectAttributes,
 			                          @RequestParam(value = "selectedAddressCode", required = false) final String selectedAddressCode,
                                    final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
@@ -287,14 +283,13 @@ public class PayPalPaymentController extends AbstractCheckoutController
         return REDIRECT_TO_PAYMENT_INFO_PAGE;
     }
 
-	@RequestMapping(value = "/mini/express", method = RequestMethod.GET)
+	@GetMapping(value = "/mini/express")
 	@RequireHardLogIn
 	@ResponseBody
 	public String doInitializeMiniCartPaypalShortcut() throws CMSItemNotFoundException, JsonGenerationException,
             JsonMappingException, IOException
 	{
-		final String jsonInString = buildPayPalMiniCartResponse();
-		return jsonInString;
+		return buildPayPalMiniCartResponse();
 	}
 
 	private String buildPayPalMiniCartResponse() throws JsonGenerationException, JsonMappingException, IOException
@@ -318,7 +313,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		return mapper.writeValueAsString(payPalMiniCartResponse);
 	}
 	@ResponseBody
-	@RequestMapping(value = "/shippingAddressError", method = RequestMethod.POST)
+	@PostMapping(value = "/shippingAddressError")
 	public void handleShippingAddressError(final Model model, final @RequestParam(value = "errorMessage", required = false) String errorMessage) throws CMSItemNotFoundException
 	{
 		LOG.error("Not correct shipping address. Error message: " + errorMessage);
@@ -352,6 +347,16 @@ public class PayPalPaymentController extends AbstractCheckoutController
 				getContentPageForLabelOrId(BraintreeaddonWebConstants.MULTI_CHECKOUT_SUMMARY_CMS_PAGE_LABEL));
 
 		GlobalMessages.addErrorMessage(model, getLocalizedString(PAY_PAL_HAED_ERROR));
+	}
+	
+	/**
+	 * Adds the paypal global error message.
+	 *
+	 * @param errorMessageKey the error message key
+	 * @param redirectAttributes the redirect attributes
+	 */
+	private void addPayPalErrorMessage(final String errorMessageKey, final RedirectAttributes redirectAttributes) {
+	  GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(errorMessageKey),null);
 	}
 
 	protected ResourceBreadcrumbBuilder getResourceBreadcrumbBuilder()

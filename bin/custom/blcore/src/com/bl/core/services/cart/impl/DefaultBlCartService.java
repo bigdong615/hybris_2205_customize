@@ -2,12 +2,13 @@ package com.bl.core.services.cart.impl;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.SerialStatusEnum;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
-
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
@@ -17,19 +18,16 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.order.impl.DefaultCartService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.store.services.BaseStoreService;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlSerialProductModel;
 
 
 /**
@@ -46,7 +44,6 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     private BlCommerceStockService blCommerceStockService;
     private BaseStoreService baseStoreService;
     private BlDatePickerService blDatePickerService;
-
     /**
      * {@inheritDoc}
      */
@@ -58,7 +55,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
         if (CollectionUtils.isNotEmpty(cartModel.getEntries())) {
 
             if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
-                setUsedGearSerialProductStatus(cartModel);
+                setUsedGearSerialProductStatus(cartModel, null);
             }
 
             final CommerceCartParameter commerceCartParameter = new CommerceCartParameter();
@@ -214,19 +211,36 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
      * {@inheritDoc}
      */
     @Override
-    public void setUsedGearSerialProductStatus(final CartModel cartModel) {
-        for (final AbstractOrderEntryModel entry : cartModel.getEntries()) {
-
-            if (entry.getProduct() instanceof BlSerialProductModel) {
-                final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
-                if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
-                    blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
-                    getModelService().save(blSerialProductModel);
-                }
-            }
-        }
-
+    public void setUsedGearSerialProductStatus(final CartModel cartModel, final AbstractOrderEntryModel cartEntry) {
+   	 if(Objects.nonNull(cartEntry) && cartEntry.getProduct() instanceof BlSerialProductModel){
+   		 doChangeSerialProductStatus(cartEntry);
+   	 }
+		else if (Objects.nonNull(cartModel) && CollectionUtils.isNotEmpty(cartModel.getEntries())){
+			for (final AbstractOrderEntryModel entry : cartModel.getEntries())
+			{
+				if (entry.getProduct() instanceof BlSerialProductModel)
+				{
+					doChangeSerialProductStatus(entry);
+				}
+			}
+		}
     }
+
+	/**
+	 * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
+	 * 
+	 * @param entry
+	 */
+	private void doChangeSerialProductStatus(final AbstractOrderEntryModel entry) {
+		final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) entry.getProduct();
+		  if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus())) {
+		      blSerialProductModel.setSerialStatus(SerialStatusEnum.ACTIVE);
+		      getModelService().save(blSerialProductModel);
+		  }
+	}
+    
+    
+
 
     public CommerceCartService getCommerceCartService() {
         return commerceCartService;

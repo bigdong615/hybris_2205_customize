@@ -21,6 +21,7 @@
                 <n:type-node id="BlProduct" code="BlProduct"/>
                 <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
 				<n:navigation-node id="BlPricingRatio">
+					<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
 					<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
 					<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
 				</n:navigation-node>
@@ -446,6 +447,23 @@
 		</wz:flow>
 	</context>
 
+	<context type="BlPricingLogic" component="advanced-search" merge-by="type" parent="GenericItem">
+		<as:advanced-search>
+			<as:field-list>
+				<as:field name="productType"/>
+			</as:field-list>
+		</as:advanced-search>
+	</context>
+
+	<context merge-by="type" type="BlPricingLogic" component="listview">
+		<lv:list-view>
+			<lv:column qualifier="productType"/>
+			<lv:column qualifier="tier"/>
+			<lv:column qualifier="greaterThan"/>
+			<lv:column qualifier="lessThan"/>
+			<lv:column qualifier="pctOfRetail"/>
+		</lv:list-view>
+	</context>
 
 	<context merge-by="type" type="BlStandardPricingRatio" component="listview">
 		<lv:list-view>
@@ -1032,7 +1050,8 @@
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">
 	      <list-view:column qualifier="serialProductCode"/>
 	      <list-view:column qualifier="reservedStatus"/>
-	      <list-view:column qualifier="date"/>
+	      <list-view:column qualifier="date" spring-bean="blStockLevelForDateCellRenderer"/>
+	      <list-view:column merge-mode="remove" qualifier="available"/>
 	    </list-view:list-view>
   	</context>
 
@@ -1059,10 +1078,6 @@
 							<editorArea:editor-parameter>
 								<editorArea:name>selectedTimeZone</editorArea:name>
 								<editorArea:value>GMT+00:00</editorArea:value>
-							</editorArea:editor-parameter>
-							<editorArea:editor-parameter>
-								<editorArea:name>displayedTimeZones</editorArea:name>
-								<editorArea:value>GMT-2,GMT-1,GMT+0,GMT+1,GMT+2</editorArea:value>
 							</editorArea:editor-parameter>
 						</editorArea:attribute>
 					</editorArea:section>

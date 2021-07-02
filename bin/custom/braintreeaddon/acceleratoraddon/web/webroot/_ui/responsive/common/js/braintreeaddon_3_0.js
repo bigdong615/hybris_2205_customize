@@ -119,6 +119,7 @@ jQuery(document).ready(function ($) {
     $("#save-address").prop('checked', true);
 	if($("#paymentAddNewAddress").length <= 0)
 	{
+		$("#showSavedAddresses").hide();
 		$("#billing-address-form-expand").toggle();
 	}
 	if($("#addNewCardForm").length <= 0)
@@ -852,7 +853,7 @@ function createHostedFields(clientInstance) {
 				if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
+					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
@@ -1021,11 +1022,13 @@ function validatePhone(phone, fieldName)
 $("#paymentAddNewAddress").on("click",function(e)
 {
 	e.preventDefault();
+	$('#validationMessage').empty();
+	$("#allFieldvalidationMessage").empty();
 	$("#save-address").prop('checked', true);
-	$("#savedAddresses").html("Enter New Or Select Saved Address");
+	$("#savedAddresses").html("Enter New Address");
 	$("#savedBillingAddressId").val('');
 	$("#paymentAddNewAddress").hide();
-	$("#billing-address-saved").removeClass("show");
+	$("#showSavedAddresses").hide();	
 });
 $("#showSavedAddresses").on("click",function(e)
 {
@@ -1036,15 +1039,19 @@ $("#showSavedAddresses").on("click",function(e)
 
 $('ul.selectSavedBillingAddress').on('click','li',function(e){
  	e.preventDefault();
+	$('#validationMessage').empty();
+	$("#allFieldvalidationMessage").empty();
 	var selectedBillingAddressId = $(this).find("a").data('id');
- 	var selectedBillingAddressFormattedData = $(this).find("a").data('address');	
+	var selectedBillingAddressFormattedData = $(this).find("a").data('address');	
 	$("#savedAddresses").html(selectedBillingAddressFormattedData);
 	$("#savedBillingAddressId").val(selectedBillingAddressId);
+	$("#billing-address-form-expand").removeClass("show");
 	$("#paymentAddNewAddress").show();
 });
 
 $('#submit_silentOrderPostForm').click(function () {
-	
+	$('#validationMessage').empty();
+	$("#allFieldvalidationMessage").empty();
 	var ccEnable = $('#paymentMethodBT').is(':checked');
 	var giftcardApplied = $("input[name='appliedGC']").val();
 	
@@ -1057,6 +1064,31 @@ $('#submit_silentOrderPostForm').click(function () {
 	if(ccEnable == false && giftcardApplied != '')
 	{
 		allFieldValidation(ACC.ccError.onlyGCSelected);
+	}
+	
+	var savedCardForm = $("#submitSavedCardForm");
+	var cardId = savedCardForm.find('input[id="savedCCCardId"]').val();
+	var cardNonce = savedCardForm.find('input[id="savedCCCardNonce"]').val();
+	
+	if(ccEnable == true && cardId == '' && cardNonce == "" && $('#credit-card-form-expand').hasClass("show") == false)
+	{
+		creditCardValidation(ACC.ccError.cardNumber);
+		creditCardValidation(ACC.ccError.cardMonth);
+		creditCardValidation(ACC.ccError.cardYear);
+		creditCardValidation(ACC.ccError.cardCVV);
+	}
+	
+	if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
+	{
+		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == true)
+	{
+		var billingFormErrorCounts = validateBillingAddressFields();
+		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
+		$('#validationMessage').append(validationDiv);
 	}
 });	
 
@@ -1124,7 +1156,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		var billingFormErrorCounts = validateBillingAddressFields();
 		if(billingFormErrorCounts > 0)
 		{
-			var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
+			var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 						$('#validationMessage').append(validationDiv);
 			$('.page-loader-new-layout').hide();
@@ -1137,12 +1169,14 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 			var savedCCCardId = createHiddenParameter("savedCCCardId", savedCardForm.find('input[id="savedCCCardId"]').val());
 			var savedCCCardNonce = createHiddenParameter("savedCCCardNonce", savedCardForm.find('input[id="savedCCCardNonce"]').val());
 			var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
+			var saveBillingAddress = createHiddenParameter("save_billing_address",  $('#billingAddressForm').find('input[id="save-address"]').prop("checked"));
 			formToSubmit.find('select[name="billTo_state"]').prop('disabled', false);
 			formToSubmit.find("input[name='billTo_country']").val("US");
 			formToSubmit.append($(savedBillingAddressId));
 			formToSubmit.append($(savedCCCardId));
 			formToSubmit.append($(savedCCCardNonce));
 			formToSubmit.append($(comapanyName));
+			formToSubmit.append($(saveBillingAddress));
 			var actionUrl = savedCardForm.attr('action');
 			formToSubmit.attr('action',actionUrl);
 			formToSubmit.submit();

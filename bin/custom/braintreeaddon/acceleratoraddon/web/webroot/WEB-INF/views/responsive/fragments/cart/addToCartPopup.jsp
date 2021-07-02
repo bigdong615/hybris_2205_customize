@@ -5,6 +5,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 
 <c:set var="productName" value="${fn:escapeXml(product.name)}" />
@@ -102,7 +103,21 @@
                                                                                   </c:if>
                                                                               </c:otherwise>
                                                                      </c:choose>
-                                                                           <span class="bookmark"></span>
+                                                                     <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                                                                           <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                                                                              <input type="hidden" name="productCodePost" id="productCodePost" value="${productReference.target.code}">
+                                                                                   <c:choose>
+                                                                                      <c:when test="${productReference.target.isBookMarked}">
+                                                                                        <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
+                                                                                            data-bookmark-value="${productReference.target.isBookMarked}"></span>
+                                                                                      </c:when>
+                                                                                      <c:otherwise>
+                                                                                        <span class="bookmark js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
+                                                                                         data-bookmark-value="${productReference.target.isBookMarked}"></span>
+                                                                                      </c:otherwise>
+                                                                                   </c:choose>
+                                                                             </form>
+                                                                      </sec:authorize>
                                                                                <div class="card-sliders splide">
                                                                                  <div class="splide__track">
                                                                                    <ul class="splide__list">

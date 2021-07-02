@@ -162,18 +162,18 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(String shippingGroup,String partnerZone,boolean payByCustomer){
    	 
    	 if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
           return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
       } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
           return getPartnerZoneDeliveryModesForUsedGear(partnerZone, payByCustomer);
       } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR);
           return getAllUSPStoreDeliveryModesForUsedGear(payByCustomer);
       } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
           return getBlRushDeliveryModeDataForUsedGear(payByCustomer);
       } else {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
           return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
       }
 	}
@@ -245,7 +245,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     * @return collection of RushDeliveryData
     */
    private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeDataForUsedGear(boolean payByCustomer) {
-       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
+       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG_FOR_USEDGEAR);
        final Collection<BlRushDeliveryModeData> blRushDeliveryModeData = getBlRushDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.NYC,payByCustomer);
        return CollectionUtils.isNotEmpty(blRushDeliveryModeData) ? blRushDeliveryModeData : Collections.emptyList();
    }

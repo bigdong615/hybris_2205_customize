@@ -9,8 +9,12 @@ import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
 import de.hybris.platform.acceleratorfacades.product.data.ProductWrapperData;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToCartOrderForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddToEntryGroupForm;
@@ -53,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bl.facades.constants.BlFacadesConstants;
 
@@ -142,7 +147,7 @@ public class AddToCartController extends AbstractController {
 
         model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC)));
         final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,
-                ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK);
+                ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK,ProductOption.REQUIRED_WISHLIST);
         final Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
         final List<ProductReferenceData> productReferences = productFacade.getProductReferencesForCode(code,
                 getEnumerationService().getEnumerationValues(ProductReferenceTypeEnum._TYPECODE), PRODUCT_OPTIONS, productsLimit);
@@ -158,10 +163,10 @@ public class AddToCartController extends AbstractController {
 
     //created separate method for add serial product to cart and redirect it to cart page.
 
-    @RequestMapping(value = "/cart/usedgearadd", method = RequestMethod.GET)
+    @RequestMapping(value = "/cart/usedgearadd", method = RequestMethod.GET, produces = "application/json")
     public String addToCartForUsedGear(@RequestParam(value = "productCodePost") final String code,
                                        @RequestParam(value = "serialProductCodePost") final String serialCode, final Model model,
-                                       @Valid final AddToCartForm form, final BindingResult bindingErrors) {
+                                       @Valid final AddToCartForm form, final BindingResult bindingErrors, final RedirectAttributes redirectAttributes) {
         validateParameterNotNull(code, "Product code must not be null");
         validateParameterNotNull(serialCode, "Serial code must not be null");
 
@@ -169,6 +174,7 @@ public class AddToCartController extends AbstractController {
             return getViewWithBindingErrorMessages(model, bindingErrors);
         }
 
+        
         if (blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode)) {
             LOG.debug("Rental and Used gear products are not allowed together");
             return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
@@ -177,27 +183,23 @@ public class AddToCartController extends AbstractController {
         final long qty = form.getQty();
 
         if (qty <= 0) {
-            model.addAttribute(ERROR_MSG_TYPE, "basket.error.quantity.invalid");
-            model.addAttribute(QUANTITY_ATTR, Long.valueOf(0L));
+      	  GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.quantity.invalid"), null);
         } else {
             try {
 
                 final CartModificationData cartModification = blCartFacade.addToCart(code, qty, serialCode);
                 if (cartModification.getQuantityAdded() == 0L) {
-                    model.addAttribute(ERROR_MSG_TYPE, "basket.information.quantity.noItemsAdded." + cartModification.getStatusCode());
+                   GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.noItemsAdded."), null);
                 } else if (cartModification.getQuantityAdded() < qty) {
-                    model.addAttribute(ERROR_MSG_TYPE,
-                            "basket.information.quantity.reducedNumberOfItemsAdded." + cartModification.getStatusCode());
+               	 GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.reducedNumberOfItemsAdded."), null);
                 }
             } catch (final CommerceCartModificationException ex) {
                 logDebugException(ex);
-                model.addAttribute(ERROR_MSG_TYPE, "basket.error.occurred");
-                model.addAttribute(QUANTITY_ATTR, Long.valueOf(0L));
+                GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.occurred"), null);
             } catch (final UnknownIdentifierException ex) {
                 LOG.debug(String.format("Product could not be added to cart - %s", ex.getMessage()));
-                model.addAttribute(ERROR_MSG_TYPE, "basket.error.occurred");
-                model.addAttribute(QUANTITY_ATTR, Long.valueOf(0L));
-                return REDIRECT_CART_URL;
+                GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.occurred"), null);
+               return REDIRECT_CART_URL;
             }
         }
 
