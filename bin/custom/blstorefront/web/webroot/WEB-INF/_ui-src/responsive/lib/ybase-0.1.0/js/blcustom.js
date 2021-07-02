@@ -53,13 +53,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	cartQuantity.val(0);
             	initialCartQuantity.val(0);
             	$(".shopping-cart__item-remove").attr("disabled", "disabled");
-              if((document.getElementsByClassName("shopping-cart__item-remove").length==1))
-            	{
-            		clearInterval(z);
-            		localStorage.removeItem('saved_countdown');
-            		fetchdata();
-            	}
             	form.submit();
+             
        });
 
 // Script to apply the selected damage Waiver from the dropdown on the cart page
@@ -547,14 +542,22 @@ $(".input-number").keydown(function (e) {
 //BL-454 It triggers, when user clicks on continue button from mixed product interception modal.
 function mixedProductInterception(productCode, serialCode){
 $('#mixedProductInterception').on("click", function(event) {
-  $.ajax({
+	var redirectToCart = false;
+	$.ajax({
 		url : ACC.config.encodedContextPath + '/cart/emptyCart',
 		type : "GET",
 		beforeSend: function(){
          $('.page-loader-new-layout').show();
      },
 		success : function(data) {
-			addProductToCart(productCode, serialCode);
+			redirectToCart = addProductToCart(productCode, serialCode);
+		},
+		complete:function(){
+			if(redirectToCart)
+			{
+				
+				window.location.href = ACC.config.encodedContextPath + '/cart';
+			}
 		},
 		error : function(xht, textStatus, ex) {
 		  $('.page-loader-new-layout').hide();
@@ -565,34 +568,71 @@ $('#mixedProductInterception').on("click", function(event) {
 }
 
 function addProductToCart(productCode, serialCode){
-  $.ajax({
-  	url : ACC.config.encodedContextPath + "/cart/add",
-  	type : 'POST',
-  	data : {
-  		productCodePost : productCode,
-  		serialProductCodePost : serialCode
-  	},
-  	success : function(response) {
-  	  $('.page-loader-new-layout').hide();
-  	  $('#addToCartModalDialog').addClass('modal-lg');
-  		$('#addToCartModalDialog').html(response.addToCartLayer);
-  		if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
-  			ACC.minicart.updateMiniCartDisplay();
-  		}
-  		updateQuantity();
-  		addToCartFromModal();
-  		if (document.getElementById("addToCart-gear-sliders") != null) {
-  			setTimeout(modalBodyContent, 100);
-  		}
-  	},
-  	error : function(jqXHR, textStatus, errorThrown) {
-  	  $('.page-loader-new-layout').hide();
-  		$('.modal-backdrop').addClass('remove-popup-background');
-  		// log the error to the console
-  		console.log("The following error occurred: " + jqXHR, textStatus,
-  				errorThrown);
-  	}
-  });
+	var redirectToCart = false;
+	if(serialCode === 'serialCodeNotPresent')
+	{
+		$.ajax({
+		  	url : ACC.config.encodedContextPath + "/cart/add",
+		  	type : 'POST',
+		  	data : {
+		  		productCodePost : productCode,
+		  		serialProductCodePost : serialCode
+		  	},
+		  	success : function(response) {
+		  	  $('.page-loader-new-layout').hide();
+		  	  $('#addToCartModalDialog').addClass('modal-lg');
+		  		$('#addToCartModalDialog').html(response.addToCartLayer);
+		  		if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+		  			ACC.minicart.updateMiniCartDisplay();
+		  		}
+		  		updateQuantity();
+		  		addToCartFromModal();
+		  		if (document.getElementById("addToCart-gear-sliders") != null) {
+		  			setTimeout(modalBodyContent, 100);
+		  		}
+		  	},
+		  	error : function(jqXHR, textStatus, errorThrown) {
+		  	  $('.page-loader-new-layout').hide();
+		  		$('.modal-backdrop').addClass('remove-popup-background');
+		  		// log the error to the console
+		  		console.log("The following error occurred: " + jqXHR, textStatus,
+		  				errorThrown);
+		  	}
+		  });
+		return redirectToCart;
+	}
+	else
+	{
+		 $.ajax({
+			  	url : ACC.config.encodedContextPath + "/cart/usedgearadd",
+			  	async: false,
+			  	type : 'GET',
+			  	data : {
+			  		productCodePost : productCode,
+			  		serialProductCodePost : serialCode
+			  	},
+			  	success : function(response) {
+			  	  $('.page-loader-new-layout').hide();
+			  	  $('#addToCartModalDialog').addClass('modal-lg');
+			  	  $('#addToCartModalDialog').html(response.addToCartLayer);
+			  	  redirectToCart = true;
+			  	},
+			  	complete: function(){
+			  		$("#addToCart").removeClass("show");
+                    $("#addToCart").hide();
+                    startUsedGearCartTimer();
+			  	},
+			  	error : function(jqXHR, textStatus, errorThrown) {
+			  	  $('.page-loader-new-layout').hide();
+			  		$('.modal-backdrop').addClass('remove-popup-background');
+			  		// log the error to the console
+			  		console.log("The following error occurred: " + jqXHR, textStatus,
+			  				errorThrown);
+			  	}
+			  });
+		 return redirectToCart;
+	}
+ return redirectToCart;
 }
 
 //BL-466 reload page, when user closes add to rental modal from empty cart page.
@@ -731,6 +771,71 @@ function startUsedGearCartTimer() {
 
 	}
 	
+	$('.js-add-to-used-cart').on("click",function(e) {
+        e.preventDefault();
+         var productCode = $(this).attr('data-product-code');
+         var serialCode = $(this).attr('data-serial');
+         var redirectToCart = false;
+         if(serialCode == '' || serialCode == undefined){
+         serialCode = "serialCodeNotPresent";
+         }
+         $.ajax({
+                    url: ACC.config.encodedContextPath + "/cart/usedgearadd",
+                    type: 'GET',
+                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                    beforeSend: function(){
+                        $('.page-loader-new-layout').show();
+                    },
+                    success: function (response) {
+                    	var addToCartLayer = response.addToUsedCartLayer;
+                    	
+                    	if(addToCartLayer == undefined || addToCartLayer == '')
+                    	{
+                    		redirectToCart = true;
+                    		startUsedGearCartTimer();
+                    	}
+                    	else
+                    	{
+                    		$('#addToCartModalDialog').html(response.addToUsedCartLayer);
+                    		onUsedCloseModal();
+                    		setTimeout(function(){
+                         	   $("#signUp").modal('hide');
+                         	   $("#addToCart").addClass("show");
+                                $("#addToCart").show();
+                            },500);
+                    		mixedProductInterception(productCode, serialCode);
+                    	}
+                    },
+                    complete : function() {
+                    	if(redirectToCart)
+                    	{
+                    		window.location.href = ACC.config.encodedContextPath + '/cart';
+                    	}
+                       $('.page-loader-new-layout').hide();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                          $('.page-loader-new-layout').hide();
+                          $('.modal-backdrop').addClass('remove-popup-background');
+                          // log the error to the console
+                          console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+                    }
+         });
 
+});
 
-
+function onUsedCloseModal()
+{
+	$("#closeUsedCartModal , #cancelUsedCartModal").on("click", function(event){
+		event.preventDefault();
+		var doReload = $("#doReload").val();
+		if(doReload === 'true')
+		{
+			location.reload();
+		}
+		else
+		{
+			$("#addToCart").removeClass("show");
+            $("#addToCart").hide();
+		}
+	});
+}

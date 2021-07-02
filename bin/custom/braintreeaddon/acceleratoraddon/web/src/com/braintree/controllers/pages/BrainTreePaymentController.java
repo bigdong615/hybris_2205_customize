@@ -16,6 +16,7 @@ import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.storefront.util.BlAddressDataUtil;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
@@ -23,7 +24,6 @@ import com.braintree.facade.impl.BrainTreeUserFacadeImpl;
 import com.braintree.hybris.data.BrainTreeSubscriptionInfoData;
 import com.braintree.hybris.data.PayPalCheckoutData;
 import com.braintree.payment.validators.BrainTreePaymentDetailsValidator;
-import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentErrorField;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.CheckoutStep;
@@ -50,9 +50,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -61,7 +59,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
 {
 
   private static final Logger LOG = Logger.getLogger(BrainTreePaymentController.class);
-  private final static String PAYMENT_METHOD = "payment-method";
+  private static final String PAYMENT_METHOD = "payment-method";
   public static final String REDIRECT_TO_PAYMENT_METHOD = "redirect:/checkout/multi/payment-method/add";
 
   @Resource(name = "brainTreePaymentFacadeImpl")
@@ -79,7 +77,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
   @Resource(name = "customerFacade")
   private BlCustomerFacade blCustomerFacade;
 
-  @RequestMapping(value = "/response", method = RequestMethod.POST)
+  @PostMapping(value = "/response")
   @RequireHardLogIn
   public String enterStep(@RequestParam(value = "bt_payment_method_nonce") final String nonce,
       @RequestParam(value = "use_delivery_address") final String useBillingAddress,
@@ -150,7 +148,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       }
     }
 
-    List<PaymentErrorField> errorFields = Lists.newArrayList();
+
 
     if (Boolean.TRUE.toString().equals(useBillingAddress))
     {
@@ -161,7 +159,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       catch (final Exception exception)
       {
         
-    	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+    	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
         return REDIRECT_TO_PAYMENT_METHOD;
       }
     }
@@ -171,12 +169,11 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       if (Objects.isNull(addressData))
       {
         
-    	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+    	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
         return REDIRECT_TO_PAYMENT_METHOD;
       }
       subscriptionInfo.setAddressData(addressData);
-
-      errorFields = brainTreePaymentDetailsValidator.validatePaymentDetails(addressData, bindingResult);
+      List<PaymentErrorField> errorFields = brainTreePaymentDetailsValidator.validatePaymentDetails(addressData, bindingResult);
 
       if (errorFields.isEmpty())
       {
@@ -187,13 +184,13 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
         catch (final Exception exception)
         {
           
-        	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+        	GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
           return REDIRECT_TO_PAYMENT_METHOD;
         }
       }
       else
       {
-    	  GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+    	  GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString(BlControllerConstants.BRAINTREE_GENERAL_ERROR_KEY),null);
         return REDIRECT_TO_PAYMENT_METHOD;
       }
 
@@ -354,7 +351,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     return StringUtils.EMPTY;
   }
 
-  @RequestMapping(value = "/back", method = RequestMethod.GET)
+  @GetMapping(value = "/back")
   @RequireHardLogIn
   @Override
   public String back(final RedirectAttributes redirectAttributes)
@@ -362,7 +359,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     return getCheckoutStep().previousStep();
   }
 
-  @RequestMapping(value = "/next", method = RequestMethod.GET)
+  @GetMapping(value = "/next")
   @RequireHardLogIn
   @Override
   public String next(final RedirectAttributes redirectAttributes)

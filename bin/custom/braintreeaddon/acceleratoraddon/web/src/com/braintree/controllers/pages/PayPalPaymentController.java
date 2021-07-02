@@ -38,10 +38,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
@@ -92,7 +89,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	@Resource
 	private CartService cartService;
 
-	@RequestMapping(value = "/express", method = RequestMethod.POST)
+	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
                                       final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException
 	{
@@ -219,7 +216,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	}
 
-    @RequestMapping(value = "/add-payment-method", method = RequestMethod.POST)
+    @PostMapping(value = "/add-payment-method")
     public String addPaymentMethod(final Model model, final RedirectAttributes redirectAttributes,
 			                          @RequestParam(value = "selectedAddressCode", required = false) final String selectedAddressCode,
                                    final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
@@ -286,14 +283,13 @@ public class PayPalPaymentController extends AbstractCheckoutController
         return REDIRECT_TO_PAYMENT_INFO_PAGE;
     }
 
-	@RequestMapping(value = "/mini/express", method = RequestMethod.GET)
+	@GetMapping(value = "/mini/express")
 	@RequireHardLogIn
 	@ResponseBody
 	public String doInitializeMiniCartPaypalShortcut() throws CMSItemNotFoundException, JsonGenerationException,
             JsonMappingException, IOException
 	{
-		final String jsonInString = buildPayPalMiniCartResponse();
-		return jsonInString;
+		return buildPayPalMiniCartResponse();
 	}
 
 	private String buildPayPalMiniCartResponse() throws JsonGenerationException, JsonMappingException, IOException
@@ -317,7 +313,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		return mapper.writeValueAsString(payPalMiniCartResponse);
 	}
 	@ResponseBody
-	@RequestMapping(value = "/shippingAddressError", method = RequestMethod.POST)
+	@PostMapping(value = "/shippingAddressError")
 	public void handleShippingAddressError(final Model model, final @RequestParam(value = "errorMessage", required = false) String errorMessage) throws CMSItemNotFoundException
 	{
 		LOG.error("Not correct shipping address. Error message: " + errorMessage);

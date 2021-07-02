@@ -16,8 +16,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,7 +35,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
   
   private static final Logger LOG = Logger.getLogger(BrainTreePaymentMethodCheckoutStepController.class);
   
-  @RequestMapping(value = "/choose-cc", method = RequestMethod.POST)
+  @PostMapping(value = "/choose-cc")
   @RequireHardLogIn
   public String doSelectPaymentMethod(@RequestParam("selectedPaymentMethodId") final String selectedPaymentMethodId,
       @RequestParam("selectedPaymentMethodNonce") final String selectedPaymentMethodNonce, final Model model, final RedirectAttributes redirectAttributes)
@@ -62,15 +62,16 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
     return getCheckoutStep().currentStep();
   }
 
-  @RequestMapping(value = "/reviewSavedPayment", method = RequestMethod.POST)
+  @PostMapping(value = "/reviewSavedPayment")
   @RequireHardLogIn
   public String doSelectSavedPaymentMethod(@RequestParam("savedCCCardId") final String savedCCCardId, @RequestParam("company_name") final String companyName,
-      @RequestParam("savedCCCardNonce") final String savedCCCardNonce, @Valid final SopPaymentDetailsForm sopPaymentDetailsForm, 
-      @RequestParam(value = "selected_Billing_Address_Id") final String selectedBillingAddressId, final Model model, final RedirectAttributes redirectAttributes)
+      @RequestParam("savedCCCardNonce") final String savedCCCardNonce, @RequestParam(value = "save_billing_address") final String saveBillingAddress,
+      @Valid final SopPaymentDetailsForm sopPaymentDetailsForm, @RequestParam(value = "selected_Billing_Address_Id") final String selectedBillingAddressId,
+      final Model model, final RedirectAttributes redirectAttributes)
   {
     try
     {
-      final AddressData newBillingAddressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm, companyName);
+      final AddressData newBillingAddressData = interpretResponseAddressData(selectedBillingAddressId, sopPaymentDetailsForm, companyName, saveBillingAddress);
       if (StringUtils.isNotBlank(savedCCCardId))
       {
         if (StringUtils.isNotBlank(savedCCCardNonce))
@@ -100,7 +101,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
    * @return the address data
    */
   private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm,
-      final String companyName)
+      final String companyName, final String saveBillingAddress)
   {
     if (StringUtils.isBlank(selectedAddressId))
     {
@@ -125,7 +126,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
       address.setShippingAddress(Boolean.FALSE);
       address.setPickStoreAddress(Boolean.FALSE);
       address.setUpsStoreAddress(Boolean.FALSE);
-      address.setVisibleInAddressBook(sopPaymentDetailsForm.isSavePaymentInfo());
+      address.setVisibleInAddressBook(StringUtils.isNotBlank(saveBillingAddress) && Boolean.TRUE.toString().equals(saveBillingAddress));
       return address;
     }
     return null;    

@@ -163,7 +163,7 @@ public class AddToCartController extends AbstractController {
 
     //created separate method for add serial product to cart and redirect it to cart page.
 
-    @RequestMapping(value = "/cart/usedgearadd", method = RequestMethod.GET)
+    @RequestMapping(value = "/cart/usedgearadd", method = RequestMethod.GET, produces = "application/json")
     public String addToCartForUsedGear(@RequestParam(value = "productCodePost") final String code,
                                        @RequestParam(value = "serialProductCodePost") final String serialCode, final Model model,
                                        @Valid final AddToCartForm form, final BindingResult bindingErrors, final RedirectAttributes redirectAttributes) {

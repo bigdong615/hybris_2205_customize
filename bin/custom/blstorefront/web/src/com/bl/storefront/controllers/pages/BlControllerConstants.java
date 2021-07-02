@@ -125,6 +125,7 @@ public class BlControllerConstants
 	public static final String DISABLE_PAYMENT = "disablePayment";
 	public static final String BILL_TO_COUNTRY = "billTo_country";
 
+	public static final String BRAINTREE_GENERAL_ERROR_KEY = "braintree.billing.general.error";
 	private BlControllerConstants()
 	{
 		//empty
