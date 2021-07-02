@@ -161,14 +161,13 @@ ACC.account = {
 								location.reload();
 							}
 							
-							
 						}
 					},
 					complete: function(){
 						var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
 						if(serialId == "" || serialId  == undefined)
 						{
-							location.reload();
+							/*do nothing*/
 						}else{
 							$("#doReload").val("true");
 							$('.' + serialId).click();
