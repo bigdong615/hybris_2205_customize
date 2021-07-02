@@ -18,6 +18,12 @@ public class BlWishlistEntryPopulator implements
 
   private ProductFacade productFacade;
 
+  /**
+   * This method is to populate the Wishlistdata
+   * @param source the source object
+   * @param target the target to fill
+   * @throws ConversionException
+   */
   @Override
   public void populate(final Wishlist2EntryModel source, final Wishlist2EntryData target)
       throws ConversionException {
@@ -25,6 +31,11 @@ public class BlWishlistEntryPopulator implements
     target.setEntryPk(source.getPk().getLong());
   }
 
+  /**
+   * This method is used to fetch required data to populate in the front end.
+   * @param source
+   * @return ProductData
+   */
   private ProductData populateProductData(final Wishlist2EntryModel source) {
 
     return getProductFacade()

@@ -20,7 +20,11 @@ public class BlWishListPopulator implements Populator<Wishlist2Model, Wishlist2D
   private UserService userService;
   private Converter<Wishlist2EntryModel, Wishlist2EntryData> blWishList2EntryConverter;
 
-
+  /**
+   *  This method is to populate the Wishlistdata
+   * @param source the source object
+   * @param target the target to fill
+   */
   @Override
   public void populate(final Wishlist2Model source, final Wishlist2Data target) {
     if (!userService.isAnonymousUser(userService.getCurrentUser())) {

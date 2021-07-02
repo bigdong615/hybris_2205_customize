@@ -1072,7 +1072,7 @@ public class AccountPageController extends AbstractSearchPageController
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
 		List<Wishlist2EntryData> wishlistEntries = searchPageData.getResults();
 
-		if (Objects.nonNull(rentalDateDto) && CollectionUtils.isNotEmpty(wishlistEntries)) {
+		if (Objects.nonNull(rentalDateDto) || CollectionUtils.isNotEmpty(wishlistEntries)) {
 			for (Wishlist2EntryData entry : wishlistEntries) {
 				if (BooleanUtils.isTrue(entry.getProduct().getIsDiscontinued())) {
 					wishlistFacade.removeWishlist(entry.getProduct().getCode());

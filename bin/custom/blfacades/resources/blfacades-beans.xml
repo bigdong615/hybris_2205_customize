@@ -512,6 +512,7 @@
   <bean class="com.bl.facades.wishlist.data.Wishlist2Data">
     <property name="name" type="String"/>
     <property name="decription" type="String"/>
+		<property name="entries" type="java.util.List&lt;com.bl.facades.wishlist.data.Wishlist2EntryData&gt;"/>
   </bean>
 
   <!--BL-781 For Wishlist2EntryData -->

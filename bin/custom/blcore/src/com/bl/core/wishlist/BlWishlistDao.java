@@ -14,7 +14,7 @@ public interface BlWishlistDao extends Wishlist2Dao {
 
   /**
    * To fetch wishlistEntries for the pageable data
-   *
+   * @param pageableData
    * @return SearchPageData of Wishlist2EntryModel
    */
   SearchPageData<Wishlist2EntryModel> getWishlistEntries(final PageableData pageableData);

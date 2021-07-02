@@ -30,4 +30,5 @@ public class DefaultBlWishlistService extends DefaultWishlist2Service implements
   public void setBlwishlistDao(DefaultBlWishlistDao blwishlistDao) {
     this.blwishlistDao = blwishlistDao;
   }
+
 }
