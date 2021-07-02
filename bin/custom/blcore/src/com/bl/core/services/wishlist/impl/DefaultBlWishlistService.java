@@ -13,21 +13,21 @@ import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
  */
 public class DefaultBlWishlistService extends DefaultWishlist2Service implements BlWishlistService {
 
-  private DefaultBlWishlistDao wishlistDao;
+  private DefaultBlWishlistDao blwishlistDao;
 
   /**
    * {@inheritDoc}
    */
   @Override
   public SearchPageData<Wishlist2EntryModel> getWishlistEntries(final PageableData pageableData) {
-    return getWishlistDao().getWishlistEntries(pageableData);
+    return getBlwishlistDao().getWishlistEntries(pageableData);
   }
 
-  public DefaultBlWishlistDao getWishlistDao() {
-    return wishlistDao;
+  public DefaultBlWishlistDao getBlwishlistDao() {
+    return blwishlistDao;
   }
 
-  public void setWishlistDao(DefaultBlWishlistDao wishlistDao) {
-    this.wishlistDao = wishlistDao;
+  public void setBlwishlistDao(DefaultBlWishlistDao blwishlistDao) {
+    this.blwishlistDao = blwishlistDao;
   }
 }
