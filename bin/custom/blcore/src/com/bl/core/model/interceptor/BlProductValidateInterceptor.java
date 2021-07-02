@@ -21,18 +21,18 @@ public class BlProductValidateInterceptor implements ValidateInterceptor<BlProdu
       throws InterceptorException {
     if (blProductModel.getDiscontinued() != null && blProductModel.getDiscontinued()) {
       final Collection<BlSerialProductModel> blSerialProducts = blProductModel.getSerialProducts();
-      boolean hasActiveSerialProduct = false;
+      boolean hasActiveSerialProduct =  CollectionUtils.isEmpty(blSerialProducts);
       if (CollectionUtils.isNotEmpty(blSerialProducts)) {
         hasActiveSerialProduct = blSerialProducts.stream().anyMatch(blSerialProductModel ->
             blSerialProductModel.getSerialStatus() != null && blSerialProductModel.getSerialStatus()
                 .equals(
                     SerialStatusEnum.ACTIVE)
-        );
+        );}
         if (hasActiveSerialProduct) {
           throw new InterceptorException(
-              "Can't mark this product as discontinue as it contains some active serial product.");
+              "Can't mark this product as discontinue");
         }
-      }
+
     }
   }
 }

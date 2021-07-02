@@ -12,6 +12,7 @@ import de.hybris.platform.core.model.order.CartModel;
 
 import java.util.List;
 import javax.annotation.Resource;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * This class was created for providing bl specific saved cart functionality.
@@ -35,9 +36,11 @@ public class DefaultBlSaveCartFacade extends DefaultSaveCartFacade implements Bl
     final SearchPageData<CartModel> savedCartModels = getCommerceSaveCartService().getSavedCartsForSiteAndUser(pageableData,
         getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser(), orderStatus);
     // remove discontinue entry from cart.
-    savedCartModels.getResults().forEach(cartModel -> {
-      blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.FALSE);
-    });
+    if(CollectionUtils.isNotEmpty(savedCartModels.getResults())) {
+      savedCartModels.getResults().forEach(cartModel -> {
+        blCartFacade.removeDiscontinueProductFromCart(cartModel, Boolean.FALSE);
+      });
+    }
     result.setPagination(savedCartModels.getPagination());
     result.setSorts(savedCartModels.getSorts());
 

@@ -113,7 +113,7 @@ public interface BlCartFacade extends CartFacade {
 	 void removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage); // NOSONAR
 
 	/**
-	 * This method used for pre-populating card data before remove discontinue entry.
+	 * This method used for pre-populating saved card data before removing its discontinue entry.
 	 * @param entryNumber
 	 * @param quantity
 	 * @param cartModel

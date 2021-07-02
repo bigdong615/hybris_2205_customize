@@ -439,14 +439,14 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 
     List<Integer> entryList = new ArrayList<Integer>();
     cartModel.getEntries().forEach(entry -> {
-      if (entry.getProduct() != null && entry.getProduct() instanceof BlProductModel) {
+      if (entry.getProduct() != null) {
         BlProductModel blProductModel = (BlProductModel) entry.getProduct();
         if (blProductModel.getDiscontinued() != null && blProductModel.getDiscontinued()) {
           entryList.add(entry.getEntryNumber());
         }
       }
     });
-    if (entryList.isEmpty()) {
+    if (CollectionUtils.isNotEmpty(entryList)) {
       Collections.reverse(entryList);
       entryList.forEach(entryNumber -> {
         try {
@@ -464,7 +464,7 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
   }
 
 	/**
-	 * This method used for pre-populating card data before remove discontinue entry.
+	 * This method used for pre-populating saved card data before removing its discontinue entry.
 	 * @param entryNumber
 	 * @param quantity
 	 * @param cartModel
