@@ -210,9 +210,9 @@ public class BLUPSShipmentCreateRequestPopulator
 		shipperAddress.setCity(shipperAddressData.getTown());
 		shipperAddress.setPostalCode(shipperAddressData.getPostalCode());
 
-		if (shipperAddressData.getRegion() != null && shipperAddressData.getRegion().getIsocode() != null)
+		if (shipperAddressData.getRegion() != null && shipperAddressData.getRegion().getIsocodeShort() != null)
 		{
-			shipperAddress.setStateProvinceCode(shipperAddressData.getRegion().getIsocode());
+			shipperAddress.setStateProvinceCode(shipperAddressData.getRegion().getIsocodeShort());
 		}
 
 		if (shipperAddressData.getCountry() != null && shipperAddressData.getCountry().getIsocode() != null)
@@ -247,9 +247,9 @@ public class BLUPSShipmentCreateRequestPopulator
 		{
 			shipToAddress.setCountryCode(shipToAddressData.getCountry().getIsocode());
 		}
-		if (shipToAddressData.getRegion() != null && shipToAddressData.getRegion().getIsocode() != null)
+		if (shipToAddressData.getRegion() != null && shipToAddressData.getRegion().getIsocodeShort() != null)
 		{
-			shipToAddress.setStateProvinceCode(shipToAddressData.getRegion().getIsocode());
+			shipToAddress.setStateProvinceCode(shipToAddressData.getRegion().getIsocodeShort());
 		}
 		shipTo.setAddress(shipToAddress);
 
@@ -275,9 +275,9 @@ public class BLUPSShipmentCreateRequestPopulator
 		shipFromAddress.setCity(address.getTown());
 		shipFromAddress.setPostalCode(address.getPostalCode());
 
-		if (address.getRegion() != null && address.getRegion().getIsocode() != null)
+		if (address.getRegion() != null && address.getRegion().getIsocodeShort() != null)
 		{
-			shipFromAddress.setStateProvinceCode(address.getRegion().getIsocode());
+			shipFromAddress.setStateProvinceCode(address.getRegion().getIsocodeShort());
 		}
 
 		if (address.getCountry() != null && address.getCountry().getIsocode() != null)

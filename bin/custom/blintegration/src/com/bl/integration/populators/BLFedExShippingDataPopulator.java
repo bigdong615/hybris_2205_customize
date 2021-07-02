@@ -108,7 +108,8 @@ public class BLFedExShippingDataPopulator
 		final AddressData addressData = new AddressData();
 		if (deliveryMode instanceof ZoneDeliveryModeModel)
 		{
-			if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(((ZoneDeliveryModeModel) deliveryMode).getShippingGroup()))
+			if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY
+					.equals(((ZoneDeliveryModeModel) deliveryMode).getShippingGroup().getCode()))
 			{
 				AddressModel warehouseAddress = new AddressModel();
 				if (consignment.getWarehouse() != null && consignment.getWarehouse().getPointsOfService() != null)
@@ -137,7 +138,7 @@ public class BLFedExShippingDataPopulator
 				fedExPickupDetailData.setLocalTimeZone(sameDayTimeZone);
 			}
 			else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY
-					.equals(((ZoneDeliveryModeModel) deliveryMode).getShippingGroup()))
+					.equals(((ZoneDeliveryModeModel) deliveryMode).getShippingGroup().getCode()))
 			{
 				addressData.setLine1(rushLine1);
 				addressData.setTown(rushTown);

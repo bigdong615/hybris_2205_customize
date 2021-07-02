@@ -145,12 +145,11 @@ public class BLUpsShippingDataPopulator
 		shipToAddressData.setLine2(shipToAddress.getLine2());
 		shipToAddressData.setTown(shipToAddress.getTown());
 		shipToAddressData.setPhone(shipToAddress.getPhone());
-		shipToAddressData.setCompanyName(shipToAddress.getCompanyName());
 
-		if (shipToAddress.getRegion() != null && shipToAddress.getRegion().getIsocode() != null)
+		if (shipToAddress.getRegion() != null && shipToAddress.getRegion().getIsocodeShort() != null)
 		{
 			final RegionData shipToRegionData = new RegionData();
-			shipToRegionData.setIsocode(shipToAddress.getRegion().getIsocode());
+			shipToRegionData.setIsocodeShort(shipToAddress.getRegion().getIsocodeShort());
 			shipToAddressData.setRegion(shipToRegionData);
 		}
 
@@ -233,8 +232,8 @@ public class BLUpsShippingDataPopulator
 		serviceDataForPackagingType.setDescription(BlintegrationConstants.PACAKAGING_TYPE_DESCIPTION);
 
 		final UpsShipmentServiceData serviceDataForUnit = new UpsShipmentServiceData();
-		serviceDataForUnit.setCode(dimensionTypeCode);
-		serviceDataForUnit.setDescription(dimensionTypeDescription);
+		serviceDataForUnit.setCode(packageWeightCode);
+		serviceDataForUnit.setDescription(packageWeightDescription);
 
 		final PackageTypeData packageData = new PackageTypeData();
 		final DimensionsTypeData dimensionsTypeData = new DimensionsTypeData();
@@ -245,8 +244,8 @@ public class BLUpsShippingDataPopulator
 		packageData.setPackageWeight(packageWeight);
 
 		final UpsShipmentServiceData unitOfMeas = new UpsShipmentServiceData();
-		unitOfMeas.setCode(packageWeightCode);
-		unitOfMeas.setDescription(packageWeightDescription);
+		unitOfMeas.setCode(dimensionTypeCode);
+		unitOfMeas.setDescription(dimensionTypeDescription);
 
 		dimensionsTypeData.setHeight(packagingInfo.getHeight());
 		dimensionsTypeData.setLength(packagingInfo.getLength());

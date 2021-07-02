@@ -52,11 +52,14 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
 		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
 
-		if (delivertCarrier.equals("UPS"))
+		if (delivertCarrier.getCode().equalsIgnoreCase(CarrierEnum.UPS.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
 					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
-			saveResponseOnPackage(upsResponse, packagingInfo);
+			if (upsResponse != null)
+			{
+				saveResponseOnPackage(upsResponse, packagingInfo);
+			}
 		}
 		else
 		{
