@@ -552,6 +552,7 @@ input[type=checkbox] + label:before{ border-radius:0px; }
 #usedProductList thead tr { background-color: #F3F3F3; }
 #usedProductList tr th { font-size: 14px; font-weight: 400; padding: 10px 0; }
 #usedProductList tbody tr { border-bottom: 1px solid #D4D3D3; }
+#usedProductList tbody .noborder { border-bottom: none;}
 #usedProductList tr td { padding: 15px 0; }
 #usedProductList .btn { padding: 6px 8px; }
 #usedProductList strike { opacity: .6; }

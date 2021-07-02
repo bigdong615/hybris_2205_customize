@@ -69,7 +69,7 @@
 												var="serialProduct" varStatus="loop">
 												
 												<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
-													<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''}">
+													<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''} noborder">
 														<td><a href="#" data-bs-toggle="modal"
 															data-bs-target="#sku52678"
 															data-cosmetic="${serialProduct.cosmeticRating}"
@@ -114,7 +114,16 @@
 																</c:otherwise>
 															</c:choose>
 														</td>
-													</tr>
+						              <c:if test="${not empty serialProduct.potentialPromotions}">
+                            <tr>
+                              <td colspan="2">
+                                 <span class="badge badge-new">${serialProduct.productTagValues}</span>
+                              </td>
+                              <td colspan="3" class="text-start textGold">
+                                  <strong>$1481.60 with code USED2020</strong>
+                              </td>
+                            </tr>
+                          </c:if>
 												</c:if>
 											</c:forEach>
 										</form:form>

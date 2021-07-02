@@ -64,6 +64,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GREAT_VALUE = "greatValue";
 	public static final String GREAT_VALUE_STRING = "Great Value";
 	public static final String STAFF_PICK_STRING = "Staff Pick";
+	public static final String ON_SALE = "ON SALE";
 	public static final String CLEAR_ALL_QUERY = "clearAllQuery";
 	public static final String PARENT_CATEGORY = "{parentcategory}";
 	public static final String RENTAL_CLEAR_ALL = "/rent/category/rentalgear";

@@ -72,7 +72,7 @@
   </bean>
 
 <!-- DTO to store Serial Product Data -->
- <bean class="com.bl.facades.product.data.SerialProductData">
+ <bean class="com.bl.facades.product.data.SerialProductData" extends="de.hybris.platform.commercefacades.product.data.ProductData">
     <property name="conditionRating" type="double"/>
     <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
@@ -81,7 +81,7 @@
     <property name="functionalRating" type="float"/>
     <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
     <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
-  </bean>
+ </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">
   	<property name="messageCode" type="String"/>
