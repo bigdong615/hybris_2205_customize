@@ -94,6 +94,7 @@ ACC.account = {
 							{
 								location.reload();
 							}else{
+								$("#doReload").val("true");
 								$('.' + serialId).click();
 							}	
 						}
@@ -158,13 +159,21 @@ ACC.account = {
 							if(serialId == "" || serialId  == undefined)
 							{
 								location.reload();
-							}else{
-								$('.' + serialId).click();
-							}	
-							
+							}
 							
 						}
 					},
+					complete: function(){
+						var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+						if(serialId == "" || serialId  == undefined)
+						{
+							/*do nothing*/
+						}else{
+							$("#doReload").val("true");
+							$('.' + serialId).click();
+							$("#signIn").hide();
+						}
+					},					
 					error: function (e) {
 						// do nothing
 					}

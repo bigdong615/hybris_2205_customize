@@ -8,7 +8,6 @@ import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.configuration.service.BrainTreeConfigService;
-import com.braintree.constants.BraintreeaddonConstants;
 import com.braintree.constants.ControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
@@ -43,9 +42,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -84,7 +84,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return BlRentalDateUtils.getRentalsDuration();
 	}
 
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	@GetMapping(value = "/view")
 	@RequireHardLogIn
 	@Override
 	@PreValidateCheckoutStep(checkoutStep = SUMMARY)
@@ -191,7 +191,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 	}
 
-	@RequestMapping(value = "/placeOrder")
+	@PostMapping(value = "/placeOrder")
 	@RequireHardLogIn
 	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, final Model model,
                              final HttpServletRequest request, final RedirectAttributes redirectModel)
@@ -214,7 +214,6 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			return REDIRECT_PREFIX + "/cart";
     }
     LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
-    LOG.info("what is this ? getMergedCustomFields(placeOrderForm.getCustomFields): " + getMergedCustomFields(placeOrderForm.getCustomFields()));
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
     if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
@@ -262,11 +261,8 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	private Map<String, String> getMergedCustomFields (Map<String, String> customFieldsFromUI)
 	{
 		Map<String, String> customFields = customFieldsService.getDefaultCustomFieldsMap();
-
-		for (String key: customFieldsFromUI.keySet()) {
-			customFields.put(key, customFieldsFromUI.get(key));
-		}
-
+		customFields.putAll(customFieldsFromUI);
+		BlLogger.logFormatMessageInfo(LOG,Level.INFO,"Custom Fields - {} ",customFields.toString());
 		return customFields;
 	}
 
@@ -330,7 +326,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return getCheckoutStep(SUMMARY);
 	}
 
-	@RequestMapping(value = "/back", method = RequestMethod.GET)
+	@GetMapping(value = "/back")
 	@RequireHardLogIn
 	@Override
 	public String back(final RedirectAttributes redirectAttributes)
@@ -338,7 +334,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		return getCheckoutStep().previousStep();
 	}
 
-	@RequestMapping(value = "/next", method = RequestMethod.GET)
+	@GetMapping(value = "/next")
 	@RequireHardLogIn
 	@Override
 	public String next(final RedirectAttributes redirectAttributes)

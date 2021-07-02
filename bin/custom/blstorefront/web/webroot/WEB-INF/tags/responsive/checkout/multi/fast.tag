@@ -50,7 +50,7 @@
                     <div id="shipToHomeShippingMethods" class="sub-option"></div>
                 </div>
                 <div id="tab-SHIP_UPS_OFFICE" class="ship-it-tab-content">
-                    <div id="shipToUPSShippingMethods">
+                    <div id="shipToUPSShippingMethods" class="sub-option">
 
                     </div>
                     <div id="checkZipForUPSPickup" style="display:none;">
