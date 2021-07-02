@@ -7,6 +7,7 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.ControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
@@ -38,6 +39,7 @@ import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -78,7 +80,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	private BlCheckoutFacade blCheckoutFacade;
 	
 	@Resource(name = "blDatePickerService")
-  	private BlDatePickerService blDatePickerService;
+	private BlDatePickerService blDatePickerService;
+
+	@Resource(name = "blRentalDateCookieGenerator")
+	private BlRentalDateCookieGenerator blRentalDateCookieGenerator;
 	
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
@@ -182,7 +187,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	@PostMapping(value = "/placeOrder")
 	@RequireHardLogIn
 	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, final Model model,
-                             final HttpServletRequest request, final RedirectAttributes redirectModel)
+			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
@@ -235,6 +240,8 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.error("Order has been placed, number/code: " + orderData.getCode());
+			blRentalDateCookieGenerator.removeCookie(response);
+			blDatePickerService.removeRentalDatesFromSession();
 		}
 		catch (final Exception e)
 		{
