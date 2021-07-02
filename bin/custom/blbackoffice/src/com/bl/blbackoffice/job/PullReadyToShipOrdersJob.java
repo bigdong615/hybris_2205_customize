@@ -15,12 +15,15 @@ import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -47,27 +50,52 @@ public class PullReadyToShipOrdersJob extends AbstractJobPerformable<PullReadyTo
    * @return PerformResult
    */
   @Override
-  public PerformResult perform(
-      final PullReadyToShipOrdersCronJobModel pullReadyToShipOrdersCronJob) {
+  public PerformResult perform(final PullReadyToShipOrdersCronJobModel pullReadyToShipOrdersCronJob) {
 
     BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing PullReadyToShipOrdersJob...");
+
     try {
 
       List<ConsignmentModel> consignmentModels = blConsignmentDao
           .getReadyToShipConsignmentsForDate(pullReadyToShipOrdersCronJob.getShipDate());
 
-      writeToExcel(consignmentModels, pullReadyToShipOrdersCronJob.getMembers());
+      String warehouseCode =
+          pullReadyToShipOrdersCronJob.getHomeBaseCode().getCode().equalsIgnoreCase("SFO")
+              ? BlCoreConstants.SFO : BlCoreConstants.BOS;
 
+      List<ConsignmentModel> filteredConsignmentModels = consignmentModels.stream().filter(
+          consignment -> consignment.getWarehouse().getCode().equalsIgnoreCase(warehouseCode))
+          .collect(Collectors.toList());
+
+      PerformResult result = null;
+      if (CollectionUtils.isNotEmpty(filteredConsignmentModels)) {
+
+        result = writeToExcel(consignmentModels, pullReadyToShipOrdersCronJob.getMembers());
+      } else {
+
+        return resetAndReturnResult(pullReadyToShipOrdersCronJob, CronJobResult.FAILURE);
+      }
+
+      if (null != result && result.getResult() == CronJobResult.FAILURE) {
+
+        return resetAndReturnResult(pullReadyToShipOrdersCronJob, CronJobResult.FAILURE);
+      }
     } catch (final Exception ex) {
 
       BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex,
           "Error occurred while performing PullReadyToShipOrdersJob");
-
-      return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
+      return resetAndReturnResult(pullReadyToShipOrdersCronJob, CronJobResult.FAILURE);
     }
 
+    return resetAndReturnResult(pullReadyToShipOrdersCronJob, CronJobResult.SUCCESS);
+  }
+
+  private PerformResult resetAndReturnResult(
+      final PullReadyToShipOrdersCronJobModel pullReadyToShipOrdersCronJob,
+      final CronJobResult result) {
+
     resetParameters(pullReadyToShipOrdersCronJob);
-    return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
+    return new PerformResult(result, CronJobStatus.FINISHED);
   }
 
   /**
@@ -76,10 +104,13 @@ public class PullReadyToShipOrdersJob extends AbstractJobPerformable<PullReadyTo
    * @param consignmentModels
    * @return members
    */
-  private void writeToExcel(final List<ConsignmentModel> consignmentModels,
-      final Set<String> members) throws Exception {
+  private PerformResult writeToExcel(final List<ConsignmentModel> consignmentModels,
+      final Set<String> members) throws IOException {
 
-    try {
+    XSSFSheet sheet = null;
+    FileOutputStream fileOut = null;
+
+    try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 
       final String FILE_PATH = getConfigurationService().getConfiguration()
           .getString("pull.ready.to.ship.orders.file.path");    //D:/PullReadyToShip
@@ -89,9 +120,7 @@ public class PullReadyToShipOrdersJob extends AbstractJobPerformable<PullReadyTo
       final String filename = FILE_PATH + df.format(new Date()) + "."
           + FILE_EXTENSION;  // filename = "D:/PullReadyToShip20210615152301.pdf"
 
-      XSSFWorkbook workbook = new XSSFWorkbook();
-
-      XSSFSheet sheet = workbook.createSheet();
+      sheet = workbook.createSheet();
 
       //creating the 0th row using the createRow() method
       XSSFRow rowHeader = sheet.createRow((short) 0);
@@ -99,15 +128,22 @@ public class PullReadyToShipOrdersJob extends AbstractJobPerformable<PullReadyTo
 
       populateDataRows(consignmentModels, sheet, members);
 
-      FileOutputStream fileOut = new FileOutputStream(filename);
+      fileOut = new FileOutputStream(filename);
       workbook.write(fileOut);
 
-      fileOut.close();
-
-      workbook.close();
     } catch (Exception ex) {
-      throw new Exception(ex);
+
+      BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex,
+          "Error occurred while performing PullReadyToShipOrdersJob");
+      return new PerformResult(CronJobResult.FAILURE, CronJobStatus.FINISHED);
+    } finally {
+
+      if (null != fileOut) {
+        fileOut.close();
+      }
     }
+
+    return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
   }
 
   /**
@@ -128,8 +164,9 @@ public class PullReadyToShipOrdersJob extends AbstractJobPerformable<PullReadyTo
     rowHeader.createCell(6).setCellValue(BlCoreConstants.SERIAL_NUMBER);
     rowHeader.createCell(7).setCellValue(BlCoreConstants.LOCATION_CODE);
     rowHeader.createCell(8).setCellValue(BlCoreConstants.SHIPPING_METHOD);
-    rowHeader.createCell(9).setCellValue(BlCoreConstants.NEED);
-    rowHeader.createCell(10).setCellValue(BlCoreConstants.FOUND);
+    rowHeader.createCell(9).setCellValue(BlCoreConstants.MEMBER_NAME);
+    rowHeader.createCell(10).setCellValue(BlCoreConstants.NEED);
+    rowHeader.createCell(11).setCellValue(BlCoreConstants.FOUND);
 
   }
 
@@ -145,60 +182,76 @@ public class PullReadyToShipOrdersJob extends AbstractJobPerformable<PullReadyTo
 
     List<String> membersList = new ArrayList<>(members);
 
-    int rowNum = 0;
+    int rowNum = 1;
     int counter = 0;
     for (ConsignmentModel consignmentModel : consignmentModels) {
 
+      if (membersList.size() <= counter) {
+        counter = 0;
+      }
       String memberName = membersList.get(counter);
       counter++;
 
       for (ConsignmentEntryModel entry : consignmentModel.getConsignmentEntries()) {
 
-        if (membersList.size() <= counter) {
-          counter = 0;
-        }
-
         for (BlSerialProductModel serialProduct : entry.getSerialProducts()) {
 
           XSSFRow dataRow = sheet.createRow((short) rowNum++);
 
-          dataRow.createCell(0)
-              .setCellValue(consignmentModel.getOrder().getCode());           //ORDER_NUMBER
-
-          if (null != consignmentModel.getOrderType()) {
-            dataRow.createCell(1).setCellValue(
-                null != consignmentModel.getOrderType().getCode() ? consignmentModel.getOrderType()
-                    .getCode() : "");                                // ORDER_TYPE
-          } else {
-            dataRow.createCell(1).setCellValue("");
-          }
-
-          dataRow.createCell(2).setCellValue(BlCoreConstants.ORDER_NOTES); //need to check  ORDER_NOTES
-
-          dataRow.createCell(3)
-              .setCellValue(entry.getOrderEntry().getProduct().getCode());      //  PRODUCT_ID
-          dataRow.createCell(4)
-              .setCellValue(entry.getOrderEntry().getProduct().getName());      //  PRODUCT_NAME
-          dataRow.createCell(5)
-              .setCellValue(entry.getQuantity());                               // PRODUCT_COUNT
-
-          dataRow.createCell(6)
-              .setCellValue(serialProduct.getCode());                                 // SERIAL_NUMBER
-          dataRow.createCell(7)
-              .setCellValue(consignmentModel.getWarehouse()
-                  .getCode());    //LOCATION_CODE to be taken from serial prod model.
-
-          dataRow.createCell(8)
-              .setCellValue(consignmentModel.getDeliveryMode().getName());     // SHIPPING_METHOD
-
-          dataRow.createCell(9).setCellValue(memberName);
-
-          dataRow.createCell(10).setCellValue(BlCoreConstants.EMPTY_STRING);
-          dataRow.createCell(11).setCellValue(BlCoreConstants.EMPTY_STRING);
+          populateDataRow(consignmentModel, memberName, entry, serialProduct, dataRow);
         } //serial product loop
+
       }  //entry loop
     }
 
+  }
+
+  /**
+   * It populates the data into excel row for data.
+   *
+   * @param consignmentModel
+   * @param memberName
+   * @param entry
+   * @param serialProduct
+   * @param dataRow
+   */
+  private void populateDataRow(final ConsignmentModel consignmentModel, final String memberName,
+      final ConsignmentEntryModel entry, final BlSerialProductModel serialProduct,
+      final XSSFRow dataRow) {
+
+    dataRow.createCell(0)
+        .setCellValue(consignmentModel.getOrder().getCode());           //ORDER_NUMBER
+
+    if (null != consignmentModel.getOrderType()) {
+      dataRow.createCell(1).setCellValue(
+          null != consignmentModel.getOrderType().getCode() ? consignmentModel.getOrderType()
+              .getCode() : "");                                // ORDER_TYPE
+    } else {
+      dataRow.createCell(1).setCellValue("");
+    }
+
+    dataRow.createCell(2).setCellValue(BlCoreConstants.ORDER_NOTES); //need to check  ORDER_NOTES
+
+    dataRow.createCell(3)
+        .setCellValue(entry.getOrderEntry().getProduct().getCode());      //  PRODUCT_ID
+    dataRow.createCell(4)
+        .setCellValue(entry.getOrderEntry().getProduct().getName());      //  PRODUCT_NAME
+    dataRow.createCell(5)
+        .setCellValue(entry.getQuantity());                               // PRODUCT_COUNT
+
+    dataRow.createCell(6)
+        .setCellValue(serialProduct.getCode());                                 // SERIAL_NUMBER
+    dataRow.createCell(7)
+        .setCellValue(consignmentModel.getWarehouse()
+            .getCode());    //LOCATION_CODE to be taken from serial prod model.
+
+    dataRow.createCell(8)
+        .setCellValue(consignmentModel.getDeliveryMode().getName());     // SHIPPING_METHOD
+
+    dataRow.createCell(9).setCellValue(memberName);
+
+    dataRow.createCell(10).setCellValue(BlCoreConstants.EMPTY_STRING);
+    dataRow.createCell(11).setCellValue(BlCoreConstants.EMPTY_STRING);
   }
 
 

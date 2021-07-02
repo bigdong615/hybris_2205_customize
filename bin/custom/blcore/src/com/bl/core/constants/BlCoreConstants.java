@@ -200,8 +200,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SERIAL_NUMBER = "Serial number";
 	public static final String LOCATION_CODE = "Location code/name";
 	public static final String SHIPPING_METHOD = "Shipping method";
+	public static final String MEMBER_NAME = "Member Name";
 	public static final String NEED = "Need ";
 	public static final String FOUND = "Found";
+	public static final String SFO = "warehouse_ca";
+	public static final String BOS = "warehouse_ma";
+
 
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
 	
