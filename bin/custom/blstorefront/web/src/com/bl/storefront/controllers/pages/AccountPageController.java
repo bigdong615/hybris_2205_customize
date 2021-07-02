@@ -321,7 +321,7 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam(value = "sort", required = false) final String sortCode, final Model model) throws CMSItemNotFoundException
 	{
 		// Handle paged search results
-		final PageableData pageableData = createPageableData(page, 10, sortCode, showMode); // NOSONAR
+		final PageableData pageableData = createPageableData(page, 8, sortCode, showMode); // NOSONAR
 		final SearchPageData<OrderHistoryData> searchPageData = blOrderFacade.getPagedOrderHistoryForStatuses(pageableData);  // NOSONAR
 		populateModel(model, searchPageData, showMode);
 		final ContentPageModel orderHistoryPage = getContentPageForLabelOrId(ORDER_HISTORY_CMS_PAGE);
@@ -1063,22 +1063,15 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-	@RequestMapping(value = "/reorder/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
-	public String reorder(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
+	public String rentAgain(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
 			throws CommerceCartModificationException {
-		final String referer = request.getHeader(BlControllerConstants.REFERER);
+
 		if(StringUtils.isNotEmpty(orderCode)) {
 			blOrderFacade.addToCartAllOrderEnrties(orderCode);
 			return BlControllerConstants.REDIRECT_CART_URL;
 		}
-			else if (referer.contains("/my-account/orders/"))
-			{
-				return REDIRECT_PREFIX + "/my-account/orders";
-			}
-		 else if (referer.contains("/my-account/order/" + orderCode)) {
-			return REDIRECT_PREFIX + "/my-account/order/" + orderCode;
-			}
 		 return REDIRECT_PREFIX + "/my-account/orders";
 	}
 

@@ -62,7 +62,7 @@
                 								</li>
                 								<li>
                 								<c:if test="${order.rentalCart}">
-                								 <c:url value="/my-account/reorder/${order.code}" var="rentOrderAction" />
+                								 <c:url value="/my-account/rentAgain/${order.code}" var="rentOrderAction" />
                                  <a href="${rentOrderAction}">
                                                         <spring:theme code="text.myaccount.order.rent.again"/> </a>
                 							  </c:if>

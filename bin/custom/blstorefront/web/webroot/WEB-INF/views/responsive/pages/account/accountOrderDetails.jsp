@@ -158,7 +158,7 @@
                              </c:if>
                                <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
-                            <c:url value="/my-account/reorder/${orderData.code}" var="rentOrderAction" />
+                            <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
                                <a href="${rentOrderAction}" class="btn btn-sm btn-primary float-end">
                                    <spring:theme code="text.myaccount.order.rent.again"/> </a>
                             </div>
@@ -215,7 +215,7 @@
                                     </tbody>
                                 </table>
                                   <c:if test="${orderData.isRentalCart}">
-                                  <c:url value="/my-account/reorder/${orderData.code}" var="rentOrderAction" />
+                                  <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
                                      <a href="${rentOrderAction}" class="btn btn-block btn-primary mt-4">
                                                   										<spring:theme code="text.myaccount.order.rent.again"/> </a>
                                 </c:if>
