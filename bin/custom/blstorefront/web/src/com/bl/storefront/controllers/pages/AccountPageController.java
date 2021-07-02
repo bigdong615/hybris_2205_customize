@@ -682,8 +682,8 @@ public class AccountPageController extends AbstractSearchPageController
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
 		if (CollectionUtils.isEmpty(userFacade.getAddressBook()))
 		{
-			newAddress.setDefaultAddress(true);
-			newAddress.setShippingAddress(true);
+			newAddress.setDefaultAddress(Boolean.TRUE);
+			newAddress.setShippingAddress(Boolean.TRUE);
 		}
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
@@ -744,17 +744,6 @@ public class AccountPageController extends AbstractSearchPageController
 				model.addAttribute(COUNTRY_ATTR, addressData.getCountry().getIsocode());
 				model.addAttribute(ADDRESS_DATA_ATTR, addressData);
 				addressDataUtil.convert(addressData, addressForm);
-				addressForm.setEmail(addressData.getEmail());
-				if (userFacade.isDefaultAddress(addressData.getId()))
-				{
-					addressForm.setDefaultAddress(Boolean.TRUE);
-					model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.TRUE);
-				}
-				else
-				{
-					addressForm.setDefaultAddress(Boolean.FALSE);
-					model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.FALSE);
-				}
 				break;
 			}
 		}

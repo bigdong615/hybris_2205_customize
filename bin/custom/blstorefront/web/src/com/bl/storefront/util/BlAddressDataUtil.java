@@ -60,7 +60,6 @@ public class BlAddressDataUtil extends AddressDataUtil {
             blAddressForm.setCompanyName(addressData.getCompanyName());
             blAddressForm.setAddressType(addressData.getAddressType());
             blAddressForm.setUpsStoreAddress(addressData.getUpsStoreAddress());
-            blAddressForm.setDefaultBillingAddress(addressData.isDefaultBillingAddress());
         }
     }
 
