@@ -4,8 +4,8 @@
 package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.facades.customer.BlUserFacade;
 import com.bl.storefront.forms.BlAddressForm;
+import com.braintree.facade.BrainTreeUserFacade;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -161,8 +161,8 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "acceleratorCheckoutFacade")
 	private CheckoutFacade checkoutFacade;
 
-	@Resource(name = "blUserFacade")
-	private BlUserFacade userFacade;
+	@Resource(name = "userFacade")
+	private BrainTreeUserFacade userFacade;
 
 	@Resource(name = "customerFacade")
 	private CustomerFacade customerFacade;
@@ -679,21 +679,12 @@ public class AccountPageController extends AbstractSearchPageController
 			setUpAddressFormAfterError(addressForm, model);
 			return getViewForPage(model);
 		}
-
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
 		if (CollectionUtils.isEmpty(userFacade.getAddressBook()))
 		{
 			newAddress.setDefaultAddress(true);
+			newAddress.setShippingAddress(true);
 		}
-		else
-		{
-			newAddress.setDefaultAddress(addressForm.getDefaultAddress() != null && addressForm.getDefaultAddress().booleanValue());
-		}
-		if(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue()){
-			newAddress.setDefaultBillingAddress(Boolean.TRUE);
-			newAddress.setBillingAddress(Boolean.TRUE);
-		}
-
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -794,18 +785,11 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-
 		if (Boolean.TRUE.equals(addressForm.getDefaultAddress()) || userFacade.getAddressBook().size() <= 1)
 		{
 			newAddress.setDefaultAddress(true);
 		}
-		if(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue()){
-			newAddress.setDefaultBillingAddress(Boolean.TRUE);
-			newAddress.setBillingAddress(Boolean.TRUE);
-		}
-		
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,

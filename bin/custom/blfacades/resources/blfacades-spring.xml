@@ -534,11 +534,6 @@
 	<bean id="blCommerceProductReferenceService" class="com.bl.facades.productreference.service.DefaultBlCommerceProductReferenceService" parent="commerceProductReferenceService">
 	</bean>
 
-	<!--BL-712:This class was created to customize bl specific address data.-->
-	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
-	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
-    <property name="customerAccountService" ref="customerAccountService"/>
-	</bean>
   <!-- BL-632:This class was created for providing bl specific saved cart functionality.-->
 	<alias name="defaultBlSaveCartFacade" alias="saveCartFacade"/>
 	<bean id="defaultBlSaveCartFacade" class="com.bl.facades.cart.impl.DefaultBlSaveCartFacade" parent="defaultSaveCartFacade">

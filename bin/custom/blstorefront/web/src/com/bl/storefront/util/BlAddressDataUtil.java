@@ -5,10 +5,8 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +20,8 @@ public class BlAddressDataUtil extends AddressDataUtil {
     public AddressData convertToAddressData(final AddressForm addressForm)
     {
         final AddressData addressData = super.convertToAddressData(addressForm);
-        final boolean isBillingAddress = BooleanUtils.toBoolean(addressForm.getBillingAddress());
-        addressData.setBillingAddress(isBillingAddress);
-        addressData.setShippingAddress(BooleanUtils.negate(isBillingAddress));
+        addressData.setBillingAddress(BooleanUtils.toBoolean(addressForm.getBillingAddress()));
+        addressData.setShippingAddress(BooleanUtils.toBoolean(addressForm.getShippingAddress()));
         fillExtendedAttributes(addressForm, addressData);
         return addressData;
     }
@@ -33,6 +30,7 @@ public class BlAddressDataUtil extends AddressDataUtil {
         if(addressForm instanceof BlAddressForm) {
             final BlAddressForm blAddressForm = (BlAddressForm) addressForm;
             addressData.setEmail(blAddressForm.getEmail());
+            addressData.setCompanyName(blAddressForm.getCompanyName());
             addressData.setAddressType(blAddressForm.getAddressType());
             addressData.setUpsStoreAddress(blAddressForm.isUpsStoreAddress());
             final java.lang.String openingDays = blAddressForm.getOpeningDaysDetails();
@@ -66,12 +64,6 @@ public class BlAddressDataUtil extends AddressDataUtil {
         }
     }
 
-    @Override
-    public void convertBasic(final AddressData source, final AddressForm target)
-    {
-        super.convertBasic(source, target);
-
-    }
 
     @Override
     public void convert(final AddressData source, final AddressForm target)
@@ -80,13 +72,4 @@ public class BlAddressDataUtil extends AddressDataUtil {
        fillExtendedAttributesToAddressForm(source,target);
     }
 
-    @Override
-    public AddressData convertToVisibleAddressData(final AddressForm addressForm)
-    {
-        final AddressData addressData= super.convertToVisibleAddressData(addressForm);
-        BlAddressForm blAddressForm= (BlAddressForm)addressForm;
-        addressData.setEmail(blAddressForm.getEmail());
-        addressData.setCompanyName(blAddressForm.getCompanyName());
-        return addressData;
-    }
 }

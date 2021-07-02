@@ -3,12 +3,17 @@
  */
 package com.braintree.customer.dao;
 
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
 import com.braintree.model.BrainTreePaymentInfoModel;
 import de.hybris.platform.commerceservices.customer.dao.impl.DefaultCustomerAccountDao;
 import de.hybris.platform.core.PK;
+import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.search.SearchResult;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
+import java.util.Collection;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
@@ -19,6 +24,13 @@ import java.util.Map;
 public class BrainTreeCustomerAccountDao extends DefaultCustomerAccountDao
 {
 	private final static Logger LOG = Logger.getLogger(BrainTreeCustomerAccountDao.class);
+	// Address Queries
+	private static final String FIND_ADDRESS_BOOK_DELIVERY_ENTRIES = "SELECT {address:" + AddressModel.PK + "} FROM {"
+			+ AddressModel._TYPECODE + " AS address LEFT JOIN " + CustomerModel._TYPECODE + " AS customer ON {address:"
+			+ AddressModel.OWNER + "}={customer:" + CustomerModel.PK + "}} WHERE {customer:" + CustomerModel.PK
+			+ "} = ?customer AND {address:"
+			+ AddressModel.VISIBLEINADDRESSBOOK + "} = ?visibleInAddressBook AND {address:" + AddressModel.COUNTRY
+			+ "} IN (?deliveryCountries)";
 
 	public BrainTreePaymentInfoModel findBrainTreePaymentInfoByCustomer(final CustomerModel customerModel, final String code)
 	{
@@ -81,5 +93,19 @@ public class BrainTreeCustomerAccountDao extends DefaultCustomerAccountDao
 				"SELECT {" + CustomerModel.PK + "} FROM {" + CustomerModel._TYPECODE + "} WHERE {" + CustomerModel.BRAINTREECUSTOMERID
 						+ "} = ?customerId", queryParams);
 		return ((result.getCount() > 0) ? (CustomerModel) result.getResult().get(0) : null);
+	}
+
+	@Override
+	public List<AddressModel> findAddressBookDeliveryEntriesForCustomer(final CustomerModel customerModel,
+			final Collection<CountryModel> deliveryCountries)
+	{
+		validateParameterNotNull(customerModel, "Customer must not be null");
+		final Map<String, Object> queryParams = new HashMap<String, Object>();
+		queryParams.put("customer", customerModel);
+		queryParams.put("visibleInAddressBook", Boolean.TRUE);
+		queryParams.put("deliveryCountries", deliveryCountries);
+		final SearchResult<AddressModel> result = getFlexibleSearchService().search(FIND_ADDRESS_BOOK_DELIVERY_ENTRIES,
+				queryParams);
+		return result.getResult();
 	}
 }

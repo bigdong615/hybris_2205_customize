@@ -5,6 +5,7 @@ package com.braintree.facade.impl;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
+import com.bl.core.services.customer.BlCustomerAccountService;
 import com.braintree.command.request.*;
 import com.braintree.command.result.*;
 import com.braintree.constants.BraintreeConstants;
@@ -72,6 +73,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	private BrainTreeConfigService brainTreeConfigService;
 	private UserService userService;
 	private ModelService modelService;
+	private BlCustomerAccountService customerAccountService;
 
 	@Override
 	public void addAddress(final AddressData addressData)
@@ -651,6 +653,39 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		this.brainTreeSubscriptionInfoConverter = brainTreeSubscriptionInfoConverter;
 	}
 
+	/**
+	 * This method is responsible for setting default billing address.
+	 * @param addressData
+	 */
+	@Override
+	public void setDefaultBillingAddress(final AddressData addressData)
+	{
+		validateParameterNotNullStandardMessage("addressData", addressData);
+		final CustomerModel currentCustomer = (CustomerModel) getUserService().getCurrentUser();
+		final AddressModel addressModel = getCustomerAccountService().getAddressForCode(currentCustomer, addressData.getId());
+		if (addressModel != null)
+		{
+			getCustomerAccountService().setDefaultBillingAddress(currentCustomer, addressModel);
+		}
+	}
+
+	/**
+	 * This method is responsible for getting default billing address.
+	 */
+	@Override
+	public AddressData getDefaultBillingAddress()
+	{
+		final CustomerModel currentCustomer = (CustomerModel) getUserService().getCurrentUser();
+		AddressData defaultBillingAddressData = null;
+
+		final AddressModel defaultBilligAddress =currentCustomer.getDefaultBillingAddress();
+		if (defaultBilligAddress != null)
+		{
+			defaultBillingAddressData = getAddressConverter().convert(defaultBilligAddress);
+		}
+		return defaultBillingAddressData;
+	}
+
 	public PaymentInfoService getPaymentInfoService()
 	{
 		return paymentInfoService;
@@ -694,5 +729,15 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	public void setModelService(ModelService modelService)
 	{
 		this.modelService = modelService;
+	}
+
+	@Override
+	public BlCustomerAccountService getCustomerAccountService() {
+		return customerAccountService;
+	}
+
+	public void setCustomerAccountService(
+			BlCustomerAccountService customerAccountService) {
+		this.customerAccountService = customerAccountService;
 	}
 }

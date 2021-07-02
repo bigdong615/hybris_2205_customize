@@ -1,6 +1,7 @@
 package com.bl.core.services.customer.impl;
 
 import com.bl.core.services.customer.BlCustomerAccountService;
+import com.braintree.customer.dao.BrainTreeCustomerAccountDao;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.commerceservices.customer.impl.DefaultCustomerAccountService;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -8,6 +9,7 @@ import de.hybris.platform.core.model.user.CustomerModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
 
@@ -19,6 +21,8 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 
 public class DefaultBlCustomerAccountService extends DefaultCustomerAccountService implements BlCustomerAccountService {
 
+    @Resource(name="brainTreeCustomerAccountDao")
+    private BrainTreeCustomerAccountDao brainTreeCustomerAccountDao;
     /**
      *This method is overridden to disable register email.
      */
@@ -53,6 +57,14 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
         }
         getModelService().save(customerModel);
         getModelService().refresh(customerModel);
+    }
+
+    @Override
+    public List<AddressModel> getAddressBookDeliveryEntries(final CustomerModel customerModel)
+    {
+        validateParameterNotNull(customerModel, "Customer model cannot be null");
+        return brainTreeCustomerAccountDao.findAddressBookDeliveryEntriesForCustomer(customerModel,
+            getCommerceCommonI18NService().getAllCountries());
     }
 }
 
