@@ -932,6 +932,13 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
+	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
+	<bean id="blOrderPrepareInterceptor"	class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor"/>
+
+	<bean id="blOrderPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blOrderPrepareInterceptor"/>
+		<property name="typeCode" value="AbstractOrder"/>
+	</bean>
 	<!-- BL-766 end -->
 
 </beans>

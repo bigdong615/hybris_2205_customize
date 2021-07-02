@@ -229,6 +229,12 @@
             collectiontype="list"/>
         </relation>
 
+      <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
+        <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
+        <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+          collectiontype="list"/>
+      </relation>
+
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
         autocreate="true">
