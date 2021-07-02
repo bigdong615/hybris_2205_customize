@@ -47,6 +47,19 @@ public interface BlDeliveryModeDao {
      */
     Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode, final String pstCutOffTime,
                                                                         final boolean payByCustomer);
+    
+    /**
+     * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group
+     * depending on the selected carrier with not AM delivery mode.
+     * @param carrier ie., UPS or FedEx
+     * @param mode i.e., standard 
+     * 
+     * @return Collection of ZoneDeliveryModeModel
+     */
+    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLikeForUsedGear(final String carrier, final String mode, 
+                                                                        final boolean payByCustomer);
+    
+    
 
     /**
      * This method will fetch all the partner-pickup-zones from DB who has delivery-modes associated to it
@@ -99,6 +112,18 @@ public interface BlDeliveryModeDao {
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
                                                                                          final boolean payByCustomer);
+    
+    /**
+     * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store not
+     * like AM condition
+     *
+     * @param mode i.e, standard
+     *
+     * @return Collection of BlPickUpZoneDeliveryModeModel
+     */
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLikeForUsedGear(final String mode, final boolean payByCustomer);
+                                                                                         
+
 
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute

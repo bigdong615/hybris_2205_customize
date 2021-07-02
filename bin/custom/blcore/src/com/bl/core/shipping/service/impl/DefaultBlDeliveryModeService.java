@@ -35,6 +35,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,7 +106,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     @Override
     public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
                                                                                    final boolean payByCustomer) {
-        return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModesForUsedGear(carrier, mode, payByCustomer);
+        return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModesNotLikeForUsedGear(carrier, mode, payByCustomer);
     }
 
     /**
@@ -222,7 +223,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode,
                                                                                                     final boolean payByCustomer) {
 
-        return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModesForUsedGear(mode, payByCustomer);
+        return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModesNotLikeForUsedGear(mode, payByCustomer);
     }
 
     /**
@@ -490,6 +491,10 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ",
                     shippingCostModel.getAmount());
+            if(BooleanUtils.isFalse(order.getIsRentalCart()))
+            {
+              return (shippingCostModel.getAmount()/2);
+            }
             return shippingCostModel.getAmount();
         }
         return null;
