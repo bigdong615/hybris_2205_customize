@@ -107,11 +107,11 @@
                                                                                    <c:choose>
                                                                                       <c:when test="${productReference.target.isBookMarked}">
                                                                                         <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
-                                                                                            data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+                                                                                            data-bookmark-value="${productReference.target.isBookMarked}"></span>
                                                                                       </c:when>
                                                                                       <c:otherwise>
                                                                                         <span class="bookmark js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${productReference.target.code}"
-                                                                                         data-bookmark-value="${productReference.target.isBookMarked}">${productReference.target.isBookMarked}</span>
+                                                                                         data-bookmark-value="${productReference.target.isBookMarked}"></span>
                                                                                       </c:otherwise>
                                                                                    </c:choose>
                                                                              </form>

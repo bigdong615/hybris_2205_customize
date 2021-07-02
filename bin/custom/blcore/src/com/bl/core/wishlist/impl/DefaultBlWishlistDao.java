@@ -6,7 +6,6 @@ import de.hybris.platform.commerceservices.search.flexiblesearch.data.SortQueryD
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.wishlist2.impl.daos.impl.DefaultWishlist2Dao;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
@@ -25,11 +24,8 @@ public class DefaultBlWishlistDao extends DefaultWishlist2Dao implements BlWishl
   private UserService userService;
   private PagedFlexibleSearchService pagedFlexibleSearchService;
 
-//  private static final String SORT_WISHLIST_BY_DATE =
-//      " ORDER BY {" + Wishlist2EntryModel.CREATIONTIME + "} DESC ;
-
   private static final String SORT_WISHLIST_BY_DATE = " ORDER BY {" + Wishlist2EntryModel.CREATIONTIME + "} DESC, {" + Wishlist2EntryModel.PK + "}";
-  private static final String FIND_WISHLIST_ENTRIES = "select {wle:pk} from {Wishlist2 as wl}, {Wishlist2Entry as wle} where {wle.wishlist} = {wl.pk} and {wl.user}= ?user";
+  private static final String FIND_WISHLIST_ENTRIES = "select  {pk} , {creationtime}  from {Wishlist2Entry as wle} , {Wishlist2 as wl}  where {wle.wishlist} = {wl.pk} and {wl.user}= ?user";
 
   /**
    * {@inheritDoc}

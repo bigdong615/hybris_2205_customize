@@ -15,8 +15,8 @@ public class DefaultBlWishlistService extends DefaultWishlist2Service implements
 
   private DefaultBlWishlistDao wishlistDao;
 
-  /*
-   *{@inheritDoc}
+  /**
+   * {@inheritDoc}
    */
   @Override
   public SearchPageData<Wishlist2EntryModel> getWishlistEntries(final PageableData pageableData) {
@@ -30,5 +30,4 @@ public class DefaultBlWishlistService extends DefaultWishlist2Service implements
   public void setWishlistDao(DefaultBlWishlistDao wishlistDao) {
     this.wishlistDao = wishlistDao;
   }
-
 }

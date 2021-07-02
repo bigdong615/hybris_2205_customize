@@ -45,8 +45,10 @@ public class DefaultBlWishListFacade implements BlWishListFacade {
 
   }
 
-  /*
+  /**
    * Method to fetch the Current User
+   *
+   * @return CustomerModel
    */
   private CustomerModel fetchUser() {
     return (CustomerModel) getUserService().getCurrentUser();
@@ -64,6 +66,8 @@ public class DefaultBlWishListFacade implements BlWishListFacade {
 
   /**
    * {@inheritDoc}
+   *
+   * @return SearchPageData of Wishlist2EntryData
    */
   @Override
   public SearchPageData<Wishlist2EntryData> getWishlistEntries(final PageableData pageableData) {
@@ -125,5 +129,4 @@ public class DefaultBlWishListFacade implements BlWishListFacade {
       Converter<Wishlist2EntryModel, Wishlist2EntryData> blWishList2EntryConverter) {
     this.blWishList2EntryConverter = blWishList2EntryConverter;
   }
-
 }

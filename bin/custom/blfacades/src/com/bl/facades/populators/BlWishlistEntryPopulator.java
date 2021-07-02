@@ -27,11 +27,10 @@ public class BlWishlistEntryPopulator implements
 
   private ProductData populateProductData(final Wishlist2EntryModel source) {
 
-    final ProductData productData = getProductFacade()
+    return getProductFacade()
         .getProductForCodeAndOptions(source.getProduct().getCode(),
             Arrays.asList(ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY,
                 ProductOption.STOCK));
-    return productData;
   }
 
   public ProductFacade getProductFacade() {

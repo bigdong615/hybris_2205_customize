@@ -12,8 +12,10 @@ import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
  */
 public interface BlWishlistService {
 
-  /*
+  /**
    * This method is to get the Wishlistentries for the pageable data
+   * @param pageableData
+   * @return
    */
   SearchPageData<Wishlist2EntryModel> getWishlistEntries(final PageableData pageableData);
 
