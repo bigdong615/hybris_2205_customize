@@ -126,6 +126,19 @@
         </enumtype>
         <!-- BL-542 End-->
 
+      <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
+        <value code="LATE_NOTES"/>
+        <value code="ORDER_CONTACT_NOTES"/>
+        <value code="SHIPPING_NOTES"/>
+        <value code="RECEIVING_NOTES"/>
+        <value code="MISSING_ITEM_NOTES"/>
+        <value code="BROKEN_ITEM_NOTES"/>
+        <value code="ORDER_NOTES"/>
+        <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
+        <value code="VERIFICATION_NOTES"/>
+        <value code="EXCEPTION_NOTES"/>
+      </enumtype>
+        
     </enumtypes>
 
     <maptypes>
@@ -144,7 +157,7 @@
                 </custom-properties>
             </targetElement>
         </relation>
-        <relation code="BlSerial2BlSubpartRelation" autocreate="true" generate="true" localized="false">
+        <!--<relation code="BlSerial2BlSubpartRelation" autocreate="true" generate="true" localized="false">
             <deployment table="Serial2SubpartRel" typecode="12206"/>
             <sourceElement qualifier="blSerials" type="BlSerialProduct" cardinality="many">
                 <modifiers read="true" write="true" search="true" optional="true"/>
@@ -152,7 +165,16 @@
             <targetElement qualifier="blSubParts" type="BlSubpart" cardinality="many">
                 <modifiers read="true" write="true" search="true" optional="true"/>
             </targetElement>
-        </relation>
+        </relation>-->
+
+      <!--<relation code="BlProduct2BlSubpartRelation" autocreate="true" generate="true" localized="false">
+      <sourceElement qualifier="blproduct" type="BlProduct" cardinality="one">
+        <modifiers read="true" write="true" search="true" optional="true"/>
+      </sourceElement>
+      <targetElement qualifier="blSubParts" type="BlSubpart" cardinality="many">
+        <modifiers read="true" write="true" search="true" optional="true"/>
+      </targetElement>
+    </relation>-->
 
         <!--BlInventoryLocationToInventoryLocationScanHistory-->
         <relation code="BlInventoryLocation2InventoryLocationScanHistoryRelation" autocreate="true" generate="true" localized="false">
@@ -193,6 +215,11 @@
         </relation>
         <!-- BL-542 End-->
 
+        <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
+          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one"/>
+          <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+            collectiontype="list"/>
+        </relation>
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
         autocreate="true">
@@ -1670,6 +1697,7 @@
                     <attribute qualifier="totalDamageWaiverCost" type="java.lang.Double">
                         <description>Total cost of selected Damage Waiver</description>
                         <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="pickUpByMe" type="boolean">
                         <persistence type="property" />
@@ -1704,22 +1732,22 @@
                     <attribute qualifier="rentalStartDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						            <description>Selected rental start date</description>
+                        <description>Rental start date of a gear selected by customer</description>
                     </attribute>
                     <attribute qualifier="rentalEndDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						            <description>Selected rental end date</description>
+                        <description>Rental end date of a gear selected by customer</description>
                     </attribute>
                   <attribute qualifier="actualRentalStartDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
-                    <description>Actual rental start date</description>
+                    <description>Shipping date of a consignment/order</description>
                   </attribute>
                   <attribute qualifier="actualRentalEndDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
-                    <description>Actual rental end date</description>
+                    <description>return date of a consignment/order</description>
                   </attribute>
                     <attribute qualifier="isRentalCart" type="java.lang.Boolean">
                       <persistence type="property" />
@@ -1738,6 +1766,7 @@
                       <modifiers read="true" write="true" search="false"
                       optional="true" />
                       <persistence type="property" />
+                      <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="isAuthorised" type="java.lang.Boolean">
                       <persistence type="property" />
@@ -2053,5 +2082,51 @@
           </attributes>
         </itemtype>
       </typegroup>
+      
+      <typegroup name="Notes">
+        <itemtype code="Notes" autocreate="true" generate="true" >
+          <description>Table to contain all type of order notes.</description>
+          <deployment table="notes" typecode="12217"/>
+          <attributes>
+            <attribute qualifier="note" type="localized:java.lang.String">
+              <description>note that can be provided by different teams</description>
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <persistence type="property">
+                <columntype database="oracle">
+                  <value>CLOB</value>
+                </columntype>
+                <columntype database="sap">
+                  <value>NCLOB</value>
+                </columntype>
+                <columntype>
+                  <value>HYBRIS.LONG_STRING</value>
+                </columntype>
+              </persistence>
+              <custom-properties>
+                <property name="hmcIndexField">
+                  <value>"thefield"</value>
+                </property>
+              </custom-properties>
+            </attribute>
+            <attribute qualifier="type" type="NotesEnum">
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <description>Type of a note</description>
+              <persistence type="property"/>
+            </attribute>
+            <attribute qualifier="userID" type="java.lang.String">
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <description>contain the userID who created that note.</description>
+              <persistence type="property"/>
+            </attribute>
+            <attribute qualifier="fraud" type="boolean">
+              <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+              <description>flag to identify fraud and it will be updated by verification team on Verification_Notes.</description>
+              <persistence type="property"/>
+              <defaultvalue>false</defaultvalue>
+            </attribute>
+          </attributes>
+        </itemtype>
+      </typegroup>
+      
 	</itemtypes>
 </items>
