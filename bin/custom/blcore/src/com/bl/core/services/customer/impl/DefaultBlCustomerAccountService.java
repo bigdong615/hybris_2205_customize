@@ -59,6 +59,11 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
         getModelService().refresh(customerModel);
     }
 
+    /**
+     *  This method used to get address list from db.
+     * @param customerModel
+     * @return
+     */
     @Override
     public List<AddressModel> getAddressBookDeliveryEntries(final CustomerModel customerModel)
     {

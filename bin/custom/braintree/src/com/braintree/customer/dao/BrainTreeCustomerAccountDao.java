@@ -95,6 +95,12 @@ public class BrainTreeCustomerAccountDao extends DefaultCustomerAccountDao
 		return ((result.getCount() > 0) ? (CustomerModel) result.getResult().get(0) : null);
 	}
 
+	/**
+	 *  This method used for getting visible address from db on the basis of current customer and delivery country.
+	 * @param customerModel
+	 * @param deliveryCountries
+	 * @return
+	 */
 	@Override
 	public List<AddressModel> findAddressBookDeliveryEntriesForCustomer(final CustomerModel customerModel,
 			final Collection<CountryModel> deliveryCountries)

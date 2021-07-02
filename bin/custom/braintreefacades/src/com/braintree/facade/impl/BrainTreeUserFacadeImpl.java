@@ -9,11 +9,8 @@ import com.bl.core.services.customer.BlCustomerAccountService;
 import com.braintree.command.request.*;
 import com.braintree.command.result.*;
 import com.braintree.constants.BraintreeConstants;
-import com.braintree.constants.BraintreefacadesConstants;
-import com.braintree.jalo.BrainTreePaymentInfo;
 import com.braintreegateway.Customer;
 import com.braintreegateway.PayPalAccount;
-import com.braintreegateway.PaymentMethod;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.impl.DefaultUserFacade;
@@ -31,10 +28,12 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -86,7 +85,6 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	        ? addressData.getPickStoreAddress() : BooleanUtils.toBoolean(deliveryAddress.getUpsStoreAddress()));
 	    addressData.setPickStoreAddress(Objects.nonNull(addressData.getUpsStoreAddress()) 
 	        ? addressData.getUpsStoreAddress() : BooleanUtils.toBoolean(deliveryAddress.getPickStoreAddress()));
-	    addressData.setShippingAddress(BooleanUtils.negate(addressData.isBillingAddress()));
 	  }
 		final BrainTreeAddressRequest addressRequest = convertBrainTreeAddress(addressData);
 
@@ -684,6 +682,45 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 			defaultBillingAddressData = getAddressConverter().convert(defaultBilligAddress);
 		}
 		return defaultBillingAddressData;
+	}
+
+	/**
+	 * This method is override to get default billing address whiling fetching address book.
+	 */
+	@Override
+	public List<AddressData> getAddressBook()
+	{
+		// Get the current customer's addresses
+		final CustomerModel currentUser = (CustomerModel) getUserService().getCurrentUser();
+		final Collection<AddressModel> addresses = getCustomerAccountService().getAddressBookDeliveryEntries(currentUser);
+
+		if (CollectionUtils.isNotEmpty(addresses))
+		{
+			final List<AddressData> addressBook = new ArrayList<>();
+			final AddressData defaultAddress = getDefaultAddress();
+			final AddressData defaultBillingAddress = getDefaultBillingAddress();
+
+			for (final AddressModel address : addresses)
+			{
+				final AddressData addressData = getAddressConverter().convert(address);
+
+				if (defaultBillingAddress!= null && StringUtils.isNotEmpty(defaultBillingAddress.getId()) && StringUtils.equals(defaultBillingAddress.getId(),addressData.getId())){
+					addressData.setDefaultBillingAddress(Boolean.TRUE);
+				}
+
+				if (defaultAddress != null && StringUtils.isNotEmpty(defaultAddress.getId()) && StringUtils.equals(defaultAddress.getId(),addressData.getId()))
+				{
+					addressData.setDefaultAddress(true);
+					addressBook.add(0, addressData);
+				}
+				else
+				{
+					addressBook.add(addressData);
+				}
+			}
+			return addressBook;
+		}
+		return Collections.emptyList();
 	}
 
 	public PaymentInfoService getPaymentInfoService()

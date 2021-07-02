@@ -788,7 +788,16 @@ public class AccountPageController extends AbstractSearchPageController
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
 		if (Boolean.TRUE.equals(addressForm.getDefaultAddress()) || userFacade.getAddressBook().size() <= 1)
 		{
-			newAddress.setDefaultAddress(true);
+			newAddress.setDefaultAddress(Boolean.TRUE);
+			newAddress.setShippingAddress(Boolean.TRUE);
+		}
+		final AddressData defaultBillingAddress = userFacade.getDefaultBillingAddress();
+		if(defaultBillingAddress != null && defaultBillingAddress.getId().equals(addressForm.getAddressId())){
+			newAddress.setBillingAddress(Boolean.TRUE);
+		}
+	   final AddressData defaultShippingAddress = userFacade.getDefaultAddress();
+		if(defaultShippingAddress != null && defaultShippingAddress.getId().equals(addressForm.getAddressId())){
+			newAddress.setShippingAddress(Boolean.TRUE);
 		}
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
