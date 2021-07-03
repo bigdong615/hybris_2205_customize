@@ -11,6 +11,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <c:url value="/cart/usedgearadd" var="addToCartUrl" />
+
 <div class="page-loader-new-layout">
 	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.."
 		title="Loading.." id="new_loading_Img" />
@@ -67,9 +68,9 @@
 											method="get">
 											<c:forEach items="${product.serialproducts}"
 												var="serialProduct" varStatus="loop">
-												
+												<c:set value="${not empty serialProduct.potentialPromotions}" var="hasPromotion"/>
 												<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
-													<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''} noborder">
+													<tr class="${(loop.index >= 3 ? 'hide-product-row' : '')}  <c:if test="${hasPromotion}">noborder </c:if>">
 														<td><a href="#" data-bs-toggle="modal"
 															data-bs-target="#sku52678"
 															data-cosmetic="${serialProduct.cosmeticRating}"
@@ -115,14 +116,18 @@
 															</c:choose>
 														</td>
 						              <c:if test="${not empty serialProduct.potentialPromotions}">
-                            <tr>
-                              <td colspan="2">
-                                 <span class="badge badge-new">${serialProduct.productTagValues}</span>
-                              </td>
-                              <td colspan="3" class="text-start textGold">
-                                  <strong>$1481.60 with code USED2020</strong>
-                              </td>
-                            </tr>
+						                <c:forEach items="${serialProduct.potentialPromotions}" var="promotion">
+                              <c:if test="${fn:containsIgnoreCase(promotion.code, 'potential')}">
+                                <tr>
+                                  <td colspan="2">
+                                     <span class="badge badge-new">On Sale</span>
+                                  </td>
+                                  <td colspan="3" class="text-start textGold">
+                                        <strong>${fn:escapeXml(promotion.description)} </strong>
+                                  </td>
+                                </tr>
+                              </c:if>
+                            </c:forEach>
                           </c:if>
 												</c:if>
 											</c:forEach>

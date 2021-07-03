@@ -4,7 +4,6 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -23,8 +22,6 @@ public class BlProductTagPopulator implements Populator<BlProductModel, ProductD
       setProductTagValues(target,
           BooleanUtils.isTrue(source.getStaffPick()) ? BlCoreConstants.STAFF_PICK_STRING
               : StringUtils.EMPTY);
-      setProductTagValues(target, BooleanUtils.isTrue(source.getForSale()) &&
-          CollectionUtils.isNotEmpty(source.getSerialProducts()) && CollectionUtils.isNotEmpty(source.getPromotions()) ? BlCoreConstants.ON_SALE : StringUtils.EMPTY);
     }
   }
 
