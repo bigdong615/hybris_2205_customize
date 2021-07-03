@@ -68,6 +68,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Resource;
@@ -184,7 +185,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
-		blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
+		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
 			if (CollectionUtils.isNotEmpty(giftCardModelList)) {
@@ -193,6 +194,11 @@ public class CartPageController extends AbstractCartPageController
 			}
 		}
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		if(StringUtils.isNotEmpty(removedEntries)) {
+			GlobalMessages
+					.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
+							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
+		}
 		return prepareCartUrl(model);
 	}
 
@@ -942,8 +948,16 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	@GetMapping(value = "/checkDateAndStock")
 	@ResponseBody
-	public String checkDateRangeAndStock(final Model model) 
+	public String checkDateRangeAndStock(final Model model,final RedirectAttributes redirectModel)
 	{
+		CartModel cartModel = blCartService.getSessionCart();
+		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
+		if(StringUtils.isNotEmpty(removedEntries)) {
+			GlobalMessages
+					.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
+							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
+			return REDIRECT_CART_URL;
+		}
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
 		if (rentalDateDto == null)
 		{

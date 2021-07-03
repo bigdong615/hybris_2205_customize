@@ -32,8 +32,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
@@ -435,17 +435,10 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	 * @param isCartPage
 	 */
   @Override
-  public void removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
-
-    List<Integer> entryList = new ArrayList<Integer>();
-    cartModel.getEntries().forEach(entry -> {
-      if (entry.getProduct() != null) {
-        BlProductModel blProductModel = (BlProductModel) entry.getProduct();
-        if (blProductModel.getDiscontinued() != null && blProductModel.getDiscontinued()) {
-          entryList.add(entry.getEntryNumber());
-        }
-      }
-    });
+  public String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
+    StringBuilder removedEntry = new StringBuilder();
+    List<Integer> entryList = new ArrayList<>();
+		getDiscontinueEntryList(cartModel,entryList,removedEntry);
     if (CollectionUtils.isNotEmpty(entryList)) {
       Collections.reverse(entryList);
       entryList.forEach(entryNumber -> {
@@ -461,6 +454,11 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
         }
       });
     }
+    String removedEntries = removedEntry.toString();
+		if(StringUtils.isNotEmpty(removedEntries)) {
+			removedEntries = removedEntries.substring(1);
+		}
+   return removedEntries;
   }
 
 	/**
@@ -486,4 +484,21 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 		return getCartModificationConverter().convert(modification);
 	}
 
+	/**
+	 *  This method used for collecting discontinue entries data form cart.
+	 * @param cartModel
+	 * @param entryList
+	 * @param removedEntry
+	 */
+	private void getDiscontinueEntryList(final CartModel cartModel,List entryList, StringBuilder removedEntry){
+		cartModel.getEntries().forEach(entry -> {
+			if (entry.getProduct() != null) {
+				final BlProductModel blProductModel = (BlProductModel) entry.getProduct();
+				if (org.apache.commons.lang.BooleanUtils.isTrue(blProductModel.getDiscontinued())) {
+					entryList.add(entry.getEntryNumber());
+					removedEntry.append(BlFacadesConstants.COMMA_SEPERATER).append(blProductModel.getName());
+				}
+			}
+		});
+	}
 }
