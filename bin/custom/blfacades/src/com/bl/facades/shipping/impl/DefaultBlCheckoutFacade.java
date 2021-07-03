@@ -786,12 +786,54 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * {@inheritDoc}
      */
     @Override
-    public PriceData getModifiedTotalForPrintQuote(final BigDecimal price) {
-   	 final CurrencyModel currentCurrency = getCommonI18NService().getCurrentCurrency();
-   	 if(Objects.nonNull(currentCurrency) && Objects.nonNull(price)) {
-   		 return getPriceDataFactory().create(PriceDataType.BUY, price, currentCurrency);
+    public void getModifiedTotalForPrintQuote(final CartData cartData) {
+   	 if(Objects.nonNull(cartData)) {
+   		 try {
+   		     final BigDecimal totalPrice = getPriceValue(cartData.getSubTotal()).add(getPriceValue(cartData.getTotalDamageWaiverCost()));
+   		     final BigDecimal discountPrice = getPriceValue(cartData.getTotalDiscounts());
+   		     final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
+   		     final PriceData modifiedTotal = getPriceDataForPrice(totalWithDiscount.compareTo(BigDecimal.valueOf(0.0d)) == 1
+      	        ? totalWithDiscount : BigDecimal.valueOf(0.0d));
+   		     cartData.setTotalPrice(modifiedTotal);
+   		 }
+   		 catch(final Exception exception) {
+   			 BlLogger.logMessage(LOG, Level.ERROR, "Error while Modifing total price for Print Quoate Page.", exception);
+   			 throw exception;
+   		 }   	    
+   	  }  	 
+    }
+    
+    /**
+     * Gets the price value.
+     *
+     * @param priceData the price data
+     * @return the price value
+     */
+    private BigDecimal getPriceValue(final PriceData priceData) {
+  	  if(Objects.nonNull(priceData) && Objects.nonNull(priceData.getValue())) {
+  	    return priceData.getValue();
+  	  }
+  	  return BigDecimal.valueOf(0.0d);
+  	}
+    
+    /**
+     * Gets the price data object for provided price.
+     *
+     * @param price the price
+     * @return the price data for price
+     */
+    private PriceData getPriceDataForPrice(final BigDecimal price) {
+   	 try {
+   		 final CurrencyModel currentCurrency = getCommonI18NService().getCurrentCurrency();
+   		 if(Objects.nonNull(currentCurrency) && Objects.nonNull(price)) {
+   		     return getPriceDataFactory().create(PriceDataType.BUY, price, currentCurrency);
+         }
+      	 return null;
    	 }
-   	 return null;
+   	 catch(final Exception exception) {
+   		 BlLogger.logMessage(LOG, Level.ERROR, "Error while converting price to PriceData object", exception);
+   		 throw exception;
+   	 }   	 
     }
 
     public BlDeliveryModeService getBlZoneDeliveryModeService() {

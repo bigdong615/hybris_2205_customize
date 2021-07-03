@@ -20,13 +20,22 @@
 <%@ taglib prefix="agreementInfo" tagdir="/WEB-INF/tags/responsive/agreementInfo" %>
 
 <c:url value="/checkout/multi/summary/braintree/view" var="reviewPageUrl"/>
+<c:url value="/cart" var="cartPageUrl"/>
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>Borrow Lenses - Checkout - Step 4</title>
+    <c:choose>
+    	<c:when test="${fn:containsIgnoreCase(fromPage, 'Review') == true }">
+    		<title>Borrow Lenses - Checkout - Step 4</title>
+    	</c:when>
+    	<c:when test="${fn:containsIgnoreCase(fromPage, 'cartPage') == true }">
+    		<title>Borrow Lenses - Checkout - Step 1</title>
+    	</c:when>
+    </c:choose>
+    
 
     <!-- Bootstrap core CSS - requierd for ALL pages -->
     		<link rel="stylesheet" type="text/css" media="all" href="/blstorefront/_ui/responsive/theme-bltheme/css/bootstrap.min.css"/>
@@ -54,40 +63,44 @@
                                 <div class="row">
                                     <div class="col-5">
                                         <p class="overline"><spring:theme code="text.review.page.date.start"/></p>
-                                        <p class="lightteal mb-0"><b>${formattedRentalStartDate}</b></p>
-                                        <p class="body14">
-                                        	<c:choose>
-                                        		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
-                                        			<spring:theme code="text.review.page.date.start.delivery.pickup"/>
-                                        		</c:when>
-                                        		<c:otherwise>
-                                        			<spring:theme code="text.review.page.date.start.delivery" arguments="${deliveryMode.carrier }"/>
-                                        		</c:otherwise>
-                                        	</c:choose>    
-                                        </p>
+                                        <p class="printQuoteDate mb-0"><b>${formattedRentalStartDate}</b></p>
+                                        <c:if test="${fn:containsIgnoreCase(fromPage, 'Review') == true }">
+	                                        <p class="body14">
+	                                        	<c:choose>
+	                                        		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
+	                                        			<spring:theme code="text.review.page.date.start.delivery.pickup"/>
+	                                        		</c:when>
+	                                        		<c:otherwise>
+	                                        			<spring:theme code="text.review.page.date.start.delivery" arguments="${deliveryMode.carrier }"/>
+	                                        		</c:otherwise>
+	                                        	</c:choose>    
+	                                        </p>
+                                        </c:if>
                                     </div>
                                     <div class="col-2 text-center">
                                         <img class="rental-arrow" src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/icon-arrow.svg">
                                     </div>
                                     <div class="col-5">
                                         <p class="overline"><spring:theme code="text.review.page.date.end"/></p>
-                                        <p class="lightteal mb-0"><b>${formattedRentalEndDate}</b></p>
-                                        <p class="body14">
-											<c:choose>
-                                        		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
-                                        			<spring:theme code="text.review.page.date.end.delivery.pickup"/>
-                                        		</c:when>
-                                        		<c:otherwise>
-                                        			<spring:theme code="text.review.page.date.end.delivery" arguments="${deliveryMode.carrier }"/>
-                                        		</c:otherwise>
-                                        	</c:choose> 
-										</p>
+                                        <p class="printQuoteDate mb-0"><b>${formattedRentalEndDate}</b></p>
+                                        <c:if test="${fn:containsIgnoreCase(fromPage, 'Review') == true }">
+	                                        <p class="body14">
+												<c:choose>
+	                                        		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
+	                                        			<spring:theme code="text.review.page.date.end.delivery.pickup"/>
+	                                        		</c:when>
+	                                        		<c:otherwise>
+	                                        			<spring:theme code="text.review.page.date.end.delivery" arguments="${deliveryMode.carrier }"/>
+	                                        		</c:otherwise>
+	                                        	</c:choose> 
+											</p>
+										</c:if>
                                     </div>
                                 </div>
                             </div>
                             <div class="reviewCart pb-0">
                                 <h5 class="mb-4"><spring:theme code="text.review.page.your.rental.title"/></h5>
-                                <c:forEach items="${allItems}" var="cartEntry" >
+                                <c:forEach items="${cartData.entries}" var="cartEntry" >
                                 <div class="row mb-4">
                                     <div class="col-md-3 text-center"><product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/></div>
                                     <div class="col-md-9 mt-3">
@@ -111,7 +124,24 @@
                                 </div>
                                 </c:forEach>
                             </div>
-                            <div class="reviewCart pb-0">
+                            <c:choose>
+                            	<c:when test="${fn:containsIgnoreCase(fromPage, 'cartPage') == true }">
+                            		<div class="reviewCart pb-0">
+                                <h5 class="mb-4"><spring:theme code="text.review.print.page.your.rental.delivery.payment.title"/></h5>
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <p class="gray80 body14">
+                                            <spring:theme code="text.review.print.page.your.rental.delivery.payment.message"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-6">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            	</c:when>
+                            	<c:when test="${fn:containsIgnoreCase(fromPage, 'Review') == true }">
+                            		<div class="reviewCart pb-0">
                                 <c:choose>
                             		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
                             			<h5 class="mb-4"><spring:theme code="text.review.page.delivery.pickup.title"/></h5>
@@ -162,6 +192,9 @@
                             <c:if test="${not empty cartData.giftCardData}">
                                 <multi-checkout-paypal:paymentInfoGiftCard cartData="${cartData}"/>
                             </c:if>
+                            	</c:when>
+                            </c:choose>
+                            
                             </form>
                         </div>
                         <div class="col-md-5">
@@ -211,7 +244,15 @@
                         </div>
                         
                         <div class="text-start mt-3">
-                            <a href="${reviewPageUrl}" class="btn btn-primary"><spring:theme code="text.review.print.page.your.rental.return.to.review"/></a>
+                        	<c:choose>
+                        		<c:when test="${fn:containsIgnoreCase(fromPage, 'cartPage') == true }">
+                        			<a href="${cartPageUrl}" class="btn btn-primary"><spring:theme code="text.review.print.page.your.rental.return.to.cart"/></a>
+                        		</c:when>
+                        		<c:when test="${fn:containsIgnoreCase(fromPage, 'Review') == true }">
+                        			<a href="${reviewPageUrl}" class="btn btn-primary"><spring:theme code="text.review.print.page.your.rental.return.to.review"/></a>
+                        		</c:when>
+                        	</c:choose>
+                            
                         </div> 
                         
                     </div>
@@ -219,6 +260,7 @@
             </div>
         </div>    
     </section>   
+    <cart:damageWaiverInfo/>
     <!-- Required for ALL pages - JQuery and Bootstrap framework -->  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>  
     <script src="/blstorefront/_ui/responsive/common/js/bootstrap.bundle.min.js"></script>

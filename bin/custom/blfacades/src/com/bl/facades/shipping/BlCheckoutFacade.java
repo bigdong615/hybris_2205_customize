@@ -9,6 +9,7 @@ import com.bl.facades.shipping.data.BlShippingGroupData;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -250,5 +251,5 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @param price the price
      * @return the modified total for print quote
      */
-    PriceData getModifiedTotalForPrintQuote(final BigDecimal price);
+    void getModifiedTotalForPrintQuote(final CartData cartData);
 }

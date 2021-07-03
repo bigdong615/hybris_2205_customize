@@ -433,3 +433,6 @@ font-size: 21px;
     box-shadow: none;
     -webkit-box-shadow: none;
 }
+.printQuoteDate {
+	color: #52bfc0;
+}

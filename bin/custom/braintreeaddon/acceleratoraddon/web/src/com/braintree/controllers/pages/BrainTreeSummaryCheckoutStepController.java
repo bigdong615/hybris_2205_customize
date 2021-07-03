@@ -6,10 +6,10 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
-import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.ControllerConstants;
+import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
@@ -26,15 +26,12 @@ import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
-import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.product.ProductOption;
-import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.payment.AdapterException;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -51,8 +48,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import de.hybris.platform.cms2.model.pages.ContentPageModel;
-
 
 @Controller
 @RequestMapping(value = "checkout/multi/summary/braintree")
@@ -85,7 +80,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	@Resource(name = "blRentalDateCookieGenerator")
 	private BlRentalDateCookieGenerator blRentalDateCookieGenerator;
 	
-	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	@ModelAttribute(name = BraintreeaddonControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
 		return BlRentalDateUtils.getRentalsDuration();
@@ -105,7 +100,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
     addCartDataInModel(cartData, model);
     setFormattedRentalDates(model);
-    model.addAttribute("currentPage", BlControllerConstants.REVIEW_PAGE);
+    model.addAttribute(BraintreeaddonControllerConstants.CURRENT_PAGE, BraintreeaddonControllerConstants.REVIEW_PAGE);
     model.addAttribute("shipsFromPostalCode", "");
 
 		// Only request the security code if the SubscriptionPciOption is set to Default.
@@ -139,11 +134,11 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		if(Objects.nonNull(rentalDateDto))
 		{
 			final String formattedRentalStartDate = getFormattedDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(),
-					BlControllerConstants.DATE_FORMAT_PATTERN));
-			model.addAttribute(BlControllerConstants.FORMATTED_RENTAL_START_DATE,formattedRentalStartDate);
+					BraintreeaddonControllerConstants.DATE_FORMAT_PATTERN));
+			model.addAttribute(BraintreeaddonControllerConstants.FORMATTED_RENTAL_START_DATE,formattedRentalStartDate);
 			final String formattedRentalEndDate = getFormattedDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(),
-			    BlControllerConstants.DATE_FORMAT_PATTERN));
-			model.addAttribute(BlControllerConstants.FORMATTED_RENTAL_END_DATE,formattedRentalEndDate);
+					BraintreeaddonControllerConstants.DATE_FORMAT_PATTERN));
+			model.addAttribute(BraintreeaddonControllerConstants.FORMATTED_RENTAL_END_DATE,formattedRentalEndDate);
 		}
 	}
 
@@ -156,7 +151,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	 */
 	private String getFormattedDate(final Date date)
 	{
-		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.REVIEW_PAGE_DATE_FORMAT);
+		return BlDateTimeUtils.convertDateToStringDate(date, BraintreeaddonControllerConstants.REVIEW_PAGE_DATE_FORMAT);
 	}
 
 	/**
@@ -175,13 +170,13 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 						.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
 								{gcCode}, locale));
 			}
-			redirectAttributes.addFlashAttribute(BlControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
+			redirectAttributes.addFlashAttribute(BraintreeaddonControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
 			} catch (final Exception exception) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
 					"Error occurred while adding message to redirect attribute for removed gift card",
 					exception);
 		}
-		return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
+		return REDIRECT_PREFIX + BraintreeaddonControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 	}
 
 	@PostMapping(value = "/placeOrder")
@@ -338,33 +333,20 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	}
 	
 	@GetMapping(value = "/reviewPrint")
-  public String print(final HttpServletRequest request, final Model model) {
-	  try {
-	    final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
-	    modifyTotalForReviewPrintPage(cartData);
-	    addCartDataInModel(cartData, model);
-	    setFormattedRentalDates(model);
-	    return ControllerConstants.Views.Pages.MultiStepCheckout.ReviewPrint;
-	  }
-	  catch(final Exception exception) {
-	    
-	  }
-	  return getCheckoutStep().currentStep();
-  }
-	
-	/**
-	 * Modify total (excluding shipping and tax price) for review print page.
-	 *
-	 * @param cartData the cart data
-	 */
-	private void modifyTotalForReviewPrintPage(final CartData cartData) {
-	  if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getTotalTax()) && Objects.nonNull(cartData.getDeliveryCost())) {
-	    final BigDecimal totalOfShippingAndTax = cartData.getDeliveryCost().getValue().add(cartData.getTotalTax().getValue());
-	    final BigDecimal printReviewPageTotal = cartData.getTotalPriceWithTax().getValue().subtract(totalOfShippingAndTax);
-	    final PriceData modifiedTotal = blCheckoutFacade.getModifiedTotalForPrintQuote(printReviewPageTotal);
-	    cartData.setTotalPriceWithTax(modifiedTotal);
-	  }
-	}
+  	public String print(final HttpServletRequest request, final Model model) {
+		try {
+			final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+			blCheckoutFacade.getModifiedTotalForPrintQuote(cartData);
+			addCartDataInModel(cartData, model);
+			setFormattedRentalDates(model);
+			model.addAttribute(BraintreeaddonControllerConstants.FROM_PAGE_STATUS, BraintreeaddonControllerConstants.REVIEW_PAGE);
+			return ControllerConstants.Views.Pages.MultiStepCheckout.ReviewPrint;
+		}
+		catch(final Exception exception) {
+			BlLogger.logMessage(LOG, Level.ERROR, "Error while creating data for Print Page from Review page", exception);
+		}
+		return getCheckoutStep().currentStep();
+  	}
 	
 	/**
 	 * Adds the cart data in model.
@@ -373,23 +355,21 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	 * @param model the model
 	 */
 	private void addCartDataInModel(final CartData cartData, final Model model) {
-	  if(Objects.nonNull(cartData)) {
-	    if (cartData.getEntries() != null && !cartData.getEntries().isEmpty())
-	    {
-	      for (final OrderEntryData entry : cartData.getEntries())
-	      {
-	        final String productCode = entry.getProduct().getCode();
-	        final ProductData product = getProductFacade().getProductForCodeAndOptions(productCode,
-	            Arrays.asList(ProductOption.BASIC, ProductOption.PRICE));
-	        entry.setProduct(product);
-	      }
-	    }
-	    model.addAttribute("cartData", cartData);
-	    model.addAttribute("allItems", cartData.getEntries());
-	    model.addAttribute("deliveryAddress", cartData.getDeliveryAddress());
-	    model.addAttribute("deliveryMode", cartData.getDeliveryMode());
-	    model.addAttribute("paymentInfo", cartData.getPaymentInfo());
-	  }    
+		if(Objects.nonNull(cartData)) {
+			if (Objects.nonNull(cartData.getEntries()) && CollectionUtils.isNotEmpty(cartData.getEntries())) {
+			  cartData.getEntries().forEach(cartEntry -> {
+			  	final String productCode = cartEntry.getProduct().getCode();
+			  	final ProductData product = getProductFacade().getProductForCodeAndOptions(productCode,
+              		Arrays.asList(ProductOption.BASIC, ProductOption.PRICE));
+			  	cartEntry.setProduct(product);
+			  });
+			}
+			model.addAttribute(BraintreeaddonControllerConstants.CART_DATA, cartData);
+			model.addAttribute(BraintreeaddonControllerConstants.ALL_ITEMS, cartData.getEntries());
+			model.addAttribute(BraintreeaddonControllerConstants.DELIVERY_ADDRESS, cartData.getDeliveryAddress());
+			model.addAttribute(BraintreeaddonControllerConstants.DELIVERY_MODE, cartData.getDeliveryMode());
+			model.addAttribute(BraintreeaddonControllerConstants.PAYMENT_INFO, cartData.getPaymentInfo());
+		}
 	}
 
 	public CustomFieldsService getCustomFieldsService() {
