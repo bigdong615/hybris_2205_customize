@@ -19,7 +19,7 @@
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <c:if test ="${product.productTagValues ne null && product.productTagValues ne 'Great Value' && product.productTagValues ne 'Staff Pick'}">
-<span class="badge badge-limited-stock">${product.productTagValues}</span>
+<span class="badge badge-new">${product.productTagValues}</span>
 </c:if>
  <span class="bookmark"></span>
   <c:choose>

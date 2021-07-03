@@ -920,5 +920,21 @@
 	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
+
+
+	<alias alias="ruleUsedGearProductConditionTranslator" name="defaultRuleUsedGearProductConditionTranslator" />
+	<bean id="defaultRuleUsedGearProductConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleUsedGearProductConditionTranslator" />
+
+
+	<!-- SOLR Field value Resolver for OnSale solr attribute -->
+	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
+
+	<bean id="blOnSaleFacetNameProvider"
+		class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider">
+	</bean>
+
+
 </beans>
+
+
 
