@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -94,10 +95,10 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       populatePrices(source, target);
       populateStock(target);
     }else {
-      // Populates Serial Product Price Data
-     if(null != this.getValue(source , "onSale")){
-        setProductTagValues(source, target, "onSale", "On Sale");
+     if(null != this.getValue(source , BlFacadesConstants.ON_SALE)){
+        setProductTagValues(source, target, BlFacadesConstants.ON_SALE, BlFacadesConstants.ON_SALE_TAG_VALUE);
       }
+      // Populates Serial Product Price Data
       populateSerialProductPrices(source, target);
     }
     // Populate product's classification features
