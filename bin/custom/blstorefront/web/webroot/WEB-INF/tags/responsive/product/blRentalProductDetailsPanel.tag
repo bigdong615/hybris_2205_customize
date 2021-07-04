@@ -61,7 +61,7 @@
                                  <div class="notification notification-error mt-4">
                                      <c:choose>
                                             <c:when test="${not empty product.alternativeProduct}">
-                                             ${product.alternativeProduct}
+                                            ${ycommerce:sanitizeHTML(product.alternativeProduct)}
                                              </c:when>
                                             <c:otherwise>
                                             <spring:theme code="pdp.product.discontinue.text"/>

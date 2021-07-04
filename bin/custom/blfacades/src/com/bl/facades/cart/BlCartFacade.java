@@ -9,6 +9,7 @@ import de.hybris.platform.core.model.order.CartModel;
 import java.util.Date;
 
 import com.bl.facades.product.data.RentalDateDto;
+import java.util.List;
 
 /**
  * It is responsible for getting all necessary information for cart.
@@ -121,4 +122,12 @@ public interface BlCartFacade extends CartFacade {
 	 * @throws CommerceCartModificationException
 	 */
 	public CartModificationData updateCartEntry(final long entryNumber, final long quantity, final CartModel cartModel) throws CommerceCartModificationException; // NOSONAR
+
+	/**
+	 * This method used for collecting discontinue entries number form cart.
+	 * @return List<Integer>
+	 * @param cartModel
+	 * @param removedEntry
+	 */
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry); // NOSONAR
 }

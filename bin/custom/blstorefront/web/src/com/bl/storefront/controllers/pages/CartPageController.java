@@ -951,11 +951,8 @@ public class CartPageController extends AbstractCartPageController
 	public String checkDateRangeAndStock(final Model model,final RedirectAttributes redirectModel)
 	{
 		CartModel cartModel = blCartService.getSessionCart();
-		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
-		if(StringUtils.isNotEmpty(removedEntries)) {
-			GlobalMessages
-					.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
-							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
+		List<Integer> entryList = blCartFacade.getDiscontinueEntryList(cartModel,new StringBuilder());
+		if(CollectionUtils.isNotEmpty(entryList)) {
 			return REDIRECT_CART_URL;
 		}
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();

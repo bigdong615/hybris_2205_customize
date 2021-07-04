@@ -21,16 +21,20 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -54,6 +58,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   private BaseStoreService baseStoreService;
   
   private BlCommerceStockService blCommerceStockService;
+
+	private Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter;
 
   /**
    * {@inheritDoc}
@@ -437,8 +443,7 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
   @Override
   public String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage) {
     StringBuilder removedEntry = new StringBuilder();
-    List<Integer> entryList = new ArrayList<>();
-		getDiscontinueEntryList(cartModel,entryList,removedEntry);
+    List<Integer> entryList = getDiscontinueEntryList(cartModel,removedEntry);
     if (CollectionUtils.isNotEmpty(entryList)) {
       Collections.reverse(entryList);
       entryList.forEach(entryNumber -> {
@@ -484,21 +489,37 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 		return getCartModificationConverter().convert(modification);
 	}
 
+	@Resource(name = "i18nService")
+	private I18NService i18nService;
 	/**
-	 *  This method used for collecting discontinue entries data form cart.
+	 *  This method used for collecting discontinue entries number form cart.
 	 * @param cartModel
-	 * @param entryList
 	 * @param removedEntry
 	 */
-	private void getDiscontinueEntryList(final CartModel cartModel,List entryList, StringBuilder removedEntry){
+	@Override
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry){
+		List<Integer> entryList = new ArrayList<>();
 		cartModel.getEntries().forEach(entry -> {
 			if (entry.getProduct() != null) {
 				final BlProductModel blProductModel = (BlProductModel) entry.getProduct();
 				if (org.apache.commons.lang.BooleanUtils.isTrue(blProductModel.getDiscontinued())) {
 					entryList.add(entry.getEntryNumber());
-					removedEntry.append(BlFacadesConstants.COMMA_SEPERATER).append(blProductModel.getName());
+					removedEntry.append(BlFacadesConstants.COMMA_SEPERATER).append(blProductModel.getName(
+							i18nService.getCurrentLocale()));
 				}
 			}
 		});
+		return entryList;
+	}
+
+	@Override
+	public Converter<AddToCartParams, CommerceCartParameter> getCommerceCartParameterConverter() {
+		return commerceCartParameterConverter;
+	}
+
+	@Override
+	public void setCommerceCartParameterConverter(
+			Converter<AddToCartParams, CommerceCartParameter> commerceCartParameterConverter) {
+		this.commerceCartParameterConverter = commerceCartParameterConverter;
 	}
 }
