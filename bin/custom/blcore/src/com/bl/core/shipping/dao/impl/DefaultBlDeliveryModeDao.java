@@ -84,7 +84,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     * {@inheritDoc}
     */
    @Override
-   public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLikeForUsedGear(final String carrier, final String mode,
+   public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
                                                                                           final boolean payByCustomer) {
        final StringBuilder barcodeList = queryForShipToHomeDeliveryWithoutAMModes(mode);
        
