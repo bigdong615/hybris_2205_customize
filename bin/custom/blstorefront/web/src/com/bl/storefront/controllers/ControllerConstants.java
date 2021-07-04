@@ -107,6 +107,7 @@ public interface ControllerConstants
 				String GiftWrapPage = "pages/checkout/multi/giftWrapPage"; // NOSONAR
 
 				String DeliveryOrPickupPage = "pages/checkout/multi/deliveryOrPickup"; // NOSONAR
+				String ReviewPrint = "pages/checkout/multi/reviewPrint"; // NOSONAR
 			}
 
 			interface Password // NOSONAR
