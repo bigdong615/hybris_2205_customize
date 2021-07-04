@@ -47,7 +47,6 @@ public interface BlDeliveryModeDao {
      */
     Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode, final String pstCutOffTime,
                                                                         final boolean payByCustomer);
-
     /**
      * This method will fetch all the partner-pickup-zones from DB who has delivery-modes associated to it
      * @return Collection of PartnerPickUpStoreModel
@@ -99,7 +98,7 @@ public interface BlDeliveryModeDao {
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
                                                                                          final boolean payByCustomer);
-
+    
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute
      * @param deliveryMode to specify SF or NYC Shipping group
