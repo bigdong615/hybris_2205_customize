@@ -106,7 +106,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     @Override
     public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
                                                                                    final boolean payByCustomer) {
-        return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModesNotLikeForUsedGear(carrier, mode, payByCustomer);
+        return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModesForUsedGear(carrier, mode, payByCustomer);
     }
 
     /**
@@ -223,7 +223,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode,
                                                                                                     final boolean payByCustomer) {
 
-        return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModesNotLikeForUsedGear(mode, payByCustomer);
+        return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModesForUsedGear(mode, payByCustomer);
     }
 
     /**

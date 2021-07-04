@@ -10,14 +10,11 @@ import java.util.Objects;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.bl.core.services.cart.BlCartService;
+import com.bl.facades.constants.BlFacadesConstants;
 
 
 public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
-	
-	
-	private static final String ROUND_TRIP = "Round Trip";
 	
 	@Autowired
 	private BlCartService blCartService;
@@ -28,11 +25,11 @@ public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
         super.populate(source, target);
         
        //Added condition for used Gear Delivery mode  
-       final CartModel sessionCart = getBlCartService().getSessionCart();
+       final CartModel sessionCart = blCartService.getSessionCart();
        if(Objects.nonNull(sessionCart) && BooleanUtils.isFalse(sessionCart.getIsRentalCart()))
        {
       	 String deliveryMethodName = String.valueOf(source.getName());
-          String usedGearDeliveryMode = deliveryMethodName.replace(ROUND_TRIP, "");
+          String usedGearDeliveryMode = deliveryMethodName.replace(BlFacadesConstants.ROUND_TRIP, "");
       	 target.setName(usedGearDeliveryMode);
        }
       
@@ -46,21 +43,7 @@ public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
       		  ? source.getShippingGroup().getCode() : StringUtils.EMPTY);
     }
 
-	/**
-	 * @return the blCartService
-	 */
-	public BlCartService getBlCartService()
-	{
-		return blCartService;
-	}
-
-	/**
-	 * @param blCartService the blCartService to set
-	 */
-	public void setBlCartService(BlCartService blCartService)
-	{
-		this.blCartService = blCartService;
-	}
+	
     
     
 }
