@@ -38,7 +38,6 @@
   <body class="cart print-quote">    
     <section id="cartProcess" class="pt-5">
         <div class="container">
-            
             <div class="row justify-content-center">
                 <div class="col-xl-10">
                     <div class="row">
@@ -47,71 +46,73 @@
                             <div class="notification notification-warning"><spring:theme code="text.review.print.page.your.rental.warning"/></div>
                             <hr>
                             <form>
-                            <c:if test="${not empty formattedRentalStartDate and not empty formattedRentalEndDate}">
-	                            <div class="reviewCart pb-0">
-	                                <h5 class="mb-4"><spring:theme code="text.review.page.date.title"/></h5>
-	                                <div class="row">
-	                                    <div class="col-5">
-	                                        <p class="overline"><spring:theme code="text.review.page.date.start"/></p>
-	                                        <p class="printQuoteDate mb-0"><b>${formattedRentalStartDate}</b></p>
-	                                    </div>
-	                                    <div class="col-2 text-center">
-	                                        <img class="rental-arrow" src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/icon-arrow.svg">
-	                                    </div>
-	                                    <div class="col-5">
-	                                        <p class="overline"><spring:theme code="text.review.page.date.end"/></p>
-	                                        <p class="printQuoteDate mb-0"><b>${formattedRentalEndDate}</b></p>
-	                                    </div>
-	                                </div>
-	                            </div>
-                            </c:if>
-                            <div class="reviewCart pb-0">
-                                <h5 class="mb-4"><spring:theme code="text.review.page.your.rental.title"/></h5>
-                                <c:forEach items="${cartData.entries}" var="cartEntry" >
-                                <div class="row mb-4">
-                                    <div class="col-md-3 text-center"><product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/></div>
-                                    <div class="col-md-9 mt-3">
-                                        <p class="gray80 body14">
-                                            <b class="gray100">${cartEntry.product.name}</b>
-                                            <spring:theme code="text.review.page.your.rental.qty"/>  ${cartEntry.quantity }<br>
-                                            <c:choose>
-													<c:when test="${cartEntry.gearGuardProFullWaiverSelected }">
-													 + <spring:theme code="text.review.page.damage.waiver.gear.plus"/><br>
-													</c:when>
-													<c:when test="${cartEntry.gearGuardWaiverSelected }">
-													 + <spring:theme code="text.review.page.damage.waiver.gear"/><br>
-													</c:when>
-													<c:otherwise>
-													 + <spring:theme code="text.review.page.damage.waiver.gear.no"/><br>
-													</c:otherwise>
-												 </c:choose>
-                                            <spring:theme code="text.review.page.your.rental.total"/>  <format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
-                                        </p>    
-                                    </div>
-                                </div>
-                                </c:forEach>
-                            </div>
-                            <div class="reviewCart pb-0">
-                                <h5 class="mb-4"><spring:theme code="text.review.print.page.your.rental.delivery.payment.title"/></h5>
-                                <div class="row mb-4">
-                                    <div class="col-12">
-                                        <p class="gray80 body14">
-                                            <spring:theme code="text.review.print.page.your.rental.delivery.payment.message"/>
-                                        </p>
-                                    </div>
-                                    <div class="col-6">
-                                        
-                                    </div>
-                                </div>
-                            </div>                            
+								<c:if test="${not empty formattedRentalStartDate and not empty formattedRentalEndDate}">
+									<div class="reviewCart pb-0">
+										<h5 class="mb-4"><spring:theme code="text.review.page.date.title"/></h5>
+										<div class="row">
+											<div class="col-5">
+												<p class="overline"><spring:theme code="text.review.page.date.start"/></p>
+												<p class="printQuoteDate mb-0"><b>${formattedRentalStartDate}</b></p>
+											</div>
+											<div class="col-2 text-center">
+												<img class="rental-arrow" src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/icon-arrow.svg">
+											</div>
+											<div class="col-5">
+												<p class="overline"><spring:theme code="text.review.page.date.end"/></p>
+												<p class="printQuoteDate mb-0"><b>${formattedRentalEndDate}</b></p>
+											</div>
+										</div>
+									</div>
+								</c:if>
+								<div class="reviewCart pb-0">
+									<h5 class="mb-4"><spring:theme code="text.review.page.your.rental.title"/></h5>
+									<c:forEach items="${cartData.entries}" var="cartEntry" >
+										<div class="row mb-4">
+											<div class="col-md-3 text-center">
+												<product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/>
+											</div>
+											<div class="col-md-9 mt-3">
+												<p class="gray80 body14">
+													<b class="gray100">${cartEntry.product.name}</b>
+													<spring:theme code="text.review.page.your.rental.qty"/>  ${cartEntry.quantity }<br>
+													<c:choose>
+															<c:when test="${cartEntry.gearGuardProFullWaiverSelected }">
+																+ <spring:theme code="text.review.page.damage.waiver.gear.plus"/><br>
+															</c:when>
+															<c:when test="${cartEntry.gearGuardWaiverSelected }">
+																+ <spring:theme code="text.review.page.damage.waiver.gear"/><br>
+															</c:when>
+															<c:otherwise>
+																+ <spring:theme code="text.review.page.damage.waiver.gear.no"/><br>
+															</c:otherwise>
+														</c:choose>
+													<spring:theme code="text.review.page.your.rental.total"/>  <format:price priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
+												</p>    
+											</div>
+										</div>
+									</c:forEach>
+								</div>
+								<div class="reviewCart pb-0">
+									<h5 class="mb-4"><spring:theme code="text.review.print.page.your.rental.delivery.payment.title"/></h5>
+									<div class="row mb-4">
+										<div class="col-12">
+											<p class="gray80 body14">
+												<spring:theme code="text.review.print.page.your.rental.delivery.payment.message"/>
+											</p>
+										</div>
+										<div class="col-6">
+											
+										</div>
+									</div>
+								</div>                            
                             </form>
                         </div>
                         <div class="col-md-5">
                             <div id="orderSummary" class="card">
                                 <h5> <spring:theme code="checkout.multi.order.summary"/></h5>
                                 <c:if test="${cartData.isRentalCart and not empty rentalDate.selectedFromDate and not empty rentalDate.selectedToDate}">
-                                <hr>
-                                <p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</p>
+									<hr>
+									<p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</p>
                                 </c:if>
                                 <hr>
                                 <table id="costSummary">
