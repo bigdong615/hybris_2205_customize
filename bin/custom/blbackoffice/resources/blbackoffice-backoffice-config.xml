@@ -1139,6 +1139,23 @@
 			</ea:tab>
 		</editorArea:editorArea>
 	</context>
+	
+	 <context merge-by="type" parent="GenericItem" type="Packaginginfo" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="warehousingbackoffice.tab.general">
+                <editorArea:section name="warehousingbackoffice.section.general.properties">
+                    <editorArea:attribute qualifier="labelURL"/>
+                    <editorArea:attribute qualifier="totalShippingPrice"/>
+                    <editorArea:attribute qualifier="shipmentIdentificationNumber"/>
+                    <editorArea:attribute qualifier="trackingNumber"/>
+                    <editorArea:attribute qualifier="graphicImage"/>
+                    <editorArea:attribute qualifier="hTMLImage"/>
+                    <editorArea:attribute qualifier="consignmentPOS"/>
+                    <editorArea:attribute qualifier="consignment"/>
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
 
 </config>
 

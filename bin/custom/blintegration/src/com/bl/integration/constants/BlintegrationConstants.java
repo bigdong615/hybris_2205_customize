@@ -59,6 +59,9 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String UTF_8_CODE = "utf-8";
 	public static final String PACAKAGING_TYPE_CODE = "02";
 	public static final String PACAKAGING_TYPE_DESCIPTION = "Customer Supplied Package";
+	public static final String SIGNATURE_SERVICE_CODE = "SERVICE_DEFAULT";
+	public static final String CATEGORY_CODE = "CONSUMER_GOODS";
+	public static final String RECIPIENT_TYPE = "RECIPIENT";
 
 	private BlintegrationConstants()
 	{
