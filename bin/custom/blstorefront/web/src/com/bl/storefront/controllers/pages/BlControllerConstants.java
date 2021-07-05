@@ -127,6 +127,8 @@ public class BlControllerConstants
 	public static final String DISCONTINUE_MESSAGE_KEY = "cart.discontinue.product.removed.entry.text";
 
 	public static final String BRAINTREE_GENERAL_ERROR_KEY = "braintree.billing.general.error";
+	public static final String CART_PAGE = "cartPage";
+	public static final String FROM_PAGE = "fromPage";
 	private BlControllerConstants()
 	{
 		//empty

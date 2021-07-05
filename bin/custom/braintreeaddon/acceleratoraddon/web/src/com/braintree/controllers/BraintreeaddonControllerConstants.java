@@ -19,6 +19,23 @@ public interface BraintreeaddonControllerConstants
     public static final String PAY_PAL_GUEST_REGISTER_ERROR = "braintree.checkout.guest.error";
     public static final String PAY_PAL_ADDRESS_ERROR = "braintree.paypal.shipping.error";
     public static final String PAY_PAL_HAED_ERROR = "braintree.paypal.head.error";
+    
+    public static final String FROM_PAGE_STATUS = "fromPage";
+    public static final String REVIEW_PAGE = "Review";
+    public static final String RENTAL_DATE = "rentalDate";
+    public static final String CURRENT_PAGE = "currentPage";
+    public static final String DATE_FORMAT_PATTERN = "dd-MM-yyyy";
+    public static final String FORMATTED_RENTAL_START_DATE = "formattedRentalStartDate";
+    public static final String FORMATTED_RENTAL_END_DATE = "formattedRentalEndDate";
+    public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
+    public static final String GIFT_CARD_REMOVE = "giftCardCodeRemove";
+    public static final String PAYMENT_METHOD_CHECKOUT_URL = "/checkout/multi/payment-method/add";
+    
+    public static final String CART_DATA = "cartData";
+    public static final String ALL_ITEMS = "allItems";
+    public static final String DELIVERY_ADDRESS = "deliveryAddress";
+    public static final String DELIVERY_MODE = "deliveryMode";
+    public static final String PAYMENT_INFO = "paymentInfo";
 
     interface Views
     {

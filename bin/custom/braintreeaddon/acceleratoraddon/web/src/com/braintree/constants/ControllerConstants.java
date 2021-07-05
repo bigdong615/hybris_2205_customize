@@ -39,6 +39,7 @@ public interface ControllerConstants
 				String SilentOrderPostPage = "pages/checkout/multi/silentOrderPostPage";
 				String AccountLayoutPage = "pages/account/accountLayoutPage";
 				String FallbackPage = "pages/checkout/multi/fallbackPage";
+				String ReviewPrint = "pages/checkout/multi/reviewPrint";
 			}
 		}
 
