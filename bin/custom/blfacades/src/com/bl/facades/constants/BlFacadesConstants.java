@@ -30,6 +30,7 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
 
   public static final String ON_SALE = "onSale";
   public static final String ON_SALE_TAG_VALUE = "On Sale";
+  public static final String POTENTIAL = "potential";
 
   public static final String ROUND_TRIP = "Round Trip";
 

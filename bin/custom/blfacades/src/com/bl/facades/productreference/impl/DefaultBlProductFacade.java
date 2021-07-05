@@ -1,6 +1,7 @@
 package com.bl.facades.productreference.impl;
 
 import com.bl.core.model.BlProductModel;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.populators.BlSerialProductPopulator;
 import com.bl.facades.product.data.SerialProductData;
 import com.bl.facades.productreference.BlCommerceProductReferenceService;
@@ -76,14 +77,14 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
   }
 
   /**
-   * Check potential Message
+   * Check potential Message for onSale true serial
    * @param serialProduct
    * @return
    */
   private String getSerialPromotionMessage(final SerialProductData serialProduct) {
      if(CollectionUtils.isNotEmpty(serialProduct.getPotentialPromotions())){
        for(PromotionData p:serialProduct.getPotentialPromotions()) {
-         if (StringUtils.containsIgnoreCase(p.getCode(), "potential") && serialProduct.isOnSale()) {
+         if (StringUtils.containsIgnoreCase(p.getCode(), BlFacadesConstants.POTENTIAL) && serialProduct.isOnSale()) {
             return p.getDescription();
          }
        }

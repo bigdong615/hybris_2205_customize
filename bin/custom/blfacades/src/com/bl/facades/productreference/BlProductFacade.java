@@ -19,7 +19,6 @@ public interface BlProductFacade extends ProductFacade{
    */
   List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct, final List<ProductOption> options, final Integer limit);
 
-
   /**
    * Get promotion Message when used gear serial product
    * promotion is active
