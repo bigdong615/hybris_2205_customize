@@ -676,10 +676,10 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		final CustomerModel currentCustomer = (CustomerModel) getUserService().getCurrentUser();
 		AddressData defaultBillingAddressData = null;
 
-		final AddressModel defaultBilligAddress =currentCustomer.getDefaultBillingAddress();
-		if (defaultBilligAddress != null)
+		final AddressModel defaultBillingAddress =currentCustomer.getDefaultBillingAddress();
+		if (defaultBillingAddress != null)
 		{
-			defaultBillingAddressData = getAddressConverter().convert(defaultBilligAddress);
+			defaultBillingAddressData = getAddressConverter().convert(defaultBillingAddress);
 		}
 		return defaultBillingAddressData;
 	}
