@@ -115,12 +115,12 @@
 																</c:otherwise>
 															</c:choose>
 														</td>
-						              <c:if test="${not empty serialProduct.potentialPromotions}">
+						              <c:if test="${not empty serialProduct.potentialPromotions && serialProduct.onSale eq 'true'}">
 						                <c:forEach items="${serialProduct.potentialPromotions}" var="promotion">
                               <c:if test="${fn:containsIgnoreCase(promotion.code, 'potential')}">
                                 <tr>
                                   <td colspan="2">
-                                     <span class="badge badge-new">On Sale</span>
+                                     <span class="badge badge-new">text.serial.product.on.Sale</span>
                                   </td>
                                   <td colspan="3" class="text-start textGold">
                                         <strong>${fn:escapeXml(promotion.description)} </strong>

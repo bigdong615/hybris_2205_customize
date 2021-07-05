@@ -72,8 +72,8 @@
 			</c:choose>
 	</h6>
 
-	<c:if test="${not empty product.ugPromotionMessage }">
-  	<p class="sale"><span class="saleprice">${product.ugPromotionMessage}</p>
+	<c:if test="${not empty product.ugPromotionMessage}">
+  	<p class="sale"> <span class="saleprice">${product.ugPromotionMessage}</p>
 	</c:if>
 
 			<c:forEach var="variantOption" items="${product.variantOptions}">

@@ -1103,6 +1103,16 @@
         </y:actions>
     </context>
 
+	<context parent="Product" merge-by="type" type="BlProduct" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea" name="">
+			<ea:tab name="hmc.tab.product.properties" position="2">
+				<ea:section name="hmc.product.descriptions" merge-mode="append">
+					<ea:attribute editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
+						qualifier="alternativeProduct"/>
+				</ea:section>
+			</ea:tab>
+		</editorArea:editorArea>
+	</context>
 
 
 <!--To calculate the total without tax -->

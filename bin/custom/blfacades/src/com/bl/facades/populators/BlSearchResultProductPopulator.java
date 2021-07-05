@@ -5,6 +5,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.facades.productreference.BlProductFacade;
 import com.bl.logging.BlLogger;
+import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -64,6 +65,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
   private BlCommercePriceService commercePriceService;
+  private BlWishlistOptionsPopulator blWishlistOptionsPopulator;
 
   /**
    * this method is created for populating values from source to target
@@ -92,11 +94,12 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
       populatePrices(source, target);
       populateStock(target);
+      populateBookMarks(target);
     }else {
-      // Populates Serial Product Price Data
-     if(null != this.getValue(source , "onSale")){
-        setProductTagValues(source, target, "onSale", "On Sale");
+     if(null != this.getValue(source , BlFacadesConstants.ON_SALE)){
+        setProductTagValues(source, target, BlFacadesConstants.ON_SALE, BlFacadesConstants.ON_SALE_TAG_VALUE);
       }
+      // Populates Serial Product Price Data
       populateSerialProductPrices(source, target);
       popaulatePromotionMessage(target);
     }
@@ -116,6 +119,20 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     populateUrl(source, target);
     populatePromotions(source, target);
     target.setIsWatching(getStockNotificationFacade().isWatchingProduct(target));
+  }
+
+
+  /**
+   * To Populate the Product data for bookmark
+   * @param target
+   */
+  private void populateBookMarks(ProductData target) {
+    final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+    if (blProductModel != null)
+    {
+      getBlWishlistOptionsPopulator().populate(blProductModel,target);
+    }
+
   }
 
   private void popaulatePromotionMessage(final ProductData target) {
@@ -488,12 +505,19 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
     this.stockNotificationFacade = stockNotificationFacade;
   }
 
-
   public BlProductFacade getBlProductFacade() {
     return blProductFacade;
   }
 
   public void setBlProductFacade(BlProductFacade blProductFacade) {
     this.blProductFacade = blProductFacade;
+  }
+  public BlWishlistOptionsPopulator getBlWishlistOptionsPopulator() {
+    return blWishlistOptionsPopulator;
+  }
+
+  public void setBlWishlistOptionsPopulator(
+      BlWishlistOptionsPopulator blWishlistOptionsPopulator) {
+    this.blWishlistOptionsPopulator = blWishlistOptionsPopulator;
   }
 }
