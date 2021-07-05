@@ -142,6 +142,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addSaleAndRentQuery(target);
     } else {
       addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
+      addQueryForCategory(target,BlCoreConstants.IS_DISCONTINUED,BlCoreConstants.FALSE);
       addSaleAndRentQuery(target);
     }
   }
