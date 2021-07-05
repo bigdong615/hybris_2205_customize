@@ -77,8 +77,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			setPromotionsForSerials(serialProductModel,serialProductData);
 			//onSale changes
-			serialProductData.setOnSale(serialProductModel.getOnSale() == null ? false : serialProductModel
-					.getOnSale());
+			serialProductData.setOnSale(serialProductModel.getOnSale() != null && serialProductModel.getOnSale());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
 			{
 				serialProductData.setFinalSalePrice(getProductPriceData(serialProductModel.getFinalSalePrice()));
@@ -107,6 +106,11 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		target.setSerialproducts(serialProductDataList);
 	}
 
+	/**
+	 * Populating serial Specific promotions on serial product data
+	 * @param serialProductModel
+	 * @param serialProductData
+	 */
 	private void setPromotionsForSerials(final BlSerialProductModel serialProductModel, final SerialProductData serialProductData) {
 		final BaseSiteModel baseSiteModel = getBaseSiteService().getCurrentBaseSite();
 		if (baseSiteModel != null) {

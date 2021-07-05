@@ -58,7 +58,7 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
    * Get promotion Message when used gear serial product promotion is active
    *
    * @param blProductData
-   * @return
+   * @return String
    */
   @Override
   public String getPromotionMessageFromUsedGear(final ProductData blProductData) {
@@ -68,8 +68,10 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
       getBlSerialProductPopulator().populate(blProductModel,blProductData);
       if(CollectionUtils.isNotEmpty(blProductData.getSerialproducts())){
         for(Object serialProduct: blProductData.getSerialproducts()){
-           promoMessage = getSerialPromotionMessage((SerialProductData) serialProduct) ;
-           break;
+           promoMessage = getSerialPromotionMessage((SerialProductData) serialProduct);
+           if(StringUtils.isNotBlank(promoMessage)){
+             break;
+           }
         }
       }
     }
@@ -79,7 +81,7 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
   /**
    * Check potential Message for onSale true serial
    * @param serialProduct
-   * @return
+   * @return String
    */
   private String getSerialPromotionMessage(final SerialProductData serialProduct) {
      if(CollectionUtils.isNotEmpty(serialProduct.getPotentialPromotions())){

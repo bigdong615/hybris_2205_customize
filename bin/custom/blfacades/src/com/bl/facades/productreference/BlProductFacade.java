@@ -23,7 +23,7 @@ public interface BlProductFacade extends ProductFacade{
    * Get promotion Message when used gear serial product
    * promotion is active
    * @param blProductData
-   * @return
+   * @return message if present
    */
   String getPromotionMessageFromUsedGear(final ProductData blProductData);
 

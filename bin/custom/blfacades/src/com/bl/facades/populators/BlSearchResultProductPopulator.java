@@ -101,7 +101,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       }
       // Populates Serial Product Price Data
       populateSerialProductPrices(source, target);
-      popaulatePromotionMessage(target);
+      populatePromotionMessage(target);
     }
     // Populate product's classification features
     getProductFeatureListPopulator().populate(getFeaturesList(source), target);
@@ -135,7 +135,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
   }
 
-  private void popaulatePromotionMessage(final ProductData target) {
+  /**
+   * Populating message on BlProduct when any Serial has active promotion
+   * @param target
+   */
+  private void populatePromotionMessage(final ProductData target) {
     target.setUgPromotionMessage(getBlProductFacade().getPromotionMessageFromUsedGear(target));
   }
 
