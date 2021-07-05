@@ -806,39 +806,6 @@ function createHostedFields(clientInstance) {
 					$("#number").addClass("crs-error-field");
 					$('.page-loader-new-layout').hide();
 				}
-	
-				if(state.fields.expirationMonth.isEmpty)
-				{
-					hasNoError = false;
-					$('#submit_silentOrderPostForm').removeAttr("disabled");
-					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-					creditCardValidation(ACC.ccError.cardMonth);
-					$("#expirationMonth").addClass("crs-error-field");
-					$('.page-loader-new-layout').hide();
-				}
-				
-				if(state.fields.expirationYear.isEmpty)
-				{
-					hasNoError = false;
-					$('#submit_silentOrderPostForm').removeAttr("disabled");
-					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-					creditCardValidation(ACC.ccError.cardYear);
-					$("#expirationYear").addClass("crs-error-field");
-					$('.page-loader-new-layout').hide();
-				}
-	
-				if(state.fields.cvv.isEmpty)
-				{
-					hasNoError = false;
-					$('#submit_silentOrderPostForm').removeAttr("disabled");
-					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-					creditCardValidation(ACC.ccError.cardCVV);
-					$("#cvv").addClass("crs-error-field");
-					$('.page-loader-new-layout').hide();
-				}
-				
-			
-				
 				if(!state.fields.number.isPotentiallyValid )
 				{
 					hasNoError = false;
@@ -847,7 +814,43 @@ function createHostedFields(clientInstance) {
 					creditCardValidation(ACC.ccError.cardNumberInValid);
 					$("#number").addClass("crs-error-field");	
 					$('.page-loader-new-layout').hide();				
-				}
+				}	
+				if(state.fields.expirationMonth.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardMonth);
+					$("#expirationMonth").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}				
+				if(state.fields.expirationYear.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardYear);
+					$("#expirationYear").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}	
+				if(state.fields.cvv.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardCVV);
+					$("#cvv").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}				
+				if(!state.fields.cvv.isPotentiallyValid)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardCVVInValid);
+					$("#cvv").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}			
 				
 				var billingFormErrorCounts = validateBillingAddressFields();
 				if(billingFormErrorCounts > 0)
@@ -877,7 +880,8 @@ function createHostedFields(clientInstance) {
 						   $('#submit_silentOrderPostForm').removeAttr("disabled");
 						    creditCardValidation(tokenizeErr);
 							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-							handleClientError(tokenizeErr)
+							$('.page-loader-new-layout').hide();
+							handleClientError(tokenizeErr);							
 						} 
 						else 
 						{

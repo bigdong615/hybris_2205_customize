@@ -33,7 +33,9 @@
 	<property name="serialfinalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
+    <property name="isBookMarked" type="java.lang.Boolean"/>
       <property name="isWatching" type="java.lang.Boolean"/>
+		<property name="alternativeProduct" type="String"/>
   </bean>
 
 
@@ -61,6 +63,7 @@
   <enum class="de.hybris.platform.commercefacades.product.ProductOption">
     <value>REQUIRED_DATA</value>
     <value>REQUIRED_SERIAL_DATA</value>
+    <value>REQUIRED_WISHLIST</value>
   </enum>
 
   <!--BL-174 : This DTO contains date related information(for temporary purpose once local storage code is ready
@@ -505,7 +508,19 @@
 		<property name="showShipmentDisplayImage" type="Boolean"/>
 		<property name="showPickupLocation" type="Boolean"/>
 	</bean>
-	
+
+  <!--BL-781 For Wishlist2data -->
+  <bean class="com.bl.facades.wishlist.data.Wishlist2Data">
+    <property name="name" type="String"/>
+    <property name="decription" type="String"/>
+		<property name="entries" type="java.util.List&lt;com.bl.facades.wishlist.data.Wishlist2EntryData&gt;"/>
+  </bean>
+
+  <!--BL-781 For Wishlist2EntryData -->
+  <bean class="com.bl.facades.wishlist.data.Wishlist2EntryData">
+    <property name="product" type="de.hybris.platform.commercefacades.product.data.ProductData"/>
+    <property name="entryPk" type="Long"/>
+  </bean>
 
 </beans>
 

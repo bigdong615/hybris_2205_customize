@@ -181,6 +181,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String RENTAL_DURATION = "rentalDuration";
 	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
 	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
+	public static final String SUCCESS = "Success";
+	public static final String ERROR = "Error";
 	public static final String FREE_RENTAL_DATES = "freeRentalDates";
 	public static final String TOTAL_INCLUDING_DAMAGE_WAIVER = "totalIncludingDamageWaiver";
 	public static final String TOTAL_WITH_DAMAGE_WAIVER = "totalwithDamageWaiver";
@@ -189,6 +191,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD_CODE = "giftCardCode";
 
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
+	public static final String IS_DISCONTINUED = "isDiscontinued";
 	
 	private BlCoreConstants()
 	{
