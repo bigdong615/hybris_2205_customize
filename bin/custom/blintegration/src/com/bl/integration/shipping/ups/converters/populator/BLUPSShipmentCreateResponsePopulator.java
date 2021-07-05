@@ -6,11 +6,11 @@ package com.bl.integration.shipping.ups.converters.populator;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bl.integration.ups.ship.v1.pojo.PackageResultsType;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentResponse;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentResultsType;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.bl.shipment.data.UPSShipmentPackageResult;
+import com.ups.xmlschema.xoltws.ship.v1.PackageResultsType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentResponse;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentResultsType;
 
 
 /**

@@ -1,10 +1,14 @@
 package com.bl.integration.services.impl;
 
+import de.hybris.platform.util.Config;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 
@@ -28,18 +32,18 @@ import com.bl.integration.services.BLShipmentCreationService;
 import com.bl.integration.shipping.ups.converters.populator.BLFedExShipmentCreateRequestPopulator;
 import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateRequestPopulator;
 import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateResponsePopulator;
-import com.bl.integration.ups.error.v1.pojo.ErrorDetailType;
-import com.bl.integration.ups.error.v1.pojo.Errors;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentRequest;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentResponse;
-import com.bl.integration.ups.upss.v1.pojo.UPSSecurity;
-import com.bl.integration.ups.wsdl.shipment.v1.pojo.ShipPortType;
-import com.bl.integration.ups.wsdl.shipment.v1.pojo.ShipService;
-import com.bl.integration.ups.wsdl.shipment.v1.pojo.ShipmentErrorMessage;
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.google.gson.Gson;
 import com.sun.xml.ws.client.ClientTransportException;
+import com.ups.wsdl.xoltws.ship.v1.ShipPortType;
+import com.ups.wsdl.xoltws.ship.v1.ShipService;
+import com.ups.wsdl.xoltws.ship.v1.ShipmentErrorMessage;
+import com.ups.xmlschema.xoltws.error.v1.ErrorDetailType;
+import com.ups.xmlschema.xoltws.error.v1.Errors;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentRequest;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentResponse;
+import com.ups.xmlschema.xoltws.upss.v1.UPSSecurity;
 
 
 /**
@@ -66,6 +70,14 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 	@Value("${blintegration.ups.shipment.endpoint.url}")
 	private String endpointURL;
+
+	@Value("${blintegration.ups.shipment.create.qname}")
+	private String qName;
+
+	@Value("${blintegration.ship.wsdl.location}")
+	private String wsdlLocation;
+
+	private ShipService shipService;
 
 	/**
 	 * @param upsShipmentRequest
@@ -201,7 +213,9 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	private ShipmentResponse createUPSShipmentResponse(final ShipmentRequest shipmentRequest, final UPSSecurity upsSecurity)
 			throws ShipmentErrorMessage
 	{
-		final ShipService shipService = new ShipService();
+		final QName qname = new QName(qName, "ShipService");
+		shipService = new ShipService(getServiceURL(), qname);
+
 		final ShipPortType shipPort = shipService.getShipPort();
 		final BindingProvider bp = (BindingProvider) shipPort;
 		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointURL);
@@ -212,6 +226,11 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 
 		return shipPort.processShipment(shipmentRequest, upsSecurity);
 
+	}
+
+	private URL getServiceURL()
+	{
+		return this.getClass().getClassLoader().getResource(Config.getString(wsdlLocation, "META-INF/wsdl/Ship.wsdl"));
 	}
 
 	/**

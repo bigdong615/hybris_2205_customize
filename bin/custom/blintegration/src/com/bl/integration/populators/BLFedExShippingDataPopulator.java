@@ -102,6 +102,152 @@ public class BLFedExShippingDataPopulator
 
 		/** Creating Pickup Details Data **/
 		final FedExPickupDetailData fedExPickupDetailData = new FedExPickupDetailData();
+		populatePickupDetails(consignment, fedExPickupDetailData);
+		fedExShippingRequestData.setPickupDetail(fedExPickupDetailData);
+
+		/** Creating Delivery Details Data **/
+
+		final FedExDeliveryDetailData fedExDeliveryDetailData = new FedExDeliveryDetailData();
+		populateDeliveryDetails(consignment, fedExDeliveryDetailData);
+		fedExShippingRequestData.setDeliveryDetail(fedExDeliveryDetailData);
+
+		/** Creating Shipper Details Data **/
+
+		final FedExShipperData fedExShipperData = new FedExShipperData();
+		fedExShipperData.setAccountNumber(shipperAccountNo);
+
+		fedExShipperData.setDisplayName("San Carlos Warehouse / Waltham Warehouse");
+
+		final AddressData shipperContactData = new AddressData();
+		shipperContactData.setFirstName("Returns Department ");
+		shipperContactData.setCompanyName("Borrowlenses");
+		shipperContactData.setPhone("844-853-6737");
+		fedExShipperData.setContact(shipperContactData);
+
+		fedExShippingRequestData.setShipper(fedExShipperData);
+
+		/** Creating Total Declared Value Data **/
+		final FedExTotalDeclaredValueData fedExTotalDeclaredValueData = new FedExTotalDeclaredValueData();
+		fedExTotalDeclaredValueData.setCurrencyCode("USD");
+		if (consignment.getOrder().getDeliveryMode() instanceof BlRushDeliveryModeModel)
+		{
+			fedExTotalDeclaredValueData.setAmount(100);
+		}
+		fedExShippingRequestData.setTotalDeclaredValue(fedExTotalDeclaredValueData);
+
+		/** Creating Package Data **/
+		final List<FedExPackageData> packageList = new ArrayList<>();
+		final FedExPackageData packageData = new FedExPackageData();
+
+		final FedExDimensionsData fedExDimensionsData = new FedExDimensionsData();
+		fedExDimensionsData.setHeight(Integer.valueOf(packagingInfo.getHeight()));
+		fedExDimensionsData.setLength(Integer.valueOf(packagingInfo.getLength()));
+		fedExDimensionsData.setWidth(Integer.valueOf(packagingInfo.getWidth()));
+		fedExDimensionsData.setUnits(packagingInfo.getDimensionUnit());
+		packageData.setDimensions(fedExDimensionsData);
+
+		final FedExWeightData fedExWeightData = new FedExWeightData();
+		fedExWeightData.setUnits(packagingInfo.getWeightUnit());
+		fedExWeightData.setValue(Integer.valueOf(packagingInfo.getGrossWeight()));
+		packageData.setWeight(fedExWeightData);
+		fedExShippingRequestData.setPackages(packageList);
+
+		/** Creating External References Data **/
+		final FedExExternalReferencesData fedExExternalReferencesData = new FedExExternalReferencesData();
+		fedExExternalReferencesData.setPoNumber("75024");
+		fedExExternalReferencesData.setDeptNumber("001N");
+		fedExExternalReferencesData.setRmaNumber("RMA00101");
+		fedExExternalReferencesData.setInvoiceNumber("001C4453TX75024");
+		fedExExternalReferencesData.setUrl("http://retailer.com/orders/75024");
+		fedExExternalReferencesData.setOther("Other");
+		fedExShippingRequestData.setExternalReferences(fedExExternalReferencesData);
+
+		/** Creating Notification Data **/
+		final FedExNotificationsData fedExNotificationsData = new FedExNotificationsData();
+		final List<FedExEmailData> emailList = new ArrayList<>();
+		final FedExEmailData fedExEmailData = new FedExEmailData();
+		fedExEmailData.setRecipientType("RECIPIENT");
+		fedExEmailData.setNotifyOnShipment(true);
+		fedExEmailData.setNotifyOnInTransit(true);
+		fedExEmailData.setNotifyOnNextStop(true);
+		fedExEmailData.setNotifyOnException(true);
+		fedExEmailData.setNotifyOnDelivery(true);
+		fedExEmailData.setLocale("en");
+		fedExEmailData.setEmailAddress("john.doe@gmail.com");
+		fedExEmailData.setRecipientOptInTimestamp(1459897586589l);
+		emailList.add(fedExEmailData);
+		fedExNotificationsData.setEmail(emailList);
+
+		final List<FedExSMSlData> smsList = new ArrayList<>();
+		final FedExSMSlData fedExSMSlData = new FedExSMSlData();
+		fedExSMSlData.setRecipientType(BlintegrationConstants.RECIPIENT_TYPE);
+		fedExSMSlData.setNotifyOnShipment(false);
+		fedExSMSlData.setNotifyOnInTransit(false);
+		fedExSMSlData.setNotifyOnNextStop(true);
+		fedExSMSlData.setNotifyOnException(true);
+		fedExSMSlData.setNotifyOnDelivery(true);
+		fedExSMSlData.setLocale("en");
+		// Need to check
+		fedExSMSlData.setPhoneNumber("555-555-3273");
+		fedExSMSlData.setRecipientOptInTimestamp(consignment.getOrder().getCreationtime().getTime());
+		smsList.add(fedExSMSlData);
+		fedExNotificationsData.setSms(smsList);
+		fedExShippingRequestData.setNotifications(fedExNotificationsData);
+
+		return fedExShippingRequestData;
+
+	}
+
+	/**
+	 * @param consignment
+	 * @param fedExDeliveryDetailData
+	 */
+	private void populateDeliveryDetails(final ConsignmentModel consignment, final FedExDeliveryDetailData fedExDeliveryDetailData)
+	{
+		final FedExLocationData deliveryLocationData = new FedExLocationData();
+		final AddressModel deliveryAddress = consignment.getOrder().getDeliveryAddress();
+
+		final AddressData deliveryData = addressConverter.convert(deliveryAddress);
+		final AddressData deliveryAddressData = new AddressData();
+		deliveryAddressData.setLine1(deliveryData.getFirstName());
+		deliveryAddressData.setTown(deliveryData.getTown());
+
+		if (deliveryData.getRegion() != null && deliveryData.getRegion().getIsocodeShort() != null)
+		{
+			final RegionData deliveryRegionData = new RegionData();
+			deliveryRegionData.setIsocodeShort(deliveryData.getRegion().getIsocodeShort());
+			deliveryAddressData.setRegion(deliveryRegionData);
+		}
+
+		if (deliveryData.getCountry() != null && deliveryData.getCountry().getIsocode() != null)
+		{
+			final CountryData deliveryCountryData = new CountryData();
+			deliveryCountryData.setIsocode(deliveryData.getCountry().getIsocode());
+			deliveryCountryData.setName(deliveryData.getCountry().getName());
+			deliveryAddressData.setCountry(deliveryCountryData);
+		}
+
+		deliveryAddressData.setPostalCode(deliveryData.getPostalCode());
+		deliveryLocationData.setAddress(deliveryAddressData);
+		deliveryLocationData.setResidential(true);
+
+		if (consignment.getOrder().getDeliveryMode() instanceof ZoneDeliveryModeModel)
+		{
+			final long readyTime = getReadyTime(consignment.getOrder().getDeliveryMode());
+			deliveryLocationData.setHoursOfOperationStart(readyTime);
+			deliveryLocationData.setHoursOfOperationEnd(1459897586589l);
+		}
+
+		fedExDeliveryDetailData.setInstructions(consignment.getOrder().getDeliveryNotes());
+		fedExDeliveryDetailData.setLocation(deliveryLocationData);
+	}
+
+	/**
+	 * @param consignment
+	 * @param fedExPickupDetailData
+	 */
+	private void populatePickupDetails(final ConsignmentModel consignment, final FedExPickupDetailData fedExPickupDetailData)
+	{
 		final DeliveryModeModel deliveryMode = consignment.getOrder().getDeliveryMode();
 
 		final FedExLocationData fedExLocationData = new FedExLocationData();
@@ -164,130 +310,6 @@ public class BLFedExShippingDataPopulator
 
 		fedExLocationData.setResidential(false);
 		fedExPickupDetailData.setLocation(fedExLocationData);
-		fedExShippingRequestData.setPickupDetail(fedExPickupDetailData);
-
-		/** Creating Delivery Details Data **/
-
-		final FedExDeliveryDetailData fedExDeliveryDetailData = new FedExDeliveryDetailData();
-		final FedExLocationData deliveryLocationData = new FedExLocationData();
-		final AddressModel deliveryAddress = consignment.getOrder().getDeliveryAddress();
-
-		final AddressData deliveryData = addressConverter.convert(deliveryAddress);
-		final AddressData deliveryAddressData = new AddressData();
-		deliveryAddressData.setLine1(deliveryData.getFirstName());
-		deliveryAddressData.setTown(deliveryData.getTown());
-
-		if (deliveryData.getRegion() != null && deliveryData.getRegion().getIsocodeShort() != null)
-		{
-			final RegionData deliveryRegionData = new RegionData();
-			deliveryRegionData.setIsocodeShort(deliveryData.getRegion().getIsocodeShort());
-			deliveryAddressData.setRegion(deliveryRegionData);
-		}
-
-		if (deliveryData.getCountry() != null && deliveryData.getCountry().getIsocode() != null)
-		{
-			final CountryData deliveryCountryData = new CountryData();
-			deliveryCountryData.setIsocode(deliveryData.getCountry().getIsocode());
-			deliveryCountryData.setName(deliveryData.getCountry().getName());
-			deliveryAddressData.setCountry(deliveryCountryData);
-		}
-
-		deliveryAddressData.setPostalCode(deliveryData.getPostalCode());
-		deliveryLocationData.setAddress(deliveryAddressData);
-		deliveryLocationData.setResidential(true);
-
-		if (consignment.getOrder().getDeliveryMode() instanceof ZoneDeliveryModeModel)
-		{
-			final long readyTime = getReadyTime(consignment.getOrder().getDeliveryMode());
-			deliveryLocationData.setHoursOfOperationStart(readyTime);
-			deliveryLocationData.setHoursOfOperationEnd(1459897586589l);
-		}
-
-		fedExDeliveryDetailData.setInstructions(consignment.getOrder().getDeliveryNotes());
-		fedExDeliveryDetailData.setLocation(deliveryLocationData);
-
-		fedExShippingRequestData.setDeliveryDetail(fedExDeliveryDetailData);
-
-		final FedExShipperData fedExShipperData = new FedExShipperData();
-		fedExShipperData.setAccountNumber(shipperAccountNo);
-
-		fedExShipperData.setDisplayName("San Carlos Warehouse / Waltham Warehouse");
-
-		final AddressData shipperContactData = new AddressData();
-		shipperContactData.setFirstName("Returns Department ");
-		shipperContactData.setCompanyName("Borrowlenses");
-		shipperContactData.setPhone("844-853-6737");
-		fedExShipperData.setContact(shipperContactData);
-
-		fedExShippingRequestData.setShipper(fedExShipperData);
-
-
-		final FedExTotalDeclaredValueData fedExTotalDeclaredValueData = new FedExTotalDeclaredValueData();
-		fedExTotalDeclaredValueData.setCurrencyCode("USD");
-		if (consignment.getOrder().getDeliveryMode() instanceof BlRushDeliveryModeModel)
-		{
-			fedExTotalDeclaredValueData.setAmount(100);
-		}
-		fedExShippingRequestData.setTotalDeclaredValue(fedExTotalDeclaredValueData);
-
-		final List<FedExPackageData> packageList = new ArrayList<>();
-		final FedExPackageData packageData = new FedExPackageData();
-
-		final FedExDimensionsData fedExDimensionsData = new FedExDimensionsData();
-		fedExDimensionsData.setHeight(Integer.valueOf(packagingInfo.getHeight()));
-		fedExDimensionsData.setLength(Integer.valueOf(packagingInfo.getLength()));
-		fedExDimensionsData.setWidth(Integer.valueOf(packagingInfo.getWidth()));
-		fedExDimensionsData.setUnits(packagingInfo.getDimensionUnit());
-		packageData.setDimensions(fedExDimensionsData);
-
-		final FedExWeightData fedExWeightData = new FedExWeightData();
-		fedExWeightData.setUnits(packagingInfo.getWeightUnit());
-		fedExWeightData.setValue(Integer.valueOf(packagingInfo.getGrossWeight()));
-		packageData.setWeight(fedExWeightData);
-		fedExShippingRequestData.setPackages(packageList);
-
-		final FedExExternalReferencesData fedExExternalReferencesData = new FedExExternalReferencesData();
-		fedExExternalReferencesData.setPoNumber("75024");
-		fedExExternalReferencesData.setDeptNumber("001N");
-		fedExExternalReferencesData.setRmaNumber("RMA00101");
-		fedExExternalReferencesData.setInvoiceNumber("001C4453TX75024");
-		fedExExternalReferencesData.setUrl("http://retailer.com/orders/75024");
-		fedExExternalReferencesData.setOther("Other");
-		fedExShippingRequestData.setExternalReferences(fedExExternalReferencesData);
-
-		final FedExNotificationsData fedExNotificationsData = new FedExNotificationsData();
-		final List<FedExEmailData> emailList = new ArrayList<>();
-		final FedExEmailData fedExEmailData = new FedExEmailData();
-		fedExEmailData.setRecipientType("RECIPIENT");
-		fedExEmailData.setNotifyOnShipment(true);
-		fedExEmailData.setNotifyOnInTransit(true);
-		fedExEmailData.setNotifyOnNextStop(true);
-		fedExEmailData.setNotifyOnException(true);
-		fedExEmailData.setNotifyOnDelivery(true);
-		fedExEmailData.setLocale("en");
-		fedExEmailData.setEmailAddress("john.doe@gmail.com");
-		fedExEmailData.setRecipientOptInTimestamp(1459897586589l);
-		emailList.add(fedExEmailData);
-		fedExNotificationsData.setEmail(emailList);
-
-		final List<FedExSMSlData> smsList = new ArrayList<>();
-		final FedExSMSlData fedExSMSlData = new FedExSMSlData();
-		fedExSMSlData.setRecipientType(BlintegrationConstants.RECIPIENT_TYPE);
-		fedExSMSlData.setNotifyOnShipment(false);
-		fedExSMSlData.setNotifyOnInTransit(false);
-		fedExSMSlData.setNotifyOnNextStop(true);
-		fedExSMSlData.setNotifyOnException(true);
-		fedExSMSlData.setNotifyOnDelivery(true);
-		fedExSMSlData.setLocale("en");
-		// Need to check
-		fedExSMSlData.setPhoneNumber("555-555-3273");
-		fedExSMSlData.setRecipientOptInTimestamp(consignment.getOrder().getCreationtime().getTime());
-		smsList.add(fedExSMSlData);
-		fedExNotificationsData.setSms(smsList);
-		fedExShippingRequestData.setNotifications(fedExNotificationsData);
-
-		return fedExShippingRequestData;
-
 	}
 
 	/**
