@@ -5,7 +5,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
-
+<c:url var="homepageUrl" value="/" />
 <template:page pageTitle="${pageTitle}">
 	<div class="screen"></div>
 	<section id="confirmationWindow">
@@ -16,8 +16,9 @@
 						<h1><spring:theme code="order.confirmation.page.thanks.message"/></h1>
 						<h5 class="mb-5">
 							<spring:theme code="order.confirmation.page.order.number" arguments="${orderCode}"/>
-							<br>
-							(${orderData.rentalDates.selectedFromDate} - ${orderData.rentalDates.selectedToDate})
+							<c:if test="${cartData.isRentalCart}">
+							  (${orderData.rentalDates.selectedFromDate} - ${orderData.rentalDates.selectedToDate})
+							</c:if>
 						</h5>
 						<c:if test="${not empty orderData.giftCardData}">
 						  <div class="notification notification-tip check d-inline-block mb-5">
@@ -32,7 +33,7 @@
 						</p>
 						<div class="confirmation-actions my-5">
 							<a href="#" class="btn btn-primary mx-3 mb-4 mb-sm-0"><spring:theme code="order.confirmation.page.review.order.button"/></a>
-							<a href="#" class="btn btn-outline mx-3 mb-4 mb-sm-0"><spring:theme code="order.confirmation.page.continue.shopping.button"/></a>
+							<a href="${homepageUrl}" class="btn btn-outline mx-3 mb-4 mb-sm-0"><spring:theme code="order.confirmation.page.continue.shopping.button"/></a>
 						</div>
 						<div class="order-actions text-center mb-4">
 							<a href="#" class="mx-2" alt="Print Order">
