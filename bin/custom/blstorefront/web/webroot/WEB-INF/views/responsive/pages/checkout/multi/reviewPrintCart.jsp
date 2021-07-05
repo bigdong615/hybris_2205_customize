@@ -165,7 +165,7 @@
     <cart:damageWaiverInfo/>
     <!-- Required for ALL pages - JQuery and Bootstrap framework -->  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>  
-    <script src="/blstorefront/_ui/responsive/common/js/bootstrap.bundle.min.js"></script>
+    <script src="${fn:escapeXml(commonResourcePath)}/js/bootstrap.bundle.min.js"></script>
     
     <script>
         // Initialize Tooltips
