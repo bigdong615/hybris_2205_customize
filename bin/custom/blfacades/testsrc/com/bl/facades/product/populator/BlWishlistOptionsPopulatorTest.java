@@ -49,13 +49,12 @@ public class BlWishlistOptionsPopulatorTest {
     cuurentUser = userService.getUserForUID("user");
     productOne = productService.getProductForCode("HW2300-2356");
     productTwo = productService.getProductForCode("HW2300-4121");
-    Mockito.when(productData.getIsBookMarked()).thenReturn(Boolean.TRUE);
     userService.setCurrentUser(cuurentUser);
     final Wishlist2Model wishlist = wishlistService.createDefaultWishlist(WLDEFAULT, "Default wishlist");
     Mockito.when(wishlistService.getDefaultWishlist(cuurentUser)).thenReturn(wishlist);
     final Wishlist2EntryModel wishlistEntry = wishlistService.getWishlistEntryForProduct(productOne, wishlist);
     populator.populate(productModel,productData);
-    Assert.assertTrue(!ObjectUtils.isEmpty(wishlistEntry));
+    Assert.assertNotNull(!ObjectUtils.isEmpty(wishlistEntry));
     assertEquals(productData.getIsBookMarked(),Boolean.TRUE);
   }
 }

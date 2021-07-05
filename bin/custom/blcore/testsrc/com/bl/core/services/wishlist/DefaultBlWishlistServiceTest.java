@@ -22,7 +22,8 @@ public class DefaultBlWishlistServiceTest {
   private final DefaultBlWishlistService blWishlistService = Mockito
       .spy(new DefaultBlWishlistService());
   @Mock
-  private DefaultBlWishlistDao wishlistDao;
+  private DefaultBlWishlistDao blwishlistDao;
+  Wishlist2EntryModel wishlist2Entry;
 
   @Test
   public void getWishlistEntries() {
@@ -30,10 +31,7 @@ public class DefaultBlWishlistServiceTest {
     pageableData.setPageSize(5);
     pageableData.setCurrentPage(0);
     pageableData.setSort("creationtime");
-    Wishlist2EntryModel wishlist2Entry = new Wishlist2EntryModel();
-    Mockito.when(wishlist2Entry.getProduct().getCode()).thenReturn("Canon_EF_135mm_f2.0L_USM");
-    Mockito.when(wishlist2Entry.getProduct().getPriceQuantity()).thenReturn(130.78);
-    SearchPageData<Wishlist2EntryModel> wishlistEntries = wishlistDao
+    SearchPageData<Wishlist2EntryModel> wishlistEntries = blwishlistDao
         .getWishlistEntries(pageableData);
     blWishlistService.getWishlistEntries(pageableData);
     Assert.assertEquals(wishlist2Entry, wishlistEntries);
