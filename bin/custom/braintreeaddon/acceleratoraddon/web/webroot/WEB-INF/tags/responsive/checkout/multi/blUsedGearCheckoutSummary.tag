@@ -224,7 +224,7 @@
 						</div>
 					</div>
 					<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
-						<cart:orderSummeryForReview cartData="${cartData}"
+						<cart:blUsedGearOrderSummaryForReviewPage cartData="${cartData}"
 							emptyCart="${emptyCart}" />
 						<c:if test="${not empty cartData.potentialOrderPromotions}">
 							<c:forEach items="${cartData.potentialOrderPromotions}"
