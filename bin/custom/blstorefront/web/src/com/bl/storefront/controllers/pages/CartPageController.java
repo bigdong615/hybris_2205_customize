@@ -1016,17 +1016,6 @@ public class CartPageController extends AbstractCartPageController
 			return StringUtils.EMPTY;
 	}
 	
-	@GetMapping(value = "/checkDateForPrint")
-	@ResponseBody
-	public String checkDateForPrint(final HttpServletRequest request, final Model model) {
-		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-		if (rentalDateDto == null)
-		{
-			return BlControllerConstants.RENTAL_DATE_FAILURE_RESULT;
-		}
-		return BlControllerConstants.SUCCESS;
-	}
-	
 	@GetMapping(value = "/reviewPrint")
 	  public String print(final HttpServletRequest request, final Model model) {
 		  try {
