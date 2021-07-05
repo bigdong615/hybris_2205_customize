@@ -1,6 +1,7 @@
 package com.braintree.facade.impl;
 
 
+import com.bl.core.services.customer.BlCustomerAccountService;
 import com.braintree.command.result.BrainTreePaymentMethodResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.hybris.data.BrainTreeSubscriptionInfoData;
@@ -21,6 +22,8 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
@@ -58,6 +61,10 @@ public class BrainTreeUserFacadeImplTest  {
     private BrainTreeConfigService brainTreeConfigService;
     @Mock
     private CustomerModel customerModel;
+    @Mock
+    private BlCustomerAccountService customerAccountService;
+    @Mock
+    private Converter<AddressModel, AddressData> addressConverter;
 
     @InjectMocks
     private  BrainTreeUserFacadeImpl brainTreeUserFacadeImpl = new BrainTreeUserFacadeImpl();
@@ -135,6 +142,27 @@ public class BrainTreeUserFacadeImplTest  {
         assertNull(brainTreePaymentInfoModel);
         verify(brainTreeConfigService,never()).getMerchantAccountIdForCurrentSiteAndCurrency();
         verify(brainTreeConfigService,never()).getVerifyCard();
+    }
+
+    @Test
+    public void shouldSetDefaultBillingAddress(){
+        AddressData addressData = mock(AddressData.class);
+        AddressModel addressModel = mock(AddressModel.class);
+        when(addressData.getId()).thenReturn(ADDRESS_ID);
+        when(customerAccountService.getAddressForCode(customerModel,addressData.getId())).thenReturn(addressModel);
+        brainTreeUserFacadeImpl.setDefaultBillingAddress(addressData);
+        verify(customerAccountService,times(1)).setDefaultBillingAddress(customerModel,addressModel);
+    }
+
+    @Test
+    public void getDefaultBillingAddress(){
+        AddressModel addressModel = mock(AddressModel.class);
+        AddressData addressData = mock(AddressData.class);
+        when(customerModel.getDefaultBillingAddress()).thenReturn(addressModel);
+        when(addressConverter.convert(addressModel)).thenReturn(addressData);
+        AddressData billingAddress = brainTreeUserFacadeImpl.getDefaultBillingAddress();
+        assertNotNull(addressData);
+        verify(addressConverter,times(1)).convert(addressModel);
     }
 
 }
