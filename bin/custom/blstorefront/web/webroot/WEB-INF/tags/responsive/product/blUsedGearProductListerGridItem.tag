@@ -70,7 +70,12 @@
 					<format:price priceData="${product.serialfinalSalePrice}" />
 				</c:otherwise>
 			</c:choose>
-	</h6>		
+	</h6>
+
+	<c:if test="${not empty product.ugPromotionMessage }">
+  	<p class="sale"><span class="saleprice">${product.ugPromotionMessage}</p>
+	</c:if>
+
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">

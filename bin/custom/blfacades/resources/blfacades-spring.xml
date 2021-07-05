@@ -196,6 +196,7 @@
 		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
 		<property name="commercePriceService" ref="commercePriceService"/>
 		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
+		<property name="blProductFacade" ref="blProductFacade"/>
 	</bean>
 
 
@@ -531,6 +532,7 @@
 	<alias name="blProductFacade" alias="blProductFacade"/>
 	<bean id="blProductFacade" class="com.bl.facades.productreference.impl.DefaultBlProductFacade" parent="productFacade">
 		<property name="blCommerceProductReferenceService" ref="blCommerceProductReferenceService"/>
+		<property name="blSerialProductPopulator" ref="blSerialProductDataPopulator"/>
 	</bean>
 
 	<!--BL-174:created to send custom parameter for the product reference section  .-->

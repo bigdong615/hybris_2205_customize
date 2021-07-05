@@ -1,5 +1,10 @@
 package com.bl.facades.populators;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.facades.productreference.BlProductFacade;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -24,7 +29,7 @@ import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
-
+import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,19 +37,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.price.service.BlCommercePriceService;
-import com.bl.logging.BlLogger;
 
 
 /**
@@ -61,6 +59,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private UrlResolver<ProductData> productDataUrlResolver;
   private Populator<FeatureList, ProductData> productFeatureListPopulator;
   private ProductService productService;
+  private BlProductFacade blProductFacade;
   private CommonI18NService commonI18NService;
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
@@ -99,6 +98,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
         setProductTagValues(source, target, "onSale", "On Sale");
       }
       populateSerialProductPrices(source, target);
+      popaulatePromotionMessage(target);
     }
     // Populate product's classification features
     getProductFeatureListPopulator().populate(getFeaturesList(source), target);
@@ -116,6 +116,10 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     populateUrl(source, target);
     populatePromotions(source, target);
     target.setIsWatching(getStockNotificationFacade().isWatchingProduct(target));
+  }
+
+  private void popaulatePromotionMessage(final ProductData target) {
+    target.setUgPromotionMessage(getBlProductFacade().getPromotionMessageFromUsedGear(target));
   }
 
   protected void populatePrices(final SearchResultValueData source, final ProductData target)
@@ -482,5 +486,14 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
 
   public void setStockNotificationFacade(StockNotificationFacade stockNotificationFacade) {
     this.stockNotificationFacade = stockNotificationFacade;
+  }
+
+
+  public BlProductFacade getBlProductFacade() {
+    return blProductFacade;
+  }
+
+  public void setBlProductFacade(BlProductFacade blProductFacade) {
+    this.blProductFacade = blProductFacade;
   }
 }

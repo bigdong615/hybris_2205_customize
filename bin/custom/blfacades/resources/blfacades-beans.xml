@@ -34,6 +34,7 @@
 	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
       <property name="isWatching" type="java.lang.Boolean"/>
+      <property name="ugPromotionMessage" type="java.lang.String"/>
   </bean>
 
 
@@ -81,6 +82,7 @@
     <property name="functionalRating" type="float"/>
     <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
     <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
+    <property name="onSale" type="boolean"/>
  </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">

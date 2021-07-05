@@ -1,15 +1,22 @@
 package com.bl.facades.productreference.impl;
 
+import com.bl.core.model.BlProductModel;
+import com.bl.facades.populators.BlSerialProductPopulator;
+import com.bl.facades.product.data.SerialProductData;
 import com.bl.facades.productreference.BlCommerceProductReferenceService;
 import com.bl.facades.productreference.BlProductFacade;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.commercefacades.product.ProductOption;
+import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
+import de.hybris.platform.commercefacades.product.data.PromotionData;
 import de.hybris.platform.commercefacades.product.impl.DefaultProductFacade;
 import de.hybris.platform.commerceservices.product.data.ReferenceData;
 import de.hybris.platform.core.model.product.ProductModel;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Default implementation of {@link BlProductFacade}.
@@ -23,7 +30,7 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
 
 
   private BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService;
-
+  private BlSerialProductPopulator blSerialProductPopulator;
   /**
    *
    * {@inheritDoc}
@@ -46,6 +53,44 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
     return result;
   }
 
+  /**
+   * Get promotion Message when used gear serial product promotion is active
+   *
+   * @param blProductData
+   * @return
+   */
+  @Override
+  public String getPromotionMessageFromUsedGear(final ProductData blProductData) {
+    String promoMessage = StringUtils.EMPTY;
+    BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(blProductData.getCode());
+    if(CollectionUtils.isNotEmpty(blProductModel.getSerialProducts())){
+      getBlSerialProductPopulator().populate(blProductModel,blProductData);
+      if(CollectionUtils.isNotEmpty(blProductData.getSerialproducts())){
+        for(Object serialProduct: blProductData.getSerialproducts()){
+           promoMessage = getSerialPromotionMessage((SerialProductData) serialProduct) ;
+           break;
+        }
+      }
+    }
+    return promoMessage;
+  }
+
+  /**
+   * Check potential Message
+   * @param serialProduct
+   * @return
+   */
+  private String getSerialPromotionMessage(final SerialProductData serialProduct) {
+     if(CollectionUtils.isNotEmpty(serialProduct.getPotentialPromotions())){
+       for(PromotionData p:serialProduct.getPotentialPromotions()) {
+         if (StringUtils.containsIgnoreCase(p.getCode(), "potential") && serialProduct.isOnSale()) {
+            return p.getDescription();
+         }
+       }
+     }
+     return StringUtils.EMPTY ;
+  }
+
 
   public BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> getBlCommerceProductReferenceService() {
     return blCommerceProductReferenceService;
@@ -54,6 +99,15 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
   public void setBlCommerceProductReferenceService(
       BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService) {
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
+  }
+
+  public BlSerialProductPopulator getBlSerialProductPopulator() {
+    return blSerialProductPopulator;
+  }
+
+  public void setBlSerialProductPopulator(
+      BlSerialProductPopulator blSerialProductPopulator) {
+    this.blSerialProductPopulator = blSerialProductPopulator;
   }
 }
 

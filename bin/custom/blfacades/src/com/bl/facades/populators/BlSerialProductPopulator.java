@@ -76,6 +76,8 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 			serialProductData.setFunctionalRating(serialProductModel.getFunctionalRating());
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			setPromotionsForSerials(serialProductModel,serialProductData);
+			serialProductData.setOnSale(serialProductModel.getOnSale() == null ? false : serialProductModel
+					.getOnSale());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
 			{
 				serialProductData.setFinalSalePrice(getProductPriceData(serialProductModel.getFinalSalePrice()));
