@@ -25,6 +25,7 @@
 <c:url value="/cart" var="cartPageUrl" />
 <c:url value="/checkout/multi/delivery-method/chooseShipping" var="shippingPageUrl" />
 <c:url value="/checkout/multi/payment-method/add" var="paymentPageUrl" />
+<c:url value="/checkout/multi/summary/braintree/reviewPrint" var="printReviewUrl" />
 
 
 <template:page pageTitle="${pageTitle}" hideHeaderLinks="true">
@@ -214,7 +215,7 @@
                            </c:if>
                             <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
 							<div class="order-actions my-4">
-								<a href="#" alt="Print Order">
+								<a href="${printReviewUrl}" alt="Print Order">
 									<i class="icon-print"></i>
 								</a>
 							</div>

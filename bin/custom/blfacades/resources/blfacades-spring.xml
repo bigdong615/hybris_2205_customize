@@ -542,6 +542,10 @@
     <property name="customerAccountService" ref="customerAccountService"/>
 	</bean>
 
+  <!-- BL-632:This class was created for providing bl specific saved cart functionality.-->
+	<alias name="defaultBlSaveCartFacade" alias="saveCartFacade"/>
+	<bean id="defaultBlSaveCartFacade" class="com.bl.facades.cart.impl.DefaultBlSaveCartFacade" parent="defaultSaveCartFacade"/>
+
 	<!-- BL-781 : Added Existing Populator to populate Wishlist data in Carousel Component -->
 	<bean parent="configurablePopulatorModification">
 		<property name="target" ref="productConfiguredPopulator" />
