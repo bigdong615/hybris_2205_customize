@@ -157,11 +157,11 @@ public class BLUPSShipmentCreateRequestPopulator
 		pkg1.setDescription(BlintegrationConstants.PACKAGE_DESCRIPTION);
 		packageList.add(pkg1);
 
-		/** Creating Return Service Data **/
 
-		final ReturnServiceType returnService = new ReturnServiceType();
-		returnService.setCode(shipmentType.getReturnService().getCode());
-		returnService.setDescription(shipmentType.getReturnService().getDescription());
+		/** Creating Return Service Data **/
+	final ReturnServiceType returnService = new ReturnServiceType();
+		returnService.setCode(shipmentData.getReturnService().getCode());
+		returnService.setDescription(shipmentData.getReturnService().getDescription());
 
 		shipmentType.setReturnService(returnService);
 

@@ -1973,6 +1973,10 @@
 						</columntype>
 					</persistence>	
 				</attribute>
+				 <attribute type="serialProducts" qualifier="serialProducts">
+				<modifiers read="true" write="true"/>
+				<persistence type="property"/>
+			  </attribute>												  
 				</attributes>
 			</itemtype>
 		</typegroup>
@@ -2115,6 +2119,41 @@
             </attribute>
           </attributes>
         </itemtype>
+        <itemtype code="BoxSizes" generate="true" autocreate="true">
+				<deployment table="boxsizes" typecode="12230"/>
+			<attributes>
+				<attribute type="java.lang.String" qualifier="length">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="width">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="height">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="dimensionUnit">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+					<attribute type="java.lang.String" qualifier="weight">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="weightUnit">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+			</attributes>
+		</itemtype>
       </typegroup>
       
 	</itemtypes>

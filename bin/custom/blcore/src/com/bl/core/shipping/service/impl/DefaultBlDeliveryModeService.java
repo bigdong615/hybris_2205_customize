@@ -116,6 +116,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
+			final boolean payByCustomer)
+	{
+		return getBlZoneDeliveryModeDao().getShipToHomeDeliveryModesForUsedGear(carrier, mode, payByCustomer);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode,
 			final String pstCutOffTime, final boolean payByCustomer)
 	{
@@ -143,6 +153,31 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 		final Collection<ZoneDeliveryModeModel> fedexZoneDeliveryModes = getShipToHomeDeliveryModesWithRentalDates(rentalStart,
 				rentalEnd, String.valueOf(CarrierEnum.FEDEX), payByCustomer).stream()
 						.filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(fedexZoneDeliveryModes))
+		{
+			allDeliveryModes.addAll(fedexZoneDeliveryModes);
+		}
+		return allDeliveryModes;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return
+	 */
+	@Override
+	public Collection<ZoneDeliveryModeModel> getAllShipToHomeDeliveryModesWithoutRentalDates(final boolean payByCustomer)
+	{
+		final Collection<ZoneDeliveryModeModel> allDeliveryModes = new ArrayList<>();
+		final Collection<ZoneDeliveryModeModel> upsZoneDeliveryModes = getShipToHomeDeliveryModesWithoutRentalDates(
+				String.valueOf(CarrierEnum.UPS), payByCustomer);
+		if (CollectionUtils.isNotEmpty(upsZoneDeliveryModes))
+		{
+			allDeliveryModes.addAll(upsZoneDeliveryModes);
+		}
+		final Collection<ZoneDeliveryModeModel> fedexZoneDeliveryModes = getShipToHomeDeliveryModesWithoutRentalDates(
+				String.valueOf(CarrierEnum.FEDEX), payByCustomer);
 		if (CollectionUtils.isNotEmpty(fedexZoneDeliveryModes))
 		{
 			allDeliveryModes.addAll(fedexZoneDeliveryModes);
@@ -186,12 +221,35 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @return
+	 */
+	@Override
+	public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesWithoutRentalDates(final String carrier,
+			final boolean payByCustomer)
+	{
+		return getShipToHomeDeliveryModesForUsedGear(carrier, BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModes(final String mode,
 			final String pstCutOffTime, final boolean payByCustomer)
 	{
 		return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModes(mode, pstCutOffTime, payByCustomer);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode,
+			final boolean payByCustomer)
+	{
+
+		return getBlZoneDeliveryModeDao().getPartnerZoneUPSStoreDeliveryModesForUsedGear(mode, payByCustomer);
 	}
 
 	/**
@@ -240,11 +298,30 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Collection<BlPickUpZoneDeliveryModeModel> getPartnerPickUpDeliveryModesWithoutRentalDates(final boolean payByCustomer)
+	{
+		return getPartnerZoneUPSStoreDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.DELIVERY_TYPE_STANDARD, payByCustomer);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithRentalDatesForUPSStore(
 			final String rentalStart, final String rentalEnd, final boolean payByCustomer)
 	{
 		return getPartnerPickUpDeliveryModesWithRentalDates(rentalStart, rentalEnd, payByCustomer).stream()
 				.filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<BlPickUpZoneDeliveryModeModel> getAllPartnerPickUpDeliveryModesWithoutRentalDatesForUPSStore(
+			final boolean payByCustomer)
+	{
+		return getPartnerPickUpDeliveryModesWithoutRentalDates(payByCustomer);
 	}
 
 	/**
@@ -281,6 +358,27 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 					? newBlPickUpZoneDeliveryModeModels.stream()
 							.filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList())
 					: Collections.emptyList();
+		}
+		return Collections.emptyList();
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneDeliveryModesForUsedGear(final String partnerZone,
+			final boolean payByCustomer)
+	{
+		final Collection<BlPickUpZoneDeliveryModeModel> blPickUpZoneDeliveryModeModels = getBlZoneDeliveryModeDao()
+				.getPartnerZoneDeliveryModes(partnerZone, payByCustomer);
+		if (CollectionUtils.isNotEmpty(blPickUpZoneDeliveryModeModels))
+		{
+			final Collection<BlPickUpZoneDeliveryModeModel> newBlPickUpZoneDeliveryModeModels = new ArrayList<>(
+					blPickUpZoneDeliveryModeModels);
+			return CollectionUtils.isNotEmpty(newBlPickUpZoneDeliveryModeModels) ? newBlPickUpZoneDeliveryModeModels
+					: Collections.emptyList();
+
 		}
 		return Collections.emptyList();
 	}
@@ -335,6 +433,18 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
 
 		return getBlZoneDeliveryModeDao().getBlRushDeliveryModes(deliveryMode, pstCutOffTime, payByCustomer).stream()
 				.filter(model -> checkDaysToSkipForDeliveryMode(model, rentalStart, rentalEnd)).collect(Collectors.toList());
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<BlRushDeliveryModeModel> getBlRushDeliveryModesForUsedGear(final String deliveryMode,
+			final boolean payByCustomer)
+	{
+
+		return getBlZoneDeliveryModeDao().getBlRushDeliveryModesForUsedGear(deliveryMode, payByCustomer);
 	}
 
 	/**

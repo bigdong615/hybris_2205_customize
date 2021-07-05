@@ -3,20 +3,21 @@
  */
 package com.bl.integration.facades.impl;
 
+
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import com.bl.core.enums.CarrierEnum;
 import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.populators.BLFedExShippingDataPopulator;
 import com.bl.integration.populators.BLUpsShippingDataPopulator;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
-import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.bl.shipment.data.UPSShipmentPackageResult;
 
@@ -46,13 +47,13 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	@Override
 	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo)
 	{
-		BlLogger.logMessage(LOG, Level.INFO, "Shipment call for UPS");
-
-		if (StringUtils.isNotBlank(packagingInfo.getConsignment().getCarrier())
-				&& StringUtils.equals(packagingInfo.getConsignment().getCarrier(), "bl-ups"))
+		final ConsignmentModel consignment = packagingInfo.getConsignment();
+		final ZoneDeliveryModeModel deliveryMode = (ZoneDeliveryModeModel) consignment.getDeliveryMode();
+		final CarrierEnum carrier = deliveryMode.getCarrier();
+		if (carrier.equals(CarrierEnum.UPS))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
-					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo.getConsignment()));
+					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
 			saveResponseOnPackage(upsResponse, packagingInfo);
 		}
 		else

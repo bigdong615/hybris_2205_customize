@@ -933,5 +933,8 @@
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
+	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
+	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
+        <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
+    </bean>																		   
 </beans>
-
