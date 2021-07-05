@@ -196,6 +196,7 @@
 		<property name="stockLevelStatusConverter" ref="stockLevelStatusConverter"/>
 		<property name="commercePriceService" ref="commercePriceService"/>
 		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
+		<property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator"/>
 	</bean>
 
 
@@ -284,6 +285,7 @@
 			<map key-type="de.hybris.platform.commercefacades.product.ProductOption" merge="true">
 				<entry key="REQUIRED_DATA" value-ref="blProductPopulator"/>
 				<entry key="REQUIRED_SERIAL_DATA" value-ref="blSerialProductDataPopulator"/>
+				<entry key="REQUIRED_WISHLIST" value-ref="blWishlistOptionsPopulator"/>
 			</map>
 		</property>
 	</bean>
@@ -542,5 +544,56 @@
 	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
 	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
     <property name="customerAccountService" ref="customerAccountService"/>
+	</bean>
+
+	<!-- BL-781 : Added Existing Populator to populate Wishlist data in Carousel Component -->
+	<bean parent="configurablePopulatorModification">
+		<property name="target" ref="productConfiguredPopulator" />
+		<property name="keyType" value="de.hybris.platform.commercefacades.product.ProductOption" />
+		<property name="key" value="REQUIRED_WISHLIST" />
+		<property name="add" ref="blWishlistOptionsPopulator" />
+	</bean>
+
+	<!--BL-781:This class was created to add,remove product from wishlist.-->
+	<alias name="defaultBlWishListFacade" alias="wishlistFacade"/>
+	<bean id="defaultBlWishListFacade" class="com.bl.facades.wishlist.impl.DefaultBlWishListFacade">
+		<property name="userService" ref="userService"/>
+		<property name="productService" ref="productService"/>
+		<property name="blwishlistService" ref="blwishlistService"/>
+		<property name="defaultWishlistService" ref="defaultWishlistService"/>
+		<property name="blWishList2EntryConverter" ref="blWishList2EntryConverter"/>
+	</bean>
+
+	<!--BL-781:This class was created to populate wishlist2data-->
+	<alias name="blwishlistPopulator" alias="blwishlistPopulator"/>
+	<bean id="blwishlistPopulator" class="com.bl.facades.populators.BlWishListPopulator">
+		<property name="userService" ref="userService"/>
+		<property name="blWishList2EntryConverter" ref="blWishList2EntryConverter"/>
+	</bean>
+
+	<!--BL-781:This class was created to populate wishlistdata-->
+	<alias name="blWishlistOptionsPopulator" alias="blWishlistOptionsPopulator"/>
+	<bean id="blWishlistOptionsPopulator" class="com.bl.facades.populators.BlWishlistOptionsPopulator">
+		<property name="userService" ref="userService"/>
+		<property name="productService" ref="productService"/>
+		<property name="wishlistService" ref="wishlistService"/>
+	</bean>
+
+	<!--BL-781:This class was created for Custom wishlist-->
+	<alias name="defaultBlWishList2EntryConverter" alias="blWishList2EntryConverter"/>
+	<bean id="defaultBlWishList2EntryConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.bl.facades.wishlist.data.Wishlist2EntryData"/>
+		<property name="populators">
+			<list>
+				<ref bean="blWishList2EntryPopulator"/>
+			</list>
+		</property>
+	</bean>
+
+	<!--BL-781:This class was created to populate wishlist2Entrydata-->
+	<alias name="defaultBlWishList2EntryPopulator" alias="blWishList2EntryPopulator"/>
+	<bean id="defaultBlWishList2EntryPopulator"
+		class="com.bl.facades.populators.BlWishlistEntryPopulator">
+		<property name="productFacade" ref="productFacade"/>
 	</bean>
 </beans>

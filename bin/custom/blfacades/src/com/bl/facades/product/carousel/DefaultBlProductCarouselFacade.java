@@ -117,7 +117,7 @@ public class DefaultBlProductCarouselFacade extends DefaultProductCarouselFacade
 	private List<ProductOption> getProductOptionsForCarousel()
 	{
 		return Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.GALLERY, ProductOption.STOCK,
-				ProductOption.REQUIRED_DATA);
+				ProductOption.REQUIRED_DATA,ProductOption.REQUIRED_WISHLIST);
 	}
 
 }
