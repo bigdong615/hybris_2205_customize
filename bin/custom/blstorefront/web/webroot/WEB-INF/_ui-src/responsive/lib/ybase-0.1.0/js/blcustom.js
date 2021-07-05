@@ -3,7 +3,6 @@ jQuery(document).ready(function () {
 	if($(".hidebutton").length <= 0){
 		$(".hide-after-login").hide();
 	}
-	printCartQuote();
 });
 
 //BL-467 clear cart functionality from cart page.
@@ -837,29 +836,5 @@ function onUsedCloseModal()
 			$("#addToCart").removeClass("show");
             $("#addToCart").hide();
 		}
-	});
-}
-
-function printCartQuote()
-{
-	$("#printCartQuote").on("click",function(event){
-		event.preventDefault();
-		$.ajax({
-			url: ACC.config.encodedContextPath + "/cart/checkDateForPrint",
-			type: 'GET',
-			success: function (response) {
-				if (response == 'success') {
-					var url = ACC.config.encodedContextPath + "/cart/reviewPrint";
-					window.location.href = url;
-				}
-				else if (response == 'rentalDateNotSelected')
-				{
-					$('#cart-warning').css('display', 'block');
-				}
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-				console.log("The following error occurred: " + jqXHR, textStatus, errorThrown);
-			}
-		});
 	});
 }
