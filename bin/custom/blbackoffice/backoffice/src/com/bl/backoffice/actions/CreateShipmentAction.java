@@ -30,7 +30,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	@Resource(name = "blCreateShipmentFacade")
 	private BlCreateShipmentFacade blCreateShipmentFacade;
 
-	protected static final String SOCKET_OUT_CONTEXT = "blCreatePackageContext";
+	protected static final String SOCKET_OUT_CONTEXT = "blCreatePackageShipmentContext";
 
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
@@ -42,6 +42,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consignment = actionContext.getData();
+		modelService.refresh(consignment);
 		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
 
 		for (final PackagingInfoModel packagingInfoModel : packages)

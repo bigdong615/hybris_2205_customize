@@ -22,7 +22,7 @@
     </settings>
     
     <!-- Sockets definition-->
-   <!--  <sockets>
-        <output id="blCreatePackageContext"/>
-    </sockets> -->
+	<sockets>
+        <output id="blCreatePackageShipmentContext"/>
+    </sockets>
 </action-definition>
