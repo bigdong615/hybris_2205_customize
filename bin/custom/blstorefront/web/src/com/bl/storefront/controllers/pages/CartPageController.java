@@ -949,7 +949,7 @@ public class CartPageController extends AbstractCartPageController
 	@ResponseBody
 	public String checkDateRangeAndStock(final Model model,final RedirectAttributes redirectModel)
 	{
-		CartModel cartModel = blCartService.getSessionCart();
+		final	CartModel cartModel = blCartService.getSessionCart();
 		List<Integer> entryList = blCartFacade.getDiscontinueEntryList(cartModel,new StringBuilder());
 		if(CollectionUtils.isNotEmpty(entryList)) {
 			return REDIRECT_CART_URL;
@@ -961,7 +961,6 @@ public class CartPageController extends AbstractCartPageController
 		}
 		else
 		{
-			final CartModel cartModel = blCartService.getSessionCart();
 			if(null == cartModel.getRentalStartDate() && null == cartModel.getRentalEndDate()) {
 				final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
 						BlControllerConstants.DATE_FORMAT_PATTERN);
