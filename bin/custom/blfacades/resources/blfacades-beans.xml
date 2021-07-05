@@ -36,6 +36,7 @@
     <property name="isBookMarked" type="java.lang.Boolean"/>
       <property name="isWatching" type="java.lang.Boolean"/>
 		<property name="ugPromotionMessage" type="java.lang.String"/>
+		<property name="alternativeProduct" type="String"/>
   </bean>
 
 

@@ -926,7 +926,16 @@
 	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
 
 	<bean id="blOnSaleFacetNameProvider"
-		class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider">
+		class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider"/>
+
+	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
+	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
+	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
+	</bean>
+
+	<bean id="blProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blProductValidateInterceptor"/>
+		<property name="typeCode" value="BlProduct"/>
 	</bean>
 
 	<!-- [BL-781]: This is to fetch the wishlist entries-->

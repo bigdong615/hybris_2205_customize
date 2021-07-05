@@ -32,6 +32,9 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String ON_SALE_TAG_VALUE = "On Sale";
   public static final String POTENTIAL = "potential";
 
+  public static final String COMMA_SEPERATER =",";
+  public static final String REMOVE_ENTRIES = "removedEntries";
+
   public static final String ROUND_TRIP = "Round Trip";
 
   private BlFacadesConstants() {

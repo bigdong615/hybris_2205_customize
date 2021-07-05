@@ -197,7 +197,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
   public static final String ITEMS_ON_SALE = "Items On Sale";
 
-	
+	public static final String IS_DISCONTINUED = "isDiscontinued";
+
 	private BlCoreConstants()
 	{
 		//empty
