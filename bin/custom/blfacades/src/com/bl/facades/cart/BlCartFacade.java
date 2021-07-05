@@ -5,9 +5,11 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
+import de.hybris.platform.core.model.order.CartModel;
 import java.util.Date;
 
 import com.bl.facades.product.data.RentalDateDto;
+import java.util.List;
 
 /**
  * It is responsible for getting all necessary information for cart.
@@ -105,5 +107,27 @@ public interface BlCartFacade extends CartFacade {
 	 * @return String
 	 */
 	String identifyCartType();
-	
+
+	/**
+	 * This method is used for remove discontinue product from cart.
+	 */
+	String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage); // NOSONAR
+
+	/**
+	 * This method used for pre-populating saved card data before removing its discontinue entry.
+	 * @param entryNumber
+	 * @param quantity
+	 * @param cartModel
+	 * @return
+	 * @throws CommerceCartModificationException
+	 */
+	public CartModificationData updateCartEntry(final long entryNumber, final long quantity, final CartModel cartModel) throws CommerceCartModificationException; // NOSONAR
+
+	/**
+	 * This method used for collecting discontinue entries number form cart.
+	 * @return List<Integer>
+	 * @param cartModel
+	 * @param removedEntry
+	 */
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry); // NOSONAR
 }
