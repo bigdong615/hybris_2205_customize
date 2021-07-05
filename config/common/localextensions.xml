@@ -139,6 +139,7 @@
 
     <!-- BL custom extensions -->
     <extension name='blassistedservicestorefront'/>
+    <extension name='assistedservicefacades'/>
     <extension name='blbackoffice'/>
     <extension name='blpcmbackoffice'/>
     <extension name='blconfigurablebundleaddon'/>

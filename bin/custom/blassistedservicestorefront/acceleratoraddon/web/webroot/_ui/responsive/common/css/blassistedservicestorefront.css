@@ -748,7 +748,7 @@
     float: right;
     font-size: 45px;
     font-weight: 200;
-    line-height: 50px;
+    line-height: 0px;
     color: #1473DF;
     cursor: pointer;
     background: transparent;
@@ -756,7 +756,7 @@
     -webkit-appearance: none;
     padding-left: 20px;
     border-left: 1px solid #39495e;
-    padding-bottom: 8px;
+    padding-bottom: 2px;
 }
 .ASM_close:hover,
 .ASM_close:focus {
@@ -1331,15 +1331,15 @@ select[multiple]#_asm .ASM-input {
     padding: 0 4em;
 }
 #_asm .ASM_header .first-top-row .element-separator-height{
-    height: 60px;
-    padding-top: 10px;
+    height: 10px;
+    padding-top: 5px;
 }
 #_asm .ASM_header .ASM_logo {
     font-family: "Dosis", Helvetica, Arial, sans-serif;
     float: left;
     font-size: 25px;
     font-weight: 300;
-    line-height: 30px;
+    line-height: 0px;
     color: #fff;
     margin-top: 10px;
 }
