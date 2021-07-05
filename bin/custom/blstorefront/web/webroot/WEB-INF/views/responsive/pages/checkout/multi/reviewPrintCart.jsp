@@ -19,16 +19,16 @@
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <%@ taglib prefix="agreementInfo" tagdir="/WEB-INF/tags/responsive/agreementInfo" %>
 
-<c:url value="/checkout/multi/summary/braintree/view" var="reviewPageUrl"/>
+<c:url value="/cart" var="cartPageUrl"/>
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>Borrow Lenses - Checkout - Step 4</title>
+    <title>Borrow Lenses - Checkout - Step 1</title>
     
-    <!-- Required CSS -->
+	<!-- Required CSS -->
     <link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/bootstrap.min.css"/>
 	<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/mmenu.css"/>
 	<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/blstyle.css"/>
@@ -47,42 +47,24 @@
                             <div class="notification notification-warning"><spring:theme code="text.review.print.page.your.rental.warning"/></div>
                             <hr>
                             <form>
-                            <div class="reviewCart pb-0">
-                                <h5 class="mb-4"><spring:theme code="text.review.page.date.title"/></h5>
-                                <div class="row">
-                                    <div class="col-5">
-                                        <p class="overline"><spring:theme code="text.review.page.date.start"/></p>
-                                        <p class="printQuoteDate mb-0"><b>${formattedRentalStartDate}</b></p>
-                                        <p class="body14">
-	                                        	<c:choose>
-	                                        		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
-	                                        			<spring:theme code="text.review.page.date.start.delivery.pickup"/>
-	                                        		</c:when>
-	                                        		<c:otherwise>
-	                                        			<spring:theme code="text.review.page.date.start.delivery" arguments="${deliveryMode.carrier }"/>
-	                                        		</c:otherwise>
-	                                        	</c:choose>    
-	                                     </p>
-                                    </div>
-                                    <div class="col-2 text-center">
-                                        <img class="rental-arrow" src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/icon-arrow.svg">
-                                    </div>
-                                    <div class="col-5">
-                                        <p class="overline"><spring:theme code="text.review.page.date.end"/></p>
-                                        <p class="printQuoteDate mb-0"><b>${formattedRentalEndDate}</b></p>
-                                        <p class="body14">
-												<c:choose>
-	                                        		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
-	                                        			<spring:theme code="text.review.page.date.end.delivery.pickup"/>
-	                                        		</c:when>
-	                                        		<c:otherwise>
-	                                        			<spring:theme code="text.review.page.date.end.delivery" arguments="${deliveryMode.carrier }"/>
-	                                        		</c:otherwise>
-	                                        	</c:choose> 
-											</p>
-                                    </div>
-                                </div>
-                            </div>
+                            <c:if test="${not empty formattedRentalStartDate and not empty formattedRentalEndDate}">
+	                            <div class="reviewCart pb-0">
+	                                <h5 class="mb-4"><spring:theme code="text.review.page.date.title"/></h5>
+	                                <div class="row">
+	                                    <div class="col-5">
+	                                        <p class="overline"><spring:theme code="text.review.page.date.start"/></p>
+	                                        <p class="printQuoteDate mb-0"><b>${formattedRentalStartDate}</b></p>
+	                                    </div>
+	                                    <div class="col-2 text-center">
+	                                        <img class="rental-arrow" src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/icon-arrow.svg">
+	                                    </div>
+	                                    <div class="col-5">
+	                                        <p class="overline"><spring:theme code="text.review.page.date.end"/></p>
+	                                        <p class="printQuoteDate mb-0"><b>${formattedRentalEndDate}</b></p>
+	                                    </div>
+	                                </div>
+	                            </div>
+                            </c:if>
                             <div class="reviewCart pb-0">
                                 <h5 class="mb-4"><spring:theme code="text.review.page.your.rental.title"/></h5>
                                 <c:forEach items="${cartData.entries}" var="cartEntry" >
@@ -110,63 +92,24 @@
                                 </c:forEach>
                             </div>
                             <div class="reviewCart pb-0">
-                                <c:choose>
-                            		<c:when test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
-                            			<h5 class="mb-4"><spring:theme code="text.review.page.delivery.pickup.title"/></h5>
-										<div class="row mb-4">
-											<div class="col-6">
-												<p class="gray80 body14">
-													<b class="gray100"><spring:theme code="text.review.page.delivery.mode.pickup"/></b>
-													${cartData.pickUpPersonFirstName}&nbsp;${cartData.pickUpPersonLastName} <br/>
-													${cartData.pickUpPersonEmail} <br/>
-													${cartData.pickUpPersonPhone} <br/>
-												</p>
-											</div>
-											<c:if test="${not empty deliveryAddress}">
-											<div class="col-6">
-												<p class="gray80 body14">
-													<b class="gray100"><spring:theme code="text.review.page.delivery.pickup.from"/></b>
-													<order:addressItem address="${deliveryAddress}"/>
-												</p>
-											</div>
-											</c:if>
-										</div>
-                            		</c:when>
-                            		<c:otherwise>
-                            			<h5 class="mb-4"><spring:theme code="text.review.page.delivery.title"/></h5>
-										<div class="row mb-4">
-											<div class="col-6">
-												<p class="gray80 body14">
-													<b class="gray100"><spring:theme code="text.review.page.delivery.mode"/></b>
-													${deliveryMode.name}
-												</p>
-											</div>
-											<c:if test="${not empty deliveryAddress}">
-											<div class="col-6">
-												<p class="gray80 body14">
-													<b class="gray100"><spring:theme code="text.review.page.delivery.shipping.to"/></b>
-													<order:addressItem address="${deliveryAddress}"/>
-												</p>
-											</div>
-											</c:if>
-										</div>
-                            		</c:otherwise>
-                            	</c:choose>
-                            </div>
-                            <div class="reviewCart pb-0">
-                                <h5 class="mb-4"><spring:theme code="text.review.page.payment.title"/> </h5>
-                                <multi-checkout-paypal:paymentInfo cartData="${cartData}" paymentInfo="${cartData.paymentInfo}" brainTreePaymentInfo="${brainTreePaymentInfoData}" />
-                            </div>
-                            <c:if test="${not empty cartData.giftCardData}">
-                                <multi-checkout-paypal:paymentInfoGiftCard cartData="${cartData}"/>
-                            </c:if>
-                            
+                                <h5 class="mb-4"><spring:theme code="text.review.print.page.your.rental.delivery.payment.title"/></h5>
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <p class="gray80 body14">
+                                            <spring:theme code="text.review.print.page.your.rental.delivery.payment.message"/>
+                                        </p>
+                                    </div>
+                                    <div class="col-6">
+                                        
+                                    </div>
+                                </div>
+                            </div>                            
                             </form>
                         </div>
                         <div class="col-md-5">
                             <div id="orderSummary" class="card">
                                 <h5> <spring:theme code="checkout.multi.order.summary"/></h5>
-                                <c:if test="${cartData.isRentalCart}">
+                                <c:if test="${cartData.isRentalCart and not empty rentalDate.selectedFromDate and not empty rentalDate.selectedToDate}">
                                 <hr>
                                 <p><b><spring:theme code="text.rental.cart.date"/></b>&emsp;${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</p>
                                 </c:if>
@@ -210,7 +153,7 @@
                         </div>
                         
                         <div class="text-start mt-3">
-                        	<a href="${reviewPageUrl}" class="btn btn-primary"><spring:theme code="text.review.print.page.your.rental.return.to.review"/></a>
+                            <a href="${cartPageUrl}" class="btn btn-primary"><spring:theme code="text.review.print.page.your.rental.return.to.cart"/></a>
                         </div> 
                         
                     </div>
