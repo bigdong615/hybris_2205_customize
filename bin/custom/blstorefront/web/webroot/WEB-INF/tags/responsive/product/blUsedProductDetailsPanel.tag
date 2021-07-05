@@ -120,7 +120,7 @@
                               <c:if test="${fn:containsIgnoreCase(promotion.code, 'potential')}">
                                 <tr>
                                   <td colspan="2">
-                                     <span class="badge badge-new">text.serial.product.on.Sale</span>
+                                     <span class="badge badge-new"><spring:theme code="text.serial.product.on.Sale"/></span>
                                   </td>
                                   <td colspan="3" class="text-start textGold">
                                         <strong>${fn:escapeXml(promotion.description)} </strong>
