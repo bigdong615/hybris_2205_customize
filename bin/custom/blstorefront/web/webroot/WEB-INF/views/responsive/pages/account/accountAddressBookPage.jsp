@@ -49,11 +49,11 @@
                                <spring:theme code="text.setDefault.billing"/>
                          </button>
                          </c:when>
-                         <c:otherwise>
+                         <c:when test="${address.billingAddress}">
                         <button class="badge badge-outline float-md-start js-set-default-address" value="set-default-billing-address/${address.id}">
                            <spring:theme code="text.setDefault.billing"/>
                         </button>
-                         </c:otherwise>
+                         </c:when>
                          </c:choose>
                      </c:otherwise>
                   </c:choose>
@@ -63,11 +63,11 @@
                            <spring:theme code="text.default.shipping"/>
                         </span>
                      </c:when>
-                     <c:otherwise>
+                     <c:when test="${address.shippingAddress}">
                         <button class="badge badge-outline float-md-end js-set-default-address" value="set-default-address/${address.id}">
                            <spring:theme code="text.setDefault"/>
                         </button>
-                     </c:otherwise>
+                     </c:when>
                   </c:choose>
                </div>
                <div class="scroll-over-text">

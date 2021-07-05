@@ -60,32 +60,13 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
 
-	
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
-                                                                        final boolean payByCustomer) {
-        final StringBuilder barcodeList = queryForShipToHomeDeliveryMode(mode);
-        
-        final FlexibleSearchQuery query = getShipToHomeDeliveryCommonAttributes(carrier, mode, payByCustomer, barcodeList);
-        
-        final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_SHIP_TO_HOME_ZONE_DELIVERY_MODE + carrier);
-        return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode,
                                                                                final String pstCutOffTime, final boolean payByCustomer) {
-        final StringBuilder barcodeList = new StringBuilder("select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, " +
-                "{CarrierEnum as ce} where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +
-                "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.code} not like '%AM%'" +
-                " and {zdm.payByCustomer} = ?payByCustomer");
+        final StringBuilder barcodeList = queryForShipToHomeDeliveryWithoutAMModes(mode);
         if (pstCutOffTime != null) {
             barcodeList.append(" and {zdm.cutOffTime} > ?pstCutOffTime");
         }
@@ -97,6 +78,24 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_SHIP_TO_HOME_ZONE_DELIVERY_MODE_AM + carrier);
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
+    
+    
+    /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode,
+                                                                                          final boolean payByCustomer) {
+       final StringBuilder barcodeList = queryForShipToHomeDeliveryWithoutAMModes(mode);
+       
+       final FlexibleSearchQuery query = getShipToHomeDeliveryCommonAttributes(carrier, mode, payByCustomer, barcodeList);
+       final Collection<ZoneDeliveryModeModel> results = getFlexibleSearchService().<ZoneDeliveryModeModel>search(query).getResult();
+       BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_SHIP_TO_HOME_ZONE_DELIVERY_MODE_AM + carrier);
+       return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+   }
+
+	
+
 
     /**
      * {@inheritDoc}
@@ -163,26 +162,9 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
      * {@inheritDoc}
      */
     @Override
-    public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode, final boolean payByCustomer) {
-                                                                                         
-        final StringBuilder barcodeList = queryForPartnerZoneUPSStoreDeliveryModes(mode);
-        
-        final FlexibleSearchQuery query = getPartnerZoneUPSStoreCommonAttributes(mode, payByCustomer, barcodeList);
-       
-        final Collection<BlPickUpZoneDeliveryModeModel> results = getFlexibleSearchService().<BlPickUpZoneDeliveryModeModel>search(query).getResult();
-        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_PARTNER_PICKUP_UPS_STORE_ZONE_DELIVERY_MODE);
-        return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
                                                                                                 final boolean payByCustomer) {
-        final StringBuilder barcodeList = new StringBuilder("select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
-                "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
-                " {pickZone.code} like '%" + mode + "%' and {zdm.code} not like '%AM%' and {pickZone.payByCustomer} = ?payByCustomer");
+        final StringBuilder barcodeList = queryForPartnerZoneUPSStoreDeliveryWithoutAMModes(mode);
         if (pstCutOffTime != null) {
             barcodeList.append(BlDeliveryModeLoggingConstants.PST_CUT_OFF_TIME_CONST);
         }
@@ -194,6 +176,23 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_PARTNER_PICKUP_UPS_STORE_ZONE_DELIVERY_MODE_AM);
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
+
+	
+    
+    
+    /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode, final boolean payByCustomer) {
+                                                                                               
+       final StringBuilder barcodeList = queryForPartnerZoneUPSStoreDeliveryWithoutAMModes(mode);
+       
+       final FlexibleSearchQuery query = getPartnerZoneUPSStoreCommonAttributes(mode, payByCustomer, barcodeList);
+       final Collection<BlPickUpZoneDeliveryModeModel> results = getFlexibleSearchService().<BlPickUpZoneDeliveryModeModel>search(query).getResult();
+       BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.FETCH_PARTNER_PICKUP_UPS_STORE_ZONE_DELIVERY_MODE_AM);
+       return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+   }
 
     /**
      * {@inheritDoc}
@@ -290,10 +289,10 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     */
    private StringBuilder queryForShipToHomeDeliveryMode(final String mode)
  	{
- 		String FlexibleSearchForShipToHomeDeliveryMode = "select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, {CarrierEnum as ce} " +
+ 		String flexibleSearchForShipToHomeDeliveryMode = "select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, {CarrierEnum as ce} " +
                  "where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +
                  "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.payByCustomer} = ?payByCustomer";
-		final StringBuilder barcodeList = new StringBuilder(FlexibleSearchForShipToHomeDeliveryMode);
+		final StringBuilder barcodeList = new StringBuilder(flexibleSearchForShipToHomeDeliveryMode);
  		return barcodeList;
  	}
    
@@ -304,10 +303,10 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     */
    private StringBuilder queryForPartnerZoneUPSStoreDeliveryModes(final String mode)
 	{
-		String FlexibleSearchForPartnerZoneUPSStoreDeliveryModes = "select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
+		String flexibleSearchForPartnerZoneUPSStoreDeliveryModes = "select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
                 "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
                 " {pickZone.code} like '%" + mode + "%' and {pickZone.payByCustomer} = ?payByCustomer";
-		final StringBuilder barcodeList = new StringBuilder(FlexibleSearchForPartnerZoneUPSStoreDeliveryModes);
+		final StringBuilder barcodeList = new StringBuilder(flexibleSearchForPartnerZoneUPSStoreDeliveryModes);
 		return barcodeList;
 	}
    
@@ -318,6 +317,34 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
    private StringBuilder queryForBlRushDeliveryModes()
 	{
 		final StringBuilder barcodeList = new StringBuilder(FLEXIBLESEARCHFORRUSHDELIVERYMODE);
+		return barcodeList;
+	}
+   
+   /**
+    * This method is used to fetch ShipToHomeDeliveryMode data except AM Delivery Mode.
+    * @param mode
+    * @return
+    */
+   private StringBuilder queryForShipToHomeDeliveryWithoutAMModes(final String mode)
+	{
+		final StringBuilder barcodeList = new StringBuilder("select {zdm.pk} from {ZoneDeliveryMode as zdm}, {ShippingGroup as sg}, " +
+               "{CarrierEnum as ce} where {sg.pk} = {zdm.shippingGroup} and {sg.code} = 'SHIP_HOME_HOTEL_BUSINESS' and {zdm.active} = 1 and " +
+               "{zdm.carrier} = {ce.pk} and {ce.code} = ?carrier and {zdm.code} like '%" + mode + "%' and {zdm.code} not like '%AM%'" +
+               " and {zdm.payByCustomer} = ?payByCustomer");
+		return barcodeList;
+	}
+   
+   /**
+    *  This method is used to fetch PartnerZoneUPSStoreDeliveryMode data except AM Delivery Mode.
+    * 
+    * @param mode
+    * @return
+    */
+   private StringBuilder queryForPartnerZoneUPSStoreDeliveryWithoutAMModes(final String mode)
+	{
+		final StringBuilder barcodeList = new StringBuilder("select {pickZone.pk} from {BlPickUpZoneDeliveryMode as pickZone}, {ShippingGroup as sg} " +
+               "where {sg.pk} = {pickZone.shippingGroup} and {sg.code} = 'SHIP_UPS_OFFICE' and {pickZone.active} = 1 and" +
+               " {pickZone.code} like '%" + mode + "%' and {pickZone.code} not like '%AM%'" + " and {pickZone.payByCustomer} = ?payByCustomer");
 		return barcodeList;
 	}
    

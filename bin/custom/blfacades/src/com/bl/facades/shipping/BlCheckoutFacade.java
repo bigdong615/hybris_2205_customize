@@ -9,6 +9,7 @@ import com.bl.facades.shipping.data.BlShippingGroupData;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -241,4 +242,12 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return String
      */
     List<String> recalculateCartForGiftCard();
+    
+    /**
+     * Gets the modified total for print quote page.
+     *
+     * @param cartData the cartData
+     * @return the modified total for print quote
+     */
+    void getModifiedTotalForPrintQuote(final CartData cartData);
 }

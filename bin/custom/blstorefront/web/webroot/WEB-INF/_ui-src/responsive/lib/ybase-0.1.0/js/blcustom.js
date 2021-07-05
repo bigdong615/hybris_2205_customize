@@ -3,7 +3,6 @@ jQuery(document).ready(function () {
 	if($(".hidebutton").length <= 0){
 		$(".hide-after-login").hide();
 	}
-	
 });
 
 //BL-467 clear cart functionality from cart page.

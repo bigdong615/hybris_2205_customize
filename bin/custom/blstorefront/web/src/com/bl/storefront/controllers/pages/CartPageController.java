@@ -58,7 +58,6 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
-import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.util.Config;
@@ -69,6 +68,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Resource;
@@ -90,7 +90,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -185,6 +184,7 @@ public class CartPageController extends AbstractCartPageController
 	{
 		getCheckoutFacade().removeDeliveryDetails();
 		CartModel cartModel = blCartService.getSessionCart();
+		String removedEntries = blCartFacade.removeDiscontinueProductFromCart(cartModel,Boolean.TRUE);
 		if (cartModel != null) {
 			List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
 			if (CollectionUtils.isNotEmpty(giftCardModelList)) {
@@ -193,6 +193,11 @@ public class CartPageController extends AbstractCartPageController
 			}
 		}
 		getBlCartFacade().recalculateCartIfRequired(); //Recalculating cart only if the rental dates has been changed by user
+		if(StringUtils.isNotEmpty(removedEntries)) {
+			GlobalMessages
+					.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
+							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
+		}
 		return prepareCartUrl(model);
 	}
 
@@ -230,7 +235,7 @@ public class CartPageController extends AbstractCartPageController
 	 *
 	 * @return The page to redirect to
 	 */
-	@RequestMapping(value = "/checkout", method = RequestMethod.GET)
+	@GetMapping(value = "/checkout")
 	@RequireHardLogIn
 	public String cartCheck(final RedirectAttributes redirectModel) throws CommerceCartModificationException
 	{
@@ -260,7 +265,7 @@ public class CartPageController extends AbstractCartPageController
 		return REDIRECT_PREFIX + "/checkout";
 	}
 
-	@RequestMapping(value = "/getProductVariantMatrix", method = RequestMethod.GET)
+	@GetMapping(value = "/getProductVariantMatrix")
 	public String getProductVariantMatrix(@RequestParam("productCode") final String productCode,
 			@RequestParam(value = "readOnly", required = false, defaultValue = "false") final String readOnly, final Model model)
 	{
@@ -278,7 +283,7 @@ public class CartPageController extends AbstractCartPageController
 
 	// This controller method is used to allow the site to force the visitor through a specified checkout flow.
 	// If you only have a static configured checkout flow then you can remove this method.
-	@RequestMapping(value = "/checkout/select-flow", method = RequestMethod.GET)
+	@GetMapping(value = "/checkout/select-flow")
 	@RequireHardLogIn
 	public String initCheck(final Model model, final RedirectAttributes redirectModel,
 			@RequestParam(value = "flow", required = false) final String flow,
@@ -319,7 +324,7 @@ public class CartPageController extends AbstractCartPageController
 		return REDIRECT_PREFIX + "/checkout";
 	}
 
-	@RequestMapping(value = "/entrygroups/{groupNumber}", method = RequestMethod.POST)
+	@PostMapping(value = "/entrygroups/{groupNumber}")
 	public String removeGroup(@PathVariable("groupNumber") final Integer groupNumber, final Model model,
 			final RedirectAttributes redirectModel)
 	{
@@ -342,7 +347,7 @@ public class CartPageController extends AbstractCartPageController
 		return REDIRECT_CART_URL;
 	}
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	@PostMapping(value = "/update")
 	public String updateCartQuantities(@RequestParam("entryNumber") final long entryNumber, @RequestParam("productCode") final String productCode,
 			@RequestParam("removeEntry") final boolean removeEntry, final Model model,
 			@Valid final UpdateQuantityForm form, final BindingResult bindingResult, final HttpServletRequest request,
@@ -363,7 +368,7 @@ public class CartPageController extends AbstractCartPageController
 					getCartFacade().updateCartEntry(entryNumber, form.getQuantity().longValue());
 
 					//Added condition to change serial status when entry remove from cart
-					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent())
+					if (BooleanUtils.isFalse(cartModel.getIsRentalCart()) && findEntry.isPresent()) // NOSONAR
 					{
 						blCartService.setUsedGearSerialProductStatus(null, findEntry.get());
 					}
@@ -566,7 +571,7 @@ public class CartPageController extends AbstractCartPageController
 
 	@SuppressWarnings("boxing")
 	@ResponseBody
-	@RequestMapping(value = "/updateMultiD", method = RequestMethod.POST)
+	@PostMapping(value = "/updateMultiD")
 	public CartData updateCartQuantitiesMultiD(@RequestParam("entryNumber") final Integer entryNumber,
 			@RequestParam("productCode") final String productCode, final Model model, @Valid final UpdateQuantityForm form,
 			final BindingResult bindingResult)
@@ -620,7 +625,7 @@ public class CartPageController extends AbstractCartPageController
 		return orderEntry;
 	}
 
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@PostMapping(value = "/save")
 	@RequireHardLogIn
 	public String saveCart(final SaveCartForm form, final BindingResult bindingResult, final RedirectAttributes redirectModel)
 			throws CommerceSaveCartException
@@ -658,7 +663,7 @@ public class CartPageController extends AbstractCartPageController
 		return REDIRECT_CART_URL;
 	}
 
-	@RequestMapping(value = "/export", method = RequestMethod.GET, produces = "text/csv")
+	@GetMapping(value = "/export", produces = "text/csv")
 	public String exportCsvFile(final HttpServletResponse response, final RedirectAttributes redirectModel) throws IOException
 	{
 		response.setHeader("Content-Disposition", "attachment;filename=cart.csv");
@@ -667,7 +672,7 @@ public class CartPageController extends AbstractCartPageController
 		{
 			try
 			{
-				final List<String> headers = new ArrayList<String>();
+				final List<String> headers = new ArrayList<>();
 				headers.add(getMessageSource().getMessage("basket.export.cart.item.sku", null, getI18nService().getCurrentLocale()));
 				headers.add(
 						getMessageSource().getMessage("basket.export.cart.item.quantity", null, getI18nService().getCurrentLocale()));
@@ -693,7 +698,7 @@ public class CartPageController extends AbstractCartPageController
 		return null;
 	}
 
-	@RequestMapping(value = "/voucher/apply", method = RequestMethod.POST)
+	@PostMapping(value = "/voucher/apply")
 	public String applyVoucherAction(@Valid final VoucherForm form, final BindingResult bindingResult,
 			final HttpServletRequest request, final RedirectAttributes redirectAttributes)
 	{
@@ -739,7 +744,7 @@ public class CartPageController extends AbstractCartPageController
 		return getRedirectUrlForCoupon(request);
 	}
 
-	@RequestMapping(value = "/voucher/remove", method = RequestMethod.POST)
+	@PostMapping(value = "/voucher/remove")
 	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel , final HttpServletRequest request)
 	{
 		try
@@ -772,7 +777,7 @@ public class CartPageController extends AbstractCartPageController
 		this.baseSiteService = baseSiteService;
 	}
 
-	@RequestMapping(value = "/entry/execute/" + ACTION_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.POST)
+	@PostMapping(value = "/entry/execute/" + ACTION_CODE_PATH_VARIABLE_PATTERN)
 	public String executeCartEntryAction(@PathVariable(value = "actionCode", required = true) final String actionCode,
 			final RedirectAttributes redirectModel, @RequestParam("entryNumbers") final Long[] entryNumbers)
 	{
@@ -942,8 +947,13 @@ public class CartPageController extends AbstractCartPageController
 	 */
 	@GetMapping(value = "/checkDateAndStock")
 	@ResponseBody
-	public String checkDateRangeAndStock(final Model model) 
+	public String checkDateRangeAndStock(final Model model,final RedirectAttributes redirectModel)
 	{
+		final	CartModel cartModel = blCartService.getSessionCart();
+		List<Integer> entryList = blCartFacade.getDiscontinueEntryList(cartModel,new StringBuilder());
+		if(CollectionUtils.isNotEmpty(entryList)) {
+			return REDIRECT_CART_URL;
+		}
 		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
 		if (rentalDateDto == null)
 		{
@@ -951,6 +961,13 @@ public class CartPageController extends AbstractCartPageController
 		}
 		else
 		{
+			if(null == cartModel.getRentalStartDate() && null == cartModel.getRentalEndDate()) {
+				final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
+						BlControllerConstants.DATE_FORMAT_PATTERN);
+				final Date endDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
+						BlControllerConstants.DATE_FORMAT_PATTERN);
+				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
+			}
 			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))
 			{
 				return BlControllerConstants.STOCK_FAILURE_RESULT;
@@ -985,7 +1002,7 @@ public class CartPageController extends AbstractCartPageController
 	 * @param isUsedGearTimerEnd
 	 * @return
 	 */
-	@RequestMapping(value = "/cartTimerOut", method = RequestMethod.POST, produces = "application/json")
+	@PostMapping(value = "/cartTimerOut", produces = "application/json")
 	public String usedGearCartSessionTimeOut(
 			@RequestParam(value = "usedGearTimerEnd", required = false, defaultValue = "true") final boolean isUsedGearTimerEnd)
 
@@ -997,6 +1014,53 @@ public class CartPageController extends AbstractCartPageController
 			return REDIRECT_CART_URL;
 		}
 			return StringUtils.EMPTY;
+	}
+	
+	@GetMapping(value = "/reviewPrint")
+	  public String print(final HttpServletRequest request, final Model model) {
+		  try {
+			  final CartData cartData = getCartFacade().getSessionCart();
+			  getCheckoutFacade().getModifiedTotalForPrintQuote(cartData);
+			  model.addAttribute(BlControllerConstants.CART_DATA, cartData);
+			  setFormattedRentalDates(model);
+			  model.addAttribute(BlControllerConstants.FROM_PAGE, BlControllerConstants.CART_PAGE);
+			  return ControllerConstants.Views.Pages.MultiStepCheckout.ReviewPrint;			  
+		  }
+		  catch(final Exception exception) {
+			  BlLogger.logMessage(LOG, Level.ERROR, "Error while creating data for Print Page from Cart page", exception);
+		  }
+		  return REDIRECT_CART_URL;
+	}
+	
+	/**
+	 * Sets the formatted rental dates on print quote page.
+	 *
+	 * @param model the new formatted rental dates
+	 */
+	private void setFormattedRentalDates(final Model model)
+	{
+		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+		if(Objects.nonNull(rentalDateDto))
+		{
+			final String formattedRentalStartDate = getFormattedDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedFromDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN));
+			model.addAttribute(BlControllerConstants.FORMATTED_RENTAL_START_DATE,formattedRentalStartDate);
+			final String formattedRentalEndDate = getFormattedDate(BlDateTimeUtils.getDate(rentalDateDto.getSelectedToDate(),
+			    BlControllerConstants.DATE_FORMAT_PATTERN));
+			model.addAttribute(BlControllerConstants.FORMATTED_RENTAL_END_DATE,formattedRentalEndDate);
+		}
+	}
+
+	/**
+	 * Gets the formatted date in EEEE, MMM d format.
+	 * Example - Wednesday, Jan 31
+	 *
+	 * @param date the date
+	 * @return the formatted date
+	 */
+	private String getFormattedDate(final Date date)
+	{
+		return BlDateTimeUtils.convertDateToStringDate(date, BlControllerConstants.REVIEW_PAGE_DATE_FORMAT);
 	}
 
 	/**

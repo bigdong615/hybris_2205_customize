@@ -921,6 +921,15 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
+	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
+	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
+	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
+	</bean>
+	<bean id="blProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blProductValidateInterceptor"/>
+		<property name="typeCode" value="BlProduct"/>
+	</bean>
+
 	<!-- [BL-781]: This is to fetch the wishlist entries-->
 	<alias name="defaultBlWishlistService" alias="blwishlistService"/>
 	<bean id="defaultBlWishlistService" class="com.bl.core.services.wishlist.impl.DefaultBlWishlistService" parent="defaultWishlistService">

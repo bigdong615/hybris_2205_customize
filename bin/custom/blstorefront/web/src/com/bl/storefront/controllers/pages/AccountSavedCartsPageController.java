@@ -3,6 +3,8 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.facades.cart.BlSaveCartFacade;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
@@ -36,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -75,7 +78,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	private ResourceBreadcrumbBuilder accountBreadcrumbBuilder;
 
 	@Resource(name = "saveCartFacade")
-	private SaveCartFacade saveCartFacade;
+	private BlSaveCartFacade saveCartFacade;
 
 	@Resource(name = "productVariantFacade")
 	private ProductFacade productFacade;
@@ -101,7 +104,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	{
 		// Handle paged search results
 		final PageableData pageableData = createPageableData(page, 5, sortCode, showMode); // NOSONAR
-		final SearchPageData<CartData> searchPageData = saveCartFacade.getSavedCartsForCurrentUser(pageableData, null); //NOSONAR
+		final SearchPageData<CartData> searchPageData = saveCartFacade.getSavedCartsForCurrentUser(pageableData, null,model); //NOSONAR
 		populateModel(model, searchPageData, showMode);
 
 		model.addAttribute("refreshSavedCart", getSiteConfigService().getBoolean(REFRESH_UPLOADING_SAVED_CART, false));
@@ -113,6 +116,13 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, accountBreadcrumbBuilder.getBreadcrumbs("text.account.savedCarts"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		model.addAttribute(BlControllerConstants.SAVE_CART_FORM , new SaveCartForm());
+		String removedEntries = (String)model.getAttribute(BlFacadesConstants.REMOVE_ENTRIES);
+		if(StringUtils.isNotEmpty(removedEntries)) {
+			removedEntries = removedEntries.substring(1);
+			GlobalMessages
+					.addFlashMessage((Map<String, Object>) model, GlobalMessages.CONF_MESSAGES_HOLDER,
+							BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{removedEntries});
+		}
 		return getViewForPage(model);
 	}
 

@@ -157,7 +157,7 @@
                 </custom-properties>
             </targetElement>
         </relation>
-        <relation code="BlSerial2BlSubpartRelation" autocreate="true" generate="true" localized="false">
+        <!--<relation code="BlSerial2BlSubpartRelation" autocreate="true" generate="true" localized="false">
             <deployment table="Serial2SubpartRel" typecode="12206"/>
             <sourceElement qualifier="blSerials" type="BlSerialProduct" cardinality="many">
                 <modifiers read="true" write="true" search="true" optional="true"/>
@@ -165,7 +165,16 @@
             <targetElement qualifier="blSubParts" type="BlSubpart" cardinality="many">
                 <modifiers read="true" write="true" search="true" optional="true"/>
             </targetElement>
-        </relation>
+        </relation>-->
+
+      <!--<relation code="BlProduct2BlSubpartRelation" autocreate="true" generate="true" localized="false">
+      <sourceElement qualifier="blproduct" type="BlProduct" cardinality="one">
+        <modifiers read="true" write="true" search="true" optional="true"/>
+      </sourceElement>
+      <targetElement qualifier="blSubParts" type="BlSubpart" cardinality="many">
+        <modifiers read="true" write="true" search="true" optional="true"/>
+      </targetElement>
+    </relation>-->
 
         <!--BlInventoryLocationToInventoryLocationScanHistory-->
         <relation code="BlInventoryLocation2InventoryLocationScanHistoryRelation" autocreate="true" generate="true" localized="false">
@@ -597,11 +606,26 @@
                          <modifiers read="true" write="true" optional="false" initial="true"/>
                          <description>Link or number for the item at the source we can purchase replacements</description>
                      </attribute>
-                     <attribute qualifier="alternativeProduct" type="java.lang.String">
-                         <persistence type="property" />
-                         <modifiers read="true" write="true" optional="true"/>
-                         <description>Message to show for discontinued items</description>
-                     </attribute>
+                   <attribute qualifier="alternativeProduct" type="localized:java.lang.String">
+                     <modifiers read="true" write="true" optional="true" search="true"/>
+                     <persistence type="property">
+                       <columntype database="oracle">
+                         <value>CLOB</value>
+                       </columntype>
+                       <columntype database="sap">
+                         <value>NCLOB</value>
+                       </columntype>
+                       <columntype>
+                         <value>HYBRIS.LONG_STRING</value>
+                       </columntype>
+                     </persistence>
+                     <custom-properties>
+                       <property name="hmcIndexField">
+                         <value>"thefield"</value>
+                       </property>
+                     </custom-properties>
+                     <description>Message to show for discontinued items</description>
+                   </attribute>
                      <attribute qualifier="isVideo" type="java.lang.Boolean">
                          <persistence type="property" />
                          <modifiers read="true" write="true" search="true" optional="false" />
@@ -1688,6 +1712,7 @@
                     <attribute qualifier="totalDamageWaiverCost" type="java.lang.Double">
                         <description>Total cost of selected Damage Waiver</description>
                         <persistence type="property"/>
+                        <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="pickUpByMe" type="boolean">
                         <persistence type="property" />
@@ -1722,22 +1747,22 @@
                     <attribute qualifier="rentalStartDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						            <description>Selected rental start date</description>
+                        <description>Rental start date of a gear selected by customer</description>
                     </attribute>
                     <attribute qualifier="rentalEndDate" type="java.util.Date">
                         <persistence type="property" />
                         <modifiers read="true" write="true" optional="true" />
-						            <description>Selected rental end date</description>
+                        <description>Rental end date of a gear selected by customer</description>
                     </attribute>
                   <attribute qualifier="actualRentalStartDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
-                    <description>Actual rental start date</description>
+                    <description>Shipping date of a consignment/order</description>
                   </attribute>
                   <attribute qualifier="actualRentalEndDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
-                    <description>Actual rental end date</description>
+                    <description>return date of a consignment/order</description>
                   </attribute>
                     <attribute qualifier="isRentalCart" type="java.lang.Boolean">
                       <persistence type="property" />
@@ -1756,6 +1781,7 @@
                       <modifiers read="true" write="true" search="false"
                       optional="true" />
                       <persistence type="property" />
+                      <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="isAuthorised" type="java.lang.Boolean">
                       <persistence type="property" />

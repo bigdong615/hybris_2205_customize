@@ -18,31 +18,31 @@ import com.bl.facades.shipment.data.UpsPaymentInformation;
 import com.bl.facades.shipment.data.UpsShipmentServiceData;
 import com.bl.facades.shipment.data.UpsShippingRequestData;
 import com.bl.integration.constants.BlintegrationConstants;
-import com.bl.integration.ups.ship.v1.pojo.BillShipperType;
-import com.bl.integration.ups.ship.v1.pojo.DimensionsType;
-import com.bl.integration.ups.ship.v1.pojo.LabelDeliveryType;
-import com.bl.integration.ups.ship.v1.pojo.LabelImageFormatType;
-import com.bl.integration.ups.ship.v1.pojo.LabelSpecificationType;
-import com.bl.integration.ups.ship.v1.pojo.LabelStockSizeType;
-import com.bl.integration.ups.ship.v1.pojo.PackageType;
-import com.bl.integration.ups.ship.v1.pojo.PackageWeightType;
-import com.bl.integration.ups.ship.v1.pojo.PackagingType;
-import com.bl.integration.ups.ship.v1.pojo.PaymentInfoType;
-import com.bl.integration.ups.ship.v1.pojo.ReturnServiceType;
-import com.bl.integration.ups.ship.v1.pojo.ServiceType;
-import com.bl.integration.ups.ship.v1.pojo.ShipAddressType;
-import com.bl.integration.ups.ship.v1.pojo.ShipFromType;
-import com.bl.integration.ups.ship.v1.pojo.ShipPhoneType;
-import com.bl.integration.ups.ship.v1.pojo.ShipToAddressType;
-import com.bl.integration.ups.ship.v1.pojo.ShipToType;
-import com.bl.integration.ups.ship.v1.pojo.ShipUnitOfMeasurementType;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentChargeType;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentRequest;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentType;
-import com.bl.integration.ups.ship.v1.pojo.ShipmentType.ShipmentServiceOptions;
-import com.bl.integration.ups.ship.v1.pojo.ShipperType;
-import com.bl.ups.common.v1.pojo.RequestType;
-import com.bl.ups.common.v1.pojo.TransactionReferenceType;
+import com.ups.xmlschema.xoltws.common.v1.RequestType;
+import com.ups.xmlschema.xoltws.common.v1.TransactionReferenceType;
+import com.ups.xmlschema.xoltws.ship.v1.BillShipperType;
+import com.ups.xmlschema.xoltws.ship.v1.DimensionsType;
+import com.ups.xmlschema.xoltws.ship.v1.LabelDeliveryType;
+import com.ups.xmlschema.xoltws.ship.v1.LabelImageFormatType;
+import com.ups.xmlschema.xoltws.ship.v1.LabelSpecificationType;
+import com.ups.xmlschema.xoltws.ship.v1.LabelStockSizeType;
+import com.ups.xmlschema.xoltws.ship.v1.PackageType;
+import com.ups.xmlschema.xoltws.ship.v1.PackageWeightType;
+import com.ups.xmlschema.xoltws.ship.v1.PackagingType;
+import com.ups.xmlschema.xoltws.ship.v1.PaymentInfoType;
+import com.ups.xmlschema.xoltws.ship.v1.ReturnServiceType;
+import com.ups.xmlschema.xoltws.ship.v1.ServiceType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipAddressType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipFromType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipPhoneType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipToAddressType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipToType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipUnitOfMeasurementType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentChargeType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentRequest;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentType;
+import com.ups.xmlschema.xoltws.ship.v1.ShipmentType.ShipmentServiceOptions;
+import com.ups.xmlschema.xoltws.ship.v1.ShipperType;
 
 
 /**
@@ -157,11 +157,14 @@ public class BLUPSShipmentCreateRequestPopulator
 		pkg1.setDescription(BlintegrationConstants.PACKAGE_DESCRIPTION);
 		packageList.add(pkg1);
 
-
 		/** Creating Return Service Data **/
-	final ReturnServiceType returnService = new ReturnServiceType();
-		returnService.setCode(shipmentData.getReturnService().getCode());
-		returnService.setDescription(shipmentData.getReturnService().getDescription());
+
+		final ReturnServiceType returnService = new ReturnServiceType();
+		if (shipmentData.getReturnService() != null && shipmentData.getReturnService().getCode() != null)
+		{
+			returnService.setCode(shipmentData.getReturnService().getCode());
+			returnService.setDescription(shipmentData.getReturnService().getDescription());
+		}
 
 		shipmentType.setReturnService(returnService);
 
@@ -207,9 +210,9 @@ public class BLUPSShipmentCreateRequestPopulator
 		shipperAddress.setCity(shipperAddressData.getTown());
 		shipperAddress.setPostalCode(shipperAddressData.getPostalCode());
 
-		if (shipperAddressData.getRegion() != null && shipperAddressData.getRegion().getIsocode() != null)
+		if (shipperAddressData.getRegion() != null && shipperAddressData.getRegion().getIsocodeShort() != null)
 		{
-			shipperAddress.setStateProvinceCode(shipperAddressData.getRegion().getIsocode());
+			shipperAddress.setStateProvinceCode(shipperAddressData.getRegion().getIsocodeShort());
 		}
 
 		if (shipperAddressData.getCountry() != null && shipperAddressData.getCountry().getIsocode() != null)
@@ -244,9 +247,9 @@ public class BLUPSShipmentCreateRequestPopulator
 		{
 			shipToAddress.setCountryCode(shipToAddressData.getCountry().getIsocode());
 		}
-		if (shipToAddressData.getRegion() != null && shipToAddressData.getRegion().getIsocode() != null)
+		if (shipToAddressData.getRegion() != null && shipToAddressData.getRegion().getIsocodeShort() != null)
 		{
-			shipToAddress.setStateProvinceCode(shipToAddressData.getRegion().getIsocode());
+			shipToAddress.setStateProvinceCode(shipToAddressData.getRegion().getIsocodeShort());
 		}
 		shipTo.setAddress(shipToAddress);
 
@@ -272,9 +275,9 @@ public class BLUPSShipmentCreateRequestPopulator
 		shipFromAddress.setCity(address.getTown());
 		shipFromAddress.setPostalCode(address.getPostalCode());
 
-		if (address.getRegion() != null && address.getRegion().getIsocode() != null)
+		if (address.getRegion() != null && address.getRegion().getIsocodeShort() != null)
 		{
-			shipFromAddress.setStateProvinceCode(address.getRegion().getIsocode());
+			shipFromAddress.setStateProvinceCode(address.getRegion().getIsocodeShort());
 		}
 
 		if (address.getCountry() != null && address.getCountry().getIsocode() != null)

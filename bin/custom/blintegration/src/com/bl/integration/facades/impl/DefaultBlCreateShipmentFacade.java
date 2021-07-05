@@ -3,14 +3,13 @@
  */
 package com.bl.integration.facades.impl;
 
-
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import com.bl.core.enums.CarrierEnum;
@@ -18,6 +17,7 @@ import com.bl.integration.facades.BlCreateShipmentFacade;
 import com.bl.integration.populators.BLFedExShippingDataPopulator;
 import com.bl.integration.populators.BLUpsShippingDataPopulator;
 import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
+import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.bl.shipment.data.UPSShipmentPackageResult;
 
@@ -47,19 +47,24 @@ public class DefaultBlCreateShipmentFacade implements BlCreateShipmentFacade
 	@Override
 	public void createBlShipmentPackages(final PackagingInfoModel packagingInfo)
 	{
-		final ConsignmentModel consignment = packagingInfo.getConsignment();
-		final ZoneDeliveryModeModel deliveryMode = (ZoneDeliveryModeModel) consignment.getDeliveryMode();
-		final CarrierEnum carrier = deliveryMode.getCarrier();
-		if (carrier.equals(CarrierEnum.UPS))
+		BlLogger.logMessage(LOG, Level.INFO, "Shipment call for UPS");
+
+		final ZoneDeliveryModeModel zoneDeliveryMode = (ZoneDeliveryModeModel) packagingInfo.getConsignment().getDeliveryMode();
+		final CarrierEnum delivertCarrier = zoneDeliveryMode.getCarrier();
+
+		if (delivertCarrier.getCode().equalsIgnoreCase(CarrierEnum.UPS.getCode()))
 		{
 			final UPSShipmentCreateResponse upsResponse = getBlShipmentCreationService()
 					.createUPSShipment(getBlUpsShippingDataPopulator().populateUPSShipmentRequest(packagingInfo));
-			saveResponseOnPackage(upsResponse, packagingInfo);
+			if (upsResponse != null)
+			{
+				saveResponseOnPackage(upsResponse, packagingInfo);
+			}
 		}
 		else
 		{
-			getBlShipmentCreationService().createFedExShipment(
-					getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo.getConsignment()));
+			getBlShipmentCreationService()
+					.createFedExShipment(getBlFedExShippingDataPopulator().populateFedExShipmentRequest(packagingInfo));
 		}
 	}
 
