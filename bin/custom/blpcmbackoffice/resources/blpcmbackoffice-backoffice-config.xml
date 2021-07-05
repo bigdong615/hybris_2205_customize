@@ -245,7 +245,7 @@
 					<ea:attribute qualifier="firmwareVersion"/>
 					<ea:attribute qualifier="lrLink"/>
 					<ea:attribute qualifier="discontinued"/>
-					<ea:attribute qualifier="alternativeProduct" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="alternativeProduct" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.ids">
 				 <ea:attribute qualifier="procurementSource"/>
