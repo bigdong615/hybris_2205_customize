@@ -27,7 +27,8 @@
                                </c:forEach>
                             </div>
                             <div class="col-9 col-md-6 my-auto">
-                                <b>${wishlistDatas.product.displayName}</b>
+                                <c:url var="rentalPDPUrl" value="/rent/product/${wishlistDatas.product.code}"/>
+                                <b><a href="${rentalPDPUrl}">${wishlistDatas.product.displayName}</a></b>
                                 <p class="gray80 body14">
                                     ${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}<br>
                                     <format:price priceData="${wishlistDatas.product.price}"/>
