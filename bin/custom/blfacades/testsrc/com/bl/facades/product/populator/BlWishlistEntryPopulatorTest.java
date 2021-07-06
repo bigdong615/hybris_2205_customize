@@ -1,7 +1,6 @@
 package com.bl.facades.product.populator;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 import com.bl.facades.populators.BlWishlistEntryPopulator;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
@@ -44,11 +43,10 @@ public class BlWishlistEntryPopulatorTest {
   public void populate() {
     wishlist2EntryData = new Wishlist2EntryData();
     Mockito.when(wishlist2EntryModel.getPk()).thenReturn(PK.parseHex("8796322464446"));
-    when(productModel.getCode()).thenReturn(PRODUCT_CODE);
-   // when(wishlist2EntryModel.getProduct().getCode()).thenReturn(PRODUCT_CODE);
-//    Mockito.when(wishlist2EntryModel.getProduct().getCode()).thenReturn("Canon_1Ds_Mark_II");
+    given(wishlist2EntryModel.getProduct()).willReturn(productModel);
+    given(productModel.getCode()).willReturn("Canon_1Ds_Mark_II");
     given(
-        productFacade.getProductForOptions(Matchers.any(),
+        productFacade.getProductForOptions(productModel,
             Arrays.asList(ProductOption.PRICE, ProductOption.REQUIRED_DATA, ProductOption.GALLERY,
                 ProductOption.STOCK))).willReturn(productData);
     blWishlistEntryPopulator.populate(wishlist2EntryModel, wishlist2EntryData);
