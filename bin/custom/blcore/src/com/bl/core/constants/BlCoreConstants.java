@@ -156,16 +156,16 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String BL_IMAGE = "blimage";
 	public static final String MEDIA_FORMAT = "300Wx300H";
 
-	public static final String ISO_CODE_SHORT ="isoCodeShort";
-	public static final String CODES ="codes";
-	public static final String ONLINE ="Online";
-	public static final String SERIAL_PRODUCT_CODES ="serialProductCodes";
-	public static final String PRODUCT_CODES ="productCodes";
-	public static final String CONSIGNMENT_PROCESS_PREFIX ="cons";
+	public static final String ISO_CODE_SHORT = "isoCodeShort";
+	public static final String CODES = "codes";
+	public static final String ONLINE = "Online";
+	public static final String SERIAL_PRODUCT_CODES = "serialProductCodes";
+	public static final String PRODUCT_CODES = "productCodes";
+	public static final String CONSIGNMENT_PROCESS_PREFIX = "cons";
 
-	public static final String LENSES ="lenses";
-	public static final String CAMERAS ="cameras";
-	public static final String PRODUCTION ="production";
+	public static final String LENSES = "lenses";
+	public static final String CAMERAS = "cameras";
+	public static final String PRODUCTION = "production";
 	public static final int SKIP_TWO_DAYS = 2;
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
@@ -192,7 +192,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
 	public static final String IS_DISCONTINUED = "isDiscontinued";
-	
+
+	public static final String COMPLETED = "Completed";
+	public static final String CONFIRM_OUTPUT = "confirmOutput";
+
 	private BlCoreConstants()
 	{
 		//empty

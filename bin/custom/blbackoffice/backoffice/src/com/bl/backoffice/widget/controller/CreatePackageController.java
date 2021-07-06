@@ -7,9 +7,7 @@ import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.ordersplitting.WarehouseService;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.search.restriction.SearchRestrictionService;
 import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
 
@@ -21,11 +19,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Checkbox;
@@ -33,15 +27,14 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 
 import com.bl.blbackoffice.dto.SerialProductDTO;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.facades.warehouse.BLWarehousingConsignmentFacade;
 import com.hybris.backoffice.i18n.BackofficeLocaleService;
-import com.hybris.backoffice.widgets.notificationarea.NotificationService;
 import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.core.events.CockpitEventQueue;
@@ -69,13 +62,7 @@ public class CreatePackageController extends DefaultWidgetController
 
 	@Wire
 	private Textbox selectedProduct;
-	//	@Wire
-	//	private Combobox globalDeclineReasons;
-	//	@Wire
-	//	private Textbox globalDeclineComment;
-	//	@Wire
 	private Grid serialEntries;
-
 
 	@Wire
 	private Checkbox serialEntry;
@@ -91,8 +78,6 @@ public class CreatePackageController extends DefaultWidgetController
 	private transient BackofficeLocaleService cockpitLocaleService;
 	@WireVariable
 	private transient CockpitEventQueue cockpitEventQueue;
-	@WireVariable
-	private transient NotificationService notificationService;
 
 	@Resource(name = "blWarehousingConsignmentFacade")
 	private BLWarehousingConsignmentFacade blWarehousingConsignmentFacade;
@@ -114,19 +99,15 @@ public class CreatePackageController extends DefaultWidgetController
 	@Wire
 	private Combobox boxes;
 
-	ListModelList<PackagingInfoData> packages = null;
-	List<PackagingInfoData> packingInfo = null;
+	public ListModelList<PackagingInfoData> packages = null;
+	private List<PackagingInfoData> packingInfo = null;
+
 	double weight = 0.0;
-	Set<BlSerialProductModel> allSerialProducts = new HashSet<BlSerialProductModel>();
-	Set<BlSerialProductModel> selectedSerialProducts = new HashSet<BlSerialProductModel>();
+	private final Set<BlSerialProductModel> allSerialProducts = new HashSet<BlSerialProductModel>();
+	private final Set<BlSerialProductModel> selectedSerialProducts = new HashSet<BlSerialProductModel>();
 
 	@Resource(name = "productDao")
 	private BlProductDao productDao;
-
-	@Autowired
-	private SearchRestrictionService searchRestrictionService;
-	@Autowired
-	private SessionService sessionService;
 
 	@SocketEvent(socketId = "inputObject")
 	public void initReallocationConsignmentForm(final ConsignmentModel consignment)
@@ -151,15 +132,15 @@ public class CreatePackageController extends DefaultWidgetController
 					serials.add(serialProduct);
 				}
 				this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
-				final ListModelList<PackagingInfoData> packages = new ListModelList<PackagingInfoData>(createPackageCombobox());
-				final PackagingInfoData packagingInfoData = packages.get(0);
-				packages.addToSelection(packagingInfoData);
-				this.boxes.setModel(packages);
+				final ListModelList<PackagingInfoData> packageBox = new ListModelList<PackagingInfoData>(createPackageCombobox());
+				final PackagingInfoData packagingInfoData = packageBox.get(0);
+				packageBox.addToSelection(packagingInfoData);
+				this.boxes.setModel(packageBox);
 				this.totalWeight.setValue(calculateTotalWeight(this.weight));
 			}
 			else
 			{
-				this.sendOutput("confirmOutput", "Completed");
+				this.sendOutput(BlCoreConstants.CONFIRM_OUTPUT, BlCoreConstants.COMPLETED);
 				Messagebox.show("All Serials are assigned to the package, " + "hence no Serials are available", "Info", Messagebox.OK,
 						"icon");
 			}
@@ -168,7 +149,8 @@ public class CreatePackageController extends DefaultWidgetController
 
 
 	/**
-	 * @param consignment
+	 * @param Consignment
+	 *           all the list of already packed serials
 	 */
 	private void getListOfPackedSerials(final ConsignmentModel consignment)
 	{
@@ -177,9 +159,9 @@ public class CreatePackageController extends DefaultWidgetController
 		{
 			allSerialProducts.addAll(consignmentEntryModel.getSerialProducts());
 		}
-		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
+		final List<PackagingInfoModel> packageInfo = consignment.getPackaginginfos();
 
-		for (final PackagingInfoModel packagingInfoModel : packages)
+		for (final PackagingInfoModel packagingInfoModel : packageInfo)
 		{
 			final Set<BlSerialProductModel> packageSerails = packagingInfoModel.getSerialProducts();
 			if (CollectionUtils.isNotEmpty(packageSerails))
@@ -212,7 +194,6 @@ public class CreatePackageController extends DefaultWidgetController
 	@ViewEvent(componentID = "selectedProduct", eventName = "onChange")
 	public void packageSelectedProduct()
 	{
-		System.out.println(this.selectedProduct.getValue());
 		if (CollectionUtils.isNotEmpty(this.allSerialProducts) && this.selectedProduct != null
 				&& this.selectedProduct.getValue().contains("_"))
 		{
@@ -249,7 +230,7 @@ public class CreatePackageController extends DefaultWidgetController
 	@ViewEvent(componentID = "undochanges", eventName = "onClick")
 	public void reset()
 	{
-		this.sendOutput("confirmOutput", "Completed");
+		this.sendOutput(BlCoreConstants.CONFIRM_OUTPUT, BlCoreConstants.COMPLETED);
 	}
 
 	@ViewEvent(componentID = "createPackaging", eventName = "onClick")
@@ -285,13 +266,7 @@ public class CreatePackageController extends DefaultWidgetController
 	protected void showMessageBox()
 	{
 		Messagebox.show("Details Updated Successfully");
-		this.sendOutput("confirmOutput", "Completed");
-	}
-
-	@Listen(Events.ON_CHECK)
-	public void onValueCheck(final Event event)
-	{
-		System.out.println("event");
+		this.sendOutput(BlCoreConstants.CONFIRM_OUTPUT, BlCoreConstants.COMPLETED);
 	}
 
 	protected List<Component> getOrderEntriesGridRows()
@@ -343,56 +318,6 @@ public class CreatePackageController extends DefaultWidgetController
 	protected CockpitEventQueue getCockpitEventQueue()
 	{
 		return this.cockpitEventQueue;
-	}
-
-
-	protected void handleRow(final Row row)
-	{
-		System.out.println("inside row");
-		final SerialProductDTO myEntry = (SerialProductDTO) row.getValue();
-		if (!((Checkbox) row.getChildren().iterator().next()).isChecked())
-		{
-			System.out.println("Check Box false" + myEntry.getSerialProduct().getCode());
-		}
-		else
-		{
-			System.out.println("Check box true" + myEntry.getSerialProduct().getCode());
-		}
-	}
-
-
-	/**
-	 * @return the searchRestrictionService
-	 */
-	public SearchRestrictionService getSearchRestrictionService()
-	{
-		return searchRestrictionService;
-	}
-
-	/**
-	 * @param searchRestrictionService
-	 *           the searchRestrictionService to set
-	 */
-	public void setSearchRestrictionService(final SearchRestrictionService searchRestrictionService)
-	{
-		this.searchRestrictionService = searchRestrictionService;
-	}
-
-	/**
-	 * @return the sessionService
-	 */
-	public SessionService getSessionService()
-	{
-		return sessionService;
-	}
-
-	/**
-	 * @param sessionService
-	 *           the sessionService to set
-	 */
-	public void setSessionService(final SessionService sessionService)
-	{
-		this.sessionService = sessionService;
 	}
 
 	/**

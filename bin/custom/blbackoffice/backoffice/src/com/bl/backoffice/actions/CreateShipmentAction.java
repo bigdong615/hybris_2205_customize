@@ -45,11 +45,11 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 		modelService.refresh(consignment);
 		final List<PackagingInfoModel> packages = consignment.getPackaginginfos();
 
+		//Create Shipment and generate lable
 		for (final PackagingInfoModel packagingInfoModel : packages)
 		{
 			blCreateShipmentFacade.createBlShipmentPackages(packagingInfoModel);
 		}
-		System.out.println("Shipment Created");
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
 		return new ActionResult("success");
 	}
