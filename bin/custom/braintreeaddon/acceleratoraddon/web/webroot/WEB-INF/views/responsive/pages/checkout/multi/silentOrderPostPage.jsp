@@ -52,10 +52,12 @@
 						<div id="order" class="col-lg-7">
 							<h1>Payment</h1>
 							<hr>
-							<p><b>Dates</b>&emsp;<input type="text"
+							<c:if test="${cartData.isRentalCart}">
+							  <p><b>Dates</b>&emsp;<input type="text"
 									class="form-control cart-picker" id="litepicker"
 									placeholder="<spring:theme code="text.rental.cart.select.date"/>">
-							</p>
+							  </p>
+							</c:if>
 							<p class="overline">Pay With</p>
 							<div class="accordion" id="paymentOptions">
 								<div class="accordion-item payProduct">
