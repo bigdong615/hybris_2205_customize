@@ -33,7 +33,7 @@
                                     <format:price priceData="${wishlistDatas.product.price}"/>
                                 </p>
                             </div>
-                            <div class="col-12 col-md-4 text-start text-md-end my-auto">
+                            <div class="col-12 col-md-4 text-start text-md-end my-auto bookmarkpage">
                             <form id="removewishlistForm_${loopindex.index}" action="${removeProduct}" method="post" >
                              <input type="hidden" name="removeProductEntry" value="${wishlistDatas.product.code}" id="removeProductEntry{loopindex.index}" />
                              <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
