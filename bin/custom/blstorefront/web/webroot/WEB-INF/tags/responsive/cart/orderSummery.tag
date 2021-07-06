@@ -146,7 +146,7 @@
 		<form:form action="${voucherRemoveUrl}" modelAttribute="voucherForm"
 			method="POST" id="removeVoucherForm${loop.index}">
 			<p class="body14">
-				<c:if test="${cartData.totalDiscounts.value > 0}">
+				<c:if test="${cartData.totalDiscounts.value > 0 || cartData.productDiscounts.value > 0}">
 					<span class="gray60">${fn:escapeXml(voucher)}</span>
 
 					<form:input hidden="hidden" value="${fn:escapeXml(voucher)}"
