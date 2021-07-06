@@ -1,6 +1,7 @@
 package com.bl.facades.cart.impl;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
@@ -29,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,7 +41,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
-import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -109,6 +108,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
   /**
    * {@inheritDoc}
    */
+  @Override
   public CartModificationData addToCart(final String productCode, final long quantity,
       final String serialCode)
       throws CommerceCartModificationException {
@@ -140,7 +140,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
       }
-    } catch (Exception exception) {
+    } catch (final Exception exception) {
       BlLogger.logMessage(LOGGER, Level.ERROR,
           "Unable to set product model, unit and new entry to CommerceCartParameter", exception);
     }
@@ -173,6 +173,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         cartModel.setIsRentalCart(Boolean.FALSE);
           //Added code for serial status changes
 		  blSerialProductModel.setSerialStatus(SerialStatusEnum.ADDED_TO_CART);
+		  getBlCartService().changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ADDED_TO_CART);
 		  getModelService().save(blSerialProductModel);
       }
     }

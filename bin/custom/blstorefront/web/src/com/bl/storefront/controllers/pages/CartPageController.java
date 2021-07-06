@@ -961,11 +961,14 @@ public class CartPageController extends AbstractCartPageController
 		}
 		else
 		{
+			final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN);
+			final Date endDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
+					BlControllerConstants.DATE_FORMAT_PATTERN);
 			if(null == cartModel.getRentalStartDate() && null == cartModel.getRentalEndDate()) {
-				final Date startDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedFromDate(),
-						BlControllerConstants.DATE_FORMAT_PATTERN);
-				final Date endDate = BlDateTimeUtils.convertStringDateToDate(rentalDateDto.getSelectedToDate(),
-						BlControllerConstants.DATE_FORMAT_PATTERN);
+				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
+			} else if(!(cartModel.getRentalStartDate().compareTo(startDate) == 0) ||
+					!(cartModel.getRentalEndDate().compareTo(endDate) == 0)) {
 				getBlCartFacade().setRentalDatesOnCart(startDate, endDate);
 			}
 			if (BooleanUtils.negate(getBlCartFacade().checkAvailabilityOnCartContinue(rentalDateDto)))
