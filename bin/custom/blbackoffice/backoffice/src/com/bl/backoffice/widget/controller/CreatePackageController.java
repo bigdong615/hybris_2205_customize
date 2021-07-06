@@ -30,7 +30,6 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
 import com.bl.blbackoffice.dto.SerialProductDTO;
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.facades.warehouse.BLWarehousingConsignmentFacade;
@@ -46,7 +45,7 @@ public class CreatePackageController extends DefaultWidgetController
 	private static final long serialVersionUID = 1L;
 	protected static final String IN_SOCKET = "consignmentInput";
 	protected static final String OUT_CONFIRM = "confirmOutput";
-	protected static final Object COMPLETED = "completed";
+	protected static final String COMPLETE = "completed";
 	protected static final String CONSIGNMENT_ACTION_EVENT_NAME = "ConsignmentActionEvent";
 	protected static final String REALLOCATE_CONSIGNMENT_CHOICE = "reallocateConsignment";
 	protected static final String DECLINE_ENTRIES = "declineEntries";
@@ -140,7 +139,7 @@ public class CreatePackageController extends DefaultWidgetController
 			}
 			else
 			{
-				this.sendOutput(BlCoreConstants.CONFIRM_OUTPUT, BlCoreConstants.COMPLETED);
+				this.sendOutput(OUT_CONFIRM, COMPLETE);
 				Messagebox.show("All Serials are assigned to the package, " + "hence no Serials are available", "Info", Messagebox.OK,
 						"icon");
 			}
@@ -230,7 +229,7 @@ public class CreatePackageController extends DefaultWidgetController
 	@ViewEvent(componentID = "undochanges", eventName = "onClick")
 	public void reset()
 	{
-		this.sendOutput(BlCoreConstants.CONFIRM_OUTPUT, BlCoreConstants.COMPLETED);
+		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
 	@ViewEvent(componentID = "createPackaging", eventName = "onClick")
@@ -266,7 +265,7 @@ public class CreatePackageController extends DefaultWidgetController
 	protected void showMessageBox()
 	{
 		Messagebox.show("Details Updated Successfully");
-		this.sendOutput(BlCoreConstants.CONFIRM_OUTPUT, BlCoreConstants.COMPLETED);
+		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
 	protected List<Component> getOrderEntriesGridRows()
