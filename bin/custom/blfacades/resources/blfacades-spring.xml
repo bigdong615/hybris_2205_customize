@@ -562,6 +562,7 @@
 		<property name="blCartFacade" ref="cartFacade"/>
 	</bean>
 
+
   <!-- BL-632:This class was created for providing bl specific saved cart functionality.-->
 	<alias name="defaultBlSaveCartFacade" alias="saveCartFacade"/>
 	<bean id="defaultBlSaveCartFacade" class="com.bl.facades.cart.impl.DefaultBlSaveCartFacade" parent="defaultSaveCartFacade"/>
