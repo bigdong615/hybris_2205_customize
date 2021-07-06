@@ -15,7 +15,6 @@ import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -53,14 +52,10 @@ public class BlWishListPopulatorTest {
     Wishlist2EntryModel wishlist2EntryModel = new Wishlist2EntryModel();
     when(wishlist2Model.getName()).thenReturn(PRODUCT_NAME);
     when(wishlist2Model.getDescription()).thenReturn(DESCRIPTION);
-
     when(productModel.getName()).thenReturn(PRODUCT_NAME);
     wishlist2EntryModel.setProduct(productModel);
-
     List<Wishlist2EntryModel> entries = new ArrayList<Wishlist2EntryModel>();
-
     when(wishlist2Model.getEntries()).thenReturn(entries);
-
     Mockito.when(blWishList2EntryConverter.convert(wishlist2EntryModel)).thenReturn(wishlist2EntryData);
     populator.populate(wishlist2Model, wishlist2Data);
     assertEquals(wishlist2Data.getName(), PRODUCT_NAME);

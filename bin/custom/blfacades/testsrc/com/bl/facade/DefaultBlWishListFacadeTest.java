@@ -14,7 +14,6 @@ import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.user.UserService;
-import de.hybris.platform.wishlist2.Wishlist2Service;
 import de.hybris.platform.wishlist2.enums.Wishlist2EntryPriority;
 import de.hybris.platform.wishlist2.impl.DefaultWishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
@@ -94,7 +93,6 @@ public class DefaultBlWishListFacadeTest {
     pageableData.setPageSize(5);
     final SearchPageData<Wishlist2EntryModel> wishlistEntries = blwishlistService
         .getWishlistEntries(pageableData);
-    //  Mockito.when(wishlistEntries.getPagination()).thenReturn(pageableData);
     final SearchPageData<T> result = new SearchPageData<T>();
     Mockito.when(result.getPagination()).thenReturn(wishlistEntries.getPagination());
     Mockito.when(result.getSorts()).thenReturn(wishlistEntries.getSorts());
