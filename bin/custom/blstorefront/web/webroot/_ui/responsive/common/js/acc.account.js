@@ -75,7 +75,7 @@ ACC.account = {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
 								}
-								$("#errorMessages_sigin_chkPwd").html("Your passwords did not match, please enter them again");
+								$("#errorMessages_sigin_chkPwd").html("Your passwords did not match, please enter them again.");
 								// BL-689: below line added
 								$("#errorMessages_sigin_chkPwd").removeClass("d-none");
 							}
@@ -85,7 +85,7 @@ ACC.account = {
 							}
 							// BL-689: below line added
 							$("#errorMessages_sigin_email").removeClass("d-none");
-							$("#errorMessages_sigin_email").html("Whoops, it looks like you’re already signed up with a BorrowLenses account");
+							$("#errorMessages_sigin_email").html("Whoops, it looks like you’re already signed up with a BorrowLenses account.");
 						} else {
 							
 							$("#errorMessages_sigin_errorbox").addClass("d-none");
