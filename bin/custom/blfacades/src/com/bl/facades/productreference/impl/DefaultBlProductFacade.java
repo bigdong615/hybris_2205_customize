@@ -68,10 +68,7 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
       getBlSerialProductPopulator().populate(blProductModel,blProductData);
       if(CollectionUtils.isNotEmpty(blProductData.getSerialproducts())){
         for(Object serialProduct: blProductData.getSerialproducts()){
-           promoMessage = getSerialPromotionMessage((SerialProductData) serialProduct);
-           if(StringUtils.isNotBlank(promoMessage)){
-             break;
-           }
+           return getSerialPromotionMessage((SerialProductData) serialProduct);
         }
       }
     }
