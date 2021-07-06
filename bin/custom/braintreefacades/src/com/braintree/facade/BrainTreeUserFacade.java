@@ -39,4 +39,13 @@ public interface BrainTreeUserFacade extends UserFacade
 
 	boolean editPaymentMethod(CCPaymentInfoData paymentInfo, String cardholderName, String expirationDate, String cvv,
 			AddressData addressData);
+
+	/**
+	 * This method is responsible for setting default billing address.
+	 */
+	public void setDefaultBillingAddress(final AddressData addressData);
+	/**
+	 * This method is responsible for getting default billing address.
+	 */
+	public AddressData getDefaultBillingAddress();
 }

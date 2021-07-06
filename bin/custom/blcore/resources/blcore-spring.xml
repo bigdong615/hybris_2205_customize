@@ -941,5 +941,30 @@
 	</bean>
 	<!-- BL-766 end -->
 
-</beans>
+	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
+	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
+	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
+	</bean>
+	<bean id="blProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blProductValidateInterceptor"/>
+		<property name="typeCode" value="BlProduct"/>
+	</bean>
 
+	<!-- [BL-781]: This is to fetch the wishlist entries-->
+	<alias name="defaultBlWishlistService" alias="blwishlistService"/>
+	<bean id="defaultBlWishlistService" class="com.bl.core.services.wishlist.impl.DefaultBlWishlistService" parent="defaultWishlistService">
+		<property name="blwishlistDao" ref="blwishlistDao"/>
+	</bean>
+
+	<!-- [BL-781]: This is to fetch the wishlist entries from the Database-->
+	<alias name="defaultBlWishlistDao" alias="blwishlistDao"/>
+	<bean id="defaultBlWishlistDao" class="com.bl.core.wishlist.impl.DefaultBlWishlistDao" parent="defaultWishlistDao">
+		<property name="userService" ref="userService"/>
+		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
+	</bean>
+	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
+	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
+        <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
+    </bean>	
+	
+</beans>
