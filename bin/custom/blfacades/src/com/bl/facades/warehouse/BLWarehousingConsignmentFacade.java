@@ -15,7 +15,20 @@ import java.util.List;
  */
 public interface BLWarehousingConsignmentFacade
 {
+	/**
+	 * Create Package using packagingInfoData and save it on Consignment
+	 *
+	 * @param consignmentCode
+	 * @param packagingInfoData
+	 * @return PackagingInfoModel
+	 */
 	public PackagingInfoModel createPackagingInformationOnConsignment(String code, PackagingInfoData packagingInfoData);
 
+
+	/**
+	 * Get all the Packaging Dimensions
+	 * 
+	 * @return List of all PackagingInfoData
+	 */
 	public List<PackagingInfoData> getAllPackagingDimensions();
 }
