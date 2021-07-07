@@ -46,6 +46,7 @@
         <form:form method="POST" modelAttribute="addressForm">
             <formElement:formInputBox idKey="address.firstName" placeholder="address.firstName" labelKey="" path="firstName" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.lastName" labelKey="" placeholder="address.lastName" path="lastName" inputCSS="form-control" mandatory="true" />
+            <formElement:formInputBox idKey="address.companyName" labelKey="" placeholder="address.companyName" path="companyName" inputCSS="form-control" mandatory="false" />
             <formElement:formInputBox idKey="address.line1" labelKey="" placeholder="address.street1" path="line1" inputCSS="form-control" mandatory="true" />
             <formElement:formInputBox idKey="address.line2" labelKey="" placeholder="address.street2" path="line2" inputCSS="form-control" mandatory="false"/>
             <formElement:formInputBox idKey="address.townCity" labelKey="" placeholder="address.townCity" path="townCity" inputCSS="form-control" mandatory="true" />

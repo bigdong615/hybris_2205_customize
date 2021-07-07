@@ -162,6 +162,7 @@ function removeClass(){
           } else {
               var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
               var lastName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
+              var companyName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]');
               var line1 = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]');
               var line2 = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]');
               var townCity = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.townCity"]');
@@ -170,7 +171,7 @@ function removeClass(){
               var email = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
               var phone = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
               if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone)) {
-                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
+                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
                                                                      phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
               } else {
@@ -826,6 +827,7 @@ function removeClass(){
         } else {
             var firstName = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
             var lastName = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
+            var companyName = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]');
             var line1 = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]');
             var line2 = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]');
             var townCity = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.townCity"]');
@@ -847,7 +849,7 @@ function removeClass(){
                    },
                    success: function (data) {
                         if(data == 'SUCCESS') {
-                            addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(),
+                            addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
                                                         townCity.val(),regionIso.val(), 'US', postcode.val(),
                                                         $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
                                                         phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
@@ -877,6 +879,8 @@ function removeClass(){
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]').removeClass('error');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').val('');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').removeClass('error');
+        $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').val('');
+        $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').removeClass('error');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').val('');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').removeClass('error');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]').val('');
@@ -975,6 +979,8 @@ function removeClass(){
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').val('');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').removeClass('error');
+     $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').val('');
+     $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').val('');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]').val('');
@@ -1034,7 +1040,7 @@ function removeClass(){
     }
  }
 
- function createAddressFormObject(firstName, lastName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
+ function createAddressFormObject(firstName, lastName, companyName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
     upsStoreAddress, openingDays, addressType) {
     let openingDaysDetails = '';
     if(openingDays != null) {
@@ -1056,6 +1062,7 @@ function removeClass(){
     let addressForm = {
         firstName : firstName,
         lastName : lastName,
+        companyName : companyName,
         line1 : line1,
         line2 : line2,
         townCity : townCity,
@@ -1182,7 +1189,7 @@ function removeClass(){
  }
 
  function callAddNewAddress(enteredAddressForm, addressForm, deliveryMode) {
-    addNewAddress(createAddressFormObject(enteredAddressForm.firstName, enteredAddressForm.lastName, addressForm.line1, addressForm.line2,
+    addNewAddress(createAddressFormObject(enteredAddressForm.firstName, enteredAddressForm.lastName, enteredAddressForm.companyName, addressForm.line1, addressForm.line2,
          addressForm.town, addressForm.region.isocode, 'US', addressForm.postalCode, enteredAddressForm.saveInAddressBook,
          enteredAddressForm.phone, enteredAddressForm.email, false, null, addressForm.addressType),
          JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode")))
