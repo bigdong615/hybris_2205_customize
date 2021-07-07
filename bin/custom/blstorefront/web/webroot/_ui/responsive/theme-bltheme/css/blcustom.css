@@ -325,10 +325,6 @@ font-size: 21px;
 ::-webkit-scrollbar {
   scrollbar-width: thin;
 }
-::-webkit-scrollbar {
-  display: none;
-}
-
 /* Hide scrollbar for IE, Edge add Firefox */
 .scroll-over-text {
   -ms-overflow-style: none;
@@ -436,3 +432,4 @@ font-size: 21px;
 .printQuoteDate {
 	color: #52bfc0;
 }
+.word-break{word-break: break-word;}
