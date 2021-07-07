@@ -5,6 +5,9 @@
 INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
                       ;blproductmanager;Bl Product Manager;employeegroup,backofficeproductmanagergroup;Backoffice BL Product Manager User has access to the PCM Backoffice Cockpit.;1234
 
+INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
+                      ;CustomerSupportAgent;Customer Support Agent;customersupportagentgroup;This generic Customer Support Agent is assigned and has access to the Backoffice Customer Support Agent Group views and ASM - to provide restricted Backoffice and ASM customer sales and service manager support.;1234
+
 
 $START_USERRIGHTS;;;;;;;;;
 Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
@@ -58,3 +61,35 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 ;;;;User;+;;;;;
 
 $END_USERRIGHTS;;;;;
+
+
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+# Access Rights for Customer Support cockpit
+UserGroup;customersupportagentgroup;;;;;;;;
+
+;;;;Order;+;+;-;-;-
+;;;;Order.orderNotes;+;+;-;-;-
+;;;;Notes;+;+;+;+;-
+;;;;Notes.note;+;+;-;-;-
+;;;;Notes.order;+;+;-;-;-
+;;;;NotesEnum;+;+;+;+;-
+;;;;Order2OrderNotes;+;+;+;+;-
+
+$END_USERRIGHTS;;;;;;;;;
+
+
+$START_USERRIGHTS;;;;;;;;;
+Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+# Access Rights for order fulfillment cockpit, WarehouseAgentGroup group
+UserGroup;warehouseagentgroup;;;;;;;;
+
+;;;;Consignment;+;+;-;-;-
+;;;;Consignment.orderNotes;+;+;-;-;-
+;;;;Notes;+;+;+;+;-
+;;;;Notes.note;+;+;-;-;-
+;;;;Notes.consignment;+;+;-;-;-
+;;;;NotesEnum;+;+;+;+;-
+;;;;Consignment2OrderNotes;+;+;+;+;-
+
+$END_USERRIGHTS;;;;;;;;;
