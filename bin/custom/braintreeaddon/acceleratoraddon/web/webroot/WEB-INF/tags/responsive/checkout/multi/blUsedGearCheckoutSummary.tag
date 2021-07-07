@@ -63,9 +63,11 @@
 									<p class="overline">
 										<spring:theme code="text.review.used.gear.page.arrives" />
 									</p>
-									<p class="lightteal mb-0">
-										<b>${formattedRentalStartDate}</b>
-									</p>
+									<c:if test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == false}">
+									  <p class="lightteal mb-0">
+										  <b><spring:theme code="text.review.used.gear.page"/></b>
+									  </p>
+									</c:if>
 									<p class="body14">
 										<c:choose>
 											<c:when
