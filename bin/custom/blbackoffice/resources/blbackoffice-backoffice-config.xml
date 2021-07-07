@@ -1106,15 +1106,18 @@
 
 
 <!--To calculate the total without tax -->
-  <context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
-      <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" name="Order editor area">
-      <ea:tab name="customersupportbackoffice.order.tab.details">
-        <ea:section name="customersupportbackoffice.section.order.general.totals" columns="3">
-          <editorArea:customPanel name="customersupportbackoffice.order.details.total" spring-bean="blTotalPriceWithTaxRenderer"/>
-        </ea:section>
+	<context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+			name="Order editor area">
+			<ea:tab name="customersupportbackoffice.order.tab.details">
+				<ea:section name="customersupportbackoffice.section.order.general.totals" columns="3">
+					<editorArea:customPanel name="customersupportbackoffice.order.details.total"
+						spring-bean="blTotalPriceWithTaxRenderer"/>
+				</ea:section>
 				<editorArea:section name="customersupportbackoffice.section.order.general.information"
 					columns="3">
-					<editorArea:attribute editor="com.hybris.cockpitng.editor.defaultmultireferenceeditor" qualifier="orderNotes" readonly="false">
+					<editorArea:attribute editor="com.hybris.cockpitng.editor.defaultmultireferenceeditor"
+						qualifier="orderNotes" readonly="false">
 						<editorArea:editor-parameter>
 							<editorArea:name>listConfigContext</editorArea:name>
 							<editorArea:value>referenceListViewNotes</editorArea:value>
@@ -1130,15 +1133,17 @@
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
 				</editorArea:section>
-      </ea:tab>
-      </editorArea:editorArea>
-  </context>
+			</ea:tab>
+		</editorArea:editorArea>
+	</context>
 
-	<context merge-by="type" parent="GenericItem" type="Consignment" component="warehousingbackoffice-editor-area" module="blbackoffice">
+	<context merge-by="type" parent="GenericItem" type="Consignment"
+		component="warehousingbackoffice-editor-area" module="blbackoffice">
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
 			<editorArea:tab name="warehousingbackoffice.tab.consignmententries">
 				<editorArea:section name="warehousingbackoffice.section.general.dashboard" columns="3">
-					<editorArea:attribute editor="com.hybris.cockpitng.editor.defaultmultireferenceeditor" qualifier="orderNotes" readonly="false">
+					<editorArea:attribute editor="com.hybris.cockpitng.editor.defaultmultireferenceeditor"
+						qualifier="orderNotes" readonly="false">
 						<editorArea:editor-parameter>
 							<editorArea:name>listConfigContext</editorArea:name>
 							<editorArea:value>referenceListViewNotes</editorArea:value>
