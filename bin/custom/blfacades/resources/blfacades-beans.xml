@@ -125,6 +125,7 @@
 		<property name="rentalFormattedEndDate" type="String"/>
 		<property name="orderedFormatDate" type="String"/>
 		<property name="totalRentalDays" type="String"/>
+		<property name="orderedFormatDateForExtendRental" type="String"/>
   </bean>
 
     <!-- Shipping -->

@@ -22,6 +22,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyCon
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateProfileForm;
@@ -157,6 +158,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String BOOKMARKS_CMS_PAGE = "bookmarks";
 	private static final String VERIFICATION_IMAGES_CMS_PAGE = "verificationImages";
 	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
+	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
@@ -1106,6 +1108,43 @@ public class AccountPageController extends AbstractSearchPageController
 			return BlControllerConstants.REDIRECT_CART_URL;
 		}
 		 return REDIRECT_PREFIX + "/my-account/orders";
+	}
+
+
+	@GetMapping(value = "/extendRent/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@RequireHardLogIn
+	public String extendRent(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model , final HttpServletRequest request)
+			throws CommerceCartModificationException, CMSItemNotFoundException {
+
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		model.addAttribute("orderData", orderDetails);
+		if(Objects.nonNull(orderDetails) && Objects.nonNull(orderDetails.getPaymentInfo()))
+		{
+			final CCPaymentInfoData paymentInfo = orderDetails.getPaymentInfo();
+			setPaymentDetailForPage(paymentInfo, model);
+		}
+		final ContentPageModel extendOrderDetailPage = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_DETAILS);
+		storeCmsPageInModel(model, extendOrderDetailPage);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		setUpMetaDataForContentPage(model, extendOrderDetailPage);
+		return getViewForPage(model);
+	}
+
+	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
+	{
+		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
+			model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
+			model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
+			model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
+		}
+		else if(BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
+		}
+
+		model.addAttribute("sopPaymentDetailsForm", new SopPaymentDetailsForm());
 	}
 
 }

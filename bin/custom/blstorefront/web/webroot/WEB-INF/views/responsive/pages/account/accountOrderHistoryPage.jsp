@@ -53,7 +53,8 @@
                 								<spring:theme code="text.myaccount.order.rental.ends" /> </p>
                 						</div>
                 						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                							<a href="#" class="btn btn-primary">
+                							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
+                							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
                 						</div>
                 					</c:if>

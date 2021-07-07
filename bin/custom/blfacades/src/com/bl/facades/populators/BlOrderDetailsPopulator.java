@@ -50,6 +50,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    target.setPickUpPersonLastName(source.getPickUpPersonLastName());
    target.setPickUpPersonEmail(source.getPickUpPersonEmail());
    target.setPickUpPersonPhone(source.getPickUpPersonPhone());
+    target.setOrderedFormatDateForExtendRental(convertDateToString(source.getDate() , "MMM d , YYYY"));
   }
 
   /**

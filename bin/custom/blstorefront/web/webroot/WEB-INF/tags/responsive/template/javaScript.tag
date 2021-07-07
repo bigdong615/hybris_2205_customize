@@ -1627,6 +1627,75 @@
                     });
                 </script>
 		</c:if>
+	<script>
+
+	<c:if test="${cmsPage.uid eq 'extendRentalOrderDetails'}">
+          //Replace button text
+          $(".dropdown-menu li button").click(function(){
+            $(this).parents(".dropdown").find('.btn').html($(this).html() + ' <span class="caret"></span>');
+            $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+          });
+
+          // Initialize RENTAL EXTENSION Calendar Litepicker - required for THIS page
+           let endDate= '07/16/2021';
+           const startDate = new Date(2021, 06, 12);
+           startDate.setDate(startDate.getDate() + 90);
+
+           const disallowedDates = [['2001-01-01', endDate]];
+           const rpicker = new Litepicker({
+              element: document.getElementById('rental-litepicker'),
+              //plugins: ['mobilefriendly'],
+              singleMode: true,
+              numberOfMonths: 2,
+              numberOfColumns: 2,
+              autoApply: false,
+              format: "MMM D YYYY",
+              resetButton: true,
+              buttonText : {"reset":"Reset"},
+              lockDaysFilter: (day) => {
+                                           const d = day.getDay();
+                                           return [6, 0].includes(d);
+                                          },
+              lockDays: disallowedDates,
+              //Limit days selection to 90 days
+                         maxDate: startDate,
+
+
+          });
+
+
+          // Initialize RENTAL EXTENSION MOBILE Calendar Litepicker - required for THIS page
+          const rmpicker = new Litepicker({
+              element: document.getElementById('rental-mobile-litepicker'),
+              plugins: ['mobilefriendly'],
+              singleMode: true,
+              numberOfMonths: 1,
+              numberOfColumns: 1,
+              autoApply: false,
+              format: "MMM D YYYY",
+              resetButton: true,
+              buttonText : {"reset":"Reset"},
+          });
+          // Mobile Menu styles - #my-menu is required for ALL pages
+          document.addEventListener(
+              "DOMContentLoaded", () => {
+                  new Mmenu( "#my-menu", {
+                      extensions: ["fullscreen","position-front"],
+                      navbars		: [{
+                          position: "top",
+                          content : [ "close", "logo" ]
+                      }],
+                  } );
+              }
+          );
+          // Initialize Mega menu rollover - required for ALL pages
+          $('.menu-large').hover(
+              function(){ $('.screen').addClass('show') },
+              function(){ $('.screen').removeClass('show') }
+          );
+      </script>
+  </c:if>
+
 	</c:otherwise>
 </c:choose>
 
