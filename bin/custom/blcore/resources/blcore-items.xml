@@ -227,11 +227,13 @@
           <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
             collectiontype="list"/>
         </relation>
-		<relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
-	        <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
-	        <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
-	          collectiontype="list"/>
-	      </relation>
+
+        <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
+          <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
+          <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+            collectiontype="list"/>
+        </relation>
+
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
         autocreate="true">
@@ -1795,7 +1797,7 @@
                       <persistence type="property" />
                       <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
-					          <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
                       <persistence type="property"/>
                       <modifiers read="true" write="true" search="true" initial="true"/>
                     </attribute>
