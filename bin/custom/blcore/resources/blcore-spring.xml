@@ -950,5 +950,8 @@
 			class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider">
 		</bean>
 
+	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
+	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
+        <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
+    </bean>																		   
 </beans>
-
