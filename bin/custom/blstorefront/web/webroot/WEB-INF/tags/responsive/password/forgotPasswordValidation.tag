@@ -16,7 +16,7 @@
          <p class="body14">
             <spring:theme code="account.confirmation.forgotten.password.link.sent.first"/>
            
-            <c:out value="${userEmail}"/>
+            <c:out value="${userEmail}"/><br>
             
             <spring:theme code="account.confirmation.forgotten.password.link.sent.second"/>
          </p>
