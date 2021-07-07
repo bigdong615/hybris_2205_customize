@@ -13,7 +13,7 @@
          <h5>
            <spring:theme code="forgottenPwd.title" />
          </h5>
-         <p class="body14">
+         <p class="body14 word-break">
             <spring:theme code="account.confirmation.forgotten.password.link.sent.first"/>
            
             <c:out value="${userEmail}"/><br>
