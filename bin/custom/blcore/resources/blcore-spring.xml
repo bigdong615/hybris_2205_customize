@@ -942,5 +942,13 @@
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
+
+		<!-- SOLR Field value Resolver for OnSale solr attribute -->
+		<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
+
+		<bean id="blOnSaleFacetNameProvider"
+			class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider">
+		</bean>
+
 </beans>
 

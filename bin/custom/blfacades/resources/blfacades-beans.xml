@@ -523,6 +523,8 @@
 		<property name="rentalEndDate" type="String"/>
 		<property name="orderDate" type="String"/>
 		<property name="rentalCart" type="Boolean"/>
+		<property name="productDetails" type="java.util.List&lt;String>"/>
+		<property name="productNameAndQuantity" type="java.util.List&lt;String>"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->

@@ -537,10 +537,12 @@
 	</bean>
 
 	<!--BL-712:This class was created to customize bl specific address data.-->
+<!--
 	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
 	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
     <property name="customerAccountService" ref="customerAccountService"/>
 	</bean>
+-->
 
 	<!--Added for MyAccount Order Page -->
 	<alias name="defaultBlOrderHistoryPopulator" alias="orderHistoryPopulator"/>
@@ -560,6 +562,10 @@
 	<alias name="defaultBlOrderFacade" alias="blOrderFacade" />
 	<bean id="defaultBlOrderFacade" parent="orderFacade" class="com.bl.facades.order.DefaultBlOrderFacade">
 		<property name="blCartFacade" ref="cartFacade"/>
+		<property name="blCartService" ref="cartService" />
+		<property name="commerceCartService" ref="commerceCartService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="cartModificationConverter" ref="cartModificationConverter"/>
 	</bean>
 
 

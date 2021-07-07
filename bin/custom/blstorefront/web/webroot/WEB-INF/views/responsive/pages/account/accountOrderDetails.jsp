@@ -90,6 +90,34 @@
                                    </c:forEach>
                             </div>
                             <div class="reviewCart">
+                            <c:choose>
+                            								<c:when
+                            									test="${fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
+                            									<h5 class="mb-4">
+                            										<spring:theme code="text.review.page.delivery.pickup.title" />
+                            									</h5>
+                            									<div class="row mb-4">
+                            										<div class="col-6">
+                            											<p class="gray80 body14">
+                            												<b class="gray100"><spring:theme
+                            														code="text.review.page.delivery.mode.pickup" /></b>
+                            												${orderData.pickUpPersonFirstName}&nbsp;${orderData.pickUpPersonLastName}
+                            												<br /> ${orderData.pickUpPersonEmail} <br />
+                            												${orderData.pickUpPersonPhone} <br />
+                            											</p>
+                            										</div>
+                            										<c:if test ="${not empty orderData.deliveryAddress}">
+                            											<div class="col-6">
+                            												<p class="gray80 body14">
+                            													<b class="gray100"><spring:theme
+                            															code="text.review.page.delivery.pickup.from" /></b>
+                            													<order:addressItem address="${orderData.deliveryAddress}" />
+                            												</p>
+                            											</div>
+                            										</c:if>
+                            									</div>
+                            								</c:when>
+                                <c:otherwise>
                                 <h5 class="mb-4"><spring:theme code="text.myaccount.order.delivery"/></h5>
                                 <div class="row mb-4">
                                     <div class="col-6">
@@ -105,56 +133,20 @@
                                         </p>
                                     </div>
                                 </div>
+                                </c:otherwise>
+                            </c:choose>
                             </div>
+
                             <div class="reviewCart">
                              <c:if test="${not empty orderData.paymentInfo}">
                                 <h5 class="mb-4"><spring:theme code="text.myaccount.order.payment.title"/></h5>
                                 <div class="row mb-4">
-                                <c:set var= "cardName" value="${fn:escapeXml(orderData.paymentInfo.cardType)}"/>
-                                <div class="col-2 text-center"><img src="${themeResourcePath}/assets/payment-${fn:replace(fn:toLowerCase(cardName),' ', '_')}.png"
-                                style="width: 49px;"></div>
-                                    <div class="col-10 col-md-5">
-                                        <p class="gray80 body14">
-                                           <b class="gray100"> ${fn:escapeXml(orderData.paymentInfo.cardType)}</b>${fn:escapeXml(orderData.paymentInfo.cardNumber)} ,
-                                          exp ${fn:escapeXml(orderData.paymentInfo.expiryMonth)}/${fn:escapeXml(orderData.paymentInfo.expiryYear)} <br/>
-                                        </p>
-                                    </div>
-                                    <div class="col-12 col-md-5">
-                                        <p class="gray80 body14">
-                                            <b class="gray100"><spring:theme code="text.myaccount.order.notes"/></b>
-                                            JayZ Superbowl Shoot
-                                        </p>
-                                    </div>
+                          <order:accountPaymentDetails orderData="${orderData}" paymentInfo="${orderData.paymentInfo}"/>
                                 </div>
                                </c:if>
                             </div>
                              <c:if test="${not empty orderData.giftCardData}">
-                            <div class="reviewCart">
-
-                                <h5 class="mb-4"><spring:theme code="text.myaccount.order.gift.cart"/></h5>
-                                <div class="row mb-4">
-                                    <div class="col-2 text-center"><img src="${themeResourcePath}/assets/bl-logo@2x.png" style="width: 49px;"></div>
-                                    <div class="col-5">
-                                        <b class="body14 gray100"><spring:theme code="text.myaccount.order.gift.cart"/></b>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <p class="body14">
-                                                <spring:theme code="text.myaccount.order.gift.cart.card"/><br>
-                                                <spring:theme code="text.myaccount.order.gift.cart.applied"/><br>
-                                                <spring:theme code="text.myaccount.order.gift.cart.balance"/></p>
-                                            </div>
-                                            <div class="col-6">
-                                                <p class="body14 gray80">
-                                                <c:forEach items="${orderData.giftCardData}" var="giftCardEntry">
-                                                  ${giftCardEntry.code}<br>
-                                                 <format:price priceData="${giftCardEntry.redeemamount}"/><br>
-                                                 <format:price priceData="${giftCardEntry.balanceamount}"/></p>
-                                                </c:forEach>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                              <order:accountGiftCardDetails orderData="${orderData}"/>
                              </c:if>
                                <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
@@ -176,7 +168,6 @@
                                 <table id="costSummary">
                                     <tbody>
                                         <tr>
-
                                             <td class="gray80">
                                               <c:if test="${orderData.isRentalCart}">
                                             <spring:theme code="text.myaccount.order.rental.cost"/>
@@ -184,7 +175,6 @@
                                               <c:if test="${!orderData.isRentalCart}">
                                                                Item Cost
                                               </c:if>
-
                                             </td>
                                             <td class="text-end"> <format:price priceData="${orderData.subTotal}"/></td>
                                         </tr>

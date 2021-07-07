@@ -97,6 +97,9 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       populateBookMarks(target);
     }else {
       // Populates Serial Product Price Data
+      if(null != this.getValue(source , "onSale")){
+                setProductTagValues(source, target, "onSale", "On Sale");
+                      }
       populateSerialProductPrices(source, target);
     }
     // Populate product's classification features

@@ -30,6 +30,11 @@
                 				<c:if test="${!order.rentalCart}">
                                  <div class="col-12 col-md-7">
                                       <p class="mb-0"><b>${order.orderDate}</b></p>
+                                       <p class="body14">
+                                       <c:forEach items="${order.productNameAndQuantity}" var="cartEntry" >
+                                             ${cartEntry}<br>
+                                       </c:forEach>
+                                      </p>
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
                                    <p class="my-2"><i class="icon-check-teal"></i>Completed</p>
@@ -62,13 +67,10 @@
                 								</li>
                 								<li>
                 								<c:if test="${order.rentalCart}">
-                								 <c:url value="/my-account/rentAgain/${order.code}" var="rentOrderAction" />
+                								 <c:url value="/my-account/order/${order.code}" var="rentOrderAction" />
                                  <a href="${rentOrderAction}">
                                                         <spring:theme code="text.myaccount.order.rent.again"/> </a>
                 							  </c:if>
-                							  <c:if test="${!order.rentalCart}">
-                                       <a href="#"> Order Again </a>
-                                 </c:if>
                 								</li>
                 							</ul>
                 						</div>

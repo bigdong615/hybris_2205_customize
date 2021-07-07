@@ -46,6 +46,10 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    final Double giftCartAMount = source.getGiftCardAmount();
    final Double totalDisount = discountAmount + giftCartAMount;
    target.setTotalDiscounts(convertDoubleToPriceData(totalDisount, source));
+   target.setPickUpPersonEmail(source.getPickUpPersonFirstName());
+   target.setPickUpPersonLastName(source.getPickUpPersonLastName());
+   target.setPickUpPersonEmail(source.getPickUpPersonEmail());
+   target.setPickUpPersonPhone(source.getPickUpPersonPhone());
   }
 
   /**
