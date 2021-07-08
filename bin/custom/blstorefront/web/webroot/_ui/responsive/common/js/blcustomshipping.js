@@ -254,7 +254,7 @@ function removeClass(){
                  savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                         $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
              } else {
-                  showErrorForInputValidation('Rush');
+                  showErrorForInputValidationPick('Ship');
              }
          }
      } else {
@@ -264,6 +264,8 @@ function removeClass(){
  }
 
  function onClickOfFindStore() {
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
      $('#ship-it-SHIP_UPS_OFFICE').html('');
      $('#ship-it-notification').html('');
      $('#ship-it-notification').hide();
@@ -413,6 +415,8 @@ function removeClass(){
   }
 
  function changeUPSStore() {
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
      $('#checkZipForUPSPickup').show();
      $('#ship-it-ups-zip-code').val('');
      $('#changeUPSStoreButton').hide();
@@ -467,7 +471,7 @@ function removeClass(){
                    savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                              $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
              } else {
-                  showErrorNotification("Please enter mandatory fields values!!", true);
+                  showErrorForInputValidationPick('Pick');
              }
          }
      } else {
@@ -487,10 +491,14 @@ function removeClass(){
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#pick-up-notification').hide();
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
  }
 
  function showPickUpBySomeoneForm() {
     $("#ship-it-pickup-person").show();
+    $('#showErrorForInputValidation').html('');
+    $('#showErrorForInputValidation').hide();
  }
 
  function showPickUpByMeClick() {
@@ -506,6 +514,8 @@ function removeClass(){
      $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
      $('#ship-it-notification').val('');
      $('#ship-it-notification').hide();
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
  }
 
  function showPartnerPickUpDeliveryModes(partnerZone) {
@@ -646,7 +656,11 @@ function removeClass(){
      showErrorNotificationForPickUpId('They must show ID at time of pickup');
  }
 
- function pickUpByMeClick() { $("#store-pickup-person").hide(); }
+ function pickUpByMeClick() {
+    $("#store-pickup-person").hide();
+    $('#showErrorForInputValidation').html('');
+    $('#showErrorForInputValidation').hide();
+ }
 
   function onSelectPartnerPickup(event) {
      resetPartnerPickUpSection();
@@ -919,10 +933,34 @@ function removeClass(){
  }
 
  function scrollUpForError(event) {
+     if(event.getAttribute('class') == 'Ship') {
+         return $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+     } else {
+         return $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+     }
+  }
+
+  function showErrorForInputValidationPick(section) {
+     let notification = '';
+     if(section == 'Ship') {
+         notification += '<div class="notification notification-error"> You are missing ' +
+                             $("#ship-it-pickup-person #blPickUpByForm").find('.form-group .error').length + ' required fields.' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
+     } else {
+         notification += '<div class="notification notification-error"> You are missing ' +
+                             $("#store-pickup-person #blPickUpByForm").find('.form-group .error').length + ' required fields.' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
+     }
+     notification += '</div>';
+     $('#showErrorForInputValidation').html(notification);
+     $('#showErrorForInputValidation').show();
+  }
+
+ function scrollUpForErrorPick(event) {
     if(event.getAttribute('class') == 'Ship') {
-        return $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+        return $("#ship-it-pickup-person #blPickUpByForm").find('.form-group .error')[0].scrollIntoView(true);
     } else {
-        return $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+        return $("#store-pickup-person #blPickUpByForm").find('.form-group .error')[0].scrollIntoView(true);
     }
  }
 
