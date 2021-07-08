@@ -22,6 +22,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyCon
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.PaymentDetailsForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
@@ -1144,7 +1145,12 @@ public class AccountPageController extends AbstractSearchPageController
 			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
 		}
 
+		final PaymentDetailsForm paymentDetailsForm = new PaymentDetailsForm();
+		final AddressForm addressForm = new AddressForm();
+		paymentDetailsForm.setBillingAddress(addressForm);
+		model.addAttribute("paymentDetailsForm" , paymentDetailsForm);
 		model.addAttribute("sopPaymentDetailsForm", new SopPaymentDetailsForm());
+		model.addAttribute("silentOrderPostForm", new PaymentDetailsForm());
 	}
 
 }

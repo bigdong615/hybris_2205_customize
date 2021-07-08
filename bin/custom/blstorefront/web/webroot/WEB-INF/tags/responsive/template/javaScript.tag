@@ -1627,42 +1627,79 @@
                     });
                 </script>
 		</c:if>
-	<script>
 
 	<c:if test="${cmsPage.uid eq 'extendRentalOrderDetails'}">
+		<input type="hidden" id="rentalEndDate" value = "${orderData.rentalEndDateForJs}">
+		<input type="hidden" id="rentalStartDate" value = "${orderData.rentalStartDateForJs}">
+		<input type="hidden" id="orderCode" value = "${fn:escapeXml(orderData.code)}">
+	<script>
           //Replace button text
           $(".dropdown-menu li button").click(function(){
             $(this).parents(".dropdown").find('.btn').html($(this).html() + ' <span class="caret"></span>');
             $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
           });
 
+
           // Initialize RENTAL EXTENSION Calendar Litepicker - required for THIS page
-           let endDate= '07/16/2021';
-           const startDate = new Date(2021, 06, 12);
-           startDate.setDate(startDate.getDate() + 90);
+           let endDate = $("#rentalEndDate").val(); // Existing Order End Date
+           let rentalStartDate = $("#rentalStartDate").val();  // Existing Order start Date
+           const startDate = new Date(rentalStartDate);
+           var orderCode = $("#orderCode").val(); // To Get Order Code
+           startDate.setDate(startDate.getDate() + 89); // To add max days from existing order startDate
+                                     const disallowedDates = [['2001-01-01', endDate]];
+                                       const picker = new Litepicker({
+                                      element: document.getElementById('rental-litepicker'),
+                                  //    plugins: ['mobilefriendly'],
+                                      singleMode: true,
+                                      numberOfMonths: 2,
+                                      numberOfColumns: 2,
+                                      autoApply: false,
+                                      format: "MMM D, YYYY",
+                                      resetButton: () => {
+                          				 let btn = document.createElement('button');
+                          				 btn.innerText = 'Reset Dates';
+                          				 btn.className = 'reset-button';
+                          				 btn.addEventListener('click', (evt) => {
+                          				 evt.preventDefault();
+                          				 $.ajax({
+                                              url: ACC.config.encodedContextPath + '/resetExtendDate',
+                                              type: "GET",
+                                              success: function (data) {
+                                              	if(data=='success')
+                                                  window.location.reload();
+                                              },
+                                              error: function (xhr, textStatus, error) {
 
-           const disallowedDates = [['2001-01-01', endDate]];
-           const rpicker = new Litepicker({
-              element: document.getElementById('rental-litepicker'),
-              //plugins: ['mobilefriendly'],
-              singleMode: true,
-              numberOfMonths: 2,
-              numberOfColumns: 2,
-              autoApply: false,
-              format: "MMM D YYYY",
-              resetButton: true,
-              buttonText : {"reset":"Reset"},
-              lockDaysFilter: (day) => {
-                                           const d = day.getDay();
-                                           return [6, 0].includes(d);
-                                          },
-              lockDays: disallowedDates,
-              //Limit days selection to 90 days
-                         maxDate: startDate,
+                                              }
+                                          });
+                          				});
+                          				return btn;
+                          				},
+                                      setup: (picker) => {
+                                			picker.on('button:apply', (newEndDate) => {
+                                				$.ajax({
+                            	                    url: ACC.config.encodedContextPath + '/extendDate',
+                            	                    data: {extendEndDate: newEndDate.toDateString() , orderCode : orderCode},
+                            	                    type: "GET",
+                            	                    success: function (data) {
+                            	                    	window.location.reload();
+                            	                    },
+                            	                    error: function (xhr, textStatus, error) {
 
-
-          });
-
+                            	                    }
+                            	                });
+                                			});
+                                			},
+                                          lockDaysFilter: (day) => {
+                                              const d = day.getDay();
+                                              return [6, 0].includes(d);
+                                            },
+                                          lockDays: disallowedDates,
+                                      //Disable dates after one year from today
+                                          maxDate: startDate,
+                                     //Change the defaul button values
+                                          buttonText: {"apply":"Apply", cancel: "Cancel", "reset":"Reset Dates"}
+                                  });
 
           // Initialize RENTAL EXTENSION MOBILE Calendar Litepicker - required for THIS page
           const rmpicker = new Litepicker({

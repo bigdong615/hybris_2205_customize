@@ -126,6 +126,17 @@
 		<property name="orderedFormatDate" type="String"/>
 		<property name="totalRentalDays" type="String"/>
 		<property name="orderedFormatDateForExtendRental" type="String"/>
+		<property name="rentalEndDateForJs" type="String"/>
+		<property name="rentalStartDateForJs" type="String"/>
+		<!--Added for extend rental order -->
+		<property name="totalCostForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="totalDamageWaiverCostForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="totalTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="subTotalTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="OrderTotalWithTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="addedTimeForExtendRental" type="java.lang.Integer"/>
+		<property name="newEndDateForExtendRental" type="java.lang.Integer"/>
+
   </bean>
 
     <!-- Shipping -->

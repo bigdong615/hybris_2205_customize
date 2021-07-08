@@ -80,26 +80,26 @@
 								<spring:theme code="text.myaccount.order.rental.damege.waiver" /> </p>
 						</div>
 						<div class="col-7 col-md-8">
-							<p class="body14 gray60">1 Day
+							<p class="body14 gray60">${orderData.addedTimeForExtendRental} Day
 								<br> $56.00
 								<br> $4.00</p>
 						</div>
 					</div>
 				</div> <b><spring:theme code="text.myaccount.extend.order.pay"/></b>
 				<div class="col-11">
-					<div class="collapse" id="credit-card-expand" data-bs-parent="#paymentOptions">
 						<ycommerce:testId code="paymentDetailsForm">
-							<form:form id="braintree-payment-form" name="silentOrderPostForm" class="create_update_payment_form" modelAttribute="sopPaymentDetailsForm" action="${request.contextPath}/braintree/checkout/hop/response" method="POST">
+						${empty braintreePaymentInfos} ****************************************************
+							<form:form id="braintree-payment-form" name="silentOrderPostForm" class="create_update_payment_form" modelAttribute="sopPaymentDetailsForm"
+							action="${request.contextPath}/braintree/checkout/hop/response" method="POST">
 								<div id="cardDetails">
 									<div id="credit-card-saved" class="collapse show" data-bs-parent="#cardDetails">
-
 										<c:choose>
-											<c:when test="${not empty userSelectedPaymentInfo.cardNumber and empty braintreePaymentInfos}"> <b class="mt-4">Saved Credit Cards</b>
+											<c:when test="${empty userSelectedPaymentInfo.cardNumber and empty braintreePaymentInfos}"> <b class="mt-4">Saved Credit Cards</b>
 												<div class="dropdown my-2">
 													<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false"> <img src="${userSelectedPaymentInfo.accountHolderName}" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)} </button>
 												</div> <a href="#" id="addNewCardForm" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a> </c:when>
 											<c:otherwise>
-												<c:if test="${not empty braintreePaymentInfos and braintreePaymentInfos.size() > 0}"> <b class="mt-4">Saved Credit Cards</b>
+												<c:if test="${empty braintreePaymentInfos}"> <b class="mt-4">Saved Credit Cards</b>
 													<div class="dropdown my-2">
 														<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
 															<c:choose>
@@ -157,7 +157,6 @@
 							<input type="hidden" id="selectedPaymentMethodId" name="selectedPaymentMethodId" value="" />
 							<input type="hidden" id="selectedPaymentMethodNonce" name="selectedPaymentMethodNonce" value="" /> </form:form>
 						</div>
-					</div>
 				</div>
 				<hr class="mt-4">
 				<div class="cart-actions">

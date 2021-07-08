@@ -559,6 +559,18 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 	</bean>
 
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="orderConverter"/>
+		<property name="add" ref="blExtendRentalOrderDetailsPopulator"/>
+	</bean>
+
+  <!--Added for extend rental order-->
+	<bean id="blExtendRentalOrderDetailsPopulator"
+		class="com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator">
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="commercePriceService" ref="commercePriceService"/>
+	</bean>
+
 	<alias name="defaultBlOrderFacade" alias="blOrderFacade" />
 	<bean id="defaultBlOrderFacade" parent="orderFacade" class="com.bl.facades.order.DefaultBlOrderFacade">
 		<property name="blCartFacade" ref="cartFacade"/>
