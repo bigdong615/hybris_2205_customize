@@ -1,6 +1,5 @@
 package com.bl.core.model.handler;
 
-import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.servicelayer.model.attribute.DynamicAttributeHandler;
