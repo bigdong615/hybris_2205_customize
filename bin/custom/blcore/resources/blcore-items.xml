@@ -238,11 +238,12 @@
             collectiontype="list"/>
         </relation>
 
-      <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
-        <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
-        <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
-          collectiontype="list"/>
-      </relation>
+
+        <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
+          <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
+          <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+            collectiontype="list"/>
+        </relation>
 
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
@@ -1059,6 +1060,11 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store functional rating data</description>
                      </attribute>
+                     <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
+                         <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
+                         <modifiers read="true" write="false" optional="true" />
+                         <description>The version the SKU's firmware is currently at</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
@@ -1808,6 +1814,7 @@
                       <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                      <description>Attribute to identify the type of order.</description>
                       <persistence type="property"/>
                       <modifiers read="true" write="true" search="true" initial="true"/>
                     </attribute>
@@ -2081,10 +2088,13 @@
                         <modifiers read="true" write="true"/>
                         <persistence type="property"/>
                     </attribute>
-                  <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
-                    <persistence type="property"/>
-                    <modifiers read="true" write="true" search="true" initial="true"/>
-                  </attribute>
+                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                      <description>Created dynamic attribute on consignment to display order type
+                        value in Order fulfillment and CS cockpits.
+                      </description>
+                      <modifiers write="false"/>
+                      <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
+                    </attribute>
                 </attributes>
             </itemtype>
             
