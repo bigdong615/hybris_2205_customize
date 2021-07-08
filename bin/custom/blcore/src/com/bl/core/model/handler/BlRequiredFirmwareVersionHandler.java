@@ -21,31 +21,17 @@ public class BlRequiredFirmwareVersionHandler implements
 
   @Override
   public String get(final BlSerialProductModel serialProduct) {
-    if (Objects.nonNull(serialProduct)) {
-   	 if(Objects.nonNull(serialProduct.getBlProduct())) {
-   		 return getFirmwareVersionOfSku(serialProduct.getBlProduct());
-   	 }   	 
-   	 BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "No SKU is assigned to Serial Product with ProductId : {}", 
+    if (Objects.isNull(serialProduct) || Objects.isNull(serialProduct.getBlProduct()) 
+   		 || StringUtils.isBlank(serialProduct.getBlProduct().getFirmwareVersion())) {
+   	 BlLogger.logFormatMessageInfo(LOG, Level.ERROR, 
+   			 "Cannot evaluate the value for BlSerialProduct.skuFirmwareVersion because SerialProduct or BlProduct or Firmware Version on SKU is null", 
    			 serialProduct.getProductId());
    	 return StringUtils.EMPTY;
     }
-    BlLogger.logMessage(LOG, Level.ERROR, "Cannot evaluate the value for BlSerialProduct.skuFirmwareVersion because Serial is null");
-    return StringUtils.EMPTY;
-  }
-  
-  /**
-   * Gets the firmware version of sku.
-   *
-   * @param sku the sku
-   * @return the firmware version of sku
-   */
-  private String getFirmwareVersionOfSku(final BlProductModel sku) {
-	  final String skuFirmwareVersion = sku.getFirmwareVersion();
-	  if(StringUtils.isNotBlank(skuFirmwareVersion)) {
-		  return skuFirmwareVersion;
-	  }
-	  BlLogger.logFormatMessageInfo(LOG, Level.ERROR, "No Firmware version found on SKU with code : {}", sku.getCode());
-	  return StringUtils.EMPTY;
+    final String skuFirmwareVersion = serialProduct.getBlProduct().getFirmwareVersion();
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Firmware version on SKU {} is {}", serialProduct.getBlProduct(), 
+   		 skuFirmwareVersion);
+    return skuFirmwareVersion;
   }
 
   @Override
