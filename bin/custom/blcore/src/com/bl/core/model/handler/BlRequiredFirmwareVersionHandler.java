@@ -23,9 +23,8 @@ public class BlRequiredFirmwareVersionHandler implements
   public String get(final BlSerialProductModel serialProduct) {
     if (Objects.isNull(serialProduct) || Objects.isNull(serialProduct.getBlProduct()) 
    		 || StringUtils.isBlank(serialProduct.getBlProduct().getFirmwareVersion())) {
-   	 BlLogger.logFormatMessageInfo(LOG, Level.ERROR, 
-   			 "Cannot evaluate the value for BlSerialProduct.skuFirmwareVersion because SerialProduct or BlProduct or Firmware Version on SKU is null", 
-   			 serialProduct.getProductId());
+   	 BlLogger.logMessage(LOG, Level.ERROR, 
+   			 "Cannot evaluate the value for BlSerialProduct.skuFirmwareVersion because Serial or SKU or Firmware Version on SKU is null");
    	 return StringUtils.EMPTY;
     }
     final String skuFirmwareVersion = serialProduct.getBlProduct().getFirmwareVersion();
