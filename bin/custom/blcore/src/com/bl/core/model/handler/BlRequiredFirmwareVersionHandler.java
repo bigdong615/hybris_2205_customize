@@ -29,7 +29,7 @@ public class BlRequiredFirmwareVersionHandler implements
    	 return StringUtils.EMPTY;
     }
     final String skuFirmwareVersion = serialProduct.getBlProduct().getFirmwareVersion();
-    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Firmware version on SKU {} is {}", serialProduct.getBlProduct(), 
+    BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Firmware version on SKU {} is {}", serialProduct.getBlProduct().getCode(), 
    		 skuFirmwareVersion);
     return skuFirmwareVersion;
   }
