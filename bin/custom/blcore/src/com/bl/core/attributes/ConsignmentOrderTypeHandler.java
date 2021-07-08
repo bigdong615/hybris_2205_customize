@@ -2,7 +2,6 @@ package com.bl.core.attributes;
 
 import com.bl.core.enums.OrderTypeEnum;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.attribute.AbstractDynamicAttributeHandler;
 import org.apache.log4j.Level;
@@ -22,22 +21,20 @@ public class ConsignmentOrderTypeHandler extends
   @Override
   public OrderTypeEnum get(final ConsignmentModel consignmentModel) {
 
-      final AbstractOrderModel orderModel = consignmentModel.getOrder();
+    if (null == consignmentModel || null == consignmentModel.getOrder() || null == consignmentModel
+        .getOrder().getOrderType()) {
 
-    if (null == orderModel || null == orderModel.getOrderType()) {
-
-      BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
-          "Returning null value for order type of consignment with code {}, as orderModel or order type is found to be null",
-          consignmentModel.getCode());
+      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
+          "Returning null value for order type of consignment as orderModel or order type is found to be null");
 
       return null;
-      }
+    }
 
-    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
+    BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
         "Order type - {} is being set to consignment with code {}.",
-        orderModel.getOrderType(), consignmentModel.getCode());
+        consignmentModel.getOrder().getOrderType(), consignmentModel.getCode());
 
-    return orderModel.getOrderType();
+    return consignmentModel.getOrder().getOrderType();
   }
 
 }
