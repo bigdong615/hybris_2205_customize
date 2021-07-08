@@ -186,6 +186,7 @@ INSERT_UPDATE CronJob;code[unique=true];job(code);singleExecutable;sessionLangua
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
                      ;stockLevelStatusCronJob; 0 0 0 * * ?
 
+
 INSERT_UPDATE ServicelayerJob;code[unique=true];springId
                              ;pullReadyToShipOrdersJob;pullReadyToShipOrdersJob
 
@@ -194,4 +195,41 @@ INSERT_UPDATE PullReadyToShipOrdersCronJob; code[unique = true]; job(code); sess
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
                      ;pullReadyToShipOrdersCronJob; 0 0 0 * * ?
+
+
+##Package Box Sizes
+INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true];weight[unique=true];weightUnit[default=lb];dimensionUnit[default=in]
+;12;	8;	6;	0.48;
+;12;	12;	7;	0.79;
+;20;	12;	7;	1.04;
+;36;	6;	36;	4.95;
+;20;	15;	9;	1.4 ;
+;36;	24;	18;	4.5 ;
+;12;	12;	48;	2.4 ;
+;26;	22;	12;	2.8 ;
+;6;	6;	6;	0.27;
+;12;	12;	12;	1.25;
+;20;	12;	12;	1.25;
+;24;	14;	12;	1.7 ;
+;24;	24;	16;	3.2 ;
+;24;	12;	12;	1.54;
+;6;	6;	24;	0.6 ;
+;12;	12;	36;	1.8 ;
+;8;	8;	36;	1.2 ;
+;26;	12;	12;	1.3 ;
+;18;	14;	10;	1.3 ;
+;8;	8;	48;	1.6 ;
+;16;	14;	8;	1.1 ;
+;26;	16;	14;	2.1 ;
+;24;	18;	14;	2.35;
+;28;	18;	18;	2.8 ;
+;26;	26;	20;	4.05;
+;20;	16;	16;	1.94;
+;24;	5;	24;	1.8 ;
+;10;	10;	60;	2.46;
+;24;	14;	10;	1.58;
+;24;	18;	24;	3.2 ;
+;24;	12;	24;	2.25;
+;24;	16;	12;	1.9 ;
+;12;	12;	18;	1.27;
 

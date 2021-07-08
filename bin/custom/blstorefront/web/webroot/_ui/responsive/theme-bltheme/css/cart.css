@@ -26,8 +26,6 @@ Designed by Veneer Studio
 .cart .select-wrapper { position: relative; display: block; }
 .cart .select-wrapper:after { content:''; display: block; position: absolute; right: 20px; top: 50%; border: none; width: 6px; height: 4px; background: url(../assets/nav-arrow.svg) center no-repeat; margin-top: -2px; margin-left: .5em; }
 .cart-actions { display: block; overflow: auto; }
-
-#order .btn-outline:hover { background-color: white; }
 #order p a { color: #52bfc0; } /* target with litecal */
 #order img { max-width: 100%; }
 #order .row b { display: block; }
@@ -149,7 +147,7 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
     font-size: 1rem;
   }
   .accordion .btn:hover {
-    background: none !important;
+    background-color:transparent !important;
 }
 .accordion .btn-secondary:hover{
   background-color: #32a3a4 !important;
@@ -507,3 +505,7 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
  #gift-card-apply-gift-card-number{
   text-transform: inherit !important;
   }
+#voucherCode{text-transform: inherit !important;}
+#sameDayZipCheckText{text-transform: inherit !important;}
+#ship-it-ups-zip-code{text-transform: inherit !important;}
+#same-day-save-address-div{float: left;margin-right: 12px;}
