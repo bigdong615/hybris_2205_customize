@@ -1049,6 +1049,11 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store functional rating data</description>
                      </attribute>
+                     <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
+                         <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
+                         <modifiers read="true" write="false" optional="true" />
+                         <description>The version the SKU's firmware is currently at</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
@@ -1798,6 +1803,7 @@
                       <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
                     <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                      <description>Attribute to identify the type of order.</description>
                       <persistence type="property"/>
                       <modifiers read="true" write="true" search="true" initial="true"/>
                     </attribute>
@@ -2050,7 +2056,9 @@
                         <persistence type="property"/>
                     </attribute>
                     <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
-                      <description>Dynamic attribute for order type</description>
+                      <description>Created dynamic attribute on consignment to display order type
+                        value in Order fulfillment and CS cockpits.
+                      </description>
                       <modifiers write="false"/>
                       <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
                     </attribute>

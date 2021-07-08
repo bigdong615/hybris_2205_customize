@@ -1,20 +1,16 @@
 package com.bl.core.attributes;
 
 import com.bl.core.enums.OrderTypeEnum;
-import com.bl.core.model.GiftCardModel;
-import com.bl.core.model.GiftCardMovementModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.attribute.AbstractDynamicAttributeHandler;
-import java.util.List;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 
 /**
- * It assigns dynamic order type to consignment.
+ * Handler to display order type value in Order fulfillment and CS cockpits.
  *
  * @author Sunil
  */
@@ -25,19 +21,23 @@ public class ConsignmentOrderTypeHandler extends
 
   @Override
   public OrderTypeEnum get(final ConsignmentModel consignmentModel) {
-    OrderTypeEnum orderTypeEnum = null;
 
-    try {
       final AbstractOrderModel orderModel = consignmentModel.getOrder();
-      if (null != orderModel && null != orderModel.getOrderType()) {
-        orderTypeEnum = orderModel.getOrderType();
+
+    if (null == orderModel || null == orderModel.getOrderType()) {
+
+      BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
+          "Returning null value for order type of consignment with code {}, as orderModel or order type is found to be null",
+          consignmentModel.getCode());
+
+      return null;
       }
 
-    } catch (final Exception exception) {
-      BlLogger.logFormatMessageInfo(LOGGER, Level.ERROR,
-          "Error occurred while assigning order type to consignment for code: {}",
-          consignmentModel.getCode(), exception);
-    }
-    return orderTypeEnum;
+    BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
+        "Order type - {} is being set to consignment with code {}.",
+        orderModel.getOrderType(), consignmentModel.getCode());
+
+    return orderModel.getOrderType();
   }
+
 }
