@@ -37,6 +37,11 @@
                 <n:type-node id="ShippingCost" code="ShippingCost"/>
                 <n:type-node id="ZoneDeliveryMode" code="ZoneDeliveryMode"/>
              </n:navigation-node>
+             
+              <n:navigation-node id="BlReportDefinition">
+                <n:type-node id="CleanCompleteOrderQueue" code="CleanCompleteOrderQueue"/>
+                <n:type-node id="IncompleteOrdersQueue" code="IncompleteOrdersQueue"/>
+             </n:navigation-node>
             
         </n:explorer-tree>
     </context>
