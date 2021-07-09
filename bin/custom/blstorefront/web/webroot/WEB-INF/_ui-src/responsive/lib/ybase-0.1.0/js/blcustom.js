@@ -372,12 +372,13 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
    					arrows : true,
    					pagination :true,
    					keyboard: false,
+					drag:false
    				} ).mount();
    				 document.querySelectorAll('.card-sliders').forEach(carousel => new Splide( carousel, {
    					type   : 'loop',
    					perPage: 1,
    					pagination: true,
-   					drag   : false,
+   					drag   : true,
    					fixedHeight: 140,
    					breakpoints: {
    						'991': {
