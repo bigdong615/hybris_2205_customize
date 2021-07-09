@@ -1,9 +1,7 @@
 package com.bl.core.model.interceptor;
 
 
-import com.bl.core.jalo.BlSerialProduct;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.model.NotesModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -11,6 +9,7 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
@@ -40,34 +39,16 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
         setOrderNotesInConsignments(abstractOrderModel, consignmentModels, interceptorContext);
     }
 
-    if (interceptorContext
-        .isModified(abstractOrderModel, AbstractOrderModel.ORDERTYPE) && CollectionUtils
-        .isNotEmpty(consignmentModels)) {
 
-      //set order type
-      setOrderTypeInConsignments(abstractOrderModel, consignmentModels, interceptorContext);
-    }
-
-  }
-
-  private void setOrderTypeInConsignments(final AbstractOrderModel abstractOrderModel,
-      final Set<ConsignmentModel> consignmentModels, final InterceptorContext interceptorContext) {
-
-    consignmentModels.forEach(consignmentModel -> {
-      consignmentModel.setOrderType(abstractOrderModel.getOrderType());
-      interceptorContext.getModelService().save(consignmentModel);
-
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "Order type {} is also set in consignment with code {}",
-          abstractOrderModel.getOrderType(), consignmentModel.getCode());
-    });
   }
 
   private void setOrderNotesInConsignments(final AbstractOrderModel abstractOrderModel,
       final Set<ConsignmentModel> consignmentModels, final InterceptorContext interceptorContext) {
 
     consignmentModels.forEach(consignmentModel -> {
-      consignmentModel.setOrderNotes(abstractOrderModel.getOrderNotes());
+      List<NotesModel> consignmentNotes = new ArrayList<>(consignmentModel.getOrderNotes());
+      consignmentNotes.addAll(abstractOrderModel.getOrderNotes());
+      consignmentModel.setOrderNotes(consignmentNotes);
       interceptorContext.getModelService().save(consignmentModel);
       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
           "Order notes {} is also set in consignment with code {}",
