@@ -2146,7 +2146,7 @@
           <attributes>
             <attribute qualifier="note" type="localized:java.lang.String">
               <description>note that can be provided by different teams</description>
-              <modifiers read="true" write="true" search="true" optional="true"/>
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
               <persistence type="property">
                 <columntype database="oracle">
                   <value>CLOB</value>
