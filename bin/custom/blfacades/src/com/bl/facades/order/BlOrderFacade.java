@@ -11,6 +11,9 @@ public interface BlOrderFacade extends OrderFacade {
 
   void addToCart(ProductModel lProductModel, final String productCode, final int quantity) throws CommerceCartModificationException;
 
-  void calculatePriceForExtendOrders(OrderData orderData, final String orderEndDate, final String selectedDate) throws CommerceCartModificationException;
+  OrderData calculatePriceForExtendOrders(OrderData orderData, final String orderEndDate, final String selectedDate) throws CommerceCartModificationException;
+
+  OrderData setRentalExtendOrderDetails(String orderCode , String rentalEndDate , String selectedDate)
+      throws CommerceCartModificationException;
 
 }

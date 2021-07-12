@@ -1160,11 +1160,16 @@ public class AccountPageController extends AbstractSearchPageController
 			@RequestParam(value = "orderEndDate", defaultValue = "") final String orderEndDate,
 			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request, final HttpServletResponse response, final Model model,
 			final RedirectAttributes redirectModel)
-			throws CommerceCartModificationException, CMSItemNotFoundException {
-		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+			throws CommerceCartModificationException {
+
+		OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
+		model.addAttribute("orderData" , orderData);
+		return Account.AccountOrderExtendSummaryPage;
+		// Commneted for later use
+		/*final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
 		blOrderFacade.calculatePriceForExtendOrders(orderDetails , orderEndDate , selectedEndDate);
 		model.addAttribute("orderData" , orderDetails);
-		return Account.AccountOrderExtendSummaryPage;
+		return Account.AccountOrderExtendSummaryPage;*/
 	}
 
 	@GetMapping(value = "/resetExtendDate")

@@ -961,4 +961,13 @@
 	<!--BL-795 Adding attribute handler class for dynamic attribute skuFirmwareVersion-->
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
 
+
+	<!--Added for extend rental order -->
+
+	<bean id="defaultBlExtendOrderService" class="com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService">
+		<property name="modelService" ref="modelService"/>
+		<property name="orderIDGenerator" ref="orderCodeGenerator"/>
+	</bean>
+
+
 </beans>

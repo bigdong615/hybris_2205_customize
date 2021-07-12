@@ -570,6 +570,8 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 		<property name="commercePriceService" ref="commercePriceService"/>
 		<property name="sessionService" ref="sessionService" />
+		<property name="modelService" ref="modelService" />
+		<property name="defaultBlCalculationService" ref="calculationService"/>
 	</bean>
 
 	<alias name="defaultBlOrderFacade" alias="blOrderFacade" />
@@ -583,6 +585,7 @@
 		<property name="commercePriceService" ref="commercePriceService"/>
 		<property name="productService" ref="productService"/>
 		<property name="sessionService" ref="sessionService" />
+		<property name="defaultBlExtendOrderService" ref="defaultBlExtendOrderService" />
 	</bean>
 
 

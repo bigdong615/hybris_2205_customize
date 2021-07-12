@@ -1831,6 +1831,18 @@
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the auth amount used to verify the card has been voided or not</description>
                     </attribute>
+                  <attribute qualifier="extendedOrderCopy" type="Order">
+                    <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                    <persistence type="property" />
+                    <description> Copy of extend order to be stored in existing order model. </description>
+                  </attribute>
+                  <attribute qualifier="isExtendedOrder" type="java.lang.Boolean">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    <description>flag to identify whether the order has been extended or not</description>
+                  </attribute>
+
                 </attributes>
             </itemtype>
         </typegroup>

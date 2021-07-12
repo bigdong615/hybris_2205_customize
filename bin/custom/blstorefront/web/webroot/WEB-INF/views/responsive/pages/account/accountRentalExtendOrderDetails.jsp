@@ -80,9 +80,9 @@
 								<spring:theme code="text.myaccount.order.rental.damege.waiver" /> </p>
 						</div>
 						<div class="col-7 col-md-8">
-							<p class="body14 gray60">${orderData.addedTimeForExtendRental} Day<br>
+							<p class="body14 gray60">	<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental} Day </div><br>
 							<div id="js-totalCost-update"><format:price priceData="${orderData.totalCostForExtendRental}"/></div><br>
-							$4.00</p>
+							<div id="js-totalDamegeWaiverCost-update"><format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></div> </p>
 						</div>
 					</div>
 				</div> <b><spring:theme code="text.myaccount.extend.order.pay"/></b>
@@ -184,17 +184,17 @@
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.order.rental.damege.waiver" /> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
-					<td class="text-end">$4.00</td>
+					<td class="text-end"><format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></td>
 				</tr>
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.extend.order.extension.taxes" /> </td>
-					<td class="text-end">$8.00</td>
+					<td class="text-end"><format:price priceData="${orderData.totalTaxForExtendRental}"/></td>
 				</tr>
 				<tr class="total">
 					<td>
-						<spring:theme code="text.account.order.total" /> </td>
-					<td class="text-end">$68.00</td>
+						<spring:theme code="text.account.order.total"/> </td>
+					<td class="text-end"><format:price priceData="${orderData.orderTotalWithTaxForExtendRental}"/></td>
 				</tr>
 			</tbody>
 		</table>

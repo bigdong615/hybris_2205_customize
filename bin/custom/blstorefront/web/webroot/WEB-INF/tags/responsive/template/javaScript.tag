@@ -1685,6 +1685,7 @@
                             	                    success: function (data) {
                             	                    $('#orderSummary').html(data);
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
+                            	                    $('#js-totaldays-update').html( $('#js-totalExtendDays').val());
                             	                    },
                             	                    error: function (xhr, textStatus, error) {
 

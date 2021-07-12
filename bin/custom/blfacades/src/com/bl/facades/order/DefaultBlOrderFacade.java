@@ -5,6 +5,7 @@ import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
@@ -43,7 +44,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private PriceDataFactory priceDataFactory;
   private BlCommercePriceService commercePriceService;
   private ProductService productService;
-  protected SessionService sessionService;
+  private SessionService sessionService;
+  private DefaultBlExtendOrderService defaultBlExtendOrderService;
 
 
 
@@ -116,23 +118,16 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
 
   @Override
-  public void calculatePriceForExtendOrders(final OrderData orderData, final String orderEndDate,
+  public OrderData calculatePriceForExtendOrders(final OrderData orderData, final String orderEndDate,
       final String selectedDate) throws CommerceCartModificationException {
 
-    final Date startDate =BlDateTimeUtils.convertStringDateToDate(orderEndDate, "MM/dd/yyyy");
+    final Date startDate = BlDateTimeUtils.convertStringDateToDate(orderEndDate, "MM/dd/yyyy");
      final Date endDate =  BlDateTimeUtils.convertStringDateToDate(selectedDate ,"EE MMM dd yyyy");
     long defaultAddedTimeForExtendRental = BlDateTimeUtils
         .getDaysBetweenDates(startDate, endDate) + 1;
     if(StringUtils.isEmpty(selectedDate)) {
        defaultAddedTimeForExtendRental = 1;
     }
-    sessionService.getCurrentSession().setAttribute("extendedRentalDuration", (int) defaultAddedTimeForExtendRental);
-
-    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-
-    OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderData.getCode(),
-        baseStoreModel);
-
     orderData.setAddedTimeForExtendRental((int) defaultAddedTimeForExtendRental); // Default value which added for extend order
     PriceDataType priceType = PriceDataType.BUY;
     PriceInformation info;
@@ -148,9 +143,20 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
     }
     orderData.setTotalCostForExtendRental(getPriceDataFactory().create(priceType, subTotal , "USD"));
-
+    return orderData;
   }
 
+  @Override
+  public OrderData setRentalExtendOrderDetails(final String orderCode , final String rentalEndDate ,final  String selectedDate)
+      throws CommerceCartModificationException {
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+   final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
+        baseStoreModel);
+    OrderModel extendOrderModel = getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(orderModel);
+
+
+    return calculatePriceForExtendOrders(getOrderConverter().convert(extendOrderModel) , rentalEndDate , selectedDate);
+  }
 
 
   public BlCartService getBlCartService() {
@@ -236,5 +242,14 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.sessionService = sessionService;
   }
 
+
+  public DefaultBlExtendOrderService getDefaultBlExtendOrderService() {
+    return defaultBlExtendOrderService;
+  }
+
+  public void setDefaultBlExtendOrderService(
+      DefaultBlExtendOrderService defaultBlExtendOrderService) {
+    this.defaultBlExtendOrderService = defaultBlExtendOrderService;
+  }
 
 }
