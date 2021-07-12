@@ -349,7 +349,7 @@ font-size: 21px;
 /* for wishlist */
 .bookmark-checked{background-color:red !important;}
 .order-block form{display:inline-table;}
-.lightteal {
+.bookmarkpage .lightteal {
     background: none;
     border: none;
     text-transform: capitalize;
@@ -357,7 +357,7 @@ font-size: 21px;
     text-decoration:underline;
      margin-right: 6px;
 }
-.lightteal:hover {
+.bookmarkpage .lightteal:hover {
     color: #e64b4f !important;
 }
 .order-block .btn-primary:hover{

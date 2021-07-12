@@ -43,10 +43,7 @@
 							    <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
                          <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
                          <c:choose>
-              		      <c:when test="${productisDiscontinued}">
-                              <span class="bookmark" disabled="disabled"></span>
-                           </c:when>
-                            <c:when test="${product.isBookMarked}">
+              		        <c:when test="${product.isBookMarked}">
                              <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${product.code}"
                               data-bookmark-value="${product.isBookMarked}"></span>
                             </c:when>
