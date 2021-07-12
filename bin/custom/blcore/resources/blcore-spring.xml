@@ -952,5 +952,10 @@
 
 	<!--BL-795 Adding attribute handler class for dynamic attribute skuFirmwareVersion-->
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
+	
+	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
+	<bean id="blConditionRatingOverallScoreHandler" class="com.bl.core.model.handler.BlConditionRatingOverallScoreHandler">
+		<property name="blPricingService" ref="blPricingService"/>
+	</bean>
 
 </beans>

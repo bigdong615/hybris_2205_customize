@@ -221,3 +221,21 @@ INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true
 ;24;	12;	24;	2.25;
 ;24;	16;	12;	1.9 ;
 ;12;	12;	18;	1.27;
+
+# BL-794 Declaring Enums for Conditional Ratings
+INSERT_UPDATE ConditionRatingValueEnum ; code[unique=true] ; name[lang=en] 
+                                       ; 1                 ; 1             
+                                       ; 2                 ; 2             
+                                       ; 3                 ; 3             
+                                       ; 4                 ; 4             
+                                       ; 5                 ; 5             
+                                       ; 6                 ; 6             
+                                       ; 7                 ; 7             
+                                       ; 8                 ; 8             
+                                       ; 9                 ; 9             
+                                       ; 10                ; 10    
+                                       
+# BL-794 Adding tooltip data for FunctionalRating and CosmeticRating attributes
+UPDATE AttributeDescriptor ; qualifier[unique=true] ; attributeType(code)      ; enclosingType(code)[unique=true] ; description[lang=en]                                                                                           
+                           ; functionalRating       ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]" 
+                           ; cosmeticRating         ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]" 

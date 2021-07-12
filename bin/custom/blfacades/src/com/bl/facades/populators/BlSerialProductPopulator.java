@@ -12,15 +12,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.product.data.SerialProductData;
+import com.bl.logging.BlLogger;
 
 
 
@@ -32,6 +36,7 @@ import com.bl.facades.product.data.SerialProductData;
  */
 public class BlSerialProductPopulator extends AbstractBlProductPopulator implements Populator<BlProductModel, ProductData>
 {
+	private static final Logger LOG = Logger.getLogger(BlSerialProductPopulator.class);
 	private PriceDataFactory priceDataFactory;
 	private CommonI18NService commonI18NService;
 	private BlCommerceStockService blCommerceStockService;
@@ -59,9 +64,17 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
 			final SerialProductData serialProductData = new SerialProductData();
+			if(isFunctionalAndCosmeticIsAvailable(serialProductModel))
+			{
+				serialProductData.setCosmeticRating(Float.parseFloat(serialProductModel.getCosmeticRating().getCode()));
+				serialProductData.setFunctionalRating(Float.parseFloat(serialProductModel.getFunctionalRating().getCode()));
+			}
+			else
+			{
+				serialProductData.setCosmeticRating(0.0f);
+				serialProductData.setFunctionalRating(0.0f);
+			}
 			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
-			serialProductData.setCosmeticRating(serialProductModel.getCosmeticRating());
-			serialProductData.setFunctionalRating(serialProductModel.getFunctionalRating());
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
 			{
@@ -89,6 +102,30 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		});
 		sortSerialBasedOnConditionRating(serialProductDataList);
 		target.setSerialproducts(serialProductDataList);
+	}
+	
+	/**
+	 * Checks if functional condition and cosmetic condition is available on serial.
+	 *
+	 * @param blSerialProductModel
+	 *           the bl serial product model
+	 * @return true, if is functional and cosmetic is available
+	 */
+	private boolean isFunctionalAndCosmeticIsAvailable(final BlSerialProductModel blSerialProductModel) {
+		boolean isEligible = true;
+		if (Objects.isNull(blSerialProductModel.getFunctionalRating())) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Cannot evaluate conditional overall rating because functional rating is null on serial {}",
+					blSerialProductModel.getProductId());
+			isEligible = false;
+		}
+		if (Objects.isNull(blSerialProductModel.getCosmeticRating())) {
+			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+					"Cannot evaluate conditional overall rating because cosmetic rating is null on serial {}",
+					blSerialProductModel.getProductId());
+			isEligible = false;
+		}
+		return isEligible;
 	}
 
 	/**
