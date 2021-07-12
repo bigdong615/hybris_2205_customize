@@ -28,6 +28,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; MobileHeaderBottomInfo                   ;                                                                       ;                           ; wide
                               ; MobileMiniCartSlot                       ;                                                                       ;                           ; minicart
                               ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                              ; TopHeaderSlot           ;                                                                             ;                           ; wide
 
 
 
@@ -46,6 +47,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MobileHeaderBottomInfo-RentalCartPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
                                      ;                         ; MobileMiniCartSlot-RentalCartPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
                                      ;                         ; SocialMediaSectionSlot-RentalCartPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                     ;                         ; TopHeaderSlot-RentalCartPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
 
 
 ########################### Define Content slots for page######################
