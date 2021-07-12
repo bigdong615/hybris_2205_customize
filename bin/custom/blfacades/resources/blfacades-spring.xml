@@ -593,4 +593,9 @@
 		class="com.bl.facades.populators.BlWishlistEntryPopulator">
 		<property name="productFacade" ref="productFacade"/>
 	</bean>
+	<alias name="blWarehousingConsignmentFacade" alias="warehousingConsignmentFacade"/>
+	<bean id="blWarehousingConsignmentFacade" parent="defaultWarehousingConsignmentFacade"
+	      class="com.bl.facades.warehouse.impl.BLWarehousingConsignmentFacadeImpl">
+	        <property name="boxDimensionService" ref="boxDimensionService"/>
+	      </bean>																				  
 </beans>

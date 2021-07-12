@@ -97,7 +97,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		if(CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
 			return redirectToPaymentPageOnGiftCardRemove(redirectAttributes, removedGiftCardCodeList);
 		}
-		final CartData cartData = getCheckoutFacade().getCheckoutCart();
+		final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
     addCartDataInModel(cartData, model);
     setFormattedRentalDates(model);
     model.addAttribute(BraintreeaddonControllerConstants.CURRENT_PAGE, BraintreeaddonControllerConstants.REVIEW_PAGE);

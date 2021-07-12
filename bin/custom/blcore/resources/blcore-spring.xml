@@ -950,8 +950,15 @@
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
 
+	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
+	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
+        <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
+    </bean>
+
+	<!-- [BL-753]: Dynamic attribute handler for attribute orderType in Type Consignment -->
+	<bean id="consignmentOrderTypeHandler" class="com.bl.core.attributes.ConsignmentOrderTypeHandler" />
+
+	<!--BL-795 Adding attribute handler class for dynamic attribute skuFirmwareVersion-->
+	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
+
 </beans>
-
-
-
-
