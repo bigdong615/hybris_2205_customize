@@ -12,9 +12,9 @@ import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.wishlist2.Wishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
+import java.util.Objects;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.util.ObjectUtils;
 
 /*
  *This class is to populate Product is Bookmarked or Not.
@@ -33,12 +33,12 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
     if (!userService.isAnonymousUser(userService.getCurrentUser())) {
       final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
       Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
-      if (!ObjectUtils.isEmpty(wishlist)) {
+      if (Objects.nonNull(wishlist)) {
         try {
           final ProductModel product = getProductService().getProductForCode(source.getCode());
           Wishlist2EntryModel wishlist2Entry = getWishlistService()
               .getWishlistEntryForProduct(product, wishlist);
-          if (!ObjectUtils.isEmpty(wishlist2Entry)) {
+          if (Objects.nonNull(wishlist2Entry)) {
             target.setIsBookMarked(true);
           }
         } catch (Exception e) {
