@@ -126,6 +126,29 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 				: rentalDaysFromSession;
 	}
 
+
+	@Override
+	public PriceInformation getWebPriceForExtendProduct(final ProductModel product , final Long rentalDays)
+	{
+		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		{
+			validateParameterNotNull(product, "Product model cannot be null");
+			final List<PriceInformation> prices = getPriceService().getPriceInformationsForProduct(product);
+			if (CollectionUtils.isNotEmpty(prices))
+			{
+				final PriceInformation defaultPriceInformation = prices.get(0);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Default Price Value is {} for product {}",
+						defaultPriceInformation.getPriceValue().getValue(), product.getCode());
+				return Objects.nonNull(rentalDays) && rentalDays.longValue() != BlCoreConstants.DEFAULT_RENTAL_DAY
+						? getBlProductDynamicPriceStrategy().getDynamicPriceInformationForProduct((BlProductModel) product,
+						defaultPriceInformation, rentalDays)
+						: defaultPriceInformation;
+			}
+			return null;
+		}
+		return super.getWebPriceForProduct(product);
+	}
+
 	/**
 	 * @return the blProductDynamicPriceStrategy
 	 */

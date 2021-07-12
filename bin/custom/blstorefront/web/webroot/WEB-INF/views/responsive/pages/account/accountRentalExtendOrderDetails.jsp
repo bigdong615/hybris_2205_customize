@@ -75,20 +75,19 @@
 							<p class="body14">
 								<spring:theme code="text.myaccount.extend.order.added.time" />
 								<br>
-								<spring:theme code="text.myaccount.extend.order.cost" />
+								<spring:theme code="text.myaccount.extend.order.cost"/>
 								<br>
 								<spring:theme code="text.myaccount.order.rental.damege.waiver" /> </p>
 						</div>
 						<div class="col-7 col-md-8">
-							<p class="body14 gray60">${orderData.addedTimeForExtendRental} Day
-								<br> $56.00
-								<br> $4.00</p>
+							<p class="body14 gray60">${orderData.addedTimeForExtendRental} Day<br>
+							<div id="js-totalCost-update"><format:price priceData="${orderData.totalCostForExtendRental}"/></div><br>
+							$4.00</p>
 						</div>
 					</div>
 				</div> <b><spring:theme code="text.myaccount.extend.order.pay"/></b>
 				<div class="col-11">
 						<ycommerce:testId code="paymentDetailsForm">
-						${empty braintreePaymentInfos} ****************************************************
 							<form:form id="braintree-payment-form" name="silentOrderPostForm" class="create_update_payment_form" modelAttribute="sopPaymentDetailsForm"
 							action="${request.contextPath}/braintree/checkout/hop/response" method="POST">
 								<div id="cardDetails">
@@ -180,7 +179,7 @@
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.extend.order.extension.cost" /> </td>
-					<td class="text-end">$56.00</td>
+					<td class="text-end" id="js-totalExtendCost"><format:price priceData="${orderData.totalCostForExtendRental}" /></td>
 				</tr>
 				<tr>
 					<td class="gray80">
@@ -191,11 +190,6 @@
 					<td class="gray80">
 						<spring:theme code="text.myaccount.extend.order.extension.taxes" /> </td>
 					<td class="text-end">$8.00</td>
-				</tr>
-				<tr>
-					<td class="gray80">
-						<spring:theme code="text.myaccount.extend.order.extension.subtotal" /> </td>
-					<td class="text-end">$68.00</td>
 				</tr>
 				<tr class="total">
 					<td>
@@ -215,6 +209,7 @@
 			<spring:theme code="text.myaccount.order.extend.rent" /> </button>
 	</div>
 </div>
+
 <!-- DamageWaivers Modal -->
 <div class="modal fade" id="damageWaivers" tabindex="-1" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-lg">

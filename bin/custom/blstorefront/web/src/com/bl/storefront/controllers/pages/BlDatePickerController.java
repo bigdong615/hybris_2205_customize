@@ -121,24 +121,6 @@ public class BlDatePickerController extends AbstractPageController
 	}
 
 
-
-	@GetMapping(value = "/extendDate")
-	public String setExtendRenatalEndDate(@RequestParam(value = "extendEndDate", defaultValue = "")
-	final String selectedEndDate,@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request, final HttpServletResponse response, final Model model,
-			final RedirectAttributes redirectModel) {
-		blCartFacade.getSessionCart();
-		return "";
-	}
-
-	@GetMapping(value = "/resetExtendDate")
-	public String resetExtendRenatalEndDate(final HttpServletRequest request, final HttpServletResponse response, final Model model,
-			final RedirectAttributes redirectModel) {
-		blCartFacade.getSessionCart();
-		return "";
-	}
-
-
-
 	/**
 	 * @return the blCartFacade
 	 */

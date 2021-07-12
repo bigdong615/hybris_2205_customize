@@ -1645,6 +1645,7 @@
            let rentalStartDate = $("#rentalStartDate").val();  // Existing Order start Date
            const startDate = new Date(rentalStartDate);
            var orderCode = $("#orderCode").val(); // To Get Order Code
+
            startDate.setDate(startDate.getDate() + 89); // To add max days from existing order startDate
                                      const disallowedDates = [['2001-01-01', endDate]];
                                        const picker = new Litepicker({
@@ -1678,11 +1679,12 @@
                                       setup: (picker) => {
                                 			picker.on('button:apply', (newEndDate) => {
                                 				$.ajax({
-                            	                    url: ACC.config.encodedContextPath + '/extendDate',
-                            	                    data: {extendEndDate: newEndDate.toDateString() , orderCode : orderCode},
+                            	                    url: ACC.config.encodedContextPath +'/my-account/extendDate/',
+                            	                    data: {extendEndDate: newEndDate.toDateString() , orderCode : orderCode , orderEndDate:endDate},
                             	                    type: "GET",
                             	                    success: function (data) {
-                            	                    	window.location.reload();
+                            	                    $('#orderSummary').html(data);
+                            	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
                             	                    },
                             	                    error: function (xhr, textStatus, error) {
 

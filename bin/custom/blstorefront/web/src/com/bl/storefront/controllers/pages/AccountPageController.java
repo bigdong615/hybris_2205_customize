@@ -11,6 +11,7 @@ import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
 import com.braintree.facade.BrainTreeUserFacade;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
@@ -74,6 +75,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -1152,5 +1154,25 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute("sopPaymentDetailsForm", new SopPaymentDetailsForm());
 		model.addAttribute("silentOrderPostForm", new PaymentDetailsForm());
 	}
+
+	@GetMapping(value = "/extendDate")
+	public String setExtendRenatalEndDate(@RequestParam(value = "extendEndDate", defaultValue = "") final String selectedEndDate,
+			@RequestParam(value = "orderEndDate", defaultValue = "") final String orderEndDate,
+			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request, final HttpServletResponse response, final Model model,
+			final RedirectAttributes redirectModel)
+			throws CommerceCartModificationException, CMSItemNotFoundException {
+		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		blOrderFacade.calculatePriceForExtendOrders(orderDetails , orderEndDate , selectedEndDate);
+		model.addAttribute("orderData" , orderDetails);
+		return Account.AccountOrderExtendSummaryPage;
+	}
+
+	@GetMapping(value = "/resetExtendDate")
+	public String resetExtendRenatalEndDate(final HttpServletRequest request, final HttpServletResponse response, final Model model,
+			final RedirectAttributes redirectModel) {
+
+		return "";
+	}
+
 
 }

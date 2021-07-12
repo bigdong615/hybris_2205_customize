@@ -1,14 +1,19 @@
 package com.bl.facades.order;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
+import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.impl.DefaultOrderFacade;
+import de.hybris.platform.commercefacades.product.PriceDataFactory;
+import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
@@ -18,12 +23,15 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.jalo.order.price.PriceInformation;
+import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.store.BaseStoreModel;
-import org.apache.commons.collections4.CollectionUtils;
+import java.math.BigDecimal;
+import java.util.Date;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
 
 public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderFacade {
 
@@ -32,6 +40,11 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private CommerceCartService commerceCartService;
   private ModelService modelService;
   private Converter<CommerceCartModification, CartModificationData> cartModificationConverter;
+  private PriceDataFactory priceDataFactory;
+  private BlCommercePriceService commercePriceService;
+  private ProductService productService;
+  protected SessionService sessionService;
+
 
 
   @Override
@@ -100,6 +113,46 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   }
 
 
+
+
+  @Override
+  public void calculatePriceForExtendOrders(final OrderData orderData, final String orderEndDate,
+      final String selectedDate) throws CommerceCartModificationException {
+
+    final Date startDate =BlDateTimeUtils.convertStringDateToDate(orderEndDate, "MM/dd/yyyy");
+     final Date endDate =  BlDateTimeUtils.convertStringDateToDate(selectedDate ,"EE MMM dd yyyy");
+    long defaultAddedTimeForExtendRental = BlDateTimeUtils
+        .getDaysBetweenDates(startDate, endDate) + 1;
+    if(StringUtils.isEmpty(selectedDate)) {
+       defaultAddedTimeForExtendRental = 1;
+    }
+    sessionService.getCurrentSession().setAttribute("extendedRentalDuration", (int) defaultAddedTimeForExtendRental);
+
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+
+    OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderData.getCode(),
+        baseStoreModel);
+
+    orderData.setAddedTimeForExtendRental((int) defaultAddedTimeForExtendRental); // Default value which added for extend order
+    PriceDataType priceType = PriceDataType.BUY;
+    PriceInformation info;
+    BigDecimal subTotal = BigDecimal.valueOf(0.0);
+
+    for(OrderEntryData entries : orderData.getEntries()) {
+      final ProductModel productModel = getProductService().getProductForCode(entries.getProduct().getCode());
+      info = getCommercePriceService().getWebPriceForExtendProduct(productModel, defaultAddedTimeForExtendRental);
+      if (info != null) {
+        subTotal = subTotal.add(BigDecimal.valueOf(info.getPriceValue().getValue()).setScale(
+            BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+      }
+
+    }
+    orderData.setTotalCostForExtendRental(getPriceDataFactory().create(priceType, subTotal , "USD"));
+
+  }
+
+
+
   public BlCartService getBlCartService() {
     return blCartService;
   }
@@ -146,6 +199,42 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.cartModificationConverter = cartModificationConverter;
   }
 
+
+  public PriceDataFactory getPriceDataFactory() {
+    return priceDataFactory;
+  }
+
+  public void setPriceDataFactory(
+      PriceDataFactory priceDataFactory) {
+    this.priceDataFactory = priceDataFactory;
+  }
+
+
+  public BlCommercePriceService getCommercePriceService() {
+    return commercePriceService;
+  }
+
+  public void setCommercePriceService(
+      BlCommercePriceService commercePriceService) {
+    this.commercePriceService = commercePriceService;
+  }
+
+
+  public ProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(ProductService productService) {
+    this.productService = productService;
+  }
+
+  public SessionService getSessionService() {
+    return sessionService;
+  }
+
+  public void setSessionService(SessionService sessionService) {
+    this.sessionService = sessionService;
+  }
 
 
 }
