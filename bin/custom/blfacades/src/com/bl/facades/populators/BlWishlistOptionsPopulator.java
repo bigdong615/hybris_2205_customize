@@ -48,13 +48,13 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
           target.setIsBookMarked(false);
           BlLogger
               .logMessage(LOG, Level.ERROR,
-                  "Wishlist entry with product " + product.getCode() + "not found.)",
+                  "Wishlist entry with product " + product.getCode() + "not found.",
                   e);
         } catch (UnknownIdentifierException e) {
           target.setIsBookMarked(false);
           BlLogger
               .logMessage(LOG, Level.ERROR,
-                  "Wishlist entry with product " + product.getCode() + " in wishlist " + wishlist.getName() + "  not found.)",
+                  "Wishlist entry with product " + product.getCode() + " in wishlist " + wishlist.getName() + "  not found.",
                   e);
         }
       }
