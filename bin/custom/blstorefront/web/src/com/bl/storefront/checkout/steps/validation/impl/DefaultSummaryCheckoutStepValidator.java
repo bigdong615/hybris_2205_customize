@@ -39,7 +39,8 @@ public class DefaultSummaryCheckoutStepValidator extends AbstractCheckoutStepVal
 	}
 
 	protected ValidationResults checkPaymentMethodAndPickup(final RedirectAttributes redirectAttributes) {
-		if (getCheckoutFlowFacade().hasNoPaymentInfo())
+
+		if (Boolean.FALSE.equals(getCheckoutFlowFacade().getCheckoutCart().getIsPOEnabled()) && getCheckoutFlowFacade().hasNoPaymentInfo())
 		{
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.INFO_MESSAGES_HOLDER,
 					"checkout.multi.paymentDetails.notprovided");

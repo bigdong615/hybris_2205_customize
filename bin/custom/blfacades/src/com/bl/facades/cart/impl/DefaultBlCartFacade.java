@@ -22,6 +22,7 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
@@ -510,6 +511,31 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 			}
 		});
 		return entryList;
+	}
+
+	/**
+	 *{@inheritDoc}
+	 */
+	@Override
+	public void savePoPaymentDetails(final String poNumber, final String poNotes) {
+    blCartService.savePoPaymentDetails(poNumber,poNotes);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removePoNumber() {
+		CartModel cartModel = blCartService.getSessionCart();
+		if(cartModel != null){
+    	try {
+				cartModel.setPoNumber(null);
+				getModelService().save(cartModel);
+				getModelService().refresh(cartModel);
+			}catch (ModelSavingException exception){
+				BlLogger.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
+			}
+		}
 	}
 
 	@Override

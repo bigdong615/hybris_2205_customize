@@ -4,11 +4,15 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.forms.GiftCardForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
@@ -52,11 +56,13 @@ import javax.validation.Valid;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -84,6 +90,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
+
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -198,6 +207,10 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
 				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+        if(Objects.nonNull(cartData) && StringUtils.isNotEmpty(cartData.getPoNumber())){
+          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NUMBER, cartData.getPoNumber());
+          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NOTES, cartData.getPoNotes());
+        }
 				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
 				{
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
@@ -501,6 +514,29 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			}
 		}
 		return sopCardTypes;
+	}
+
+  /**
+   * It saves PO payment details.
+   * @param poNumber
+   * @param poNotes
+   * @param model
+   * @param redirectAttributes
+   * @return
+   */
+	@PostMapping(value = "/reviewSavePoPayment")
+	@RequireHardLogIn
+	public String savePoPaymentMethod(@RequestParam("poNumber") final String poNumber, @RequestParam("poNotes") final String poNotes,
+      final Model model, final RedirectAttributes redirectAttributes){
+		try{
+       blCartFacade.savePoPaymentDetails(poNumber,poNotes);
+		}catch(final Exception exception)
+		{
+			BlLogger.logMessage(LOGGER, Level.ERROR, "Error occurred while setting selected PO payment details", exception);
+			GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+			return getCheckoutStep().currentStep();
+		}
+		return getCheckoutStep().nextStep();
 	}
 
 	protected CheckoutStep getCheckoutStep()
