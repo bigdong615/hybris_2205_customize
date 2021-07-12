@@ -31,18 +31,22 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
   public void populate(final BlProductModel source, final ProductData target)
       throws ConversionException {
     if (!userService.isAnonymousUser(userService.getCurrentUser())) {
-      try {
-        final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
-        Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
-        final ProductModel product = getProductService().getProductForCode(source.getCode());
-        Wishlist2EntryModel wishlist2Entry = getWishlistService()
-            .getWishlistEntryForProduct(product, wishlist);
-        if (!ObjectUtils.isEmpty(wishlist2Entry)) {
-          target.setIsBookMarked(true);
+      final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
+      Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
+      if (!ObjectUtils.isEmpty(wishlist)) {
+        try {
+          final ProductModel product = getProductService().getProductForCode(source.getCode());
+          Wishlist2EntryModel wishlist2Entry = getWishlistService()
+              .getWishlistEntryForProduct(product, wishlist);
+          if (!ObjectUtils.isEmpty(wishlist2Entry)) {
+            target.setIsBookMarked(true);
+          }
+        } catch (Exception e) {
+          target.setIsBookMarked(false);
+          BlLogger
+              .logMessage(LOG, Level.ERROR, "Default Wish list does not contain wish list entries",
+                  e);
         }
-      } catch (Exception e) {
-        target.setIsBookMarked(false);
-        BlLogger.logMessage(LOG, Level.ERROR, "Wish list found more than one product entry", e);
       }
     }
   }
