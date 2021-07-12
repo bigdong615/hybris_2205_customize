@@ -8,6 +8,8 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
+import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.wishlist2.Wishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
@@ -34,17 +36,25 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
       final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
       Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
       if (Objects.nonNull(wishlist)) {
+        ProductModel product = null;
         try {
-          final ProductModel product = getProductService().getProductForCode(source.getCode());
+          product = getProductService().getProductForCode(source.getCode());
           Wishlist2EntryModel wishlist2Entry = getWishlistService()
               .getWishlistEntryForProduct(product, wishlist);
           if (Objects.nonNull(wishlist2Entry)) {
             target.setIsBookMarked(true);
           }
-        } catch (Exception e) {
+        } catch (ModelNotFoundException e) {
           target.setIsBookMarked(false);
           BlLogger
-              .logMessage(LOG, Level.ERROR, "Default Wish list does not contain wish list entries",
+              .logMessage(LOG, Level.ERROR,
+                  "Wishlist entry with product " + product.getCode() + "not found.)",
+                  e);
+        } catch (UnknownIdentifierException e) {
+          target.setIsBookMarked(false);
+          BlLogger
+              .logMessage(LOG, Level.ERROR,
+                  "Wishlist entry with product " + product.getCode() + " in wishlist " + wishlist.getName() + "  not found.)",
                   e);
         }
       }
