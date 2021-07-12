@@ -7,6 +7,7 @@ import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.ruleengineservices.calculation.NumberedLineItem;
@@ -18,6 +19,7 @@ import de.hybris.platform.ruleengineservices.rao.RuleEngineResultRAO;
 import de.hybris.platform.ruleengineservices.rule.evaluation.RuleActionContext;
 import de.hybris.platform.ruleengineservices.rule.evaluation.actions.AbstractRuleExecutableSupport;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.model.ModelService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -41,6 +43,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
   private BlCommercePriceService blCommercePriceService;
   private ProductService productService;
   private BlCartService cartService;
+  private ModelService modelService;
   private Converter<OrderEntryRAO, NumberedLineItem> orderEntryRaoToNumberedLineItemConverter;
 
 
@@ -68,19 +71,28 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    */
   protected boolean performAction(final RuleActionContext context, final Integer freeRentalDays) {
     CartRAO cartRAO = context.getCartRao();
-    if(freeRentalDays > 0) {
+    if(freeRentalDays > 0 && cartRAO.getRentalDurationDays() > 0) {
       final BigDecimal newExtendedDaysSubtotal;
-      Date updatedRentalToDate = getUpdatedEndDate(cartRAO,freeRentalDays);
-      newExtendedDaysSubtotal = getPromotionRentalDurationPrice(cartRAO,context,
-          cartRAO.getRentalDurationDays() + freeRentalDays);
-      /*getBlDatePickerService().addRentalDatesIntoSession(
+      final Date updatedRentalToDate = getUpdatedEndDate(cartRAO,freeRentalDays);
+      final int rentalDays
+          = cartRAO.getRentalDurationDays() + freeRentalDays;
+      newExtendedDaysSubtotal = getPromotionRentalDurationPrice(cartRAO,context, rentalDays);
+      BlLogger.logMessage(LOG, Level.INFO, " New total for : " +rentalDays+" is: "+ newExtendedDaysSubtotal);
+
+      getBlDatePickerService().addRentalDatesIntoSession(
           BlDateTimeUtils
               .convertDateToStringDate(cartRAO.getRentalArrivalDate(), BlCoreConstants.DATE_FORMAT),
           BlDateTimeUtils
-              .convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT))*/;
+              .convertDateToStringDate(updatedRentalToDate, BlCoreConstants.DATE_FORMAT));
+      CartModel cartModel = getCartService().getSessionCart();
+      if(cartModel != null){
+        cartModel.setSubtotal(newExtendedDaysSubtotal.doubleValue());
+        getModelService().save(cartModel);
+
+      }
       getCartService().updatePromotionalEndDate(updatedRentalToDate);
-      //cartRAO.setRentalToDate(updatedRentalToDate);
-      BigDecimal finalDiscout = newExtendedDaysSubtotal.subtract(cartRAO.getSubTotal())
+      cartRAO.setRentalToDate(updatedRentalToDate);
+      BigDecimal finalDiscount = newExtendedDaysSubtotal.subtract(cartRAO.getSubTotal())
           .setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
       BlLogger.logMessage(LOG, Level.INFO, "Old cart sub Total: " + cartRAO.getSubTotal());
 
@@ -91,8 +103,8 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
       BlLogger.logMessage(LOG, Level.INFO, " before discount cart Total: " + cartRAO.getSubTotal());
 
       DiscountRAO discount = this.getRuleEngineCalculationService()
-          .addOrderLevelDiscount(cartRAO, true, finalDiscout);
-      BlLogger.logMessage(LOG, Level.INFO, "Discount calculated: " + finalDiscout);
+          .addOrderLevelDiscount(cartRAO, true, finalDiscount);
+      BlLogger.logMessage(LOG, Level.INFO, "Discount calculated: " + finalDiscount);
       BlLogger.logMessage(LOG, Level.INFO, "cart Sub Total: " + cartRAO.getSubTotal());
       BlLogger.logMessage(LOG, Level.INFO, "cart Total: " + cartRAO.getTotal());
 
@@ -115,8 +127,8 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
    * @param freeRentalDays
    * @return
    */
-  private Date getUpdatedEndDate(CartRAO cartRao, Integer freeRentalDays) {
-    List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
+  private Date getUpdatedEndDate(final CartRAO cartRao, final Integer freeRentalDays) {
+    final List<Date> blackOutDates = getBlDatePickerService().getListOfBlackOutDates();
     Date updatedRentalToDate = addFreeRentalDays(freeRentalDays.longValue(), BlDateTimeUtils
         .convertDateToStringDate(cartRao.getRentalToDate(),BlCoreConstants.DATE_FORMAT));
     BlLogger.logMessage(LOG, Level.INFO, "Updated Rental To Date without checking it is blackout date or Weekend: " + updatedRentalToDate);
@@ -144,16 +156,23 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
     int  entryNumber = 1;
     for (OrderEntryRAO entry : cartRao.getEntries()) {
       if (Objects.nonNull(entry.getPrice()) && rentalDays > 0) {
-        BlProductModel blProduct = (BlProductModel) this.findProduct(entry.getProductCode(), context);
-        Double basePrice = CollectionUtils.isNotEmpty(blProduct.getEurope1Prices()) ? blProduct.getEurope1Prices().iterator().next().getPrice() : 0.0D;
-        BigDecimal updatedEntryRentalPrice = getBlCommercePriceService().getDynamicPriceDataForProduct(blProduct.getConstrained(),basePrice, rentalDays.longValue()).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-        updatedEntryRentalPrice = updatedEntryRentalPrice.multiply(new BigDecimal(entry.getAvailableQuantity())).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-        totalRentalPrice = totalRentalPrice.add(updatedEntryRentalPrice).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-        entry.setPrice(updatedEntryRentalPrice);
-        entry.setEntryNumber(entryNumber);
-        BlLogger.logMessage(LOG, Level.DEBUG," extended day cart entry price for : "+rentalDays +"rental days" + "for product" + entry.getProductCode() +" is : "+ updatedEntryRentalPrice );
-        this.getOrderEntryRaoToNumberedLineItemConverter().convert(entry);
-        entryNumber++;
+        final BlProductModel blProduct = (BlProductModel) this.findProduct(entry.getProductCode(), context);
+        if(blProduct != null) {
+          final Double basePrice = CollectionUtils.isNotEmpty(blProduct.getEurope1Prices()) ? blProduct
+              .getEurope1Prices().iterator().next().getPrice() : 0.0D;
+          BigDecimal updatedEntryRentalPrice = getBlCommercePriceService().getDynamicPriceDataForProduct(blProduct.getConstrained(), basePrice,rentalDays.longValue()).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+          updatedEntryRentalPrice = updatedEntryRentalPrice.multiply(new BigDecimal(entry.getAvailableQuantity())).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+          totalRentalPrice = totalRentalPrice.add(updatedEntryRentalPrice).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+          entry.setPrice(updatedEntryRentalPrice);
+          entry.setBasePrice(updatedEntryRentalPrice);
+          entry.setTotalPrice(updatedEntryRentalPrice);
+          entry.setEntryNumber(entryNumber);
+          BlLogger.logMessage(LOG, Level.INFO,
+              " extended day cart entry price for : " + rentalDays + "rental days" + "for product"
+                  + entry.getProductCode() + " is : " + updatedEntryRentalPrice);
+          this.getOrderEntryRaoToNumberedLineItemConverter().convert(entry);
+          entryNumber++;
+        }
       }
     }
     return totalRentalPrice;
@@ -172,7 +191,7 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
   protected ProductModel findProduct(String productCode, RuleActionContext context) {
     ProductModel product = null;
     try {
-      product = this.getProductService().getProductForCode(productCode);
+     return this.getProductService().getProductForCode(productCode);
     } catch (Exception var5) {
       BlLogger.logMessage(LOG, Level.ERROR, "no product found for code"+ productCode+"in rule"+this.getRuleCode(context) +"cannot apply rule action.");
 
@@ -253,6 +272,14 @@ public class BlExtendedFreeRentalDaysRAOAction extends AbstractRuleExecutableSup
   public void setBlCommercePriceService(
       BlCommercePriceService blCommercePriceService) {
     this.blCommercePriceService = blCommercePriceService;
+  }
+
+  public ModelService getModelService() {
+    return modelService;
+  }
+
+  public void setModelService(ModelService modelService) {
+    this.modelService = modelService;
   }
 }
 

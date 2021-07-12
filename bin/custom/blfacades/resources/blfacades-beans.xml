@@ -251,6 +251,7 @@
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
     <property name="extendedFreeRentalDays" type="java.lang.Integer" />
+    <property name="extendedDurationDays" type="java.lang.Integer" />
   </bean>
 
 </beans>

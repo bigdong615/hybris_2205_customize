@@ -129,6 +129,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		final String cartCode = cartModel.getCode();
 		cartModel.setRentalStartDate(rentalStartDate);
 		cartModel.setRentalEndDate(rentalEndDate);
+		updatePromotionalEndDate(cartModel.getPromotionalRentalEndDate());
 		try 
 		{			
 			getModelService().save(cartModel);
@@ -230,14 +231,16 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	 */
 	@Override
 	public void updatePromotionalEndDate(Date updatedRentalToDate) {
-		if (updatedRentalToDate != null) {
-			final CartModel cartModel = getSessionCart();
+		final CartModel cartModel = getSessionCart();
+		if (updatedRentalToDate != null  && cartModel != null) {
 			String cartCode = cartModel.getCode();
-			if(cartModel.getPromotionalRentalEndDate() != null && !isFreeRentalDayPromoApplied()){
+			if(!isFreeRentalDayPromoApplied()){
 				cartModel.setPromotionalRentalEndDate(null);
 			}
 			else{
 				cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
+				BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
+						"Setting Rental Promotional End Date: {} on Cart: {}", cartModel.getPromotionalRentalEndDate(),cartCode);
 			}
 			try {
 				getModelService().save(cartModel);
@@ -260,7 +263,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 	public boolean isFreeRentalDayPromoApplied() {
 		CartModel cartModel = getSessionCart();
 		if(cartModel != null && CollectionUtils.isNotEmpty(cartModel.getAllPromotionResults())){
-			return  cartModel.getAllPromotionResults().stream().filter(promoResult -> promoResult.getPromotion().getCode().contains("EXTENDED_RENTALDAYS")).findAny().isPresent();
+			return  cartModel.getAllPromotionResults().stream().filter(promoResult -> promoResult.getPromotion().getCode().contains("EXTENDED_RENTAL_DAYS")).findAny().isPresent();
 		}
 		return  false;
 	}
