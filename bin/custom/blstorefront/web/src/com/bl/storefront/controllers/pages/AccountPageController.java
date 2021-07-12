@@ -6,11 +6,11 @@ package com.bl.storefront.controllers.pages;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlRentalDateUtils;
-import com.bl.facades.customer.BlUserFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
 import com.bl.storefront.forms.BlAddressForm;
+import com.braintree.facade.BrainTreeUserFacade;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -129,7 +129,6 @@ public class AccountPageController extends AbstractSearchPageController
 	// Internal Redirects
 	private static final String REDIRECT_TO_ADDRESS_BOOK_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_ADDRESS_BOOK_URL;
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
-	private static final String REDIRECT_TO_EDIT_ADDRESS_PAGE = REDIRECT_PREFIX + "/my-account/edit-address/";
 	private static final String REDIRECT_TO_UPDATE_EMAIL_PAGE = REDIRECT_PREFIX + "/my-account/update-email";
 	private static final String REDIRECT_TO_UPDATE_PROFILE = REDIRECT_PREFIX + "/my-account/update-profile";
 	private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE = REDIRECT_PREFIX + "/my-account/update-password";
@@ -169,8 +168,8 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "acceleratorCheckoutFacade")
 	private CheckoutFacade checkoutFacade;
 
-	@Resource(name = "blUserFacade")
-	private BlUserFacade userFacade;
+	@Resource(name = "userFacade")
+	private BrainTreeUserFacade userFacade;
 
 	@Resource(name = "customerFacade")
 	private CustomerFacade customerFacade;
@@ -698,17 +697,12 @@ public class AccountPageController extends AbstractSearchPageController
 			setUpAddressFormAfterError(addressForm, model);
 			return getViewForPage(model);
 		}
-
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
 		if (CollectionUtils.isEmpty(userFacade.getAddressBook()))
 		{
-			newAddress.setDefaultAddress(true);
+			newAddress.setDefaultAddress(Boolean.TRUE);
+			newAddress.setShippingAddress(Boolean.TRUE);
 		}
-		else
-		{
-			newAddress.setDefaultAddress(addressForm.getDefaultAddress() != null && addressForm.getDefaultAddress().booleanValue());
-		}
-		newAddress.setDefaultBillingAddress(addressForm.getDefaultBillingAddress() !=null && addressForm.getDefaultBillingAddress().booleanValue());
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -732,7 +726,7 @@ public class AccountPageController extends AbstractSearchPageController
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "account.confirmation.address.added",
 				null);
 
-		return REDIRECT_TO_EDIT_ADDRESS_PAGE + newAddress.getId();
+		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
 	}
 
 	protected void setUpAddressFormAfterError(final BlAddressForm addressForm, final Model model)
@@ -768,17 +762,6 @@ public class AccountPageController extends AbstractSearchPageController
 				model.addAttribute(COUNTRY_ATTR, addressData.getCountry().getIsocode());
 				model.addAttribute(ADDRESS_DATA_ATTR, addressData);
 				addressDataUtil.convert(addressData, addressForm);
-				addressForm.setEmail(addressData.getEmail());
-				if (userFacade.isDefaultAddress(addressData.getId()))
-				{
-					addressForm.setDefaultAddress(Boolean.TRUE);
-					model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.TRUE);
-				}
-				else
-				{
-					addressForm.setDefaultAddress(Boolean.FALSE);
-					model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.FALSE);
-				}
 				break;
 			}
 		}
@@ -809,14 +792,20 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-       newAddress.setEmail(addressForm.getEmail());
 		if (Boolean.TRUE.equals(addressForm.getDefaultAddress()) || userFacade.getAddressBook().size() <= 1)
 		{
-			newAddress.setDefaultAddress(true);
+			newAddress.setDefaultAddress(Boolean.TRUE);
+			newAddress.setShippingAddress(Boolean.TRUE);
 		}
-
+		final AddressData defaultBillingAddress = userFacade.getDefaultBillingAddress();
+		if(defaultBillingAddress != null && defaultBillingAddress.getId().equals(addressForm.getAddressId())){
+			newAddress.setBillingAddress(Boolean.TRUE);
+		}
+	   final AddressData defaultShippingAddress = userFacade.getDefaultAddress();
+		if(defaultShippingAddress != null && defaultShippingAddress.getId().equals(addressForm.getAddressId())){
+			newAddress.setShippingAddress(Boolean.TRUE);
+		}
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -839,7 +828,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "account.confirmation.address.updated",
 				null);
-		return REDIRECT_TO_EDIT_ADDRESS_PAGE + newAddress.getId();
+		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
 	}
 
 	@RequestMapping(value = "/select-suggested-address", method = RequestMethod.POST)

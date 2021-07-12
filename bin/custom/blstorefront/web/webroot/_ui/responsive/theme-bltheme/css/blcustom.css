@@ -133,7 +133,7 @@ text-decoration :none ;
 .btnwidth .btnwidthplp {width :100%; margin-top:1%;}
 .btnwidth .btnwidthusedgear{width :100%;}
 /* BL-606 */
-.splide__slide .card h6.product, #productList .card h6.product {height :36px; overflow: hidden;}
+.splide__slide .card h6.product, #productList .card h6.product {height :42px; overflow: hidden;}
 @media only screen and (max-width: 1025px) and (min-width: 991px)   {
   .splide__slide .card h6.product, #productList .card h6.product {height :43px; overflow: hidden;}
   #gear-slider .splide__slide .card h6.product {height :35px; overflow: hidden;}
@@ -325,10 +325,6 @@ font-size: 21px;
 ::-webkit-scrollbar {
   scrollbar-width: thin;
 }
-::-webkit-scrollbar {
-  display: none;
-}
-
 /* Hide scrollbar for IE, Edge add Firefox */
 .scroll-over-text {
   -ms-overflow-style: none;
@@ -435,4 +431,16 @@ font-size: 21px;
 }
 .printQuoteDate {
 	color: #52bfc0;
+}
+.word-break{word-break: break-word;}
+.hostedFields input[type="checkbox"]{
+  position: static;
+  width:auto;
+}
+#billingDetails input[type="checkbox"]{
+  position: static;
+  width:auto;
+}
+.billingAddressForm input[type="checkbox"]{
+  margin-left:-10px;
 }

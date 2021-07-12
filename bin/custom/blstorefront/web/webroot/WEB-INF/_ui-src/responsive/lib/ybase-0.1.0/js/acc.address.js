@@ -328,5 +328,82 @@ ACC.address = {
                     	}
                     	});
                 });
+
+           /* This method is written for address form validation*/
+           var count = 0;
+           $(document).on("click", ".js-validate-address-form-data", function (e) {
+           	e.preventDefault();
+           	count = 0;
+           	$('#js-add-address-Validation').html("");
+           	$('#js-add-address-Validation').removeClass('notification notification-error');
+
+           	// Fetching input form object.
+           	var firstName = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.firstName"]');
+           	var lastName = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.surname"]');
+           	var line1 = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.line1"]');
+           	var townCity = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.townCity"]');
+           	var postcode = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="zip"]');
+           	var regionIso = $('.accountAddressAdd #editAddress').find('.form-group').find('select[id="state"]');
+           	var email = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.email"]');
+           	var phone = $('.accountAddressAdd #editAddress').find('.form-group').find('input[id="address.phone"]');
+             //Validating form data
+           	validateField(firstName.val(), firstName);
+           	validateField(lastName.val(), lastName);
+           	validateField(line1.val(), line1);
+           	validateField(townCity.val(), townCity);
+           	validateField(postcode.val(), postcode);
+           	validateField(regionIso.val(), regionIso);
+           	validateEmail(email.val(), email);
+           	validatePhone(phone.val(), phone);
+           	let checkedStatus = false;
+           	var billing = $('#default-billing-address').is(':checked');
+           	var shipping = $('#default-shipping-address').is(':checked');
+           	if (billing || shipping) {
+           		$('#js-default-address-Validation').removeClass('notification notification-error');
+           		$('#js-default-address-Validation').html("");
+           		checkedStatus = true;
+           	} else {
+           		$('#js-default-address-Validation').addClass('notification notification-error');
+           		$('#js-default-address-Validation').html("Whoops, be sure to select if this is a billing or shipping address.");
+           	}
+           	if (count > 0) {
+           		$('#js-add-address-Validation').addClass('notification notification-error');
+           		$('#js-add-address-Validation').html("You are missing " + count + " required fields.");
+           	} else if (checkedStatus) {
+           		$('#editAddress').submit();
+           	}
+           });
+
+        /*Validating address field */
+    	function validateField(attribute, fieldName) {
+        	if (attribute && attribute.trim() != '' && attribute.length < 255) {
+        		fieldName.removeClass('error');
+        		return true;
+        	}
+        	fieldName.addClass('error');
+        	count = count + 1;
+        	return false;
+        }
+        /* Validate email data*/
+        function validateEmail(email, fieldName) {
+        	if (email && email.trim() != '' && null != email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+        		fieldName.removeClass('error');
+        		return true;
+        	}
+        	fieldName.addClass('error');
+        	count = count + 1;
+        	return false;
+        }
+        /*Validating phone number*/
+        function validatePhone(phone, fieldName) {
+        	if (phone && phone.trim() != '' && null != phone.match(/^[\+]?[(]?[0-9]{3}[/)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im)) {
+        		fieldName.removeClass('error');
+        		return true;
+        	}
+        	fieldName.addClass('error');
+        	count = count + 1;
+        	return false;
+        }
+
     	}
 };

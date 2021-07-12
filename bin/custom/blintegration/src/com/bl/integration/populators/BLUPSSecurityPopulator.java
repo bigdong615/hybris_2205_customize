@@ -5,7 +5,7 @@ package com.bl.integration.populators;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.bl.integration.ups.upss.v1.pojo.UPSSecurity;
+import com.ups.xmlschema.xoltws.upss.v1.UPSSecurity;
 
 
 /**
