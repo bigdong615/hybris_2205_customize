@@ -1047,10 +1047,10 @@
                          <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store cosmetic rating data</description>
                          <custom-properties>
-							<property name="description">
-								<value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
-							</property>
-						</custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
                      <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
@@ -1058,10 +1058,10 @@
                          <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store functional rating data</description>
                          <custom-properties>
-							<property name="description">
-								<value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
-							</property>
-						</custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
                      <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
                          <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
