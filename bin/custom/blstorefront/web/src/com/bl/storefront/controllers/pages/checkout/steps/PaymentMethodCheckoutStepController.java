@@ -13,6 +13,7 @@ import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.forms.GiftCardForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
@@ -38,8 +39,6 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,7 +49,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import org.apache.commons.collections4.CollectionUtils;
@@ -528,12 +526,13 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@RequireHardLogIn
 	public String savePoPaymentMethod(@RequestParam("poNumber") final String poNumber, @RequestParam("poNotes") final String poNotes,
       final Model model, final RedirectAttributes redirectAttributes){
-		try{
-       blCartFacade.savePoPaymentDetails(poNumber,poNotes);
-		}catch(final Exception exception)
-		{
-			BlLogger.logMessage(LOGGER, Level.ERROR, "Error occurred while setting selected PO payment details", exception);
-			GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
+		try {
+			blCartFacade.savePoPaymentDetails(poNumber, poNotes);
+		} catch (final Exception exception) {
+			BlLogger.logMessage(LOGGER, Level.ERROR,
+					"Error occurred while setting selected PO payment details", exception);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+					getLocalizedString("braintree.billing.general.error"), null);
 			return getCheckoutStep().currentStep();
 		}
 		return getCheckoutStep().nextStep();

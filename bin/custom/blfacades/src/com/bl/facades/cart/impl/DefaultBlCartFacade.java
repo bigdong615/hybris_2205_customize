@@ -1,6 +1,7 @@
 package com.bl.facades.cart.impl;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
@@ -41,7 +42,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
-import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -526,13 +526,14 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 	@Override
 	public void removePoNumber() {
 		CartModel cartModel = blCartService.getSessionCart();
-		if(cartModel != null){
-    	try {
+		if (cartModel != null) {
+			try {
 				cartModel.setPoNumber(null);
 				getModelService().save(cartModel);
 				getModelService().refresh(cartModel);
-			}catch (final ModelSavingException exception){
-				BlLogger.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
+			} catch (final ModelSavingException exception) {
+				BlLogger
+						.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
 			}
 		}
 	}
