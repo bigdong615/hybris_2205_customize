@@ -1215,3 +1215,21 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 		}
 	}
 });
+
+//Handled min and max character for PO number and PO notes.
+var inputQuantity = [];
+$(function() {
+    $(".po-number").on("keyup", function (e) {
+        var $field = $(this),
+            val=this.value;
+        if (this.validity && this.validity.badInput || isNaN(val) || $field.is(":invalid") ) {
+            this.value = inputQuantity[$thisIndex];
+            return;
+        }
+        if (val.length > Number($field.attr("maxlength"))) {
+          val=val.slice(0, 5);
+          $field.val(val);
+        }
+        inputQuantity[$thisIndex]=val;
+    });
+});

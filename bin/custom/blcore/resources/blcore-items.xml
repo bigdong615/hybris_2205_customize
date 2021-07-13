@@ -1825,13 +1825,33 @@
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the auth amount used to verify the card has been voided or not</description>
                     </attribute>
-                    <attribute qualifier="poNumber" type="java.lang.String">
-                      <persistence type="property" />
+                    <attribute qualifier="poNumber" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
                       <modifiers read="true" write="true" optional="true" />
                       <description>PO number used as payment method</description>
                     </attribute>
-                    <attribute qualifier="poNotes" type="java.lang.String">
-                      <persistence type="property" />
+                    <attribute qualifier="poNotes" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
                       <modifiers read="true" write="true" optional="true" />
                       <description>PO Notes</description>
                     </attribute>

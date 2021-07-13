@@ -353,9 +353,9 @@
                 				<div class="collapse" id="po-expand"
                 					data-bs-parent="#paymentOptions">
                 				<form:form name="submitSavedPoForm" method="POST" id="submitSavedPoForm" action="${reviewSavePoPaymentAction}">
-                					<input type="text" class="form-control" name="poNumber" id="poNumber" min="1" max="30" value="${selectedPoNumber}"
+                					<input type="text" class="form-control po-number" name="poNumber" id="poNumber" min="1" max="30" maxlength="30" value="${selectedPoNumber}"
                 						placeholder="<spring:theme code="text.payment.page.po.number.placeholder"/>">
-                					<input type="text" class="form-control" name="poNotes" id="poNotes" max="1000" value="${selectedPoNotes}"
+                					<input type="text" class="form-control po-number" name="poNotes" id="poNotes" min="1" max="1000" maxlength="1000" value="${selectedPoNotes}"
                 						placeholder="<spring:theme code="text.payment.page.po.notes.placeholder"/>">
                 					<input type="hidden" id="selectedPoNumber" name="selectedPoNumber" value=""/>
                           <input type="hidden" id="selectedPoNotes" name="selectedPoNotes" value=""/>

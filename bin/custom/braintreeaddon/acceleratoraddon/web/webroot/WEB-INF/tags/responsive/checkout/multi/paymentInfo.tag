@@ -77,17 +77,19 @@
     		</div>
     	</div>
     	<div class="col-12 col-md-5">
-    		<p class="gray80 body14">
-    			<b class="gray100"><spring:theme code="text.review.page.payment.notes"/></b>
-    			<c:choose>
-    				<c:when test="${cartData.poNotes == ''}">
+    	  <div class="po-order-notes">
+    		  <p class="gray80 body14">
+    			  <b class="gray100"><spring:theme code="text.review.page.payment.notes"/></b>
+    			  <c:choose>
+    				  <c:when test="${cartData.poNotes == ''}">
                  <spring:theme code="text.review.page.payment.notes.na"/>
     				  </c:when>
-    				<c:otherwise>
+    				  <c:otherwise>
                 ${cartData.poNotes}
     				  </c:otherwise>
-    			</c:choose>
-    		</p>
+    			  </c:choose>
+    		  </p>
+    	  </div>
     	</div>
     </div>
   </c:otherwise>
