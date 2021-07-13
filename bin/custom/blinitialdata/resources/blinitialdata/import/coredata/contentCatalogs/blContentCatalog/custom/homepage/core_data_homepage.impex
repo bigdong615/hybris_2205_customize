@@ -109,7 +109,7 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; HomePageHeroBannerSlot             ; HomePage Hero Banner Slot              
                           ;                         ; HomePageBannerSearchBoxSlot        ; HomePage Banner Search Box Slot        
                           ;                         ; HomePageBannerTextSlot             ; HomePage Banner Text Slot              
-                          ;                         ; HomePageRentingGearSectionSlot     ; HomePage RentingGear Section slot      
+                          ;                         ; HomePageRentingGearSectionSlot     ; Home & PDP Renting Gear is Easy Slot
                           ;                         ; HomePageCategorySectionSlot        ; HomePage Category Section slot         
                           ;                         ; HomePageBrandSectionSlot           ; HomePage Brand Section Slot            
                           ;                         ; HomePageFeaturedGearSectionSlot    ; HomePage FeaturedGear Section Slot     
@@ -118,7 +118,7 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; HomePageFeaturedStoriesSectionSlot ; HomePage FeaturedStories Section Slot  
                           ;                         ; HomePageFeaturedStoriesTitleSlot   ; HomePage FeaturedStories Title Slot    
                           ;                         ; HomePageBrandTitleSlot             ; HomePage BrandTitle Slot               
-                          ;                         ; HomePageRentingGearIsEasyTitleSlot ; HomePage RentingGearIsEasy Title Slot  
+                          ;                         ; HomePageRentingGearIsEasyTitleSlot ; Home & PDP Renting Gear is Easy Title Slot
                           ;                         ; HomePageCategoriesTitleSlot        ; HomePage Categories Title Slot         
                           ;                         ; HomePageTheyBorrowFromUsTitleSlot  ; HomePage TheyBorrowFromUs Title Slot   
                           ;                         ; MobileHeaderLinkForShipOrPickupSlot      ; Mobile Header Link for ShipOrPickup Slot;
