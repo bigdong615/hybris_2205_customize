@@ -921,6 +921,26 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
+	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
+	<bean id="blOrderPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor"/>
+
+	<bean id="blOrderPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blOrderPrepareInterceptor"/>
+		<property name="typeCode" value="AbstractOrder"/>
+	</bean>
+
+	<alias name="blConsignmentPrepareInterceptor" alias="blConsignmentPrepareInterceptor"/>
+	<bean id="blConsignmentPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor"/>
+
+	<bean id="blConsignmentPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blConsignmentPrepareInterceptor"/>
+		<property name="typeCode" value="Consignment"/>
+	</bean>
+
 	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
 	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
