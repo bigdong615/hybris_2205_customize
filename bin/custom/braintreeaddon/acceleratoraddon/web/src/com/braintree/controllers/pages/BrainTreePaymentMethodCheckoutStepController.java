@@ -1,5 +1,6 @@
 package com.braintree.controllers.pages;
 
+import com.bl.facades.cart.BlCartFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 
 import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
@@ -32,7 +33,10 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
 {
   @Resource(name = "brainTreeCheckoutFacade")
   private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
-  
+
+  @Resource(name = "cartFacade")
+  private BlCartFacade blCartFacade;
+
   private static final Logger LOG = Logger.getLogger(BrainTreePaymentMethodCheckoutStepController.class);
   
   @PostMapping(value = "/choose-cc")
@@ -59,6 +63,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
       BlLogger.logMessage(LOG, Level.ERROR, "Error occured while setting selected creditcard on user", exception);
       GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
     }
+    blCartFacade.removePoNumber();
     return getCheckoutStep().currentStep();
   }
 
@@ -90,6 +95,7 @@ public class BrainTreePaymentMethodCheckoutStepController extends PaymentMethodC
       GlobalMessages.addFlashMessage(redirectAttributes,GlobalMessages.ERROR_MESSAGES_HOLDER,getLocalizedString("braintree.billing.general.error"),null);
       return getCheckoutStep().currentStep();
     }
+    blCartFacade.removePoNumber();
     return getCheckoutStep().nextStep();
   }
   
