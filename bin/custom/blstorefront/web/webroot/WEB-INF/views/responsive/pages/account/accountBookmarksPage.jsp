@@ -27,13 +27,14 @@
                                </c:forEach>
                             </div>
                             <div class="col-9 col-md-6 my-auto">
-                                <b>${wishlistDatas.product.displayName}</b>
+                                <c:url var="rentalPDPUrl" value="/rent/product/${wishlistDatas.product.code}"/>
+                                <b><a href="${rentalPDPUrl}">${wishlistDatas.product.displayName}</a></b>
                                 <p class="gray80 body14">
                                     ${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}<br>
                                     <format:price priceData="${wishlistDatas.product.price}"/>
                                 </p>
                             </div>
-                            <div class="col-12 col-md-4 text-start text-md-end my-auto">
+                            <div class="col-12 col-md-4 text-start text-md-end my-auto bookmarkpage">
                             <form id="removewishlistForm_${loopindex.index}" action="${removeProduct}" method="post" >
                              <input type="hidden" name="removeProductEntry" value="${wishlistDatas.product.code}" id="removeProductEntry{loopindex.index}" />
                              <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>

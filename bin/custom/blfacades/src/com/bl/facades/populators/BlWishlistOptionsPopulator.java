@@ -8,13 +8,15 @@ import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
+import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.wishlist2.Wishlist2Service;
 import de.hybris.platform.wishlist2.model.Wishlist2EntryModel;
 import de.hybris.platform.wishlist2.model.Wishlist2Model;
+import java.util.Objects;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.springframework.util.ObjectUtils;
 
 /*
  *This class is to populate Product is Bookmarked or Not.
@@ -31,18 +33,30 @@ public class BlWishlistOptionsPopulator implements Populator<BlProductModel, Pro
   public void populate(final BlProductModel source, final ProductData target)
       throws ConversionException {
     if (!userService.isAnonymousUser(userService.getCurrentUser())) {
-      try {
-        final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
-        Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
-        final ProductModel product = getProductService().getProductForCode(source.getCode());
-        Wishlist2EntryModel wishlist2Entry = getWishlistService()
-            .getWishlistEntryForProduct(product, wishlist);
-        if (!ObjectUtils.isEmpty(wishlist2Entry)) {
-          target.setIsBookMarked(true);
+      final CustomerModel user = (CustomerModel) getUserService().getCurrentUser();
+      Wishlist2Model wishlist = getWishlistService().getDefaultWishlist(user);
+      if (Objects.nonNull(wishlist)) {
+        ProductModel product = null;
+        try {
+          product = getProductService().getProductForCode(source.getCode());
+          Wishlist2EntryModel wishlist2Entry = getWishlistService()
+              .getWishlistEntryForProduct(product, wishlist);
+          if (Objects.nonNull(wishlist2Entry)) {
+            target.setIsBookMarked(true);
+          }
+        } catch (ModelNotFoundException e) {
+          target.setIsBookMarked(false);
+          BlLogger
+              .logMessage(LOG, Level.ERROR,
+                  "Wishlist entry with product " + product.getCode() + "not found.",
+                  e);
+        } catch (UnknownIdentifierException e) {
+          target.setIsBookMarked(false);
+          BlLogger
+              .logMessage(LOG, Level.ERROR,
+                  "Wishlist entry with product " + product.getCode() + " in wishlist " + wishlist.getName() + "  not found.",
+                  e);
         }
-      } catch (Exception e) {
-        target.setIsBookMarked(false);
-        BlLogger.logMessage(LOG, Level.ERROR, "Wish list found more than one product entry", e);
       }
     }
   }
