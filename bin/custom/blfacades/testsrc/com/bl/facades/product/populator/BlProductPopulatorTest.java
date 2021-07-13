@@ -3,18 +3,13 @@ package com.bl.facades.product.populator;
 import static de.hybris.platform.testframework.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import com.bl.core.enums.ConditionRatingValueEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.ProductVideoModel;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.populators.BlProductPopulator;
 import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.media.MediaModel;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
-import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -32,45 +27,30 @@ public class BlProductPopulatorTest {
   @InjectMocks
   private final BlProductPopulator populator = Mockito.spy(new BlProductPopulator());
 
-  public static String PRODUCT_CODE = "testcode";
-  public static String DISPLAY_NAME = "test product";
-  public static String RENTAL_INCLUDE = "This is rental include related data";
-  public static String SHORT_DESCRIPTION = "This is sort description";
-  public static String USED_INCLUDE = "This is used include related data";
-  public static String DISPLAY_NOTE = "This is display note related data";
-  public static String USED_DESCIPTION = "This is rental include related data";
-  public static String VIDEO_TITLE = "Test video title";
-  public static Long VIDEO_DURATION = 345l;
-  public static String VIDEO_URL = "https://www.borrowlenses.com";
-  public static String PRODUCT_ID1 = "39507";
-  public static Double PRODUCT_RATING1 = 6.0d;
-  public static String PRODUCT_ID2 = "39508";
-  public static Double PRODUCT_RATING2 = 6.0d;
-  public static String PRODUCT_ID3 = "39509";
-  public static ConditionRatingValueEnum FUNCTIONAL_RATING = ConditionRatingValueEnum.valueOf("6");
-  public static ConditionRatingValueEnum COSMETIC_RATING = ConditionRatingValueEnum.valueOf("6");
+  private static final String PRODUCT_CODE = "testcode";
+  private static final String DISPLAY_NAME = "test product";
+  private static final String RENTAL_INCLUDE = "This is rental include related data";
+  private static final String SHORT_DESCRIPTION = "This is sort description";
+  private static final String DISPLAY_NOTE = "This is display note related data";
+  private static final String VIDEO_TITLE = "Test video title";
+  private static final Long VIDEO_DURATION = 345L;
+  private static final String VIDEO_URL = "https://www.borrowlenses.com";
 
   @Mock
   BlProductModel productModel;
-  @Mock
-  private ModelService modelService;
 
-  List serialProductList;
+  private List<ProductVideoModel> productVideoList;
 
-  List productVideoList;
-  @Mock
-  private Converter<MediaModel, ImageData> imageConverter;
   @Mock
   private Populator<BlProductModel, ProductData> blProductTagPopulator;
 
-  private ProductVideoModel productVideoModel;
-  ProductData productData;
+  private final ProductData productData = new ProductData();
 
   @Before
   public void prepare() {
     MockitoAnnotations.initMocks(this);
-    productData = new ProductData();
-    productVideoList= new ArrayList();
+    final ProductVideoModel productVideoModel;
+    productVideoList= new ArrayList<>();
     productVideoModel = new ProductVideoModel();
     productVideoModel.setVideoTitle(VIDEO_TITLE);
     productVideoModel.setVideoLink(VIDEO_URL);
@@ -89,8 +69,7 @@ public class BlProductPopulatorTest {
     when(productModel.getDisplayNotes()).thenReturn(DISPLAY_NOTE);
     
     when(productModel.getRentalVideosLink()).thenReturn(productVideoList);
-    
-    when(productModel.getSerialProducts()).thenReturn(serialProductList);
+
     populator.populate(productModel, productData);
     assertEquals(productData.getDisplayName(), DISPLAY_NAME);
     assertEquals(productData.getRentalIncludes(), RENTAL_INCLUDE);

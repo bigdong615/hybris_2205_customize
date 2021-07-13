@@ -7,12 +7,11 @@ import de.hybris.platform.servicelayer.model.attribute.DynamicAttributeHandler;
 
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.logging.BlLogger;
 
@@ -30,6 +29,7 @@ public class BlConditionRatingOverallScoreHandler implements
   private static final Logger LOG = Logger.getLogger(BlConditionRatingOverallScoreHandler.class);
 
   private BlPricingService blPricingService;
+  private BlProductService blProductService; 
 
   @Override
   public Double get(final BlSerialProductModel blSerialProductModel) {
@@ -49,7 +49,7 @@ public class BlConditionRatingOverallScoreHandler implements
    * @return the condition overall rating
    */
   private Double getConditionOverallRating(final BlSerialProductModel blSerialProductModel) {
-    if (isFunctionalAndCosmeticIsAvailable(blSerialProductModel)) {
+    if (getBlProductService().isFunctionalAndCosmeticIsAvailable(blSerialProductModel)) {
       final float cosmeticRating = Float
           .parseFloat(blSerialProductModel.getCosmeticRating().getCode());
       final float functionalRating = Float
@@ -64,35 +64,6 @@ public class BlConditionRatingOverallScoreHandler implements
       return calculatedConditionalRating;
     }
     return Double.valueOf(0.0d);
-  }
-
-  /**
-   * Checks if functional condition and cosmetic condition is available on serial.
-   *
-   * @param blSerialProductModel
-   *           the bl serial product model
-   * @return true, if is functional and cosmetic is available
-   */
-  private boolean isFunctionalAndCosmeticIsAvailable(
-      final BlSerialProductModel blSerialProductModel) {
-    boolean isEligible = true;
-    if (Objects.isNull(blSerialProductModel.getFunctionalRating())
-        || StringUtils.equalsIgnoreCase(blSerialProductModel.getFunctionalRating().getCode(),
-        BlCoreConstants.ZERO_RATING)) {
-      BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-          "Cannot evaluate conditional overall rating because functional rating is null or it is 0 on serial {}",
-          blSerialProductModel.getProductId());
-      isEligible = false;
-    }
-    if (Objects.isNull(blSerialProductModel.getCosmeticRating())
-        || StringUtils.equalsIgnoreCase(blSerialProductModel.getCosmeticRating().getCode(),
-        BlCoreConstants.ZERO_RATING)) {
-      BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-          "Cannot evaluate conditional overall rating because cosmetic rating is null or it is 0 on serial {}",
-          blSerialProductModel.getProductId());
-      isEligible = false;
-    }
-    return isEligible;
   }
 
   @Override
@@ -117,5 +88,21 @@ public class BlConditionRatingOverallScoreHandler implements
   public void setBlPricingService(final BlPricingService blPricingService) {
     this.blPricingService = blPricingService;
   }
+
+/**
+ * @return the blProductService
+ */
+public BlProductService getBlProductService()
+{
+	return blProductService;
+}
+
+/**
+ * @param blProductService the blProductService to set
+ */
+public void setBlProductService(BlProductService blProductService)
+{
+	this.blProductService = blProductService;
+}
 
 }
