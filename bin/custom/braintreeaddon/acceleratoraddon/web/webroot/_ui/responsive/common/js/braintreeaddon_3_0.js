@@ -1067,13 +1067,15 @@ $('#submit_silentOrderPostForm').click(function () {
 	var savedPoForm = $("#submitSavedPoForm");
   var poNumber = savedPoForm.find('input[id="poNumber"]').val();
   var poNotes = savedPoForm.find('input[id="poNotes"]').val();
-  if(poEnable == true && poNumber == '' && giftcardApplied == ''){
-      var validationDiv = $('<div class="notification notification-warning mb-4" />').text(ACC.ccError.poNumber);
-      	  $('#validationMessage').append(validationDiv);
-  }else if(poEnable == true && poNumber != '' && giftcardApplied == ''){
-  	    savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
-        savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
-  	    savedPoForm.submit();
+  if (poEnable == true && poNumber == '' && giftcardApplied == '') {
+  	var validationDiv = $(
+  			'<div class="notification notification-warning mb-4" />').text(
+  			ACC.ccError.poNumber);
+  	$('#validationMessage').append(validationDiv);
+  } else if (poEnable == true && poNumber != '' && giftcardApplied == '') {
+  	savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
+  	savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
+  	savedPoForm.submit();
   }
 	if(giftcardApplied == '' && ccEnable == false && poEnable != true)
 	{
