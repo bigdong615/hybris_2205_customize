@@ -81,7 +81,7 @@
 						</div>
 						<div class="col-7 col-md-8">
 							<p class="body14 gray60">	<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental} Day </div><br>
-							<div id="js-totalCost-update"><format:price priceData="${orderData.totalCostForExtendRental}"/></div><br>
+							<div id="js-totalCost-update"><format:price priceData="${orderData.subTotalTaxForExtendRental}"/></div><br>
 							<div id="js-totalDamegeWaiverCost-update"><format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></div> </p>
 						</div>
 					</div>
@@ -179,12 +179,12 @@
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.extend.order.extension.cost" /> </td>
-					<td class="text-end" id="js-totalExtendCost"><format:price priceData="${orderData.totalCostForExtendRental}" /></td>
+					<td class="text-end" id="js-totalExtendCost"><format:price priceData="${orderData.subTotalTaxForExtendRental}" /></td>
 				</tr>
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.order.rental.damege.waiver" /> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
-					<td class="text-end"><format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></td>
+					<td class="text-end" id="js-totalDamageWaiver"><format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></td>
 				</tr>
 				<tr>
 					<td class="gray80">

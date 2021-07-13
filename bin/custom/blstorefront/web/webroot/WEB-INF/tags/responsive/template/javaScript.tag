@@ -1686,6 +1686,7 @@
                             	                    $('#orderSummary').html(data);
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
                             	                    $('#js-totaldays-update').html( $('#js-totalExtendDays').val());
+                            	                    $('#js-totalDamegeWaiverCost-update').html( $('#js-totalDamageWaiver').html());
                             	                    },
                             	                    error: function (xhr, textStatus, error) {
 

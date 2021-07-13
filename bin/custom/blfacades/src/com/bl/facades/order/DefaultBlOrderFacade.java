@@ -1,17 +1,17 @@
 package com.bl.facades.order;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
-import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.impl.DefaultOrderFacade;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
@@ -24,7 +24,7 @@ import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.jalo.order.price.PriceInformation;
+import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.model.ModelService;
@@ -46,8 +46,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private ProductService productService;
   private SessionService sessionService;
   private DefaultBlExtendOrderService defaultBlExtendOrderService;
-
-
+  private DefaultBlCalculationService defaultBlCalculationService;
 
   @Override
   public void addToCartAllOrderEnrties(String orderCode) throws CommerceCartModificationException {
@@ -118,7 +117,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
 
   @Override
-  public OrderData calculatePriceForExtendOrders(final OrderData orderData, final String orderEndDate,
+  public OrderData calculatePriceForExtendOrders(final OrderModel orderModel , final OrderData orderData, final String orderEndDate,
       final String selectedDate) throws CommerceCartModificationException {
 
     final Date startDate = BlDateTimeUtils.convertStringDateToDate(orderEndDate, "MM/dd/yyyy");
@@ -130,19 +129,30 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     }
     orderData.setAddedTimeForExtendRental((int) defaultAddedTimeForExtendRental); // Default value which added for extend order
     PriceDataType priceType = PriceDataType.BUY;
-    PriceInformation info;
-    BigDecimal subTotal = BigDecimal.valueOf(0.0);
-
-    for(OrderEntryData entries : orderData.getEntries()) {
+    OrderModel extendOrderModel =  getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(orderModel);
+    for(AbstractOrderEntryModel entries : extendOrderModel.getEntries()) {
       final ProductModel productModel = getProductService().getProductForCode(entries.getProduct().getCode());
-      info = getCommercePriceService().getWebPriceForExtendProduct(productModel, defaultAddedTimeForExtendRental);
-      if (info != null) {
-        subTotal = subTotal.add(BigDecimal.valueOf(info.getPriceValue().getValue()).setScale(
-            BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+      getCommercePriceService().getWebPriceForExtendProduct(productModel, defaultAddedTimeForExtendRental);
+      try {
+        getDefaultBlCalculationService().recalculateForExtendOrder(extendOrderModel , (int) defaultAddedTimeForExtendRental);
+      } catch (CalculationException e) {
+        e.printStackTrace();
       }
-
     }
-    orderData.setTotalCostForExtendRental(getPriceDataFactory().create(priceType, subTotal , "USD"));
+    orderData.setSubTotalTaxForExtendRental(getPriceDataFactory().create(priceType, BigDecimal.valueOf(extendOrderModel.getSubtotal()) ,
+        extendOrderModel.getCurrency().getIsocode()));
+    orderData.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalDamageWaiverCost()) ,
+        extendOrderModel.getCurrency().getIsocode()));
+    orderData.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalTax()),
+        extendOrderModel.getCurrency().getIsocode()));
+    final BigDecimal orderTotalWithTax = BigDecimal.valueOf(extendOrderModel.getSubtotal()).add(BigDecimal.valueOf(extendOrderModel.getTotalDamageWaiverCost())).
+        add(BigDecimal.valueOf(extendOrderModel.getTotalTax()));
+
+    orderData.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,orderTotalWithTax , extendOrderModel.getCurrency().getIsocode()));
+
+    // To set current extendOrderModel to session
+    BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
+
     return orderData;
   }
 
@@ -152,10 +162,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
         baseStoreModel);
-    OrderModel extendOrderModel = getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(orderModel);
-
-
-    return calculatePriceForExtendOrders(getOrderConverter().convert(extendOrderModel) , rentalEndDate , selectedDate);
+   // Calculate order details based on new return date for extend rental order
+    return calculatePriceForExtendOrders(orderModel , getOrderConverter().convert(orderModel), rentalEndDate , selectedDate);
   }
 
 
@@ -250,6 +258,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   public void setDefaultBlExtendOrderService(
       DefaultBlExtendOrderService defaultBlExtendOrderService) {
     this.defaultBlExtendOrderService = defaultBlExtendOrderService;
+  }
+
+  public DefaultBlCalculationService getDefaultBlCalculationService() {
+    return defaultBlCalculationService;
+  }
+
+  public void setDefaultBlCalculationService(
+      DefaultBlCalculationService defaultBlCalculationService) {
+    this.defaultBlCalculationService = defaultBlCalculationService;
   }
 
 }

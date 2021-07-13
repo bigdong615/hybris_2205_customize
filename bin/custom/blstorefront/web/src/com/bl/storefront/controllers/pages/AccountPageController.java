@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.facades.product.data.RentalDateDto;
@@ -60,6 +61,7 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
@@ -1119,6 +1121,12 @@ public class AccountPageController extends AbstractSearchPageController
 	public String extendRent(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model , final HttpServletRequest request)
 			throws CommerceCartModificationException, CMSItemNotFoundException {
 
+		// To remove seesion if current order and session order when mismatch
+		if(null != BlExtendOrderUtils.getCurrentExtendOrderToSession() &&
+				! StringUtils.containsIgnoreCase(orderCode , BlExtendOrderUtils.getCurrentExtendOrderToSession().getCode())){
+			BlExtendOrderUtils.removeCurrentExtendOrderToSession();
+		}
+
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
 		model.addAttribute("orderData", orderDetails);
 		if(Objects.nonNull(orderDetails) && Objects.nonNull(orderDetails.getPaymentInfo()))
@@ -1165,11 +1173,6 @@ public class AccountPageController extends AbstractSearchPageController
 		OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
 		model.addAttribute("orderData" , orderData);
 		return Account.AccountOrderExtendSummaryPage;
-		// Commneted for later use
-		/*final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
-		blOrderFacade.calculatePriceForExtendOrders(orderDetails , orderEndDate , selectedEndDate);
-		model.addAttribute("orderData" , orderDetails);
-		return Account.AccountOrderExtendSummaryPage;*/
 	}
 
 	@GetMapping(value = "/resetExtendDate")

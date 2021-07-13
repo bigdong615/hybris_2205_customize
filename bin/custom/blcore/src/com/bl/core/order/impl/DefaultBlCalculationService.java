@@ -140,8 +140,14 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			final double totalDiscounts = calculateDiscountValues(order, recalculate);
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
-			// set total
+
+			// Set Delivery Cost as 0 for Extend rental order based on falg -> isExtendedOrder
+			if(BooleanUtils.isTrue(order.getIsExtendedOrder())){
+				order.setDeliveryCost(0.0);
+			}
+
 			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+			// set total
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
 					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
@@ -427,7 +433,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			saveOrderEntryUnneeded.set(Boolean.TRUE);
 			calculateEntriesForExtendOrder(order, true , defaultAddedTimeForExtendRental);
 			final Map taxValueMap = resetAllValues(order);
-			calculateTotals(order, true, taxValueMap);
+			calculateTotals(order, true, calculateSubtotal(order , true));
 		}
 		finally
 		{
@@ -453,6 +459,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", finaltotalDamageWaiverCost);
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
+		order.setDeliveryCost(0.0);
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}

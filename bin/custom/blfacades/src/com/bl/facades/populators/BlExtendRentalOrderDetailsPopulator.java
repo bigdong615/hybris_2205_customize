@@ -1,22 +1,22 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
+import com.bl.core.utils.BlExtendOrderUtils;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.jalo.order.price.PriceInformation;
+import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.order.exceptions.CalculationException;
+import de.hybris.platform.product.ProductService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.math.BigDecimal;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 
 public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
@@ -26,65 +26,38 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
   private ModelService modelService;
   private SessionService sessionService;
   private DefaultBlCalculationService defaultBlCalculationService;
+  private ProductService productService;
+  private DefaultBlExtendOrderService defaultBlExtendOrderService;
 
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
 
-    int defaultAddedTimeForExtendRental = 1; // Default value
-    target.setAddedTimeForExtendRental(defaultAddedTimeForExtendRental); // Default value which added for extend order
+    long defaultAddedTimeForExtendRental = 1; // Default value
+    target.setAddedTimeForExtendRental((int) defaultAddedTimeForExtendRental); // Default value which added for extend order
      PriceDataType priceType = PriceDataType.BUY;
-     BigDecimal subTotal = BigDecimal.valueOf(0.0);
-
-     for(AbstractOrderEntryModel entries : source.getEntries()) {
-       checkForExistinDamageWaiverSelected(entries);
-       updateOrderEntryDamageWaiver(entries.getEntryNumber() , source);
+     OrderModel extendOrderModel =  getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(source);
+     for(AbstractOrderEntryModel entries : extendOrderModel.getEntries()) {
+       final ProductModel productModel = getProductService().getProductForCode(entries.getProduct().getCode());
+        getCommercePriceService().getWebPriceForExtendProduct(productModel, defaultAddedTimeForExtendRental);
        try {
-         getDefaultBlCalculationService().recalculateForExtendOrder(source , defaultAddedTimeForExtendRental);
-         subTotal = subTotal.add(BigDecimal.valueOf(entries.getTotalPrice()).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
-
+         getDefaultBlCalculationService().recalculateForExtendOrder(extendOrderModel , (int) defaultAddedTimeForExtendRental);
        } catch (CalculationException e) {
          e.printStackTrace();
        }
-
      }
-     target.setTotalCostForExtendRental(getPriceDataFactory().create(priceType, subTotal , source.getCurrency().getIsocode()));
-     target.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(0.0) ,
-         source.getCurrency().getIsocode()));
-     target.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(0.0) ,
-         source.getCurrency().getIsocode()));
-     final BigDecimal orderTotalWithTax = subTotal.add(target.getTotalDamageWaiverCostForExtendRental().getValue()).add(target.getTotalTaxForExtendRental().getValue());
-     target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,orderTotalWithTax , source.getCurrency().getIsocode()));
-  }
+     target.setSubTotalTaxForExtendRental(getPriceDataFactory().create(priceType, BigDecimal.valueOf(extendOrderModel.getSubtotal()) ,
+         extendOrderModel.getCurrency().getIsocode()));
+     target.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalDamageWaiverCost()) ,
+         extendOrderModel.getCurrency().getIsocode()));
+     target.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalTax()),
+         extendOrderModel.getCurrency().getIsocode()));
+     final BigDecimal orderTotalWithTax = BigDecimal.valueOf(extendOrderModel.getSubtotal()).add(BigDecimal.valueOf(extendOrderModel.getTotalDamageWaiverCost())).
+         add(BigDecimal.valueOf(extendOrderModel.getTotalTax()));
 
-  private void checkForExistinDamageWaiverSelected(final AbstractOrderEntryModel entries) {
-    if(BooleanUtils.isTrue(entries.getGearGuardProFullWaiverSelected())) {
-      setFlags(entries, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
-    }
-    else if(BooleanUtils.isTrue(entries.getGearGuardWaiverSelected())) {
-      setFlags(entries, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
-    }
-    else if(BooleanUtils.isTrue(entries.getNoDamageWaiverSelected())) {
-      setFlags(entries, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE);
-    }
-  }
+     target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,orderTotalWithTax , extendOrderModel.getCurrency().getIsocode()));
 
-  private void updateOrderEntryDamageWaiver(final long entryNumber, OrderModel orderModel) {
-    if (CollectionUtils.isNotEmpty(orderModel.getEntries())) {
-      final AbstractOrderEntryModel abstractOrderEntryModel = orderModel.getEntries().stream()
-          .filter(cartEntry -> Integer.valueOf((int) entryNumber).equals(cartEntry.getEntryNumber())).findFirst().orElse(null);
-      orderModel.setCalculated(Boolean.FALSE);
-      getModelService().save(abstractOrderEntryModel);
-      getModelService().save(orderModel);
-    }
-  }
-
-
-  private void setFlags(final AbstractOrderEntryModel cartEntryModel, final Boolean gearGuardProFullWaiverSelected,
-      final Boolean gearGuardWaiverSelected, final Boolean noGearGuardWaiverSelected) {
-    cartEntryModel.setGearGuardProFullWaiverSelected(gearGuardProFullWaiverSelected);
-    cartEntryModel.setGearGuardWaiverSelected(gearGuardWaiverSelected);
-    cartEntryModel.setNoDamageWaiverSelected(noGearGuardWaiverSelected);
-    cartEntryModel.setCalculated(Boolean.FALSE);
+    // To set current extendOrderModel to session
+    BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
   }
 
   public PriceDataFactory getPriceDataFactory() {
@@ -131,6 +104,25 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
   public void setDefaultBlCalculationService(
       DefaultBlCalculationService defaultBlCalculationService) {
     this.defaultBlCalculationService = defaultBlCalculationService;
+  }
+
+
+  public ProductService getProductService() {
+    return productService;
+  }
+
+  public void setProductService(ProductService productService) {
+    this.productService = productService;
+  }
+
+
+  public DefaultBlExtendOrderService getDefaultBlExtendOrderService() {
+    return defaultBlExtendOrderService;
+  }
+
+  public void setDefaultBlExtendOrderService(
+      DefaultBlExtendOrderService defaultBlExtendOrderService) {
+    this.defaultBlExtendOrderService = defaultBlExtendOrderService;
   }
 
 }
