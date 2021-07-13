@@ -40,6 +40,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String BOS = "BOS";
     public static final String IN_HOUSE = "In House Scrapped Items";
     public static final String UNKNOWN = "Unknown Carrier";
+    
+    public static final String MAW = "MAW";
+    public static final String CAW = "CAW";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
@@ -69,6 +72,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: ";
     public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: ";
     public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
+    
+    public static final String TECH_ENG_NOTIFICATION_HANDLER = "techEngSanToolNotification";
 
     private BlInventoryScanLoggingConstants() { }
 
@@ -90,4 +95,16 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(IN_HOUSE);
         return defaultLocations;
     }
+    
+    /**
+    * Gets the default tech eng location Initials.
+    *
+    * @return the list of  default tech eng location
+    */
+   public static List<String> getDefaultTechEngLocation() {
+      List<String> defaultLocations = new ArrayList<>();
+      defaultLocations.add(MAW);
+      defaultLocations.add(CAW);      
+      return defaultLocations;
+  }
 }

@@ -659,6 +659,7 @@
             <n:navigation-node id="BLInventoryScan">
                 <n:navigation-node id="WebScanTool"/>
             </n:navigation-node>
+            <n:navigation-node id="TechEngScanTool"/>
         </n:explorer-tree>
     </context>
 
@@ -1227,6 +1228,90 @@
                 </editorArea:section>
             </editorArea:tab>
         </editorArea:editorArea>
+    </context>
+    
+    <!-- Tech Eng. Section -->
+	<context type="TechEngScanTool" component="create-wizard">
+        <wz:flow id="TechEngScanTool" title="blbackoffice.web.scan.tool.title">
+            <wz:prepare id="userPasswordChangePrepare">
+                <wz:initialize property="webScanToolData" template-bean="webScanToolData"/>
+            </wz:prepare>
+            <wz:step id="step1" label="blbackoffice.web.scan.tool.label">
+                <wz:content>
+                    <wz:custom-view id="step1.content.customView" lang="zul">
+                        <wz:renderer spring-bean="defaultWebScanToolRenderer">
+                            <wz:parameter>
+                                <wz:name>webScanToolDataModelKey</wz:name>
+                                <wz:value>webScanToolData</wz:value>
+                            </wz:parameter>
+                        </wz:renderer>
+                    </wz:custom-view>
+                </wz:content>
+                <wz:navigation id="step1.navigation">
+                    <wz:cancel/>
+                    <wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultTechEngScanToolHandler">
+                        <wz:parameter>
+                            <wz:name>webScanToolDataModelKey</wz:name>
+                            <wz:value>webScanToolData</wz:value>
+                        </wz:parameter>
+                    </wz:custom>
+                </wz:navigation>
+            </wz:step>
+        </wz:flow>
+    </context>
+    
+    <context component="notification-area" source="techEngSanToolNotification" merge-by="source">
+        <na:notification-area>
+            <na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="mustTwoBarcodeErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.must2.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="manyLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.many.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+
+            <na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+        </na:notification-area>
     </context>
 
 </config>
