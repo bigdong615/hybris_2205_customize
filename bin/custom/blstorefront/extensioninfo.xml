@@ -6,8 +6,8 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                     	
    
     <extension abstractclassprefix="Generated" classprefix="BlStorefront" name="blstorefront" usemaven="false">
-        	   
-	   
+
+        <requires-extension name="tealiumiqaddon"/>
         <requires-extension name="blstocknotificationaddon"/>
         <requires-extension name="personalizationaddon"/>
         <requires-extension name="smarteditaddon"/>
