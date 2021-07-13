@@ -147,6 +147,10 @@
       </enumtype>
       
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
+      
+      <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
+      	<value code="OTHERS"/>
+      </enumtype>
         
     </enumtypes>
 
@@ -1233,6 +1237,11 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Parent Inventory Location for serial product</description>
+                    </attribute>
+                    <attribute qualifier="locationCategory" type="BlInventoryLocationCategoryEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>BL Inventory location category</description>
                     </attribute>
                 </attributes>
             </itemtype>
