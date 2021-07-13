@@ -1987,10 +1987,10 @@
                 <persistence type="property" />
                 <description>It holds information about customer default billing address</description>
             </attribute>
-            <attribute autocreate="true" qualifier="isPOEnabled" type="java.lang.Boolean">
+            <attribute autocreate="true" qualifier="isPOEnabled" type="boolean">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
-                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                <defaultvalue>Boolean.FALSE</defaultvalue>
                 <description>It enables/disables PO payment option for a customer</description>
             </attribute>
             </attributes>
