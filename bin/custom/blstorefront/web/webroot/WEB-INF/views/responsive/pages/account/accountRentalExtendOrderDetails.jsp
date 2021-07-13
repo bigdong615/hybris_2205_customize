@@ -6,6 +6,8 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart"%>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="order" tagdir="/WEB-INF/tags/responsive/order" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <div id="accountContent" class="col-lg-5 offset-lg-1">
@@ -51,7 +53,7 @@
 			<div class="rental-images row mt-3">
 				<c:forEach items="${orderData.entries}" var="cartEntry">
 					<div class="col-4 col-md-3 text-center">
-						<product:productPrimaryImage product="${cartEntry.product}" format="thumbnail" /> </div>
+						<product:productPrimaryImage product="${cartEntry.product}" format="product" /> </div>
 				</c:forEach>
 			</div>
 		</div>
@@ -80,9 +82,11 @@
 								<spring:theme code="text.myaccount.order.rental.damege.waiver" /> </p>
 						</div>
 						<div class="col-7 col-md-8">
-							<p class="body14 gray60">	<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental} Day </div><br>
-							<div id="js-totalCost-update"><format:price priceData="${orderData.subTotalTaxForExtendRental}"/></div><br>
-							<div id="js-totalDamegeWaiverCost-update"><format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></div> </p>
+							<p class="body14 gray60">
+							<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental} Day </div> <br>
+							<div id="js-totalCost-update"> <format:price priceData="${orderData.subTotalTaxForExtendRental}"/> </div> <br>
+							<div id="js-totalDamegeWaiverCost-update"> <format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/> </div>
+							</p>
 						</div>
 					</div>
 				</div> <b><spring:theme code="text.myaccount.extend.order.pay"/></b>
@@ -198,17 +202,30 @@
 				</tr>
 			</tbody>
 		</table>
-		<div class="input-group my-3">
-			<input type="text" class="form-control" value="Promo code">
-			<div class="input-group-append">
-				<button class="btn btn-secondary" type="button">
-					<spring:theme code="text.myaccount.extend.order.extension.voucher.apply" /> </button>
-			</div>
-		</div>
+		<c:url value="/my-account/voucher/apply" var="voucherUrl" />
+		<form:form action="${voucherUrl}" modelAttribute="voucherForm" method="POST" id="applyVoucherForm">
+    			<spring:theme
+    				code="text.checkout.multi.order.summary.promocode.placeholder"
+    				var="voucherplaceholder" />
+    			<div class="input-group my-3">
+    				<form:input type="text"
+    					class="form-control ${errormsgvalid} js-voucher-code-text-account"
+    					path="voucherCode" placeholder="${voucherplaceholder}"
+    					name="voucherCode" />
+    				<div class="input-group-append">
+    					<button type="submit"
+    						class="btn btn-secondary js-voucher-apply-account-btn">
+    						<spring:theme code="text.voucher.apply.button.label" />
+    					</button>
+    				</div>
+    			</div>
+    		</form:form>
 		<button class="btn btn-block btn-primary mt-4">
 			<spring:theme code="text.myaccount.order.extend.rent" /> </button>
 	</div>
 </div>
+
+<div class="notification notification-error d-none"id="errorMessages_account_voucher"></div>
 
 <!-- DamageWaivers Modal -->
 <div class="modal fade" id="damageWaivers" tabindex="-1" aria-hidden="true">

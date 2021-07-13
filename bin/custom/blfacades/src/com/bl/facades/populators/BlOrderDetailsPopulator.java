@@ -21,7 +21,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   private PriceDataFactory priceDataFactory;
 
   @Override
-  public void populate(OrderModel source, OrderData target) throws ConversionException {
+  public void populate(final OrderModel source, final OrderData target) throws ConversionException {
 
     target.setIsRentalCart(source.getIsRentalCart());
     if(null != source.getRentalStartDate() && null != source.getRentalEndDate()) {

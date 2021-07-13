@@ -651,5 +651,13 @@
 	<bean id="blWarehousingConsignmentFacade" parent="defaultWarehousingConsignmentFacade"
 	      class="com.bl.facades.warehouse.impl.BLWarehousingConsignmentFacadeImpl">
 	        <property name="boxDimensionService" ref="boxDimensionService"/>
-	      </bean>																				  
+	      </bean>
+
+
+	<!--Added for extend order promotion -->
+
+	<bean id="defaultBlCouponFacade" class="com.bl.facades.coupon.impl.DefaultBlCouponFacade">
+		<property name="couponService" ref="couponService"/>
+	</bean>
+
 </beans>

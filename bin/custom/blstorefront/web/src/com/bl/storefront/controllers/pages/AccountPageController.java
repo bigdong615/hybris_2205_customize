@@ -7,6 +7,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
@@ -29,6 +30,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsFo
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateProfileForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.AddressValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.EmailValidator;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.validation.PasswordValidator;
@@ -52,6 +54,8 @@ import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.commercefacades.user.data.TitleData;
 import de.hybris.platform.commercefacades.user.exceptions.PasswordMismatchException;
+import de.hybris.platform.commercefacades.voucher.VoucherFacade;
+import de.hybris.platform.commercefacades.voucher.exceptions.VoucherOperationException;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentGivenException;
 import de.hybris.platform.commerceservices.consent.exceptions.CommerceConsentWithdrawnException;
@@ -60,8 +64,8 @@ import de.hybris.platform.commerceservices.enums.CountryType;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
+import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
@@ -78,6 +82,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -92,6 +97,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -164,13 +170,9 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String VERIFICATION_IMAGES_CMS_PAGE = "verificationImages";
 	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
 	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
+	public static final String ERROR_MSG_TYPE = "errorMsg";
 
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
-
-/*
-	@Resource(name = "orderFacade")
-	private OrderFacade orderFacade;
-*/
 
 	@Resource(name = "acceleratorCheckoutFacade")
 	private CheckoutFacade checkoutFacade;
@@ -222,6 +224,15 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
+
+	@Resource(name = "bruteForceAttackHandler")
+	private BruteForceAttackHandler bruteForceAttackHandler;
+
+	@Resource(name = "voucherFacade")
+	private VoucherFacade voucherFacade;
+
+	@Resource(name = "defaultBlCouponFacade")
+	private DefaultBlCouponFacade defaultBlCouponFacade;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -1102,20 +1113,25 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
+	/**
+	 * This method used for renting the order again
+	 */
 	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
-	public String rentAgain(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
+	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
 			throws CommerceCartModificationException {
 
 		if(StringUtils.isNotEmpty(orderCode)) {
 			blOrderFacade.addToCartAllOrderEnrties(orderCode);
-			pModel.addAttribute("dummy" , "working");
 			return BlControllerConstants.REDIRECT_CART_URL;
 		}
 		 return REDIRECT_PREFIX + "/my-account/orders";
 	}
 
 
+	/**
+	 * This method created for extend only rental orders from MyAccount Page
+	 */
 	@GetMapping(value = "/extendRent/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String extendRent(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model , final HttpServletRequest request)
@@ -1134,6 +1150,7 @@ public class AccountPageController extends AbstractSearchPageController
 			final CCPaymentInfoData paymentInfo = orderDetails.getPaymentInfo();
 			setPaymentDetailForPage(paymentInfo, model);
 		}
+		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 		final ContentPageModel extendOrderDetailPage = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_DETAILS);
 		storeCmsPageInModel(model, extendOrderDetailPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
@@ -1141,6 +1158,9 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
+	/**
+	 * This method created to set the payment details for extend rental page
+	 */
 	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
 	{
 		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
@@ -1163,17 +1183,29 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute("silentOrderPostForm", new PaymentDetailsForm());
 	}
 
+	/**
+	 * This method created for seleting the new return for extend order
+	 */
 	@GetMapping(value = "/extendDate")
 	public String setExtendRenatalEndDate(@RequestParam(value = "extendEndDate", defaultValue = "") final String selectedEndDate,
 			@RequestParam(value = "orderEndDate", defaultValue = "") final String orderEndDate,
-			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request, final HttpServletResponse response, final Model model,
-			final RedirectAttributes redirectModel)
-			throws CommerceCartModificationException {
+			@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,final HttpServletRequest request,
+			final HttpServletResponse response, final Model model, final RedirectAttributes redirectModel) throws CommerceCartModificationException {
 
-		OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
+		final OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
+
 		model.addAttribute("orderData" , orderData);
+
+		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
+		{
+			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		}
 		return Account.AccountOrderExtendSummaryPage;
 	}
+
+	/**
+	 * To reset the selected dates for extend order
+	 */
 
 	@GetMapping(value = "/resetExtendDate")
 	public String resetExtendRenatalEndDate(final HttpServletRequest request, final HttpServletResponse response, final Model model,
@@ -1181,6 +1213,53 @@ public class AccountPageController extends AbstractSearchPageController
 
 		return "";
 	}
+
+	@PostMapping(value = "/voucher/apply")
+	public String applyVoucherAction(@Valid final VoucherForm form, final BindingResult bindingResult,
+			final HttpServletRequest request, final RedirectAttributes redirectAttributes)
+	{
+		try
+		{
+			if (bindingResult.hasErrors())
+			{
+				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
+						getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
+			}
+			else
+			{
+				final String ipAddress = request.getRemoteAddr();
+				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
+				{
+					redirectAttributes.addFlashAttribute("disableUpdate", Boolean.valueOf(true));
+					redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
+							getMessageSource().getMessage("text.voucher.apply.bruteforce.error", null, getI18nService().getCurrentLocale()));
+				}
+				else
+				{
+					defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode());
+					redirectAttributes.addFlashAttribute("successMsg",
+							getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
+									{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
+				}
+			}
+		}
+		catch (final VoucherOperationException e)
+		{
+			redirectAttributes.addFlashAttribute(BlControllerConstants.VOUCHER_FORM, form);
+			redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
+					getMessageSource().getMessage(e.getMessage(), null,
+							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
+							getI18nService().getCurrentLocale()));
+			if (LOG.isDebugEnabled())
+			{
+				LOG.debug(e.getMessage(), e);
+			}
+
+		}
+
+		return "";
+	}
+
 
 
 }

@@ -17,7 +17,7 @@ public class BlExtendOrderUtils {
    return getSessionService().getAttribute(BlCoreConstants.EXTEND_ORDER);
   }
 
-  public static void setCurrentExtendOrderToSession(OrderModel extendOrder) {
+  public static void setCurrentExtendOrderToSession(final OrderModel extendOrder) {
     getSessionService().setAttribute(BlCoreConstants.EXTEND_ORDER , extendOrder);
   }
 

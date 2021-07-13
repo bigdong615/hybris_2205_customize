@@ -34,6 +34,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * This class is created for My account rent again and extend order functionality
+ * @author Manikandan
+ */
 public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderFacade {
 
   private BlCartFacade blCartFacade;
@@ -48,20 +52,26 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private DefaultBlExtendOrderService defaultBlExtendOrderService;
   private DefaultBlCalculationService defaultBlCalculationService;
 
+  /**
+   * This method created to add all the products from existing order
+   */
   @Override
-  public void addToCartAllOrderEnrties(String orderCode) throws CommerceCartModificationException {
+  public void addToCartAllOrderEnrties(final String orderCode) throws CommerceCartModificationException
+  {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-    OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
+    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
     for (final AbstractOrderEntryModel lEntryModel : orderModel.getEntries())
     {
       final ProductModel lProductModel = lEntryModel.getProduct();
-      addToCart(lProductModel, lEntryModel.getProduct().getCode(), lEntryModel.getQuantity().intValue());
+      addToCart(lProductModel , lProductModel.getCode() ,  lEntryModel.getQuantity().intValue());
     }
   }
 
-  public void addToCart(ProductModel lProductModel, String productCode, int quantity)
+  /**
+   * This method created to add product to cart
+   */
+  public void addToCart(final ProductModel lProductModel , String orderCode , final int quantity)
       throws CommerceCartModificationException {
-
     if (lProductModel != null)
     {
      // getBlCartFacade().addToCart(productCode, quantity ,"");
@@ -118,10 +128,11 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
   @Override
   public OrderData calculatePriceForExtendOrders(final OrderModel orderModel , final OrderData orderData, final String orderEndDate,
-      final String selectedDate) throws CommerceCartModificationException {
+      final String selectedDate) {
 
     final Date startDate = BlDateTimeUtils.convertStringDateToDate(orderEndDate, "MM/dd/yyyy");
      final Date endDate =  BlDateTimeUtils.convertStringDateToDate(selectedDate ,"EE MMM dd yyyy");
+
     long defaultAddedTimeForExtendRental = BlDateTimeUtils
         .getDaysBetweenDates(startDate, endDate) + 1;
     if(StringUtils.isEmpty(selectedDate)) {
@@ -129,10 +140,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     }
     orderData.setAddedTimeForExtendRental((int) defaultAddedTimeForExtendRental); // Default value which added for extend order
     PriceDataType priceType = PriceDataType.BUY;
-    OrderModel extendOrderModel =  getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(orderModel);
+    final OrderModel extendOrderModel =  getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(orderModel);
     for(AbstractOrderEntryModel entries : extendOrderModel.getEntries()) {
-      final ProductModel productModel = getProductService().getProductForCode(entries.getProduct().getCode());
-      getCommercePriceService().getWebPriceForExtendProduct(productModel, defaultAddedTimeForExtendRental);
       try {
         getDefaultBlCalculationService().recalculateForExtendOrder(extendOrderModel , (int) defaultAddedTimeForExtendRental);
       } catch (CalculationException e) {
