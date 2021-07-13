@@ -531,7 +531,7 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 				cartModel.setPoNumber(null);
 				getModelService().save(cartModel);
 				getModelService().refresh(cartModel);
-			}catch (ModelSavingException exception){
+			}catch (final ModelSavingException exception){
 				BlLogger.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
 			}
 		}
