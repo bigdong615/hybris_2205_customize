@@ -145,6 +145,12 @@
         <value code="VERIFICATION_NOTES"/>
         <value code="EXCEPTION_NOTES"/>
       </enumtype>
+      
+      <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
+      
+      <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
+      	<value code="OTHERS"/>
+      </enumtype>
         
     </enumtypes>
 
@@ -903,8 +909,8 @@
                          <description>This is the price the customer paid when the item is sold on a used gear order</description>
                      </attribute>
                    <attribute qualifier="conditionRatingOverallScore" type="java.lang.Double">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
+                         <persistence type="dynamic" attributeHandler="blConditionRatingOverallScoreHandler"/>
+                         <modifiers read="true" write="false" optional="true"/>
                          <description>T</description>
                      </attribute>
                    <attribute qualifier="incentivizedPrice" type="java.math.BigDecimal">
@@ -1039,21 +1045,39 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
-                     <attribute qualifier="cosmeticRating" type="float">
+                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store cosmetic rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
-                     <attribute qualifier="functionalRating" type="float">
+                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store functional rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
                      <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
                          <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
                          <modifiers read="true" write="false" optional="true" />
                          <description>The version the SKU's firmware is currently at</description>
                      </attribute>
+                     <attribute qualifier="gearRated" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                        <description>To determine if the Gear is Rated by Tech. Eng. Member</description>
+                    </attribute>
                  </attributes>
              </itemtype>
 
@@ -1213,6 +1237,11 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Parent Inventory Location for serial product</description>
+                    </attribute>
+                    <attribute qualifier="locationCategory" type="BlInventoryLocationCategoryEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>BL Inventory location category</description>
                     </attribute>
                 </attributes>
             </itemtype>
