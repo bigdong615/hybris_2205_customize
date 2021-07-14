@@ -13,10 +13,18 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.product.ProductService;
+import de.hybris.platform.promotions.PromotionsService;
+import de.hybris.platform.promotions.jalo.PromotionsManager.AutoApplyMode;
+import de.hybris.platform.promotions.model.PromotionGroupModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.session.SessionService;
+import de.hybris.platform.servicelayer.time.TimeService;
+import de.hybris.platform.site.BaseSiteService;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
@@ -28,6 +36,14 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
   private DefaultBlCalculationService defaultBlCalculationService;
   private ProductService productService;
   private DefaultBlExtendOrderService defaultBlExtendOrderService;
+  @Autowired
+  private PromotionsService promotionsService;
+  @Autowired
+  private  BaseSiteService baseSiteService;
+  @Autowired
+  private  TimeService timeService;
+
+
 
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
@@ -37,10 +53,10 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
      PriceDataType priceType = PriceDataType.BUY;
      OrderModel extendOrderModel =  getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(source);
      for(AbstractOrderEntryModel entries : extendOrderModel.getEntries()) {
-       final ProductModel productModel = getProductService().getProductForCode(entries.getProduct().getCode());
-        getCommercePriceService().getWebPriceForExtendProduct(productModel, defaultAddedTimeForExtendRental);
        try {
          getDefaultBlCalculationService().recalculateForExtendOrder(extendOrderModel , (int) defaultAddedTimeForExtendRental);
+         promotionsService.updatePromotions(getPromotionGroups(), extendOrderModel, true, AutoApplyMode.APPLY_ALL,
+             AutoApplyMode.APPLY_ALL, timeService.getCurrentTime());
        } catch (CalculationException e) {
          e.printStackTrace();
        }
@@ -123,6 +139,17 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
   public void setDefaultBlExtendOrderService(
       DefaultBlExtendOrderService defaultBlExtendOrderService) {
     this.defaultBlExtendOrderService = defaultBlExtendOrderService;
+  }
+
+  protected Collection<PromotionGroupModel> getPromotionGroups()
+  {
+    final Collection<PromotionGroupModel> promotionGroupModels = new ArrayList<PromotionGroupModel>();
+    if (baseSiteService.getCurrentBaseSite() != null
+        && baseSiteService.getCurrentBaseSite().getDefaultPromotionGroup() != null)
+    {
+      promotionGroupModels.add(baseSiteService.getCurrentBaseSite().getDefaultPromotionGroup());
+    }
+    return promotionGroupModels;
   }
 
 }

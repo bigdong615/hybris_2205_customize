@@ -436,7 +436,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		{
 			saveOrderEntryUnneeded.set(Boolean.TRUE);
 			calculateEntriesForExtendOrder(order, true , defaultAddedTimeForExtendRental);
-			final Map taxValueMap = resetAllValues(order);
+			final Map taxValueMap = resetAllValues(order); // Needs to remove if not needed
 			calculateTotals(order, true, calculateSubtotal(order , true));
 		}
 		finally
