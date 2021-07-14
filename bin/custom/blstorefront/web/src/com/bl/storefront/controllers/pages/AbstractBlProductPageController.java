@@ -3,6 +3,7 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.facades.cart.BlCartFacade;
 import de.hybris.platform.acceleratorfacades.futurestock.FutureStockFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.ProductBreadcrumbBuilder;
@@ -42,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -118,6 +118,9 @@ public class AbstractBlProductPageController extends AbstractPageController
 	
 	@Resource(name = "blDatePickerService")
 	private BlDatePickerService blDatePickerService;
+
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
 
 	/*
 	 * This method is used for render pdp.
@@ -413,7 +416,10 @@ public class AbstractBlProductPageController extends AbstractPageController
 		storeCmsPageInModel(model, getPageForProduct(productCode));
 		populateProductData(productData, model);
 		model.addAttribute(WebConstants.BREADCRUMBS_KEY, productBreadcrumbBuilder.getBreadcrumbs(productCode));
-
+    final String currentCartType = blCartFacade.identifyCartType();
+    if(StringUtils.isNotEmpty(currentCartType)){
+      model.addAttribute(currentCartType,true);
+    }
 		if (CollectionUtils.isNotEmpty(productData.getVariantMatrix()))
 		{
 			model.addAttribute(WebConstants.MULTI_DIMENSIONAL_PRODUCT,

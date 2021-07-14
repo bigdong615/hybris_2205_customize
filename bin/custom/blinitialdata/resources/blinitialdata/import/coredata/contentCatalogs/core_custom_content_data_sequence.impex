@@ -17,6 +17,7 @@ $contentCatalogsCustomHomepagePath = /blinitialdata/import/coredata/contentCatal
 $contentCatalogsCustomProductPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/productpage
 $contentCatalogsCustomCatalogPath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/catalog
 $contentCatalogsCustomShippingPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/shipping
+$contentCatalogsCustomOrderPagePath = /blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/order
 
 #Please go through to /blinitialdata/resources/blinitialdata/import/coredata/contentCatalogs/blContentCatalog/custom/readme.txt for more information 
 
@@ -55,5 +56,13 @@ $contentCatalogsCustomShippingPagePath = /blinitialdata/import/coredata/contentC
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomShippingPagePath/cms-content_rentalDeliveryOrPickUpPage.impex"), "utf-8", 0, 0);
 
 #Mention here Checkout Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomCheckoutPagePath/cms-content_payment.impex"), "utf-8", 0, 0);
 
 #Mention here Email Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-content_en.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/giftCardEmail_content.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/stockNotification_content.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomEmailsPath/email-forgotpassword.impex"), "utf-8", 0, 0);
+
+#Mention here Order Page related impexes in sequence
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$contentCatalogsCustomOrderPagePath/core_order_confirmation_page.impex"), "utf-8", 0, 0);

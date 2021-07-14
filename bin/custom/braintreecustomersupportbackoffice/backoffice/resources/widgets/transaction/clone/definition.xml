@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<widget-definition id="com.braintree.customersupportbackoffice.widgets.clonetransaction"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+    <name>Clone Transaction</name>
+    <description>Clone Transaction widget.</description>
+    <defaultTitle>Clone Transaction</defaultTitle>
+    <author>braintree</author>
+    <version>0.1</version>
+
+    <sockets>
+        <input type="com.braintree.model.BrainTreeTransactionDetailModel" id="inputObject"/>
+        <output type="java.lang.String" id="confirm"/>
+    </sockets>
+
+    <keywords>
+        <keyword>Clone</keyword>
+    </keywords>
+
+    <controller class="com.braintree.customersupportbackoffice.widgets.transaction.clone.BrainTreeCloneTransactionController"/>
+
+    <view src="clonetransaction.zul"/>
+
+</widget-definition>

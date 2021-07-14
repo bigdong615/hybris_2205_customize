@@ -3,7 +3,14 @@
  */
 package com.bl.storefront.controllers.pages;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.facades.wishlist.BlWishListFacade;
+import com.bl.facades.wishlist.data.Wishlist2EntryData;
 import com.bl.storefront.forms.BlAddressForm;
+import com.braintree.facade.BrainTreeUserFacade;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -35,7 +42,6 @@ import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.ProductOption;
-import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
@@ -61,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -69,6 +76,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -85,6 +93,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
@@ -120,7 +129,6 @@ public class AccountPageController extends AbstractSearchPageController
 	// Internal Redirects
 	private static final String REDIRECT_TO_ADDRESS_BOOK_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_ADDRESS_BOOK_URL;
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
-	private static final String REDIRECT_TO_EDIT_ADDRESS_PAGE = REDIRECT_PREFIX + "/my-account/edit-address/";
 	private static final String REDIRECT_TO_UPDATE_EMAIL_PAGE = REDIRECT_PREFIX + "/my-account/update-email";
 	private static final String REDIRECT_TO_UPDATE_PROFILE = REDIRECT_PREFIX + "/my-account/update-profile";
 	private static final String REDIRECT_TO_PASSWORD_UPDATE_PAGE = REDIRECT_PREFIX + "/my-account/update-password";
@@ -161,7 +169,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private CheckoutFacade checkoutFacade;
 
 	@Resource(name = "userFacade")
-	private UserFacade userFacade;
+	private BrainTreeUserFacade userFacade;
 
 	@Resource(name = "customerFacade")
 	private CustomerFacade customerFacade;
@@ -196,8 +204,19 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "customerConsentDataStrategy")
 	protected CustomerConsentDataStrategy customerConsentDataStrategy;
 
-	@Resource(name = "addressDataUtil")
+	@Resource(name = "blAddressDataUtil")
 	private AddressDataUtil addressDataUtil;
+
+	@Resource(name = "wishlistFacade")
+	private BlWishListFacade wishlistFacade;
+
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration() {
+		return BlRentalDateUtils.getRentalsDuration();
+	}
 
 	protected PasswordValidator getPasswordValidator()
 	{
@@ -412,7 +431,7 @@ public class AccountPageController extends AbstractSearchPageController
 		final UpdateEmailForm updateEmailForm = new UpdateEmailForm();
 
 		updateEmailForm.setEmail(customerData.getDisplayUid());
-
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_EMAIL_IDENTIFIER);
 		model.addAttribute("updateEmailForm", updateEmailForm);
 		final ContentPageModel updateEmailPage = getContentPageForLabelOrId(UPDATE_EMAIL_CMS_PAGE);
 		storeCmsPageInModel(model, updateEmailPage);
@@ -437,15 +456,14 @@ public class AccountPageController extends AbstractSearchPageController
 
 		if (bindingResult.hasErrors())
 		{
-			returnAction = setErrorMessagesAndCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+			returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
 		}
 		else
 		{
 			try
 			{
 				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
-				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-						"text.account.profile.confirmationUpdated", null);
+				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null, getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
@@ -458,12 +476,12 @@ public class AccountPageController extends AbstractSearchPageController
 			catch (final DuplicateUidException e)
 			{
 				bindingResult.rejectValue("email", "profile.email.unique");
-				returnAction = setErrorMessagesAndCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
 				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);//NOSONAR
-				returnAction = setErrorMessagesAndCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
 			}
 		}
 
@@ -480,6 +498,16 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
+	//This method is for displaying the Error message on the Account page rather than using the Global messages.
+	protected String setErrorMessagesOnAccountCMSPage(final Model model,
+			final String cmsPageLabelOrId) throws CMSItemNotFoundException {
+		final ContentPageModel cmsPage = getContentPageForLabelOrId(cmsPageLabelOrId);
+		storeCmsPageInModel(model, cmsPage);
+		setUpMetaDataForContentPage(model, cmsPage);
+		model.addAttribute(BREADCRUMBS_ATTR,
+				accountBreadcrumbBuilder.getBreadcrumbs(TEXT_ACCOUNT_PROFILE));
+		return getViewForPage(model);
+	}
 
 	@RequestMapping(value = "/update-profile", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -557,7 +585,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String updatePassword(final Model model) throws CMSItemNotFoundException
 	{
 		final UpdatePasswordForm updatePasswordForm = new UpdatePasswordForm();
-
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_PASSWORD_PAGE_IDENTIFIER);
 		model.addAttribute("updatePasswordForm", updatePasswordForm);
 
 		final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
@@ -598,7 +626,6 @@ public class AccountPageController extends AbstractSearchPageController
 
 		if (bindingResult.hasErrors())
 		{
-			GlobalMessages.addErrorMessage(model, FORM_GLOBAL_ERROR);
 			final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
 			storeCmsPageInModel(model, updatePasswordPage);
 			setUpMetaDataForContentPage(model, updatePasswordPage);
@@ -608,8 +635,7 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 		else
 		{
-			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-					"text.account.confirmation.password.updated", null);
+			redirectAttributes.addFlashAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
 			return REDIRECT_TO_PASSWORD_UPDATE_PAGE;
 		}
 	}
@@ -619,6 +645,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String getAddressBook(final Model model) throws CMSItemNotFoundException
 	{
 		model.addAttribute(ADDRESS_DATA_ATTR, userFacade.getAddressBook());
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		final ContentPageModel addressBookPage = getContentPageForLabelOrId(ADDRESS_BOOK_CMS_PAGE);
 		storeCmsPageInModel(model, addressBookPage);
 		setUpMetaDataForContentPage(model, addressBookPage);
@@ -630,6 +657,7 @@ public class AccountPageController extends AbstractSearchPageController
 	@RequireHardLogIn
 	public String addAddress(final Model model) throws CMSItemNotFoundException
 	{
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		model.addAttribute(COUNTRY_DATA_ATTR, checkoutFacade.getCountries(CountryType.SHIPPING));
 		populateModelRegionAndCountry(model, Locale.US.getCountry());
 		final BlAddressForm addressForm = getPreparedAddressForm();
@@ -669,18 +697,12 @@ public class AccountPageController extends AbstractSearchPageController
 			setUpAddressFormAfterError(addressForm, model);
 			return getViewForPage(model);
 		}
-
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-		newAddress.setEmail(addressForm.getEmail());
 		if (CollectionUtils.isEmpty(userFacade.getAddressBook()))
 		{
-			newAddress.setDefaultAddress(true);
+			newAddress.setDefaultAddress(Boolean.TRUE);
+			newAddress.setShippingAddress(Boolean.TRUE);
 		}
-		else
-		{
-			newAddress.setDefaultAddress(addressForm.getDefaultAddress() != null && addressForm.getDefaultAddress().booleanValue());
-		}
-
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -704,7 +726,7 @@ public class AccountPageController extends AbstractSearchPageController
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "account.confirmation.address.added",
 				null);
 
-		return REDIRECT_TO_EDIT_ADDRESS_PAGE + newAddress.getId();
+		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
 	}
 
 	protected void setUpAddressFormAfterError(final BlAddressForm addressForm, final Model model)
@@ -724,6 +746,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String editAddress(@PathVariable("addressCode") final String addressCode, final Model model)
 			throws CMSItemNotFoundException
 	{
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		final BlAddressForm addressForm = new BlAddressForm();
 		model.addAttribute(COUNTRY_DATA_ATTR, checkoutFacade.getCountries(CountryType.SHIPPING));
 		model.addAttribute(ADDRESS_FORM_ATTR, addressForm);
@@ -739,17 +762,6 @@ public class AccountPageController extends AbstractSearchPageController
 				model.addAttribute(COUNTRY_ATTR, addressData.getCountry().getIsocode());
 				model.addAttribute(ADDRESS_DATA_ATTR, addressData);
 				addressDataUtil.convert(addressData, addressForm);
-				addressForm.setEmail(addressData.getEmail());
-				if (userFacade.isDefaultAddress(addressData.getId()))
-				{
-					addressForm.setDefaultAddress(Boolean.TRUE);
-					model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.TRUE);
-				}
-				else
-				{
-					addressForm.setDefaultAddress(Boolean.FALSE);
-					model.addAttribute(IS_DEFAULT_ADDRESS_ATTR, Boolean.FALSE);
-				}
 				break;
 			}
 		}
@@ -766,6 +778,7 @@ public class AccountPageController extends AbstractSearchPageController
 	public String editAddress(final BlAddressForm addressForm, final BindingResult bindingResult, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
 	{
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.ADDRESS_PAGE_IDENTIFIER);
 		addressForm.setCountryIso(Locale.US.getCountry());
 		getAddressValidator().validate(addressForm, bindingResult);
 		final ContentPageModel addEditAddressPage = getContentPageForLabelOrId(ADD_EDIT_ADDRESS_CMS_PAGE);
@@ -779,14 +792,20 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
-
 		final AddressData newAddress = addressDataUtil.convertToVisibleAddressData(addressForm);
-       newAddress.setEmail(addressForm.getEmail());
 		if (Boolean.TRUE.equals(addressForm.getDefaultAddress()) || userFacade.getAddressBook().size() <= 1)
 		{
-			newAddress.setDefaultAddress(true);
+			newAddress.setDefaultAddress(Boolean.TRUE);
+			newAddress.setShippingAddress(Boolean.TRUE);
 		}
-
+		final AddressData defaultBillingAddress = userFacade.getDefaultBillingAddress();
+		if(defaultBillingAddress != null && defaultBillingAddress.getId().equals(addressForm.getAddressId())){
+			newAddress.setBillingAddress(Boolean.TRUE);
+		}
+	   final AddressData defaultShippingAddress = userFacade.getDefaultAddress();
+		if(defaultShippingAddress != null && defaultShippingAddress.getId().equals(addressForm.getAddressId())){
+			newAddress.setShippingAddress(Boolean.TRUE);
+		}
 		final AddressVerificationResult<AddressVerificationDecision> verificationResult = getAddressVerificationFacade()
 				.verifyAddressData(newAddress);
 		final boolean addressRequiresReview = getAddressVerificationResultHandler().handleResult(verificationResult, newAddress,
@@ -809,7 +828,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "account.confirmation.address.updated",
 				null);
-		return REDIRECT_TO_EDIT_ADDRESS_PAGE + newAddress.getId();
+		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
 	}
 
 	@RequestMapping(value = "/select-suggested-address", method = RequestMethod.POST)
@@ -856,7 +875,8 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@RequestMapping(value = "/set-default-address/" + ADDRESS_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
 	@RequireHardLogIn
-	public String setDefaultAddress(@PathVariable("addressCode") final String addressCode, final RedirectAttributes redirectModel)
+	public @ResponseBody
+	String setDefaultAddress(@PathVariable("addressCode") final String addressCode, final RedirectAttributes redirectModel)
 	{
 		final AddressData addressData = new AddressData();
 		addressData.setDefaultAddress(true);
@@ -865,7 +885,25 @@ public class AccountPageController extends AbstractSearchPageController
 		userFacade.setDefaultAddress(addressData);
 		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
 				"account.confirmation.default.address.changed");
-		return REDIRECT_TO_ADDRESS_BOOK_PAGE;
+		return BlControllerConstants.SUCCESS;
+	}
+
+	/**
+	 * This method is responsible for setting default billing address.
+	 */
+	@RequestMapping(value = "/set-default-billing-address/" + ADDRESS_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@RequireHardLogIn
+	public @ResponseBody
+	String setDefaultBillingAddress(@PathVariable("addressCode") final String addressCode, final RedirectAttributes redirectModel)
+	{
+		final AddressData addressData = new AddressData();
+		addressData.setDefaultBillingAddress(true);
+		addressData.setVisibleInAddressBook(true);
+		addressData.setId(addressCode);
+		userFacade.setDefaultBillingAddress(addressData);
+		GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
+				"account.confirmation.default.address.changed");
+		return BlControllerConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/payment-details", method = RequestMethod.GET)
@@ -994,12 +1032,42 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@GetMapping(value = "/bookmarks")
 	@RequireHardLogIn
-	public String bookmarksPage(final Model model) throws CMSItemNotFoundException{
+	public String bookmarksPage(@RequestParam(value = "page", defaultValue = "0") final int page,
+			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
+			@RequestParam(value = "sort", required = false) final String sortCode, final Model model)
+			throws CMSItemNotFoundException {
+		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,
+				BlControllerConstants.BOOKMARKS_PAGE_IDENTIFIER);
+		final PageableData pageableData = createPageableData(page, 5, sortCode, showMode);
+		final SearchPageData<Wishlist2EntryData> searchPageData = wishlistFacade
+				.getWishlistEntries(pageableData);
+		removeDiscontinuedEntries(searchPageData);
+		populateModel(model, searchPageData, showMode);
 		final ContentPageModel bookmarksPage = getContentPageForLabelOrId(BOOKMARKS_CMS_PAGE);
 		storeCmsPageInModel(model, bookmarksPage);
 		setUpMetaDataForContentPage(model, bookmarksPage);
-		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+		model.addAttribute("searchPageData", searchPageData);
+		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+				ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
+
+	}
+
+	/**
+	 *  This is to remove the discontinued products from the pageable data of WishlistEntries
+	 * @param searchPageData
+	 */
+	private void removeDiscontinuedEntries(SearchPageData<Wishlist2EntryData> searchPageData) {
+		final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+		List<Wishlist2EntryData> wishlistEntries = searchPageData.getResults();
+
+		if (Objects.nonNull(rentalDateDto) || CollectionUtils.isNotEmpty(wishlistEntries)) {
+			for (Wishlist2EntryData entry : wishlistEntries) {
+				if (BooleanUtils.isTrue(entry.getProduct().getIsDiscontinued())) {
+					wishlistFacade.removeWishlist(entry.getProduct().getCode());
+				}
+			}
+		}
 	}
 
 	@GetMapping(value = "/verificationImages")

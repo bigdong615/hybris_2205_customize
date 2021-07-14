@@ -7,6 +7,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="theme" tagdir="/WEB-INF/tags/shared/theme" %>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 
 <spring:htmlEscape defaultHtmlEscape="true" />
@@ -31,12 +32,32 @@
 			</c:when>
 			<c:otherwise>
 				<c:if test="${product.productTagValues ne null}">
-					<span class="badge badge-limited-stock">${product.productTagValues}</span>
+				<c:choose>
+				<c:when test="${fn:containsIgnoreCase(product.productTagValues, 'New') || fn:containsIgnoreCase(product.productTagValues, 'Staff Pick') ||  fn:containsIgnoreCase(product.productTagValues, 'Great Value')}">
+					<span class="badge badge-new">${product.productTagValues}</span>
+				</c:when>
+				<c:otherwise>
+				  <span class="badge badge-limited-stock">${product.productTagValues}</span>
+				</c:otherwise>
+				</c:choose>
 				</c:if>
 			</c:otherwise>
 		</c:choose>
-
-		<span class="bookmark"></span>
+    <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
+                <c:choose>
+                   <c:when test="${product.isBookMarked}">
+                    <span class="bookmark set js-add-to-wishlist bookmarkicons" data-product-code="${product.code}"
+                     data-bookmark-value="${product.isBookMarked}"></span>
+                   </c:when>
+                   <c:otherwise>
+                    <span class="bookmark js-add-to-wishlist bookmarkicons"  data-product-code="${product.code}"
+                    data-bookmark-value="${product.isBookMarked}"></span>
+                   </c:otherwise>
+                </c:choose>
+    </form>
+    </sec:authorize>
   <c:choose>
      <c:when test ="${not empty product.images}">
         <div class="card-slider splide">
@@ -65,7 +86,7 @@
  <p class="overline">${product.manufacturer}</p>
  <h6 class="product">
           <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-           <a href="${rentUrl}"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
+           <a href="${rentUrl}" role="button"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
   </h6>
 		<ycommerce:testId code="product_wholeProduct">
 
@@ -106,7 +127,7 @@
 		<c:set var="addToCartText" value="${addToCartText}" scope="request"/>
 		<c:set var="addToCartUrl" value="${addToCartUrl}" scope="request"/>
 		<c:set var="isGrid" value="true" scope="request"/>
-		<div class="addtocart">
+		<div class="addtocart btnwidth">
 			<div class="actions-container-for-${fn:escapeXml(component.uid)} <c:if test="${ycommerce:checkIfPickupEnabledForStore() and product.availableForPickup}"> pickup-in-store-available</c:if>">
 				<action:actions element="div" parentComponent="${component}"/>
 			</div>

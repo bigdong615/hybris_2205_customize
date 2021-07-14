@@ -2,15 +2,22 @@ package com.bl.core.customer;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.bl.core.services.customer.impl.DefaultBlCustomerAccountService;
+import com.braintree.customer.dao.BrainTreeCustomerAccountDao;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.commercefacades.user.data.RegisterData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import de.hybris.platform.commerceservices.customer.dao.CustomerAccountDao;
+import de.hybris.platform.commerceservices.i18n.CommerceCommonI18NService;
+import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.PasswordEncoderConstants;
 import de.hybris.platform.servicelayer.user.UserService;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
@@ -32,11 +39,18 @@ public class DefaultBlCustomerAccountServiceTest {
   @Mock
   private CustomerModel newCustomer;
   @Mock
+  private AddressModel addressModel1;
+  @Mock
+  private AddressModel addressModel2;
+  @Mock
   private UserService userService;
   @Mock
   private ModelService modelService;
+  @Mock
+  private CommerceCommonI18NService commerceCommonI18NService;
 
   RegisterData registerData;
+  List addressList;
 
   @Before
   public void prepare(){
@@ -44,7 +58,8 @@ public class DefaultBlCustomerAccountServiceTest {
     registerData = new RegisterData();
     registerData.setLogin(EMAIL);
     registerData.setPassword(PASSWORD);
-  }
+    addressList = new ArrayList<AddressModel>();
+     }
 
   @Test
   public void shouldRegisterCustomer() throws DuplicateUidException {
@@ -52,5 +67,18 @@ public class DefaultBlCustomerAccountServiceTest {
     verify(modelService).save(newCustomer);
     verify(modelService, times(1)).save(newCustomer);
   }
+
+  @Test
+  public void shouldSetDefaultBillingAddress(){
+    addressList.add(addressModel1);
+    addressList.add(addressModel2);
+    when(newCustomer.getAddresses()).thenReturn(addressList);
+    customerAccountService.setDefaultBillingAddress(newCustomer,addressModel1);
+    verify(customerAccountService, times(1)).setDefaultBillingAddress(newCustomer,addressModel1);
+    verify(modelService).save(newCustomer);
+    verify(modelService, times(1)).save(newCustomer);
+    verify(modelService,times(1)).refresh(newCustomer);
+  }
+
 
 }

@@ -11,13 +11,13 @@ import de.hybris.platform.commercefacades.product.data.ProductData;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -38,6 +38,10 @@ public class RentalProductPageController extends AbstractBlProductPageController
 
   @Resource(name = "productVariantFacade")
   private ProductFacade productFacade;
+
+  @Resource(name = "stockNotificationFacade")
+  private StockNotificationFacade stockNotificationFacade;
+
 
   /**
    * This common method created to get rental duration for rental products from BlRentalDateUtils class
@@ -76,8 +80,9 @@ public class RentalProductPageController extends AbstractBlProductPageController
 				ProductOption.URL, ProductOption.PRICE, ProductOption.SUMMARY, ProductOption.DESCRIPTION, ProductOption.GALLERY,
 				ProductOption.CATEGORIES, ProductOption.REVIEW, ProductOption.PROMOTIONS, ProductOption.CLASSIFICATION,
 				ProductOption.VARIANT_FULL, ProductOption.STOCK, ProductOption.VOLUME_PRICES, ProductOption.PRICE_RANGE,
-				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA) );
+				ProductOption.DELIVERY_MODE_AVAILABILITY,ProductOption.REQUIRED_DATA,ProductOption.REQUIRED_WISHLIST) );
+     model.addAttribute(BlControllerConstants.IS_WATCHING, stockNotificationFacade.isWatchingProduct(productData));
       return productDetail(encodedProductCode, options, productData, model, request, response);
   }
-  
+
 }

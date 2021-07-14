@@ -5,13 +5,18 @@ package com.bl.storefront.controllers.pages.checkout.steps;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.enums.AddressTypeEnum;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.services.cart.BlCartService;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.locator.data.UpsLocatorResposeData;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.ups.address.data.AVSResposeData;
+import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.controllers.pages.checkout.BlCheckoutStepController;
 import com.bl.storefront.forms.BlAddressForm;
@@ -26,28 +31,27 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.checkout.steps.AbstractCheckoutStepController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
 import de.hybris.platform.commercefacades.order.data.CartData;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.address.AddressVerificationDecision;
 import de.hybris.platform.core.model.c2l.CountryModel;
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.store.services.BaseStoreService;
+import java.util.Collection;
+import java.util.List;
+import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.annotation.Resource;
-import java.util.Collection;
 
 
 @Controller
@@ -67,6 +71,15 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
 
     @Resource(name = "baseStoreService")
     private BaseStoreService baseStoreService;
+
+    @Resource(name = "cartService")
+    private BlCartService blCartService;
+
+    @Resource(name = "blGiftCardFacade")
+    private BlGiftCardFacade blGiftCardFacade;
+
+    @Resource(name ="cartFacade")
+    private BlCartFacade blCartFacade;
     
     @ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
  	 private RentalDateDto getRentalsDuration() 
@@ -79,6 +92,14 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
     @Override
     @PreValidateCheckoutStep(checkoutStep = DELIVERY_METHOD)
     public String getAllShippingGroups(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException {
+        CartModel cartModel = blCartService.getSessionCart();
+        if (cartModel != null) {
+            List<GiftCardModel> giftCardModelList = cartModel.getGiftCard();
+            if (CollectionUtils.isNotEmpty(giftCardModelList)) {
+                blGiftCardFacade.removeAppliedGiftCardFromCartOrShippingPage(cartModel, giftCardModelList);
+                model.addAttribute(BlControllerConstants.IS_GIFT_CARD_REMOVE, true);
+            }
+        }
         final CartData cartData = getCheckoutFacade().getCheckoutCart();
         model.addAttribute(CART_DATA, cartData);
         model.addAttribute("shippingGroup", getCheckoutFacade().getAllShippingGroups());
@@ -97,6 +118,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
         if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
         }
+        model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
         return ControllerConstants.Views.Pages.MultiStepCheckout.DeliveryOrPickupPage;
     }
 
@@ -316,7 +338,7 @@ public class DeliveryMethodCheckoutStepController extends AbstractCheckoutStepCo
                return BlDeliveryModeLoggingConstants.PIN_ERROR;
             }
         } else {
-            if(StringUtils.isNotEmpty(addressType) && businessType && !addressType.equals(AddressTypeEnum.BUSINESS.getCode())) {
+            if(businessType && (StringUtils.isEmpty(addressType) || !addressType.equals(AddressTypeEnum.BUSINESS.getCode()))) {
                 return BlDeliveryModeLoggingConstants.AM_ERROR;
             }
         }

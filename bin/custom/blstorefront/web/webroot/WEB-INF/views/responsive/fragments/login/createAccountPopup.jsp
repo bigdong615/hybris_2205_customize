@@ -23,6 +23,7 @@
           inputCSS="form-control mb-2 "  placeholder="register.pwd" />
         <formElement:formPasswordBox idKey="checkPwd-form-id"
           path="checkPwd" inputCSS="form-control mb-2"  placeholder="register.checkPwd" />
+           <input type="hidden" id="serialClickSignUP" name="serialClickSignUP" value=""/>
         <ycommerce:testId code="register_Register_button">
           <button type="submit" class="btn btn-block btn-primary mt-4 js-signUp-popup-validation" value="${registerActionUrl}">
             <spring:theme code="register.submit" />
@@ -37,16 +38,16 @@
                            </c:if>
 
            <div class ="notification notification-error d-none" id="errorMessages_sigin_errorbox">
-                                       <div id="errorMessages_sigin_email"></div> &nbsp;
-                                       <div id="errorMessages_sigin_pwd"></div> &nbsp;
+                                     <!--  BL:689 changes in below two line -->
+                                       <div id="errorMessages_sigin_email" class="mb-2"></div>
+                                       <div id="errorMessages_sigin_pwd" class="mb-2"></div>
                                        <div id="errorMessages_sigin_chkPwd"></div>
            </div>
         <p class="body14 text-center mb-0 mt-4">
-          <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
+          <a class="js-login-popup" id="serialSignInInstead" data-click="" href="#signIn" data-link="<c:url value='/login/loginpopup'/>"
              data-bs-dismiss="modal">
             <spring:theme code="login.login" />
           </a>
-          &nbsp;
           <spring:theme code="login.suggestion.text"/>
         </p>
       </form:form>

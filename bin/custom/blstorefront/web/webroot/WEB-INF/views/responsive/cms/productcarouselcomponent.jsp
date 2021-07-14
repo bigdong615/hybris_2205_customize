@@ -9,6 +9,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
@@ -18,7 +19,7 @@
 		<div id="gear-slider" class="splide mt-4">
 			<div class="splide__track">
 				<ul class="splide__list">
-					<c:forEach items="${productData}" var="product">
+					<c:forEach items="${productData}" var="product" varStatus="loopindex">
 						<li class="splide__slide">
 							<div class="card">
 							<c:choose>
@@ -38,8 +39,21 @@
 										</c:if>
 									</c:otherwise>
 								</c:choose>
-								
-								<span class="bookmark"></span>
+							<sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+							    <form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
+                         <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
+                         <c:choose>
+              		        <c:when test="${product.isBookMarked}">
+                             <span class="bookmark set js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${product.code}"
+                              data-bookmark-value="${product.isBookMarked}"></span>
+                            </c:when>
+                            <c:otherwise>
+                             <span class="bookmark js-add-to-wishlist" id="card-${loopindex.index}" data-product-code="${product.code}"
+                             data-bookmark-value="${product.isBookMarked}"></span>
+                            </c:otherwise>
+                         </c:choose>
+                  </form>
+               </sec:authorize>
 								<div class="card-slider splide">
 									<div class="splide__track">
 										<ul class="splide__list">
@@ -47,7 +61,8 @@
 												<c:if test="${productImage.format eq 'product' and productImage.imageType eq 'GALLERY'}">
 													<c:url value="${productImage.url}" var="primaryImageUrl" />
 	                       							<c:set value="this is alternate" var="altTextHtml"/>
-													<li class="splide__slide"><img src="${primaryImageUrl}"></li>
+	                       							<c:url var="rentUrl" value="/rent/product/${product.code}"/>
+													<li class="splide__slide"><a href="${rentUrl}"><img src="${primaryImageUrl}"></a></li>
 												</c:if>
 											</c:forEach>
 										</ul>

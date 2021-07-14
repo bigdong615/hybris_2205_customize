@@ -5,7 +5,11 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 
+import de.hybris.platform.core.model.order.CartModel;
 import java.util.Date;
+
+import com.bl.facades.product.data.RentalDateDto;
+import java.util.List;
 
 /**
  * It is responsible for getting all necessary information for cart.
@@ -88,4 +92,54 @@ public interface BlCartFacade extends CartFacade {
 	 *            the commerce cart modification exception
 	 */
 	CartModificationData updateCartEntryFromPopup(long entryNumber, long quantity) throws CommerceCartModificationException;
+	
+	/**
+	 * Check availability in cart page on continue button to go to next checkout step
+	 *
+	 * @param sessionRentalDate
+	 *           the session rental date
+	 * @return true, if stock is available for cart
+	 */
+	boolean checkAvailabilityOnCartContinue(final RentalDateDto sessionRentalDate);
+
+	/**
+	 * It identifies type of cart, whether it is rental or used gear cart.
+	 * @return String
+	 */
+	String identifyCartType();
+
+	/**
+	 * This method is used for remove discontinue product from cart.
+	 */
+	String removeDiscontinueProductFromCart(final CartModel cartModel,final boolean isCartPage); // NOSONAR
+
+	/**
+	 * This method used for pre-populating saved card data before removing its discontinue entry.
+	 * @param entryNumber
+	 * @param quantity
+	 * @param cartModel
+	 * @return
+	 * @throws CommerceCartModificationException
+	 */
+	public CartModificationData updateCartEntry(final long entryNumber, final long quantity, final CartModel cartModel) throws CommerceCartModificationException; // NOSONAR
+
+	/**
+	 * This method used for collecting discontinue entries number form cart.
+	 * @return List<Integer>
+	 * @param cartModel
+	 * @param removedEntry
+	 */
+	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry); // NOSONAR
+
+	/**
+	 * This method saves PO payment details.
+	 * @param poNumber
+	 * @param poNotes
+	 */
+	void savePoPaymentDetails(final String poNumber, final String poNotes);
+
+	/**
+	 * If credit card or paypal payment method selected then remove po number from cartModel.
+	 */
+	void removePoNumber();
 }

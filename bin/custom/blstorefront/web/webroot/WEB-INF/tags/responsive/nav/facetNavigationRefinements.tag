@@ -11,9 +11,19 @@
 
 <c:if test="${not empty facetData.values}">
 <ycommerce:testId code="facetNav_title_${facetData.name}">
+<c:set var="facetid" value="${facetData.name}"/>
+<c:if test="${fn:contains(facetData.name, '/')}">
+   <c:set var = "facetid" value = "${fn:replace(facetid, '/', '')}" />
+</c:if>
+<c:if test="${fn:contains(facetData.name, '&')}">
+   <c:set var = "facetid" value = "${fn:replace(facetid, '&', '')}" />
+</c:if>
+<c:if test="${fn:contains(facetData.name, ' ')}">
+   <c:set var = "facetid" value = "${fn:replace(facetid, ' ', '')}" />
+</c:if>
 <hr>
- <p><a class="filter-expand" data-bs-toggle="collapse" href="#${facetData.name}" role="button" aria-expanded="false" aria-controls="${facetData.name}">${facetData.name}</a></p>
-	<div class="facet js-facet collapse" id="${facetData.name}">
+ <p><a class="filter-expand" data-bs-toggle="collapse" href="#${facetid}" role="button" aria-expanded="false" aria-controls="${facetid}">${facetData.name}</a></p>
+	<div class="facet js-facet collapse" id="${facetid}">
 		<div class="facet__values js-facet-values js-facet-form">
 
 			<c:if test="${not empty facetData.topValues}">
@@ -28,7 +38,8 @@
 									<c:if test="${pageType == 'PRODUCTSEARCH'}">
                                                  <input type="hidden" name="blPageType" value="${blPageType}"/>
                   </c:if>
-                   <input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
+                  <!--BL-447 changes added below -->
+                   <input class="facet__list__checkbox" type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''} class="facet-checkbox" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/ autocomplete="off">
 									<label for="${facetData.code}-${facetValue.name}">
 										<span class="facet__list__label">
 											<span class="facet__list__mark"></span>
@@ -68,7 +79,8 @@
 								 <c:if test="${pageType == 'PRODUCTSEARCH'}">
                                <input type="hidden" name="blPageType" value="${blPageType}"/>
                                </c:if>
-                               <input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/>
+                                <!--BL-447 changes added below --> 
+                               <input type="checkbox" ${facetValue.selected ? 'checked="checked"' : ''}  class="facet__list__checkbox js-facet-checkbox sr-only" id="${facetData.code}-${facetValue.name}" name="${facetData.code}-${facetValue.name}"/ autocomplete="off">
 								<label for="${facetData.code}-${facetValue.name}">
 									<span class="facet__list__label">
 										<span class="facet__list__mark"></span>

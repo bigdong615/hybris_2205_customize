@@ -23,6 +23,14 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String SERIAL_CODE_MISSING = "serialCodeNotPresent";
   public static final String SUCCESS = "success";
   public static final String RESULT_SUCCESS = "SUCCESS";
+
+  public static final String USED_GEAR_CART = "isUsedGearCart";
+  public static final String RENTAL_CART = "isRentalCart";
+  public static final String RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED = "allowAddToCart";
+  public static final String COMMA_SEPERATER =",";
+  public static final String REMOVE_ENTRIES = "removedEntries";
+  public static final String ROUND_TRIP = "Round Trip";
+
   private BlFacadesConstants() {
     //empty
   }

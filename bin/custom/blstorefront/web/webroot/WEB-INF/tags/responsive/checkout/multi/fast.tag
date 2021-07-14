@@ -40,17 +40,17 @@
                 </div>
                 <div id="tab-SHIP_HOME_HOTEL_BUSINESS" class="ship-it-tab-content">
                     <checkout:addressForm />
-                    <div id="ship-it-save-address-div">
+                    <div id="ship-it-save-address-div" class="mb-5">
                         <input type="checkbox" id="ship-it-save-address" checked>
                         <label for="ship-it-save-address">
                             <span class="gray80"><spring:theme code="text.add.new.shipping.save.address"/></span>
                         </label>
                     </div>
                     <b class="mt-4"><spring:theme code="text.ship.it.available.delivery.methods"/></b>
-                    <div id="shipToHomeShippingMethods"></div>
+                    <div id="shipToHomeShippingMethods" class="sub-option"></div>
                 </div>
                 <div id="tab-SHIP_UPS_OFFICE" class="ship-it-tab-content">
-                    <div id="shipToUPSShippingMethods">
+                    <div id="shipToUPSShippingMethods" class="sub-option">
 
                     </div>
                     <div id="checkZipForUPSPickup" style="display:none;">

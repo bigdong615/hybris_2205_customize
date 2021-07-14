@@ -76,7 +76,61 @@ public class BlControllerConstants
 	public static final String RENTAL_DATE_FORMAT = "MMM dd";
 	public static final String NEXT_AVAILABLE_DATE = "nextAvailabilityDate";
 
+	public static final int SKIP_TWO_DAYS = 2;
+	public static final String TRUE_STRING = "true";
+	public static final String FALSE_STRING = "false";
+	public static final String IS_WATCHING = "isWatching";
+	public static final String STOCK_NOTIFICATION_FORM = "stockNotificationForm";
+	public static final String USER_EMAIL_STRING = "userEmail";
+	public static final String GIFT_CARD_REMOVE = "giftCardCodeRemove";
+	public static final String GIFT_CARD_FORM = "giftCardForm";
+	public static final String IS_GIFT_CARD_REMOVE = "isGiftCardRemoved";
 
+	public static final String AUDIO_CATEGORY = "audio";
+	public static final String LIGHTING_CATEGORY = "lighting";
+	public static final String PRODUCTION_CATEGORY = "production";
+
+	public static final String VOUCHER_FORM = "voucherForm";
+	public static final String DELIVERY_METHOD_CHECKOUT_URL = "/checkout/multi/delivery-method/chooseShipping";
+	public static final String PAYMENT_METHOD_CHECKOUT_URL = "/checkout/multi/payment-method/add";
+
+	public static final String PRODUCT_REFERENCE = "productReferences";
+	public static final String MAXIMUM_LIMIT = "productsLimit";
+	public static final String ADDRESS_PAGE_IDENTIFIER = "Addresses";
+	public static final String USER_SELECTED_PAYMENT_INFO = "userSelectedPaymentInfo";
+	public static final String SELECTED_PAYMENT_METHOD_NONCE = "selectedPaymentMethodNonce";
+	public static final String PAYMENT_INFO_BILLING_ADDRESS = "paymentInfoBillingAddress";
+	public static final String IS_SAVED_CARD_ORDER = "isSavedCardOrder";
+	public static final String CHECKOUT_SUMMARY_PAGE = "multiStepCheckoutSummaryPage";
+	public static final String UPDATE_PASSWORD_PAGE_IDENTIFIER = "Change Password";
+	public static final String ORDER_CONFIRMATION_PAGE = "orderConfirmation";
+	public static final String CREDIT_CARD_CHECKOUT = "CreditCard";
+	public static final String BOOKMARKS_PAGE_IDENTIFIER = "Bookmarks";
+	public static final String UPDATE_EMAIL_IDENTIFIER = "Change Email";
+	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
+	public static final String FORMATTED_RENTAL_START_DATE = "formattedRentalStartDate";
+	public static final String FORMATTED_RENTAL_END_DATE = "formattedRentalEndDate";
+	
+	public static final String USER_SELECTED_PAYPAL_PAYMENT_INFO = "userSelectedPayPalPaymentInfo";
+	public static final String PAYPAL_CHECKOUT = "BrainTreePayPalExpress";
+	public static final String REVIEW_PAGE = "Review";
+	public static final String DEFAULT_BILLING_ADDRESS = "defaultBillingAddress";
+
+	public static final String REDIRECT_PREFIX = "redirect:";
+
+	public static final String REDIRECT_CART_URL = REDIRECT_PREFIX + "/cart";
+	public static final String SAVE_CART_FORM = "saveCartForm";
+	
+	public static final String PAYPAL_ERROR_MESSAGE_KEY = "text.paypal.payment.error.message";
+	public static final String DISABLE_PAYMENT = "disablePayment";
+	public static final String BILL_TO_COUNTRY = "billTo_country";
+	public static final String DISCONTINUE_MESSAGE_KEY = "cart.discontinue.product.removed.entry.text";
+
+	public static final String BRAINTREE_GENERAL_ERROR_KEY = "braintree.billing.general.error";
+	public static final String CART_PAGE = "cartPage";
+	public static final String FROM_PAGE = "fromPage";
+	public static final String USER_SELECTED_PO_NUMBER = "selectedPoNumber";
+	public static final String USER_SELECTED_PO_NOTES = "selectedPoNotes";
 	private BlControllerConstants()
 	{
 		//empty

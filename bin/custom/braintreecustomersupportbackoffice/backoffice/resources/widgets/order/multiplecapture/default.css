@@ -1,0 +1,101 @@
+.bt-widget-multiplecapture-configuration {
+    overflow: auto;
+    margin: 0 auto;
+    background-color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.bt-widget-multiplecapture-configuration-container {
+    float: right;
+    margin-right: 80px;
+    min-height: 200px;
+}
+
+.bt-widget-multiplecapture-configuration-button-container {
+    float: right;
+    display: block;
+    margin-right: 10px;
+}
+
+.bt-widget-multiplecapture-configuration-main-container .bt-widget-multiplecapture-configuration-container {
+    border: 1px solid #CACACA;
+    margin: 0 30px;
+    padding-top: 10px;
+}
+
+.bt-widget-multiplecapture-configuration-button {
+    height: 32px !important;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+.bt-widget-multiplecapture-configuration-save-button {
+    background-color: #085ABC !important;
+    font-family: 'Roboto', Arial, sans-serif !important;
+}
+
+div.bt-widget-multiplecapture-configuration div.bt-widget-multiplecapture-configuration-button-container button.bt-widget-multiplecapture-configuration-save-button:hover {
+    background-color: #6282B9 !important;
+}
+
+.bt-widget-multiplecapture-configuration-save-button[disabled="disabled"] {
+    background: #6F7C91 !important;
+    color: #ffffff !important;
+    cursor: default;
+}
+
+.bt-widget-multiplecapture-configuration-save-button[disabled="disabled"]:hover {
+    background-color: #6282B9 !important;
+    color: #ffffff !important;
+    cursor: not-allowed;
+}
+
+.bt-widget-multiplecapture--input-text-box {
+    width: 235px;
+    color: #303030;
+    padding-right: 0px;
+}
+
+.bt-widget-multiplecapture--input-combo-box {
+    width: 235px;
+    color: #303030;
+    padding-right: 0px;
+}
+
+.bt-widget-multiplecapture-configuration .z-listitem {
+    background: #ffffff;
+}
+
+.bt-widget-multiplecapture-configuration .z-label {
+    display: inline-block;
+    font-family: 'Roboto', Arial, sans-serif !important;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.bt-widget-multiplecapture--body {
+    padding-left: 20px;
+    padding-bottom: 20px;
+}
+
+.bt-widget-multiplecapture-configuration div.z-listbox-header{
+    width: 1160px !important;
+}
+
+.bt-widget-multiplecapture-configuration div.z-listbox-body{
+    width: 1160px !important;
+}
+
+input:disabled + label.z-checkbox-content{
+    color: #B7BDC8;
+}
+
+.bt-widget-multiplecapture--confirm-area{
+    background-color: #f5f5f5 !important;
+    width:180px;
+    height: 70px;
+    padding: 5px;
+    text-align: center;
+    margin-top: 15px;
+    float: right;
+    margin-right: 10px;
+}

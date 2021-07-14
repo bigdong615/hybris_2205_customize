@@ -28,7 +28,15 @@ public interface BlDeliveryModeDao {
      */
     Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModes(final String carrier, final String mode, final String pstCutOffTime,
                                                                  final boolean payByCustomer);
-
+    
+    /**
+     * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group
+     * depending on the selected carrier.
+     * @param carrier ie., UPS or FedEx
+     * @param mode i.e., standard 
+     * @return Collection of ZoneDeliveryModeModel
+     */
+    Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesForUsedGear(final String carrier, final String mode, final boolean payByCustomer);
     /**
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group
      * depending on the selected carrier with not AM delivery mode.
@@ -39,7 +47,6 @@ public interface BlDeliveryModeDao {
      */
     Collection<ZoneDeliveryModeModel> getShipToHomeDeliveryModesNotLike(final String carrier, final String mode, final String pstCutOffTime,
                                                                         final boolean payByCustomer);
-
     /**
      * This method will fetch all the partner-pickup-zones from DB who has delivery-modes associated to it
      * @return Collection of PartnerPickUpStoreModel
@@ -72,6 +79,16 @@ public interface BlDeliveryModeDao {
                                                                                   final boolean payByCustomer);
 
     /**
+     * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store.
+     *
+     * @param mode i.e, standard or Overnight
+     * @param pstCutOffTime for time condition
+     * @return Collection of BlPickUpZoneDeliveryModeModel
+     */
+    Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode, final boolean payByCustomer);
+                                                                                  
+
+    /**
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store not
      * like AM condition
      *
@@ -81,7 +98,7 @@ public interface BlDeliveryModeDao {
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesNotLike(final String mode, final String pstCutOffTime,
                                                                                          final boolean payByCustomer);
-
+    
     /**
      * This method will fetch all time windows for RushDelivery depending on deliveryType attribute
      * @param deliveryMode to specify SF or NYC Shipping group
@@ -89,6 +106,15 @@ public interface BlDeliveryModeDao {
      * @return Collection of BlRushDeliveryModeModel
      */
     Collection<BlRushDeliveryModeModel> getBlRushDeliveryModes(final String deliveryMode, final String pstCutOffTime, final boolean payByCustomer);
+    
+    
+    /**
+     * This method will fetch all time windows for RushDelivery depending on deliveryType attribute
+     * @param deliveryMode to specify SF or NYC Shipping group
+     * @return Collection of BlRushDeliveryModeModel
+     */
+    Collection<BlRushDeliveryModeModel> getBlRushDeliveryModesForUsedGear(final String deliveryMode, final boolean payByCustomer);
+
 
     /**
      * This method will fetch shipping cost model for calculated value for variable delivery cost model

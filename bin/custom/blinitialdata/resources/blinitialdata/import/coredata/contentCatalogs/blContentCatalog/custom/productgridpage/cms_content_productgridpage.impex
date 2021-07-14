@@ -48,6 +48,7 @@ INSERT_UPDATE ContentSlot; $contentCV[unique = true]; uid[unique = true]     ; n
                          ;                          ; ProductLeftRefinements ; Refinements                     ; true
                          ;                          ; ProductGridSlot        ; Product List                    ; true
                          ;                          ; PlaceholderContentSlot ; Placeholder for Addon tag files ; true
+                         ;                         ; SocialMediaSectionSlot  ; Social Media Section Slot       ; true
 
 
 
@@ -73,6 +74,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]           ; template(uid, $co
                              ; NavigationPromoSlot           ;                                                                              ;                          ; logo
                              ; NavigationBarSlot             ;                                                                              ;                          ; navigation
                              ; NavigationBarMobileSlot       ;                                                                              ;                          ; navigation
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
 
 
 INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid                                       ; position[unique = true]       ; pageTemplate(uid, $contentCV)[unique = true][default = 'ProductGridPageTemplate']; contentSlot(uid, $contentCV)[unique = true]; allowOverwrite
@@ -101,6 +103,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV               ; uid            
                                     ;                          ; FooterSlot-productGrid                    ; FooterSlot                    ;                                                                                  ; FooterSlot                                 ; true
                                     ;                          ; FooterSubscriptionSlot-productGrid        ; FooterSubscriptionSlot        ;                                                                                  ; FooterSubscriptionSlot                     ; true
                                     ;                          ; FooterCopyRightslot-productGrid           ; FooterCopyRightslot           ;                                                                                  ; FooterCopyRightslot                        ; true
+                                    ;                         ; SocialMediaSectionSlot-productGrid         ; SocialMediaSectionSlot        ;                                                                                  ; SocialMediaSectionSlot                   ; true
 
 
 

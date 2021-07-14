@@ -5,6 +5,8 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib  prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec"	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <c:url value="/cart/add" var="addToCartUrl"/>
  <div class="screen"></div>
@@ -13,7 +15,7 @@
  </cms:pageSlot>
     <section id="theProduct">
         <div class="page-loader-new-layout">
-          <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img">
+          <img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.." title="Loading.." id="new_loading_Img"/>
         </div>
             <div class="container">
                 <div class="row justify-content-center">
@@ -54,6 +56,25 @@
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
                                 </ul>
+                                <c:choose >
+                                 <c:when test="${product.isDiscontinued eq 'true'}">
+                                 <div class="notification notification-error mt-4">
+                                     <c:choose>
+                                            <c:when test="${not empty product.alternativeProduct}">
+                                            ${ycommerce:sanitizeHTML(product.alternativeProduct)}
+                                             </c:when>
+                                            <c:otherwise>
+                                            <spring:theme code="pdp.product.discontinue.text"/>
+                                            </c:otherwise>
+                                     </c:choose>
+                                 </div>
+                                 </c:when>
+                                <c:when test="${product.isUpcoming eq 'true'}">
+                                <div id="pickupDelivery">
+                                  <p><span class="arrival"><spring:theme code="pdp.rental.comming.soon.text"/></span></p>
+                                </div>
+                                </c:when>
+                                <c:otherwise>
                                  <div id="productDates">
                                       <div class="input-group">
                                         <span class="rental-dates d-md-inline"><i class="icon-calendar"></i> <spring:theme code="pdp.rental.dates.label.text" /></span>
@@ -65,44 +86,81 @@
                                  <p>
 	                                 <c:choose>
 	                                 	<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' and not empty nextAvailabilityDate}">
-	                                 		<span class="arrival"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
+	                                 		<span class="arrival  nextAvailDate"><spring:theme code="rental.pdp.next.available" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 	<c:when test="${not empty nextAvailabilityDate }">
-	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span> 
+	                                 		<span class="arrival"><spring:theme code="rental.pdp.get.it.on" arguments="${nextAvailabilityDate}" /></span>
 	                                 	</c:when>
 	                                 </c:choose>
 	                                 <a href="#" class="pickupDeliveryLink"><spring:theme code="pdp.pickup.section.text"/></a>
                                  </p>
                                   </div>
+                                  </c:otherwise>
+                                   </c:choose>
+                                   <c:if test = "{product.isDiscontinued ne 'true'}">
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                   <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span>
                                 </div>
+                                </c:if>
+                                <!--BL-628: Notify Me-->
                                 <c:choose >
+                                 <c:when test="${product.isDiscontinued eq 'true'}">
+                                 </c:when>
                                 <c:when test="${product.isUpcoming eq 'true'}">
-                                <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5" data-bs-toggle="modal"
-                                 data-bs-target="#notifyMeModal"><spring:theme code="text.notify.me" /></a>
+                                <spring:theme code="text.stock.notification.subscribe.title" var="colorBoxTitle" />
+                                <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
+                                   <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-login-popup"   data-link="<c:url value='/login/loginpopup'/>"
+                                      data-bs-toggle="modal"  data-bs-target="#signIn">
+                                      <spring:theme code="text.get.notified" />
+                                   </a>
+                                </sec:authorize>
+                                <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
+                                   <c:choose>
+                                      <c:when test="${isWatching}">
+                                         <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 removeInterestbtn"  data-box-title="${colorBoxTitle}"
+                                            data-box-productcode="${product.code}" data-bs-toggle="modal"
+                                            data-bs-target="#getNotified"><spring:theme code="text.remove.notified.button.text"/></a>
+                                      </c:when>
+                                      <c:otherwise>
+                                         <a href="#" class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 arrival-notification"  data-box-title="${colorBoxTitle}"
+                                               data-box-productcode="${product.code}" data-bs-toggle="modal"
+                                               data-bs-target="#getNotified">
+                                               <spring:theme code="text.get.notified" />
+                                            </a>
+                                         </c:otherwise>
+                                   </c:choose>
+                                </sec:authorize>
                                 </c:when>
                                 <c:otherwise>
                                    <c:choose>
                                   		<c:when test="${product.stock.stockLevelStatus.code eq 'outOfStock' }">
                                   				<button id="addToCartButton" type="submit"
-                                  					  class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn"
+                                  					  class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn "
                                   					  aria-disabled="true" disabled="disabled">
                                   				  <spring:theme code="basket.add.to.rental.cart.button.text" />
                                   				</button>
                                   		</c:when>
                                   		<c:when test="${product.isDiscontinued eq 'true' }">
                                           <button id="addToCartButton" type="submit"
-                                                   class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn"
+                                                   class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart js-disable-btn "
                                                    aria-disabled="true" disabled="disabled">
                                                  <spring:theme code="basket.add.to.rental.cart.button.text" />
                                       		</button>
                                   		</c:when>
                                       <c:otherwise>
-                                        <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
-                                           <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
-                                        </div>
+                                      <c:choose>
+                                        <c:when test="${allowAddToCart || isRentalCart}">
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-lg" id="addToCartModalDialog"></div>
+                                              </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                              <div class="modal fade" id="addToCart" tabindex="-1" aria-hidden="true">
+                                                   <div class="modal-dialog modal-dialog-centered modal-sm" id="addToCartModalDialog"></div>
+                                              </div>
+                                        </c:otherwise>
+                                      </c:choose>
                                         <form class="add_to_cart_form" action="${addToCartUrl}" method="post">
                                           <button type="button"
                                   			    	class="btn btn-primary btn-block mt-4 mb-0 mb-md-5 js-add-to-cart" data-bs-toggle="modal" data-bs-target="#addToCart" data-product-code="${product.code}">
@@ -111,7 +169,6 @@
                                   		  </form>
                                   		</c:otherwise>
                                   </c:choose>
-
                            		</c:otherwise>
                             </c:choose>
                               </div>
@@ -163,7 +220,8 @@
                                   <hr>
                                 <!-- Additional Gear Slider -->
                                  <h5><spring:theme code= "pdp.rental.product.recommendation.section.text" /></h5>
-                                  <div id="gear-slider" class="splide mt-4">
+                                 <!-- BL-605 :added class below -->
+                                  <div id="gear-slider" class="splide mt-4 hide-days">
                                      <cms:pageSlot position="CrossSelling" var="comp" element="div" class="productDetailsPageSectionCrossSelling">
                                          <cms:component component="${comp}" element="div" class="productDetailsPageSectionCrossSelling-component"/>
                                      </cms:pageSlot>
@@ -174,3 +232,4 @@
                         </div>
                     </div>
                 </section>
+

@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
 import com.google.common.base.Splitter;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorservices.data.RequestContextData;
@@ -13,6 +14,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractCategoryPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.util.MetaSanitizerUtil;
+import de.hybris.platform.catalog.model.KeywordModel;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.cms2.model.pages.CategoryPageModel;
 import de.hybris.platform.commercefacades.product.data.CategoryData;
@@ -27,14 +29,14 @@ import de.hybris.platform.util.Config;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -45,8 +47,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 public class AbstractBlCategoryPageController extends AbstractCategoryPageController {
 
+    @Resource(name = "cartFacade")
+    private BlCartFacade blCartFacade;
+
     @ResponseBody
-    @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets", method = RequestMethod.GET)
+    @GetMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/facets")
     public FacetRefinement<SearchStateData> getFacets(@PathVariable("categoryCode") final String categoryCode,
                                                       @RequestParam(value = "q", required = false) final String searchQuery,
                                                       @RequestParam(value = "page", defaultValue = "0") final int page,
@@ -56,7 +61,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     }
 
     @ResponseBody
-    @RequestMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/results", method = RequestMethod.GET)
+    @GetMapping(value = BlControllerConstants.CATEGORY_CODE_PATH_VARIABLE_PATTERN + "/results")
     public SearchResultsData<ProductData> getResults(@PathVariable("categoryCode") final String categoryCode,
                                                      @RequestParam(value = "q", required = false) final String searchQuery,
                                                      @RequestParam(value = "page", defaultValue = "0") final int page,
@@ -84,10 +89,18 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 if(StringUtils.isNotBlank(categoryParam)) {
                     final Map<String, String> categoryCodeMap = Splitter.on(BlCoreConstants.DELIMETER)
                         .withKeyValueSeparator(BlCoreConstants.RATIO).split(categoryParam);
+
                     if(StringUtils.isNotBlank(categoryCodeMap.get(categoryCode))) {
+                        if(BlControllerConstants.AUDIO_CATEGORY.equalsIgnoreCase(categoryCodeMap.get(categoryCode)) ||
+                            BlControllerConstants.LIGHTING_CATEGORY.equalsIgnoreCase(categoryCodeMap.get(categoryCode))) {
+                            searchQuery = String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE))
+                                .append(getConfigParameters(BlCoreConstants.FACTED_USED_GEAR_CATEGORY_NAME))
+                                .append(BlControllerConstants.PRODUCTION_CATEGORY));
+                        }
+                        else {
                         searchQuery = String.valueOf(configParam.append(getConfigParameters(BlCoreConstants.DEFAULT_SORT_CODE))
                             .append(getConfigParameters(BlCoreConstants.FACTED_USED_GEAR_CATEGORY_NAME))
-                            .append(categoryCodeMap.get(categoryCode)));
+                            .append(categoryCodeMap.get(categoryCode)));}
                     }
                 }
         }
@@ -133,6 +146,10 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
     private void addModelAttributeForRentalAndUsedCategory(final CategoryModel category, final Model model) {
         if(category.isRentalCategory()){
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_GEAR);
+            final String currentCartType = blCartFacade.identifyCartType();
+            if(StringUtils.isNotEmpty(currentCartType)){
+                model.addAttribute(currentCartType,true);
+            }
         }
         else {
             model.addAttribute(BlCoreConstants.BL_PAGE_TYPE , BlCoreConstants.USED_GEAR_CODE);
@@ -235,7 +252,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
                 final SearchStateData searchState = new SearchStateData();
                 searchState.setQuery(searchQueryData);
 
-                final PageableData pageableData = createPageableData(page, getSearchPageSize(), sortCode, showMode);
+                final PageableData pageableData = createPageableData(page, getSearchPageSize(), sortCode, showMode); // NOSONAR
                 searchPageData = getProductSearchFacade().categorySearch(categoryCode, searchState, pageableData);
 
             }
@@ -329,7 +346,7 @@ public class AbstractBlCategoryPageController extends AbstractCategoryPageContro
      */
     private void setMetaData(final CategoryModel category , final Model model) {
         final String metaKeywords = MetaSanitizerUtil.sanitizeKeywords(
-            category.getKeywords().stream().map(keywordModel -> keywordModel.getKeyword()).collect(
+            category.getKeywords().stream().map(KeywordModel::getKeyword).collect(
                 Collectors.toSet()));
         final String metaDescription = MetaSanitizerUtil.sanitizeDescription(category.getDescription());
         setUpMetaData(model, metaKeywords, metaDescription);

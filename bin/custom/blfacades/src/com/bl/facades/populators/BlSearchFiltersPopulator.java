@@ -13,6 +13,8 @@ import de.hybris.platform.commerceservices.search.solrfacetsearch.data.SolrSearc
 import de.hybris.platform.commerceservices.search.solrfacetsearch.populators.SearchFiltersPopulator;
 import de.hybris.platform.solrfacetsearch.config.IndexedProperty;
 import de.hybris.platform.solrfacetsearch.config.IndexedType;
+import de.hybris.platform.solrfacetsearch.config.IndexedTypeSort;
+import de.hybris.platform.solrfacetsearch.config.IndexedTypeSortField;
 import de.hybris.platform.solrfacetsearch.search.SearchQuery;
 import de.hybris.platform.util.Config;
 import java.util.ArrayList;
@@ -140,6 +142,7 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
       addSaleAndRentQuery(target);
     } else {
       addQueryForCategory(target,BlCoreConstants.FOR_RENT,BlCoreConstants.TRUE);
+      addQueryForCategory(target,BlCoreConstants.IS_DISCONTINUED,BlCoreConstants.FALSE);
       addSaleAndRentQuery(target);
     }
   }
@@ -208,6 +211,27 @@ public class BlSearchFiltersPopulator<FACET_SEARCH_CONFIG_TYPE, INDEXED_TYPE_SOR
    */
   private void addQueryForCategory(final SolrSearchRequest<FACET_SEARCH_CONFIG_TYPE, IndexedType, IndexedProperty, SearchQuery, INDEXED_TYPE_SORT_TYPE> target ,final String key , final String value) {
     target.getSearchQuery().addFilterQuery(key,value);
+    // Added for Rental Gear and Used Gear sorting field
+          String sortName = BlCoreConstants.EMPTY_STRING;
+          if(null != target.getPageableData() && null != target.getPageableData().getSort()) {
+           sortName = target.getPageableData().getSort();
+          }
+          else if(null != target.getSearchQueryData() && null != target.getSearchQueryData().getSort()) {
+             sortName = target.getSearchQueryData().getSort();
+          }
+
+        for (final IndexedTypeSort indexedTypeSorts : target.getSearchQuery().getIndexedType().getSorts()) {
+          if(indexedTypeSorts.getCode().equalsIgnoreCase(sortName) && (BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName)
+          ||  BlCoreConstants.PRICE_DESC.equalsIgnoreCase(sortName))){
+            indexedTypeSorts.getFields().clear();
+            final List<IndexedTypeSortField> fields = new ArrayList<>();
+            final IndexedTypeSortField indexedTypeSortField = new IndexedTypeSortField();
+            indexedTypeSortField.setFieldName(BlCoreConstants.FOR_SALE.equalsIgnoreCase(key) ? BlCoreConstants.MIN_SERIAL_PRICE : BlCoreConstants.PRICE_VALUE);
+            indexedTypeSortField.setAscending(BlCoreConstants.PRICE_ASC.equalsIgnoreCase(sortName));
+            fields.add(indexedTypeSortField);
+            indexedTypeSorts.setFields(fields);
+          }
+        }
   }
 
 

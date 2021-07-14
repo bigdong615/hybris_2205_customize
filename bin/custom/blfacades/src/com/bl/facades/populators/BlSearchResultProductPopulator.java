@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +46,7 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.logging.BlLogger;
 
+
 /**
  * This class is completly overriden for adding custom logics on populator
  * @author Manikandan
@@ -53,7 +55,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
 	private static final Logger LOG = Logger.getLogger(BlSearchResultProductPopulator.class);
 
-
+  private StockNotificationFacade stockNotificationFacade;
   private ImageFormatMapping imageFormatMapping;
   private PriceDataFactory priceDataFactory;
   private UrlResolver<ProductData> productDataUrlResolver;
@@ -63,6 +65,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
   private BlCommercePriceService commercePriceService;
+  private BlWishlistOptionsPopulator blWishlistOptionsPopulator;
 
   /**
    * this method is created for populating values from source to target
@@ -91,6 +94,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       setUpcomingAttributeValue(source, target, BlCoreConstants.UPCOMING);
       populatePrices(source, target);
       populateStock(target);
+      populateBookMarks(target);
     }else {
       // Populates Serial Product Price Data
       populateSerialProductPrices(source, target);
@@ -110,6 +114,20 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 
     populateUrl(source, target);
     populatePromotions(source, target);
+    target.setIsWatching(getStockNotificationFacade().isWatchingProduct(target));
+  }
+
+  /**
+   * To Populate the Product data for bookmark
+   * @param target
+   */
+  private void populateBookMarks(ProductData target) {
+    final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+    if (blProductModel != null)
+    {
+      getBlWishlistOptionsPopulator().populate(blProductModel,target);
+    }
+
   }
 
   protected void populatePrices(final SearchResultValueData source, final ProductData target)
@@ -470,4 +488,20 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
 	this.commercePriceService = commercePriceService;
 }
 
+  public StockNotificationFacade getStockNotificationFacade() {
+    return stockNotificationFacade;
+  }
+
+  public void setStockNotificationFacade(StockNotificationFacade stockNotificationFacade) {
+    this.stockNotificationFacade = stockNotificationFacade;
+  }
+
+  public BlWishlistOptionsPopulator getBlWishlistOptionsPopulator() {
+    return blWishlistOptionsPopulator;
+  }
+
+  public void setBlWishlistOptionsPopulator(
+      BlWishlistOptionsPopulator blWishlistOptionsPopulator) {
+    this.blWishlistOptionsPopulator = blWishlistOptionsPopulator;
+  }
 }
