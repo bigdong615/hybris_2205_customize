@@ -204,7 +204,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
-    if (StringUtils.isEmpty(getCheckoutFlowFacade().getCheckoutCart().getPoNumber()) && CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    if (paymentInfo != null && CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
     {
       try
       {
@@ -228,7 +228,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		try
 		{
 			LOG.error("getCheckoutFacade: " + getCheckoutFacade());
-			if(StringUtils.isEmpty(getCheckoutFacade().getCheckoutCart().getPoNumber())) {
+			if(paymentInfo != null) {
 				brainTreeCheckoutFacade.storeIntentToCart();
 				brainTreeCheckoutFacade
 						.storeCustomFieldsToCart(getMergedCustomFields(placeOrderForm.getCustomFields()));
