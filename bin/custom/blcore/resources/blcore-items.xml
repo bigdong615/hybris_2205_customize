@@ -126,6 +126,13 @@
         </enumtype>
         <!-- BL-542 End-->
 
+      <enumtype generate="true" code="OrderTypeEnum" autocreate="true" dynamic="true">
+        <value code="VIP"/>
+        <value code="FD"/>
+        <value code="SHIPPING"/>
+        <value code="USED_GEAR"/>
+      </enumtype>
+
       <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
         <value code="LATE_NOTES"/>
         <value code="ORDER_CONTACT_NOTES"/>
@@ -137,6 +144,12 @@
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
         <value code="VERIFICATION_NOTES"/>
         <value code="EXCEPTION_NOTES"/>
+      </enumtype>
+      
+      <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
+      
+      <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
+      	<value code="OTHERS"/>
       </enumtype>
         
     </enumtypes>
@@ -220,6 +233,13 @@
           <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
             collectiontype="list"/>
         </relation>
+
+        <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
+          <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
+          <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+            collectiontype="list"/>
+        </relation>
+
       <!-- Gift card Start-->
       <relation code="GiftCard2Movement" generate="true" localized="false"
         autocreate="true">
@@ -889,8 +909,8 @@
                          <description>This is the price the customer paid when the item is sold on a used gear order</description>
                      </attribute>
                    <attribute qualifier="conditionRatingOverallScore" type="java.lang.Double">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
+                         <persistence type="dynamic" attributeHandler="blConditionRatingOverallScoreHandler"/>
+                         <modifiers read="true" write="false" optional="true"/>
                          <description>T</description>
                      </attribute>
                    <attribute qualifier="incentivizedPrice" type="java.math.BigDecimal">
@@ -1025,16 +1045,39 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
-                     <attribute qualifier="cosmeticRating" type="float">
+                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store cosmetic rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
-                     <attribute qualifier="functionalRating" type="float">
+                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store functional rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
+                     <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
+                         <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
+                         <modifiers read="true" write="false" optional="true" />
+                         <description>The version the SKU's firmware is currently at</description>
+                     </attribute>
+                     <attribute qualifier="gearRated" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                        <description>To determine if the Gear is Rated by Tech. Eng. Member</description>
+                    </attribute>
                  </attributes>
              </itemtype>
 
@@ -1194,6 +1237,11 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Parent Inventory Location for serial product</description>
+                    </attribute>
+                    <attribute qualifier="locationCategory" type="BlInventoryLocationCategoryEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>BL Inventory location category</description>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -1783,6 +1831,11 @@
                       <persistence type="property" />
                       <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                     </attribute>
+                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                      <description>Attribute to identify the type of order.</description>
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+                    </attribute>
                     <attribute qualifier="isAuthorised" type="java.lang.Boolean">
                       <persistence type="property" />
                       <modifiers optional="true" read="true" write="true" />
@@ -1800,6 +1853,36 @@
                       <modifiers optional="true" read="true" write="true" />
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the auth amount used to verify the card has been voided or not</description>
+                    </attribute>
+                    <attribute qualifier="poNumber" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
+                      <modifiers read="true" write="true" optional="true" />
+                      <description>PO number used as payment method</description>
+                    </attribute>
+                    <attribute qualifier="poNotes" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
+                      <modifiers read="true" write="true" optional="true" />
+                      <description>PO Notes</description>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -1933,6 +2016,12 @@
                 <persistence type="property" />
                 <description>It holds information about customer default billing address</description>
             </attribute>
+            <attribute autocreate="true" qualifier="poEnabled" type="boolean">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Boolean.FALSE</defaultvalue>
+                <description>It enables/disables PO payment option for a customer</description>
+            </attribute>
             </attributes>
             </itemtype>
         </typegroup>
@@ -1999,6 +2088,10 @@
 						</columntype>
 					</persistence>	
 				</attribute>
+				 <attribute type="serialProducts" qualifier="serialProducts">
+				<modifiers read="true" write="true"/>
+				<persistence type="property"/>
+			  </attribute>												  
 				</attributes>
 			</itemtype>
 		</typegroup>
@@ -2026,6 +2119,13 @@
                         <description>Shipping method optimization type</description>
                         <modifiers read="true" write="true"/>
                         <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                      <description>Created dynamic attribute on consignment to display order type
+                        value in Order fulfillment and CS cockpits.
+                      </description>
+                      <modifiers write="false"/>
+                      <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -2105,7 +2205,7 @@
           <attributes>
             <attribute qualifier="note" type="localized:java.lang.String">
               <description>note that can be provided by different teams</description>
-              <modifiers read="true" write="true" search="true" optional="true"/>
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
               <persistence type="property">
                 <columntype database="oracle">
                   <value>CLOB</value>
@@ -2141,6 +2241,41 @@
             </attribute>
           </attributes>
         </itemtype>
+        <itemtype code="BoxSizes" generate="true" autocreate="true">
+				<deployment table="boxsizes" typecode="12230"/>
+			<attributes>
+				<attribute type="java.lang.String" qualifier="length">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="width">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="height">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="dimensionUnit">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+					<attribute type="java.lang.String" qualifier="weight">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+				<attribute type="java.lang.String" qualifier="weightUnit">
+					<modifiers read="true" write="true"
+						optional="false" />
+						<persistence type="property"/>
+				</attribute>
+			</attributes>
+		</itemtype>
       </typegroup>
       
 	</itemtypes>

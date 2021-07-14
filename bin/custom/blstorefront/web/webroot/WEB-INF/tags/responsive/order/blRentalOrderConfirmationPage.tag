@@ -17,7 +17,7 @@
 					</h1>
 					<h5 class="mb-5">
 						<spring:theme code="order.confirmation.page.order.number"
-							arguments="${orderCode}" />
+							arguments="${orderCode}" /><br/>
 						(${orderData.rentalDates.selectedFromDate} - ${orderData.rentalDates.selectedToDate})
 					</h5>
 					<c:if test="${not empty orderData.giftCardData}">

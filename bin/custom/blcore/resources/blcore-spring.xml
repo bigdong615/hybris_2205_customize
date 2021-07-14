@@ -942,5 +942,24 @@
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
-</beans>
+	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
+	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
+        <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
+    </bean>
 
+	<!-- [BL-753]: Dynamic attribute handler for attribute orderType in Type Consignment -->
+	<bean id="consignmentOrderTypeHandler" class="com.bl.core.attributes.ConsignmentOrderTypeHandler" />
+
+	<!--BL-795 Adding attribute handler class for dynamic attribute skuFirmwareVersion-->
+	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
+	
+	<alias alias="productService" name="defaultBlProductService"/>
+	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
+	
+	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
+	<bean id="blConditionRatingOverallScoreHandler" class="com.bl.core.model.handler.BlConditionRatingOverallScoreHandler">
+		<property name="blPricingService" ref="blPricingService"/>
+		<property name="blProductService" ref="productService"/>
+	</bean>
+	
+</beans>

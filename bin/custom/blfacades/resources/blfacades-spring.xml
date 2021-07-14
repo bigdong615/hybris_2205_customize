@@ -272,6 +272,7 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="blProductService" ref="productService"/>
 	</bean>
 	
 	<!-- BL-166:This bean is override to configure bl related populator-->
@@ -590,4 +591,9 @@
 		class="com.bl.facades.populators.BlWishlistEntryPopulator">
 		<property name="productFacade" ref="productFacade"/>
 	</bean>
+	<alias name="blWarehousingConsignmentFacade" alias="warehousingConsignmentFacade"/>
+	<bean id="blWarehousingConsignmentFacade" parent="defaultWarehousingConsignmentFacade"
+	      class="com.bl.facades.warehouse.impl.BLWarehousingConsignmentFacadeImpl">
+	        <property name="boxDimensionService" ref="boxDimensionService"/>
+	      </bean>																				  
 </beans>

@@ -3,6 +3,7 @@
  */
 package com.braintree.controllers.pages;
 
+import com.bl.facades.cart.BlCartFacade;
 import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.constants.BraintreeConstants;
 import com.bl.logging.BlLogger;
@@ -88,6 +89,9 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	@Resource
 	private CartService cartService;
+
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -212,6 +216,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
 		  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
+		blCartFacade.removePoNumber();
 		return REDIRECT_PREFIX + "/checkout/multi/summary/braintree/view";
 
 	}

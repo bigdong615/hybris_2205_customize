@@ -1106,16 +1106,88 @@
 
 
 <!--To calculate the total without tax -->
-  <context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
-      <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" name="Order editor area">
-      <ea:tab name="customersupportbackoffice.order.tab.details">
-        <ea:section name="customersupportbackoffice.section.order.general.totals" columns="3">
-          <editorArea:customPanel name="customersupportbackoffice.order.details.total" spring-bean="blTotalPriceWithTaxRenderer"/>
-        </ea:section>
-      </ea:tab>
-      </editorArea:editorArea>
-  </context>
+	<context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+			name="Order editor area">
+			<ea:tab name="customersupportbackoffice.order.tab.details">
+				<ea:section name="customersupportbackoffice.section.order.general.totals" columns="3">
+					<editorArea:customPanel name="customersupportbackoffice.order.details.total"
+						spring-bean="blTotalPriceWithTaxRenderer"/>
+				</ea:section>
+				<editorArea:section name="customersupportbackoffice.section.order.general.information"
+					columns="3">
+					<editorArea:attribute editor="com.hybris.cockpitng.editor.defaultmultireferenceeditor"
+						qualifier="orderNotes" readonly="false">
+						<editorArea:editor-parameter>
+							<editorArea:name>listConfigContext</editorArea:name>
+							<editorArea:value>referenceListViewNotes</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx
+							</editorArea:name>
+							<editorArea:value>cs-editor-area</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
+							<editorArea:value>false</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="orderType" readonly="false" />
+				</editorArea:section>
+			</ea:tab>
+		</editorArea:editorArea>
+	</context>
 
+	<context merge-by="type" parent="GenericItem" type="Consignment"
+		component="warehousingbackoffice-editor-area" module="blbackoffice">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="warehousingbackoffice.tab.consignmententries">
+				<editorArea:section name="warehousingbackoffice.section.general.dashboard" columns="3">
+					<editorArea:attribute editor="com.hybris.cockpitng.editor.defaultmultireferenceeditor"
+						qualifier="orderNotes" readonly="false">
+						<editorArea:editor-parameter>
+							<editorArea:name>listConfigContext</editorArea:name>
+							<editorArea:value>referenceListViewNotes</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>referenceSelected/editorArea/editorAreaConfigCtx
+							</editorArea:name>
+							<editorArea:value>warehousingbackoffice-editor-area</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
+							<editorArea:value>false</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+					<editorArea:attribute qualifier="orderType"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context merge-by="type" parent="GenericItem" type="Notes" component="referenceListViewNotes" module="blbackoffice">
+		<list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<list-view:column label="Type" qualifier="type"/>
+			<list-view:column label="UserID" qualifier="userID"/>
+			<list-view:column label="Fraud" qualifier="fraud"/>
+			<list-view:column label="Note" qualifier="note"/>
+		</list-view:list-view>
+	</context>
+
+	<context type="Notes" component="base" module="blbackoffice">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>type+ ' - ' +userID</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
+	<context merge-by="type" parent="GenericItem" type="Notes" component="simple-search" module="blbackoffice">
+		<simple-search:simple-search xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<simple-search:field name="type"/>
+			<simple-search:field name="userID"/>
+		</simple-search:simple-search>
+	</context>
 
 	<context type="Consignment" component="warehousingbackoffice-refine-by" merge-by="module">
 		<rb:refine-by xmlns:rb="http://www.hybris.com/warehousingbackoffice/config/warehousingrefineby">

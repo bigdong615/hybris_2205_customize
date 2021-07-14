@@ -31,6 +31,8 @@
 <c:if test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
 <c:set var="hideUseShipping" value="hideUseShipping"/>
 </c:if>
+<c:url value="/checkout/multi/payment-method/reviewSavePoPayment" var="reviewSavePoPaymentAction" />
+
 <spring:eval
 	expression="@configurationService.configuration.getProperty('braintree.store.in.vault')"
 	var="storeInVault" />
@@ -52,10 +54,12 @@
 						<div id="order" class="col-lg-7">
 							<h1>Payment</h1>
 							<hr>
-							<p><b>Dates</b>&emsp;<input type="text"
+							<c:if test="${cartData.isRentalCart}">
+							  <p><b>Dates</b>&emsp;<input type="text"
 									class="form-control cart-picker" id="litepicker"
 									placeholder="<spring:theme code="text.rental.cart.select.date"/>">
-							</p>
+							  </p>
+							</c:if>
 							<p class="overline">Pay With</p>
 							<div class="accordion" id="paymentOptions">
 								<div class="accordion-item payProduct">
@@ -322,6 +326,46 @@
 										</div>
 									</div>
 								</div>
+								<!--BL-623 PO section -->
+                <c:if test="${cartData.isPOEnabled}">
+                	<div class="accordion-item payProduct">
+                	  <c:if test="${not empty selectedPoNumber}">
+                    		<input type="hidden" id="isPOPresent" name="isPOPresent" value="true"/>
+                    </c:if>
+                	  <div class="row">
+                			<div class="col-1 text-center">
+                			  <c:choose>
+                        	<c:when test="${disablePayment}">
+                        			<button class="btn-checkbox paymentDisabled" type="button" disabled></button>
+                        	</c:when>
+                        	<c:otherwise>
+                				    <button class="btn-checkbox" type="button" data-bs-toggle="collapse"
+                					    data-bs-target="#po-expand" aria-controls="po-expand"
+                					    aria-expanded="false">
+                					    <input type="radio" class="paypalselection" id="paymentMethodPo" name="paymentMethodSelection" value="bt"><label
+                						  for="paymentMethodPo"></label>
+                				    </button>
+                				  </c:otherwise>
+                        </c:choose>
+                			</div>
+                			<div class="col-11">
+                				<b><spring:theme code="text.payment.page.po" /></b>
+                				<div class="collapse" id="po-expand"
+                					data-bs-parent="#paymentOptions">
+                				<form:form name="submitSavedPoForm" method="POST" id="submitSavedPoForm" action="${reviewSavePoPaymentAction}">
+                					<input type="text" class="form-control po-number" name="poNumber" id="poNumber" min="1" max="30" maxlength="30" value="${selectedPoNumber}"
+                						placeholder="<spring:theme code="text.payment.page.po.number.placeholder"/>">
+                					<input type="text" class="form-control po-number" name="poNotes" id="poNotes" min="1" max="1000" maxlength="1000" value="${selectedPoNotes}"
+                						placeholder="<spring:theme code="text.payment.page.po.notes.placeholder"/>">
+                					<input type="hidden" id="selectedPoNumber" name="selectedPoNumber" value=""/>
+                          <input type="hidden" id="selectedPoNotes" name="selectedPoNotes" value=""/>
+                          <input type="hidden" id="poSelected" name="poSelected" value=""/>
+                				</form:form>
+                				</div>
+                			</div>
+                		</div>
+                	</div>
+                </c:if>
 							</div>
 							<%-- Error message secion --%>
 							<cart:blGiftCard cartData="${cartData}"/>
