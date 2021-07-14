@@ -130,4 +130,16 @@ public interface BlCartFacade extends CartFacade {
 	 * @param removedEntry
 	 */
 	public List<Integer> getDiscontinueEntryList(final CartModel cartModel, StringBuilder removedEntry); // NOSONAR
+
+	/**
+	 * This method saves PO payment details.
+	 * @param poNumber
+	 * @param poNotes
+	 */
+	void savePoPaymentDetails(final String poNumber, final String poNotes);
+
+	/**
+	 * If credit card or paypal payment method selected then remove po number from cartModel.
+	 */
+	void removePoNumber();
 }

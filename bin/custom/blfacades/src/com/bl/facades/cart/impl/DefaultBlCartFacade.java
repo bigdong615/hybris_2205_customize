@@ -1,6 +1,7 @@
 package com.bl.facades.cart.impl;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
@@ -22,6 +23,7 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
@@ -29,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,7 +42,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
-import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -510,6 +510,32 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 			}
 		});
 		return entryList;
+	}
+
+	/**
+	 *{@inheritDoc}
+	 */
+	@Override
+	public void savePoPaymentDetails(final String poNumber, final String poNotes) {
+    blCartService.savePoPaymentDetails(poNumber,poNotes);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removePoNumber() {
+		CartModel cartModel = blCartService.getSessionCart();
+		if (cartModel != null) {
+			try {
+				cartModel.setPoNumber(null);
+				getModelService().save(cartModel);
+				getModelService().refresh(cartModel);
+			} catch (final ModelSavingException exception) {
+				BlLogger
+						.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
+			}
+		}
 	}
 
 	@Override
