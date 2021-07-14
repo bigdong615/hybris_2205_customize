@@ -1987,7 +1987,7 @@
                 <persistence type="property" />
                 <description>It holds information about customer default billing address</description>
             </attribute>
-            <attribute autocreate="true" qualifier="isPOEnabled" type="boolean">
+            <attribute autocreate="true" qualifier="poEnabled" type="boolean">
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <defaultvalue>Boolean.FALSE</defaultvalue>
