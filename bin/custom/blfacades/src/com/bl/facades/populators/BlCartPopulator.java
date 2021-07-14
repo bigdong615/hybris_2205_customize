@@ -11,6 +11,7 @@ import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -45,6 +46,12 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
 		target.setIsRentalCart(source.getIsRentalCart());
+		target.setPoNumber(source.getPoNumber());
+		target.setPoNotes(source.getPoNotes());
+		if(source.getUser() instanceof CustomerModel){
+			final CustomerModel customerModel = (CustomerModel)source.getUser();
+			target.setIsPOEnabled(customerModel.isPoEnabled());
+		}
 
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)

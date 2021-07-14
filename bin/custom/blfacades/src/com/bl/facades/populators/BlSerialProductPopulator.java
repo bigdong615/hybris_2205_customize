@@ -19,6 +19,7 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.product.data.SerialProductData;
 
@@ -35,6 +36,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	private PriceDataFactory priceDataFactory;
 	private CommonI18NService commonI18NService;
 	private BlCommerceStockService blCommerceStockService;
+	private BlProductService blProductService; 
 
 	@Override
 	public void populate(final BlProductModel source, final ProductData target)
@@ -59,9 +61,17 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 				.emptyIfNull(source.getSerialProducts());
 		blSerialProductModels.forEach(serialProductModel -> {
 			final SerialProductData serialProductData = new SerialProductData();
+			if(getBlProductService().isFunctionalAndCosmeticIsAvailable(serialProductModel))
+			{
+				serialProductData.setCosmeticRating(Float.parseFloat(serialProductModel.getCosmeticRating().getCode()));
+				serialProductData.setFunctionalRating(Float.parseFloat(serialProductModel.getFunctionalRating().getCode()));
+			}
+			else
+			{
+				serialProductData.setCosmeticRating(0.0f);
+				serialProductData.setFunctionalRating(0.0f);
+			}
 			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
-			serialProductData.setCosmeticRating(serialProductModel.getCosmeticRating());
-			serialProductData.setFunctionalRating(serialProductModel.getFunctionalRating());
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
 			{
@@ -171,6 +181,22 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	public void setBlCommerceStockService(final BlCommerceStockService blCommerceStockService)
 	{
 		this.blCommerceStockService = blCommerceStockService;
+	}
+
+	/**
+	 * @return the blProductService
+	 */
+	public BlProductService getBlProductService()
+	{
+		return blProductService;
+	}
+
+	/**
+	 * @param blProductService the blProductService to set
+	 */
+	public void setBlProductService(BlProductService blProductService)
+	{
+		this.blProductService = blProductService;
 	}
 
 
