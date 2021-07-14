@@ -970,8 +970,12 @@
 	</bean>
 
 <!--Coupon for rental extend order -->
-	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService">
+	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService" parent="defaultCouponService">
+
 	</bean>
 
+
+	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
+	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
 
 </beans>

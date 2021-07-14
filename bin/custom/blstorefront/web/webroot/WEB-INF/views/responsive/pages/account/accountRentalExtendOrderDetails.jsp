@@ -195,6 +195,13 @@
 						<spring:theme code="text.myaccount.extend.order.extension.taxes" /> </td>
 					<td class="text-end"><format:price priceData="${orderData.totalTaxForExtendRental}"/></td>
 				</tr>
+				<c:if test="${orderData.totalDiscounts.value > 0}">
+        				<tr>
+                	<td class="discount">
+                	<spring:theme code="Discount" /> </td>
+                <td class="text-end"><format:price priceData="${orderData.totalDiscounts}"/></td>
+                	</tr>
+        </c:if>
 				<tr class="total">
 					<td>
 						<spring:theme code="text.account.order.total"/> </td>

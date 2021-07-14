@@ -657,7 +657,7 @@
 	<!--Added for extend order promotion -->
 
 	<bean id="defaultBlCouponFacade" class="com.bl.facades.coupon.impl.DefaultBlCouponFacade">
-		<property name="couponService" ref="couponService"/>
+		<property name="defaultBlCouponService" ref="defaultBlCouponService"/>
 	</bean>
 
 </beans>
