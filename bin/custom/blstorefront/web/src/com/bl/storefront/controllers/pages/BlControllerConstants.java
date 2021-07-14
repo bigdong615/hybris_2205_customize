@@ -129,6 +129,8 @@ public class BlControllerConstants
 	public static final String BRAINTREE_GENERAL_ERROR_KEY = "braintree.billing.general.error";
 	public static final String CART_PAGE = "cartPage";
 	public static final String FROM_PAGE = "fromPage";
+	public static final String USER_SELECTED_PO_NUMBER = "selectedPoNumber";
+	public static final String USER_SELECTED_PO_NOTES = "selectedPoNotes";
 	private BlControllerConstants()
 	{
 		//empty
