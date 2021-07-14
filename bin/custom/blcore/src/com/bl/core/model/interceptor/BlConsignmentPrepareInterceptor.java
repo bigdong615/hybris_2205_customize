@@ -58,7 +58,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       final InterceptorContext interceptorContext) {
 
     orderNotesFromConsignment.forEach(orderNote -> {
-      List<ConsignmentModel> orderNoteConsignments = new ArrayList<>(orderNote.getConsignment());
+      final List<ConsignmentModel> orderNoteConsignments = new ArrayList<>(orderNote.getConsignment());
       orderNoteConsignments.addAll(otherConsignmentModels);
       orderNote.setConsignment(orderNoteConsignments);
       orderNote.setOrder(abstractOrderModel);
