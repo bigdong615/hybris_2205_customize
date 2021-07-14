@@ -745,22 +745,18 @@
     }
 }
 .ASM_close {
-   float: right;
-       font-size: 45px;
-       font-weight: 200;
-       margin: 0 !important;
-       color: #1473DF;
-       cursor: pointer !important;
-       background: transparent;
-       border-bottom: none !important;
-       height: 37px !important;
-       line-height: 16px;
-       border: 1px solid #39495e !important;
-       text-align: center;
-       width: 44px;
-       padding: 0;
-       position: absolute;
-       right: 0;
+    float: right;
+    font-size: 45px;
+    font-weight: 200;
+    line-height: 50px;
+    color: #1473DF;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+    padding-left: 20px;
+    border-left: 1px solid #39495e;
+    padding-bottom: 8px;
 }
 .ASM_close:hover,
 .ASM_close:focus {
@@ -1249,8 +1245,6 @@
 }
 #_asm .ASM_input_holder.input-group {
     display: table;
-    padding:0;
-    background:none;
 }
 #_asm .ASM_input_holder label {
     font-family: "Dosis", Helvetica, Arial, sans-serif;
@@ -1282,15 +1276,13 @@
     line-height: 37px;
 }
 #_asm .ASM-input {
-   height: 44px;
-       padding: 6px 10px;
-       font-size: 19px;
-       line-height: 20px;
-       border-radius: 0;
-       border: 0;
-       background: #fff;
-       width: 92%;
-       float: left;
+    height: 40px;
+    padding: 6px 10px;
+    font-size: 19px;
+    line-height: 20px;
+    border-radius: 0;
+    border: 0;
+    width: 100%;
 }
 #_asm .ASM-input[disabled], #_asm .ASM-input.disabled, #_asm .ASM-input[readonly], #_asm .ASM-input[readonly]:focus {
     background-color: #b4bac2;
@@ -1335,19 +1327,19 @@ select[multiple]#_asm .ASM-input {
 }
 #_asm .ASM_header .first-top-row {
     border-bottom: 1px solid #39495e;
-        margin: 0 0 16px 0;
-        padding: 12px 0 27px 0;
+    margin: 0 -4em 10px -4em;
+    padding: 0 4em;
 }
 #_asm .ASM_header .first-top-row .element-separator-height{
-    height: 10px;
-    padding-top: 5px;
+    height: 60px;
+    padding-top: 10px;
 }
 #_asm .ASM_header .ASM_logo {
     font-family: "Dosis", Helvetica, Arial, sans-serif;
     float: left;
     font-size: 25px;
     font-weight: 300;
-    line-height: 0px;
+    line-height: 30px;
     color: #fff;
     margin-top: 10px;
 }
@@ -2348,7 +2340,7 @@ button.ASM_close  {
 }
 
 #_asm span.input-group-addon {
-    padding: 13px 12px;
+    padding: 6px 12px;
     font-size: 14px;
     font-weight: normal;
     line-height: 1;
@@ -2719,15 +2711,4 @@ button.ASM_close  {
 #_asm.asm-collapsed .ASM_header
 {
     display: none;
-}
-.ASM_login .input-group {
-    background-color: white;
-    padding:0;
-    border-radius: 0;
-}
-.ASM_login .input-group input:focus {
-    border: none;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    height: 43px !important;
 }
