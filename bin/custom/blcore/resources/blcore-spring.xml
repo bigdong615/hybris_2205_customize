@@ -921,6 +921,7 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
+	<!-- BL-753:This interceptor is added to update consignment in order notes -->
 	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
 	<bean id="blOrderPrepareInterceptor"
 		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor"/>
@@ -931,6 +932,7 @@
 		<property name="typeCode" value="AbstractOrder"/>
 	</bean>
 
+	<!-- BL-753:This interceptor is added to update order and other consignment in order notes. -->
 	<alias name="blConsignmentPrepareInterceptor" alias="blConsignmentPrepareInterceptor"/>
 	<bean id="blConsignmentPrepareInterceptor"
 		class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor"/>

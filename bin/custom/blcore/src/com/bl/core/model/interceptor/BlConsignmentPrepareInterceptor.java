@@ -30,10 +30,10 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 
     final AbstractOrderModel abstractOrderModel = consignmentModel.getOrder();
 
-    Set<ConsignmentModel> otherConsignmentModels = new HashSet<>(abstractOrderModel.getConsignments());
+    final Set<ConsignmentModel> otherConsignmentModels = new HashSet<>(abstractOrderModel.getConsignments());
     otherConsignmentModels.remove(consignmentModel);
 
-    List<NotesModel> orderNotesFromConsignment = consignmentModel.getOrderNotes();
+    final List<NotesModel> orderNotesFromConsignment = consignmentModel.getOrderNotes();
 
     if (interceptorContext.isModified(consignmentModel, ConsignmentModel.ORDERNOTES)
         && CollectionUtils.isNotEmpty(orderNotesFromConsignment)) {
@@ -44,9 +44,18 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
 
   }
 
+  /**
+   * Update consignment and order in order notes.
+   *
+   * @param abstractOrderModel - the order model
+   * @param otherConsignmentModels      - list of other consignments
+   * @param orderNotesFromConsignment - order notes
+   * @param interceptorContext      - interceptorContext
+   */
   private void setOrderAndOtherConsignmentsInNotes(final AbstractOrderModel abstractOrderModel,
       final Set<ConsignmentModel> otherConsignmentModels,
-      List<NotesModel> orderNotesFromConsignment, final InterceptorContext interceptorContext) {
+      final List<NotesModel> orderNotesFromConsignment,
+      final InterceptorContext interceptorContext) {
 
     orderNotesFromConsignment.forEach(orderNote -> {
       List<ConsignmentModel> orderNoteConsignments = new ArrayList<>(orderNote.getConsignment());

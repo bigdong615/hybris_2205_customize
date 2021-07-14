@@ -9,6 +9,7 @@ import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
@@ -38,12 +39,19 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
 
   }
 
+  /**
+   * Update consignment in order notes.
+   *
+   * @param abstractOrderModel - the order model
+   * @param consignmentModels      - list of consignments
+   * @param interceptorContext      - interceptorContext
+   */
   private void setConsignmentsInNotes(final AbstractOrderModel abstractOrderModel,
       final Set<ConsignmentModel> consignmentModels, final InterceptorContext interceptorContext) {
 
-    List<NotesModel> orderNotesFromOrder = abstractOrderModel.getOrderNotes();
+    final List<NotesModel> orderNotesFromOrder = abstractOrderModel.getOrderNotes();
     orderNotesFromOrder.forEach(orderNote -> {
-      List<ConsignmentModel> orderNoteConsignments = new ArrayList<>(orderNote.getConsignment());
+      final Set<ConsignmentModel> orderNoteConsignments = new HashSet<>(orderNote.getConsignment());
       orderNoteConsignments.addAll(consignmentModels);
       orderNote.setConsignment(orderNoteConsignments);
     });
