@@ -48,9 +48,9 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		target.setIsRentalCart(source.getIsRentalCart());
 		target.setPoNumber(source.getPoNumber());
 		target.setPoNotes(source.getPoNotes());
-		if(source.getUser() != null){
+		if(source.getUser() instanceof CustomerModel){
 			final CustomerModel customerModel = (CustomerModel)source.getUser();
-			target.setIsPOEnabled(customerModel.getIsPOEnabled());
+			target.setIsPOEnabled(customerModel.isPoEnabled());
 		}
 
 		final PriceDataType priceType = PriceDataType.BUY;
