@@ -310,6 +310,7 @@ font-size: 21px;
     left: inherit !important;
     right:inherit !important;
   }
+  #featuredPromo span{left:24px !important;bottom:9% !important;}  
 }
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
@@ -444,3 +445,6 @@ font-size: 21px;
 .billingAddressForm input[type="checkbox"]{
   margin-left:-10px;
 }
+#featuredPromo .col-12{position: relative;}
+#featuredPromo span{position: absolute;left: 97px;color: #000;bottom: 30%; font-size: 16px;}
+#featuredPromo span b{color: #fff;font-weight:100;}

@@ -9,7 +9,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                   <a href="#"><img class="promoImg" src="${media.url}"></a>
+                   <a href="#"><img class="promoImg" src="https://cdn.static-bl.com/images/homepage/safety-cleanliness-rentals-borrowlenses.jpg">
+                <span>See our checklist of top 10 rental accessories. <b> View list ></b> </span>
+                </a>
+                   
                 </div>
             </div>
         </div>    
