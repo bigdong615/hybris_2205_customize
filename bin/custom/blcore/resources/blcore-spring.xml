@@ -921,6 +921,28 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
+	<!-- BL-753:This interceptor is added to update consignment in order notes -->
+	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
+	<bean id="blOrderPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor"/>
+
+	<bean id="blOrderPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blOrderPrepareInterceptor"/>
+		<property name="typeCode" value="AbstractOrder"/>
+	</bean>
+
+	<!-- BL-753:This interceptor is added to update order and other consignment in order notes. -->
+	<alias name="blConsignmentPrepareInterceptor" alias="blConsignmentPrepareInterceptor"/>
+	<bean id="blConsignmentPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor"/>
+
+	<bean id="blConsignmentPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blConsignmentPrepareInterceptor"/>
+		<property name="typeCode" value="Consignment"/>
+	</bean>
+
 	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
 	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
@@ -962,6 +984,17 @@
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
 
 
+
+	<alias alias="productService" name="defaultBlProductService"/>
+	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
+	
+	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
+	<bean id="blConditionRatingOverallScoreHandler" class="com.bl.core.model.handler.BlConditionRatingOverallScoreHandler">
+		<property name="blPricingService" ref="blPricingService"/>
+		<property name="blProductService" ref="productService"/>
+	</bean>
+
+
 	<!--Added for extend rental order -->
 
 	<bean id="defaultBlExtendOrderService" class="com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService">
@@ -969,13 +1002,11 @@
 		<property name="orderIDGenerator" ref="orderCodeGenerator"/>
 	</bean>
 
-<!--Coupon for rental extend order -->
+	<!--Coupon for rental extend order -->
 	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService" parent="defaultCouponService">
-
 	</bean>
-
 
 	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
 	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
-
+	
 </beans>

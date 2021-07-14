@@ -28,7 +28,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       extendOrderModel.setCalculated(false);
       extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));
       extendOrderModel.setIsExtendedOrder(true);
-      extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.CREATED);
+      extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
       originalOrder.setExtendedOrderCopy(extendOrderModel);
       getModelService().save(originalOrder);
       getModelService().refresh(originalOrder);
