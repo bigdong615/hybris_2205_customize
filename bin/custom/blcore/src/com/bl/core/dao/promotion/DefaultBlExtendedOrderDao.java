@@ -24,7 +24,7 @@ public class DefaultBlExtendedOrderDao extends DefaultExtendedOrderDao {
         result = orders.get(0);
       } else {
         for(AbstractOrderModel abstractOrderModel :orders) {
-          if(BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()) && null == abstractOrderModel.getExtendedOrderCopy()) {
+          if(BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder()) && null == abstractOrderModel.getExtendedOrderCopy() ) { // Add check for status
             result = abstractOrderModel;
           }
         }

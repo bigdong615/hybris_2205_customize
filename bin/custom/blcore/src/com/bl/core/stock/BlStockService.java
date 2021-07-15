@@ -74,4 +74,6 @@ public interface BlStockService
 	 * @param blSerialProduct the serial product
 	 */
 	public void findAndUpdateWarehouseInStockRecords(final BlSerialProductModel blSerialProduct);
+
+	void findStockLevelForExtendOrderSerialProducts(final String serialCode , final Date startDate , final Date endDate);
 }

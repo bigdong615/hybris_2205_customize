@@ -136,6 +136,35 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<StockLevelModel> findSerialStockLevelForExtendDate(final String serialProductCode, final Collection<WarehouseModel> warehouseModels,
+			final Date startDay, final Date endDay)
+	{
+		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(SERIAL_STOCK_LEVEL_FOR_DATE_QUERY);
+		fQuery.addQueryParameter(BlCoreConstants.SERIAL_PRODUCT_CODE, serialProductCode);
+
+		final Set<WarehouseModel> warehouses = new HashSet<>(warehouseModels);
+		fQuery.addQueryParameter(BlCoreConstants.ACTIVE, SerialStatusEnum.ACTIVE.getCode());
+		fQuery.addQueryParameter(BlCoreConstants.WAREHOUSES, warehouses);
+
+		addQueryParameter(startDay, endDay, fQuery);
+
+		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final List<StockLevelModel> stockLevels = result.getResult();
+		if (CollectionUtils.isEmpty(stockLevels))
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+					"No Stock Levels found for serial product {} with date between : {} and {}",
+					serialProductCode, startDay, endDay);
+			return Collections.emptyList();
+		}
+		return stockLevels;
+	}
+
+
+	/**
 	 * It adds the parameters value into query
 	 * @param startDay
 	 * @param endDay

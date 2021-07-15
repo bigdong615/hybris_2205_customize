@@ -84,11 +84,19 @@
 						<div class="col-7 col-md-8">
 							<p class="body14 gray60">
 							<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental} Day </div> <br>
-							<div id="js-totalCost-update"> <format:price priceData="${orderData.subTotalTaxForExtendRental}"/> </div> <br>
-							<div id="js-totalDamegeWaiverCost-update"> <format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/> </div>
+							<div id="js-totalCost-update"> <format:blPrice priceData="${orderData.subTotalTaxForExtendRental}"/> </div> <br>
+							<div id="js-totalDamegeWaiverCost-update"><format:blPrice priceData="${orderData.totalDamageWaiverCostForExtendRental}"/> </div>
 							</p>
 						</div>
 					</div>
+             <div class="productNotifications row d-none" id="add-error-message">
+                    <div class="col-12">
+                       <div class="notification notification-error" id="js-isAllProductExtendabe-update">
+                       </div>
+                    </div>
+             </div>
+
+						<div > </div>
 				</div> <b><spring:theme code="text.myaccount.extend.order.pay"/></b>
 				<div class="col-11">
 						<ycommerce:testId code="paymentDetailsForm">
@@ -183,29 +191,29 @@
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.extend.order.extension.cost" /> </td>
-					<td class="text-end" id="js-totalExtendCost"><format:price priceData="${orderData.subTotalTaxForExtendRental}" /></td>
+					<td class="text-end" id="js-totalExtendCost"><format:blPrice priceData="${orderData.subTotalTaxForExtendRental}" /></td>
 				</tr>
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.order.rental.damege.waiver" /> <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers"><i class="icon-support"></i></a></td>
-					<td class="text-end" id="js-totalDamageWaiver"><format:price priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></td>
+					<td class="text-end" id="js-totalDamageWaiver"><format:blPrice priceData="${orderData.totalDamageWaiverCostForExtendRental}"/></td>
 				</tr>
 				<tr>
 					<td class="gray80">
 						<spring:theme code="text.myaccount.extend.order.extension.taxes" /> </td>
-					<td class="text-end"><format:price priceData="${orderData.totalTaxForExtendRental}"/></td>
+					<td class="text-end"  id="js-totalExtendTax"><format:blPrice priceData="${orderData.totalTaxForExtendRental}"/></td>
 				</tr>
 				<c:if test="${orderData.totalDiscounts.value > 0}">
         				<tr>
                 	<td class="discount">
                 	<spring:theme code="Discount" /> </td>
-                <td class="text-end"><format:price priceData="${orderData.totalDiscounts}"/></td>
+                <td class="text-end"  id="js-extendDiscount"><format:blPrice priceData="${orderData.totalDiscounts}"/></td>
                 	</tr>
         </c:if>
 				<tr class="total">
 					<td>
 						<spring:theme code="text.account.order.total"/> </td>
-					<td class="text-end"><format:price priceData="${orderData.orderTotalWithTaxForExtendRental}"/></td>
+					<td class="text-end" id="js-extendOrderTotal"><format:blPrice priceData="${orderData.orderTotalWithTaxForExtendRental}"/></td>
 				</tr>
 			</tbody>
 		</table>
@@ -220,15 +228,17 @@
     					path="voucherCode" placeholder="${voucherplaceholder}"
     					name="voucherCode" />
     				<div class="input-group-append">
-    					<button type="submit"
-    						class="btn btn-secondary js-voucher-apply-account-btn">
-    						<spring:theme code="text.voucher.apply.button.label" />
-    					</button>
+
+                                  	<button type="submit" class="btn btn-secondary js-voucher-apply-account-btn">
+                                       <spring:theme code="text.voucher.apply.button.label" />
+                                    </button>
+
     				</div>
     			</div>
     		</form:form>
 		<button class="btn btn-block btn-primary mt-4">
-			<spring:theme code="text.myaccount.order.extend.rent" /> </button>
+			<spring:theme code="text.myaccount.order.extend.rent" />
+			</button>
 	</div>
 </div>
 

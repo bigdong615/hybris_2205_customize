@@ -36,11 +36,8 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
   private DefaultBlCalculationService defaultBlCalculationService;
   private ProductService productService;
   private DefaultBlExtendOrderService defaultBlExtendOrderService;
-  @Autowired
   private PromotionsService promotionsService;
-  @Autowired
   private  BaseSiteService baseSiteService;
-  @Autowired
   private  TimeService timeService;
 
 
@@ -48,15 +45,18 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
 
-    long defaultAddedTimeForExtendRental = 1; // Default value
+    /*long defaultAddedTimeForExtendRental = 1; // Default value
     target.setAddedTimeForExtendRental((int) defaultAddedTimeForExtendRental); // Default value which added for extend order
      PriceDataType priceType = PriceDataType.BUY;
      OrderModel extendOrderModel =  getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(source);
      for(AbstractOrderEntryModel entries : extendOrderModel.getEntries()) {
        try {
          getDefaultBlCalculationService().recalculateForExtendOrder(extendOrderModel , (int) defaultAddedTimeForExtendRental);
-         promotionsService.updatePromotions(getPromotionGroups(), extendOrderModel, true, AutoApplyMode.APPLY_ALL,
-             AutoApplyMode.APPLY_ALL, timeService.getCurrentTime());
+         if(null != extendOrderModel.getAllPromotionResults()) {
+           getPromotionsService().updatePromotions(getPromotionGroups(), extendOrderModel, true,
+               AutoApplyMode.APPLY_ALL,
+               AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
+         }
        } catch (CalculationException e) {
          e.printStackTrace();
        }
@@ -67,13 +67,15 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
          extendOrderModel.getCurrency().getIsocode()));
      target.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalTax()),
          extendOrderModel.getCurrency().getIsocode()));
-     final BigDecimal orderTotalWithTax = BigDecimal.valueOf(extendOrderModel.getSubtotal()).add(BigDecimal.valueOf(extendOrderModel.getTotalDamageWaiverCost())).
-         add(BigDecimal.valueOf(extendOrderModel.getTotalTax()));
 
-     target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,orderTotalWithTax , extendOrderModel.getCurrency().getIsocode()));
+     target.setTotalDiscounts(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalDiscounts()),
+         extendOrderModel.getCurrency().getIsocode()));
+
+     target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalPrice()) ,
+         extendOrderModel.getCurrency().getIsocode()));
 
     // To set current extendOrderModel to session
-    BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
+    BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);*/
   }
 
   public PriceDataFactory getPriceDataFactory() {
@@ -144,12 +146,37 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
   protected Collection<PromotionGroupModel> getPromotionGroups()
   {
     final Collection<PromotionGroupModel> promotionGroupModels = new ArrayList<PromotionGroupModel>();
-    if (baseSiteService.getCurrentBaseSite() != null
-        && baseSiteService.getCurrentBaseSite().getDefaultPromotionGroup() != null)
+    if (getBaseSiteService().getCurrentBaseSite() != null
+        && getBaseSiteService().getCurrentBaseSite().getDefaultPromotionGroup() != null)
     {
-      promotionGroupModels.add(baseSiteService.getCurrentBaseSite().getDefaultPromotionGroup());
+      promotionGroupModels.add(getBaseSiteService().getCurrentBaseSite().getDefaultPromotionGroup());
     }
     return promotionGroupModels;
+  }
+
+
+  public PromotionsService getPromotionsService() {
+    return promotionsService;
+  }
+
+  public void setPromotionsService(PromotionsService promotionsService) {
+    this.promotionsService = promotionsService;
+  }
+
+  public BaseSiteService getBaseSiteService() {
+    return baseSiteService;
+  }
+
+  public void setBaseSiteService(BaseSiteService baseSiteService) {
+    this.baseSiteService = baseSiteService;
+  }
+
+  public TimeService getTimeService() {
+    return timeService;
+  }
+
+  public void setTimeService(TimeService timeService) {
+    this.timeService = timeService;
   }
 
 }

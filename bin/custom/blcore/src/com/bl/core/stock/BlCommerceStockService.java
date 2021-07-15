@@ -177,4 +177,7 @@ public interface BlCommerceStockService
 	 */
 	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
 			final Collection<StockLevelModel> stockLevels);
+
+	public StockResult getStockForEntireExtendDuration(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate);
 }

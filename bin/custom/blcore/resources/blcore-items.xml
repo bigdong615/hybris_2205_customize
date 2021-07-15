@@ -1894,6 +1894,22 @@
                     <persistence type="property" />
                     <description>flag to identify whether the order has been extended or not</description>
                   </attribute>
+                  <attribute qualifier="extendRentalEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>return date of a for extend order</description>
+                  </attribute>
+                  <attribute qualifier="totaExtendDays" type="java.lang.Integer">
+                  <persistence type="property" />
+                  <modifiers read="true" write="true" optional="true" />
+                  <description>To get the number of days extended .</description>
+                 </attribute>
+                  <attribute qualifier="totalDaysWithExistingOrder" type="java.lang.Integer">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To get the Total number of days.</description>
+                  </attribute>
+
                   <attribute qualifier="extendedOrderCopyList" type="ExtendOrderCopyList">
                     <modifiers read="true" write="true" search="true" optional="true" initial="true" />
                     <persistence type="property" />

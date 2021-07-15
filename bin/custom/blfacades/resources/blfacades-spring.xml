@@ -575,6 +575,9 @@
 		<property name="defaultBlCalculationService" ref="calculationService"/>
 		<property name="productService" ref="productService"/>
 		<property name="defaultBlExtendOrderService" ref="defaultBlExtendOrderService"/>
+		<property name="promotionsService" ref="promotionsService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="timeService" ref="timeService" />
 	</bean>
 
 	<alias name="defaultBlOrderFacade" alias="blOrderFacade" />
@@ -590,6 +593,10 @@
 		<property name="sessionService" ref="sessionService" />
 		<property name="defaultBlExtendOrderService" ref="defaultBlExtendOrderService" />
 		<property name="defaultBlCalculationService" ref="calculationService"/>
+		<property name="promotionsService" ref="promotionsService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="timeService" ref="timeService" />
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 	</bean>
 
 

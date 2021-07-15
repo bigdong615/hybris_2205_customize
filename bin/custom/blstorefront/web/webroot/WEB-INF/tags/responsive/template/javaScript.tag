@@ -1687,6 +1687,12 @@
                             	                    $('#js-totalCost-update').html( $('#js-totalExtendCost').html());
                             	                    $('#js-totaldays-update').html( $('#js-totalExtendDays').val());
                             	                    $('#js-totalDamegeWaiverCost-update').html( $('#js-totalDamageWaiver').html());
+                            	                    if($('#js-isAllProductExtendabe').val() !== '') {
+                            	                    if($("#add-error-message").hasClass("d-none")){
+                                                                                    $("#add-error-message").removeClass("d-none");
+                                                  }
+                                                  $('#js-isAllProductExtendabe-update').html( $('#js-isAllProductExtendabe').val());
+                                                  }
                             	                    },
                             	                    error: function (xhr, textStatus, error) {
 

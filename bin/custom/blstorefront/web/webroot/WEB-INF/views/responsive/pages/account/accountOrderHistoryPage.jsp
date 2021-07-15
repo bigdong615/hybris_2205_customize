@@ -9,15 +9,20 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 								<c:set var="searchUrl" value="/my-account/orders?sort=${ycommerce:encodeUrl(searchPageData.pagination.sort)}" />
+								<c:url var="homepageUrl" value="/" />
                 <c:if test="${empty searchPageData.results}">
                 	<div id="accountContent" class="col-lg-8 offset-lg-1">
                 		<h1><spring:theme code="text.myaccount.recent.order"/></h1>
                 		<hr>
                 		<div class="notification no-orders">
-                			<p><strong></strong>
-                				<spring:theme code="text.myaccount.empty.order" /> </p>
+                			<p><strong>
+                				<spring:theme code="text.myaccount.empty.order" /></strong></p>
                 			<p>
-                				<spring:theme code="text.myaccount.empty.order.instruction" /> </p>
+                				<p><spring:theme code="text.myaccount.empty.order.instruction.first"/>
+                				<a href="${homepageUrl}"><spring:theme code="text.myaccount.empty.order.instruction.middle"/></a>
+                				<spring:theme code="text.myaccount.empty.order.instruction.last"/></p>
+
+                				</p>
                 		</div>
                 	</div>
                 </c:if>

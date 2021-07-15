@@ -1216,7 +1216,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@PostMapping(value = "/voucher/apply")
 	public String applyVoucherAction(@Valid final VoucherForm form, final BindingResult bindingResult,
-			final HttpServletRequest request, final RedirectAttributes redirectAttributes)
+			final HttpServletRequest request, final RedirectAttributes redirectAttributes , final Model model)
 	{
 		try
 		{
