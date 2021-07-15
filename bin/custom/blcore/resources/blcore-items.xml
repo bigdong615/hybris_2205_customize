@@ -2300,6 +2300,11 @@
         <itemtype code="CustomerNotes" autocreate="true" generate="true" extends="Notes">
           <description>Table to contain all type of customer notes.</description>
           <attributes>
+            <attribute qualifier="type" type="NotesEnum"  redeclare="true">
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <description>Type of a note</description>
+              <persistence type="property"/>
+            </attribute>
             <attribute qualifier="customerNoteType" type="CustomerNotesEnum">
               <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
               <description>Type of a note</description>
