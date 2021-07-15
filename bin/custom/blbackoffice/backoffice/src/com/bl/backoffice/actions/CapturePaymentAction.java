@@ -26,7 +26,7 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
 	{
 		final ConsignmentModel contextData = actionContext.getData();
 
-		return contextData.getOrder() != null
+		return contextData != null && contextData.getOrder() != null
 				&& BooleanUtils.isFalse(contextData.getOrder().getIsCaptured());
 	}
 
