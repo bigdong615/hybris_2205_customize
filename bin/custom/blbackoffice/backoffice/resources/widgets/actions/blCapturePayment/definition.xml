@@ -13,9 +13,9 @@
     <inputType>de.hybris.platform.ordersplitting.model.ConsignmentModel</inputType>
     <outputType>de.hybris.platform.ordersplitting.model.ConsignmentModel</outputType>
 
-    <iconUri>icons/icon_action_updateShipping_default.png</iconUri>
-    <iconDisabledUri>icons/icon_action_updateShipping_disabled.png</iconDisabledUri>
-    <iconHoverUri>icons/icon_action_updateShipping_hover.png</iconHoverUri>
+    <iconUri>icons/icon_action_capturePayment_default.png</iconUri>
+    <iconDisabledUri>icons/icon_action_capturePayment_disabled.png</iconDisabledUri>
+    <iconHoverUri>icons/icon_action_capturePayment_hover.png</iconHoverUri>
 
     <settings>
         <setting key="viewMode" default-value="iconAndText"/>
