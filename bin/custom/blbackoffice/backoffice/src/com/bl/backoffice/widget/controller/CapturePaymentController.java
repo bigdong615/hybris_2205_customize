@@ -6,9 +6,6 @@ package com.bl.backoffice.widget.controller;
 import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
 import com.hybris.cockpitng.annotations.ViewEvent;
-import com.hybris.cockpitng.util.notifications.NotificationService;
-import com.hybris.cockpitng.util.notifications.event.NotificationEvent;
-import com.hybris.cockpitng.util.notifications.event.NotificationEventTypes;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
@@ -43,9 +40,6 @@ public class CapturePaymentController extends DefaultWidgetController {
   @Resource
   private BlPaymentService blPaymentService;
 
-  @Resource
-  private NotificationService notificationService;
-
   private OrderModel orderModel;
 
   @Wire
@@ -73,8 +67,6 @@ public class CapturePaymentController extends DefaultWidgetController {
     if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode())
         || BooleanUtils.isTrue(getOrderModel().getIsCaptured())) {
       showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER));
-      /*showNotification(OrderModel._TYPECODE, NotificationEventTypes.EVENT_TYPE_GENERAL, NotificationEvent.Level.FAILURE,
-          Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER));*/
       return;
     }
     blPaymentService.capturePaymentForOrder(getOrderModel());
@@ -91,11 +83,5 @@ public class CapturePaymentController extends DefaultWidgetController {
 
   protected void showMessageBox(final String message) {
     Messagebox.show(message);
-  }
-
-  private void showNotification(final String source, final String eventType,
-      final NotificationEvent.Level level,
-      final String localizedString) {
-    notificationService.notifyUser(source, eventType, level, localizedString);
   }
 }

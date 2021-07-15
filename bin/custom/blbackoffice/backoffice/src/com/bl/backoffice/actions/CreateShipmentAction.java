@@ -5,7 +5,6 @@
 package com.bl.backoffice.actions;
 
 import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.jalo.order.Order;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
@@ -33,6 +32,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 
 	protected static final String SOCKET_OUT_CONTEXT = "blCreatePackageShipmentContext";
 
+	@Override
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consignment = actionContext.getData();
@@ -59,8 +59,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	{
 		final OrderStatus status = consignment.getOrder().getStatus();
 		if (OrderStatus.CANCELLED.equals(status) || OrderStatus.CHECKED_INVALID.equals(status)
-		 || OrderStatus.PAYMENT_NOT_AUTHORIZED.equals(status))
-		{
+				|| OrderStatus.PAYMENT_NOT_AUTHORIZED.equals(status)) {
 			return false;
 		}
 		return true;

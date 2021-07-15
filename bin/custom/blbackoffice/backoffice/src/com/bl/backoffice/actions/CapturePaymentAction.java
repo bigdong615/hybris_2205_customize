@@ -21,6 +21,7 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
 {
 	protected static final String SOCKET_OUT_CONTEXT = "blCapturePaymentContext";
 
+	@Override
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel contextData = actionContext.getData();
