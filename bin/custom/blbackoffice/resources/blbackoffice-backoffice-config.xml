@@ -1131,6 +1131,10 @@
 							<editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
 							<editorArea:value>false</editorArea:value>
 						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>disableRemoveReference</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType" readonly="false" />
 				</editorArea:section>
@@ -1157,6 +1161,10 @@
 						<editorArea:editor-parameter>
 							<editorArea:name>isNestedObjectCreationDisabled</editorArea:name>
 							<editorArea:value>false</editorArea:value>
+						</editorArea:editor-parameter>
+						<editorArea:editor-parameter>
+							<editorArea:name>disableRemoveReference</editorArea:name>
+							<editorArea:value>true</editorArea:value>
 						</editorArea:editor-parameter>
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType"/>
@@ -1228,6 +1236,26 @@
             </editorArea:tab>
         </editorArea:editorArea>
     </context>
+
+	<context merge-by="type" parent="GenericItem" type="AbstractOrder" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="blbackoffice.order.notes.tab.name" position="1">
+				<editorArea:section name="blbackoffice.order.notes.section.general">
+					<editorArea:attribute qualifier="orderNotes"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context merge-by="type" parent="GenericItem" type="Consignment" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="blbackoffice.order.notes.tab.name" position="1">
+				<editorArea:section name="blbackoffice.order.notes.section.general">
+					<editorArea:attribute qualifier="orderNotes"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
 
 </config>
 
