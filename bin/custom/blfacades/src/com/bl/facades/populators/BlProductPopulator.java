@@ -1,7 +1,6 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
-
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
@@ -12,7 +11,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -46,6 +45,8 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
         target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
         target.setAlternativeProduct(source.getAlternativeProduct());
+        target.setUpc(StringUtils.isNotEmpty(source.getUpc()) ? source.getUpc() : StringUtils.EMPTY );
+        target.setBrandName(StringUtils.isNotEmpty(source.getBrandName()) ? source.getBrandName() : StringUtils.EMPTY);
         getBlProductTagPopulator().populate(source, target);
     }
 
