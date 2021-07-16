@@ -129,6 +129,15 @@
 					 $("#summary-litepicker").val('');
 					 $("#summary-litepicker").attr('placeholder','${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}');
 				 }
+				 
+				 $('#saved-payment-action-payBill').on('change',function(e){
+					 var optionSelected = $("option:selected", this);
+					 var paymentId = optionSelected.data("id");
+						var paymentnonce = optionSelected.data("nonce");
+						$("#paymentId").val(paymentId);
+						$("#paymentNonce").val(paymentnonce);
+				 });
+				 
 			});
 		</script>
 		

@@ -1,5 +1,6 @@
 package com.braintree.facade.impl;
 
+import com.bl.core.order.dao.BlOrderDao;
 import com.bl.logging.BlLogger;
 import com.braintree.command.request.BrainTreeAddressRequest;
 import com.braintree.command.result.BrainTreeAddressResult;
@@ -21,8 +22,8 @@ import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorChecko
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.c2l.RegionModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
@@ -45,16 +46,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 
-
+/**
+ * Checkout facade for Braintree
+ * @author Moumita
+ */
 public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 {
 	private static final Logger LOG = Logger.getLogger(BrainTreeCheckoutFacade.class);
@@ -69,8 +71,11 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	private BrainTreeConfigService brainTreeConfigService;
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 	private CustomFieldsService customFieldsService;
+	private BlOrderDao orderDao;
 
-
+	/**
+	 * It sets intent to cart
+	 */
 	public void storeIntentToCart() {
 		CartModel cart = cartService.getSessionCart();
 		BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
@@ -79,6 +84,10 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		getModelService().save(paymentInfo);
 	}
 
+	/**
+	 * It stores ship from postal code to cart
+	 * @param shipsFromPostalCode the ship from postal code
+	 */
 	public void storeShipsFromPostalCodeToCart(final String shipsFromPostalCode) {
         CartModel cart = cartService.getSessionCart();
         BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
@@ -87,6 +96,10 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
         getModelService().save(paymentInfo);
     }
 
+	/**
+	 * It sets the custom fields into cart
+ 	 * @param customFields the custom fields
+	 */
 	public void storeCustomFieldsToCart(final Map<String, String> customFields) {
 		CartModel cart = cartService.getSessionCart();
 		BrainTreePaymentInfoModel paymentInfo = (BrainTreePaymentInfoModel) cart.getPaymentInfo();
@@ -101,6 +114,12 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return authorizePayment(securityCode, getCustomFields());
 	}
 
+	/**
+	 * It does the payment authorization
+	 * @param securityCode the security code
+	 * @param customFields the custom fields
+	 * @return boolean
+	 */
 	public boolean authorizePayment(final String securityCode, Map<String, String> customFields)
 	{
 		LOG.info("!isAvailablePaymentAuthorization: " + !isAvailablePaymentAuthorization());
@@ -118,6 +137,11 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return brainTreeTransactionService.createAuthorizationTransaction(customFields);
 	}
 
+	/**
+	 * It does the payment authorization
+	 * @param cart the cart model
+	 * @return boolean
+	 */
 	public boolean authorizePayment(CartModel cart){
 		PaymentTransactionEntryModel paymentTransactionEntryModel = brainTreeTransactionService.createAuthorizationTransaction(cart);
 		return paymentTransactionEntryModel != null
@@ -125,6 +149,12 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 				|| TransactionStatus.REVIEW.name().equals(paymentTransactionEntryModel.getTransactionStatus()));
 	}
 
+	/**
+	 * It creates authorize transaction
+	 * @param order the order
+	 * @param amount the amount
+	 * @return boolean
+	 */
 	public boolean authorizePayment(OrderModel order, BigDecimal amount)
 	{
 		PaymentTransactionEntryModel paymentTransactionEntryModel =
@@ -328,6 +358,12 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
     }
   }
 
+	/**
+	 * It sets the payment details
+	 * @param paymentInfoId the payment info id
+	 * @param paymentMethodNonce the payment method nonce
+	 * @return boolean
+	 */
 	public boolean setPaymentDetails(final String paymentInfoId, final String paymentMethodNonce) {
 		validateParameterNotNullStandardMessage("paymentInfoId", paymentInfoId);
 
@@ -336,9 +372,9 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 			if (StringUtils.isNotBlank(paymentInfoId)) {
 				final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentService
 						.completeCreateSubscription(currentUserForCheckout, paymentInfoId);
-				paymentInfo.setNonce(paymentMethodNonce);
-				getModelService().save(paymentInfo);
 				if (paymentInfo != null) {
+					paymentInfo.setNonce(paymentMethodNonce);
+					getModelService().save(paymentInfo);
 					return true;
 				} else {
 					super.setPaymentDetails(paymentInfoId);
@@ -376,6 +412,10 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return false;
 	}
 
+	/**
+	 * It generates client token
+	 * @return client token
+	 */
 	public String generateClientToken()
 	{
 		final String clientToken = brainTreePaymentService.generateClientToken();
@@ -398,6 +438,15 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return payPalCheckoutData;
 	}
 
+	/**
+	 * It gets the order by order code
+	 * @param orderCode the order number
+	 * @return AbstractOrderModel
+	 */
+	public AbstractOrderModel getOrderByCode(final String orderCode) {
+		return getOrderDao().getOrderByCode(orderCode);
+	}
+
 	public boolean isAvailablePaymentAuthorization() {
 		if (isCreditCard() || isApplePay() || isVenmo() || isGooglePay()) {
 			return true;
@@ -405,6 +454,18 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		boolean paypalIntentIsOrder = PAYPAL_INTENT_ORDER.equals(getBrainTreeConfigService().getIntent());
 		boolean config = Boolean.parseBoolean(getBrainTreeConfigService().getStoreInVaultForCurrentUser());
 		return !(paypalIntentIsOrder && !config);
+	}
+
+	/**
+	 * It gets payment info model by payment info id
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the payment method nonce
+	 * @return BrainTreePaymentInfoModel
+	 */
+	public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCode(final CustomerModel customer, final String
+			paymentInfoId, final String nonce) {
+		return brainTreePaymentService.getBrainTreePaymentInfoForCode(customer, paymentInfoId, nonce);
 	}
 
 	private boolean isCreditCard()
@@ -504,6 +565,10 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 		return subscriptionInfo;
 	}
 
+	/**
+	 * It handles order intent via subscription
+	 * @param order the order
+	 */
     public void handleOrderIntentViaSubscription(final OrderModel order) {
        	getModelService().refresh(order);
         UserModel user = order.getUser();
@@ -514,7 +579,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
         subscriptionInfo.setIntent(BraintreeConstants.PAYPAL_INTENT_ORDER);
         subscriptionInfo.setAmount(String.valueOf(order.getTotalPrice()));
 		 final boolean isCreditEnabled = brainTreeConfigService.getCreditEnabled();
-        brainTreePaymentFacade.completeCreateSubscription(subscriptionInfo, (CustomerModel) user, order, isCreditEnabled);
+        brainTreePaymentFacade.completeCreateSubscription(subscriptionInfo, (CustomerModel) user, order, isCreditEnabled, true);
 
         BrainTreePaymentInfoModel brainTreePaymentInfo = (BrainTreePaymentInfoModel) order.getPaymentInfo();
         brainTreePaymentInfo.setPayPalIntent(BraintreeConstants.PAYPAL_INTENT_ORDER);
@@ -528,7 +593,13 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
         getModelService().save(brainTreePaymentInfo);
     }
 
-    public OrderData placeOrderByCart(CartModel cartModel) throws InvalidCartException
+	/**
+	 * It places the order
+	 * @param cartModel the cart model
+	 * @return Order data
+	 * @throws InvalidCartException Invalid cart exception
+	 */
+	public OrderData placeOrderByCart(CartModel cartModel) throws InvalidCartException
 	 {
 		 if (cartModel != null)
 		 {
@@ -747,5 +818,22 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	public void setCustomFieldsService(CustomFieldsService customFieldsService)
 	{
 		this.customFieldsService = customFieldsService;
+	}
+
+	/**
+	 * @return the blOrderDao
+	 */
+	public BlOrderDao getOrderDao()
+	{
+		return orderDao;
+	}
+
+	/**
+	 * @param orderDao
+	 *           the blOrderDao to set
+	 */
+	public void setOrderDao(final BlOrderDao orderDao)
+	{
+		this.orderDao = orderDao;
 	}
 }

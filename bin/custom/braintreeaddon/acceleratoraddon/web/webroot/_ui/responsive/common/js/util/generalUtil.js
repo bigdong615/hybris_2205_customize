@@ -31,6 +31,8 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
 
     // collect device data for advanced fraud tools
     var collectDeviceData = createHiddenParameter("device_data", this.paypalDeviceData);
+    var orderCode = createHiddenParameter("order_code", $("#orderCode").val());
+    payPalForm.append($(orderCode));
     payPalForm.append($(isSavePaymentInfo));
     payPalForm.append($(collectDeviceData));
     payPalForm.append($(paymentType));

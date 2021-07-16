@@ -23,7 +23,6 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.customer.CustomerEmailResolutionService;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
-import de.hybris.platform.converters.impl.AbstractPopulatingConverter;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -151,11 +150,11 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 	{
 		final CustomerModel customer = getCurrentUserForCheckout();
 		final CartModel cart = getCartService().getSessionCart();
-		completeCreateSubscription(subscriptionInfo, customer, cart, isCreditEnabled);
+		completeCreateSubscription(subscriptionInfo, customer, cart, isCreditEnabled, true);
 	}
 
-	public void completeCreateSubscription(final BrainTreeSubscriptionInfoData brainTreeSubscriptionInfoData,
-			final CustomerModel customer, final AbstractOrderModel cart, final  boolean isCreditEnabled)
+	public BrainTreePaymentInfoModel completeCreateSubscription(final BrainTreeSubscriptionInfoData brainTreeSubscriptionInfoData,
+			final CustomerModel customer, final AbstractOrderModel cart, final  boolean isCreditEnabled, final boolean isCheckout)
 	{
 		BrainTreePaymentInfoModel paymentInfo = null;
 		final AddressData addressData = brainTreeSubscriptionInfoData.getAddressData();
@@ -168,9 +167,8 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		//get value from form if we should show that payment info
 		final boolean isStoreInVault = brainTreeConfigService.getVaultingForCurrentUser(brainTreeSubscriptionInfoData.getPaymentProvider());
 		BrainTreeCreatePaymentMethodResult result = null;
-		// The below code has been commented out because the credit card details needs to be stored in vault
-		//		if (isAvailableCreatingNewPaymentMethod(brainTreeSubscriptionInfoData, isStoreInVault, isCreditEnabled))
-		//		{
+		// The below code has been commented out because the credit card details needs to be stored in vault //NOSONAR
+		//		if (isAvailableCreatingNewPaymentMethod(brainTreeSubscriptionInfoData, isStoreInVault, isCreditEnabled)) { //NOSONAR
 			BraintreeInfo paymentMethodBrainTreeInfo = null;
 			paymentMethodBrainTreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
 			result = getBrainTreePaymentService().createPaymentMethodForCustomer(customer,
@@ -180,7 +178,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 			checkBraintreeResult(result);
 
 			addAdditionalPaymentMethodFields(brainTreeSubscriptionInfoData, result);
-//		}
+//		} //NOSONAR
 		if (isStoreInVault && StringUtils.isEmpty(customer.getBraintreeCustomerId())) {
 			LOG.debug("... creating customer on the braintree side");
 			getBrainTreePaymentService().createCustomer(customer, billingAddress);
@@ -202,12 +200,25 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		paymentInfo.setPayer(brainTreeSubscriptionInfoData.getEmail());
 		paymentInfo.setDuplicate(isDuplicate);
 		modelService.save(paymentInfo);
-		cart.setPaymentInfo(paymentInfo);
-		modelService.save(cart);
+		setPaymentInfoInCart(cart, paymentInfo, isCheckout);
 		if (BraintreeConstants.PAYPAL_INTENT_ORDER.equalsIgnoreCase(getBrainTreeConfigService().getIntent())
 				&& result != null && isPayPalCheckout(brainTreeSubscriptionInfoData))
 		{
 			brainTreeTransactionService.createOrderTransaction(cart, result);
+		}
+		return paymentInfo;
+	}
+
+	/**
+	 * It saves the cart after setting the payment info
+	 * @param cart
+	 * @param paymentInfo
+	 * @param isCheckout
+	 */
+	private void setPaymentInfoInCart(AbstractOrderModel cart, BrainTreePaymentInfoModel paymentInfo, boolean isCheckout) {
+		if(isCheckout) {
+			cart.setPaymentInfo(paymentInfo);
+			modelService.save(cart);
 		}
 	}
 
@@ -283,7 +294,8 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 						.collect(Collectors.toList());
 
 		return customerPaymentInfos.stream()
-				.filter(payment -> payment.getBillingAddress().getLine1().equals(billingAddress.getLine1())
+				.filter(payment -> null != payment.getBillingAddress().getLine1() &&
+						payment.getBillingAddress().getLine1().equals(billingAddress.getLine1())
 						&& payment.getBillingAddress().getPostalcode().equals(billingAddress.getPostalcode()))
 				.anyMatch(payment -> {
 					if ((isPayPalCheckout(paymentInfo) || paymentProvider.equals(APPLE_PAY_CARD)
