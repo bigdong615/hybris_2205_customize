@@ -76,6 +76,19 @@ UserGroup;customersupportagentgroup;;;;;;;;
 ;;;;NotesEnum;+;+;+;+;-
 ;;;;Order2OrderNotes;+;+;+;+;-
 
+# Access Rights for customer notes on cs cockpit;;;;;;;;
+;;;Customer;+;+;-;-
+;;;Customer.customerNotes;+;+;+;+
+;;;Customer2CustomerNotes;+;+;+;+
+;;;CustomerNotesEnum;+;+;+;+
+;;;CustomerNotes;+;+;+;+
+;;;CustomerNotes.customerNoteType;+;+;+;+
+;;;CustomerNotes.fraud;+;+;+;+
+;;;CustomerNotes.customer;+;+;+;+
+;;;CustomerNotes.type;-;-;-;-
+;;;;Notes.type;+;+;+;+;-
+;;;;Notes.userID;+;+;-;-;-
+
 $END_USERRIGHTS;;;;;;;;;
 
 

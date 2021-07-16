@@ -452,3 +452,12 @@ margin: 0;
 .billingAddressForm input[type="checkbox"]{
   margin-left:-10px;
 }
+
+/* for Gift Card */
+.gift-card-plp{width: 100%;margin: 0 0 41px 0;height: 258px;}
+.gift-card-plp img{width: 100%;}
+.gift-card-pdp{width: 100%;margin: 0 0 41px 0;}
+.gift-card-pdp img{width: 100%;}
+.gc-pdp-form input{margin:0 0 7px 0;height:42px ;}
+
+
