@@ -221,3 +221,69 @@ INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true
 ;24;	12;	24;	2.25;
 ;24;	16;	12;	1.9 ;
 ;12;	12;	18;	1.27;
+
+# BL-794 Declaring Enums for Conditional Ratings
+INSERT_UPDATE ConditionRatingValueEnum ; code[unique=true] ; name[lang=en] 
+                                       ; 1                 ; 1             
+                                       ; 2                 ; 2             
+                                       ; 3                 ; 3             
+                                       ; 4                 ; 4             
+                                       ; 5                 ; 5             
+                                       ; 6                 ; 6             
+                                       ; 7                 ; 7             
+                                       ; 8                 ; 8             
+                                       ; 9                 ; 9             
+                                       ; 10                ; 10    
+                                       
+# BL-794 Adding tooltip data for FunctionalRating and CosmeticRating attributes
+UPDATE AttributeDescriptor ; qualifier[unique=true] ; attributeType(code)      ; enclosingType(code)[unique=true] ; description[lang=en]                                                                                           
+                           ; functionalRating       ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]" 
+                           ; cosmeticRating         ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]" 
+
+INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]                     ; name[lang=en]                                    
+                                              ; BABY_CAGE_WORKSTATION                 ; Baby Cage Workstation                            
+                                              ; BIN                                   ; Bin                                              
+                                              ; BOXING_WORKSTATION                    ; Boxing Workstation                               
+                                              ; CAP_SPECIFIC_PERSON                   ; CAP = SPECIFIC PERSON, used for employee rentals 
+                                              ; CLEAN_FRONT_DESK_CART                 ; Clean Front Desk Cart                            
+                                              ; CLEAN_GEAR_AISLE_IN_CAGE              ; Clean Gear Aisle in Cage                         
+                                              ; CLEAN_GEAR_CAGE                       ; Clean Gear Cage                                  
+                                              ; CLEAN_GEAR_MOBILE_CART                ; Clean Gear Mobile Cart                           
+                                              ; CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART ; Clean Gear Request Pickup Mobile Cart            
+                                              ; CLEAN_GEAR_SHIPPING_MOBILE_CART       ; Clean Gear Shipping Mobile Cart                  
+                                              ; CLEAN_MOBILE_LAUNDRY_BIN              ; Clean Mobile Laundry Bin                         
+                                              ; CLEAN_PRIORITY_GEAR_CART              ; Clean Priority Gear Cart                         
+                                              ; CLEAN_PRIORITY_MOBILE_CART            ; Clean Priority Mobile Cart                       
+                                              ; CS_WORKSTATION                        ; CS Workstation                                   
+                                              ; DIRTY_FRONT_DESK_CART                 ; Dirty Front Desk Cart                            
+                                              ; DIRTY_GEAR_MOBILE_CART                ; Dirty Gear Mobile Cart                           
+                                              ; DIRTY_MOBILE_LAUNDRY_BIN              ; Dirty Mobile Laundry Bin                         
+                                              ; DIRTY_PRIORITY_GEAR                   ; Dirty Priority Gear                              
+                                              ; DIRTY_PRIORITY_MOBILE_CART            ; Dirty Priority Mobile Cart                       
+                                              ; FD_OUT_OF_WH                          ; For front desk orders, out of warehouse location 
+                                              ; FRONT_DESK_MOBILE_CART                ; Front Desk Mobile Cart                           
+                                              ; FRONT_DESK_SHIPPED_MOBILE_CART        ; Front Desk Shipped Mobile Cart                   
+                                              ; FRONT_DESK_SHIPPING_BIN               ; Front Desk Shipping Bin                          
+                                              ; FRONT_DESK_SHIPPING_WORKSTATION       ; Front Desk Shipping Workstation                  
+                                              ; MAP_SPECIFIC_PERSON                   ; MAP = SPECIFIC PERSON, used for employee rentals 
+                                              ; MARKETING_WORKSTATION                 ; Marketing Workstation                            
+                                              ; MOBILE_CART                           ; Mobile Cart                                      
+                                              ; NEW_GEAR_PERMANENT_SHELF              ; New Gear Permanent Shelf                         
+                                              ; OC_UNKNOWN_LOCATION                   ; OC location for items with unknown locations     
+                                              ; OC_TO_BE_SCRAPPED                     ; OC location of items that need to be scrapped    
+                                              ; PARTS_NEEDED_MOBILE_CART              ; Parts Needed Mobile Cart                         
+                                              ; PARTS_WAITING_MOBILE_CART             ; Parts Waiting Mobile Cart                        
+                                              ; PICKER_WORKSTATION                    ; Picker Workstation                               
+                                              ; REPAIR_CABINET                        ; Repair Cabinet                                   
+                                              ; REPAIR_CLEAN_MOBILE_CART              ; Repair Clean Mobile Cart                         
+                                              ; REPAIR_MOBILE_LAUNDRY_BIN             ; Repair Mobile Laundry Bin                        
+                                              ; REPAIR_MOBILE_SHELF                   ; Repair Mobile Shelf                              
+                                              ; REPAIR_SHELF                          ; Repair Shelf                                     
+                                              ; SCRAPPED_GEAR_PERMANENT_LOCATION      ; Scrapped Gear Permanent Location                 
+                                              ; SHIPPER_WORKSTATION                   ; Shipper Workstation                              
+                                              ; TAN_MOBILE_CART                       ; Tan Mobile Cart                                  
+                                              ; TECH_ENGINEERING_WORKSTATION          ; Tech Engineering Workstation                     
+                                              ; VIP_CHECKED_GEAR_WORKSTATION          ; VIP Checked Gear Workstation                     
+                                              ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
+                                              ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
+                                              
