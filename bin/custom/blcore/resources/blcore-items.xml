@@ -233,9 +233,14 @@
         <!-- BL-542 End-->
 
         <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
-          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one"/>
+          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one">
+            <modifiers read="true" write="true" search="true" optional="true"/>
+          </sourceElement>
+
           <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
-            collectiontype="list"/>
+            collectiontype="list">
+            <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
+          </targetElement>
         </relation>
 
 

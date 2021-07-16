@@ -3,11 +3,13 @@ package com.bl.facades.shipping.impl;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
@@ -27,6 +29,7 @@ import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
@@ -802,8 +805,32 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
    		 }   	    
    	  }  	 
     }
-    
-    /**
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void saveOrderNotes(final String orderNotes) {
+    try {
+        final CartModel cartModel = getCartService().getSessionCart();
+        if (Objects.nonNull(cartModel) && Objects
+            .nonNull(cartModel.getUser())) {
+          final NotesModel notesModel = getModelService().create(NotesModel.class);
+          notesModel.setType(NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES);
+          notesModel.setNote(orderNotes);
+          notesModel.setUserID(cartModel.getUser().getUid());
+          getModelService().save(notesModel);
+          cartModel.setOrderNotes(Lists.newArrayList(notesModel));
+          getModelService().save(cartModel);
+          getModelService().refresh(cartModel);
+        }
+      } catch (final Exception exception) {
+        BlLogger.logMessage(LOG, Level.ERROR,
+          "Error occurred while saving order notes", exception);
+    }
+  }
+
+  /**
      * Gets the price value.
      *
      * @param priceData the price data

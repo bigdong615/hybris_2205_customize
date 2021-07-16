@@ -52,7 +52,9 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			final CustomerModel customerModel = (CustomerModel)source.getUser();
 			target.setIsPOEnabled(customerModel.isPoEnabled());
 		}
-
+		if (CollectionUtils.isNotEmpty(source.getOrderNotes())){
+			target.setOrderNotes(source.getOrderNotes().get(0).getNote());
+		}
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
 		{
