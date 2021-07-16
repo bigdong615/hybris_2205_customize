@@ -25,68 +25,9 @@
 <c:if test="${product.code ne 'bl_giftcard'}">
  <span class="bookmark"></span>
  </c:if>
-<!-- BL-926: Added condition for Gift Card as per requirement --> 
-		<c:choose>
-			<c:when test="${product.code eq 'bl_giftcard'}">
-				<div class="gift-card-plp">
-					<c:choose>
-						<c:when test="${not empty product.images}">
-							<c:forEach var="mediaLi" items="${product.images}">
-								<c:if test="${mediaLi.format eq 'product'}">
-									<c:url value="${mediaLi.url}" var="primaryImageUrl" />
-									<c:set value="this is alternate" var="altTextHtml" />
-									<li class="splide__slide"">
-										<c:url
-											var="usedGearUrl" value="/buy/product/${product.code}" /> <a
-										href="${usedGearUrl}"><img
-											src="${fn:escapeXml(primaryImageUrl)}" /></a>
-									</li>
-								</c:if>
-							</c:forEach>
-						</c:when>
-						<c:otherwise>
-							<c:set
-								value="/blstorefront/_ui/responsive/theme-bltheme/images/missing_product_EN_300x300.jpg"
-								var="altTextHtml1" />
-							<img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}"
-								title="${altText}" title="${altText}" />
-						</c:otherwise>
-					</c:choose>
-
-				</div>
-			</c:when>
-			<c:otherwise>
-				<c:choose>
-					<c:when test="${not empty product.images}">
-						<div class="card-slider splide">
-							<div class="splide__track">
-								<ul class="splide__list">
-									<c:forEach var="mediaLi" items="${product.images}">
-										<c:if test="${mediaLi.format eq 'product'}">
-											<c:url value="${mediaLi.url}" var="primaryImageUrl" />
-											<c:set value="this is alternate" var="altTextHtml" />
-											<li class="splide__slide"">
-												<!-- BL-534: Added Url or <a> tag as per requirement --> <c:url
-													var="usedGearUrl" value="/buy/product/${product.code}" />
-												<a href="${usedGearUrl}"><img
-													src="${fn:escapeXml(primaryImageUrl)}" /></a>
-											</li>
-										</c:if>
-									</c:forEach>
-								</ul>
-							</div>
-						</div>
-					</c:when>
-					<c:otherwise>
-						<c:set
-							value="/blstorefront/_ui/responsive/theme-bltheme/images/missing_product_EN_300x300.jpg"
-							var="altTextHtml1" />
-						<img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}"
-							title="${altText}" title="${altText}" />
-					</c:otherwise>
-				</c:choose>
-			</c:otherwise>
-		</c:choose>
+<!-- BL-926: Added new file for Gift Card --> 
+<product:giftCardImagePanel productType="UsedGearProduct" product="${product}"/>
+		
 
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
       <c:if test="${product.code ne 'bl_giftcard'}">
