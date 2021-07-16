@@ -527,7 +527,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	public String savePoPaymentMethod(@RequestParam("poNumber") final String poNumber, @RequestParam("poNotes") final String poNotes,
       final Model model, final RedirectAttributes redirectAttributes){
 		try {
-			blCartFacade.savePoPaymentDetails(poNumber, poNotes);
+			if(StringUtils.isNotBlank(poNumber)) {
+				blCartFacade.savePoPaymentDetails(poNumber, poNotes);
+			}
 		} catch (final Exception exception) {
 			BlLogger.logMessage(LOGGER, Level.ERROR,
 					"Error occurred while setting selected PO payment details", exception);

@@ -250,4 +250,10 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      * @return the modified total for print quote
      */
     void getModifiedTotalForPrintQuote(final CartData cartData);
+
+    /**
+     * It saves order notes
+     * @param orderNotes
+     */
+    void saveOrderNotes(final String orderNotes);
 }
