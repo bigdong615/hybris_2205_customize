@@ -2230,7 +2230,7 @@ select[multiple]#_asm .ASM-input {
 
 .ASM_customer-list-modal .techne-table > thead > tr > th,
 .asm__customer360 .techne-table > thead > tr > th{
-    border-width: 1px;
+    border-width: 0px;
 }
 .ASM_customer-list-modal a, .ASM_customer360-modal a{
     color: #0486e0;
@@ -2852,4 +2852,77 @@ margin: 8px 0 8px 0;
 
     height: 39px !important;
     margin: 8px 0 0 0 !important;
+}
+
+ @font-face{font-family:'Glyphicons Halflings';src:url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot');src:url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.woff') format('woff'),url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.ttf') format('truetype'),url('https://netdna.bootstrapcdn.com/bootstrap/3.0.0/fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');}.glyphicon{position:relative;top:1px;display:inline-block;font-family:'Glyphicons Halflings';font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;}
+
+
+.glyphicon {
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	font-family: "Glyphicons Halflings";
+	font-style: normal;
+	font-weight: 400;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale
+}
+.glyphicon-sort-by-attributes-alt:before {
+    content: "\e156";
+}
+.glyphicon-shopping-cart:before {
+    content: "\e116";
+}
+.nav-order-tools:before {
+    position: relative;
+    top: 23%;
+    display: inline;
+    font-family: 'Glyphicons Halflings', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\e032";
+   color: #0486e0;
+    font-size: 30px;
+}
+.ASM_customer-list-modal .asm-account-section .default-pic:before {
+    content: '\e801';
+}
+.visible-xs, .visible-sm, .visible-md, .visible-lg {
+    display: none !important;
+}
+.glyphicon-chevron-down:before {
+    content: "\e114";
+}
+.ASM-customer360_icon:before {
+    font-family: 'asm_icons', sans-serif;
+    content: '\e800';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    color: #fff;
+    font-size: 30px;
+    display: inline-block;
+    margin-top: -2px;
+}
+.ASM_icon-chain {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    background: #27394f;
+    padding: 17px 20px 13px 10px;
+    font-size: 30px;
+}
+.pagination-bar {
+    margin: 30px 0;
+}
+.y-toolbar__wrapper.y-toolbar__dropdown .dropdown-menu>li:focus,.dropdown-menu>li>a:hover {
+    text-decoration: none;
+    color: #262626;
+    background-color: #d2dbe6;
+    outline:none;
 }
