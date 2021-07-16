@@ -1,0 +1,47 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Products
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs gift-card.impex ========================="); 
+
+# Macros / Replacement Parameter definitions
+$contentCatalog=blContentCatalog
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$superCategories=supercategories(code, $catalogVersion)
+$keywords=keywords(keyword, $catalogVersion)
+$approved=approvalstatus(code)[default='approved']
+$siteResource=jar:com.bl.initialdata.constants.BlInitialDataConstants&/blinitialdata/import/sampledata/contentCatalogs/$contentCatalog
+$mediaContainer=media(qualifier, $catalogVersion)[lang=$lang]; 
+$blProduct=blProduct(code,$catalogVersion)
+$medias=medias(code, $catalogVersion)
+$galleryImages=galleryImages(qualifier, $catalogVersion)
+# Language
+$lang=en
+ 
+ 
+INSERT_UPDATE Media ; $catalogVersion[unique=true] ; code[unique=true]                    ; realfilename           ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/svg+xml'] ; altText ; folder(qualifier)[default='images'] ; mediaFormat(qualifier) 
+                    ;                              ; /images/theme/BL-GC-Image-small.jpg  ; BL-GC-Image-Large.jpg  ; $siteResource/images/theme/BL-GC-Image-small.jpg                           ; image/png+xml                 ;         ;                                     ; 96Wx96H                
+                    ;                              ; /images/theme/BL-GC-Image-medium.jpg ; BL-GC-Image-medium.jpg ; $siteResource/images/theme/BL-GC-Image-medium.jpg                          ; image/png+xml                 ;         ;                                     ; 300Wx300H              
+                    
+INSERT_UPDATE MediaContainer ; qualifier[unique=true] ; $medias                                                                  ; $catalogVersion 
+                             ; BL-GC_Container        ; /images/theme/BL-GC-Image-small.jpg,/images/theme/BL-GC-Image-medium.jpg ;                 
+                             
+                             
+                             
+INSERT_UPDATE BLProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories ; name[lang=en]                 ; procurementCost ; displayName                   ; procurementSource ; mpn ; upc ; productType(code) ; forRent ; forSale ; level1Required ; level2Required ; numberSystem(code) ; scheduled ; isVideo ; manufacturerAID ; manufacturerName ; retailPrice ; $galleryImages  ; $keywords                               
+                        ;                 ;           ; bl_giftcard       ;                  ; BorrowLenses Gift Certificate ; 0               ; BorrowLenses Gift Certificate ; NA                ; NA  ; NA  ; CAMERAS           ; true    ; true    ; false          ; false          ; NONE               ; false     ; false   ; 0               ; NA               ; 0           ; BL-GC_Container ; Gift,Card,GC,Gift Card,Gift Certificate 
+                        
+INSERT_UPDATE Keyword ; $catalogVersion ; keyword[unique=true] ; language(isocode)[default=$lang] ; catalog(id)     
+                      ;                 ; Gift                 ;                                  ; $productCatalog 
+                      ;                 ; Card                 ;                                  ; $productCatalog 
+                      ;                 ; Gift Card            ;                                  ; $productCatalog 
+                      ;                 ; GC                   ;                                  ; $productCatalog 
+                      ;                 ; Gift Certificate     ;                                  ; $productCatalog 
+                      
+                      
+                      
+INSERT_UPDATE BlSerialProduct ; $catalogVersion ; productId ; code[unique=true] ; displayName         ; $blProduct  ; $approved ; serialStatus(code) ; barcode  ; forSale ; ownedBy ; procurementCost ; procurementSource ; forSaleBasePrice ; assetNumber ; assetStatus ; manufacturerAID ; numberSystem(code) ; mpn      ; upc           ; productType(code) ; unit(code)[default='pieces'] 
+                              ;                 ;           ; bl_serialGiftCard ; BL Serial Gift Card ; bl_giftcard ;           ; ACTIVE             ; 40002011 ; true    ;         ; 0               ; B&H               ; 418.25           ; 335777      ;             ; 2               ; NONE               ; 0344B002 ; 4960000000000 ; CAMERAS           
+                              
