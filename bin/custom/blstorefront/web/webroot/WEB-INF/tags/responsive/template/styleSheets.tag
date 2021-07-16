@@ -31,9 +31,6 @@
 		<%--  BL Custom CSS file--%>
 		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/blcustom.css"/>
 		<%--  AddOn Common CSS files --%>
-		<%--  BL asm-custom CSS file--%>
-    		<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(themeResourcePath)}/css/asm-custom.css"/>
-    		<%--  AddOn asm-custom CSS files --%>
 		<c:forEach items="${addOnCommonCssPaths}" var="addOnCommonCss">
 			<link rel="stylesheet" type="text/css" media="all" href="${fn:escapeXml(addOnCommonCss)}"/>
 		</c:forEach>
