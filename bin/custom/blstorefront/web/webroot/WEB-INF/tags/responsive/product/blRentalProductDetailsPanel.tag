@@ -52,7 +52,8 @@
                                          </c:if>
                                       </c:otherwise>
                                     </c:choose>
-                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="${themeResourcePath}/assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
+                                    <product:productPageReviewsTab product="${product}" />
+                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
                                 </ul>
@@ -231,5 +232,7 @@
                             </div>
                         </div>
                     </div>
+                   
+                    
                 </section>
 

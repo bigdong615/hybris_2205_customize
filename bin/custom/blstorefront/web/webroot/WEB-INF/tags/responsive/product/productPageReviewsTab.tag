@@ -5,62 +5,56 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<c:set value="${ycommerce:productImage(product, 'product')}" var="primaryImage"/>
 
-<c:url value="${product.url}/reviewhtml/3" var="getPageOfReviewsUrl"/>
-<c:url value="${product.url}/reviewhtml/all" var="getAllReviewsUrl"/>
-<c:url value="${product.url}/review" var="productReviewActionUrl"/>
+<c:if test="${not empty primaryImage.url}">
+	<c:url value="${primaryImage.url}" var="primaryImageUrl" context="${originalContextPath}"/>
+</c:if>
 
-<div class="tab-review">
-	<div class="review-pagination-bar">
-		<button class="btn btn-default js-review-write-toggle "><spring:theme code="review.write.title"/></button>
+<c:set var="stockStatus" value="${product.stock.stockLevelStatus.code}"/>
+<c:if test="${empty stockStatus}">
+	<c:set var="stockStatus" value="inStock"/>
+</c:if>
+<c:set var="requestUrl" value="${pageContext.request.requestURL}" />
+<c:set var="baseUrl" value="${fn:substringBefore(requestUrl,'/WEB-INF')}" />
 
-		<div class="right">
-			<button class="btn btn-default all-reviews-btn"><spring:theme code="review.show.all" /></button>
-			<button class="btn btn-default less-reviews-btn"><spring:theme code="review.show.less" /></button>
-		</div>
-	</div>
+<script src="//ui.powerreviews.com/stable/4.0/ui.js"></script>
 
-	<div class="write-review js-review-write">
-		<form:form method="post" action="${productReviewActionUrl}" modelAttribute="reviewForm">
-			<div class="form-group">
-				<formElement:formInputBox idKey="review.headline" labelKey="review.headline" path="headline" inputCSS="form-control" mandatory="true"/>
-			</div>
-			<div class="form-group">
-				<formElement:formTextArea idKey="review.comment" labelKey="review.comment" path="comment" areaCSS="form-control" mandatory="true"/>
-			</div>
-			
-			<div class="form-group">
-			
-				<label><spring:theme code="review.rating"/></label>
-
-
-				<div class="rating rating-set js-ratingCalcSet">
-					<div class="rating-stars js-writeReviewStars">
-                        <c:forEach  begin="1" end="10" varStatus="loop">
-                            <span class="js-ratingIcon glyphicon glyphicon-star ${loop.index % 2 == 0 ? 'lh' : 'fh'}"></span>
-                        </c:forEach>
-					</div>
-				</div>
-
-				<formElement:formInputBox idKey="review.rating" labelKey="review.rating" path="rating" inputCSS="sr-only js-ratingSetInput" labelCSS="sr-only" mandatory="true"/>
-	
-				<formElement:formInputBox idKey="alias" labelKey="review.alias" path="alias" inputCSS="form-control" mandatory="false"/>
-			</div>
-
-			<button type="submit" class="btn btn-primary" value="<spring:theme code="review.submit"/>"><spring:theme code="review.submit"/></button>
-		</form:form>
-
-	</div>
-
-	<ul id="reviews" class="review-list" data-reviews="${fn:escapeXml(getPageOfReviewsUrl)}"  data-allreviews="${fn:escapeXml(getAllReviewsUrl)}"></ul>
-
-	<div class="review-pagination-bar">
-
-		<div class="right">
-			<button class="btn btn-default all-reviews-btn"><spring:theme code="review.show.all" /></button>
-			<button class="btn btn-default less-reviews-btn"><spring:theme code="review.show.less" /></button>
-		</div>
-	</div>
-</div>
+<script>
+window.pwr = window.pwr || function () {
+	  (pwr.q = pwr.q || []).push(arguments); 
+	 };
+	 pwr("render", {
+     api_key: '54a82048-9c20-4a13-a01b-dd5b0415a965',
+   	 locale: 'en_US',
+    merchant_group_id: '2120371445',
+    merchant_id: '1415200746',
+    page_id: '${product.code}',
+    review_wrapper_url:'${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${product.code}',
+    REVIEW_DISPLAY_SNAPSHOT_TYPE:'SIMPLE', 	
+    REVIEW_DISPLAY_PAGINATION_TYPE:'VERTICAL',
+    
+    product :{
+        name: '${product.name}',
+        url: '${baseUrl}${product.url}',
+        image_url: '${primaryImageUrl}',
+        description: '${(product.description)}',
+        category_name: '${(product.categories[0].name)}',
+        manufacturer_id: '${product.manufacturer}',
+        upc: '${product.upc}',
+        brand_name: '${product.brandName}',
+       	price: '${product.price.value}',
+        in_stock: '${stockStatus}'
+    },
+    components: {
+        ReviewSnippet: 'pr-reviewsnippet',
+        ReviewImageSnippet: 'pr-imagesnippet',
+        ReviewDisplay: 'pr-reviewdisplay',
+        
+        
+    }
+  });
+</script>
