@@ -813,7 +813,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
   public void saveOrderNotes(final String orderNotes) {
     try {
         final CartModel cartModel = getCartService().getSessionCart();
-        if (Objects.nonNull(cartModel) && Objects
+        if (StringUtils.isNotBlank(orderNotes) && Objects.nonNull(cartModel) && Objects
             .nonNull(cartModel.getUser())) {
           final NotesModel notesModel = getModelService().create(NotesModel.class);
           notesModel.setType(NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES);
