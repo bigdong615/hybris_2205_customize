@@ -1167,6 +1167,8 @@
     background: #d2dbe6;
     color: #0354ae;
     width: 100%;
+    height: 38px !important;
+    margin-top: 8px !important;
 }
 #_asmBindForm {
     vertical-align: bottom;
