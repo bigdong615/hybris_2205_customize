@@ -10,6 +10,7 @@
 	uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
+<!-- BL-927: Created new file for gift card product details --> 
 <c:url value="/cart/usedgearadd" var="addToCartUrl" />
 <div class="page-loader-new-layout">
 	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.."
