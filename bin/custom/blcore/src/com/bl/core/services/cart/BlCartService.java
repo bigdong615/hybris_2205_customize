@@ -68,4 +68,11 @@ public interface BlCartService extends CartService {
      */
     void setUsedGearSerialProductStatus(final CartModel cartModel, final AbstractOrderEntryModel cartEntry);
 
+
+    /**
+     * This method saves PO payment details.
+     * @param poNumber
+     * @param poNotes
+     */
+    void savePoPaymentDetails(final String poNumber, final String poNotes);
 }

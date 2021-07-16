@@ -274,6 +274,7 @@
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="productPromotionsPopulator" ref="productPromotionsPopulator"/>
+		<property name="blProductService" ref="productService"/>
 	</bean>
 	
 	<!-- BL-166:This bean is override to configure bl related populator-->

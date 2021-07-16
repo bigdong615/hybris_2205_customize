@@ -142,11 +142,21 @@
         <value code="BROKEN_ITEM_NOTES"/>
         <value code="ORDER_NOTES"/>
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
+      </enumtype>
+
+      <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
         <value code="VERIFICATION_NOTES"/>
         <value code="EXCEPTION_NOTES"/>
       </enumtype>
-        
-    </enumtypes>
+
+      
+      <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
+      
+      <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
+      	<value code="OTHERS"/>
+      </enumtype>
+
+	  </enumtypes>
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
@@ -228,9 +238,17 @@
             collectiontype="list"/>
         </relation>
 
+
         <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
-          <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
+          <deployment table="ConsToOrderNotesRel" typecode="12220"/>
+          <sourceElement qualifier="consignment" type="Consignment" cardinality="many"/>
           <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+            collectiontype="list"/>
+        </relation>
+
+        <relation code="Customer2CustomerNotes" generate="true" localized="false" autocreate="true">
+          <sourceElement qualifier="customer" type="Customer" cardinality="one"/>
+          <targetElement qualifier="customerNotes" type="CustomerNotes" cardinality="many"
             collectiontype="list"/>
         </relation>
 
@@ -909,8 +927,8 @@
                          <description>This is the price the customer paid when the item is sold on a used gear order</description>
                      </attribute>
                    <attribute qualifier="conditionRatingOverallScore" type="java.lang.Double">
-                         <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
+                         <persistence type="dynamic" attributeHandler="blConditionRatingOverallScoreHandler"/>
+                         <modifiers read="true" write="false" optional="true"/>
                          <description>T</description>
                      </attribute>
                    <attribute qualifier="incentivizedPrice" type="java.math.BigDecimal">
@@ -1045,21 +1063,39 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
-                     <attribute qualifier="cosmeticRating" type="float">
+                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store cosmetic rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
-                     <attribute qualifier="functionalRating" type="float">
+                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store functional rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
                      <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
                          <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
                          <modifiers read="true" write="false" optional="true" />
                          <description>The version the SKU's firmware is currently at</description>
                      </attribute>
+                     <attribute qualifier="gearRated" type="boolean">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                        <description>To determine if the Gear is Rated by Tech. Eng. Member</description>
+                    </attribute>
                  </attributes>
              </itemtype>
 
@@ -1219,6 +1255,11 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Parent Inventory Location for serial product</description>
+                    </attribute>
+                    <attribute qualifier="locationCategory" type="BlInventoryLocationCategoryEnum">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>BL Inventory location category</description>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -1831,6 +1872,36 @@
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the auth amount used to verify the card has been voided or not</description>
                     </attribute>
+                    <attribute qualifier="poNumber" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
+                      <modifiers read="true" write="true" optional="true" />
+                      <description>PO number used as payment method</description>
+                    </attribute>
+                    <attribute qualifier="poNotes" type="localized:java.lang.String">
+                      <persistence type="property">
+                        <columntype database="oracle">
+                          <value>CLOB</value>
+                        </columntype>
+                        <columntype database="sap">
+                          <value>NCLOB</value>
+                        </columntype>
+                        <columntype>
+                          <value>HYBRIS.LONG_STRING</value>
+                        </columntype>
+                      </persistence>
+                      <modifiers read="true" write="true" optional="true" />
+                      <description>PO Notes</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -1962,6 +2033,12 @@
                 <modifiers read="true" write="true" search="true" optional="true" />
                 <persistence type="property" />
                 <description>It holds information about customer default billing address</description>
+            </attribute>
+            <attribute autocreate="true" qualifier="poEnabled" type="boolean">
+                <modifiers read="true" write="true" search="true" optional="true" />
+                <persistence type="property" />
+                <defaultvalue>Boolean.FALSE</defaultvalue>
+                <description>It enables/disables PO payment option for a customer</description>
             </attribute>
             </attributes>
             </itemtype>
@@ -2174,6 +2251,22 @@
               <description>contain the userID who created that note.</description>
               <persistence type="property"/>
             </attribute>
+          </attributes>
+        </itemtype>
+
+        <itemtype code="CustomerNotes" autocreate="true" generate="true" extends="Notes">
+          <description>Table to contain all type of customer notes.</description>
+          <attributes>
+            <attribute qualifier="type" type="NotesEnum"  redeclare="true">
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <description>Type of a note</description>
+              <persistence type="property"/>
+            </attribute>
+            <attribute qualifier="customerNoteType" type="CustomerNotesEnum">
+              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <description>Type of a note</description>
+              <persistence type="property"/>
+            </attribute>
             <attribute qualifier="fraud" type="boolean">
               <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
               <description>flag to identify fraud and it will be updated by verification team on Verification_Notes.</description>
@@ -2182,6 +2275,7 @@
             </attribute>
           </attributes>
         </itemtype>
+
         <itemtype code="BoxSizes" generate="true" autocreate="true">
 				<deployment table="boxsizes" typecode="12230"/>
 			<attributes>

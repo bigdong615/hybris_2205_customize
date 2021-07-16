@@ -12,6 +12,7 @@ import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PA
 import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
+import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.storefront.util.BlAddressDataUtil;
 import com.braintree.configuration.service.BrainTreeConfigService;
@@ -76,6 +77,9 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
   private BlAddressDataUtil addressDataUtil;
   @Resource(name = "customerFacade")
   private BlCustomerFacade blCustomerFacade;
+
+  @Resource(name = "cartFacade")
+  private BlCartFacade blCartFacade;
 
   @PostMapping(value = "/response")
   @RequireHardLogIn
@@ -195,7 +199,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       }
 
     }
-
+    blCartFacade.removePoNumber();
     return getCheckoutStep().nextStep();
   }
 

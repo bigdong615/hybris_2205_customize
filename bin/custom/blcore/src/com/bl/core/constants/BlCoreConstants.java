@@ -201,6 +201,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String COMPLETED = "Completed";
 	public static final String CONFIRM_OUTPUT = "confirmOutput";
+	
+	public static final String ZERO_RATING = "0";
 
 	private BlCoreConstants()
 	{
