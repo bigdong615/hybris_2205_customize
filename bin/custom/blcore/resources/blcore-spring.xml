@@ -874,6 +874,21 @@
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
 
+	<!-- [BL-663]: Custom Actions for used gear products promotion-->
+	<alias alias="ruleUsedGearPercentageDiscountAction" name="defaultRuleUsedGearPercentageDiscountAction" />
+	<bean id="defaultRuleUsedGearPercentageDiscountAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="ruleUGOrderEntryPercentageDiscountRAOAction"/>
+	</bean>
+	<alias alias="ruleUGOrderEntryPercentageDiscountRAOAction" name="defaultBlUGOrderEntryPercentageDiscountRAOAction" />
+	<bean id="defaultBlUGOrderEntryPercentageDiscountRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlUGOrderEntryPercentageDiscountRAOAction">
+		<property name="productService" ref="productService"/>
+	</bean>
+
+	<bean id="blUsedGearPercentDiscountStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+		<property name="key" value="defaultBlUGOrderEntryPercentageDiscountRAOAction"/>
+		<property name="value" ref="orderEntryAdjustActionStrategy"/>
+	</bean>
+
 	<!--Added for promo code case sensitivity check-->
 	<alias name="defaultBlCouponDao" alias="couponDao" />
 	<bean id="defaultBlCouponDao" class="com.bl.core.dao.coupon.impl.DefaultBlCouponDao" parent="defaultCouponDao"/>
@@ -894,6 +909,10 @@
 	<!--[Bl-652] condition and Actions-->
 	<alias alias="ruleTotalDamageWaiverConditionTranslator" name="defaultRuleTotalDamageWaiverConditionTranslator" />
 	<bean id="defaultRuleTotalDamageWaiverConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleTotalDamageWaiverConditionTranslator" />
+
+	<!--[Bl-663] condition-->
+	<alias alias="ruleUsedGearOnSaleConditionTranslator" name="defaultRuleUsedGearOnSaleConditionTranslator" />
+	<bean id="defaultRuleUsedGearOnSaleConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleUsedGearOnSaleConditionTranslator" />
 
 	<alias name="defaultBlShippingActionStrategy" alias="blShippingActionStrategy"/>
 	<bean id="defaultBlShippingActionStrategy" parent="abstractRuleActionStrategy" class="com.bl.core.promotions.promotionengineservices.action.impl.DefaultBlShippingActionStrategy" >

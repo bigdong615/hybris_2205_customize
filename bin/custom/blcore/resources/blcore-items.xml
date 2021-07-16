@@ -149,7 +149,7 @@
         <value code="EXCEPTION_NOTES"/>
       </enumtype>
 
-      
+
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
       
       <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
@@ -157,6 +157,7 @@
       </enumtype>
 
 	  </enumtypes>
+
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
@@ -906,7 +907,7 @@
                    </attribute>
                      <attribute qualifier="barcode" type="java.lang.String">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" unique="true" optional="false"
+                         <modifiers read="true" write="true" unique="true" optional="true"
                            initial="true"/>
                          <description>Serial barcode assigned specifically to the serial</description>
                      </attribute>
@@ -2019,6 +2020,16 @@
 						<persistence type="property" />
 						<modifiers optional="true" read="true" write="true" />
 						<description>used gear session timer value </description>
+					</attribute>
+                  <attribute qualifier="usedGearPromotionMessage" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear Site Wide promotion Message </description>
+					</attribute>
+                  <attribute qualifier="usedGearPromotionDiscount" type="java.lang.Integer">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear Site Wide promotion Discount in absolute percentage</description>
 					</attribute>
                 </attributes>                
             </itemtype>
