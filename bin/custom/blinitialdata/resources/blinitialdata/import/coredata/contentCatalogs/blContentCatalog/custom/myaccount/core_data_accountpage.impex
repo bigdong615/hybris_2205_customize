@@ -78,3 +78,5 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; verificationImages           ; Verification Images Page        ; AccountPageTemplate                  ;verificationImages
                           ;                         ; creditCarts                  ; Credit Carts Pages              ; AccountPageTemplate                 ; creditCarts
                           ;                         ;update-email                  ;Update Email Page                ;AccountPageTemplate                  ;update-email
+                          ;							; pay-bill					   ;Bill Payment Page				 ;AccountPageTemplate				   ; pay-bill
+                          ;							; pay-bill-success			   ;Bill Payment Success Page		 ;AccountPageTemplate				   ; pay-bill-success

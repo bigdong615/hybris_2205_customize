@@ -227,7 +227,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		final OrderData orderData;
 		try
 		{
-			LOG.error("getCheckoutFacade: " + getCheckoutFacade());
+			LOG.info("getCheckoutFacade: " + getCheckoutFacade());
 			if(paymentInfo != null) {
 				brainTreeCheckoutFacade.storeIntentToCart();
 				brainTreeCheckoutFacade
@@ -236,7 +236,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 						.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
 			}
 			orderData = getCheckoutFacade().placeOrder();
-			LOG.error("Order has been placed, number/code: " + orderData.getCode());
+			LOG.info("Order has been placed, number/code: " + orderData.getCode());
 			blRentalDateCookieGenerator.removeCookie(response);
 			blDatePickerService.removeRentalDatesFromSession();
 		}

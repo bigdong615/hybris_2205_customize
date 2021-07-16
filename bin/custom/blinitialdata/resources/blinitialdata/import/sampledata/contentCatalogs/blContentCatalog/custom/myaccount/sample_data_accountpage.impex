@@ -16,6 +16,8 @@ INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;
                                  ;;VerificationImagesComponent ; Verification Images Component ; accountVerificationImagesPage.jsp ;; VerificationImagesComponent
                                  ;;CreditCartsComponent    ; Credit Carts Component   ; accountCreditCartsPage.jsp ;;CreditCartsComponent
                                  ;;UpdateEmailComponent;Update Email Component;accountProfileEmailEditPage.jsp;;UpdateEmailComponent
+                                 ;;PayBillComponent;Bill Pay Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillPage.jsp;;PayBillComponent
+                                 ;;PayBillSuccessComponent;Bill Pay Success Component;/WEB-INF/views/addons/braintreeaddon/responsive/pages/account/accountPayBillSuccessPage.jsp;;PayBillSuccessComponent
 
 
 # CMS View Order Action
@@ -34,7 +36,8 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
                          ;;BodyContentSlot-verificationImages;Body Content Slot for Verification Images;true;VerificationImagesComponent;;;
                          ;;BodyContentSlot-creditCarts;Body Content Slot for Credit Carts;true;CreditCartsComponent;;;
                          ;;BodyContent-update-email;Body Content Slot for Update Email;true;UpdateEmailComponent;;;
-
+                         ;;BodyContentSlot-bill-pay;Body Content Slot for Bill Payment;true;PayBillComponent;;;
+                         ;;BodyContentSlot-bill-pay-success;Body Content Slot for Bill Payment Success;true;PayBillSuccessComponent;;;
 
 # ContentSlotForPage
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true];contentSlot(uid,$contentCV)[unique=true];;;
@@ -47,3 +50,5 @@ INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];positi
                                 ;;BodyContent-verificationImages  ;BodyContent; verificationImages ;BodyContentSlot-verificationImages;;;
                                 ;;BodyContent-creditCarts  ;BodyContent; creditCarts ;BodyContentSlot-creditCarts;;;
                                 ;;BodyContent-update-email;BodyContent;update-email;BodyContent-update-email;;;
+                                ;;BodyContentSlot-bill-pay;BodyContent;pay-bill;BodyContentSlot-bill-pay;;;
+                                ;;BodyContentSlot-bill-pay-success;BodyContent;pay-bill-success;BodyContentSlot-bill-pay-success;;;

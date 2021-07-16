@@ -21,6 +21,7 @@ import com.braintree.hybris.data.PayPalMiniCartResponse;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.security.PayPalGUIDCookieStrategy;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
@@ -126,7 +127,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
 		  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
-        final DeliveryModeModel selectedDeliveryMode = cartService.getSessionCart().getDeliveryMode();
+		final DeliveryModeModel selectedDeliveryMode = cartService.getSessionCart().getDeliveryMode();
 		final String payPalEmail = payPalExpressResponse.getDetails().getEmail();
 		if (ANONYMOUS_USER.equals(getSessionCartUserUid()))
 		{
@@ -157,16 +158,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			payPalUserLoginHandler.isHardLogin(model);
 		}
 
-		String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
-
-		if(payPalExpressResponse.getType().equals(BraintreeConstants.APPLE_PAY_CARD))
-		{
-			paymentProvider = BraintreeConstants.APPLE_PAY_CARD;
-		}
-		else if (payPalExpressResponse.getType().equals(BraintreeConstants.ANDROID_PAY_CARD))
-		{
-			paymentProvider = BraintreeConstants.ANDROID_PAY_CARD;
-		}
+		String paymentProvider = getPaymentProvider(payPalExpressResponse);
 
 		final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
 				paymentProvider,  isSavePaymentInfo, Boolean.FALSE, payPalEmail);
@@ -191,23 +183,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			}
 		}
 
-		if (deviceData != null){
-			subscriptionInfo.setDeviceData(deviceData);
-		}
-
-		final PayPalAddressData payPalBillingAddress = payPalExpressResponse.getDetails().getBillingAddress();
-		if (payPalBillingAddress != null)
-		{
-			final AddressData hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
-					payPalExpressResponse.getDetails(), payPalBillingAddress);
-			hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
-			subscriptionInfo.setAddressData(hybrisBillingAddress);
-		}
-		else
-		{
-			LOG.warn("No billing address provide by Pay Pal. Use billing address as shipping...");
-			subscriptionInfo.setAddressData(hybrisShippingAddress);
-		}
+		setAdditionalParametersInSubscriptionInfo(subscriptionInfo, deviceData, payPalExpressResponse,
+				hybrisShippingAddress);
 
 		if (selectedDeliveryMode == null){
 			brainTreeCheckoutFacade.setCheapestDeliveryModeForCheckout();
@@ -233,7 +210,53 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	}
 
-    @PostMapping(value = "/add-payment-method")
+	/**
+	 * It sets the address into subscription info
+	 * @param subscriptionInfo
+	 * @param deviceData
+	 * @param payPalExpressResponse
+	 * @param hybrisShippingAddress
+	 */
+	private void setAdditionalParametersInSubscriptionInfo(final BrainTreeSubscriptionInfoData subscriptionInfo, final String
+			deviceData, final PayPalExpressResponse payPalExpressResponse, final AddressData hybrisShippingAddress) {
+		if (deviceData != null){
+			subscriptionInfo.setDeviceData(deviceData);
+		}
+
+		final PayPalAddressData payPalBillingAddress = payPalExpressResponse.getDetails().getBillingAddress();
+		if (payPalBillingAddress != null)
+		{
+			final AddressData hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
+					payPalExpressResponse.getDetails(), payPalBillingAddress);
+			hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			subscriptionInfo.setAddressData(hybrisBillingAddress);
+		}
+		else
+		{
+			LOG.warn("No billing address provide by Pay Pal. Use billing address as shipping...");
+			subscriptionInfo.setAddressData(hybrisShippingAddress);
+		}
+	}
+
+	/**
+	 * It gets the payment provider
+	 * @param payPalExpressResponse
+	 * @return
+	 */
+	private String getPaymentProvider(PayPalExpressResponse payPalExpressResponse) {
+		String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
+		if(payPalExpressResponse.getType().equals(BraintreeConstants.APPLE_PAY_CARD))
+		{
+			paymentProvider = BraintreeConstants.APPLE_PAY_CARD;
+		}
+		else if (payPalExpressResponse.getType().equals(BraintreeConstants.ANDROID_PAY_CARD))
+		{
+			paymentProvider = BraintreeConstants.ANDROID_PAY_CARD;
+		}
+		return paymentProvider;
+	}
+
+	@PostMapping(value = "/add-payment-method")
     public String addPaymentMethod(final Model model, final RedirectAttributes redirectAttributes,
 			                          @RequestParam(value = "selectedAddressCode", required = false) final String selectedAddressCode,
                                    final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
@@ -323,13 +346,11 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	@GetMapping(value = "/mini/express")
 	@RequireHardLogIn
 	@ResponseBody
-	public String doInitializeMiniCartPaypalShortcut()
-	{
+	public String doInitializeMiniCartPaypalShortcut() throws JsonProcessingException {
 		return buildPayPalMiniCartResponse();
 	}
 
-	private String buildPayPalMiniCartResponse()
-	{
+	private String buildPayPalMiniCartResponse() throws JsonProcessingException {
 		final ObjectMapper mapper = new ObjectMapper();
 		final PayPalMiniCartResponse payPalMiniCartResponse = new PayPalMiniCartResponse();
 
