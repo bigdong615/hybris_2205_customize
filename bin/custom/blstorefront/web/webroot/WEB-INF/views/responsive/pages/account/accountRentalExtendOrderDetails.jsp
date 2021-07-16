@@ -98,81 +98,16 @@
 
 						<div > </div>
 				</div> <b><spring:theme code="text.myaccount.extend.order.pay"/></b>
-				<div class="col-11">
-						<ycommerce:testId code="paymentDetailsForm">
-							<form:form id="braintree-payment-form" name="silentOrderPostForm" class="create_update_payment_form" modelAttribute="sopPaymentDetailsForm"
-							action="${request.contextPath}/braintree/checkout/hop/response" method="POST">
-								<div id="cardDetails">
-									<div id="credit-card-saved" class="collapse show" data-bs-parent="#cardDetails">
-										<c:choose>
-											<c:when test="${empty userSelectedPaymentInfo.cardNumber and empty braintreePaymentInfos}"> <b class="mt-4">Saved Credit Cards</b>
-												<div class="dropdown my-2">
-													<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false"> <img src="${userSelectedPaymentInfo.accountHolderName}" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)} </button>
-												</div> <a href="#" id="addNewCardForm" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a> </c:when>
-											<c:otherwise>
-												<c:if test="${empty braintreePaymentInfos}"> <b class="mt-4">Saved Credit Cards</b>
-													<div class="dropdown my-2">
-														<button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="savedCards" data-bs-toggle="dropdown" aria-expanded="false">
-															<c:choose>
-																<c:when test="${not empty userSelectedPaymentInfo}"> <img src="${userSelectedPaymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(userSelectedPaymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(userSelectedPaymentInfo.expiryMonth)}/${fn:escapeXml(userSelectedPaymentInfo.expiryYear)} </c:when>
-																<c:otherwise> Select or Enter new card </c:otherwise>
-															</c:choose>
-														</button>
-														<ul class="dropdown-menu savedPaymentList" aria-labelledby="savedCards" id="saved-payment-action">
-															<c:forEach items="${braintreePaymentInfos}" var="paymentInfo" varStatus="status">
-																<c:if test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'CreditCard')}">
-																	<li>
-																		<button class="dropdown-item" data-id="${paymentInfo.id}" data-nonce="${paymentInfo.paymentMethodNonce}"> <img src="${paymentInfo.accountHolderName }" style="max-width: 33px; height: auto;"> &nbsp ${fn:escapeXml(paymentInfo.cardNumber)} &nbsp exp ${fn:escapeXml(paymentInfo.expiryMonth)}/${fn:escapeXml(paymentInfo.expiryYear)} </button>
-																	</li>
-																</c:if>
-															</c:forEach>
-														</ul>
-													</div> <a href="#" id="addNewCardForm" class="gray80" data-bs-toggle="collapse" data-bs-target="#credit-card-form-expand" aria-controls="credit-card-form-expand">+ Add a new credit card</a> </c:if>
-											</c:otherwise>
-										</c:choose>
-									</div>
-									<div class="collapse" id="credit-card-form-expand" data-bs-parent="#cardDetails"> <b class="mt-4">Add Your Credit Card</b>
-										<div class="mb-5">
-											<div class="hostedFields">
-												<div class="control-group cardForm" style="dispaly: none;" id="cardForn">
-													<div id="number" class="controls form-control secure testing"></div>
-													<div class="row">
-														<div class="col-4">
-															<div id="expirationMonth" class="controls form-control"></div>
-														</div>
-														<div class="col-4">
-															<div id="expirationYear" class="controls form-control"></div>
-														</div>
-														<div class="col-4">
-															<div id="cvv" class="controls form-control"></div>
-														</div>
-													</div>
-															<input type="checkbox" checked class="form-control" id="savePaymentInfo" name="savePaymentInfo" />
-															<label for="savePaymentInfo"> <span class="gray80"><spring:theme code="checkout.multi.sop.savePaymentInfo" /></span> </label>
-												</div>
-											</div>
-										</div> <a href="#" class="gray80" id="showSavedCard" data-bs-toggle="collapse" data-bs-target="#credit-card-saved" aria-expanded="false" aria-controls="credit-card-saved">+ Use a saved credit card</a> </div>
-								</div>
-								<hr/>
-							</form:form>
-						</ycommerce:testId>
-						<c:set var="selectedAddressId" value="${defaultBillingAddress.id }" />
-						<c:if test="${not empty paymentInfoBillingAddress}">
-							<c:set var="selectedAddressId" value="${paymentInfoBillingAddress.id }" /> </c:if>
-						<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value="${selectedAddressId}" />
-
-						<form:form name="submitSavedCardForm" method="POST" id="submitSavedCardForm" action="${reviewSavedPaymentAction}">
-							<input type="hidden" id="savedCCCardId" name="savedCCCardId" value="${userSelectedPaymentInfo.id}" />
-							<input type="hidden" id="savedCCCardNonce" name="savedCCCardNonce" value="${userSelectedPaymentInfo.paymentMethodNonce}" /> </form:form>
-						<form:form name="selectSavedCardForm" method="POST" id="selectSavedCardForm" action="${savedPaymentInfoFormURL}">
-							<input type="hidden" id="selectedPaymentMethodId" name="selectedPaymentMethodId" value="" />
-							<input type="hidden" id="selectedPaymentMethodNonce" name="selectedPaymentMethodNonce" value="" /> </form:form>
-						</div>
+                <order:accountExtendOrderPayment order="${orderData}"/>
 				</div>
 				<hr class="mt-4">
+
+
+
 				<div class="cart-actions">
-					<a href="#" class="btn btn-sm btn-primary float-end">
-						<spring:theme code="text.myaccount.order.extend.rent" /> </a>
+						<button type="submit" class="btn btn-sm btn-primary float-end js-extendOrder-btn" data-order-id="${fn:escapeXml(orderData.code)}">
+                 <spring:theme code="text.myaccount.order.extend.rent"/>
+            </button>
 				</div>
 			</div>
 		</div>
@@ -240,9 +175,13 @@
 			<spring:theme code="text.myaccount.order.extend.rent" />
 			</button>
 	</div>
-</div>
 
+
+ <div class="col-12">
 <div class="notification notification-error d-none"id="errorMessages_account_voucher"></div>
+ </div>
+
+ </div>
 
 <!-- DamageWaivers Modal -->
 <div class="modal fade" id="damageWaivers" tabindex="-1" aria-hidden="true">

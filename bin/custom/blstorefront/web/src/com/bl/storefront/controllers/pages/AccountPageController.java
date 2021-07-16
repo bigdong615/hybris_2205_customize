@@ -12,10 +12,12 @@ import com.bl.facades.order.BlOrderFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
 import com.bl.facades.wishlist.data.Wishlist2EntryData;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
 import com.braintree.facade.BrainTreeUserFacade;
+import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -66,6 +68,7 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
@@ -86,6 +89,7 @@ import javax.validation.Valid;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -172,6 +176,9 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
 
+
+
+	final String CLIENT_TOKEN = "client_token";
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
 	@Resource(name = "acceleratorCheckoutFacade")
@@ -233,6 +240,10 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "defaultBlCouponFacade")
 	private DefaultBlCouponFacade defaultBlCouponFacade;
+
+
+	@Resource(name = "brainTreeCheckoutFacade")
+	private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -1144,13 +1155,15 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
+		orderDetails.setIsExtendOrderPage(true);
 		model.addAttribute("orderData", orderDetails);
-		if(Objects.nonNull(orderDetails) && Objects.nonNull(orderDetails.getPaymentInfo()))
+		/*if(Objects.nonNull(orderDetails) && Objects.nonNull(orderDetails.getPaymentInfo()))
 		{
 			final CCPaymentInfoData paymentInfo = orderDetails.getPaymentInfo();
 			setPaymentDetailForPage(paymentInfo, model);
-		}
+		}*/
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		setupAdditionalFields(model); //Add braintree detils
 		final ContentPageModel extendOrderDetailPage = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_DETAILS);
 		storeCmsPageInModel(model, extendOrderDetailPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
@@ -1181,6 +1194,7 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute("paymentDetailsForm" , paymentDetailsForm);
 		model.addAttribute("sopPaymentDetailsForm", new SopPaymentDetailsForm());
 		model.addAttribute("silentOrderPostForm", new PaymentDetailsForm());
+
 	}
 
 	/**
@@ -1260,6 +1274,22 @@ public class AccountPageController extends AbstractSearchPageController
 		return "";
 	}
 
+
+	private void setupAdditionalFields(final Model model)
+	{
+		String clientToken = StringUtils.EMPTY;
+
+		try
+		{
+			clientToken = brainTreeCheckoutFacade.generateClientToken();
+		}
+		catch (final AdapterException exception)
+		{
+			BlLogger.logMessage(LOG , Level.ERROR , "[ExtendOrderController] Error during token generation!" , exception);
+		}
+
+		model.addAttribute(CLIENT_TOKEN, clientToken);
+	}
 
 
 }

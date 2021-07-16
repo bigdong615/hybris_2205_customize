@@ -21,6 +21,7 @@ import com.braintree.hybris.data.PayPalMiniCartResponse;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.security.PayPalGUIDCookieStrategy;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
@@ -323,13 +324,11 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	@GetMapping(value = "/mini/express")
 	@RequireHardLogIn
 	@ResponseBody
-	public String doInitializeMiniCartPaypalShortcut()
-	{
+	public String doInitializeMiniCartPaypalShortcut() throws JsonProcessingException {
 		return buildPayPalMiniCartResponse();
 	}
 
-	private String buildPayPalMiniCartResponse()
-	{
+	private String buildPayPalMiniCartResponse() throws JsonProcessingException {
 		final ObjectMapper mapper = new ObjectMapper();
 		final PayPalMiniCartResponse payPalMiniCartResponse = new PayPalMiniCartResponse();
 

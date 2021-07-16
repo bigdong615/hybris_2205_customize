@@ -142,6 +142,7 @@
 			<property name="poNotes" type="java.lang.String"/>
 			<property name="isAllProductExtendabe" type="java.lang.Boolean"/>
 			<property name="extendErrorMessage" type="java.lang.String"/>
+			<property name="isExtendOrderPage" type="java.lang.Boolean"/>
   </bean>
 
     <!-- Shipping -->

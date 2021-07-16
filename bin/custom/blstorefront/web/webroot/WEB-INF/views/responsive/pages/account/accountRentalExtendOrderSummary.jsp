@@ -98,3 +98,32 @@
 			<spring:theme code="text.myaccount.order.extend.rent" /> </button>
 
 			<div class="notification notification-error d-none"id="errorMessages_voucher"></div>
+
+
+<script>
+$(".js-voucher-apply-account-btn").on("click", function(e) {
+   			e.preventDefault();
+   			var voucherCode = $.trim($(".js-voucher-code-text-account").val());
+   			if (voucherCode != '' && voucherCode.length > 0) {
+         var formValues = $('#applyVoucherForm').serialize();
+   				$.ajax({
+   			url: ACC.config.encodedContextPath + '/my-account/voucher/apply',
+             type: "POST",
+             data: formValues,
+             success: function (data) {
+             if(data=='success')
+                    window.location.reload();
+             },
+             error: function (xhr, textStatus, error) {
+
+             }
+   				});
+   			} else {
+   				$("#errorMessages_account_voucher").removeClass("d-none");
+   				$("#errorMessages_account_voucher").html("Please enter your coupon code and click apply");
+   				$(".js-voucher-code-text-account").addClass("error");
+   			}
+
+   	});
+
+</script>

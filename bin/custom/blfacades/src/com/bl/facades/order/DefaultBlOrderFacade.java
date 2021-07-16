@@ -159,7 +159,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(startDate);
-    calendar.add(Calendar.DAY_OF_MONTH ,1);
+    calendar.add(Calendar.DAY_OF_MONTH ,2);
     startDate = calendar.getTime();
 
 

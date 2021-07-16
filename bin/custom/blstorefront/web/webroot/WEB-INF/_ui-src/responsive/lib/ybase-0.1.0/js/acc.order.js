@@ -3,7 +3,8 @@ ACC.order = {
 	_autoload: [
 	    "backToOrderHistory",
 	    "bindMultidProduct",
-	    ["bindApplyAccountVoucher", $(".js-voucher-apply-account-btn").length != 0]
+	    ["bindApplyAccountVoucher", $(".js-voucher-apply-account-btn").length != 0],
+	    "bindApplyExtendOrder"
 	],
 
 	backToOrderHistory: function(){
@@ -70,6 +71,27 @@ ACC.order = {
    			}
    		}
    	});
-   }
+   },
+
+   	 bindApplyExtendOrder: function() {
+      		$(".js-extendOrder-btn").on("click", function(e) {
+      			e.preventDefault();
+      			   var orderCode = $(this).data('order-id');
+      			alert(orderCode)
+      				$.ajax({
+      			url: ACC.config.encodedContextPath + '/my-account/extendOrder',
+                type: "POST",
+                data: formValues,
+                success: function (data) {
+                if(data=='success')
+                       window.location.reload();
+                },
+                error: function (xhr, textStatus, error) {
+
+                }
+      				});
+
+      	});
+      }
 
 };
