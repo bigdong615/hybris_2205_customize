@@ -24,37 +24,38 @@
 <script src="//ui.powerreviews.com/stable/4.0/ui.js"></script>
 
 <script>
-window.pwr = window.pwr || function () {
-	  (pwr.q = pwr.q || []).push(arguments); 
-	 };
-	 pwr("render", {
-     api_key: '54a82048-9c20-4a13-a01b-dd5b0415a965',
-   	 locale: 'en_US',
-    merchant_group_id: '2120371445',
-    merchant_id: '1415200746',
-    page_id: '${product.code}',
-    review_wrapper_url:'${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${product.code}',
-    REVIEW_DISPLAY_SNAPSHOT_TYPE:'SIMPLE', 	
-    REVIEW_DISPLAY_PAGINATION_TYPE:'VERTICAL',
-    
-    product :{
-        name: '${product.name}',
-        url: '${baseUrl}${product.url}',
-        image_url: '${primaryImageUrl}',
-        description: '${(product.description)}',
-        category_name: '${(product.categories[0].name)}',
-        manufacturer_id: '${product.manufacturer}',
-        upc: '${product.upc}',
-        brand_name: '${product.brandName}',
-       	price: '${product.price.value}',
-        in_stock: '${stockStatus}'
-    },
-    components: {
-        ReviewSnippet: 'pr-reviewsnippet',
-        ReviewImageSnippet: 'pr-imagesnippet',
-        ReviewDisplay: 'pr-reviewdisplay',
-        
-        
-    }
-  });
+	window.pwr = window.pwr || function() {
+		(pwr.q = pwr.q || []).push(arguments);
+	};
+	pwr(
+			"render",
+			{
+				api_key : '54a82048-9c20-4a13-a01b-dd5b0415a965',
+				locale : 'en_US',
+				merchant_group_id : '2120371445',
+				merchant_id : '1415200746',
+				page_id : '${product.code}',
+				review_wrapper_url : '${baseUrl}/rent/product/${product.code}/writeReview/?pr_page_id= ${product.code}',
+				REVIEW_DISPLAY_SNAPSHOT_TYPE : 'SIMPLE',
+				REVIEW_DISPLAY_PAGINATION_TYPE : 'VERTICAL',
+
+				product : {
+					name : '${product.name}',
+					url : '${baseUrl}${product.url}',
+					image_url : '${primaryImageUrl}',
+					description : '${(product.description)}',
+					category_name : '${(product.categories[0].name)}',
+					manufacturer_id : '${product.manufacturer}',
+					upc : '${product.upc}',
+					brand_name : '${product.brandName}',
+					price : '${product.price.value}',
+					in_stock : '${stockStatus}'
+				},
+				components : {
+					ReviewSnippet : 'pr-reviewsnippet',
+					ReviewImageSnippet : 'pr-imagesnippet',
+					ReviewDisplay : 'pr-reviewdisplay',
+
+				}
+			});
 </script>
