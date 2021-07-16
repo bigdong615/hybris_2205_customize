@@ -239,9 +239,14 @@
         <!-- BL-542 End-->
 
         <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
-          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one"/>
+          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one">
+            <modifiers read="true" write="true" search="true" optional="true"/>
+          </sourceElement>
+
           <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
-            collectiontype="list"/>
+            collectiontype="list">
+            <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
+          </targetElement>
         </relation>
 
 
@@ -899,6 +904,11 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>To identify whether product is OnSale or not</description>
                    </attribute>
+                   <attribute qualifier="brandName" type="java.lang.String">
+                         <persistence type="property" />
+                         <modifiers read="true" write="true" optional="false" initial="true"/>
+                         <description>Brand name for the BL Product</description>
+                     </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"

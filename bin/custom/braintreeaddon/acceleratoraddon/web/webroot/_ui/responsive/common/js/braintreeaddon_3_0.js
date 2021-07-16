@@ -1067,7 +1067,7 @@ $('#submit_silentOrderPostForm').click(function () {
 	var savedPoForm = $("#submitSavedPoForm");
   var poNumber = savedPoForm.find('input[id="poNumber"]').val();
   var poNotes = savedPoForm.find('input[id="poNotes"]').val();
-  if (poEnable == true && poNumber == '' && giftcardApplied == '') {
+  if (poEnable == true && $.trim(poNumber) == "" && giftcardApplied == '') {
   	var validationDiv = $(
   			'<div class="notification notification-warning mb-4" />').text(
   			ACC.ccError.poNumber);
