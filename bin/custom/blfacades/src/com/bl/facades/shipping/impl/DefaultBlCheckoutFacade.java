@@ -811,8 +811,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
    */
   @Override
   public void saveOrderNotes(final String orderNotes) {
+    final CartModel cartModel = getCartService().getSessionCart();
     try {
-        final CartModel cartModel = getCartService().getSessionCart();
         if (StringUtils.isNotBlank(orderNotes) && Objects.nonNull(cartModel) && Objects
             .nonNull(cartModel.getUser())) {
           final NotesModel notesModel = getModelService().create(NotesModel.class);
@@ -826,7 +826,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         }
       } catch (final Exception exception) {
         BlLogger.logMessage(LOG, Level.ERROR,
-          "Error occurred while saving order notes", exception);
+          "Error occurred while saving order notes for cart {}", cartModel.getCode(), exception);
     }
   }
 
