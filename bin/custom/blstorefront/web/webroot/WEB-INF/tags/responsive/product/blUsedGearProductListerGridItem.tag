@@ -26,7 +26,7 @@
  <span class="bookmark"></span>
  </c:if>
 <!-- BL-926: Added new file for Gift Card --> 
-<product:giftCardImagePanel productType="UsedGearProduct" product="${product}"/>
+<product:productListImagePanel productType="UsedGearProduct" product="${product}"/>
 		
 
 <!-- BL-926: Added condition for Gift Card as per requirement --> 

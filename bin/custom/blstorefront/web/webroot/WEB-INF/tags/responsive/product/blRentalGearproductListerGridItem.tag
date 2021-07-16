@@ -65,7 +65,7 @@
     </sec:authorize>
     </c:if>
     <!-- BL-926: Added new file for Gift Card --> 
-    <product:giftCardImagePanel productType="RentalGearProduct" product="${product}"/>
+    <product:productListImagePanel productType="RentalGearProduct" product="${product}"/>
 
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
 		<c:if test="${product.code ne 'bl_giftcard'}">
