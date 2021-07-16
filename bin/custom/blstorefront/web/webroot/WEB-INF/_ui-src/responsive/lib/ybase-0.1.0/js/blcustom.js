@@ -313,6 +313,17 @@ $('#applyGcCode').click(function (e) {
 	});
 });
 
+//BL-927 Gift Card Purchase Amount
+$('#add-to-gc').click(function(e) {
+    $('.page-loader-new-layout').hide();
+    var form = $('#giftCardPurchaseForm');
+    var amount = form.find('input[name=amount]').val();
+    if (amount < 25 || amount > 500) {
+        $('.notification').show();
+        return false;
+    }
+});
+
 //BL-563 Remove Gift Card
 $('.remove-gift-card').on("click", function(e) {
      e.preventDefault();
