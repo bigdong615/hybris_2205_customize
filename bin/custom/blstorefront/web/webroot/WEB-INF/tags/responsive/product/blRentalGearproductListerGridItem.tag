@@ -132,7 +132,7 @@
 			<c:choose>
 				<c:when test="${product.code eq 'bl_giftcard'}">
 					<a href="${rentUrl}" class="btn btn-primary"><spring:theme
-							code="basket.add.to.basket" /></a>
+							code="text.product.list.by.now" /></a>
 				</c:when>
 				<c:otherwise>
 					<div class="addtocart btnwidth">
