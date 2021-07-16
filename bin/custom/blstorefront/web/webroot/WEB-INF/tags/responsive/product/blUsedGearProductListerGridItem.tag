@@ -87,9 +87,10 @@
 		<c:set var="addToCartUrl" value="${addToCartUrl}" scope="request"/>
 		<c:set var="isGrid" value="true" scope="request"/>
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
+		<c:url var="usedUrl" value="/buy/product/${product.code}"/>
 			<c:choose>
 				<c:when test="${product.code eq 'bl_giftcard'}">
-					<a href="${rentUrl}" class="btn btn-primary"><spring:theme
+					<a href="${usedUrl}" class="btn btn-primary"><spring:theme
 							code="basket.add.to.basket" /></a>
 				</c:when>
 				<c:otherwise>
