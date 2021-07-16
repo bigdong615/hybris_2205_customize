@@ -204,7 +204,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
-    if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    if (paymentInfo != null && CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
     {
       try
       {
@@ -228,11 +228,13 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		try
 		{
 			LOG.error("getCheckoutFacade: " + getCheckoutFacade());
-
-			brainTreeCheckoutFacade.storeIntentToCart();
-			brainTreeCheckoutFacade.storeCustomFieldsToCart(getMergedCustomFields(placeOrderForm.getCustomFields()));
-			brainTreeCheckoutFacade.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
-
+			if(paymentInfo != null) {
+				brainTreeCheckoutFacade.storeIntentToCart();
+				brainTreeCheckoutFacade
+						.storeCustomFieldsToCart(getMergedCustomFields(placeOrderForm.getCustomFields()));
+				brainTreeCheckoutFacade
+						.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
+			}
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.error("Order has been placed, number/code: " + orderData.getCode());
 			blRentalDateCookieGenerator.removeCookie(response);
@@ -273,7 +275,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			invalid = true;
 		}
 
-		if (getCheckoutFlowFacade().hasNoPaymentInfo())
+		if (StringUtils.isEmpty(getCheckoutFlowFacade().getCheckoutCart().getPoNumber()) && getCheckoutFlowFacade().hasNoPaymentInfo())
 		{
 			GlobalMessages.addErrorMessage(model, "checkout.paymentMethod.notSelected");
 			invalid = true;
