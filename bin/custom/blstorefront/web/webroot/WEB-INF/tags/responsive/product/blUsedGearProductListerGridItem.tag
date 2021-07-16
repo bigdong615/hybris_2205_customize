@@ -21,33 +21,18 @@
 <c:if test ="${product.productTagValues ne null && product.productTagValues ne 'Great Value' && product.productTagValues ne 'Staff Pick'}">
 <span class="badge badge-limited-stock">${product.productTagValues}</span>
 </c:if>
+<!-- BL-926: Added condition for Gift Card as per requirement --> 
+<c:if test="${product.code ne 'bl_giftcard'}">
  <span class="bookmark"></span>
-  <c:choose>
-     <c:when test ="${not empty product.images}">
-        <div class="card-slider splide">
-           <div class="splide__track">
-              <ul class="splide__list">
-                 <c:forEach var="mediaLi" items="${product.images}">
-                    <c:if test ="${mediaLi.format eq 'product'}">
-                       <c:url value="${mediaLi.url}" var="primaryImageUrl" />
-                       <c:set value="this is alternate" var="altTextHtml"/>
-                       <li class="splide__slide"">
-					   <!-- BL-534: Added Url or <a> tag as per requirement --> 
-					   <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
-                       <a href="${usedGearUrl}"><img src="${fn:escapeXml(primaryImageUrl)}"/></a></li>
-                    </c:if>
-                 </c:forEach>
-              </ul>
-           </div>
-        </div>
-     </c:when>
-     <c:otherwise>
-        <c:set value="/blstorefront/_ui/responsive/theme-bltheme/images/missing_product_EN_300x300.jpg" var="altTextHtml1"/>
-        <img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}" title="${altText}" title="${altText}"/>
-     </c:otherwise>
-  </c:choose>
+ </c:if>
+<!-- BL-926: Added new file for Gift Card --> 
+<product:productListImagePanel productType="UsedGearProduct" product="${product}"/>
+		
 
- <p class="overline">${product.manufacturer}</p>
+<!-- BL-926: Added condition for Gift Card as per requirement --> 
+      <c:if test="${product.code ne 'bl_giftcard'}">
+		<p class="overline">${product.manufacturer}</p>
+	  </c:if>
  <h6 class="product">
  <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
             <a href="${usedGearUrl}" role="button"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/> </a>
@@ -61,7 +46,16 @@
 					</c:forEach>
 				</div>
 			</c:if>
-	<h6 class="price"><small><spring:theme code="text.used.product.card.price.starting.at"/></small>
+	<h6 class="price">
+	<!-- BL-926: Added condition for Gift Card as per requirement --> 
+	<c:choose>
+	    <c:when test="${product.code eq 'bl_giftcard'}">
+	     <spring:theme code="slp.giftcard.price" /> 
+	    </c:when>
+	   <c:otherwise>
+	      <small><spring:theme code="text.used.product.card.price.starting.at"/></small>
+	   </c:otherwise>
+	</c:choose>
 			<c:choose>
 				<c:when test="${not empty product.serialIncentivizedPrice }">
 					<format:price priceData="${product.serialIncentivizedPrice}" />&nbsp;<small><strike><format:price priceData="${product.serialfinalSalePrice}" /></strike></small>
@@ -92,11 +86,23 @@
 		<c:set var="addToCartText" value="${addToCartText}" scope="request"/>
 		<c:set var="addToCartUrl" value="${addToCartUrl}" scope="request"/>
 		<c:set var="isGrid" value="true" scope="request"/>
-		<div class="addtocart btnwidth">
-			<div class="actions-container-for-${fn:escapeXml(component.uid)} <c:if test="${ycommerce:checkIfPickupEnabledForStore() and product.availableForPickup}"> pickup-in-store-available</c:if>">
-				<action:actions element="div" parentComponent="${component}"/>
-			</div>
-		</div>
-	</ycommerce:testId>
+		<!-- BL-926: Added condition for Gift Card as per requirement --> 
+		<c:url var="usedUrl" value="/buy/product/${product.code}"/>
+			<c:choose>
+				<c:when test="${product.code eq 'bl_giftcard'}">
+					<a href="${usedUrl}" class="btn btn-primary"><spring:theme
+							code="basket.add.to.basket" /></a>
+				</c:when>
+				<c:otherwise>
+					<div class="addtocart btnwidth">
+						<div
+							class="actions-container-for-${fn:escapeXml(component.uid)} <c:if test="${ycommerce:checkIfPickupEnabledForStore() and product.availableForPickup}"> pickup-in-store-available</c:if>">
+							<action:actions element="div" parentComponent="${component}" />
+						</div>
+					</div>
+				</c:otherwise>
+			</c:choose>
+
+		</ycommerce:testId>
 </div>
 </div>
