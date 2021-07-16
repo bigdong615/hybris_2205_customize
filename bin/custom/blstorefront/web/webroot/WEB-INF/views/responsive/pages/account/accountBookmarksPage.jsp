@@ -18,14 +18,11 @@
                     <div class="order-block">
                         <div class="row">
                             <div class="col-3 col-md-2 text-center">
-                               <c:set value="true" var="continueLoop"/>
                                <c:forEach items="${wishlistDatas.product.images}" var="productImagePdp">
-                                  <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY' and continueLoop}">
+                                  <c:if test="${productImagePdp.format eq 'product' and productImagePdp.imageType eq 'GALLERY'}">
                                     <c:url value="${productImagePdp.url}" var="primaryImagePdpUrl" />
                                     <c:set value="this is alternate" var="altTextHtml"/>
-                                           <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}">
-                                           <c:set value="false" var="continueLoop"/>
-                                           </a>
+                                           <a href ="${rentalPDPUrl}"><img src="${primaryImagePdpUrl}"></a>
                                   </c:if>
                                </c:forEach>
                             </div>
@@ -33,10 +30,7 @@
                                 <c:url var="rentalPDPUrl" value="/rent/product/${wishlistDatas.product.code}"/>
                                 <b><a href="${rentalPDPUrl}">${wishlistDatas.product.displayName}</a></b>
                                 <p class="gray80 body14">
-                                    <c:if test="${rentalDate.selectedFromDate ne null and rentalDate.selectedToDate ne null}">
-                                     ${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}
-                                    </c:if>
-                                    <br>
+                                    ${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}<br>
                                     <format:price priceData="${wishlistDatas.product.price}"/>
                                 </p>
                             </div>
