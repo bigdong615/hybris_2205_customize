@@ -140,6 +140,10 @@ jQuery(document).ready(function ($) {
 	{
 		$("#submit_silentOrderSavedForm").hide();
 	}
+	if($("#isPOPresent") != '' && $("#isPOPresent").val() != '' && $("#isPOPresent").val() === 'true')
+	{
+	  $("#paymentMethodPo").click();
+	}
 	if($("#isAddressPresent") != '' && $("#isAddressPresent").val() != '' && $("#isAddressPresent").val() === 'true')
 	{
 		$("#billing-address-saved").addClass("show");
@@ -1058,9 +1062,22 @@ $('#submit_silentOrderPostForm').click(function () {
 	$("#allFieldvalidationMessage").empty();
 	var ccEnable = $('#paymentMethodBT').is(':checked');
 	var giftcardApplied = $("input[name='appliedGC']").val();
-	
+	var poEnable = $('#paymentMethodPo').is(':checked');
 	$("#allFieldvalidationMessage").empty();
-	if(giftcardApplied == '' && ccEnable == false)
+	var savedPoForm = $("#submitSavedPoForm");
+  var poNumber = savedPoForm.find('input[id="poNumber"]').val();
+  var poNotes = savedPoForm.find('input[id="poNotes"]').val();
+  if (poEnable == true && poNumber == '' && giftcardApplied == '') {
+  	var validationDiv = $(
+  			'<div class="notification notification-warning mb-4" />').text(
+  			ACC.ccError.poNumber);
+  	$('#validationMessage').append(validationDiv);
+  } else if (poEnable == true && poNumber != '' && giftcardApplied == '') {
+  	savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
+  	savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
+  	savedPoForm.submit();
+  }
+	if(giftcardApplied == '' && ccEnable == false && poEnable != true)
 	{
 		allFieldValidation(ACC.ccError.allFieldsNotSelected);
 	}
@@ -1150,11 +1167,24 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 	e.preventDefault();
 	$('#validationMessage').empty();
 	$("#allFieldvalidationMessage").empty();
+	var giftcardApplied = $("input[name='appliedGC']").val();
+  var poEnable = $('#paymentMethodPo').is(':checked');
+  var savedPoForm = $("#submitSavedPoForm");
+  var poNumber = savedPoForm.find('input[id="poNumber"]').val();
+  var poNotes = savedPoForm.find('input[id="poNotes"]').val();
 	$('.page-loader-new-layout').show();
 	if($("#paymentMethodPayPal").is(":checked"))
 	{
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
-	}
+	}else if(poEnable == true && poNumber == '' && giftcardApplied == ''){
+	  $('.page-loader-new-layout').hide();
+    var validationDiv = $('<div class="notification notification-warning mb-4" />').text(ACC.ccError.poNumber);
+    $('#validationMessage').append(validationDiv);
+  }else if(poEnable == true && poNumber != '' && giftcardApplied == ''){
+      savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
+      savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
+      savedPoForm.submit();
+  }
 	else
 	{
 		var billingFormErrorCounts = validateBillingAddressFields();
@@ -1186,4 +1216,22 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 			formToSubmit.submit();
 		}
 	}
+});
+
+//Handled min and max character for PO number and PO notes.
+var inputQuantity = [];
+$(function() {
+    $(".po-number").on("keyup", function (e) {
+        var $field = $(this),
+            val=this.value;
+        if (this.validity && this.validity.badInput || isNaN(val) || $field.is(":invalid") ) {
+            this.value = inputQuantity[$thisIndex];
+            return;
+        }
+        if (val.length > Number($field.attr("maxlength"))) {
+          val=val.slice(0, 5);
+          $field.val(val);
+        }
+        inputQuantity[$thisIndex]=val;
+    });
 });
