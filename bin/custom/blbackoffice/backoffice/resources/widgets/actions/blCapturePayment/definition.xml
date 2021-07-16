@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
 
-    <name>capturePayment.action</name>
+    <name>Capture Payment Action</name>
     <description>Capture Payment Action</description>
     <author>hybris</author>
     <version>0.1</version>

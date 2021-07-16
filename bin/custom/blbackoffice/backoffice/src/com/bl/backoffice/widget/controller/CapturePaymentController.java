@@ -34,6 +34,9 @@ public class CapturePaymentController extends DefaultWidgetController {
 
   private static final Logger LOG = Logger.getLogger(CapturePaymentController.class);
 
+  protected static final String OUT_CONFIRM = "confirmOutput";
+  private static final String TITLE_MESSG = "Capture payment for order";
+  protected static final String COMPLETE = "completed";
   private static final String ERR_MESG_FOR_ALREADY_CAPTURED_ORDER = "error.message.already.captured.order";
   private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED = "success.message.payment.captured";
 
@@ -47,9 +50,7 @@ public class CapturePaymentController extends DefaultWidgetController {
 
   @SocketEvent(socketId = "inputObject")
   public void init(final ConsignmentModel inputObject) {
-    this.getWidgetInstanceManager().setTitle(
-        this.getWidgetInstanceManager().getLabel("blbackoffice.capture.payment.confirm.title")
-            + " : " + inputObject.getOrder().getCode());
+    this.getWidgetInstanceManager().setTitle(TITLE_MESSG + " : " + inputObject.getOrder().getCode());
     if (inputObject.getOrder() instanceof OrderModel) {
       this.setOrderModel((OrderModel) inputObject.getOrder());
     }
@@ -83,5 +84,6 @@ public class CapturePaymentController extends DefaultWidgetController {
 
   protected void showMessageBox(final String message) {
     Messagebox.show(message);
+    this.sendOutput(OUT_CONFIRM, COMPLETE);
   }
 }
