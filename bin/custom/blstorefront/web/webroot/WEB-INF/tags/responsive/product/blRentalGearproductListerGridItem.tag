@@ -146,7 +146,7 @@
 			<!-- BL-926: Added condition for Gift Card as per requirement --> 
 				<c:choose>
 					<c:when test="${product.code eq 'bl_giftcard'}">
-                          $25 - $500 
+                          <spring:theme code="slp.giftcard.price" />
 					</c:when>
 					<c:otherwise>
 						<product:productListerItemPrice product="${product}" />
