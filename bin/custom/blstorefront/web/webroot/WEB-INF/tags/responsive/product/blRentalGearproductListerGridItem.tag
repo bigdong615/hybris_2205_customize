@@ -74,7 +74,7 @@
 		<h6 class="product">
           <c:url var="rentUrl" value="/rent/product/${product.code}"/>
            <a href="${rentUrl}" role="button" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
-            data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
+            data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="rental">
             <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
        </h6>
 		<ycommerce:testId code="product_wholeProduct">
@@ -134,7 +134,7 @@
 			<c:choose>
 				<c:when test="${product.code eq 'bl_giftcard'}">
 					<a href="${rentUrl}" class="btn btn-primary js-pdplinkUrl" data-productCode="${product.code}" data-brand="GiftCart"
-                   data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
+                   data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="rental">
 					<spring:theme
 							code="text.product.list.by.now" /></a>
 				</c:when>

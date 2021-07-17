@@ -21,18 +21,18 @@ gtag('config', googleAnalyticsTrackingId);
 		<c:set var="categories" value="" />
 		<c:set var="blPageType" value="${IsRentalPage ? 'Rental' : 'Used'}"/>
 		<c:forEach items="${product.categories}" var="category">
-			<c:set var="categories">${categories},${ycommerce:encodeJavaScript(category.name)}</c:set>
+			<c:set var="categories">${ycommerce:encodeJavaScript(category.name)}</c:set>
 		</c:forEach>
     gtag('event', 'view_item', {
-       'event_category': 'engagement'
-       'event_label' : 'Product'
+       'event_category': 'engagement',
+       'event_label' : 'Product',
       "items": [
         {
-          "id": ${product.code},
-          "name": ${product.name},
-          "brand": ${product.manufacturer},
-          "category": ${categories},
-          "variant" : ${ycommerce:encodeJavaScript(blPageType)}
+          "id": "${product.code}",
+          "name": "${product.name}",
+          "brand": "${product.manufacturer}",
+          "category": "${categories}",
+          "variant" : "${ycommerce:encodeJavaScript(blPageType)}"
         }
       ]
     });
@@ -47,13 +47,13 @@ gtag('config', googleAnalyticsTrackingId);
 				<c:if test="${not empty searchPageData.results}">
 						gtag('event', 'view_item_list', {
 							"event_category": "engagement",
-							"event_label": ${ycommerce:encodeJavaScript(listName)},
+							"event_label": "${ycommerce:encodeJavaScript(listName)}",
 							"items": [
               				<c:forEach items='${searchPageData.results}' var='product' varStatus='status'>
               					{
                               "id":"${product.code}",
-                              "name":"${product.name}",
-                              "brand": ${product.manufacturer},
+                              "name":"${product.displayName}",
+                              "brand": "${product.manufacturer}",
                               <c:choose>
                               <c:when test="${not empty product.categories}">
                              	"category": "${ycommerce:encodeJavaScript(product.categories[fn:length(product.categories) - 1].name)}",
@@ -63,7 +63,7 @@ gtag('config', googleAnalyticsTrackingId);
                               </c:otherwise>
                               </c:choose>
                                "list_position": ${status.index},
-                               "variant" :${ycommerce:encodeJavaScript(variantName)}
+                               "variant" :"${ycommerce:encodeJavaScript(variantName)}"
                        	}
                        	<c:if test='${not status.last}'>
                         ,
@@ -86,7 +86,8 @@ gtag('config', googleAnalyticsTrackingId);
 		gtag('event', 'purchase', {
 		  "transaction_id": "${orderCode}",
 		  "affiliation": "${ycommerce:encodeJavaScript(siteName)}",
-		  "value": "${ycommerce:encodeJavaScript(orderData.totalPrice.value)}",
+		  "value": ${ycommerce:encodeJavaScript(orderData.totalPrice.value)},
+		  "currency": "USD",
 		  "tax": ${ycommerce:encodeJavaScript(orderData.totalTax.value)},
 		  "shipping": ${ycommerce:encodeJavaScript(orderData.deliveryCost.value)},
 		  "items": [
@@ -143,7 +144,6 @@ function trackAddToCart_google(productCode, quantityAdded,cartData,productBrand,
 }
 
 function trackRemoveFromCart(productCode,productName,initialQuantity) {
-	alert("productCode:"+productCode+":"+productName+":"+initialQuantity);
 	gtag('event', 'remove_from_cart', {
 	 "event_category": "ecommerce",
    "event_label": "RemoveFromCart",
@@ -192,6 +192,33 @@ function trackProductClick(productCode, productName,brand,productType) {
     ]
   });
 }
+
+window.mediator.subscribe('searchRentalDate', function(data) {
+	if (data.lengthOfRental)
+	{
+		trackDatePickerClick(data.daysInAdvance,data.lengthOfRental);
+	}
+});
+
+function trackDatePickerClick(daysInAdvance,lengthOfRental) {
+	gtag('event', 'select_content', {
+      'event_category': 'Search Rental Date',
+      'event_label': daysInAdvance,
+      'value' : lengthOfRental
+	});
+}
+
+window.mediator.subscribe('trackSearch', function(data) {
+		trackSearchClick(data.searchText);
+});
+
+function trackSearchClick(searchText) {
+	gtag('event', 'select_content', {
+      'event_category': 'Search',
+      'event_label': searchText
+	});
+}
+
 
 window.mediator.subscribe('loginClick', function(data) {
 	if (data.userId)

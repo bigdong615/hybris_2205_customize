@@ -58,7 +58,7 @@
 									<li class="splide__slide"">
 										<!-- BL-534--> <c:url var="rentUrl" value="${productTypeUrl}/${product.code}" />
 										<a href="${rentUrl}" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
-                          data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="${productType eq 'RentalGearProduct' ? 'rental' : 'used gear' }">
+                          data-productName="${product.displayName}" data-productType="${productType eq 'RentalGearProduct' ? 'rental' : 'used gear' }">
 										<img	src="${fn:escapeXml(primaryImageUrl)}" />
 									</a>
 									</li>

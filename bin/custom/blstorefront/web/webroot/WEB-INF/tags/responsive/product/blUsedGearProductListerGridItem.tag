@@ -36,7 +36,7 @@
  <h6 class="product">
  <c:url var="usedGearUrl" value="/buy/product/${product.code}"/>
             <a href="${usedGearUrl}" role="button"  class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
-             data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="used gear">
+             data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="used gear">
              <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}"/> </a>
   </h6>
 		<ycommerce:testId code="product_wholeProduct">
@@ -93,7 +93,7 @@
 			<c:choose>
 				<c:when test="${product.code eq 'bl_giftcard'}">
 					<a href="${usedUrl}" class="btn btn-primary js-pdplinkUrl" data-productCode="${product.code}" data-brand="gift cart"
-              data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="used gear">
+              data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="used gear">
 					<spring:theme code="text.product.list.by.now" /></a>
 				</c:when>
 				<c:otherwise>

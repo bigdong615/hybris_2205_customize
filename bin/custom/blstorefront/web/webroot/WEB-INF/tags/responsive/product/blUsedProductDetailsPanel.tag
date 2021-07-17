@@ -132,7 +132,7 @@
 							<c:url var="rentUrl" value="/rent/product/${product.code}" />
 							<!--  BL:573 and  572 mt-4 added -->
 							<a href="${rentUrl}" data-productCode="${product.code}" data-brand="${product.manufacturer}"
-                data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental"
+                data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="rental"
 								class="btn btn-sm btn-secondary float-end mt-4 js-pdplinkUrl"><spring:theme
 									code="pdp.product.rent.instead.button.text" /></a>
 							</p>
