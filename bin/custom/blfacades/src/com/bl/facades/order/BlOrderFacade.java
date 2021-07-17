@@ -17,4 +17,12 @@ public interface BlOrderFacade extends OrderFacade {
   OrderData setRentalExtendOrderDetails(String orderCode , String rentalEndDate , String selectedDate)
       throws CommerceCartModificationException;
 
+   OrderData getExtendedOrderDetailsFromOrderCode(final String orderCode);
+
+  OrderModel getExtendOrderFromOrderModel(final OrderModel orderModel);
+
+  OrderModel getExtendedOrderModelFromCode(final String orderCode);
+
+  void updateOrderExtendDetails(final OrderModel orderModel);
+
 }

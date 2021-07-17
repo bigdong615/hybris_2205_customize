@@ -31,7 +31,7 @@
 										<div class="col-11">
 											<b>Credit Card <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png" style="height: 44px; width: auto;"></b>
 											<div class="collapse" id="credit-card-expand" data-bs-parent="#paymentOptions">
-												<select class="btn btn-block btn-outline dropdown-toggle text-start" id="saved-payment-action-payBill">
+												<select class="btn btn-block btn-outline dropdown-toggle text-start" id="saved-payment-action-ExtendBill">
 																	<ul class="dropdown-menu savedPaymentList" aria-labelledby="savedCards" >
 																	<c:choose>
 																		<c:when test="false">
@@ -107,7 +107,10 @@
                 												<div id="payPalErrorMessage"></div>
                 											</div>
                 										</div>
-                									</div>
+
+
+
+	                                 </div>
                 								</div>
 
 

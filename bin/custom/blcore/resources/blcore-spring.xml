@@ -1000,6 +1000,9 @@
 	<bean id="defaultBlExtendOrderService" class="com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService">
 		<property name="modelService" ref="modelService"/>
 		<property name="orderIDGenerator" ref="orderCodeGenerator"/>
+		<property name="userService" ref="userService"/>
+		<property name="customerAccountService" ref="customerAccountService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
 
 	<!--Coupon for rental extend order -->

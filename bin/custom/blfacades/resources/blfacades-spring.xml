@@ -560,11 +560,6 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 	</bean>
 
-	<bean parent="modifyPopulatorList">
-		<property name="list" ref="orderConverter"/>
-		<property name="add" ref="blExtendRentalOrderDetailsPopulator"/>
-	</bean>
-
   <!--Added for extend rental order-->
 	<bean id="blExtendRentalOrderDetailsPopulator"
 		class="com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator">
@@ -597,6 +592,7 @@
 		<property name="baseSiteService" ref="baseSiteService"/>
 		<property name="timeService" ref="timeService" />
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
 	</bean>
 
 
@@ -666,6 +662,10 @@
 
 	<bean id="defaultBlCouponFacade" class="com.bl.facades.coupon.impl.DefaultBlCouponFacade">
 		<property name="defaultBlCouponService" ref="defaultBlCouponService"/>
+	</bean>
+
+
+	<bean id="blExtendOrderPopulator" class="com.bl.facades.populators.BlExtendOrderPopulator">
 	</bean>
 
 </beans>

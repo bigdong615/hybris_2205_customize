@@ -1,3 +1,4 @@
+/*
 package com.bl.storefront.controllers.pages;
 
 import javax.servlet.http.HttpServletRequest;
@@ -5,27 +6,39 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+*/
+/*
 @Controller
 @RequestMapping("/extendOrder")
 public class ExtendOrderController {
 
   protected static final Logger LOG = Logger.getLogger(ExtendOrderController.class);
 
-  /**
-   * To place the extend rental order
-   */
+  private static final String ORDER_CODE_PATH_VARIABLE_PATTERN = "{orderCode:.*}";
 
-  @PostMapping(value = "/placeOrder")
-  public void placeExtendOrder(	@RequestParam(value = "orderCode", defaultValue = "") final String orderCode ,
-      final HttpServletRequest request, final HttpServletResponse response, final Model model,
-      final RedirectAttributes redirectModel) {
+  *//*
+
+*/
+/**
+   * To place the extend rental order
+   *//*
+*/
+/*
+
+
+  @PostMapping(value = "/placeOrder/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+  public void placeExtendOrder(	@PathVariable(value = "orderCode") final String orderCode ,
+      final HttpServletRequest request, final HttpServletResponse response, final Model model) {
+    model.addAttribute("hh" , "hhhh");
   }
+*//*
+
 
 
 
 }
+*/

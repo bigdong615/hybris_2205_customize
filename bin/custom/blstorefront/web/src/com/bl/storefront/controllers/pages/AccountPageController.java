@@ -16,8 +16,11 @@ import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
+import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -68,11 +71,14 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -174,6 +180,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String VERIFICATION_IMAGES_CMS_PAGE = "verificationImages";
 	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
 	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
+	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
 
 
@@ -244,6 +251,9 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "brainTreeCheckoutFacade")
 	private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
+
+	@Resource
+	private BrainTreeTransactionService brainTreeTransactionService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -1292,4 +1302,46 @@ public class AccountPageController extends AbstractSearchPageController
 	}
 
 
-}
+	@PostMapping(value = "/extendOrder/"+  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	public String placeExtendOrder(@PathVariable(value = "orderCode" ,required = false) final String orderCode ,
+			final HttpServletRequest request, final HttpServletResponse response, final Model model)
+			throws CMSItemNotFoundException {
+
+		String paymentInfoId = request.getParameter("paymentId");
+		String paymentMethodNonce = request.getParameter("paymentNonce");
+
+		boolean isSuccess = false;
+		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
+				StringUtils.isNotBlank(paymentMethodNonce)) {
+
+			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
+
+			if(null != orderModel) {
+				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+						.getBrainTreePaymentInfoForCode(
+								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
+				if(null != paymentInfo) {
+
+					isSuccess = brainTreeTransactionService
+							.createAuthorizationTransactionOfOrder(orderModel,
+									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
+				}
+			}
+
+			if(isSuccess) {
+				blOrderFacade.updateOrderExtendDetails(orderModel); //to update extend order details to DB
+				final OrderData extendOrderData = blOrderFacade.getExtendedOrderDetailsFromOrderCode(orderCode);
+				model.addAttribute("extendOrderData", extendOrderData);
+				final ContentPageModel extendOrderConfirmation = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_CONFIRMATION);
+				storeCmsPageInModel(model, extendOrderConfirmation);
+				model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+				setUpMetaDataForContentPage(model, extendOrderConfirmation);
+				return getViewForPage(model);
+			}
+
+		}
+		model.addAttribute("extendOrderPaymentError" , "hhhh");
+			return REDIRECT_PREFIX + "/my-account/extendRent/"+ orderCode;
+	}
+
+	}

@@ -104,11 +104,21 @@
 
 
 
-				<div class="cart-actions">
-						<button type="submit" class="btn btn-sm btn-primary float-end js-extendOrder-btn" data-order-id="${fn:escapeXml(orderData.code)}">
-                 <spring:theme code="text.myaccount.order.extend.rent"/>
-            </button>
-				</div>
+     <div class="cart-actions">
+      <c:choose>
+        <c:when test="${orderData.totalDamageWaiverCostForExtendRental eq null}">
+                <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end">
+                           <spring:theme code="text.myaccount.order.extend.rent"/>
+                  </a>
+         </c:when>
+          <c:otherwise>
+                   <c:url value="my-account/extendOrder/" var="placeOrder" />
+                     <a href="${placeOrder}" class="btn btn-sm btn-primary float-end">
+                           <spring:theme code="text.myaccount.order.extend.rent"/>
+                  </a>
+          </c:otherwise>
+       </c:choose>
+	   </div>
 			</div>
 		</div>
 	</div>
@@ -171,9 +181,7 @@
     				</div>
     			</div>
     		</form:form>
-		<button class="btn btn-block btn-primary mt-4">
-			<spring:theme code="text.myaccount.order.extend.rent" />
-			</button>
+            <button class="btn btn-block btn-primary mt-4">Extend Rental</button>
 	</div>
 
 

@@ -1911,6 +1911,11 @@
                     <persistence type="property" />
                     <description>flag to identify whether the order has been extended or not</description>
                   </attribute>
+                  <attribute qualifier="extendStartEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>return date of a for extend order</description>
+                  </attribute>
                   <attribute qualifier="extendRentalEndDate" type="java.util.Date">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />

@@ -44,6 +44,7 @@
 						<spring:theme code="text.account.order.total" /> </td>
 					<td class="text-end"  id="js-extendOrderTotal"><format:blPrice priceData="${orderData.orderTotalWithTaxForExtendRental}"/></td>
 				</tr>
+
 			</tbody>
 		</table>
 		<c:if test="${not empty fn:escapeXml(errorMsg)}">
@@ -94,8 +95,13 @@
             		</form:form>
             	</c:forEach>
 
-		<button class="btn btn-block btn-primary mt-4">
-			<spring:theme code="text.myaccount.order.extend.rent" /> </button>
+                       <c:url value="/my-account/extendOrder/${fn:escapeXml(orderData.code)}" var="payExtendOrderUrl"/>
+                                       <form action="${payExtendOrderUrl}" method="post" id="payExtendOrderForm">
+                                            <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
+                                            <input type="hidden" id="paymentId" name="paymentId" value=""/>
+                                            <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
+                                            <button class="btn btn-block btn-primary mt-4" type="submit">  <spring:theme code="text.myaccount.order.extend.rent"/></button>
+                                       </form>
 
 			<div class="notification notification-error d-none"id="errorMessages_voucher"></div>
 
@@ -125,5 +131,13 @@ $(".js-voucher-apply-account-btn").on("click", function(e) {
    			}
 
    	});
+
+   	$('#saved-payment-action-ExtendBill').on('change',function(e){
+    					 var optionSelected = $("option:selected", this);
+    					 var paymentId = optionSelected.data("id");
+    						var paymentnonce = optionSelected.data("nonce");
+    						$("#paymentId").val(paymentId);
+    						$("#paymentNonce").val(paymentnonce);
+    				 });
 
 </script>

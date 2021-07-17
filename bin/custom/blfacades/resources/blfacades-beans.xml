@@ -136,6 +136,7 @@
 		<property name="totalTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="subTotalTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="OrderTotalWithTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="extendOrderDiscount" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 		<property name="addedTimeForExtendRental" type="java.lang.Integer"/>
 		<property name="newEndDateForExtendRental" type="java.lang.Integer"/>
 

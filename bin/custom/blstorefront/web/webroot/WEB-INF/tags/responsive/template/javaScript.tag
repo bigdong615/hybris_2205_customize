@@ -1702,6 +1702,9 @@
                                                   }
                                                   $('#js-isAllProductExtendabe-update').html( $('#js-isAllProductExtendabe').val());
                                                   }
+                                                  if($('#js-isAllProductExtendabe').val() === '') {
+                                                    $("#add-error-message").addClass("d-none");
+                                                    }
                             	                    },
                             	                    error: function (xhr, textStatus, error) {
 

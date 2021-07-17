@@ -1,6 +1,7 @@
 package com.bl.facades.order;
 
 import com.bl.core.data.StockResult;
+import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.impl.DefaultBlCalculationService;
@@ -12,7 +13,7 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.product.data.AvailabilityMessage;
+import com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -75,6 +76,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private BaseSiteService baseSiteService;
   private TimeService timeService;
   private BlCommerceStockService blCommerceStockService;
+  private BlExtendRentalOrderDetailsPopulator blExtendRentalOrderDetailsPopulator;
 
   private static final Logger LOG = Logger.getLogger(DefaultBlOrderFacade.class);
   /**
@@ -157,12 +159,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     Date startDate = BlDateTimeUtils.convertStringDateToDate(orderEndDate, "MM/dd/yyyy");
     final Date endDate = BlDateTimeUtils.convertStringDateToDate(selectedDate, "EE MMM dd yyyy");
 
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(startDate);
-    calendar.add(Calendar.DAY_OF_MONTH ,2);
-    startDate = calendar.getTime();
-
-
+    final Date stockStartDate = setAdditionalDaysForStock(startDate);
+    final Date stockEndDate = setAdditionalDaysForStock(endDate);
     List<StockResult> stockResults = new ArrayList<>();
 
     for (ConsignmentModel consignmentModel : orderModel.getConsignments()) {
@@ -172,7 +170,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           StockResult stockResult = getBlCommerceStockService()
               .getStockForEntireExtendDuration(blSerialProductModel.getCode(),
                   Collections.singleton(blSerialProductModel.getWarehouseLocation())
-                  , startDate, endDate);
+                  , stockStartDate, stockEndDate);
           if (stockResult.getStockLevelStatus().getCode()
               .equalsIgnoreCase(StockLevelStatus.OUTOFSTOCK.getCode())) {
             stockResults.add(stockResult);
@@ -194,7 +192,16 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           (int) defaultAddedTimeForExtendRental); // Default value which added for extend order
       PriceDataType priceType = PriceDataType.BUY;
       final OrderModel extendOrderModel = getDefaultBlExtendOrderService()
-          .cloneOrderModelForExtendRental(orderModel);
+          .cloneOrderModelForExtendRental(orderModel , defaultAddedTimeForExtendRental);
+
+      // Start Date will same as existing rental startDate
+      extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental); // To set total number of days extended
+      Calendar extendStartDate = Calendar.getInstance();
+      extendStartDate.setTime(startDate);
+      extendStartDate.add(Calendar.DAY_OF_MONTH ,1);
+      extendOrderModel.setExtendStartEndDate(extendStartDate.getTime());
+      extendOrderModel.setRentalEndDate(endDate);    // End Date will be stored based on customer selection
+      extendOrderModel.setActualRentalEndDate(stockEndDate);
       try {
         getDefaultBlCalculationService()
             .recalculateForExtendOrder(extendOrderModel, (int) defaultAddedTimeForExtendRental);
@@ -223,6 +230,8 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       orderData.setOrderTotalWithTaxForExtendRental(getPriceDataFactory()
           .create(priceType, orderTotalWithTax, extendOrderModel.getCurrency().getIsocode()));
 
+
+
       // To set current extendOrderModel to session
       BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
     }
@@ -250,13 +259,47 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return promotionGroupModels;
   }
 
-  private AvailabilityMessage getMessage(final String messageCode, final List<String> arguments)
-  {
-    final AvailabilityMessage message = new AvailabilityMessage();
-    message.setMessageCode(messageCode);
-    message.setArguments(arguments);
-    return message;
+ private Date setAdditionalDaysForStock(final Date dateToAdd) {
+   Calendar calendar = Calendar.getInstance();
+   calendar.setTime(dateToAdd);
+   calendar.add(Calendar.DAY_OF_MONTH ,2);
+   return calendar.getTime();
+ }
+
+  @Override
+  public OrderData getExtendedOrderDetailsFromOrderCode(final String orderCode) {
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
+        baseStoreModel);
+
+    final OrderData orderData = new OrderData();
+    getBlExtendRentalOrderDetailsPopulator().populate(getExtendOrderFromOrderModel(orderModel), orderData);
+    return orderData;
   }
+
+  @Override
+  public OrderModel getExtendOrderFromOrderModel(final OrderModel orderModel) {
+
+    if(null != orderModel.getExtendedOrderCopy() && StringUtils.endsWithIgnoreCase(orderModel.getExtendedOrderCopy().getExtendOrderStatus().getCode() ,
+        ExtendOrderStatusEnum.PROCESSING.getCode())) {
+      return orderModel.getExtendedOrderCopy();
+    }
+    return orderModel;
+  }
+
+  @Override
+  public OrderModel getExtendedOrderModelFromCode(final String orderCode) {
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
+        baseStoreModel);
+    return getExtendOrderFromOrderModel(orderModel);
+  }
+
+  @Override
+  public void updateOrderExtendDetails(final OrderModel orderModel) {
+    getDefaultBlExtendOrderService().updateExtendOrder(orderModel);
+  }
+
 
 
   public BlCartService getBlCartService() {
@@ -393,5 +436,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   public void setBlCommerceStockService(BlCommerceStockService blCommerceStockService) {
     this.blCommerceStockService = blCommerceStockService;
   }
+
+  public BlExtendRentalOrderDetailsPopulator getBlExtendRentalOrderDetailsPopulator() {
+    return blExtendRentalOrderDetailsPopulator;
+  }
+
+  public void setBlExtendRentalOrderDetailsPopulator(
+      BlExtendRentalOrderDetailsPopulator blExtendRentalOrderDetailsPopulator) {
+    this.blExtendRentalOrderDetailsPopulator = blExtendRentalOrderDetailsPopulator;
+  }
+
 
 }

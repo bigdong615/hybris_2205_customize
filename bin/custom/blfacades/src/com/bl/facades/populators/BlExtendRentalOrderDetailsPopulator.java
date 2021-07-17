@@ -43,39 +43,37 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
 
 
   @Override
-  public void populate(final OrderModel source, final OrderData target) throws ConversionException {
+  public void populate(final OrderModel orderModel, final OrderData target) throws ConversionException {
 
-    /*long defaultAddedTimeForExtendRental = 1; // Default value
-    target.setAddedTimeForExtendRental((int) defaultAddedTimeForExtendRental); // Default value which added for extend order
+
      PriceDataType priceType = PriceDataType.BUY;
-     OrderModel extendOrderModel =  getDefaultBlExtendOrderService().cloneOrderModelForExtendRental(source);
-     for(AbstractOrderEntryModel entries : extendOrderModel.getEntries()) {
+
        try {
-         getDefaultBlCalculationService().recalculateForExtendOrder(extendOrderModel , (int) defaultAddedTimeForExtendRental);
-         if(null != extendOrderModel.getAllPromotionResults()) {
-           getPromotionsService().updatePromotions(getPromotionGroups(), extendOrderModel, true,
-               AutoApplyMode.APPLY_ALL,
-               AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
+         getDefaultBlCalculationService().recalculateForExtendOrder(orderModel , orderModel.getTotaExtendDays());
+         if(null != orderModel.getAllPromotionResults()) {
+           getPromotionsService().updatePromotions(getPromotionGroups(), orderModel, true,
+               AutoApplyMode.APPLY_ALL, AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
          }
        } catch (CalculationException e) {
          e.printStackTrace();
        }
-     }
-     target.setSubTotalTaxForExtendRental(getPriceDataFactory().create(priceType, BigDecimal.valueOf(extendOrderModel.getSubtotal()) ,
-         extendOrderModel.getCurrency().getIsocode()));
-     target.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalDamageWaiverCost()) ,
-         extendOrderModel.getCurrency().getIsocode()));
-     target.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalTax()),
-         extendOrderModel.getCurrency().getIsocode()));
 
-     target.setTotalDiscounts(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalDiscounts()),
-         extendOrderModel.getCurrency().getIsocode()));
+       target.setAddedTimeForExtendRental(orderModel.getTotaExtendDays());
+     target.setSubTotalTaxForExtendRental(getPriceDataFactory().create(priceType, BigDecimal.valueOf(orderModel.getSubtotal()) ,
+         orderModel.getCurrency().getIsocode()));
+     target.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalDamageWaiverCost()) ,
+         orderModel.getCurrency().getIsocode()));
+     target.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalTax()),
+         orderModel.getCurrency().getIsocode()));
 
-     target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(extendOrderModel.getTotalPrice()) ,
-         extendOrderModel.getCurrency().getIsocode()));
+     target.setTotalDiscounts(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalDiscounts()),
+         orderModel.getCurrency().getIsocode()));
 
-    // To set current extendOrderModel to session
-    BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);*/
+     target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalPrice()) ,
+         orderModel.getCurrency().getIsocode()));
+
+     //To set customer Mail
+
   }
 
   public PriceDataFactory getPriceDataFactory() {

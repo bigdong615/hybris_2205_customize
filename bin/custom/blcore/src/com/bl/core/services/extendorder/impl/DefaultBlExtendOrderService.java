@@ -2,23 +2,36 @@ package com.bl.core.services.extendorder.impl;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.services.extendorder.BlExtendOrderService;
+import de.hybris.platform.commerceservices.constants.GeneratedCommerceServicesConstants.Enumerations.OrderStatus;
+import de.hybris.platform.commerceservices.customer.CustomerAccountService;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
+import java.util.ArrayList;
 import java.util.Collections;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 
 public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
   private ModelService modelService;
   private KeyGenerator orderIDGenerator;
+  private UserService userService;
+  private CustomerAccountService customerAccountService;
+  private BaseStoreService baseStoreService;
 
   @Override
-  public OrderModel cloneOrderModelForExtendRental(final OrderModel originalOrder) {
+  public OrderModel cloneOrderModelForExtendRental(final OrderModel originalOrder , long defaultAddedTimeForExtendRental) {
 
     if(null == originalOrder.getExtendedOrderCopy()) {
       OrderModel extendOrderModel = getModelService().clone(originalOrder);
@@ -34,7 +47,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));
       extendOrderModel.setIsExtendedOrder(true);
       extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
-
+      extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental);
 
       getModelService().save(extendOrderModel);
       getModelService().refresh(extendOrderModel);
@@ -79,6 +92,34 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
   }
 
+  public void updateExtendOrder(final AbstractOrderModel extendOrderModel) {
+
+    if(BooleanUtils.isTrue(extendOrderModel.getIsExtendedOrder()) && extendOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED)) {
+
+      final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+      final OrderModel originalOrder = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), extendOrderModel.getCode(),
+          baseStoreModel);
+      if(extendOrderModel.getExtendOrderStatus().getCode().equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode())) {
+        extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.COMPLETED);
+      }
+      getModelService().save(extendOrderModel);
+      getModelService().refresh(extendOrderModel);
+      if(CollectionUtils.isNotEmpty(originalOrder.getExtendedOrderCopyList())) {
+        originalOrder.getExtendedOrderCopyList().add(extendOrderModel);
+      }
+      else {
+        final List<AbstractOrderModel> orderModelList = new ArrayList<>();
+        orderModelList.add(extendOrderModel);
+        originalOrder.setExtendedOrderCopyList(orderModelList);
+      }
+        originalOrder.setExtendedOrderCopy(null);
+
+      getModelService().save(originalOrder);
+      getModelService().refresh(originalOrder);
+    }
+
+  }
+
   public ModelService getModelService() {
     return modelService;
   }
@@ -93,6 +134,31 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
   public void setOrderIDGenerator(KeyGenerator orderIDGenerator) {
     this.orderIDGenerator = orderIDGenerator;
+  }
+
+  public UserService getUserService() {
+    return userService;
+  }
+
+  public void setUserService(UserService userService) {
+    this.userService = userService;
+  }
+
+  public CustomerAccountService getCustomerAccountService() {
+    return customerAccountService;
+  }
+
+  public void setCustomerAccountService(
+      CustomerAccountService customerAccountService) {
+    this.customerAccountService = customerAccountService;
+  }
+
+  public BaseStoreService getBaseStoreService() {
+    return baseStoreService;
+  }
+
+  public void setBaseStoreService(BaseStoreService baseStoreService) {
+    this.baseStoreService = baseStoreService;
   }
 
 
