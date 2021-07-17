@@ -47,8 +47,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	var productCode = form.find('input[name=productCode]').val();
             	var initialCartQuantity = form.find('input[name=initialQuantity]');
             	var cartQuantity = form.find('input[name=quantity]');
-
-            	ACC.track.trackRemoveFromCart(productCode, initialCartQuantity.val());
+              var productName = form.find('input[name=productName]').val();
+            	ACC.track.trackRemoveFromCart(productCode, productName ,initialCartQuantity.val());
             	cartQuantity.val(0);
             	initialCartQuantity.val(0);
             	$(".shopping-cart__item-remove").attr("disabled", "disabled");

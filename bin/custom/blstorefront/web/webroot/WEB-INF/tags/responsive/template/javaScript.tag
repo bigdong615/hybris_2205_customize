@@ -86,6 +86,7 @@
 		<script src="${commonResourcePathHtml}/js/acc.cookienotification.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.closeaccount.js"></script>
     <script src="${commonResourcePathHtml}/js/acc.wishlist.js"></script>
+    <script src="${commonResourcePathHtml}/js/acc.blanalyticsevent.js"></script>
 
 		<script src="${commonResourcePathHtml}/js/acc.csv-import.js"></script>
 

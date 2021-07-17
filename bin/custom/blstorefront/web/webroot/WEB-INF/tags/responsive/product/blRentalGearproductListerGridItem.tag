@@ -73,7 +73,9 @@
 		</c:if>
 		<h6 class="product">
           <c:url var="rentUrl" value="/rent/product/${product.code}"/>
-           <a href="${rentUrl}" role="button"> <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
+           <a href="${rentUrl}" role="button" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
+            data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
+            <c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /> </a>
        </h6>
 		<ycommerce:testId code="product_wholeProduct">
 
@@ -131,7 +133,9 @@
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
 			<c:choose>
 				<c:when test="${product.code eq 'bl_giftcard'}">
-					<a href="${rentUrl}" class="btn btn-primary"><spring:theme
+					<a href="${rentUrl}" class="btn btn-primary js-pdplinkUrl" data-productCode="${product.code}" data-brand="GiftCart"
+                   data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
+					<spring:theme
 							code="text.product.list.by.now" /></a>
 				</c:when>
 				<c:otherwise>
