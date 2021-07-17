@@ -149,6 +149,11 @@
         <value code="EXCEPTION_NOTES"/>
       </enumtype>
 
+      <enumtype generate="true" code="ItemStatusEnum" autocreate="true" dynamic="true">
+        <value code="INCLUDED"/>
+        <value code="NOT_INCLUDED"/>
+      </enumtype>
+
       
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
       
@@ -160,7 +165,9 @@
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
+        <maptype code="ItemStatusMap" argumenttype="java.lang.String" returntype="ItemStatusEnum" />
     </maptypes>
+
 
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
@@ -233,9 +240,14 @@
         <!-- BL-542 End-->
 
         <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
-          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one"/>
+          <sourceElement qualifier="order" type="AbstractOrder" cardinality="one">
+            <modifiers read="true" write="true" search="true" optional="true"/>
+          </sourceElement>
+
           <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
-            collectiontype="list"/>
+            collectiontype="list">
+            <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
+          </targetElement>
         </relation>
 
 
@@ -1994,9 +2006,14 @@
 			<description>Extending ConsignmentEntry type with additional attributes.</description>
 			<attributes>
 			  <attribute type="serialProducts" qualifier="serialProducts">
-				<modifiers read="true" write="true"/>
-				<persistence type="property"/>
+				    <modifiers read="true" write="true"/>
+				    <persistence type="property"/>
 			  </attribute>
+        <attribute type="ItemStatusMap" qualifier="items">
+            <description>Created Map to display Shipper what all items are attached to the consignment. So that agent can verify and scan the serial</description>
+            <modifiers read="true" write="true"/>
+            <persistence type="property"/>
+        </attribute>
 			</attributes>
 		  </itemtype>
 		</typegroup>
