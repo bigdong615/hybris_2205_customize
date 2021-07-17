@@ -171,7 +171,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
     final Set<BlSerialProductModel> serialProductModels = result.getSerialProductMap().get(orderEntry.getEntryNumber());
-    entry.setSerialProducts(serialProductModels);   //setting serial products from result
+    entry.setSerialProducts(new HashSet<>(serialProductModels));   //setting serial products from result
 
     setItemsMap(entry, serialProductModels);
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
@@ -192,8 +192,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    * BEFORE SCANNING --->
    * 54356 NOT_INCLUDED
    * 46363 NOT_INCLUDED
-   * Lens Hood1 NOT_INCLUDED (Sub-parts Name associated)
-   * Lens Hood2 NOT_INCLUDED (Sub-parts Name associated)
+   * Lens Hood-1 NOT_INCLUDED (Sub-parts Name associated)
+   * Lens Hood-2 NOT_INCLUDED (Sub-parts Name associated)
    * Battery NOT_INCLUDED (Sub-parts Name associated)
    *
    * AFTER SCANNING --->
@@ -213,6 +213,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     serialProductModels.stream().forEach(blSerialProductModel -> {
       itemsMap.put(blSerialProductModel.getCode(), ItemStatusEnum.NOT_INCLUDED);
     });
+
+
     entry.setItems(itemsMap);
   }
 
