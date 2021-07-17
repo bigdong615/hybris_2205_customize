@@ -233,7 +233,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
     public void savePoPaymentDetails(final String poNumber, final String poNotes) {
         final CartModel cartModel = getSessionCart();
         if(cartModel != null){
-            cartModel.setPoNumber(poNumber);
+            cartModel.setPoNumber(poNumber.trim());
             cartModel.setPoNotes(poNotes);
             if(cartModel.getPaymentInfo() != null){
                 cartModel.setPaymentInfo(null);

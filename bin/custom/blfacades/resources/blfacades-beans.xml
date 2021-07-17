@@ -123,6 +123,7 @@
 			<property name="isPOEnabled" type="java.lang.Boolean"/>
 			<property name="poNumber" type="java.lang.String"/>
 			<property name="poNotes" type="java.lang.String"/>
+			<property name="orderNotes" type="java.lang.String"/>
   </bean>
 
     <!-- Shipping -->
