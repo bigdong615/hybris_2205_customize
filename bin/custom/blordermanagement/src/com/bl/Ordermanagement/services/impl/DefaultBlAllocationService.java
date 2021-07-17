@@ -2,10 +2,10 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
+import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
-import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.base.Strings;
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -14,18 +14,16 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
-import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
-import de.hybris.platform.storelocator.model.PointOfServiceModel;
 import de.hybris.platform.warehousing.allocation.impl.DefaultAllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
@@ -42,6 +40,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     BlAllocationService {
 
   private static final Logger LOG = Logger.getLogger(DefaultBlAllocationService.class);
+  public static final String ERROR_WHILE_ALLOCATING_THE_ORDER = "Error while allocating the order.";
   private BlStockLevelDao blStockLevelDao;
 
   /**
@@ -58,7 +57,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
     if (MapUtils.isEmpty(result.getAllocation()) || MapUtils
         .isEmpty(result.getSerialProductMap())) {
-      throw new BlSourcingException("Error while allocating the order.");
+      throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
     }
 
     try {
@@ -133,11 +132,11 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
             "At the time of consignment creation, the availability of the allocated serial products not found.");
 
-        throw new BlSourcingException("Error while allocating the order.");
+        throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
       }
 
     } catch (final Exception ex) {
-      throw new BlSourcingException("Error while allocating the order.", ex);
+      throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
 
 
@@ -171,8 +170,10 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setQuantity(quantity);
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
-    entry.setSerialProducts(result.getSerialProductMap()
-        .get(orderEntry.getEntryNumber()));   //setting serial products from result
+    final Set<BlSerialProductModel> serialProductModels = result.getSerialProductMap().get(orderEntry.getEntryNumber());
+    entry.setSerialProducts(new HashSet<>(serialProductModels));   //setting serial products from result
+
+    setItemsMap(entry, serialProductModels);
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
       orderEntry.getConsignmentEntries().forEach(consignmentEntries::add);
@@ -181,6 +182,40 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     consignmentEntries.add(entry);
     orderEntry.setConsignmentEntries(consignmentEntries);
     return entry;
+  }
+
+  /**
+   * Created Map to display Shipper what all items are attached to the consignment. So that agent can verify and scan the serial.
+   * Sub-parts and serials both will be added to this Map.
+   * During Sub-parts scanning, please replace sub-part name with sub-part serial code
+   * ex:
+   * BEFORE SCANNING --->
+   * 54356 NOT_INCLUDED
+   * 46363 NOT_INCLUDED
+   * Lens Hood-1 NOT_INCLUDED (Sub-parts Name associated)
+   * Lens Hood-2 NOT_INCLUDED (Sub-parts Name associated)
+   * Battery NOT_INCLUDED (Sub-parts Name associated)
+   *
+   * AFTER SCANNING --->
+   * 54356 INCLUDED
+   * 46363 INCLUDED
+   * GHDKD INCLUDED (Sub-parts Serial associated)
+   * EGDBD INCLUDED (Sub-parts Serial associated)
+   * Battery INCLUDED (This Sub-parts has no barcode, So manually INCLUDED by shipper)
+   *
+   * @param entry
+   * @param serialProductModels
+   * @return
+   */
+  private void setItemsMap(final ConsignmentEntryModel entry,
+      final Set<BlSerialProductModel> serialProductModels) {
+    final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
+    serialProductModels.stream().forEach(blSerialProductModel -> {
+      itemsMap.put(blSerialProductModel.getCode(), ItemStatusEnum.NOT_INCLUDED);
+    });
+
+
+    entry.setItems(itemsMap);
   }
 
   public BlStockLevelDao getBlStockLevelDao() {
