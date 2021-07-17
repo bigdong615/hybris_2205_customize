@@ -31,6 +31,7 @@ import com.bl.storefront.forms.BlPickUpByForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
@@ -789,21 +790,23 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * {@inheritDoc}
      */
     @Override
-    public void getModifiedTotalForPrintQuote(final CartData cartData) {
-   	 if(Objects.nonNull(cartData)) {
-   		 try {
-   		     final BigDecimal totalPrice = getPriceValue(cartData.getSubTotal()).add(getPriceValue(cartData.getTotalDamageWaiverCost()));
-   		     final BigDecimal discountPrice = getPriceValue(cartData.getTotalDiscounts());
-   		     final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
-   		     final PriceData modifiedTotal = getPriceDataForPrice(totalWithDiscount.compareTo(BigDecimal.valueOf(0.0d)) == 1
-      	        ? totalWithDiscount : BigDecimal.valueOf(0.0d));
-   		     cartData.setTotalPrice(modifiedTotal);
-   		 }
-   		 catch(final Exception exception) {
-   			 BlLogger.logMessage(LOG, Level.ERROR, "Error while Modifing total price for Print Quoate Page.", exception);
-   			 throw exception;
-   		 }   	    
-   	  }  	 
+    public void getModifiedTotalForPrintQuote(final AbstractOrderData abstractOrderData) {
+      if (Objects.nonNull(abstractOrderData)) {
+        try {
+          final BigDecimal totalPrice = getPriceValue(abstractOrderData.getSubTotal())
+              .add(getPriceValue(abstractOrderData.getTotalDamageWaiverCost()));
+          final BigDecimal discountPrice = getPriceValue(abstractOrderData.getTotalDiscounts());
+          final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
+          final PriceData modifiedTotal = getPriceDataForPrice(
+              totalWithDiscount.compareTo(BigDecimal.valueOf(0.0d)) == 1
+                  ? totalWithDiscount : BigDecimal.valueOf(0.0d));
+          abstractOrderData.setTotalPrice(modifiedTotal);
+        } catch (final Exception exception) {
+          BlLogger.logMessage(LOG, Level.ERROR,
+              "Error while Modifying total price for Print Quote Page.", exception);
+          throw exception;
+        }
+      }
     }
 
   /**
