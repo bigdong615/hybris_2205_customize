@@ -1176,7 +1176,7 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 	if($("#paymentMethodPayPal").is(":checked"))
 	{
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
-	}else if(poEnable == true && poNumber == '' && giftcardApplied == ''){
+	}else if(poEnable == true && $.trim(poNumber) == "" && giftcardApplied == ''){
 	  $('.page-loader-new-layout').hide();
     var validationDiv = $('<div class="notification notification-warning mb-4" />').text(ACC.ccError.poNumber);
     $('#validationMessage').append(validationDiv);
