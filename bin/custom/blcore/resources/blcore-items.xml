@@ -8,7 +8,7 @@
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
-		<collectiontype code="serialProducts" elementtype="BlSerialProduct" autocreate="true"
+		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
       generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
@@ -290,6 +290,16 @@
           cardinality="one" />
       </relation>
       <!-- Gift card End-->
+
+      <relation code="BlProduct2BlProductRelation" autocreate="true" generate="true" localized="false">
+        <deployment table="blprod2blprodrel" typecode="12221"/>
+        <sourceElement qualifier="blProducts" type="BlProduct" cardinality="many">
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </sourceElement>
+        <targetElement qualifier="subParts" type="BlProduct" cardinality="many">
+          <modifiers read="true" write="true" search="true" optional="true"/>
+        </targetElement>
+      </relation>
 
     </relations>
 
@@ -900,10 +910,16 @@
                      <description>Additional Discount for used gear</description>
                    </attribute>
                    <attribute qualifier="brandName" type="java.lang.String">
-                         <persistence type="property" />
-                         <modifiers read="true" write="true" optional="false" initial="true"/>
-                         <description>Brand name for the BL Product</description>
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="false" initial="true"/>
+                     <description>Brand name for the BL Product</description>
                      </attribute>
+                   <attribute qualifier="subpartQuantity" type="java.lang.Integer">
+                     <description>It tells shipper how much quantity we need to add for this sub-part</description>
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" optional="false" initial="true"/>
+                     <defaultvalue>Integer.valueOf(0)</defaultvalue>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
