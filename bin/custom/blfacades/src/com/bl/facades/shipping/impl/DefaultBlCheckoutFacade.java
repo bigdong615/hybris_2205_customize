@@ -708,6 +708,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
 	/**
    * {@inheritDoc}
+   * @return the list of string
    */
 	 public List<String> recalculateCartForGiftCard() {
         if (getBrainTreeCheckoutFacade().getCartService() != null) {
@@ -798,8 +799,8 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
           final BigDecimal discountPrice = getPriceValue(abstractOrderData.getTotalDiscounts());
           final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
           final PriceData modifiedTotal = getPriceDataForPrice(
-              totalWithDiscount.compareTo(BigDecimal.valueOf(0.0d)) == 1
-                  ? totalWithDiscount : BigDecimal.valueOf(0.0d));
+              totalWithDiscount.compareTo(BigDecimal.ZERO) > 0
+                  ? totalWithDiscount : BigDecimal.ZERO);
           abstractOrderData.setTotalPrice(modifiedTotal);
         } catch (final Exception exception) {
           BlLogger.logMessage(LOG, Level.ERROR,

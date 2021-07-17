@@ -35,7 +35,7 @@ import org.apache.commons.lang3.BooleanUtils;
 public class BrainTreeOrderPopulator extends OrderPopulator
 {
 	private Converter<BrainTreePaymentInfoModel, CCPaymentInfoData> brainTreePaymentInfoConverter;
-	
+	private static final int ROUND_OFF_SCALE = 2;
 	@Override
 	public void populate(final OrderModel source, final OrderData target) {
 		super.populate(source, target);
@@ -71,7 +71,9 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 				blGiftCardData.setCode(giftCardModel.getCode());
 				final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
 				//rounding off double value to 2 decimal places
-				BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+				BigDecimal gcRedeemedAmount = BigDecimal.valueOf(
+						giftCardMovementModelList.get(giftCardMovementModelList.size() - 1).getAmount())
+						.setScale(ROUND_OFF_SCALE, RoundingMode.HALF_DOWN);
 				blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
 				blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
 				blGiftCardDataList.add(blGiftCardData);

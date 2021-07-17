@@ -223,15 +223,15 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 
     /**
      * It removes, applied gift card from cart.
-     * @param giftCardCode
-     * @param cartModel
+     * @param giftCardCode the gift card code
+     * @param cartModel the gift card code
      * @return String
      */
     String removeGiftCardFromCart(final String giftCardCode, final CartModel cartModel);
 
     /**
      * It checks, gift card committed movement.
-     * @param giftCardMovementModelList
+     * @param giftCardMovementModelList the gift card movement model list
      * @return boolean value
      */
     boolean isCommittedMovement(final List<GiftCardMovementModel> giftCardMovementModelList);
@@ -239,7 +239,7 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
     /**
      * It checks, if gift card has been applied then recalculate cart and checks if applied gift card has
      * insufficient balance then remove it from cart.
-     * @return String
+     * @return String the string
      */
     List<String> recalculateCartForGiftCard();
     
