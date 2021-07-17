@@ -94,4 +94,7 @@ public interface BlStockLevelDao {
 	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodes(
 			final Set<String> serialProductCodes, final Date startDay, final Date endDay);
 
+	Collection<StockLevelModel> findSerialStockLevelForExtendDate(final String serialProductCode, final Collection<WarehouseModel> warehouseModels,
+			final Date startDay, final Date endDay);
+
 }

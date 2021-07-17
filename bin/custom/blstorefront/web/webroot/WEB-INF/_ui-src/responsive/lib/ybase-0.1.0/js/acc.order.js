@@ -2,7 +2,9 @@ ACC.order = {
 
 	_autoload: [
 	    "backToOrderHistory",
-	    "bindMultidProduct"
+	    "bindMultidProduct",
+	    ["bindApplyAccountVoucher", $(".js-voucher-apply-account-btn").length != 0],
+	    "bindApplyExtendOrder"
 	],
 
 	backToOrderHistory: function(){
@@ -25,5 +27,71 @@ ACC.order = {
 			ACC.multidgrid.populateAndShowGridOverlay(this, event);
 		});
 
-	}
+	} ,
+
+	 bindApplyAccountVoucher: function() {
+
+   		$(".js-voucher-apply-account-btn").on("click", function(e) {
+   			e.preventDefault();
+   			var voucherCode = $.trim($(".js-voucher-code-text-account").val());
+   			if (voucherCode != '' && voucherCode.length > 0) {
+         var formValues = $('#applyVoucherForm').serialize();
+   				$.ajax({
+   			url: ACC.config.encodedContextPath + '/my-account/voucher/apply',
+             type: "POST",
+             data: formValues,
+             success: function (data) {
+             if(data=='success')
+                    window.location.reload();
+             },
+             error: function (xhr, textStatus, error) {
+
+             }
+   				});
+   			} else {
+   				$("#errorMessages_account_voucher").removeClass("d-none");
+   				$("#errorMessages_account_voucher").html("Please enter your coupon code and click apply");
+   				$(".js-voucher-code-text-account").addClass("error");
+   			}
+
+   	});
+
+
+
+   	$("#js-voucher-code-text-account").on("keypress", function(e) {
+   		var code = (e.keyCode ? e.keyCode : e.which);
+   		if (code == 13) {
+   			var voucherCode = $.trim($(".js-voucher-code-text-account").val());
+   			if (voucherCode != '' && voucherCode.length > 0) {
+   				$("#applyVoucherForm").submit();
+   			} else {
+   				$("#errorMessages_account_voucher").removeClass("d-none");
+   				$("#errorMessages_account_voucher").html("Please enter your coupon code and click apply");
+   				$(".js-voucher-code-text-account").addClass("error");
+   			}
+   		}
+   	});
+   },
+
+   	 bindApplyExtendOrder: function() {
+      		$(".js-extendOrder-btn").on("click", function(e) {
+      			e.preventDefault();
+      			   var orderCode = $(this).data('order-id');
+      			alert(orderCode)
+      				$.ajax({
+      			url: ACC.config.encodedContextPath + '/my-account/extendOrder',
+                type: "POST",
+                data: formValues,
+                success: function (data) {
+                if(data=='success')
+                       window.location.reload();
+                },
+                error: function (xhr, textStatus, error) {
+
+                }
+      				});
+
+      	});
+      }
+
 };

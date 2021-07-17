@@ -72,6 +72,7 @@ import com.braintreegateway.WebhookNotification;
 import com.braintreegateway.exceptions.NotFoundException;
 import de.hybris.platform.braintree.data.BrainTreeWebhookNotificationRequest;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
@@ -698,6 +699,21 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	public String createCustomer(CustomerModel customer, AddressModel billingAddress)
 	{
 		return saveBraintreeCustomerId(customer, billingAddress);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCode(final CustomerModel customer, final String
+			paymentInfoId, final String nonce) {
+		final BrainTreePaymentInfoModel paymentInfo = brainTreeCustomerAccountService.getBrainTreePaymentInfoForCode(
+				customer, paymentInfoId);
+		if(null != paymentInfo) {
+			paymentInfo.setNonce(nonce);
+			getModelService().save(paymentInfo);
+		}
+		return paymentInfo;
 	}
 
 	private BrainTreeFindCustomerResult findBrainTreeCustomer(String braintreeCustomerId)

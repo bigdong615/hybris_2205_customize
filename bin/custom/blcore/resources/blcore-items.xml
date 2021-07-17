@@ -12,6 +12,8 @@
       generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
+      <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
+
     </collectiontypes>
 
     <enumtypes>
@@ -149,18 +151,22 @@
         <value code="EXCEPTION_NOTES"/>
       </enumtype>
 
+
+      <enumtype generate="true" code="ExtendOrderStatusEnum" autocreate="true" dynamic="true">
+        <value code="PROCESSING"/>
+        <value code="COMPLETED"/>
+      </enumtype>
+
       <enumtype generate="true" code="ItemStatusEnum" autocreate="true" dynamic="true">
         <value code="INCLUDED"/>
         <value code="NOT_INCLUDED"/>
       </enumtype>
 
-      
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
       
       <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
       	<value code="OTHERS"/>
       </enumtype>
-
 	  </enumtypes>
 
     <maptypes>
@@ -908,6 +914,12 @@
                      <persistence type="property"/>
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Additional Discount for used gear</description>
+                   </attribute>
+                   <attribute qualifier="onSale" type="java.lang.Boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether product is OnSale or not</description>
                    </attribute>
                    <attribute qualifier="brandName" type="java.lang.String">
                      <persistence type="property" />
@@ -1899,7 +1911,49 @@
                       <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                       <description>flag to identify whether the auth amount used to verify the card has been voided or not</description>
                     </attribute>
-                    <attribute qualifier="poNumber" type="localized:java.lang.String">
+                  <attribute qualifier="extendedOrderCopy" type="Order">
+                    <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                    <persistence type="property" />
+                    <description> Copy of extend order to be stored in existing order model. </description>
+                  </attribute>
+                  <attribute qualifier="isExtendedOrder" type="java.lang.Boolean">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    <description>flag to identify whether the order has been extended or not</description>
+                  </attribute>
+                  <attribute qualifier="extendOrderStatus" type="ExtendOrderStatusEnum">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <description>flag to identify whether the order has been extended or not</description>
+                  </attribute>
+                  <attribute qualifier="extendStartEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>return date of a for extend order</description>
+                  </attribute>
+                  <attribute qualifier="extendRentalEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>return date of a for extend order</description>
+                  </attribute>
+                  <attribute qualifier="totaExtendDays" type="java.lang.Integer">
+                  <persistence type="property" />
+                  <modifiers read="true" write="true" optional="true" />
+                  <description>To get the number of days extended .</description>
+                 </attribute>
+                  <attribute qualifier="totalDaysWithExistingOrder" type="java.lang.Integer">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To get the Total number of days.</description>
+                  </attribute>
+
+                  <attribute qualifier="extendedOrderCopyList" type="ExtendOrderCopyList">
+                    <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                    <persistence type="property" />
+                    <description> Copy of listed extend order to be stored in existing order model.</description>
+                  </attribute>
+                   <attribute qualifier="poNumber" type="localized:java.lang.String">
                       <persistence type="property">
                         <columntype database="oracle">
                           <value>CLOB</value>

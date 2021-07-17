@@ -193,10 +193,14 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
 	public static final String IS_DISCONTINUED = "isDiscontinued";
 
+	public static final String ITEMS_ON_SALE = "Items On Sale";
+
 	public static final String COMPLETED = "Completed";
 	public static final String CONFIRM_OUTPUT = "confirmOutput";
 	
 	public static final String ZERO_RATING = "0";
+
+	public static final String EXTEND_ORDER = "extendOrder";
 
 	private BlCoreConstants()
 	{

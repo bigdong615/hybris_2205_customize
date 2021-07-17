@@ -964,6 +964,14 @@
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
+
+		<!-- SOLR Field value Resolver for OnSale solr attribute -->
+		<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
+
+		<bean id="blOnSaleFacetNameProvider"
+			class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider">
+		</bean>
+
 	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
 	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
         <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
@@ -974,7 +982,9 @@
 
 	<!--BL-795 Adding attribute handler class for dynamic attribute skuFirmwareVersion-->
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
-	
+
+
+
 	<alias alias="productService" name="defaultBlProductService"/>
 	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
 	
@@ -983,5 +993,23 @@
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blProductService" ref="productService"/>
 	</bean>
+
+
+	<!--Added for extend rental order -->
+
+	<bean id="defaultBlExtendOrderService" class="com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService">
+		<property name="modelService" ref="modelService"/>
+		<property name="orderIDGenerator" ref="orderCodeGenerator"/>
+		<property name="userService" ref="userService"/>
+		<property name="customerAccountService" ref="customerAccountService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
+
+	<!--Coupon for rental extend order -->
+	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService" parent="defaultCouponService">
+	</bean>
+
+	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
+	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
 	
 </beans>

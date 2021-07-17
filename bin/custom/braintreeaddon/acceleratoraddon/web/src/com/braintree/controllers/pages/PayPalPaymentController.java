@@ -8,6 +8,7 @@ import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.constants.BraintreeConstants;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.controllers.handler.PayPalResponseExpressCheckoutHandler;
 import com.braintree.controllers.handler.PayPalUserLoginHandler;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
@@ -17,23 +18,31 @@ import com.braintree.hybris.data.PayPalAddressData;
 import com.braintree.hybris.data.PayPalCheckoutData;
 import com.braintree.hybris.data.PayPalExpressResponse;
 import com.braintree.hybris.data.PayPalMiniCartResponse;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.security.PayPalGUIDCookieStrategy;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.braintree.transaction.service.BrainTreeTransactionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractCheckoutController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
+import de.hybris.platform.commercefacades.order.OrderFacade;
+import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
+import java.math.BigDecimal;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -45,7 +54,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static com.braintree.controllers.BraintreeaddonControllerConstants.*;
 import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
@@ -57,7 +65,6 @@ import static de.hybris.platform.util.localization.Localization.getLocalizedStri
 public class PayPalPaymentController extends AbstractCheckoutController
 {
 	protected static final String REDIRECT_URL_CART = REDIRECT_PREFIX + BraintreeaddonWebConstants.CART_URL;
-	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String ANONYMOUS_USER = "anonymous";
 	private static final String DEVICE_DATA = "device_data";
 
@@ -92,6 +99,12 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	@Resource(name = "cartFacade")
 	private BlCartFacade blCartFacade;
+
+	@Resource
+	private BrainTreeTransactionService brainTreeTransactionService;
+
+	@Resource(name = "orderFacade")
+	private OrderFacade orderFacade;
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -227,6 +240,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
                                    final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
         PayPalExpressResponse payPalExpressResponse = null;
         AddressData hybrisBillingAddress = null;
+				final String orderCode = request.getParameter("order_code");
         try {
             payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
         } catch (final IllegalArgumentException exeption) {
@@ -253,10 +267,10 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			paymentProvider = BraintreeConstants.ANDROID_PAY_CARD;
 		}
 
-        final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
-				  paymentProvider, Boolean.FALSE, Boolean.TRUE, payPalEmail);
+		final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
+			  paymentProvider, Boolean.FALSE, Boolean.TRUE, payPalEmail);
 
-        final PayPalAddressData payPalBillingAddress = payPalExpressResponse.getDetails().getBillingAddress();
+    final PayPalAddressData payPalBillingAddress = payPalExpressResponse.getDetails().getBillingAddress();
 		 if (payPalBillingAddress != null)
 		 {
 			 hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
@@ -275,30 +289,46 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			 hybrisBillingAddress.setEmail(payPalEmail);
 			 subscriptionInfo.setAddressData(hybrisBillingAddress);
 		 }
-
+				boolean isSuccess = false;
         try {
-            brainTreePaymentFacade.completeCreateSubscription(subscriptionInfo, false);
+					AbstractOrderModel order = brainTreeCheckoutFacade.getOrderByCode(orderCode);
+					if(null != order) {
+						final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
+								.completeCreateSubscription(subscriptionInfo,
+										(CustomerModel) order.getUser(), order, false, false);
+						if(null != paymentInfo) {
+							isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+									BigDecimal.valueOf(order.getTotalPrice()), true, paymentInfo);
+						}
+					}
         } catch (final Exception exception) {
             final String errorMessage = getLocalizedString("braintree.billing.general.error");
             handleErrors(errorMessage, model);
             return CheckoutOrderPageErrorPage;
         }
-        GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
-                getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.success"));
-        return REDIRECT_TO_PAYMENT_INFO_PAGE;
+			if(isSuccess) {
+				final OrderData orderDetails = orderFacade.getOrderDetailsForCode(orderCode);
+				model.addAttribute("orderData", orderDetails);
+				final ContentPageModel payBillSuccessPage = getContentPageForLabelOrId(
+						BraintreeaddonControllerConstants.PAY_BILL_SUCCESS_CMS_PAGE);
+				storeCmsPageInModel(model, payBillSuccessPage);
+				setUpMetaDataForContentPage(model, payBillSuccessPage);
+				model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS,
+						ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+				return getViewForPage(model);
+			} else {
+				return REDIRECT_PREFIX + "/my-account/" + orderCode + "/payBill";
+			}
     }
 
 	@GetMapping(value = "/mini/express")
 	@RequireHardLogIn
 	@ResponseBody
-	public String doInitializeMiniCartPaypalShortcut() throws CMSItemNotFoundException, JsonGenerationException,
-            JsonMappingException, IOException
-	{
+	public String doInitializeMiniCartPaypalShortcut() throws JsonProcessingException {
 		return buildPayPalMiniCartResponse();
 	}
 
-	private String buildPayPalMiniCartResponse() throws JsonGenerationException, JsonMappingException, IOException
-	{
+	private String buildPayPalMiniCartResponse() throws JsonProcessingException {
 		final ObjectMapper mapper = new ObjectMapper();
 		final PayPalMiniCartResponse payPalMiniCartResponse = new PayPalMiniCartResponse();
 

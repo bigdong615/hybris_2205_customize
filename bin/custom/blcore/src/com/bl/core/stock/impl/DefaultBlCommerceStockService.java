@@ -594,6 +594,52 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		return ChronoUnit.DAYS.between(startDate, endDate.plusDays(1));
 	}
 
+
+	//
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public StockResult getStockForEntireExtendDuration(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate)
+	{
+		final List<Long> availableCount = new ArrayList<>();
+		final List<Long> totalCount = new ArrayList<>();
+		collectAvailabilityForExtend(startDate, endDate, productCode, warehouses, availableCount, totalCount);
+		Long availability = Long.valueOf(0);
+		Long totalUnits = Long.valueOf(0);
+		if (CollectionUtils.isNotEmpty(totalCount) && CollectionUtils.isNotEmpty(availableCount)) {
+			availability = availableCount.stream().mapToLong(Long::longValue).min().getAsLong();
+			totalUnits = totalCount.stream().mapToLong(Long::longValue).min().getAsLong();
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Stock Level found for product : {} and date between: {} and {} with "
+					+ "total count : {} and avaiable count : {}", productCode, startDate, endDate, totalUnits, availability);
+		}
+		final StockResult stockResult = new StockResult();
+		stockResult.setTotalCount(totalUnits);
+		stockResult.setAvailableCount(availability);
+		final StockLevelStatus stockLevelStatus = setStockLevelStatus(stockResult);
+		stockResult.setStockLevelStatus(stockLevelStatus);
+		return stockResult;
+	}
+
+	protected void collectAvailabilityForExtend(final Date startDate, final Date endDate, final String productCode,
+			final Collection<WarehouseModel> warehouses, final List<Long> availability, final List<Long> totalUnits)
+	{
+		final Collection<StockLevelModel> stockLevels = getStockForExtendDate(productCode, warehouses,
+				startDate, endDate);
+		collectAvailableQty(startDate, endDate, stockLevels, availability, totalUnits, productCode);
+	}
+
+	public Collection<StockLevelModel> getStockForExtendDate(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate)
+	{
+		return getBlStockLevelDao().findSerialStockLevelForExtendDate(productCode, warehouses, startDate, endDate);
+	}
+
+
+
+
 	/**
 	 * Gets the next date by adding number of days.
 	 *

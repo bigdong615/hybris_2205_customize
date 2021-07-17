@@ -85,6 +85,7 @@ public interface ControllerConstants
 				String AccountPaymentInfoPage = "pages/account/accountPaymentInfoPage"; // NOSONAR
 				String AccountRegisterPage = "pages/account/accountRegisterPage"; // NOSONAR
 				String AccountBookMarkPage = "pages/account/accountBookmarksPage"; //NOSONAR
+				String AccountOrderExtendSummaryPage = "pages/account/accountRentalExtendOrderSummary"; //NOSONAR
 			}
 
 			interface Checkout // NOSONAR
