@@ -51,8 +51,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	{
 
 		updateProductTypeForSubpartsSerial(blSerialProduct,ctx);
-		//updating conditional Overall rating.
-		updateConditionalOverallRating(blSerialProduct);
 
 		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);

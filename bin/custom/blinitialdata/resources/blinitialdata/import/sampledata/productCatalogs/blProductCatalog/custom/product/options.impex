@@ -1,0 +1,80 @@
+# -----------------------------------------------------------------------
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+# -----------------------------------------------------------------------
+# ImpEx for Importing Products
+#% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs options.impex =========================");
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$superCategories=supercategories(code, $catalogVersion)
+$blProduct=blProduct(productId,$catalogVersion)
+$approved=approvalstatus(code)[default='approved']
+
+INSERT_UPDATE BlOptions;$blProduct;optionId[unique=true];code;name;description;active[default=true];optionType(code);unitCost;unitPrice;altPrice;weight;smallImage;largeImage;defaultOptionId;required[default=true]
+                       ;12;2173;RED_mount;RED Mount;;TRUE;EXPANDED;0;0;0;0;;;14444;TRUE
+                       ;8;2770;surfboard-mount;Surfboard Mounts;;TRUE;EXPANDED;0;0;0;0;;;14097;FALSE
+                       ;3;3263;gopro_sticky_mount;Additional Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;5;3441;WEAPON_RED_mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;17518;TRUE
+                       ;6;3796;Amira_mount;Amira Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;;4090;SCARLET_RED_mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;22598;TRUE
+                       ;;4094;STUDIO_SCARLET_RED_mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;22617;TRUE
+                       ;;4275;varicam_mount;Varicam Mount;;TRUE;EXPANDED;0;0;0;0;;;23509;TRUE
+                       ;;4335;alexa_mount;Alexa Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;;5159;fusion-mount;Fusion Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;;5407;RED-MONSTRO-8K-Mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;30963;TRUE
+                       ;94;5679;Osmo-Action-Sticky-Mount;Additional Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;97;5960;GoPro-MAX-360-Camera-Mount;MAX Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;88;6410;URSA-Mini-Pro-12K-Mount;URSA Mini Pro 12K Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+
+
+INSERT_UPDATE BlOptions;options(code);code[unique=true];name;description;active[default=true];unitCost;unitPrice;altPrice
+                       ;alexa_mount;alexa_mount_error;Select a Mount;null;TRUE;0;0;0
+                       ;alexa_mount;alexa_mount_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;alexa_mount;alexa_mount_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;Amira_mount;Amira_error;Select a Mount;null;TRUE;0;0;0
+                       ;Amira_mount;Amira_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;Amira_mount;Amira_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;fusion-mount;fusion_error;Select Sticky Mount;null;TRUE;0;0;0
+                       ;fusion-mount;fusion_None;No Sticky Mounts;null;TRUE;0;0;0
+                       ;fusion-mount;fusion_curved_mount;1 Fusion Curved Mount;null;TRUE;0;6;0
+                       ;fusion-mount;fusion_flat_mount;1 Fusion Flat Mount;null;TRUE;0;6;0
+                       ;fusion-mount;fusion_both_mounts;"1 Fusion Flat; 1 Curved (2 Total)";null;TRUE;4;11;0
+                       ;fusion-mount;fusion_two_flat_mounts;2 Fusion Flat Mounts;null;TRUE;0;11;0
+                       ;fusion-mount;fusion_two_curved_mounts;2 Fusion Curved Mounts;null;TRUE;0;11;0
+                       ;gopro_sticky_mount;gopro_error;Select Sticky Mount;null;TRUE;0;0;0
+                       ;gopro_sticky_mount;gopro_None;No Extra Sticky Mount;null;TRUE;0;0;0
+                       ;gopro_sticky_mount;gopro_curved_mount;Curved;null;TRUE;0;2;0
+                       ;gopro_sticky_mount;gopro_flat_mount;Flat;null;TRUE;0;2;0
+                       ;gopro_sticky_mount;gopro_both_mounts;Curved and Flat;null;TRUE;0;4;0
+                       ;Osmo-Action-Sticky-Mount;Osmo_error;Select Sticky Mount;null;TRUE;0;0;0
+                       ;Osmo-Action-Sticky-Mount;Osmo_None;No Extra Sticky Mount;null;TRUE;0;0;0
+                       ;Osmo-Action-Sticky-Mount;Osmo_curved_mount;Curved;null;TRUE;0;2;0
+                       ;Osmo-Action-Sticky-Mount;Osmo_flat_mount;Flat;null;TRUE;0;2;0
+                       ;Osmo-Action-Sticky-Mount;Osmo_both_mounts;Curved and Flat;null;TRUE;0;4;0
+                       ;RED-EPIC-W-5K-Gemini-Mount;red_epic_error;Select a Mount;null;TRUE;0;0;0
+                       ;RED-EPIC-W-5K-Gemini-Mount;red_epic_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;RED-EPIC-W-5K-Gemini-Mount;red_epic_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;RED-MONSTRO-8K-Mount;red_monstro_error;Select a Mount;null;TRUE;0;0;0
+                       ;RED-MONSTRO-8K-Mount;red_monstro_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;RED-MONSTRO-8K-Mount;red_monstro_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;RED_mount;redm_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;RED_mount;redm_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;RED_mount;redm_error;Select a Mount;null;TRUE;0;0;0
+                       ;SCARLET_RED_mount;scarlet_error;Select a Mount;null;TRUE;0;0;0
+                       ;SCARLET_RED_mount;scarlet_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;SCARLET_RED_mount;scarlet_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;STUDIO_SCARLET_RED_mount;ss_error;Select a Mount;null;TRUE;0;0;0
+                       ;STUDIO_SCARLET_RED_mount;ss_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;STUDIO_SCARLET_RED_mount;ss_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;surfboard-mount;sf_mounts;Add Mounts;null;TRUE;0;20;0
+                       ;surfboard-mount;sf_None;None;null;TRUE;0;0;0
+                       ;URSA-Mini-Pro-12K-Mount;URSA_error;Select a Mount;null;TRUE;0;0;0
+                       ;URSA-Mini-Pro-12K-Mount;URSA_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;URSA-Mini-Pro-12K-Mount;URSA_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;varicam_mount;varicam_error;Select a Mount;null;TRUE;0;0;0
+                       ;varicam_mount;varicam_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;varicam_mount;varicam_PL-mount;PL Mount;null;TRUE;0;0;0
+                       ;WEAPON_RED_mount;weapon_error;Select a Mount;null;TRUE;0;0;0
+                       ;WEAPON_RED_mount;weapon_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
+                       ;WEAPON_RED_mount;weapon_PL-mount;PL Mount;null;TRUE;0;0;0

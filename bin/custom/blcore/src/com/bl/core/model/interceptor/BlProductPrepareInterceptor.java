@@ -2,6 +2,7 @@ package com.bl.core.model.interceptor;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.DurationEnum;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.calculation.BlPricingService;
@@ -127,7 +128,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
             .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
             .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
-    if (retailPrice != null && retailPrice > 0.0D) {
+    if (retailPrice != null && retailPrice > 0.0D && !ProductTypeEnum.SUBPARTS.equals(blProductModel.getProductType())) {
       if (sevenDayPrice.isEmpty()) {
         blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));

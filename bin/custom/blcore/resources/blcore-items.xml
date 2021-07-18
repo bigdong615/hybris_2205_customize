@@ -1158,21 +1158,32 @@
                     </attribute>
                  </attributes>
              </itemtype>
+          <itemtype code="BlSubpart" extends="BlSerialProduct" autocreate="true" generate="true"
+            jaloclass="com.bl.core.jalo.BlSubpart">
+            <description>Extending BlSubPart with additional attributes</description>
+            <attributes>
+              <attribute qualifier="barcode" type="java.lang.String" redeclare="true">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" unique="true"  optional="true"/>
+                <description>Unique Barcode associated to a subpart</description>
+              </attribute>
+            </attributes>
+          </itemtype>
 
           <itemtype code="BlOptions" autocreate="true" generate="true"
             jaloclass="com.bl.core.jalo.BlOptions">
             <description>These are options which are available on certain BlProducts</description>
-            <deployment table="bloptions" typecode="12223"/>
-            <custom-properties>
-              <property name="catalogItemType"><value>java.lang.Boolean.TRUE</value></property>
-              <property name="catalogVersionAttributeQualifier"><value>"catalogVersion"</value></property>
-              <property name="uniqueKeyAttributeQualifier"><value>"code"</value></property>
-            </custom-properties>
+            <deployment table="bloptions" typecode="12218"/>
             <attributes>
               <attribute qualifier="optionId" type="java.lang.String" >
                 <persistence type="property"/>
                 <modifiers read="true" write="true" optional="true"/>
                 <description>The identifier on the options</description>
+              </attribute>
+              <attribute qualifier="optionType" type="OptionTypeEnum" >
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>The type on the options</description>
               </attribute>
               <attribute qualifier="code" type="java.lang.String" >
                 <persistence type="property"/>

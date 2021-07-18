@@ -452,16 +452,6 @@
 					<ea:attribute qualifier="galleryImages"/>
 				</ea:section>
 			</ea:tab>
-			<ea:tab name="hmc.tab.product.supbparts" position="22">
-				<ea:section description="hmc.text.supbparts" name="hmc.section.product.subparts">
-					<ea:attribute qualifier="blSubParts">
-						<ea:editor-parameter>
-							<ea:name>configurableFlowConfigCtx</ea:name>
-							<ea:value>create-wizard-no-save</ea:value>
-						</ea:editor-parameter>
-					</ea:attribute>
-				</ea:section>
-			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
 				<ea:section name="hmc.section.product.extendedattributes">
 					<ea:attribute qualifier="inventoryLocationId"/>
