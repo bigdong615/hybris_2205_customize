@@ -48,7 +48,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	@Override
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
-
 		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
