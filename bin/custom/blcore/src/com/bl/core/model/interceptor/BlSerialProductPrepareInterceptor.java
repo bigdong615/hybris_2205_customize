@@ -50,8 +50,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
 
-		updateProductTypeForSubpartsSerial(blSerialProduct,ctx);
-
 		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
@@ -61,18 +59,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 	}
 
-	/**
-	 * Update Serial Product with product Type value
-	 * when its Blproduct is of type SUBPARTS
-	 * @param blSerialProduct
-	 * @param ctx
-	 */
-	private void updateProductTypeForSubpartsSerial(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) {
-		final BlProductModel blProduct = blSerialProduct.getBlProduct();
-		if((ctx.isNew(blSerialProduct) && Objects.nonNull(blProduct) && Objects.nonNull(blProduct.getProductType()) && ProductTypeEnum.SUBPARTS.equals(blProduct.getProductType()))){
-	   	 blSerialProduct.setProductType(blProduct.getProductType());
-		 }
-	}
 
 	/**
 	 * It updates the warehouse in stock records when warehouse location is changed of a serial product
