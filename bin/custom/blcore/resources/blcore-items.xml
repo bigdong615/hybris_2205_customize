@@ -12,6 +12,7 @@
       generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true" type="list"/>
+        <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -159,6 +160,11 @@
       
       <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
       	<value code="OTHERS"/>
+      </enumtype>
+
+      <enumtype generate="true" code="ExtendOrderStatusEnum" autocreate="true" dynamic="true">
+        <value code="PROCESSING"/>
+        <value code="COMPLETED"/>
       </enumtype>
 
 	  </enumtypes>
@@ -1929,6 +1935,47 @@
                       <modifiers read="true" write="true" optional="true" />
                       <description>PO Notes</description>
                     </attribute>
+                  <attribute qualifier="extendedOrderCopy" type="Order">
+                    <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                    <persistence type="property" />
+                    <description> Copy of extend order to be stored in existing order model. </description>
+                  </attribute>
+                  <attribute qualifier="isExtendedOrder" type="java.lang.Boolean">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                    <description>flag to identify whether the order has been extended or not</description>
+                  </attribute>
+                  <attribute qualifier="extendOrderStatus" type="ExtendOrderStatusEnum">
+                    <modifiers read="true" write="true" search="true" optional="true" />
+                    <persistence type="property" />
+                    <description>flag to identify whether the order has been extended or not</description>
+                  </attribute>
+                  <attribute qualifier="extendStartEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>return date of a for extend order</description>
+                  </attribute>
+                  <attribute qualifier="extendRentalEndDate" type="java.util.Date">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>return date of a for extend order</description>
+                  </attribute>
+                  <attribute qualifier="totaExtendDays" type="java.lang.Integer">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To get the number of days extended .</description>
+                  </attribute>
+                  <attribute qualifier="totalDaysWithExistingOrder" type="java.lang.Integer">
+                    <persistence type="property" />
+                    <modifiers read="true" write="true" optional="true" />
+                    <description>To get the Total number of days.</description>
+                  </attribute>
+                  <attribute qualifier="extendedOrderCopyList" type="ExtendOrderCopyList">
+                    <modifiers read="true" write="true" search="true" optional="true" initial="true" />
+                    <persistence type="property" />
+                    <description> Copy of listed extend order to be stored in existing order model.</description>
+                  </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -2017,7 +2064,48 @@
 			</attributes>
 		  </itemtype>
 		</typegroup>
+
 		<typegroup name="Consignment">
+
+      <itemtype code="Consignment" autocreate="false" generate="false">
+        <description>Extending Consignment type with additional attributes.</description>
+        <attributes>
+          <attribute qualifier="optimizedShippingStartDate" type="java.util.Date">
+            <description>Optimized shipping from date.</description>
+            <modifiers read="true" write="true"/>
+            <persistence type="property"/>
+          </attribute>
+          <attribute qualifier="optimizedShippingEndDate" type="java.util.Date">
+            <description>optimized shipping end date.</description>
+            <modifiers read="true" write="true"/>
+            <persistence type="property"/>
+          </attribute>
+          <!--  <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
+               <description>Shipping method optimization type</description>
+               <modifiers read="true" write="true"/>
+               <persistence type="property"/>
+           </attribute> -->
+          <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
+            <description>Shipping method optimization type</description>
+            <modifiers read="true" write="true"/>
+            <persistence type="property"/>
+          </attribute>
+          <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+            <description>Created dynamic attribute on consignment to display order type
+              value in Order fulfillment and CS cockpits.
+            </description>
+            <modifiers write="false"/>
+            <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
+          </attribute>
+          <attribute autocreate="true" qualifier="cleanCompleteConsignment" type="boolean">
+            <modifiers read="true" write="true" search="true" optional="true"/>
+            <persistence type="property"/>
+            <defaultvalue>Boolean.FALSE</defaultvalue>
+            <description>It tells whether the consignment is clean complete or dirty.</description>
+          </attribute>
+        </attributes>
+      </itemtype>
+
 		  <itemtype code="ConsignmentEntry" autocreate="false" generate="false">
 			<description>Extending ConsignmentEntry type with additional attributes.</description>
 			<attributes>
@@ -2032,6 +2120,35 @@
         </attribute>
 			</attributes>
 		  </itemtype>
+
+      <itemtype code="OptimizedShippingMethod" generate="true"
+        autocreate="true">
+        <deployment table="optShipMethod" typecode="12215"/>
+        <attributes>
+          <attribute type="java.lang.String" qualifier="code">
+            <modifiers read="true" write="true" unique="true"
+              optional="false" />
+            <persistence type="property"/>
+          </attribute>
+          <attribute type="java.lang.String" qualifier="name">
+            <modifiers read="true" write="true" unique="false"
+              optional="true" />
+            <persistence type="property"/>
+          </attribute>
+          <attribute type="java.lang.String"
+            qualifier="serviceTypeCode">
+            <modifiers read="true" write="true" unique="false"
+              optional="true" />
+            <persistence type="property"/>
+          </attribute>
+          <attribute type="java.lang.String"
+            qualifier="serviceTypeDesc">
+            <modifiers read="true" write="true" unique="false"
+              optional="true" />
+            <persistence type="property"/>
+          </attribute>
+        </attributes>
+      </itemtype>
 		</typegroup>
 	
         <typegroup name="BaseStore">
@@ -2145,71 +2262,6 @@
 				</attributes>
 			</itemtype>
 		</typegroup>
-		
-	<typegroup name="Consignment">
-	<itemtype code="Consignment" autocreate="false" generate="false">
-                <description>Extending Consignment type with additional attributes.</description>
-                <attributes>
-                    <attribute qualifier="optimizedShippingStartDate" type="java.util.Date">
-                        <description>Optimized shipping from date.</description>
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute>
-                    <attribute qualifier="optimizedShippingEndDate" type="java.util.Date">
-                        <description>optimized shipping end date.</description>
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute>
-                   <!--  <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
-                        <description>Shipping method optimization type</description>
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute> -->
-                    <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
-                        <description>Shipping method optimization type</description>
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute>
-                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
-                      <description>Created dynamic attribute on consignment to display order type
-                        value in Order fulfillment and CS cockpits.
-                      </description>
-                      <modifiers write="false"/>
-                      <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
-                    </attribute>
-                </attributes>
-            </itemtype>
-            
-            	<itemtype code="OptimizedShippingMethod" generate="true"
-				autocreate="true">
-				<deployment table="optShipMethod" typecode="12215"/>
-			<attributes>
-				<attribute type="java.lang.String" qualifier="code">
-					<modifiers read="true" write="true" unique="true"
-						optional="false" />
-						<persistence type="property"/>
-				</attribute>
-				<attribute type="java.lang.String" qualifier="name">
-					<modifiers read="true" write="true" unique="false"
-						optional="true" />
-						<persistence type="property"/>
-				</attribute>
-				<attribute type="java.lang.String"
-					qualifier="serviceTypeCode">
-					<modifiers read="true" write="true" unique="false"
-						optional="true" />
-						<persistence type="property"/>
-				</attribute>
-				<attribute type="java.lang.String"
-					qualifier="serviceTypeDesc">
-					<modifiers read="true" write="true" unique="false"
-						optional="true" />
-						<persistence type="property"/>
-				</attribute>
-			</attributes>
-		</itemtype>
-            
-        </typegroup>
 
       <typegroup name="Promotion">
         <itemtype code="RuleBasedFreeDeliveryModeAction"
