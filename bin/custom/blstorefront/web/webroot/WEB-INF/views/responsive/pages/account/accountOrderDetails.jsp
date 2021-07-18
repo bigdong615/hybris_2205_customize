@@ -152,7 +152,7 @@
                             <div class="cart-actions">
 
                             <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
-                               <a href="#" class="btn btn-sm btn-primary float-end js-rent-again" data-order-id="${orderData.code}">
+                               <a href="${rentOrderAction}" class="btn btn-sm btn-primary float-end" data-order-id="${orderData.code}">
                                    <spring:theme code="text.myaccount.order.rent.again"/> </a>
                             </div>
                             </c:if>
@@ -207,8 +207,9 @@
                                 </table>
                                   <c:if test="${orderData.isRentalCart}">
                                   <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
-                                     <a href="${rentOrderAction}" class="btn btn-block btn-primary mt-4">
-                                                  										<spring:theme code="text.myaccount.order.rent.again"/> </a>
+                                     <a href="#" class="btn btn-block btn-primary mt-4 js-rent-again" data-order-id="${orderData.code}">
+                                             <spring:theme code="text.myaccount.order.rent.again"/>
+                                     </a>
                                 </c:if>
                             </div>
                         </div>

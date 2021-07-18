@@ -4,7 +4,8 @@ ACC.order = {
 	    "backToOrderHistory",
 	    "bindMultidProduct",
 	    ["bindApplyAccountVoucher", $(".js-voucher-apply-account-btn").length != 0],
-	    "bindApplyExtendOrder"
+	    "bindApplyExtendOrder",
+	    "bindApplyRentAgain"
 	],
 
 	backToOrderHistory: function(){
@@ -72,6 +73,29 @@ ACC.order = {
    		}
    	});
    },
+
+   bindApplyRentAgain: function() {
+         		$(".js-rent-again").on("click", function(e) {
+         			e.preventDefault();
+         			   var orderCode = $(this).data('order-id');
+         				$.ajax({
+         			url: ACC.config.encodedContextPath + '/my-account/rentAgain/'+ orderCode,
+                   data: orderCode,
+                   success: function (data) {
+                   alert(data.includes("/cart"))
+                   if(data.includes("/cart")){
+                    window.location.href = ACC.config.encodedContextPath + "/cart";}
+                 else  {
+                 $('#rentAgainPopUp').html(data);
+                   setTimeout(function(){$("#rentAgainPopUp").modal('show');},500);}
+                   },
+                   error: function (xhr, textStatus, error) {
+
+                   }
+         				});
+
+         	});
+         },
 
    	 bindApplyExtendOrder: function() {
       		$(".js-extendOrder-btn").on("click", function(e) {

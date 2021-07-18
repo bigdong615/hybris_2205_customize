@@ -9,6 +9,7 @@ import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
+import org.apache.commons.lang.BooleanUtils;
 
 /**
  * This class overrides the OOB add to cart implementation to override the OOB availability logic
@@ -46,6 +47,13 @@ public class DefaultBlCommerceAddToCartStrategy extends
       if (actualAllowedQuantityChange > 0) {
         // We are allowed to add items to the cart
         final CartEntryModel entryModel = addCartEntry(parameter, actualAllowedQuantityChange);
+
+        // To update the Damage waiver same as order
+        if(BooleanUtils.isTrue(parameter.getIsFromRentAgainPage())) {
+          entryModel.setGearGuardProFullWaiverSelected(parameter.getIsDamageWaiverProSelected());
+          entryModel.setGearGuardWaiverSelected(parameter.getIsDamageWaiverSelected());
+          entryModel.setNoDamageWaiverSelected(parameter.getIsNODamageWaiverSelected());
+        }
         getModelService().save(entryModel);
 
         final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange,

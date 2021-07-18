@@ -67,6 +67,13 @@
                           </div>
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
+
+                <div class="productNotifications row">
+                      <div class="col-12">
+                              ${fn:escapeXml(errorMsgForRentAgain)}
+                       </div>
+                </div>
+
                              <c:if test ="${not empty fn:escapeXml(errorMsg)}">
                               <div class="notification notification-error">
                                       ${fn:escapeXml(errorMsg)}

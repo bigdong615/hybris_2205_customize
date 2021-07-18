@@ -91,7 +91,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javolution.io.Struct.Bool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -181,7 +180,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
 	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
-	public static final String ERROR_MSG_TYPE = "errorMsg";
+	public static final String ERROR_MSG_TYPE = "errorMsgForRentAgain";
 
 
 
@@ -1139,31 +1138,51 @@ public class AccountPageController extends AbstractSearchPageController
 	 */
 	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
-	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
+	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request ,
+			final RedirectAttributes redirectAttributes)
+			throws CommerceCartModificationException {
+		boolean isAddProductToCartAllowed;
+		if(StringUtils.isNotEmpty(orderCode)) {
+			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel);
+			if(BooleanUtils.isTrue(isAddProductToCartAllowed)) {
+				pModel.addAttribute("isfromExtendOrder" , true);
+				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
+						getMessageSource().getMessage("jbqucbqucybeycubche" ,null,
+								getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
+								getI18nService().getCurrentLocale()));
+				return BlControllerConstants.REDIRECT_CART_URL;
+			}
+			else {
+				return Account.AccountOrderRentAgainPage;
+			}
+		}
+		 return Account.AccountOrderRentAgainPage;
+	}
+
+
+	/**
+	 * This method used for renting the order again
+	 */
+	@RequestMapping(value = "/rentAgainOrder/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
+	@RequireHardLogIn
+	public String rentAgainOrder(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
 			throws CommerceCartModificationException {
 
-		boolean isRentAgainAllowed ;
-
-		isRentAgainAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode , pModel);
-
-
-		if(BooleanUtils.isFalse(isRentAgainAllowed)) {
-			return Account.AccountOrderRentAgainPage;
+		if(null != getSessionService().getAttribute("orderModelForRentAgain")) {
+			getSessionService().removeAttribute("orderModelForRentAgain");
 		}
 
-		return  BlControllerConstants.REDIRECT_CART_URL;
-
-		/*boolean isRentAgainAllowed ;
-		if(StringUtils.isNotEmpty(orderCode)) {
-
-			*//*isRentAgainAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode , pModel);
-
-			if(BooleanUtils.isFalse(isRentAgainAllowed)) {
-				return "/my-account/order/"+orderCode;
+		 boolean isRentAgainAllowed = false;
+			if(StringUtils.isNotBlank(orderCode)) {
+				isRentAgainAllowed = blOrderFacade.addToCartAllRentalOrderEnrties(orderCode, pModel);
+				GlobalMessages
+						.addFlashMessage((Map<String, Object>) pModel, GlobalMessages.CONF_MESSAGES_HOLDER,
+								BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{"testremoved"});
 			}
-			return BlControllerConstants.REDIRECT_CART_URL;*//*
-		}
-		 return BlControllerConstants.REDIRECT_CART_URL;*/
+			if(BooleanUtils.isTrue(isRentAgainAllowed)) {
+				return BlControllerConstants.REDIRECT_CART_URL;
+			}
+			return "/my-account/order/" + orderCode;
 	}
 
 

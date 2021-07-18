@@ -93,33 +93,18 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     final CartModel cartModel = getBlCartService().getSessionCart();
 
     if(null != cartModel && BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
-      model.addAttribute("isUsedGearActive" , true);
       return false;
     }
 
-    if(null != cartModel && BooleanUtils.isTrue(cartModel.getIsRentalCart())) {
-      for(AbstractOrderEntryModel abstractOrderEntryModel : orderModel.getEntries()) {
-        cartModel.getEntries().add(abstractOrderEntryModel);
-      }
-      model.addAttribute("isrentalCart" , true);
-      return false;
+    for (final AbstractOrderEntryModel lEntryModel : orderModel.getEntries())
+    {
+      final ProductModel lProductModel = lEntryModel.getProduct();
+      addToCart(lProductModel , lEntryModel.getQuantity().intValue() , lEntryModel);
     }
     return true;
   }
 
-  /**
-   * This method created to add product to cart
-   */
-  public void addToCart(final ProductModel lProductModel , String orderCode , final int quantity)
-      throws CommerceCartModificationException {
-    if (lProductModel != null)
-    {
-      addToCart(lProductModel, quantity);
-    }
-
-  }
-
-  public CartModificationData addToCart(final ProductModel blProductModel, final long quantity)
+  public CartModificationData addToCart(final ProductModel blProductModel, final long quantity , final AbstractOrderEntryModel abstractOrderEntryModel)
       throws CommerceCartModificationException {
 
     CartModel cartModel = blCartService.getSessionCart();
@@ -138,6 +123,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     parameter.setCart(cartModel);
     parameter.setQuantity(quantity);
 
+    updateDamegeWaiverSelectedFromOrder(abstractOrderEntryModel , parameter);
     final CommerceCartModification commerceCartModification = getCommerceCartService()
         .addToCart(parameter);
     setCartType(null, cartModel, commerceCartModification);
@@ -163,6 +149,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   }
 
 
+  /*
+   * To set damage waiver in parameter from order
+   */
+  private void updateDamegeWaiverSelectedFromOrder(final AbstractOrderEntryModel abstractOrderEntryModel , final CommerceCartParameter parameter) {
+    parameter.setIsFromRentAgainPage(true);
+    parameter.setIsDamageWaiverProSelected(abstractOrderEntryModel.getGearGuardProFullWaiverSelected());
+    parameter.setIsDamageWaiverSelected(abstractOrderEntryModel.getGearGuardWaiverSelected());
+    parameter.setIsNODamageWaiverSelected(abstractOrderEntryModel.getNoDamageWaiverSelected());
+  }
 
 
   @Override
@@ -311,6 +306,22 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   @Override
   public void updateOrderExtendDetails(final OrderModel orderModel) {
     getDefaultBlExtendOrderService().updateExtendOrder(orderModel);
+  }
+
+  @Override
+  public boolean addToCartAllRentalOrderEnrties(final String orderCode , final Model model) {
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
+
+    if(BooleanUtils.isTrue(orderModel.getIsRentalCart())) {
+      getSessionService().setAttribute("orderModelForRentAgain", orderModel);
+      return true;
+    }
+    if(BooleanUtils.isFalse(orderModel.getIsRentalCart())) {
+      model.addAttribute("isUsedGearCartActive" , true);
+      return false;
+    }
+    return false;
   }
 
 
