@@ -3,6 +3,7 @@ package com.bl.Ordermanagement.services.impl;
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
@@ -14,6 +15,9 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.search.restriction.SearchRestrictionService;
+import de.hybris.platform.servicelayer.session.SessionExecutionBody;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.allocation.impl.DefaultAllocationService;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
@@ -42,6 +46,8 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   private static final Logger LOG = Logger.getLogger(DefaultBlAllocationService.class);
   public static final String ERROR_WHILE_ALLOCATING_THE_ORDER = "Error while allocating the order.";
   private BlStockLevelDao blStockLevelDao;
+  private SessionService sessionService;
+  private SearchRestrictionService searchRestrictionService;
 
   /**
    * Create consignment.
@@ -171,9 +177,10 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     entry.setConsignment(consignment);
     //entry.setSerialProductCodes(result.getSerialProductCodes());   //setting serial products from result
     final Set<BlSerialProductModel> serialProductModels = result.getSerialProductMap().get(orderEntry.getEntryNumber());
-    entry.setSerialProducts(new HashSet<>(serialProductModels));   //setting serial products from result
+    entry.setSerialProducts(new ArrayList<>(serialProductModels));   //setting serial products from result
 
     setItemsMap(entry, serialProductModels);
+
     final Set<ConsignmentEntryModel> consignmentEntries = new HashSet<>();
     if (orderEntry.getConsignmentEntries() != null) {
       orderEntry.getConsignmentEntries().forEach(consignmentEntries::add);
@@ -209,11 +216,33 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
    */
   private void setItemsMap(final ConsignmentEntryModel entry,
       final Set<BlSerialProductModel> serialProductModels) {
-    final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
-    serialProductModels.stream().forEach(blSerialProductModel -> {
-      itemsMap.put(blSerialProductModel.getCode(), ItemStatusEnum.NOT_INCLUDED);
-    });
 
+    final Map<String, ItemStatusEnum> itemsMap = new HashMap<>();
+    serialProductModels.forEach(serial -> {
+
+      itemsMap.put(serial.getCode(), ItemStatusEnum.NOT_INCLUDED);
+
+      List<BlProductModel> subPartProducts = getSessionService()
+          .executeInLocalView(new SessionExecutionBody() {
+            @Override
+            public List<BlProductModel> execute() {
+              getSearchRestrictionService().disableSearchRestrictions();
+              if (null != serial.getBlProduct()) {
+
+                return (List<BlProductModel>) serial.getBlProduct().getSubParts();
+              }
+              return new ArrayList<>();
+            }
+          });
+
+      subPartProducts.forEach(product -> {
+        for (int i = 1; i <= product.getSubpartQuantity(); i++) {
+          entry.getSerialProducts().add(product);
+          itemsMap.put(product.getName() + "-" + i, ItemStatusEnum.NOT_INCLUDED);
+        }
+      });
+
+    });
 
     entry.setItems(itemsMap);
   }
@@ -225,5 +254,24 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
   public void setBlStockLevelDao(final BlStockLevelDao blStockLevelDao) {
     this.blStockLevelDao = blStockLevelDao;
   }
+
+  public SessionService getSessionService() {
+    return sessionService;
+  }
+
+  public void setSessionService(final SessionService sessionService) {
+    this.sessionService = sessionService;
+  }
+
+
+  public SearchRestrictionService getSearchRestrictionService() {
+    return searchRestrictionService;
+  }
+
+  public void setSearchRestrictionService(
+      final SearchRestrictionService searchRestrictionService) {
+    this.searchRestrictionService = searchRestrictionService;
+  }
+
 
 }
