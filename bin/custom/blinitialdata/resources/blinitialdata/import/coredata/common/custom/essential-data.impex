@@ -222,6 +222,7 @@ INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true
 ;24;	16;	12;	1.9 ;
 ;12;	12;	18;	1.27;
 
+<<<<<<< Updated upstream
 # BL-794 Declaring Enums for Conditional Ratings
 INSERT_UPDATE ConditionRatingValueEnum ; code[unique=true] ; name[lang=en] 
                                        ; 1                 ; 1             
@@ -287,3 +288,10 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
                                               ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
                                               
+
+INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
+                            ;COMPACT;COMPACT
+                            ;COMPACTINPUT;COMPACTINPUT
+                            ;EXPANDED;EXPANDED
+                            ;EXPANDEDINPUT;EXPANDEDINPUT
+

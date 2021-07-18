@@ -1,5 +1,6 @@
 package com.bl.core.model.interceptor;
 
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
@@ -48,6 +49,11 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	@Override
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
+
+		updateProductTypeForSubpartsSerial(blSerialProduct,ctx);
+		//updating conditional Overall rating.
+		updateConditionalOverallRating(blSerialProduct);
+
 		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
@@ -55,6 +61,19 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
 		updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
 		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+	}
+
+	/**
+	 * Update Serial Product with product Type value
+	 * when its Blproduct is of type SUBPARTS
+	 * @param blSerialProduct
+	 * @param ctx
+	 */
+	private void updateProductTypeForSubpartsSerial(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) {
+		final BlProductModel blProduct = blSerialProduct.getBlProduct();
+		if((ctx.isNew(blSerialProduct) && Objects.nonNull(blProduct) && Objects.nonNull(blProduct.getProductType()) && ProductTypeEnum.SUBPARTS.equals(blProduct.getProductType()))){
+	   	 blSerialProduct.setProductType(blProduct.getProductType());
+		 }
 	}
 
 	/**
