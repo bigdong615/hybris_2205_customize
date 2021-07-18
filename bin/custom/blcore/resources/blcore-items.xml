@@ -2097,7 +2097,7 @@
             <modifiers write="false"/>
             <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
           </attribute>
-          <attribute autocreate="true" qualifier="cleanCompleteFlag" type="boolean">
+          <attribute autocreate="true" qualifier="cleanCompleteConsignment" type="boolean">
             <modifiers read="true" write="true" search="true" optional="true"/>
             <persistence type="property"/>
             <defaultvalue>Boolean.FALSE</defaultvalue>
