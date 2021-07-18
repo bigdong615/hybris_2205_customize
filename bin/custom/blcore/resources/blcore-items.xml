@@ -166,16 +166,13 @@
       <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
       	<value code="OTHERS"/>
       </enumtype>
-<<<<<<< HEAD
-=======
 
       <enumtype generate="true" code="ExtendOrderStatusEnum" autocreate="true" dynamic="true">
         <value code="PROCESSING"/>
         <value code="COMPLETED"/>
       </enumtype>
 
->>>>>>> 37413e5d7b5dd9c73246b9401e590c8171d3e2a2
-	  </enumtypes>
+    </enumtypes>
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
