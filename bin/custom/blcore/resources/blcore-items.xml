@@ -167,11 +167,6 @@
       	<value code="OTHERS"/>
       </enumtype>
 
-      <enumtype generate="true" code="ExtendOrderStatusEnum" autocreate="true" dynamic="true">
-        <value code="PROCESSING"/>
-        <value code="COMPLETED"/>
-      </enumtype>
-
     </enumtypes>
 
     <maptypes>
