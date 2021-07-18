@@ -1,6 +1,5 @@
 package com.bl.core.model.interceptor;
 
-import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
@@ -58,7 +57,6 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
 		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 	}
-
 
 	/**
 	 * It updates the warehouse in stock records when warehouse location is changed of a serial product
