@@ -9,7 +9,7 @@ import com.bl.facades.shipping.data.BlShippingGroupData;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
-import de.hybris.platform.commercefacades.order.data.CartData;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
@@ -223,15 +223,15 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
 
     /**
      * It removes, applied gift card from cart.
-     * @param giftCardCode
-     * @param cartModel
+     * @param giftCardCode the gift card code
+     * @param cartModel the gift card code
      * @return String
      */
     String removeGiftCardFromCart(final String giftCardCode, final CartModel cartModel);
 
     /**
      * It checks, gift card committed movement.
-     * @param giftCardMovementModelList
+     * @param giftCardMovementModelList the gift card movement model list
      * @return boolean value
      */
     boolean isCommittedMovement(final List<GiftCardMovementModel> giftCardMovementModelList);
@@ -239,21 +239,21 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
     /**
      * It checks, if gift card has been applied then recalculate cart and checks if applied gift card has
      * insufficient balance then remove it from cart.
-     * @return String
+     * @return String the string
      */
     List<String> recalculateCartForGiftCard();
     
     /**
      * Gets the modified total for print quote page.
      *
-     * @param cartData the cartData
+     * @param abstractOrderData the abstractOrderData
      * @return the modified total for print quote
      */
-    void getModifiedTotalForPrintQuote(final CartData cartData);
+    void getModifiedTotalForPrintQuote(final AbstractOrderData abstractOrderData);
 
     /**
      * It saves order notes
-     * @param orderNotes
+     * @param orderNotes the orderNotes
      */
     void saveOrderNotes(final String orderNotes);
 }

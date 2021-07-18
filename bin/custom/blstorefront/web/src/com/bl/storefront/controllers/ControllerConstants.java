@@ -187,6 +187,7 @@ public interface ControllerConstants
 				String TermsAndConditionsPopup = "fragments/checkout/termsAndConditionsPopup"; // NOSONAR
 				String BillingAddressForm = "fragments/checkout/billingAddressForm"; // NOSONAR
 				String ReadOnlyExpandedOrderForm = "fragments/checkout/readOnlyExpandedOrderForm"; // NOSONAR
+				String PrintOrderConfirmation = "pages/checkout/multi/printOrderConfirmation"; // NOSONAR
 			}
 
 			interface Password // NOSONAR

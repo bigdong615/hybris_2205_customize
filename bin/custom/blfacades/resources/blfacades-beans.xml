@@ -147,6 +147,7 @@
 			<property name="extendErrorMessage" type="java.lang.String"/>
 			<property name="isExtendOrderPage" type="java.lang.Boolean"/>
 			<property name="orderNotes" type="java.lang.String"/>
+		  <property name="rentalDatesOnPrint" type="com.bl.facades.product.data.RentalDateDto"/>
   </bean>
 
     <!-- Shipping -->

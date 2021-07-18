@@ -79,7 +79,7 @@
     	<div class="col-12 col-md-5">
     	  <div class="po-order-notes">
     		  <p class="gray80 body14">
-    			  <b class="gray100"><spring:theme code="text.review.page.payment.notes"/></b>
+    			  <b class="gray100"><spring:theme code="text.order.confirmation.print.page.po.notes"/></b>
     			  <c:choose>
     				  <c:when test="${cartData.poNotes == ''}">
                  <spring:theme code="text.review.page.payment.notes.na"/>
