@@ -58,7 +58,7 @@
 					</c:otherwise>
 				</c:choose>
 
-				<td class="d-none d-md-table-cell"># ${serialProduct.serialId}</td>
+				<td class="d-none d-md-table-cell">#${serialProduct.serialId}</td>
 				<td class="text-end">
 					<!-- BL-537 : Added  class js-usedProduct-button --> <sec:authorize
 						access="hasAnyRole('ROLE_ANONYMOUS')">
