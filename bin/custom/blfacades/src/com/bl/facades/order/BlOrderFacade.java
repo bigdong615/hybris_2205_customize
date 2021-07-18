@@ -5,10 +5,11 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import org.springframework.ui.Model;
 
 public interface BlOrderFacade extends OrderFacade {
 
-  void addToCartAllOrderEnrties(final String orderCode) throws CommerceCartModificationException;
+  boolean addToCartAllOrderEnrties(final String orderCode , final Model model) throws CommerceCartModificationException;
 
   void addToCart(ProductModel lProductModel, final String productCode, final int quantity) throws CommerceCartModificationException;
 

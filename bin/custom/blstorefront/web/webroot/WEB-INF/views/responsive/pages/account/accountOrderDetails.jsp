@@ -150,8 +150,9 @@
                              </c:if>
                                <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
+
                             <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
-                               <a href="${rentOrderAction}" class="btn btn-sm btn-primary float-end">
+                               <a href="#" class="btn btn-sm btn-primary float-end js-rent-again" data-order-id="${orderData.code}">
                                    <spring:theme code="text.myaccount.order.rent.again"/> </a>
                             </div>
                             </c:if>
@@ -257,3 +258,8 @@
           </div>
       </div>
   </div>
+
+   <div class="modal fade " id="rentAgainPopUp" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+         <div class="modal-dialog modal-dialog-centered modal-sm">
+         </div>
+      </div>

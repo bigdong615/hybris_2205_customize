@@ -51,9 +51,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.ui.Model;
 
 /**
  * This class is created for My account rent again and extend order functionality
@@ -83,15 +85,26 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * This method created to add all the products from existing order
    */
   @Override
-  public void addToCartAllOrderEnrties(final String orderCode) throws CommerceCartModificationException
+  public boolean addToCartAllOrderEnrties(final String orderCode , final Model model) throws CommerceCartModificationException
   {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
     final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
-    for (final AbstractOrderEntryModel lEntryModel : orderModel.getEntries())
-    {
-      final ProductModel lProductModel = lEntryModel.getProduct();
-      addToCart(lProductModel , lProductModel.getCode() ,  lEntryModel.getQuantity().intValue());
+
+    final CartModel cartModel = getBlCartService().getSessionCart();
+
+    if(null != cartModel && BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+      model.addAttribute("isUsedGearActive" , true);
+      return false;
     }
+
+    if(null != cartModel && BooleanUtils.isTrue(cartModel.getIsRentalCart())) {
+      for(AbstractOrderEntryModel abstractOrderEntryModel : orderModel.getEntries()) {
+        cartModel.getEntries().add(abstractOrderEntryModel);
+      }
+      model.addAttribute("isrentalCart" , true);
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -164,7 +177,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     List<StockResult> stockResults = new ArrayList<>();
 
     for (ConsignmentModel consignmentModel : orderModel.getConsignments()) {
-      for (ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
+     /* for (ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
         for (BlSerialProductModel blSerialProductModel : consignmentEntryModel
             .getSerialProducts()) {
           StockResult stockResult = getBlCommerceStockService()
@@ -179,7 +192,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
             BlLogger.logMessage(LOG , Level.INFO , "product cannot be extend" , blSerialProductModel.getCode());
           }
         }
-      }
+      }*/
     }
 
     if (CollectionUtils.isEmpty(stockResults)) {

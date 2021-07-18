@@ -16,7 +16,6 @@ import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
-import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
@@ -92,6 +91,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javolution.io.Struct.Bool;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -1142,11 +1142,28 @@ public class AccountPageController extends AbstractSearchPageController
 	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
 			throws CommerceCartModificationException {
 
-		if(StringUtils.isNotEmpty(orderCode)) {
-			blOrderFacade.addToCartAllOrderEnrties(orderCode);
-			return BlControllerConstants.REDIRECT_CART_URL;
+		boolean isRentAgainAllowed ;
+
+		isRentAgainAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode , pModel);
+
+
+		if(BooleanUtils.isFalse(isRentAgainAllowed)) {
+			return Account.AccountOrderRentAgainPage;
 		}
-		 return REDIRECT_PREFIX + "/my-account/orders";
+
+		return  BlControllerConstants.REDIRECT_CART_URL;
+
+		/*boolean isRentAgainAllowed ;
+		if(StringUtils.isNotEmpty(orderCode)) {
+
+			*//*isRentAgainAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode , pModel);
+
+			if(BooleanUtils.isFalse(isRentAgainAllowed)) {
+				return "/my-account/order/"+orderCode;
+			}
+			return BlControllerConstants.REDIRECT_CART_URL;*//*
+		}
+		 return BlControllerConstants.REDIRECT_CART_URL;*/
 	}
 
 
