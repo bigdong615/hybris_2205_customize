@@ -41,6 +41,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
                               ; BodyContent                        ;                                                                         ;                           ;wide
                               ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                              ; TopHeaderSlot           ;                                                                             ;                           ; wide
 
 
 ###  Define ContentSlot For Template  ###
@@ -60,6 +61,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; HomePageRentingGearIsEasyTitleSlot-AccountPage ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true
                                      ;                         ; HomePageRentingGearSectionSlot-AccountPage     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
                                      ;                         ; SocialMediaSectionSlot-AccountPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                     ;                         ; TopHeaderSlot-AccountPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
                                      ;                         ; MobileHeaderLinkForSupportSlot-AccountPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
                                      ;                         ; MobileHeaderLinkForAccountSlot-AccountPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true
                                     ;                         ; MobileHeaderBottomInfo-AccountPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true

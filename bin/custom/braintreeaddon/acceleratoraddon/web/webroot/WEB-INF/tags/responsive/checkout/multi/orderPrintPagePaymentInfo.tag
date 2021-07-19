@@ -87,18 +87,6 @@
 						<p class="body14">
 							<spring:theme code="text.review.page.payment.amount" />
 						</p>
-						<p class="gray80 body14">
-							<b class="gray100"><spring:theme
-									code="text.order.confirmation.print.page.po.notes" /></b>
-							<c:choose>
-								<c:when test="${orderData.poNotes == ''}">
-									<spring:theme code="text.review.page.payment.notes.na" />
-								</c:when>
-								<c:otherwise>
-                     ${orderData.poNotes}
-                 </c:otherwise>
-							</c:choose>
-						</p>
 					</div>
 					<div class="col-6">
 						<p class="body14 gray80">
@@ -121,6 +109,18 @@
     				  </c:otherwise>
 						</c:choose>
 					</p>
+					<p class="gray80 body14">
+          	<b class="gray100"><spring:theme
+          		 code="text.order.confirmation.print.page.po.notes" /></b>
+          	<c:choose>
+          		<c:when test="${orderData.poNotes == ''}">
+          			<spring:theme code="text.review.page.payment.notes.na" />
+          		</c:when>
+          		<c:otherwise>
+                 ${orderData.poNotes}
+              </c:otherwise>
+            </c:choose>
+          </p>
 				</div>
 			</div>
 		</div>
