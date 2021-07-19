@@ -9,13 +9,12 @@
                         type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
-        <collectiontype code="serialProductCodes" elementtype="java.lang.String" autocreate="true"
-                        generate="false" type="set"/>
-        <collectiontype code="serialProducts" elementtype="BlSerialProduct" autocreate="true"
+        <collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
                         generate="false" type="set"/>
         <collectiontype code="MediasList" elementtype="Media" autocreate="true" generate="true" type="list"/>
         <collectiontype code="BlackOutDates" elementtype="java.util.Date" autocreate="true" generate="true"
                         type="list"/>
+        <collectiontype code="ExtendOrderCopyList" elementtype="AbstractOrder" type="list"/>
     </collectiontypes>
 
     <enumtypes>
@@ -175,11 +174,54 @@
         <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
             <value code="OTHERS"/>
         </enumtype>
+
+        <enumtype generate="true" code="OrderTypeEnum" autocreate="true" dynamic="true">
+            <value code="VIP"/>
+            <value code="FD"/>
+            <value code="SHIPPING"/>
+            <value code="USED_GEAR"/>
+        </enumtype>
+
+        <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
+            <value code="LATE_NOTES"/>
+            <value code="ORDER_CONTACT_NOTES"/>
+            <value code="SHIPPING_NOTES"/>
+            <value code="RECEIVING_NOTES"/>
+            <value code="MISSING_ITEM_NOTES"/>
+            <value code="BROKEN_ITEM_NOTES"/>
+            <value code="ORDER_NOTES"/>
+            <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
+        </enumtype>
+
+        <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
+            <value code="VERIFICATION_NOTES"/>
+            <value code="EXCEPTION_NOTES"/>
+        </enumtype>
+
+        <enumtype generate="true" code="ItemStatusEnum" autocreate="true" dynamic="true">
+            <value code="INCLUDED"/>
+            <value code="NOT_INCLUDED"/>
+        </enumtype>
+
+
+        <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
+
+        <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
+            <value code="OTHERS"/>
+        </enumtype>
+
+        <enumtype generate="true" code="ExtendOrderStatusEnum" autocreate="true" dynamic="true">
+            <value code="PROCESSING"/>
+            <value code="COMPLETED"/>
+        </enumtype>
+
     </enumtypes>
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String"/>
+        <maptype code="ItemStatusMap" argumenttype="java.lang.String" returntype="ItemStatusEnum"/>
     </maptypes>
+
 
     <relations>
         <relation code="BLProduct2BLSerialProductRelation" autocreate="true" generate="true" localized="false">
@@ -284,15 +326,38 @@
         <!-- Gift card End-->
 
         <relation code="Order2OrderNotes" generate="true" localized="false" autocreate="true">
-            <sourceElement qualifier="order" type="AbstractOrder" cardinality="one"/>
+            <sourceElement qualifier="order" type="AbstractOrder" cardinality="one">
+                <modifiers read="true" write="true" search="true" optional="true"/>
+            </sourceElement>
+
+            <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+                           collectiontype="list">
+                <modifiers read="true" write="true" search="true" optional="true" partof="true"/>
+            </targetElement>
+        </relation>
+
+
+        <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
+            <deployment table="ConsToOrderNotesRel" typecode="12220"/>
+            <sourceElement qualifier="consignment" type="Consignment" cardinality="many"/>
             <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
                            collectiontype="list"/>
         </relation>
 
-        <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
-            <sourceElement qualifier="consignment" type="Consignment" cardinality="one"/>
-            <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
+        <relation code="Customer2CustomerNotes" generate="true" localized="false" autocreate="true">
+            <sourceElement qualifier="customer" type="Customer" cardinality="one"/>
+            <targetElement qualifier="customerNotes" type="CustomerNotes" cardinality="many"
                            collectiontype="list"/>
+        </relation>
+
+        <relation code="BlProduct2BlProductRelation" autocreate="true" generate="true" localized="false">
+            <deployment table="blprod2blprodrel" typecode="12221"/>
+            <sourceElement qualifier="blProducts" type="BlProduct" cardinality="many">
+                <modifiers read="true" write="true" search="true" optional="true"/>
+            </sourceElement>
+            <targetElement qualifier="subParts" type="BlProduct" cardinality="many">
+                <modifiers read="true" write="true" search="true" optional="true"/>
+            </targetElement>
         </relation>
 
     </relations>
@@ -619,14 +684,10 @@
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>Defines Category is faceted category</description>
                     </attribute>
-
                     <attribute qualifier="rentalCategory" type="boolean">
                         <persistence type="property"/>
                         <modifiers read="true" write="true" search="true" optional="false"/>
-                        <defaultvalue>Boolean.FALSE</defaultvalue>
-                        <description>Defines Category is Rental</description>
                     </attribute>
-
                 </attributes>
             </itemtype>
             <itemtype code="BlProduct" extends="Product" autocreate="true" generate="true"
@@ -937,6 +998,17 @@
                         <persistence type="property"/>
                         <modifiers read="true" write="true" optional="true"/>
                         <description>Additional Discount for used gear</description>
+                    </attribute>
+                    <attribute qualifier="brandName" type="java.lang.String">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
+                        <description>Brand name for the BL Product</description>
+                    </attribute>
+                    <attribute qualifier="subpartQuantity" type="java.lang.Integer">
+                        <description>It tells shipper how much quantity we need to add for this sub-part</description>
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="false" initial="true"/>
+                        <defaultvalue>Integer.valueOf(0)</defaultvalue>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -1974,6 +2046,47 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <description>PO Notes</description>
                     </attribute>
+                    <attribute qualifier="extendedOrderCopy" type="Order">
+                        <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+                        <persistence type="property"/>
+                        <description>Copy of extend order to be stored in existing order model.</description>
+                    </attribute>
+                    <attribute qualifier="isExtendedOrder" type="java.lang.Boolean">
+                        <modifiers read="true" write="true" search="true" optional="true"/>
+                        <persistence type="property"/>
+                        <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                        <description>flag to identify whether the order has been extended or not</description>
+                    </attribute>
+                    <attribute qualifier="extendOrderStatus" type="ExtendOrderStatusEnum">
+                        <modifiers read="true" write="true" search="true" optional="true"/>
+                        <persistence type="property"/>
+                        <description>flag to identify whether the order has been extended or not</description>
+                    </attribute>
+                    <attribute qualifier="extendStartEndDate" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>return date of a for extend order</description>
+                    </attribute>
+                    <attribute qualifier="extendRentalEndDate" type="java.util.Date">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>return date of a for extend order</description>
+                    </attribute>
+                    <attribute qualifier="totaExtendDays" type="java.lang.Integer">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>To get the number of days extended .</description>
+                    </attribute>
+                    <attribute qualifier="totalDaysWithExistingOrder" type="java.lang.Integer">
+                        <persistence type="property"/>
+                        <modifiers read="true" write="true" optional="true"/>
+                        <description>To get the Total number of days.</description>
+                    </attribute>
+                    <attribute qualifier="extendedOrderCopyList" type="ExtendOrderCopyList">
+                        <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+                        <persistence type="property"/>
+                        <description>Copy of listed extend order to be stored in existing order model.</description>
+                    </attribute>
                 </attributes>
             </itemtype>
         </typegroup>
@@ -2043,7 +2156,6 @@
                 </attributes>
             </itemtype>
         </typegroup>
-
         <typegroup name="Warehouse">
             <itemtype code="Warehouse" autocreate="false" generate="false">
                 <description>Extending Warehouse type with additional attributes for BL.</description>
@@ -2058,50 +2170,6 @@
                         <description>Warehouse that is active or not.</description>
                         <persistence type="property"/>
                         <defaultvalue>Boolean.FALSE</defaultvalue>
-                    </attribute>
-                </attributes>
-            </itemtype>
-        </typegroup>
-        <typegroup name="Consignment">
-            <itemtype code="ConsignmentEntry" autocreate="false" generate="false">
-                <description>Extending ConsignmentEntry type with additional attributes.</description>
-                <attributes>
-                    <attribute type="serialProducts" qualifier="serialProducts">
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute>
-                </attributes>
-            </itemtype>
-
-            <itemtype code="Consignment" autocreate="false" generate="false">
-                <description>Extending Consignment type with additional attributes.</description>
-                <attributes>
-                    <attribute qualifier="optimizedShippingStartDate" type="java.util.Date">
-                        <description>Optimized shipping from date.</description>
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute>
-                    <attribute qualifier="optimizedShippingEndDate" type="java.util.Date">
-                        <description>optimized shipping end date.</description>
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute>
-                    <!--  <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
-                         <description>Shipping method optimization type</description>
-                         <modifiers read="true" write="true"/>
-                         <persistence type="property"/>
-                     </attribute> -->
-                    <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
-                        <description>Shipping method optimization type</description>
-                        <modifiers read="true" write="true"/>
-                        <persistence type="property"/>
-                    </attribute>
-                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
-                        <description>Created dynamic attribute on consignment to display order type
-                            value in Order fulfillment and CS cockpits.
-                        </description>
-                        <modifiers write="false"/>
-                        <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
                     </attribute>
                 </attributes>
             </itemtype>
@@ -2170,6 +2238,63 @@
                                qualifier="serviceTypeDesc">
                         <modifiers read="true" write="true" unique="false"
                                    optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
+        <typegroup name="Consignment">
+            <itemtype code="Consignment" autocreate="false" generate="false">
+                <description>Extending Consignment type with additional attributes.</description>
+                <attributes>
+                    <attribute qualifier="optimizedShippingStartDate" type="java.util.Date">
+                        <description>Optimized shipping from date.</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="optimizedShippingEndDate" type="java.util.Date">
+                        <description>optimized shipping end date.</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <!--  <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
+                         <description>Shipping method optimization type</description>
+                         <modifiers read="true" write="true"/>
+                         <persistence type="property"/>
+                     </attribute> -->
+                    <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
+                        <description>Shipping method optimization type</description>
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="orderType" type="OrderTypeEnum" autocreate="true">
+                        <description>Created dynamic attribute on consignment to display order type
+                            value in Order fulfillment and CS cockpits.
+                        </description>
+                        <modifiers write="false"/>
+                        <persistence type="dynamic" attributeHandler="consignmentOrderTypeHandler"/>
+                    </attribute>
+                    <attribute autocreate="true" qualifier="cleanCompleteConsignment" type="boolean">
+                        <modifiers read="true" write="true" search="true" optional="true"/>
+                        <persistence type="property"/>
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
+                        <description>It tells whether the consignment is clean complete or dirty.</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+            <itemtype code="ConsignmentEntry" autocreate="false" generate="false">
+                <description>Extending ConsignmentEntry type with additional attributes.</description>
+                <attributes>
+                    <attribute type="serialProducts" qualifier="serialProducts">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute type="ItemStatusMap" qualifier="items">
+                        <description>Created Map to display Shipper what all items are attached to the consignment. So
+                            that agent can verify and scan the serial
+                        </description>
+                        <modifiers read="true" write="true"/>
                         <persistence type="property"/>
                     </attribute>
                 </attributes>
@@ -2371,6 +2496,30 @@
                     </attribute>
                 </attributes>
             </itemtype>
+
+            <itemtype code="CustomerNotes" autocreate="true" generate="true" extends="Notes">
+                <description>Table to contain all type of customer notes.</description>
+                <attributes>
+                    <attribute qualifier="type" type="NotesEnum" redeclare="true">
+                        <modifiers read="true" write="true" search="true" optional="true"/>
+                        <description>Type of a note</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="customerNoteType" type="CustomerNotesEnum">
+                        <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                        <description>Type of a note</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="fraud" type="boolean">
+                        <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
+                        <description>flag to identify fraud and it will be updated by verification team on Verification_Notes.
+                        </description>
+                        <persistence type="property"/>
+                        <defaultvalue>false</defaultvalue>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
             <itemtype code="BoxSizes" generate="true" autocreate="true">
                 <deployment table="boxsizes" typecode="12230"/>
                 <attributes>

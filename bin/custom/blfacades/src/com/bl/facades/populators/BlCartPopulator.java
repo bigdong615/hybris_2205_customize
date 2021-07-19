@@ -39,10 +39,11 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	{
 		super.populate(source, target);
 		target.setTotalDamageWaiverCost(createPrice(source, source.getTotalDamageWaiverCost()));
-		target.setPickUpPersonFirstName(source.getPickUpPersonFirstName());
-		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
-		target.setPickUpPersonEmail(source.getPickUpPersonEmail());
-		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
+//		For now removing I am or someone else option for pick up
+//		target.setPickUpPersonFirstName(source.getPickUpPersonFirstName());
+//		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
+//		target.setPickUpPersonEmail(source.getPickUpPersonEmail());
+//		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
 		target.setIsRentalCart(source.getIsRentalCart());
@@ -52,7 +53,9 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			final CustomerModel customerModel = (CustomerModel)source.getUser();
 			target.setIsPOEnabled(customerModel.isPoEnabled());
 		}
-
+		if (CollectionUtils.isNotEmpty(source.getOrderNotes())){
+			target.setOrderNotes(source.getOrderNotes().get(0).getNote());
+		}
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
 		{

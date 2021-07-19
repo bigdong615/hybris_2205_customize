@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -181,11 +182,13 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@PostMapping(value = "/placeOrder")
 	@RequireHardLogIn
-	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, final Model model,
+	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, @RequestParam(value ="orderNotes")
+	final String orderNotes, final Model model,
 			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		blCheckoutFacade.saveOrderNotes(orderNotes);
 		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
 			return redirectToPaymentPageOnGiftCardRemove(redirectModel, removedGiftCardCodeList);
 		}
@@ -204,7 +207,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
-    if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    if (paymentInfo != null && CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
     {
       try
       {
@@ -228,11 +231,13 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		try
 		{
 			LOG.error("getCheckoutFacade: " + getCheckoutFacade());
-
-			brainTreeCheckoutFacade.storeIntentToCart();
-			brainTreeCheckoutFacade.storeCustomFieldsToCart(getMergedCustomFields(placeOrderForm.getCustomFields()));
-			brainTreeCheckoutFacade.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
-
+			if(paymentInfo != null) {
+				brainTreeCheckoutFacade.storeIntentToCart();
+				brainTreeCheckoutFacade
+						.storeCustomFieldsToCart(getMergedCustomFields(placeOrderForm.getCustomFields()));
+				brainTreeCheckoutFacade
+						.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
+			}
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.error("Order has been placed, number/code: " + orderData.getCode());
 			blRentalDateCookieGenerator.removeCookie(response);
@@ -273,7 +278,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			invalid = true;
 		}
 
-		if (getCheckoutFlowFacade().hasNoPaymentInfo())
+		if (StringUtils.isEmpty(getCheckoutFlowFacade().getCheckoutCart().getPoNumber()) && getCheckoutFlowFacade().hasNoPaymentInfo())
 		{
 			GlobalMessages.addErrorMessage(model, "checkout.paymentMethod.notSelected");
 			invalid = true;

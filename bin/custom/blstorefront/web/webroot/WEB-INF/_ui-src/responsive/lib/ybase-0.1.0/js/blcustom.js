@@ -839,3 +839,41 @@ function onUsedCloseModal()
 		}
 	});
 }
+
+//BL-625 place order with order notes.
+$('#placeOrderSummary').on("click", function(e) {
+	$('#placeOrder').click();
+});
+
+$('#placeOrder').on(
+		"click",
+		function(e) {
+			var submitForm = $("#placeOrderForm1");
+			var csrfTokan = createHiddenParameter("CSRFToken",
+					$(ACC.config.CSRFToken));
+			submitForm.append($(csrfTokan));
+			submitForm.submit();
+		});
+
+//Handled min and max character for order notes.
+var inputQuantity = [];
+$(function() {
+	$(".order-notes").on(
+			"keyup",
+			function(e) {
+				var $field = $(this), val = this.value;
+				$thisIndex=parseInt($field.data("idx"),10); 
+				if (val.length > Number($field.attr("maxlength"))) {
+					val = val.slice(0, 5);
+					$field.val(val);
+				}
+				inputQuantity[$thisIndex] = val;
+			});
+});
+
+//Print order confirmation page
+$('#printOrderConfirmation').on("click",function(e) {
+		e.preventDefault();
+		var submitForm = $("#printOrderConfirmationForm");
+		submitForm.submit();
+});
