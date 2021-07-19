@@ -5,7 +5,10 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <c:url var="homepageUrl" value="/" />
-
+<c:url value="/my-account/order/"
+	var="reviewOrderUrl" />
+<c:url value="/checkout/printOrderConfirmation"
+	var="printOrderConfirmationUrl" />
 <div class="screen"></div>
 <section id="confirmationWindow">
 	<div class="container">
@@ -38,16 +41,17 @@
 						<br> <b>${orderData.user.uid}</b>
 					</p>
 					<div class="confirmation-actions my-5">
-						<a href="#" class="btn btn-primary mx-3 mb-4 mb-sm-0"><spring:theme
+						<a href="${reviewOrderUrl}${orderCode}" class="btn btn-primary mx-3 mb-4 mb-sm-0"><spring:theme
 								code="order.confirmation.page.review.order.button" /></a> <a
 							href="${homepageUrl}" class="btn btn-outline mx-3 mb-4 mb-sm-0"><spring:theme
 								code="order.confirmation.page.continue.shopping.button" /></a>
 					</div>
 					<div class="order-actions text-center mb-4">
-						<a href="#" class="mx-2" alt="Print Order"> <i
+            <form action="${printOrderConfirmationUrl}" id="printOrderConfirmationForm" method="GET">
+              <input type="hidden" id="orderCode" name="orderCode" value="${orderCode}"/>
+            </form>
+						<a href="#" class="mx-2" alt="Print Order" id="printOrderConfirmation"> <i
 							class="icon-print"></i>
-						</a> <a href="#" class="mx-2"> <i class="icon-save"
-							alt="Save Order"></i>
 						</a>
 					</div>
 				</div>
