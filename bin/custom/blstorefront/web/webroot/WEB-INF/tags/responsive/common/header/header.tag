@@ -8,8 +8,10 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav"%>
+<%@ taglib prefix="livechat" tagdir="/WEB-INF/tags/shared/livechat" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<livechat:livechat/>
 <cms:pageSlot position="TopHeaderSlot" var="component" element="div" class="container">
   <cms:component component="${component}" />
 </cms:pageSlot>
