@@ -39,6 +39,8 @@
 		<property name="ugPromotionMessage" type="java.lang.String"/>
 		<property name="alternativeProduct" type="String"/>
 		<property name="onSale" type="java.lang.boolean"/>
+	<property name="upc" type="java.lang.String"/>
+	<property name="brandName" type="java.lang.String"/>
   </bean>
 
 
@@ -124,6 +126,8 @@
 			<property name="isPOEnabled" type="java.lang.Boolean"/>
 			<property name="poNumber" type="java.lang.String"/>
 			<property name="poNotes" type="java.lang.String"/>
+			<property name="orderNotes" type="java.lang.String"/>
+		  <property name="rentalDatesOnPrint" type="com.bl.facades.product.data.RentalDateDto"/>
   </bean>
 
     <!-- Shipping -->

@@ -18,7 +18,7 @@
         <span class="input-group-addon ASM_icon-lock"></span>
         <input name="password" type="password" class="ASM-input ${error}" placeholder="${passwordLabel}" autocomplete="off">
     </div>
-    <div class=" col-sm-4 col-xs-12">
+    <div class=" col-sm-4 col-xs-12" style="padding: 0;">
         <button type="submit" class="ASM-btn ASM-btn-login" <c:if test="${disabledButton}">disabled</c:if>><spring:theme code="${actionNameKey}"/></button>
     </div>
 </form>
