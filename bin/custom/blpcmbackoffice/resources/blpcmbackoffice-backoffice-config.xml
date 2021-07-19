@@ -106,6 +106,13 @@
 		principal="backofficeproductmanagergroup,backofficeproductadministratorgroup">
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
+				<ea:section name="hmc.essential">
+				<ea:attribute qualifier="code"/>
+				<ea:attribute qualifier="productId"/>
+				<ea:attribute qualifier="name"/>
+				<ea:attribute qualifier="catalogVersion"/>
+				<ea:attribute qualifier="approvalStatus"/>
+				</ea:section>
 				<ea:section name="label.pcmbackoffice.general">
 					<ea:attribute qualifier="manufacturerAID" label="label.pcmbackoffice.manufactureAID"/>
 					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
