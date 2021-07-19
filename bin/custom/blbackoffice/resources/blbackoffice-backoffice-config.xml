@@ -1285,6 +1285,40 @@
 			</y:group>
 		</y:actions>
 	</context>
+
+	<context merge-by="principal" parent="User" type="Customer" component="cs-editor-area" principal="customersupportmanagerrole,customersupportagentrole">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:lv="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
+			xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+			xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
+			xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+			xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<editorArea:tab name="blbackoffice.customer.notes.tab.name" position="10">
+				<editorArea:section name="blbackoffice.order.notes.section.customer.notes">
+					<editorArea:attribute qualifier="customerNotes" readonly="false">
+						<editorArea:editor-parameter>
+							<editorArea:name>disableRemoveReference</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context type="CustomerNotes" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>customerNoteType+ ' - ' +userID</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+
 </config>
 
 

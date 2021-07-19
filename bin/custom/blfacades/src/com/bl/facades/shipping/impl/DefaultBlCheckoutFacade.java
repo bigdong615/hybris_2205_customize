@@ -3,11 +3,13 @@ package com.bl.facades.shipping.impl;
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
@@ -27,7 +29,9 @@ import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
@@ -497,12 +501,13 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             final AddressModel addressModel = blPickUpZoneDeliveryModeModel.getInternalStoreAddress();
             if (addressModel != null) {
                 addressModel.setPickStoreAddress(Boolean.TRUE);
-                if(cartModel.isPickUpByMe()) {
-                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
-                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
-                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
-                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
-                }
+//              For now removing I am or someone else option for pick up
+//                if(cartModel.isPickUpByMe()) {
+//                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
+//                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
+//                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
+//                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
+//                }
                 getModelService().save(addressModel);
                 getModelService().refresh(addressModel);
                 setUPSAddressOnCart(addressModel);
@@ -549,22 +554,23 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public String savePickUpInfoOnCart(final BlPickUpByForm blPickUpByForm) {
-        final CartModel cartModel = getCart();
-        try {
-            if (cartModel != null && blPickUpByForm != null) {
-                cartModel.setPickUpPersonFirstName(blPickUpByForm.getFirstName());
-                cartModel.setPickUpPersonLastName(blPickUpByForm.getLastName());
-                cartModel.setPickUpPersonEmail(blPickUpByForm.getEmail());
-                cartModel.setPickUpPersonPhone(blPickUpByForm.getPhone());
-                cartModel.setPickUpByMe(blPickUpByForm.getFirstName() != null ? Boolean.FALSE : Boolean.TRUE);
-                getModelService().save(cartModel);
-                getModelService().refresh(cartModel);
-            }
+//        For now removing I am or someone else option for pick up
+//        final CartModel cartModel = getCart();
+//        try {
+//            if (cartModel != null && blPickUpByForm != null) {
+//                cartModel.setPickUpPersonFirstName(blPickUpByForm.getFirstName());
+//                cartModel.setPickUpPersonLastName(blPickUpByForm.getLastName());
+//                cartModel.setPickUpPersonEmail(blPickUpByForm.getEmail());
+//                cartModel.setPickUpPersonPhone(blPickUpByForm.getPhone());
+//                cartModel.setPickUpByMe(blPickUpByForm.getFirstName() != null ? Boolean.FALSE : Boolean.TRUE);
+//                getModelService().save(cartModel);
+//                getModelService().refresh(cartModel);
+//            }
             return BlFacadesConstants.RESULT_SUCCESS;
-        } catch (Exception e) {
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
-            return "FAILURE";
-        }
+//        } catch (Exception e) {
+//            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
+//            return "FAILURE";
+//        }
     }
 
     /**
@@ -616,11 +622,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setDeliveryAddress(null);
             cartModel.setDeliveryCost(null);
             cartModel.setDeliveryMode(null);
-            cartModel.setPickUpByMe(Boolean.TRUE);
-            cartModel.setPickUpPersonFirstName(null);
-            cartModel.setPickUpPersonLastName(null);
-            cartModel.setPickUpPersonEmail(null);
-            cartModel.setPickUpPersonPhone(null);
+//            For now removing I am or someone else option for pick up
+//            cartModel.setPickUpByMe(Boolean.TRUE);
+//            cartModel.setPickUpPersonFirstName(null);
+//            cartModel.setPickUpPersonLastName(null);
+//            cartModel.setPickUpPersonEmail(null);
+//            cartModel.setPickUpPersonPhone(null);
             cartModel.setDeliveryNotes(null);
             cartModel.setStatusUpdate(Boolean.FALSE);
             getModelService().save(cartModel);
@@ -704,6 +711,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
 	/**
    * {@inheritDoc}
+   * @return the list of string
    */
 	 public List<String> recalculateCartForGiftCard() {
         if (getBrainTreeCheckoutFacade().getCartService() != null) {
@@ -786,24 +794,50 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      * {@inheritDoc}
      */
     @Override
-    public void getModifiedTotalForPrintQuote(final CartData cartData) {
-   	 if(Objects.nonNull(cartData)) {
-   		 try {
-   		     final BigDecimal totalPrice = getPriceValue(cartData.getSubTotal()).add(getPriceValue(cartData.getTotalDamageWaiverCost()));
-   		     final BigDecimal discountPrice = getPriceValue(cartData.getTotalDiscounts());
-   		     final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
-   		     final PriceData modifiedTotal = getPriceDataForPrice(totalWithDiscount.compareTo(BigDecimal.valueOf(0.0d)) == 1
-      	        ? totalWithDiscount : BigDecimal.valueOf(0.0d));
-   		     cartData.setTotalPrice(modifiedTotal);
-   		 }
-   		 catch(final Exception exception) {
-   			 BlLogger.logMessage(LOG, Level.ERROR, "Error while Modifing total price for Print Quoate Page.", exception);
-   			 throw exception;
-   		 }   	    
-   	  }  	 
+    public void getModifiedTotalForPrintQuote(final AbstractOrderData abstractOrderData) {
+      if (Objects.nonNull(abstractOrderData)) {
+        try {
+          final BigDecimal totalPrice = getPriceValue(abstractOrderData.getSubTotal())
+              .add(getPriceValue(abstractOrderData.getTotalDamageWaiverCost()));
+          final BigDecimal discountPrice = getPriceValue(abstractOrderData.getTotalDiscounts());
+          final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
+          final PriceData modifiedTotal = getPriceDataForPrice(
+              totalWithDiscount.compareTo(BigDecimal.ZERO) > 0
+                  ? totalWithDiscount : BigDecimal.ZERO);
+          abstractOrderData.setTotalPrice(modifiedTotal);
+        } catch (final Exception exception) {
+          BlLogger.logMessage(LOG, Level.ERROR,
+              "Error while Modifying total price for Print Quote Page.", exception);
+          throw exception;
+        }
+      }
     }
-    
-    /**
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void saveOrderNotes(final String orderNotes) {
+    final CartModel cartModel = getCartService().getSessionCart();
+    try {
+        if (StringUtils.isNotBlank(orderNotes) && Objects.nonNull(cartModel) && Objects
+            .nonNull(cartModel.getUser())) {
+          final NotesModel notesModel = getModelService().create(NotesModel.class);
+          notesModel.setType(NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES);
+          notesModel.setNote(orderNotes);
+          notesModel.setUserID(cartModel.getUser().getUid());
+          getModelService().save(notesModel);
+          cartModel.setOrderNotes(Lists.newArrayList(notesModel));
+          getModelService().save(cartModel);
+          getModelService().refresh(cartModel);
+        }
+      } catch (final Exception exception) {
+        BlLogger.logMessage(LOG, Level.ERROR,
+          "Error occurred while saving order notes for cart {}", cartModel.getCode(), exception);
+    }
+  }
+
+  /**
      * Gets the price value.
      *
      * @param priceData the price data
