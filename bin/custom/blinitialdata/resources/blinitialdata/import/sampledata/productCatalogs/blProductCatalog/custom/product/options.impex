@@ -21,11 +21,12 @@ INSERT_UPDATE BlOptions;$blProduct;optionId[unique=true];code;name;description;a
                        ;;4094;STUDIO_SCARLET_RED_mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;22617;TRUE
                        ;;4275;varicam_mount;Varicam Mount;;TRUE;EXPANDED;0;0;0;0;;;23509;TRUE
                        ;;4335;alexa_mount;Alexa Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;;5159;fusion-mount;Fusion Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;15;5159;fusion-mount;Fusion Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
                        ;;5407;RED-MONSTRO-8K-Mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;30963;TRUE
                        ;94;5679;Osmo-Action-Sticky-Mount;Additional Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
                        ;97;5960;GoPro-MAX-360-Camera-Mount;MAX Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
                        ;88;6410;URSA-Mini-Pro-12K-Mount;URSA Mini Pro 12K Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
+                       ;;5144;RED-EPIC-W-5K-Gemini-Mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;29813;TRUE
 
 
 INSERT_UPDATE BlOptions;options(code);code[unique=true];name;description;active[default=true];unitCost;unitPrice;altPrice
@@ -78,3 +79,21 @@ INSERT_UPDATE BlOptions;options(code);code[unique=true];name;description;active[
                        ;WEAPON_RED_mount;weapon_error;Select a Mount;null;TRUE;0;0;0
                        ;WEAPON_RED_mount;weapon_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
                        ;WEAPON_RED_mount;weapon_PL-mount;PL Mount;null;TRUE;0;0;0
+
+$productCatalog=blProductCatalog
+$productCatalogName=BL Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$superCategories=supercategories(code, $catalogVersion)
+$blProduct=source(productId,$catalogVersion)[unique=true]
+$Options=target(code)[unique=true]
+
+INSERT_UPDATE BlProduct2OptionsRelation;$blProduct;$Options
+;12;RED_mount
+;8 ;surfboard-mount
+;3 ;gopro_sticky_mount
+;5 ;WEAPON_RED_mount
+;6 ;Amira_mount
+;15;fusion-mount
+;94;Osmo-Action-Sticky-Mount
+;97;GoPro-MAX-360-Camera-Mount
+;88;URSA-Mini-Pro-12K-Mount
