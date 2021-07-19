@@ -219,14 +219,22 @@ width: 25px;
 margin: 0;
 }
 .glyphicon-minus:before {
-content: "-";
-color:#52BFC0;
-font-size: 21px;
+      content: "-";
+    color: #52BFC0;
+    font-size: 35px;
+    font-weight: inherit;
+    position: relative;
+    line-height: 0px;
+    top: -6px;
 }
 .glyphicon-plus:before {
-content: "+";
-color:#52BFC0;
-font-size: 21px;
+    content: "+";
+    color: #52BFC0;
+    font-size: 11px;
+    font-weight: inherit;
+    line-height: 8px;
+    position: relative;
+    top: -4px;
 }
 /*BL-712*/
 .boldCustom {
@@ -321,10 +329,10 @@ font-size: 21px;
 .scroll-over-text{
   overflow-y: scroll;
   height:160px;
-}
-::-webkit-scrollbar {
-  scrollbar-width: thin;
-}
+ }
+.scroll-over-text::-webkit-scrollbar {
+  display: none;
+} 
 /* Hide scrollbar for IE, Edge add Firefox */
 .scroll-over-text {
   -ms-overflow-style: none;
