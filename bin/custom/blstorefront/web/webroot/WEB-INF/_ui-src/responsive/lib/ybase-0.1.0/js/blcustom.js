@@ -862,11 +862,7 @@ $(function() {
 			"keyup",
 			function(e) {
 				var $field = $(this), val = this.value;
-				if (this.validity && this.validity.badInput || isNaN(val)
-						|| $field.is(":invalid")) {
-					this.value = inputQuantity[$thisIndex];
-					return;
-				}
+				$thisIndex=parseInt($field.data("idx"),10); 
 				if (val.length > Number($field.attr("maxlength"))) {
 					val = val.slice(0, 5);
 					$field.val(val);

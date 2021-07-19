@@ -32,6 +32,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
                              ; buyingUsedGearEasySection           ;                                                                             ;                           ; wide
                              ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; TopHeaderSlot           ;                                                                             ;                           ; wide
 
 
 
@@ -63,6 +64,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                    ;                         ; MobileMiniCartSlot-productDetails                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
                                    ;                         ; BuyingUsedGearComponentSectionSlot-productDetails ; buyingUsedGearEasySection ;                                                       ; buyingUsedGearEasySectionSlot  ; true
                                    ;                         ; SocialMediaSectionSlot-productDetails              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                   ;                         ; TopHeaderSlot-productDetails              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
 
 
 
