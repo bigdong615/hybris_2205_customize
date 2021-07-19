@@ -107,16 +107,15 @@
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
 				<ea:section name="label.pcmbackoffice.general">
-					<ea:attribute qualifier="code"/>
-					<ea:attribute qualifier="productId"/>
-					<ea:attribute qualifier="name"/>
-					<ea:attribute qualifier="displayName" label="label.pcmbackoffice.displayname"/>
-					<ea:attribute qualifier="catalogVersion"/>
-					<ea:attribute qualifier="approvalStatus"/>
+					<ea:attribute qualifier="manufacturerAID"/>
+					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
+					<ea:attribute qualifier="displayName"/>
+					<ea:attribute qualifier="displayNotes" label="label.pcmbackoffice.displaynotes"/>
 					<ea:attribute qualifier="isNew"/>
-					<ea:attribute qualifier="constrained"/>
-					<ea:attribute qualifier="forSale"/>
-					<ea:attribute qualifier="forRent"/>
+					<ea:attribute qualifier="isVideo"/>
+					<ea:attribute qualifier="productType" label="label.pcmbackoffice.producttype"/>
+					<ea:attribute qualifier="shortDescription" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="titleTag" label="label.pcmbackoffice.titletag"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.rentaldetails">
 					<ea:attribute qualifier="rentalVideosLink" />
@@ -139,17 +138,10 @@
 						<ea:attribute
 							editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"
 							qualifier="description"/>
-						<ea:attribute qualifier="rentalVideosLink" />
 						<ea:attribute qualifier="summary"/>
 						<ea:attribute qualifier="data_sheet"/>
-						<ea:attribute qualifier="rentalIncludes" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 						<ea:attribute qualifier="displayNotes" label="label.pcmbackoffice.displaynotes"/>
-						<ea:attribute qualifier="purchaseNotes" editor="com.hybris.cockpitng.editor.wysiwyg" label="label.pcmbackoffice.purchasenotes"/>
 						<ea:attribute qualifier="shortDescription" editor="com.hybris.cockpitng.editor.wysiwyg"/>
-						<ea:attribute qualifier="usedDescription" editor="com.hybris.cockpitng.editor.wysiwyg" label="lebel.pcmbackoffice.useddescription"/>
-						<ea:attribute qualifier="usedGearVideosLink" />
-						<ea:attribute qualifier="usedIncludes" editor="com.hybris.cockpitng.editor(com.hybris.cockpitng.editor.wysiwyg)"/>
-						<ea:attribute qualifier="techEngNotes"/>
 					</ea:panel>
 				</ea:section>
 				<ea:section name="hmc.section.catalog_and_validity">
@@ -257,11 +249,9 @@
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
 				<ea:section name="hmc.section.product.extendedattributes">
-					<ea:attribute qualifier="numberSystem"/>
 					<ea:attribute qualifier="productType" label="label.pcmbackoffice.producttype"/>
 					<ea:attribute qualifier="scheduled"/>
 					<ea:attribute qualifier="video"/>
-					<ea:attribute qualifier="firmwareVersion"/>
 					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
 					<ea:attribute qualifier="alternativeProduct" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)" label="label.pcmbackoffice.alternativeproduct"/>
 				</ea:section>
@@ -287,9 +277,6 @@
 					<ea:attribute qualifier="productId"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.ids">
-				 <ea:attribute qualifier="procurementSource"/>
-					<ea:attribute qualifier="mpn"/>
-					<ea:attribute qualifier="upc"/>
 					<ea:attribute qualifier="manufacturerAID"/>
 					<ea:attribute qualifier="manufacturerName"/>
 				</ea:section>
