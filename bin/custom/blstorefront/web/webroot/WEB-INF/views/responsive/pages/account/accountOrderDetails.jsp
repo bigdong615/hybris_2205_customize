@@ -51,7 +51,38 @@
                                         </p>
                                     </div>
                                 </div>
-                            </div>
+
+                             <c:if test="${not empty orderData.extendOrderEntrie}">
+                               <div class="col-12 mt-4">
+                                 <b><spring:theme code="text.myaccount.extend.order.details"/></b>
+                                   <c:forEach items="${orderData.extendOrderEntrie}" var="extendOrder">
+                                        <div class="row">
+                                           <div class="col-5 col-md-4">
+                                              <p class="body14"><spring:theme code="text.order.extend.text"/><br>
+                                                    <spring:theme code="text.myaccount.extend.order.added.time"/><br>
+                                                    <spring:theme code="text.myaccount.extend.order.cost"/><br>
+                                                    <spring:theme code="text.myaccount.order.rental.damege.waiver"/></p>
+                                           </div>
+                                           <div class="col-7 col-md-8">
+                                               <p class="body14 gray60">
+                                                 ${extendOrder.extendOrderEndDate}<br>
+                                                 ${extendOrder.extendOrderDaysWithoutPrevOrder}<br>
+                                                 <format:blPrice priceData="${extendOrder.extendOrderCost}"/></br>
+                                                <c:choose>
+                                                <c:when test="${extendOrder.extendOrderDamageWaiverCost.value > 0}">
+                                                 <format:blPrice priceData="${extendOrder.extendOrderDamageWaiverCost}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                $0.00
+                                                </c:otherwise>
+                                                </c:choose>
+                                               </p>
+                                           </div>
+                                        </div>
+                                   </c:forEach>
+                               </div>
+                             </c:if>
+                             </div>
                             <div class="reviewCart">
                                 <h5 class="mb-4">
                                  <c:if test="${orderData.isRentalCart}">
@@ -151,10 +182,19 @@
                                <c:if test="${orderData.isRentalCart}">
                             <div class="cart-actions">
 
+                            <c:choose>
+                            <c:when test="${isUsedGearCartActive eq true}">
+                                     <a href="#" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#rentAgainPopUp">
+                                     <spring:theme code="text.myaccount.order.rent.again"/> </a>
+                            </c:when>
+                            <c:otherwise>
                             <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
                                <a href="${rentOrderAction}" class="btn btn-sm btn-primary float-end" data-order-id="${orderData.code}">
                                    <spring:theme code="text.myaccount.order.rent.again"/> </a>
-                            </div>
+
+                            </c:otherwise>
+                           </c:choose>
+                          </div>
                             </c:if>
 
                         </div>
@@ -206,10 +246,19 @@
                                     </tbody>
                                 </table>
                                   <c:if test="${orderData.isRentalCart}">
-                                  <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
-                                     <a href="${rentOrderAction}" class="btn btn-block btn-primary mt-4" data-order-id="${orderData.code}">
-                                             <spring:theme code="text.myaccount.order.rent.again"/>
-                                     </a>
+                                      <c:choose>
+                                          <c:when test="${isUsedGearCartActive eq true}">
+                                                   <a href="#" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#rentAgainPopUp">
+                                                         <spring:theme code="text.myaccount.order.rent.again"/>
+                                                   </a>
+                                          </c:when>
+                                          <c:otherwise>
+                                               <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
+                                                    <a href="${rentOrderAction}" class="btn btn-block btn-primary mt-4" data-order-id="${orderData.code}">
+                                                        <spring:theme code="text.myaccount.order.rent.again"/>
+                                                    </a>
+                                          </c:otherwise>
+                                      </c:choose>
                                 </c:if>
                             </div>
                         </div>
@@ -260,7 +309,27 @@
       </div>
   </div>
 
-   <div class="modal fade " id="rentAgainPopUp" aria-hidden="true" aria-labelledby="..." tabindex="-1">
-         <div class="modal-dialog modal-dialog-centered modal-sm">
-         </div>
+ <!--Used Gear Cart Error  -->
+
+<div class="modal fade" id="rentAgainPopUp" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+      <div class="modal-header">
+      <h5>Wait!</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+      <div class="modal-body">
+         <p>
+                 Wait!
+      </p>
+      <div class="modal-actions">
+                      <p class="text-center mb-0">
+                     	<a href="#" class="lightteal" aria-label="Close" data-bs-dismiss="modal" aria-label="Close">
+                     											<spring:theme code="basket.save.cart.action.cancel" /> </a></p>
+          </div>
+
       </div>
+      </div>
+      </div>
+</div>
+

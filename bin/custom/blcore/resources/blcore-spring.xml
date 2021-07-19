@@ -1003,6 +1003,7 @@
 		<property name="userService" ref="userService"/>
 		<property name="customerAccountService" ref="customerAccountService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
 	</bean>
 
 	<!--Coupon for rental extend order -->

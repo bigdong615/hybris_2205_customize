@@ -6,6 +6,7 @@ import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import java.util.List;
@@ -36,5 +37,7 @@ public interface BlOrderFacade extends OrderFacade {
   boolean addToCartAllRentalOrderEnrties(final String orderCode , final Model model) throws CommerceCartModificationException;
 
   OrderModel getOrderModelFromOrderCode(String orderCode);
+
+  AbstractOrderModel getExtendOrderAfterPlaceingOrder(final OrderModel orderModel);
 
 }

@@ -1,17 +1,25 @@
 package com.bl.facades.populators;
 
+import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.product.data.ExtendOrderData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commerceservices.constants.GeneratedCommerceServicesConstants.Attributes.Order;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.ruleengineservices.order.dao.ExtendedOrderDao;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 
 public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
@@ -52,6 +60,45 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     target.setOrderedFormatDateForExtendRental(convertDateToString(source.getDate() , "MMM d , YYYY"));
     target.setRentalEndDateForJs(convertDateToString(source.getRentalEndDate() , "MM/dd/yyyy"));
     target.setRentalStartDateForJs(convertDateToString(source.getRentalStartDate() , "yyyy ,MM, dd"));
+    populateExtendOrderDetails(source , target);
+
+    // To set the date for selecting in calendar
+    if(CollectionUtils.isNotEmpty(target.getExtendOrderEntrie())) {
+      populateRentalEndDateForJs(source, target);
+    }
+  }
+
+  private void populateExtendOrderDetails(final OrderModel orderModel , final OrderData orderData) {
+
+    final List<ExtendOrderData> extendOrderDataList = new ArrayList<>();
+    if(CollectionUtils.isNotEmpty(orderModel.getExtendedOrderCopyList())) {
+      for(AbstractOrderModel extendOrderModel : orderModel.getExtendedOrderCopyList()) {
+       final ExtendOrderData extendOrderData = new ExtendOrderData();
+       extendOrderData.setExtendOrderCost(convertDoubleToPriceData(extendOrderModel.getTotalPrice() , orderModel));
+       extendOrderData.setExtendOrderDamageWaiverCost(convertDoubleToPriceData(extendOrderModel.getTotalDamageWaiverCost(), orderModel));
+       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotaExtendDays() + "days");
+       extendOrderData.setExtendOrderEndDate(convertDateToString(extendOrderModel.getRentalEndDate() , "MMM d , YYYY"));
+       extendOrderDataList.add(extendOrderData);
+      }
+    }
+    orderData.setExtendOrderEntrie(extendOrderDataList);
+  }
+
+  private void populateRentalEndDateForJs(final OrderModel orderModel , final OrderData orderData) {
+
+    final  List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
+
+      final int size = orderModelList.size();
+      for (final AbstractOrderModel extendOrder :orderModelList) {
+        if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
+            .getExtendOrderStatus().getCode()
+            .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())
+            && orderModelList.get(size - 1).getPk()
+            .equals(extendOrder.getPk())) {
+          orderData.setRentalEndDateForJs(convertDateToString(extendOrder.getRentalEndDate() , "MM/dd/yyyy"));
+        }
+    }
+
   }
 
   /**

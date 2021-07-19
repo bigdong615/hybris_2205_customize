@@ -1,7 +1,11 @@
 package com.bl.core.services.extendorder.impl;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlProductModel;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.extendorder.BlExtendOrderService;
+import com.bl.core.stock.BlStockLevelDao;
 import de.hybris.platform.commerceservices.constants.GeneratedCommerceServicesConstants.Enumerations.OrderStatus;
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -9,16 +13,19 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -29,6 +36,8 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   private UserService userService;
   private CustomerAccountService customerAccountService;
   private BaseStoreService baseStoreService;
+
+  private BlStockLevelDao blStockLevelDao;
 
   @Override
   public OrderModel cloneOrderModelForExtendRental(final OrderModel originalOrder , long defaultAddedTimeForExtendRental) {
@@ -48,6 +57,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       extendOrderModel.setIsExtendedOrder(true);
       extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
       extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental);
+      extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
 
       getModelService().save(extendOrderModel);
       getModelService().refresh(extendOrderModel);
@@ -105,7 +115,10 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       getModelService().save(extendOrderModel);
       getModelService().refresh(extendOrderModel);
       if(CollectionUtils.isNotEmpty(originalOrder.getExtendedOrderCopyList())) {
-        originalOrder.getExtendedOrderCopyList().add(extendOrderModel);
+        final List<AbstractOrderModel> extendOrderModelList = new ArrayList<>(
+            originalOrder.getExtendedOrderCopyList());
+        extendOrderModelList.add(extendOrderModel);
+        originalOrder.setExtendedOrderCopyList(extendOrderModelList);
       }
       else {
         final List<AbstractOrderModel> orderModelList = new ArrayList<>();
@@ -116,8 +129,41 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
       getModelService().save(originalOrder);
       getModelService().refresh(originalOrder);
+
+      final List<String> allocatedProductCodes = new ArrayList<>();
+      // add in private method
+      if(CollectionUtils.isNotEmpty(extendOrderModel.getConsignments())) {
+        for (final ConsignmentModel consignmentModel : extendOrderModel.getConsignments()) {
+          for (final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
+            for (final BlProductModel blProductModel : consignmentEntryModel.getSerialProducts()) {
+              if (blProductModel instanceof BlSerialProductModel && !blProductModel.getProductType()
+                  .equals(ProductTypeEnum.SUBPARTS)) {
+                final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+                allocatedProductCodes.add(blSerialProductModel.getCode());
+              }
+            }
+          }
+        }
+      }
+
+      final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(extendOrderModel,
+          new HashSet<>(allocatedProductCodes));
+
+      if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
+          .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+        serialStocks.forEach(stock -> stock.setReservedStatus(true));
+        this.getModelService().saveAll(serialStocks);
+      }
+      }
     }
 
+
+
+  private Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
+      final Set<String> serialProductCodes) {
+
+    return getBlStockLevelDao().findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getActualRentalStartDate(),
+            order.getActualRentalEndDate());
   }
 
   public ModelService getModelService() {
@@ -160,6 +206,16 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   public void setBaseStoreService(BaseStoreService baseStoreService) {
     this.baseStoreService = baseStoreService;
   }
+
+
+  public BlStockLevelDao getBlStockLevelDao() {
+    return blStockLevelDao;
+  }
+
+  public void setBlStockLevelDao(BlStockLevelDao blStockLevelDao) {
+    this.blStockLevelDao = blStockLevelDao;
+  }
+
 
 
 

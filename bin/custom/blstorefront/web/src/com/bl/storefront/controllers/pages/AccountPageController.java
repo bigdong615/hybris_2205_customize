@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.services.cart.BlCartService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
@@ -263,6 +264,9 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "blCommerceStockService")
 	private BlCommerceStockService blCommerceStockService;
 
+	@Resource(name = "cartService")
+	private BlCartService blCartService;
+
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
 		return BlRentalDateUtils.getRentalsDuration();
@@ -385,7 +389,7 @@ public class AccountPageController extends AbstractSearchPageController
 		populateModel(model, searchPageData, showMode);
 		final ContentPageModel orderHistoryPage = getContentPageForLabelOrId(ORDER_HISTORY_CMS_PAGE);
 		storeCmsPageInModel(model, orderHistoryPage);
-		setUpMetaDataForContentPage(model, orderHistoryPage);
+			setUpMetaDataForContentPage(model, orderHistoryPage);
 		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.orderHistory"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
@@ -420,6 +424,7 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		setUpMetaDataForContentPage(model, orderDetailPage);
 		model.addAttribute("pageType" , "orderDetails");
+		model.addAttribute("isUsedGearCartActive" , BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
 		return getViewForPage(model);
 	}
 
@@ -1388,7 +1393,6 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 
 		}
-		model.addAttribute("extendOrderPaymentError" , "hhhh");
 			return REDIRECT_PREFIX + "/my-account/extendRent/"+ orderCode;
 	}
 

@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -7,10 +8,12 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.fasterxml.jackson.databind.util.Converter;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
+import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import java.math.BigDecimal;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.util.Assert;
 
@@ -66,6 +70,9 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      }
      target.setProductNameAndQuantity(productQtyAndName);
    }
+   if(CollectionUtils.isNotEmpty(source.getExtendedOrderCopyList())) {
+     updateRentalDetailsIfExtendOrderExist(source, target);
+   }
   }
 
   /**
@@ -73,6 +80,25 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    */
   private String convertDateToString(final Date rentalDate) {
     return BlDateTimeUtils.convertDateToStringDate(rentalDate, BlFacadesConstants.RENTAL_DATE_FORMAT);
+  }
+
+  private void updateRentalDetailsIfExtendOrderExist(final OrderModel orderModel , final OrderHistoryData orderData){
+
+    final List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
+
+    final int size = orderModelList.size();
+    for (final AbstractOrderModel extendOrder :orderModelList) {
+      if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
+          .getExtendOrderStatus().getCode()
+          .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())
+          && orderModelList.get(size - 1).getPk()
+          .equals(extendOrder.getPk())) {
+        orderData.setRentalEndDate(convertDateToString(extendOrder.getRentalEndDate()));
+        BigDecimal totalPrice = BigDecimal.valueOf(extendOrder.getTotalPrice());
+        orderData.setTotal(getPriceDataFactory().create(PriceDataType.BUY, totalPrice, extendOrder.getCurrency()));
+      }
+    }
+
   }
 
 }

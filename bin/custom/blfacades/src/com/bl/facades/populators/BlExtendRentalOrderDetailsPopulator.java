@@ -9,6 +9,7 @@ import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.order.exceptions.CalculationException;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends OrderData> implements
+public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
 
   private PriceDataFactory priceDataFactory;
@@ -43,7 +44,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
 
 
   @Override
-  public void populate(final OrderModel orderModel, final OrderData target) throws ConversionException {
+  public void populate(final AbstractOrderModel orderModel, final OrderData target) throws ConversionException {
 
 
      PriceDataType priceType = PriceDataType.BUY;
@@ -58,6 +59,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
          e.printStackTrace();
        }
 
+       target.setCode(orderModel.getCode());
        target.setAddedTimeForExtendRental(orderModel.getTotaExtendDays());
      target.setSubTotalTaxForExtendRental(getPriceDataFactory().create(priceType, BigDecimal.valueOf(orderModel.getSubtotal()) ,
          orderModel.getCurrency().getIsocode()));
@@ -73,6 +75,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends OrderModel, TAR
          orderModel.getCurrency().getIsocode()));
 
      //To set customer Mail
+    target.setCustomerMail(orderModel.getUser().getUid());
 
   }
 

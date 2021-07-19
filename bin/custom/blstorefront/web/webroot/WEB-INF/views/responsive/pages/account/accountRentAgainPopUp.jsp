@@ -10,7 +10,7 @@
 
 <spring:htmlEscape defaultHtmlEscape="true" />
 
-      <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-dialog modal-dialog-centered modal-sm"  id="rentAgainPopUp">
       <div class="modal-content">
       <div class="modal-header">
       <h5>Wait!</h5>
