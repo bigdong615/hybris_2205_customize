@@ -185,13 +185,6 @@
             <value code="NOT_INCLUDED"/>
         </enumtype>
 
-
-        <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
-
-        <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
-            <value code="OTHERS"/>
-        </enumtype>
-
         <enumtype generate="true" code="ExtendOrderStatusEnum" autocreate="true" dynamic="true">
             <value code="PROCESSING"/>
             <value code="COMPLETED"/>
@@ -2492,7 +2485,7 @@
                         <description>Type of a note</description>
                         <persistence type="property"/>
                     </attribute>
-                    <attribute qualifier="fraud" type="boolean">
+                    <attribute qualifier="fraud" type="boolean" redeclare="true">
                         <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
                         <description>flag to identify fraud and it will be updated by verification team on Verification_Notes.
                         </description>
