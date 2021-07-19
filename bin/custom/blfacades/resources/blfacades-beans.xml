@@ -124,6 +124,7 @@
 			<property name="poNumber" type="java.lang.String"/>
 			<property name="poNotes" type="java.lang.String"/>
 			<property name="orderNotes" type="java.lang.String"/>
+		  <property name="rentalDatesOnPrint" type="com.bl.facades.product.data.RentalDateDto"/>
   </bean>
 
     <!-- Shipping -->

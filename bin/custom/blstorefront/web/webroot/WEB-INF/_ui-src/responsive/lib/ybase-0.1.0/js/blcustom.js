@@ -874,3 +874,10 @@ $(function() {
 				inputQuantity[$thisIndex] = val;
 			});
 });
+
+//Print order confirmation page
+$('#printOrderConfirmation').on("click",function(e) {
+		e.preventDefault();
+		var submitForm = $("#printOrderConfirmationForm");
+		submitForm.submit();
+});

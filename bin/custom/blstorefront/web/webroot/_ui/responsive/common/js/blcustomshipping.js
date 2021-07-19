@@ -583,7 +583,7 @@ function removeClass(){
                 if(data.length == 1) {
                     $('#partnerPickUpShippingMethods #pickup-nyc').first().find('input[name="pickup-locations"]').prop("checked", true);
                 }
-                showErrorNotificationForPickUpId('They must show ID at time of pickup');
+                /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
             } else {
             	$('#cart-shipping-cost').text('-');
             	 calculateCartTotal();
@@ -654,7 +654,7 @@ function removeClass(){
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').removeClass('error');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
-     showErrorNotificationForPickUpId('They must show ID at time of pickup');
+     /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
  }
 
  function pickUpByMeClick() {
