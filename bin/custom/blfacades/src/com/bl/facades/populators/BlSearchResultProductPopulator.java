@@ -3,9 +3,10 @@ package com.bl.facades.populators;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
+import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.productreference.BlProductFacade;
 import com.bl.logging.BlLogger;
-import com.bl.facades.constants.BlFacadesConstants;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
 import de.hybris.platform.classification.features.Feature;
@@ -31,6 +32,8 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import de.hybris.platform.stocknotificationfacades.StockNotificationFacade;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +64,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private Populator<FeatureList, ProductData> productFeatureListPopulator;
   private ProductService productService;
   private BlProductFacade blProductFacade;
+  private BaseStoreService baseStoreService;
+  private BlPromotionService blPromotionService;
   private CommonI18NService commonI18NService;
   private Converter<ProductModel, StockData> stockConverter;
   private Converter<StockLevelStatus, StockData> stockLevelStatusConverter;
@@ -98,10 +103,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     }else {
      if(null != this.getValue(source , BlFacadesConstants.ON_SALE)){
         setProductTagValues(source, target, BlFacadesConstants.ON_SALE, BlFacadesConstants.ON_SALE_TAG_VALUE);
+        target.setOnSale(this.<Boolean>getValue(source, BlFacadesConstants.ON_SALE));
       }
       // Populates Serial Product Price Data
       populateSerialProductPrices(source, target);
-      populatePromotionMessage(target);
+      populateSerialPromotionMessage(target);
     }
     // Populate product's classification features
     getProductFeatureListPopulator().populate(getFeaturesList(source), target);
@@ -139,8 +145,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
    * Populating message on BlProduct when any Serial has active promotion
    * @param target
    */
-  private void populatePromotionMessage(final ProductData target) {
-    target.setUgPromotionMessage(getBlProductFacade().getPromotionMessageFromUsedGear(target));
+  private void populateSerialPromotionMessage(final ProductData target) {
+    final BaseStoreModel baseStore = getBaseStoreService().getCurrentBaseStore();
+    if(baseStore != null && StringUtils.isNotBlank(baseStore.getUsedGearPromotionMessage()) && getBlPromotionService().isUsedGearCategoryPromotionActive()) {
+      target.setUgPromotionMessage(baseStore.getUsedGearPromotionMessage());
+    }
   }
 
   protected void populatePrices(final SearchResultValueData source, final ProductData target)
@@ -180,6 +189,11 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
 	  if(PredicateUtils.notNullPredicate().evaluate(minSerialIncentivizedPrice)) 
 	  {
 		  target.setSerialIncentivizedPrice(getProductPriceData(BigDecimal.valueOf(minSerialIncentivizedPrice)));
+	  }
+	  final Double minSerialPromoPrice = this.<Double> getValue(source, "minSerialPromoPrice");
+	  if(PredicateUtils.notNullPredicate().evaluate(minSerialPromoPrice))
+	  {
+		  target.setSerialPromotionPrice(getProductPriceData(BigDecimal.valueOf(minSerialPromoPrice)));
 	  }
   }
   
@@ -523,5 +537,22 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
   public void setBlWishlistOptionsPopulator(
       BlWishlistOptionsPopulator blWishlistOptionsPopulator) {
     this.blWishlistOptionsPopulator = blWishlistOptionsPopulator;
+  }
+
+  public BaseStoreService getBaseStoreService() {
+    return baseStoreService;
+  }
+
+  public void setBaseStoreService(BaseStoreService baseStoreService) {
+    this.baseStoreService = baseStoreService;
+  }
+
+  public BlPromotionService getBlPromotionService() {
+    return blPromotionService;
+  }
+
+  public void setBlPromotionService(
+      BlPromotionService blPromotionService) {
+    this.blPromotionService = blPromotionService;
   }
 }

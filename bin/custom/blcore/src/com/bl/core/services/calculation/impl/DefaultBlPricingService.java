@@ -229,6 +229,21 @@ public class DefaultBlPricingService implements BlPricingService {
     return bigDecimal.doubleValue();
   }
 
+  /**
+   * Get the min promotion price for serial
+   * @param serialProductPrice
+   * @param ugPromotionDiscount
+   * @return
+   */
+  @Override
+  public BigDecimal getSerialPromotionPrice(final BigDecimal serialProductPrice, final Integer ugPromotionDiscount) {
+
+    if (serialProductPrice != null && serialProductPrice.compareTo(BigDecimal.ZERO) > 0)
+    {
+      return serialProductPrice.subtract(serialProductPrice.multiply(new BigDecimal(ugPromotionDiscount)).divide(new BigDecimal(100))).setScale(BlCoreConstants.DECIMAL_PRECISION, RoundingMode.HALF_DOWN);
+    }
+    return  BigDecimal.ZERO;
+  }
 
   public ModelService getModelService() {
     return modelService;
@@ -279,4 +294,5 @@ public class DefaultBlPricingService implements BlPricingService {
       GenericDao<PriceRowModel> priceRowGenericDao) {
     this.priceRowGenericDao = priceRowGenericDao;
   }
+
 }

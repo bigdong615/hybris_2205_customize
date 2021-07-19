@@ -198,6 +198,8 @@
 		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
 		<property name="blProductFacade" ref="blProductFacade"/>
 		<property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blPromotionService" ref="blPromotionService"/>
 	</bean>
 
 
@@ -275,6 +277,9 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="productPromotionsPopulator" ref="productPromotionsPopulator"/>
 		<property name="blProductService" ref="productService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blPromotionService" ref="blPromotionService"/>
+		<property name="blPricingService" ref="blPricingService"/>
 	</bean>
 	
 	<!-- BL-166:This bean is override to configure bl related populator-->

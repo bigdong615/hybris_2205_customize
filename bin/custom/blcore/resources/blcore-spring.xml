@@ -942,6 +942,17 @@
 
 	<!-- SOLR Field value Resolver for OnSale solr attribute -->
 	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
+	<bean id="blUsedGearPromotionPriceValueResolver" class="com.bl.core.resolvers.BlUsedGearPromotionPriceValueResolver" parent="abstractValueResolver">
+			<property name="baseStoreService" ref="baseStoreService"/>
+			<property name="blPromotionService" ref="blPromotionService"/>
+			<property name="blPricingService" ref="blPricingService"/>
+	</bean>
+
+	<alias name="defaultBlPromotionService" alias="blPromotionService"/>
+	<bean id="defaultBlPromotionService" class="com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService">
+		<property name="promotionDao" ref="promotionDao"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
 
 	<bean id="blOnSaleFacetNameProvider"
 		class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider"/>
@@ -966,7 +977,6 @@
 		<property name="interceptor" ref="blConsignmentPrepareInterceptor"/>
 		<property name="typeCode" value="Consignment"/>
 	</bean>
->>>>>>> develop
 
 	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>

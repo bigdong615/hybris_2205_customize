@@ -1,6 +1,7 @@
 package com.bl.facades.populators;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.voucher.converters.populator.OrderAppliedVouchersPopulator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -9,18 +10,24 @@ import de.hybris.platform.promotionengineservices.model.RuleBasedOrderEntryAdjus
 import de.hybris.platform.promotions.model.AbstractPromotionActionModel;
 import de.hybris.platform.promotions.model.PromotionResultModel;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This populator created to populate coupon codes and coupon amount
  * @author Manikandan
  */
 public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulator {
+
+  private static final Logger LOG = Logger.getLogger(BlOrderAppliedVouchersPopulator.class);
 
   /**
    * This method created to populate coupon codes and coupon amount based on promotional results
@@ -29,14 +36,14 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
   public void populate(final AbstractOrderModel source, final AbstractOrderData target)
   {
     final Map<String, BigDecimal> amountMap = new HashMap<>();
-    final List<String> vouchers = new ArrayList<>();
+    final Set<String> vouchers = new HashSet<>();
     if(CollectionUtils.isNotEmpty(source.getAllPromotionResults())) {
       for (final PromotionResultModel promotionResultModel : source.getAllPromotionResults()) {
         setCouponDiscountPrice(amountMap , promotionResultModel , vouchers);
       }
     }
     target.setPromotionAmountMap(amountMap);
-    target.setAppliedVouchers(vouchers);
+    target.setAppliedVouchers((List<String>) vouchers);
   }
 
   /**
@@ -60,14 +67,25 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
    */
   private void getOrderEntryDiscountPrice(final Map<String, BigDecimal> amountMap,
       final PromotionResultModel promotionResultModel ,final Collection<String> vouchers) {
-    final RuleBasedOrderEntryAdjustActionModel ruleBasedOrderEntryAdjustActionModel = (RuleBasedOrderEntryAdjustActionModel) promotionResultModel
-        .getActions().iterator().next();
-    if(null != ruleBasedOrderEntryAdjustActionModel && CollectionUtils.isNotEmpty(ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes())) {
-      for (final String couponCode : ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes()) {
-        final BigDecimal amount =  ruleBasedOrderEntryAdjustActionModel.getAmount();
-        if (null != amount && (Double.compare(amount.doubleValue(), 0.0) > 0)) {
-          amountMap.put(couponCode, amount.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
-          vouchers.add(couponCode);
+    Collection<AbstractPromotionActionModel> actions = promotionResultModel.getActions();
+    if(CollectionUtils.isNotEmpty(actions)){
+      for(AbstractPromotionActionModel action : actions){
+        RuleBasedOrderEntryAdjustActionModel ruleBasedOrderEntryAdjustActionModel = (RuleBasedOrderEntryAdjustActionModel) action;
+        BlLogger.logMessage(LOG, Level.INFO,"Entry Model product : "+ ruleBasedOrderEntryAdjustActionModel.getOrderEntryProduct());
+        if(null != ruleBasedOrderEntryAdjustActionModel && CollectionUtils.isNotEmpty(ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes())) {
+          for (final String couponCode : ruleBasedOrderEntryAdjustActionModel.getUsedCouponCodes()) {
+            BlLogger.logMessage(LOG, Level.INFO,"Coupon Code : "+ couponCode);
+            BigDecimal amount = ruleBasedOrderEntryAdjustActionModel.getAmount();
+            if (null != amount && (Double.compare(amount.doubleValue(), 0.0) > 0)) {
+              amountMap.put(couponCode,
+                  amount.setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE));
+              if(MapUtils.isNotEmpty(amountMap) && amountMap.containsKey(couponCode)){
+                amount = amountMap.get(couponCode).add(amount);
+              }
+              BlLogger.logMessage(LOG, Level.INFO,"Coupon Code Amount : "+ amount.doubleValue());
+              vouchers.add(couponCode);
+            }
+          }
         }
       }
     }

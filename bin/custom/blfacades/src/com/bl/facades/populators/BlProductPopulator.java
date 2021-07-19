@@ -46,6 +46,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
         target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
         target.setAlternativeProduct(source.getAlternativeProduct());
+        target.setOnSale(source.getOnSale() != null && source.getOnSale());
         getBlProductTagPopulator().populate(source, target);
     }
 

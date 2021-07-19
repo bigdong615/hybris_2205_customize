@@ -71,9 +71,8 @@
 				</c:otherwise>
 			</c:choose>
 	</h6>
-
-	<c:if test="${not empty product.ugPromotionMessage}">
-  	<p class="sale"> <span class="saleprice">${product.ugPromotionMessage}</p>
+	<c:if test="${product.ugPromotionMessage ne null && product.serialPromotionPrice.value > 0 && product.onSale eq true}">
+  	<p class="sale"><span class="saleprice"><format:price	priceData="${product.serialPromotionPrice}" />&nbsp;&nbsp;${fn:escapeXml(product.ugPromotionMessage)} </p>
 	</c:if>
 
 			<c:forEach var="variantOption" items="${product.variantOptions}">

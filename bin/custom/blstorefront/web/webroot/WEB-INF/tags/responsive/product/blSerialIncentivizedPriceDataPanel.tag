@@ -35,8 +35,8 @@
 		<c:forEach items="${product.serialproducts}" var="serialProduct"
 			varStatus="loop">
 		
-		 <c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true  and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
-			<c:set value="${not empty serialProduct.potentialPromotions}" var="hasPromotion"/>
+		<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true  and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
+			<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}" var="hasPromotion"/>
 			<tr class=" ${loop.index >= 3 ? 'hide-product-row' : ''} <c:if test="${hasPromotion}">noborder </c:if>">
 				<td><a href="#" data-bs-toggle="modal"
 					data-bs-target="#sku52678"
@@ -92,21 +92,17 @@
 					</c:choose>
 				</td>
 			</tr>
-        <c:if test="${not empty serialProduct.potentialPromotions && serialProduct.onSale eq 'true'}">
-          <c:forEach items="${serialProduct.potentialPromotions}" var="promotion">
-            <c:if test="${fn:containsIgnoreCase(promotion.code, 'potential')}">
-              <tr>
-                <td colspan="2">
-                   <span class="badge badge-new"><spring:theme code="text.serial.product.on.Sale"/></span>
-                </td>
-                <td colspan="3" class="text-start textGold">
-                      <strong>${fn:escapeXml(promotion.description)} </strong>
-                </td>
-              </tr>
-            </c:if>
-          </c:forEach>
+        <c:if test="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq 'true'}">
+          <tr>
+            <td colspan="2">
+               <span class="badge badge-new"><spring:theme code="text.serial.product.on.Sale"/></span>
+            </td>
+            <td colspan="3" class="text-start textGold">
+                <strong><format:price	priceData="${serialProduct.serialPromotionPrice}"/>&nbsp;&nbsp;${fn:escapeXml(serialProduct.ugPromotionMessage)} </strong>
+            </td>
+          </tr>
         </c:if>
-			</c:if>
+		</c:if>
 		</c:forEach>
 	</form:form>
 </tbody>

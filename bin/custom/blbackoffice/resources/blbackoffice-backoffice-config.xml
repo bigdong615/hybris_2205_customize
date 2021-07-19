@@ -20,11 +20,12 @@
             <n:navigation-node id="BLBackoffice">
                 <n:type-node id="BlProduct" code="BlProduct"/>
                 <n:type-node id="BlSerialProduct" code="BlSerialProduct"/>
-				<n:navigation-node id="BlPricingRatio">
-					<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
-					<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
-					<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
-				</n:navigation-node>
+								<n:navigation-node id="BlPricingRatio">
+									<n:type-node id="BlPricingLogic" code="BlPricingLogic"/>
+									<n:type-node id="BlStandardPricingRatio" code="BlStandardPricingRatio"/>
+									<n:type-node id="BlConstrainedPricingRatio" code="BlConstrainedPricingRatio"/>
+								</n:navigation-node>
+
                 <n:navigation-node id="BLProduct Inventory">
                     <n:type-node id="BlInventoryLocation" code="BlInventoryLocation"/>
                     <n:type-node id="BlInventoryLocationScanHistory" code="BlInventoryLocationScanHistory"/>
@@ -1043,8 +1044,8 @@
                 <advanced-search:field name="shippingGroup" selected="true"/>
         	</advanced-search:field-list>
         </advanced-search:advanced-search>
-   		</context>   		
-    
+   		</context>
+
     <!-- For Stock level -->
     <context merge-by="type" parent="GenericItem" type="StockLevel"  extends="StockLevel" component="listview">
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">

@@ -2,6 +2,9 @@ package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.product.service.BlProductService;
+import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
+import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.product.data.SerialProductData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
@@ -11,6 +14,8 @@ import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,14 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
-
-
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlSerialProductModel;
-import com.bl.core.product.service.BlProductService;
-import com.bl.core.stock.BlCommerceStockService;
-import com.bl.facades.product.data.SerialProductData;
 
 
 
@@ -39,6 +38,9 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 {
 	private PriceDataFactory priceDataFactory;
 	private CommonI18NService commonI18NService;
+	private BaseStoreService baseStoreService;
+	private BlPromotionService blPromotionService;
+	private BlPricingService blPricingService;
 	private BlCommerceStockService blCommerceStockService;
   private ProductPromotionsPopulator productPromotionsPopulator;
 	private BlProductService blProductService;
@@ -79,6 +81,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
 			serialProductData.setSerialId(serialProductModel.getProductId());
 			productPromotionsPopulator.populate(serialProductModel,serialProductData);
+			populateSerialPromotionData(serialProductModel,serialProductData);
 			//onSale changes
 			serialProductData.setOnSale(serialProductModel.getOnSale() != null && serialProductModel.getOnSale());
 			if (PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
@@ -107,6 +110,38 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		});
 		sortSerialBasedOnConditionRating(serialProductDataList);
 		target.setSerialproducts(serialProductDataList);
+	}
+
+	/**
+	 * populate the promotion message for category wide promotion and price
+	 * @param serialProductModel
+	 * @param serialProductData
+	 */
+	private void populateSerialPromotionData(final BlSerialProductModel serialProductModel, final SerialProductData serialProductData) {
+    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+    final boolean baseStoreHasDiscount = baseStoreModel != null && baseStoreModel.getUsedGearPromotionDiscount()!= null && baseStoreModel.getUsedGearPromotionDiscount() > 0;
+    final boolean baseStoreHasMessage = baseStoreModel != null && StringUtils.isNotBlank(baseStoreModel.getUsedGearPromotionMessage());
+    if( baseStoreHasDiscount && getBlPromotionService().isUsedGearCategoryPromotionActive() && baseStoreHasMessage){
+    	serialProductData.setUgPromotionMessage(baseStoreModel.getUsedGearPromotionMessage());
+    	serialProductData.setSerialPromotionPrice(setSerialPromotionPrice(serialProductModel,baseStoreModel.getUsedGearPromotionDiscount()));
+		}
+	}
+
+	/**
+	 * Set Serial promo Price
+	 * @param serialProductModel
+	 * @param usedGearPromotionDiscount
+	 * @return
+	 */
+	private PriceData setSerialPromotionPrice(final BlSerialProductModel serialProductModel,final Integer usedGearPromotionDiscount) {
+		BigDecimal promoPrice = BigDecimal.ZERO;
+		if(serialProductModel.getIncentivizedPrice() != null && serialProductModel.getIncentivizedPrice().compareTo(BigDecimal.ZERO) > 0 ){
+	   	 promoPrice = getBlPricingService().getSerialPromotionPrice(serialProductModel.getIncentivizedPrice(),usedGearPromotionDiscount);
+		 }
+	   else  if(serialProductModel.getFinalSalePrice() != null && serialProductModel.getFinalSalePrice().compareTo(BigDecimal.ZERO) > 0 ){
+			 promoPrice = getBlPricingService().getSerialPromotionPrice(serialProductModel.getFinalSalePrice(),usedGearPromotionDiscount);
+		 }
+	   return getProductPriceData(promoPrice);
 	}
 
 
@@ -216,5 +251,30 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	public void setProductPromotionsPopulator(
 			ProductPromotionsPopulator productPromotionsPopulator) {
 		this.productPromotionsPopulator = productPromotionsPopulator;
+	}
+
+	public BaseStoreService getBaseStoreService() {
+		return baseStoreService;
+	}
+
+	public void setBaseStoreService(BaseStoreService baseStoreService) {
+		this.baseStoreService = baseStoreService;
+	}
+
+	public BlPromotionService getBlPromotionService() {
+		return blPromotionService;
+	}
+
+	public void setBlPromotionService(
+			BlPromotionService blPromotionService) {
+		this.blPromotionService = blPromotionService;
+	}
+
+	public BlPricingService getBlPricingService() {
+		return blPricingService;
+	}
+
+	public void setBlPricingService(BlPricingService blPricingService) {
+		this.blPricingService = blPricingService;
 	}
 }

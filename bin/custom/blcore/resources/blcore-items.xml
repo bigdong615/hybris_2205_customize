@@ -1064,27 +1064,15 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
-                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
+                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
-                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store cosmetic rating data</description>
-                         <custom-properties>
-                           <property name="description">
-                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
-                           </property>
-                         </custom-properties>
                      </attribute>
-                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
+                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" >
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
-                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store functional rating data</description>
-                         <custom-properties>
-                           <property name="description">
-                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
-                           </property>
-                         </custom-properties>
                      </attribute>
                      <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
                          <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
@@ -2021,7 +2009,12 @@
 						<modifiers optional="true" read="true" write="true" />
 						<description>used gear session timer value </description>
 					</attribute>
-                  <attribute qualifier="usedGearPromotionMessage" type="java.lang.String">
+           <attribute qualifier="usedGearPromotionCode" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear category promotion code </description>
+					</attribute>
+           <attribute qualifier="usedGearPromotionMessage" type="java.lang.String">
 						<persistence type="property" />
 						<modifiers optional="true" read="true" write="true" />
 						<description>Used gear Site Wide promotion Message </description>
@@ -2031,6 +2024,7 @@
 						<modifiers optional="true" read="true" write="true" />
 						<description>Used gear Site Wide promotion Discount in absolute percentage</description>
 					</attribute>
+
                 </attributes>                
             </itemtype>
         </typegroup>
