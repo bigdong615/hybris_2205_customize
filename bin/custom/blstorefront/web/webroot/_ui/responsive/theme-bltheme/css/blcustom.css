@@ -321,10 +321,10 @@ font-size: 21px;
 .scroll-over-text{
   overflow-y: scroll;
   height:160px;
-}
-::-webkit-scrollbar {
-  scrollbar-width: thin;
-}
+ }
+.scroll-over-text::-webkit-scrollbar {
+  display: none;
+} 
 /* Hide scrollbar for IE, Edge add Firefox */
 .scroll-over-text {
   -ms-overflow-style: none;
