@@ -175,24 +175,6 @@
             <value code="OTHERS"/>
         </enumtype>
 
-        <enumtype generate="true" code="OrderTypeEnum" autocreate="true" dynamic="true">
-            <value code="VIP"/>
-            <value code="FD"/>
-            <value code="SHIPPING"/>
-            <value code="USED_GEAR"/>
-        </enumtype>
-
-        <enumtype generate="true" code="NotesEnum" autocreate="true" dynamic="true">
-            <value code="LATE_NOTES"/>
-            <value code="ORDER_CONTACT_NOTES"/>
-            <value code="SHIPPING_NOTES"/>
-            <value code="RECEIVING_NOTES"/>
-            <value code="MISSING_ITEM_NOTES"/>
-            <value code="BROKEN_ITEM_NOTES"/>
-            <value code="ORDER_NOTES"/>
-            <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
-        </enumtype>
-
         <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
             <value code="VERIFICATION_NOTES"/>
             <value code="EXCEPTION_NOTES"/>
