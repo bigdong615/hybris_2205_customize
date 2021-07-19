@@ -246,5 +246,65 @@ function trackRegisterClick(userId) {
 	});
 }
 
+window.mediator.subscribe('applyPromo', function(data) {
+	if (data.voucherError)
+	{
+  trackPromoCLick(data.voucherError);
+	}
+});
+
+ function trackPromoCLick(voucherError){
+   gtag('event', 'Add Promo - Error', {
+     'event_label': 'voucherError',
+     'event_category': 'Cart',
+     'non_interaction': true
+   });
+ }
+
+window.mediator.subscribe('applyCreditCart', function(data) {
+	if (data.paymentError)
+	{
+	trackCreditCart(data.paymentError)
+	}
+});
+
+ function trackCreditCart(paymentError){
+    gtag('event', 'cardPayment', {
+    'event_label': 'paymentError',
+    'event_category': 'Checkout',
+    'non_interaction': true
+  });
+ }
+
+window.mediator.subscribe('applyPayPal', function(data) {
+	if (data.paymentError)
+	{
+  trackPayPalClick(data.paymentError)
+	}
+});
+
+function trackPayPalClick(paymentError) {
+  gtag('event', 'PayPalPayment', {
+   'event_label': 'paymentError',
+   'event_category': 'Checkout',
+   'non_interaction': true
+  });
+}
+
+window.mediator.subscribe('applyPO', function(data) {
+	if (data.paymentError)
+	{
+	 trackPOClick(data.paymentError)
+	}
+});
+
+function trackPOClick(paymentError) {
+   gtag('event', 'POPayment', {
+   'event_label': 'paymentError',
+   'event_category': 'Checkout',
+   'non_interaction': true
+ });
+}
+
 </script>
 </c:if>
