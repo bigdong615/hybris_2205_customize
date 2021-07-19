@@ -495,7 +495,7 @@
 					<ea:attribute qualifier="procurementSource"/>
 					<ea:attribute qualifier="mpn"/>
 					<ea:attribute qualifier="upc"/>
-					<ea:attribute qualifier="manufacturerAID" label="label.pcmbackoffice.manufactureAID"/>
+					<ea:attribute qualifier="manufacturerAID"/>
 					<ea:attribute qualifier="numberSystem"/>
 					<ea:attribute qualifier="productType"/>
 				</ea:section>
