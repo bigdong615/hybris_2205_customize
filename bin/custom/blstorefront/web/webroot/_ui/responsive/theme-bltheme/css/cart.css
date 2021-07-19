@@ -509,3 +509,17 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
 #sameDayZipCheckText{text-transform: inherit !important;}
 #ship-it-ups-zip-code{text-transform: inherit !important;}
 #same-day-save-address-div{float: left;margin-right: 12px;}
+#cardDetails .btn {
+  text-decoration: none;
+  padding: 10px 16px !important; 
+}
+#credit-card-saved .dropdown-item {
+  padding: 2px 5px 2px 11px !important;
+}
+#billing-address-saved .dropdown-item {
+  padding: 2px 5px 2px 11px !important;
+}
+#billingDetails .btn {
+  text-decoration: none;
+  padding: 10px 16px !important; 
+}
