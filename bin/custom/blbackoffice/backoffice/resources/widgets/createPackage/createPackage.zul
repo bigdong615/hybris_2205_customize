@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2018 SAP SE or an SAP affiliate company.
+ All rights reserved.
+
+ This software is the confidential and proprietary information of SAP
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with SAP.
+-->
+
+
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+        sclass="oms-widget-reallocationconsignment-configuration" height="100%" width="100%"
+        id="createPackage">
+
+<hlayout sclass="oms-widget-reallocationconsignment-header">
+        <hbox sclass="oms-widget-reallocationconsignment-body">
+            <vbox>
+                <label value="${labels.warehousingbackoffice.reallocationconsignment.consignmentcode}" width="100%"/>
+                <textbox sclass="oms-widget-reallocationconsignment-input-text-box" readonly="true" id="consignmentCode"
+                         width="140px"/>
+						 
+						 <textbox sclass="oms-widget-reallocationconsignment-input-text-box" id="selectedProduct" visible="false"
+                         width="140px"/>
+            </vbox>
+        </hbox>
+        <hbox sclass="oms-widget-reallocationconsignment-body">
+            <vbox>
+                <label value="${labels.warehousingbackoffice.reallocationconsignment.customer}" width="100%"/>
+                <textbox sclass="oms-widget-reallocationconsignment-input-text-box" readonly="true" id="customerName"
+                         width="240px"/>
+            </vbox>
+        </hbox>
+    </hlayout>
+
+	<separator width="100%" sclass="oms-widget-reallocationconsignment-configuration--separator"/>
+	
+	<hlayout width="100%" sclass="oms-widget-reallocationconsignment-list">
+        <div sclass="oms-widget-reallocationconsignment-list-container">
+            <grid id="serialEntries" mold="paging"
+                  pageSize="6" width="100%" height="100%">
+                <columns>
+                	<column sclass="oms-widget-reallocationconsignment-listbox-header">
+                        <checkbox id="serialEntry" class="oms-widget-reallocationconsignment-list-container__checkbox" visible="false"/>
+                    </column>
+                    <column sclass="oms-widget-reallocationconsignment-listbox-header">
+                        <label value="${labels.warehousingbackoffice.createpackage.productcode}" width="100%"/>
+                    </column>
+                    <column sclass="oms-widget-reallocationconsignment-listbox-header">
+                        <label value="${labels.warehousingbackoffice.createpackage.productname}" width="100%"/>
+                    </column>
+                    <column sclass="oms-widget-reallocationconsignment-listbox-header">
+                        <label value="${labels.warehousingbackoffice.createpackage.weight}" width="100%"/>
+                    </column>
+                     <column sclass="oms-widget-reallocationconsignment-listbox-header">
+                        <label value="${labels.warehousingbackoffice.createpackage.height}" width="100%" />
+                    </column>
+                     <column sclass="oms-widget-reallocationconsignment-listbox-header">
+                        <label value="${labels.warehousingbackoffice.createpackage.length}" width="100%"/>
+                    </column>
+                     <column sclass="oms-widget-reallocationconsignment-listbox-header">
+                        <label value="${labels.warehousingbackoffice.createpackage.width}" width="100%"/>
+                    </column>
+                </columns>
+              <rows>
+                    <template name="model">
+                        <row>
+                          <checkbox class="oms-widget-reallocationconsignment-list-container__checkbox" id="${each.serialProduct.code}" onCheck="doChecked()"/>
+                            <label value="${each.serialProduct.code}" width="100%"/>
+                            <label value="${each.serialProduct.blProduct.name}" width="100%"/>
+                             <label value="${each.serialProduct.blProduct.weight}" width="100%" style="text-align: center;"/>
+                             <label value="${each.serialProduct.blProduct.height}" width="100%" style="text-align: center;"/>
+                             <label value="${each.serialProduct.blProduct.length}" width="100%" style="text-align: center;"/>
+                             <label value="${each.serialProduct.blProduct.width}" width="100%" style="text-align: center;"/>
+                        </row>
+                    </template>
+                </rows>
+            </grid>
+            
+			<zscript><![CDATA[
+            void doChecked() {
+				selectedProduct.setValue(self.getId()+"_"+self.isChecked());
+				Events.postEvent("onChange", selectedProduct, null);
+            }
+        ]]></zscript>
+         <label style="margin-left:50px;margin-top:15px;position:absolute;left:40%;font-size:20px;font-weight:600">Create Package</label>   
+         <grid style="margin-left:50px;margin-top:40px">
+            <rows>
+            <row>
+             <label value="${labels.warehousingbackoffice.createpackage.box.list}" style="margin-left:30px;"	/>
+				  <combobox   xmlns:w="client" id="boxes"
+                                        model="${each.boxes}" 
+                                        sclass="oms-widget-updateorder__template-reason"
+                                        style="">
+                                <template name="model">
+                                    <comboitem label="${forEachStatus.previous.each} ${each}" 
+                                    forEach="${each.dimension}" />
+                                </template>
+                            </combobox>
+            </row>
+                <row>
+                  <label value="${labels.warehousingbackoffice.createpackage.box.height}" style="margin-left:30px;"/>
+                    <hlayout>
+                        <textbox id="packageHeight"  readonly="true" />
+                    </hlayout>
+                    
+                    <label value="${labels.warehousingbackoffice.createpackage.box.length}" style="margin-left:30px;"/>
+                    <hlayout>
+                       <textbox sclass="oms-widget-updateorder-input-text-box" id="packageLength"  readonly="true"/>
+                    </hlayout>
+                    
+                      <label value="${labels.warehousingbackoffice.createpackage.box.width}" style="margin-left:30px;"/>
+                    <hlayout>
+                        <textbox id="packageWidth"  readonly="true"/>
+                    </hlayout>
+                </row>
+                
+                  <row>
+                    <label value="${labels.warehousingbackoffice.createpackage.box.weight}" style="margin-left:30px;" />
+                    <hlayout>
+                       <textbox sclass="oms-widget-updateorder-input-text-box" id="packageWeight"  readonly="true" />
+                    </hlayout>
+                     <label value="${labels.warehousingbackoffice.createpackage.total.weight}" style="margin-left:30px;"/>
+                    <hlayout>
+                        <textbox id="totalWeight" readonly="true" />
+      				</hlayout>
+                </row>
+                
+               </rows>
+                </grid>
+        </div>        
+    </hlayout>
+        
+    		
+    <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
+        <button id="undochanges"
+				label="${labels.warehousingbackoffice.createpackage.button.undo}" 
+				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
+	    <button id="createPackaging" 
+				label="${labels.warehousingbackoffice.createpackage.button.confirm}" 
+				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
+    </div>            	
+</widget>

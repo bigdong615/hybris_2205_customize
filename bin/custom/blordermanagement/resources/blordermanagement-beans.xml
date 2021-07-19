@@ -27,7 +27,7 @@
 	</bean>
 
 	<bean class="de.hybris.platform.warehousing.data.sourcing.SourcingResult">
-		<property name="serialProductMap" type="java.util.Map&lt;Integer, java.util.Set&lt;String>>"/>
+		<property name="serialProductMap" type="java.util.Map&lt;Integer, java.util.Set&lt;com.bl.core.model.BlSerialProductModel>>"/>
 	</bean>
 
 </beans>

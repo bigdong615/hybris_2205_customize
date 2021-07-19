@@ -15,6 +15,7 @@ ACC.account = {
 				success: function (result) {
 					$('#signIn').html(result);
 					$('#serialClick').val(serialClick);
+					$('#serialSignUp').attr("data-serial", serialClick);
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
@@ -23,11 +24,14 @@ ACC.account = {
 		/*This function is responsible for providing form object for the sign up popup*/
 		$(document).on("click", ".js-signUp-popup", function (e) {
 			e.preventDefault();
+			var serialClick = $(this).data('serial');
 			$('#signUp').html("");
 			$.ajax({
 				url: $(this).data("link"),
 				success: function (result) {
 					$('#signUp').html(result);
+					$('#serialClickSignUP').val(serialClick);
+					$('#serialSignInInstead').attr("data-click", serialClick);
 					setTimeout(function(){$("#signUp").modal('show');},500)
 				}
 			})
@@ -71,7 +75,7 @@ ACC.account = {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
 								}
-								$("#errorMessages_sigin_chkPwd").html("Your passwords did not match, please enter them again");
+								$("#errorMessages_sigin_chkPwd").html("Your passwords did not match, please enter them again.");
 								// BL-689: below line added
 								$("#errorMessages_sigin_chkPwd").removeClass("d-none");
 							}
@@ -81,10 +85,18 @@ ACC.account = {
 							}
 							// BL-689: below line added
 							$("#errorMessages_sigin_email").removeClass("d-none");
-							$("#errorMessages_sigin_email").html("Whoops, it looks like you’re already signed up with a BorrowLenses account");
+							$("#errorMessages_sigin_email").html("Whoops, it looks like you’re already signed up with a BorrowLenses account.");
 						} else {
+							
 							$("#errorMessages_sigin_errorbox").addClass("d-none");
-							location.reload();
+							var serialId = $('#signUppopup-validation').find('input[name="serialClickSignUP"]').val();
+							if(serialId == "" || serialId  == undefined)
+							{
+								location.reload();
+							}else{
+								$("#doReload").val("true");
+								$('.' + serialId).click();
+							}	
 						}
 					},
 					error: function (e) {
@@ -147,13 +159,21 @@ ACC.account = {
 							if(serialId == "" || serialId  == undefined)
 							{
 								location.reload();
-							}else{
-								$('.' + serialId).click();
-							}	
-							
+							}
 							
 						}
 					},
+					complete: function(){
+						var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+						if(serialId == "" || serialId  == undefined)
+						{
+							/*do nothing*/
+						}else{
+							$("#doReload").val("true");
+							$('.' + serialId).click();
+							$("#signIn").hide();
+						}
+					},					
 					error: function (e) {
 						// do nothing
 					}

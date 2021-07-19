@@ -4,11 +4,16 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.bl.storefront.forms.GiftCardForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
@@ -34,8 +39,6 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,17 +49,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -85,6 +89,9 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
 
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
+
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
 	{
@@ -100,7 +107,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("months")
 	public List<SelectOption> getMonths()
 	{
-		final List<SelectOption> months = new ArrayList<SelectOption>();
+		final List<SelectOption> months = new ArrayList<>();
 
 		months.add(new SelectOption("1", "01"));
 		months.add(new SelectOption("2", "02"));
@@ -121,7 +128,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("startYears")
 	public List<SelectOption> getStartYears()
 	{
-		final List<SelectOption> startYears = new ArrayList<SelectOption>();
+		final List<SelectOption> startYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
 		for (int i = calender.get(Calendar.YEAR); i > calender.get(Calendar.YEAR) - 6; i--)
@@ -135,7 +142,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("expiryYears")
 	public List<SelectOption> getExpiryYears()
 	{
-		final List<SelectOption> expiryYears = new ArrayList<SelectOption>();
+		final List<SelectOption> expiryYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
 		for (int i = calender.get(Calendar.YEAR); i < calender.get(Calendar.YEAR) + 11; i++)
@@ -198,11 +205,17 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
 				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+        if(Objects.nonNull(cartData) && StringUtils.isNotEmpty(cartData.getPoNumber())){
+          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NUMBER, cartData.getPoNumber());
+          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NOTES, cartData.getPoNotes());
+        }
 				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
 				{
 					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
 					setPaymentDetailForPage(paymentInfo, model);					
 				}
+				// adding model attribute to disable other payment excluding Credit card if Gift card is applied
+				disableOtherPayments(cartData, model);
 				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
@@ -228,6 +241,20 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
+	}
+	
+	/**
+	 * Disable other payments excluding Credit Card.
+	 *
+	 * @param cart the cart
+	 * @param model the model
+	 */
+	private void disableOtherPayments(final CartData cart, final Model model){
+		model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.FALSE);
+		if(Objects.nonNull(cart) && CollectionUtils.isNotEmpty(cart.getGiftCardData()))
+		{
+			model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.TRUE);
+		}		
 	}
 	
 	/**
@@ -456,11 +483,11 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		model.addAttribute("sopCardTypes", getSopCardTypes());
 		model.addAttribute("billingAddresses", getBlCustomerFacade().getAllVisibleBillingAddressesOnUser());
 		if (MapUtils.isNotEmpty(sopPaymentDetailsForm.getParameters())
-				&& sopPaymentDetailsForm.getParameters().containsKey("billTo_country")
-				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get("billTo_country")))
+				&& sopPaymentDetailsForm.getParameters().containsKey(BlControllerConstants.BILL_TO_COUNTRY)
+				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)))
 		{
 			model.addAttribute("regions",
-					getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get("billTo_country")));
+					getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)));
 			model.addAttribute("country", sopPaymentDetailsForm.getBillTo_country());
 		}
 		if (sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null)
@@ -472,7 +499,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	protected Collection<CardTypeData> getSopCardTypes()
 	{
-		final Collection<CardTypeData> sopCardTypes = new ArrayList<CardTypeData>();
+		final Collection<CardTypeData> sopCardTypes = new ArrayList<>();
 
 		final List<CardTypeData> supportedCardTypes = getCheckoutFacade().getSupportedCardTypes();
 		for (final CardTypeData supportedCardType : supportedCardTypes)
@@ -485,6 +512,30 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			}
 		}
 		return sopCardTypes;
+	}
+
+  /**
+   * It saves PO payment details.
+   * @param poNumber
+   * @param poNotes
+   * @param model
+   * @param redirectAttributes
+   * @return
+   */
+	@PostMapping(value = "/reviewSavePoPayment")
+	@RequireHardLogIn
+	public String savePoPaymentMethod(@RequestParam("poNumber") final String poNumber, @RequestParam("poNotes") final String poNotes,
+      final Model model, final RedirectAttributes redirectAttributes){
+		try {
+			blCartFacade.savePoPaymentDetails(poNumber, poNotes);
+		} catch (final Exception exception) {
+			BlLogger.logMessage(LOGGER, Level.ERROR,
+					"Error occurred while setting selected PO payment details", exception);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+					getLocalizedString("braintree.billing.general.error"), null);
+			return getCheckoutStep().currentStep();
+		}
+		return getCheckoutStep().nextStep();
 	}
 
 	protected CheckoutStep getCheckoutStep()

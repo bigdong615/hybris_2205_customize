@@ -27,6 +27,7 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
 
 public class BrainTreeOrderPopulator extends OrderPopulator
@@ -39,6 +40,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 	  super.populate(source, target);
 	  target.setRentalDates(getOrderRentalDates(source));
 		setGiftCardDetails(source, target);
+		target.setIsRentalCart(BooleanUtils.toBoolean(source.getIsRentalCart()));
 	}
 
 	/**

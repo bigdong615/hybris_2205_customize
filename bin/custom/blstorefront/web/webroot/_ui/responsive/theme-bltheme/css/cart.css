@@ -12,7 +12,6 @@ Designed by Veneer Studio
 }
 .btn-checkbox { padding: 0; width: 20px; height: 20px; border: 0; background: transparent; }
 #pickup-person .btn-checkbox { font-size: 16px; text-transform: none; width: auto; }
-.dropdown button { }
 .cart h1 { font-size: 34px; line-height: 40px; }
 #cartProcess, #confirmationWindow { background-color: white; border-top: 1px solid #D4D3D3; border-bottom: 1px solid #D4D3D3; padding-bottom: 50px; margin-top: 10px; }
 #cartSteps { padding: 30px 0 60px; }
@@ -23,11 +22,10 @@ Designed by Veneer Studio
 .step1 { margin-left: 0; }
 .step1.active, .step2.active, .step3.active, .step4.active { color: #52bfc0; }
 .cart input[type=text], .cart select.form-control { padding: 10px; margin-top: 6px; margin-bottom: 6px; }
+#orderSummary input{width: 100%;}
 .cart .select-wrapper { position: relative; display: block; }
 .cart .select-wrapper:after { content:''; display: block; position: absolute; right: 20px; top: 50%; border: none; width: 6px; height: 4px; background: url(../assets/nav-arrow.svg) center no-repeat; margin-top: -2px; margin-left: .5em; }
 .cart-actions { display: block; overflow: auto; }
-
-#order .btn-outline:hover { background-color: white; }
 #order p a { color: #52bfc0; } /* target with litecal */
 #order img { max-width: 100%; }
 #order .row b { display: block; }
@@ -146,7 +144,16 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
     background-position: right;
     background-position-x: calc(100% - 18px);
     text-transform: inherit;
+    font-size: 1rem;
   }
+  .accordion .btn:hover {
+    background-color:transparent !important;
+}
+.accordion .btn-secondary:hover{
+  background-color: #32a3a4 !important;
+  border: 1px solid #32a3a4;
+  color: #fff !important;
+}
   .accordion select::-ms-expand {
     display: none !important;
     width: 100%;
@@ -494,3 +501,11 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
   .bootstrap-select.show-menu-arrow.open>.dropdown-toggle:after {
     display: block;
   }
+
+ #gift-card-apply-gift-card-number{
+  text-transform: inherit !important;
+  }
+#voucherCode{text-transform: inherit !important;}
+#sameDayZipCheckText{text-transform: inherit !important;}
+#ship-it-ups-zip-code{text-transform: inherit !important;}
+#same-day-save-address-div{float: left;margin-right: 12px;}

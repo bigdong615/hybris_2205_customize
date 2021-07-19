@@ -7,6 +7,12 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.bl.core.constants.BlCoreConstants;
 import com.braintree.hybris.data.PayPalAddressData;
 import com.braintree.paypal.validator.PayPalAddressDetailValidator;
 
@@ -34,7 +40,7 @@ public class PayPalAddressDataConverter implements Converter<AddressModel, PayPa
 		}
 
 		paypalAddress.setLocality(hybrisAddress.getTown());
-		paypalAddress.setPhone(hybrisAddress.getPhone1());
+		paypalAddress.setPhone(checkIfPhoneNumberIsValid(hybrisAddress.getPhone1()) ? hybrisAddress.getPhone1() : StringUtils.EMPTY);
 		paypalAddress.setPostalCode(hybrisAddress.getPostalcode());
 		paypalAddress.setRecipientName(recipientName);
 		paypalAddress.setStreetAddress(hybrisAddress.getLine1());
@@ -80,6 +86,22 @@ public class PayPalAddressDataConverter implements Converter<AddressModel, PayPa
 
 		return addressData;
 	}
+	
+	/**
+	 * Check if phone number has valid pattern.
+	 *
+	 * @param phoneNumber the phone number
+	 * @return true, if successful
+	 */
+	private boolean checkIfPhoneNumberIsValid(final String phoneNumber) {
+	  if(StringUtils.isNotBlank(phoneNumber)) {
+	    final Pattern regexPattern = Pattern.compile(BlCoreConstants.PHONE_REGEX_PATTERN);
+	    final Matcher matchPatter = regexPattern.matcher(phoneNumber);
+	    return matchPatter.matches();
+	  }
+	  return Boolean.FALSE;
+	}
+	
 
 
 	public PayPalAddressDetailValidator getPayPalAddressDetailValidator()

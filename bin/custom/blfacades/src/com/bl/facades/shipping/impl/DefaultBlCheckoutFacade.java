@@ -31,11 +31,13 @@ import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorChecko
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.order.CommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
+import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
@@ -162,18 +164,18 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(String shippingGroup,String partnerZone,boolean payByCustomer){
    	 
    	 if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
           return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
       } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
           return getPartnerZoneDeliveryModesForUsedGear(partnerZone, payByCustomer);
       } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR);
           return getAllUSPStoreDeliveryModesForUsedGear(payByCustomer);
       } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
           return getBlRushDeliveryModeDataForUsedGear(payByCustomer);
       } else {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG);
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
           return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
       }
 	}
@@ -245,7 +247,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     * @return collection of RushDeliveryData
     */
    private Collection<BlRushDeliveryModeData> getBlRushDeliveryModeDataForUsedGear(boolean payByCustomer) {
-       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG);
+       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY_MSG_FOR_USEDGEAR);
        final Collection<BlRushDeliveryModeData> blRushDeliveryModeData = getBlRushDeliveryModesForUsedGear(BlDeliveryModeLoggingConstants.NYC,payByCustomer);
        return CollectionUtils.isNotEmpty(blRushDeliveryModeData) ? blRushDeliveryModeData : Collections.emptyList();
    }
@@ -778,6 +780,60 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
                 giftCardCode, cartModel.getCode(), cartModel.getUser().getUid(), exception);
             return null;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void getModifiedTotalForPrintQuote(final CartData cartData) {
+   	 if(Objects.nonNull(cartData)) {
+   		 try {
+   		     final BigDecimal totalPrice = getPriceValue(cartData.getSubTotal()).add(getPriceValue(cartData.getTotalDamageWaiverCost()));
+   		     final BigDecimal discountPrice = getPriceValue(cartData.getTotalDiscounts());
+   		     final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
+   		     final PriceData modifiedTotal = getPriceDataForPrice(totalWithDiscount.compareTo(BigDecimal.valueOf(0.0d)) == 1
+      	        ? totalWithDiscount : BigDecimal.valueOf(0.0d));
+   		     cartData.setTotalPrice(modifiedTotal);
+   		 }
+   		 catch(final Exception exception) {
+   			 BlLogger.logMessage(LOG, Level.ERROR, "Error while Modifing total price for Print Quoate Page.", exception);
+   			 throw exception;
+   		 }   	    
+   	  }  	 
+    }
+    
+    /**
+     * Gets the price value.
+     *
+     * @param priceData the price data
+     * @return the price value
+     */
+    private BigDecimal getPriceValue(final PriceData priceData) {
+  	  if(Objects.nonNull(priceData) && Objects.nonNull(priceData.getValue())) {
+  	    return priceData.getValue();
+  	  }
+  	  return BigDecimal.valueOf(0.0d);
+  	}
+    
+    /**
+     * Gets the price data object for provided price.
+     *
+     * @param price the price
+     * @return the price data for price
+     */
+    private PriceData getPriceDataForPrice(final BigDecimal price) {
+   	 try {
+   		 final CurrencyModel currentCurrency = getCommonI18NService().getCurrentCurrency();
+   		 if(Objects.nonNull(currentCurrency) && Objects.nonNull(price)) {
+   		     return getPriceDataFactory().create(PriceDataType.BUY, price, currentCurrency);
+         }
+      	 return null;
+   	 }
+   	 catch(final Exception exception) {
+   		 BlLogger.logMessage(LOG, Level.ERROR, "Error while converting price to PriceData object", exception);
+   		 throw exception;
+   	 }   	 
     }
 
     public BlDeliveryModeService getBlZoneDeliveryModeService() {

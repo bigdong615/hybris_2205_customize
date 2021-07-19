@@ -89,6 +89,7 @@
 		<property name="brainTreeConfigService" ref="brainTreeConfigService"/>
 		<property name="userService" ref="userService"/>
 		<property name="modelService" ref="modelService"/>
+		<property name="customerAccountService" ref="customerAccountService"/>
 	</bean>
 
 	<alias name="brainTreeStoreSessionFacade" alias="storeSessionFacade" />

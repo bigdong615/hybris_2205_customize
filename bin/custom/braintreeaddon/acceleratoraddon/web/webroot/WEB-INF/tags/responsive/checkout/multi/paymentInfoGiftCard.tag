@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <div class="reviewCart">
 	<h5 class="mb-4">
@@ -30,7 +31,8 @@
 					</div>
 					<div class="col-6">
 						<p class="body14 gray80">
-							${gift.code}<br> <format:price priceData="${gift.redeemamount}"/><br>
+						  <c:set var="redeemedAmount"><format:price priceData="${gift.redeemamount}"/></c:set>
+							${gift.code}<br> ${fn:replace(redeemedAmount, "-", "")}<br>
 							<format:price priceData="${gift.balanceamount}"/>
 						</p>
 					</div>

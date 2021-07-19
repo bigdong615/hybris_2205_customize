@@ -119,6 +119,7 @@ jQuery(document).ready(function ($) {
     $("#save-address").prop('checked', true);
 	if($("#paymentAddNewAddress").length <= 0)
 	{
+		$("#showSavedAddresses").hide();
 		$("#billing-address-form-expand").toggle();
 	}
 	if($("#addNewCardForm").length <= 0)
@@ -138,6 +139,10 @@ jQuery(document).ready(function ($) {
 	else
 	{
 		$("#submit_silentOrderSavedForm").hide();
+	}
+	if($("#isPOPresent") != '' && $("#isPOPresent").val() != '' && $("#isPOPresent").val() === 'true')
+	{
+	  $("#paymentMethodPo").click();
 	}
 	if($("#isAddressPresent") != '' && $("#isAddressPresent").val() != '' && $("#isAddressPresent").val() === 'true')
 	{
@@ -805,39 +810,6 @@ function createHostedFields(clientInstance) {
 					$("#number").addClass("crs-error-field");
 					$('.page-loader-new-layout').hide();
 				}
-	
-				if(state.fields.expirationMonth.isEmpty)
-				{
-					hasNoError = false;
-					$('#submit_silentOrderPostForm').removeAttr("disabled");
-					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-					creditCardValidation(ACC.ccError.cardMonth);
-					$("#expirationMonth").addClass("crs-error-field");
-					$('.page-loader-new-layout').hide();
-				}
-				
-				if(state.fields.expirationYear.isEmpty)
-				{
-					hasNoError = false;
-					$('#submit_silentOrderPostForm').removeAttr("disabled");
-					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-					creditCardValidation(ACC.ccError.cardYear);
-					$("#expirationYear").addClass("crs-error-field");
-					$('.page-loader-new-layout').hide();
-				}
-	
-				if(state.fields.cvv.isEmpty)
-				{
-					hasNoError = false;
-					$('#submit_silentOrderPostForm').removeAttr("disabled");
-					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-					creditCardValidation(ACC.ccError.cardCVV);
-					$("#cvv").addClass("crs-error-field");
-					$('.page-loader-new-layout').hide();
-				}
-				
-			
-				
 				if(!state.fields.number.isPotentiallyValid )
 				{
 					hasNoError = false;
@@ -846,13 +818,49 @@ function createHostedFields(clientInstance) {
 					creditCardValidation(ACC.ccError.cardNumberInValid);
 					$("#number").addClass("crs-error-field");	
 					$('.page-loader-new-layout').hide();				
-				}
+				}	
+				if(state.fields.expirationMonth.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardMonth);
+					$("#expirationMonth").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}				
+				if(state.fields.expirationYear.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardYear);
+					$("#expirationYear").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}	
+				if(state.fields.cvv.isEmpty)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardCVV);
+					$("#cvv").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}				
+				if(!state.fields.cvv.isPotentiallyValid)
+				{
+					hasNoError = false;
+					$('#submit_silentOrderPostForm').removeAttr("disabled");
+					$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
+					creditCardValidation(ACC.ccError.cardCVVInValid);
+					$("#cvv").addClass("crs-error-field");
+					$('.page-loader-new-layout').hide();
+				}			
 				
 				var billingFormErrorCounts = validateBillingAddressFields();
 				if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
+					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
@@ -876,7 +884,8 @@ function createHostedFields(clientInstance) {
 						   $('#submit_silentOrderPostForm').removeAttr("disabled");
 						    creditCardValidation(tokenizeErr);
 							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
-							handleClientError(tokenizeErr)
+							$('.page-loader-new-layout').hide();
+							handleClientError(tokenizeErr);							
 						} 
 						else 
 						{
@@ -1021,11 +1030,13 @@ function validatePhone(phone, fieldName)
 $("#paymentAddNewAddress").on("click",function(e)
 {
 	e.preventDefault();
+	$('#validationMessage').empty();
+	$("#allFieldvalidationMessage").empty();
 	$("#save-address").prop('checked', true);
-	$("#savedAddresses").html("Enter New Or Select Saved Address");
+	$("#savedAddresses").html("Enter New Address");
 	$("#savedBillingAddressId").val('');
 	$("#paymentAddNewAddress").hide();
-	$("#billing-address-saved").removeClass("show");
+	$("#showSavedAddresses").hide();	
 });
 $("#showSavedAddresses").on("click",function(e)
 {
@@ -1036,20 +1047,37 @@ $("#showSavedAddresses").on("click",function(e)
 
 $('ul.selectSavedBillingAddress').on('click','li',function(e){
  	e.preventDefault();
+	$('#validationMessage').empty();
+	$("#allFieldvalidationMessage").empty();
 	var selectedBillingAddressId = $(this).find("a").data('id');
- 	var selectedBillingAddressFormattedData = $(this).find("a").data('address');	
+	var selectedBillingAddressFormattedData = $(this).find("a").data('address');	
 	$("#savedAddresses").html(selectedBillingAddressFormattedData);
 	$("#savedBillingAddressId").val(selectedBillingAddressId);
+	$("#billing-address-form-expand").removeClass("show");
 	$("#paymentAddNewAddress").show();
 });
 
 $('#submit_silentOrderPostForm').click(function () {
-	
+	$('#validationMessage').empty();
+	$("#allFieldvalidationMessage").empty();
 	var ccEnable = $('#paymentMethodBT').is(':checked');
 	var giftcardApplied = $("input[name='appliedGC']").val();
-	
+	var poEnable = $('#paymentMethodPo').is(':checked');
 	$("#allFieldvalidationMessage").empty();
-	if(giftcardApplied == '' && ccEnable == false)
+	var savedPoForm = $("#submitSavedPoForm");
+  var poNumber = savedPoForm.find('input[id="poNumber"]').val();
+  var poNotes = savedPoForm.find('input[id="poNotes"]').val();
+  if (poEnable == true && poNumber == '' && giftcardApplied == '') {
+  	var validationDiv = $(
+  			'<div class="notification notification-warning mb-4" />').text(
+  			ACC.ccError.poNumber);
+  	$('#validationMessage').append(validationDiv);
+  } else if (poEnable == true && poNumber != '' && giftcardApplied == '') {
+  	savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
+  	savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
+  	savedPoForm.submit();
+  }
+	if(giftcardApplied == '' && ccEnable == false && poEnable != true)
 	{
 		allFieldValidation(ACC.ccError.allFieldsNotSelected);
 	}
@@ -1057,6 +1085,31 @@ $('#submit_silentOrderPostForm').click(function () {
 	if(ccEnable == false && giftcardApplied != '')
 	{
 		allFieldValidation(ACC.ccError.onlyGCSelected);
+	}
+	
+	var savedCardForm = $("#submitSavedCardForm");
+	var cardId = savedCardForm.find('input[id="savedCCCardId"]').val();
+	var cardNonce = savedCardForm.find('input[id="savedCCCardNonce"]').val();
+	
+	if(ccEnable == true && cardId == '' && cardNonce == "" && $('#credit-card-form-expand').hasClass("show") == false)
+	{
+		creditCardValidation(ACC.ccError.cardNumber);
+		creditCardValidation(ACC.ccError.cardMonth);
+		creditCardValidation(ACC.ccError.cardYear);
+		creditCardValidation(ACC.ccError.cardCVV);
+	}
+	
+	if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
+	{
+		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
+		$('#validationMessage').append(validationDiv);
+	}
+	else if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == true)
+	{
+		var billingFormErrorCounts = validateBillingAddressFields();
+		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
+		$('#validationMessage').append(validationDiv);
 	}
 });	
 
@@ -1114,17 +1167,30 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 	e.preventDefault();
 	$('#validationMessage').empty();
 	$("#allFieldvalidationMessage").empty();
+	var giftcardApplied = $("input[name='appliedGC']").val();
+  var poEnable = $('#paymentMethodPo').is(':checked');
+  var savedPoForm = $("#submitSavedPoForm");
+  var poNumber = savedPoForm.find('input[id="poNumber"]').val();
+  var poNotes = savedPoForm.find('input[id="poNotes"]').val();
 	$('.page-loader-new-layout').show();
 	if($("#paymentMethodPayPal").is(":checked"))
 	{
 		window.location.href = ACC.config.encodedContextPath + '/checkout/multi/summary/braintree/view';
-	}
+	}else if(poEnable == true && poNumber == '' && giftcardApplied == ''){
+	  $('.page-loader-new-layout').hide();
+    var validationDiv = $('<div class="notification notification-warning mb-4" />').text(ACC.ccError.poNumber);
+    $('#validationMessage').append(validationDiv);
+  }else if(poEnable == true && poNumber != '' && giftcardApplied == ''){
+      savedPoForm.find('input[name="selectedPoNumber"]').val(poNumber);
+      savedPoForm.find('input[name="selectedPoNotes"]').val(poNotes);
+      savedPoForm.submit();
+  }
 	else
 	{
 		var billingFormErrorCounts = validateBillingAddressFields();
 		if(billingFormErrorCounts > 0)
 		{
-			var validationDiv = $('<div class="notification notification-warning mb-4" />').html("You are missing " + billingFormErrorCounts + " required fields." +
+			var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 						$('#validationMessage').append(validationDiv);
 			$('.page-loader-new-layout').hide();
@@ -1137,15 +1203,35 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 			var savedCCCardId = createHiddenParameter("savedCCCardId", savedCardForm.find('input[id="savedCCCardId"]').val());
 			var savedCCCardNonce = createHiddenParameter("savedCCCardNonce", savedCardForm.find('input[id="savedCCCardNonce"]').val());
 			var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
+			var saveBillingAddress = createHiddenParameter("save_billing_address",  $('#billingAddressForm').find('input[id="save-address"]').prop("checked"));
 			formToSubmit.find('select[name="billTo_state"]').prop('disabled', false);
 			formToSubmit.find("input[name='billTo_country']").val("US");
 			formToSubmit.append($(savedBillingAddressId));
 			formToSubmit.append($(savedCCCardId));
 			formToSubmit.append($(savedCCCardNonce));
 			formToSubmit.append($(comapanyName));
+			formToSubmit.append($(saveBillingAddress));
 			var actionUrl = savedCardForm.attr('action');
 			formToSubmit.attr('action',actionUrl);
 			formToSubmit.submit();
 		}
 	}
+});
+
+//Handled min and max character for PO number and PO notes.
+var inputQuantity = [];
+$(function() {
+    $(".po-number").on("keyup", function (e) {
+        var $field = $(this),
+            val=this.value;
+        if (this.validity && this.validity.badInput || isNaN(val) || $field.is(":invalid") ) {
+            this.value = inputQuantity[$thisIndex];
+            return;
+        }
+        if (val.length > Number($field.attr("maxlength"))) {
+          val=val.slice(0, 5);
+          $field.val(val);
+        }
+        inputQuantity[$thisIndex]=val;
+    });
 });
