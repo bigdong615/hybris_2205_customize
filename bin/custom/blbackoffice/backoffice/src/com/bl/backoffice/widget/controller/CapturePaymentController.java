@@ -74,6 +74,12 @@ public class CapturePaymentController extends DefaultWidgetController {
     showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
   }
 
+  @ViewEvent(componentID = "cancelChanges", eventName = "onClick")
+  public void close()
+  {
+    this.sendOutput(OUT_CONFIRM, COMPLETE);
+  }
+
   public OrderModel getOrderModel() {
     return orderModel;
   }

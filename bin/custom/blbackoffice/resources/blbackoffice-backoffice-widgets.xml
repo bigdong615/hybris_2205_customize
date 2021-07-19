@@ -46,10 +46,37 @@
 			<setting key="_height" type="String">650px</setting>
 			<virtual-sockets/>
 		</widget>
+		<widget id="blFrontBarCodeScanContextPopup"
+			widgetDefinitionId="custom.bl.widgets.blFrontBarCodeScan"
+			slotId="cockpitWidgetChildrenInvisible"
+			template="true">
+
+			<instance-settings socketEventRoutingMode="LAST_USED">
+				<create onInit="false" reuseExisting="true">
+					<all-incoming-events/>
+				</create>
+				<close>
+					<all-outgoing-events/>
+				</close>
+				<select onInit="false">
+					<all-incoming-events/>
+				</select>
+			</instance-settings>
+
+			<setting key="widgetStyleClass" type="String"></setting>
+			<setting key="__externalLocationPath" type="String">
+				extension://warehousingbackoffice
+			</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1020px</setting>
+			<setting key="_height" type="String">650px</setting>
+			<virtual-sockets/>
+		</widget>
 	</widget-extension>
 
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="WebScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="WebScanTool_conditionevaluator" outputId="true" targetWidgetId="WebScanTool_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="WebScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
 	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction" outputId="blFrontCapturePaymentContext" targetWidgetId="frontCapturePaymentPopup" inputId="inputObject" />
+	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.frontBarCodeScanAction" outputId="blFrontBarCodeScanContext" targetWidgetId="blFrontBarCodeScanContextPopup" inputId="inputObject" />
 </widgets>
