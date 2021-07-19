@@ -107,9 +107,9 @@
 		<ea:editorArea name="">
 			<ea:tab name="hmc.tab.product.properties" position="2">
 				<ea:section name="label.pcmbackoffice.general">
-					<ea:attribute qualifier="manufacturerAID"/>
+					<ea:attribute qualifier="manufacturerAID" label="label.pcmbackoffice.manufactureAID"/>
 					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
-					<ea:attribute qualifier="displayName"/>
+					<ea:attribute qualifier="displayName" label="label.pcmbackoffice.displayname"/>
 					<ea:attribute qualifier="displayNotes" label="label.pcmbackoffice.displaynotes"/>
 					<ea:attribute qualifier="isNew"/>
 					<ea:attribute qualifier="isVideo"/>
@@ -140,8 +140,6 @@
 							qualifier="description"/>
 						<ea:attribute qualifier="summary"/>
 						<ea:attribute qualifier="data_sheet"/>
-						<ea:attribute qualifier="displayNotes" label="label.pcmbackoffice.displaynotes"/>
-						<ea:attribute qualifier="shortDescription" editor="com.hybris.cockpitng.editor.wysiwyg"/>
 					</ea:panel>
 				</ea:section>
 				<ea:section name="hmc.section.catalog_and_validity">
@@ -175,8 +173,6 @@
 				</ea:section>
 				<ea:section name="hmc.section.product.pricesdiscounts">
 					<ea:panel colspan="2" name="panel.europe1Prices" rowspan="2">
-						<ea:attribute qualifier="procurementCost"/>
-						<ea:attribute qualifier="retailPrice"/>
 						<ea:attribute description="hmc.text.product.pg"
 							editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
 							qualifier="europe1Prices">
@@ -249,10 +245,8 @@
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
 				<ea:section name="hmc.section.product.extendedattributes">
-					<ea:attribute qualifier="productType" label="label.pcmbackoffice.producttype"/>
 					<ea:attribute qualifier="scheduled"/>
 					<ea:attribute qualifier="video"/>
-					<ea:attribute qualifier="discontinued" label="label.pcmbackoffice.discontinued"/>
 					<ea:attribute qualifier="alternativeProduct" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)" label="label.pcmbackoffice.alternativeproduct"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.opssettings">
@@ -277,7 +271,6 @@
 					<ea:attribute qualifier="productId"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.ids">
-					<ea:attribute qualifier="manufacturerAID"/>
 					<ea:attribute qualifier="manufacturerName"/>
 				</ea:section>
 				<ea:section name="hmc.section.product.keywords">
@@ -286,11 +279,7 @@
 			</ea:tab>
 			<ea:tab name="hmc.tab.shipping" position="30">
 				<ea:section name="hmc.product.shipping">
-					<ea:attribute qualifier="weight"/>
 					<ea:attribute qualifier="height"/>
-					<ea:attribute qualifier="length"/>
-					<ea:attribute qualifier="width"/>
-
 				</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.community" position="34">
