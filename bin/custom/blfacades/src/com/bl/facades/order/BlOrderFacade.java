@@ -1,5 +1,6 @@
 package com.bl.facades.order;
 
+import com.google.common.collect.Ordering;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
@@ -7,11 +8,14 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import java.util.List;
+import java.util.Map;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public interface BlOrderFacade extends OrderFacade {
 
-  boolean addToCartAllOrderEnrties(final String orderCode , final Model model) throws CommerceCartModificationException;
+  boolean addToCartAllOrderEnrties(final String orderCode , final Model model ,final RedirectAttributes redirectAttributes , List<String> emptyCart) throws CommerceCartModificationException;
 
   CartModificationData addToCart(final ProductModel blProductModel, final long quantity , final AbstractOrderEntryModel abstractOrderEntryModel)  throws CommerceCartModificationException;
 
@@ -30,5 +34,7 @@ public interface BlOrderFacade extends OrderFacade {
 
 
   boolean addToCartAllRentalOrderEnrties(final String orderCode , final Model model) throws CommerceCartModificationException;
+
+  OrderModel getOrderModelFromOrderCode(String orderCode);
 
 }

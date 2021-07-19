@@ -41,6 +41,18 @@
                               <c:forEach items="${cartData.entries}" var="entry">
                                  <cart:blRentalCartItem entry="${entry}" cartData="${cartData}" />
                               </c:forEach>
+                              <!--To Display error message from rent again -->
+                               <div class="productNotifications row">
+                                                    <div class="col-12">
+                                                    <c:if test="${not empty fn:escapeXml(errorMsgForRentAgain)}">
+                                                        <div class="notification notification-error">${fn:escapeXml(errorMsgForRentAgain)}</div>
+                                                   </c:if>
+                                                   <c:if test="${not empty fn:escapeXml(errorMsgForLowQuantity)}">
+                                                        <div class="notification notification-error">${fn:escapeXml(errorMsgForLowQuantity)}</div>
+                                                   </c:if>
+
+                                                     </div>
+                                              </div>
                               <!-- Form to update the cart total on the selection of damage Waiver from the dropdown -->
 								              <form:form id="updateDamageWaiverForm" action="${cartUpdateDamageWaiverFormAction}" method="post" >
 					                      <input type="hidden" name="entryNumber" value="" />
@@ -68,11 +80,6 @@
                           <div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
                               <cart:orderSummery cartData="${cartData}" emptyCart="${emptyCart}"/>
 
-                <div class="productNotifications row">
-                      <div class="col-12">
-                              ${fn:escapeXml(errorMsgForRentAgain)}
-                       </div>
-                </div>
 
                              <c:if test ="${not empty fn:escapeXml(errorMsg)}">
                               <div class="notification notification-error">

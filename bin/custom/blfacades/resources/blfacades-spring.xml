@@ -593,6 +593,7 @@
 		<property name="timeService" ref="timeService" />
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
+		<property name="blDatePickerService" ref="blDatePickerService" />
 	</bean>
 
 

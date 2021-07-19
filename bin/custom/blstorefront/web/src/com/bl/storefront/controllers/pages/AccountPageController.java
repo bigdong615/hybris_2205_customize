@@ -5,6 +5,7 @@ package com.bl.storefront.controllers.pages;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
@@ -70,6 +71,7 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
@@ -78,6 +80,7 @@ import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -180,7 +183,10 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String CREDIT_CARTS_CMS_PAGE = "creditCarts";
 	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
-	public static final String ERROR_MSG_TYPE = "errorMsgForRentAgain";
+	public static final String ERROR_MSG_TYPE = "errorMsg";
+
+	public static final String ERROR_MSG_TYPE_FOR_RENT_AGAIN = "errorMsgForRentAgain";
+	public static final String ERROR_MSG_TYPE_FOR_LOW_QTY = "errorMsgForLowQuantity";
 
 
 
@@ -253,6 +259,9 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource
 	private BrainTreeTransactionService brainTreeTransactionService;
+
+	@Resource(name = "blCommerceStockService")
+	private BlCommerceStockService blCommerceStockService;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -1141,22 +1150,25 @@ public class AccountPageController extends AbstractSearchPageController
 	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request ,
 			final RedirectAttributes redirectAttributes)
 			throws CommerceCartModificationException {
-		boolean isAddProductToCartAllowed;
-		if(StringUtils.isNotEmpty(orderCode)) {
-			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel);
+		 boolean isAddProductToCartAllowed;
+		  if(StringUtils.isNotEmpty(orderCode)) {
+		  	final List<String> emptyCart = new ArrayList<>();
+			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel , redirectAttributes , emptyCart );
 			if(BooleanUtils.isTrue(isAddProductToCartAllowed)) {
 				pModel.addAttribute("isfromExtendOrder" , true);
-				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-						getMessageSource().getMessage("jbqucbqucybeycubche" ,null,
-								getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
-								getI18nService().getCurrentLocale()));
+
+				if(CollectionUtils.isNotEmpty(emptyCart)) {
+					setGlobalErrorForEmptyCart(orderCode , pModel , redirectAttributes);
+
+				}
+
 				return BlControllerConstants.REDIRECT_CART_URL;
 			}
 			else {
-				return Account.AccountOrderRentAgainPage;
+				return "/my-account/order/"+ orderCode;
 			}
 		}
-		 return Account.AccountOrderRentAgainPage;
+		 return "/my-account/order/"+ orderCode;
 	}
 
 
@@ -1378,6 +1390,36 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 		model.addAttribute("extendOrderPaymentError" , "hhhh");
 			return REDIRECT_PREFIX + "/my-account/extendRent/"+ orderCode;
+	}
+
+	public void setGlobalErrorForEmptyCart( final String orderCode, final Model pModel , final RedirectAttributes redirectAttributes) {
+		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
+		if (null != orderModel) {
+			final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
+			if(CollectionUtils.isNotEmpty(orderModel.getEntries()) && orderModel.getEntries().size() == 1){
+				AbstractOrderEntryModel abstractOrderEntryModel = orderModel.getEntries().listIterator().next();
+				final String nextAvailabilityDate = blCommerceStockService
+						.getNextAvailabilityDateInCheckout(abstractOrderEntryModel.getProduct().getCode(),
+								rentalDateDto, null,
+								abstractOrderEntryModel.getQuantity().intValue());
+
+				if (StringUtils.isNotBlank(nextAvailabilityDate)) {
+					GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+							"This item are not available until"+ nextAvailabilityDate +
+									". Change your dates or select a different item to continue.",
+							null);
+				}
+				else {
+					GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+							"This item is no longer available for your selected date range. Change your dates.", null);
+				}
+			}
+			else {
+				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+						"This item is no longer available for your selected date range. Change your dates.", null);
+			}
+
+		}
 	}
 
 	}

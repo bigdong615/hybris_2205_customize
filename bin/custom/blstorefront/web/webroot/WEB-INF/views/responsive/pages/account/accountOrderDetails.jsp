@@ -207,7 +207,7 @@
                                 </table>
                                   <c:if test="${orderData.isRentalCart}">
                                   <c:url value="/my-account/rentAgain/${orderData.code}" var="rentOrderAction" />
-                                     <a href="#" class="btn btn-block btn-primary mt-4 js-rent-again" data-order-id="${orderData.code}">
+                                     <a href="${rentOrderAction}" class="btn btn-block btn-primary mt-4" data-order-id="${orderData.code}">
                                              <spring:theme code="text.myaccount.order.rent.again"/>
                                      </a>
                                 </c:if>
