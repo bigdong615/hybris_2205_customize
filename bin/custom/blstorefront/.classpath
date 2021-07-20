@@ -54,5 +54,5 @@
     <classpathentry combineaccessrules="false" kind="src" path="/notificationaddon"/>
     <classpathentry combineaccessrules="false" kind="src" path="/customerinterestsaddon"/>
     <classpathentry combineaccessrules="false" kind="src" path="/blstocknotificationaddon"/>
-
+     <classpathentry combineaccessrules="false" kind="src" path="/tealiumiqaddon"/>
 </classpath>
