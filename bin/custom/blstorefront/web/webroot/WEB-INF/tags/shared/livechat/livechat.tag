@@ -6,13 +6,13 @@
 <spring:eval expression="@configurationService.configuration.getProperty('livechat.button.id.value')" var="buttonId"/>
 
 
-/*Deployment:*/
+<!--/*Deployment:*/-->
 <script type='text/javascript' src='https://c.la2-c1-iad.salesforceliveagent.com/content/g/js/48.0/deployment.js'></script>
 <script type='text/javascript'>
-liveagent.init(${liveChatURL}, {organizationID}, ${deploymentID});
+liveagent.init(${liveChatURL}, ${organizationID}, ${deploymentID});
 </script>
 
-/*Chat buttons:*/
+<!--/*Chat buttons:*/-->
 <a id="liveagent_button_online_${buttonId}" href="javascript://Chat" style="display: none;" onclick="liveagent.startChat(${buttonId})"><!-- Online Chat Content -></a><div id="liveagent_button_offline_${buttonId}" style="display: none;"><!- Offline Chat Content --></div><script type="text/javascript">
 if (!window._laq) { window._laq = []; }
 window._laq.push(function()
