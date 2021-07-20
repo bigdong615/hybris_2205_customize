@@ -40,8 +40,24 @@ public class BraintreeInfo
 	private String intent;
 
 	private String amount;
+	
+	private Boolean isDefault;
 
-  private String braintreeAddressId;
+  /**
+	 * @return the isDefault
+	 */
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	/**
+	 * @param isDefault the isDefault to set
+	 */
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
+	}
+
+private String braintreeAddressId;
 
 	public BraintreeInfo()
 	{

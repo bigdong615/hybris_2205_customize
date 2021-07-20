@@ -37,7 +37,7 @@ public interface BrainTreeUserFacade extends UserFacade
 	 */
 	BrainTreePaymentInfoModel addPaymentMethod(BrainTreeSubscriptionInfoData subscriptionInfoData);
 
-	boolean editPaymentMethod(CCPaymentInfoData paymentInfo, String cardholderName, String expirationDate, String cvv,
+	boolean editPaymentMethod(CCPaymentInfoData paymentInfo, String expirationDate, String cvv,
 			AddressData addressData);
 
 	/**

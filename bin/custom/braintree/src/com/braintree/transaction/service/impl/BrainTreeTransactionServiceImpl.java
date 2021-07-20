@@ -958,6 +958,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		cardPaymentInfoModel.setImageSource(braintreeInfo.getImageSource());
 		cardPaymentInfoModel.setExpirationMonth(braintreeInfo.getExpirationMonth());
 		cardPaymentInfoModel.setExpirationYear(braintreeInfo.getExpirationYear());
+		cardPaymentInfoModel.setIsDefault(braintreeInfo.getIsDefault());
 		if (StringUtils.isNotEmpty(customerModel.getBraintreeCustomerId()))
 		{
 			cardPaymentInfoModel.setCustomerId(customerModel.getBraintreeCustomerId());

@@ -7,7 +7,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-        <script type="text/javascript" src="https://js.braintreegateway.com/web/3.63.0/js/venmo.min.js"></script>
+<%-- <script type="text/javascript" src="https://js.braintreegateway.com/web/3.63.0/js/venmo.min.js"></script>
 
 <c:set var="noBorder" value=""/>
 <c:if test="${not empty braintreePaymentInfos}">
@@ -190,15 +190,173 @@
             <spring:theme code="text.account.paymentDetails.noPaymentInformation" />
         </div>
     </c:otherwise>
-</c:choose>
+</c:choose> --%>
+
+<section id="myAccount">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div id="accountMenu" class="col-lg-3 sticky-lg-top">
+                    <h6 class="mb-4">Hello, John!</h6>
+                    <div id="accountMobileNav" class="d-block d-lg-none dropdown my-4">
+                        <button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="accountMobile" data-bs-toggle="dropdown" aria-expanded="false">
+                            Credit Cards
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="accountMobile">
+                            <li><a href="#" class="dropdown-item">Orders</a></li>
+                            <li><a href="#" class="dropdown-item">Addresses</a></li>
+                            <li><a href="#" class="dropdown-item">Change Email</a></li>
+                            <li><a href="#" class="dropdown-item">Change Password</a></li>
+                            <li><a href="#" class="dropdown-item">Saved Carts</a></li>
+                            <li><a href="#" class="dropdown-item">Bookmarks</a></li>
+                            <li><a href="#" class="dropdown-item">Verification Documents</a></li>
+                            <li><a href="#" class="dropdown-item"><b>Credit Cards</b></a></li>
+                        </ul>
+                    </div>
+                    <div class="d-none d-lg-block">
+                        <p><a href="#">Orders</a></p>
+                        <hr>
+                        <p><a href="#">Addresses</a></p>
+                        <hr>
+                        <p><a href="#">Change Email</a></p>
+                        <hr>
+                        <p><a href="#">Change Password</a></p>
+                        <hr>
+                        <p><a href="#">Saved Carts</a></p>
+                        <hr>
+                        <p><a href="#">Bookmarks</a></p>
+                        <hr>
+                        <p><a href="#">Verification Documents</a></p>
+                        <hr>
+                        <p><a href="#" class="active">Credit Cards</a></p>
+                    </div>
+                </div>
+                <div id="accountContent" class="col-lg-8 offset-lg-1">
+                    <h1>Credit Cards</h1>
+                    <hr>
+                    <div class="notification notification-tip cc">
+                        <p>Active and upcoming orders will charge the card used when you placed your rental. To change the card used, please <a href="#">contact us</a>.</p>
+                    </div>
+                    <div id="cardList" class="row mt-5">
+                    <c:choose>
+                    <c:when test="${not empty braintreePaymentInfos}">
+                    <c:forEach items="${braintreePaymentInfos}" var="paymentInfo">
+                  
+                    <c:set var="cardName" value="${fn:escapeXml(paymentInfo.cardType)}"/>
+                        <div class="col-md-6 saved-card">
+                            <div class="card mb-4"> 
+                            <c:choose>
+                            <c:when test="${paymentInfo.isDefault eq true }">
+                             <div class="badges">
+                                    <span class="badge badge-default float-start">Default Card</span>
+                              </div> 
+                            </c:when>
+                            <c:otherwise>
+<!--                             	<div class="badges"> -->
+<!--                                     <span class="badge badge-outline float-md-end">Set as Default Card</span> -->
+<!--                               </div> -->
+										<button class="badge badge-default float-start js-set-default-card" data-card-default="true" data-payment-default-id="${paymentInfo.id}"  data-payment-default-token="${paymentInfo.paymentMethodToken}">
+												<spring:theme code="text.setDefault" />		
+										</button>
+							</c:otherwise>
+                            </c:choose>
+                                
+                                <div class="row">
+                                    <div class="col-9">
+                                        
+                                        <span class="gray60">${fn:escapeXml(paymentInfo.cardType)}<br>
+                                        ${fn:escapeXml(paymentInfo.cardNumber)}<br>
+                                        Exp: ${fn:escapeXml(paymentInfo.expiryMonth)} /
+                                                ${fn:escapeXml(paymentInfo.expiryYear)}</span>
+                                                 
+                                        <p class="card-actions mb-0"><a href="#" class="edit-cc-form" data-id="${paymentInfo.id}">Edit</a><a href="#" class="delete-link"data-payment-id="${paymentInfo.id}"  data-tokan="${paymentInfo.paymentMethodToken}" data-bs-toggle="modal" data-bs-target="#clearCartWarning">Remove</a></p>
+                                        
+                                        
+                                        
+                                    </div>
+                                    <div class="col-3 text-md-right">
+                                        <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-${fn:replace(fn:toLowerCase(cardName),' ', '_')}.png" class="cc-image">
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+                        </c:forEach>
+                        </c:when>
+						 <c:otherwise>
+						 </c:otherwise>
+                    </c:choose>
+                        <div class="col-md-6 saved-card">
+                            <div class="card mb-4"> 
+                                <div class="row">
+                                    <div class="col-9">
+                                        <b>PayPal makes it easy!</b>
+                                        <span class="gray60">Select the PayPal option during checkout for a fast, secure checkout.</span>
+                                    </div>
+                                    <div class="col-3 text-md-right">
+                                        <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/img-paypal.png" class="cc-image">
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <!-- <button class="btn btn-primary">Add Credit Card</button> -->
+                            <a class="btn btn-primary" href="add-payment-method" >
+	                          Add Credit Card
+	           			    </a>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+        </div> 
+        <%-- <form id="braintree-payment-default-form" action="${request.contextPath}/my-account/default-credit-card" method="GET">
+              <input type="hidden" name="paymentInfoIdDefault" id="paymentInfoIdDefault" value=""/>
+              <input type="hidden" name="paymentMethodTokenDefault" id="paymentMethodTokenDefault" value=""/>
+              <input type="hidden" name="defaultCard" id="defaultCard"/>
+         </form> --%>
+         
+         <form id="braintree-payment-default-form" action="${request.contextPath}/my-account/edit-payment-method" method="GET">
+         
+         </form>
+         
+    <c:url value="/my-account/remove-payment-method-bt" var="removePaymentActionUrl"/>
+       <form:form id="removePaymentDetails${paymentInfo.id}" action="${removePaymentActionUrl}" method="post">
+        <input type="hidden" id="paymentInfoIdRemove" name="paymentInfoIdRemove" value=""/>
+         <input type="hidden" id="paymentMethodTokenRomove"  name="paymentMethodTokenRomove" value=""/>
+                               
+	<div class="modal fade" id="clearCartWarning" tabindex="-1"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						<spring:theme
+							code="text.account.paymentDetails.deleteLink.title" />
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p class="body14">
+						<spring:theme code="text.account.paymentDetails.deleteLink.message" />
+					</p>
+					<ycommerce:testId code="paymentDetailsDelete_delete_button" >
+					<button type="submit" data-payment-id="${paymentInfo.id}" class="btn btn-primary btn-block my-4 paymentsDeleteBtn">
+                           <spring:theme code="text.account.paymentDetails.delete"/>
+                    </button>		
+					</ycommerce:testId>		
+					<p class="text-center mb-0">
+						<a href="#" class="lightteal" data-bs-dismiss="modal"
+							aria-label="Close"><spring:theme code="text.button.cancel" /></a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	</form:form>
+</section> 
+    
 
     <script>
-    var venmoEnabled = ${venmoEnabled};
-    var environment = "${payPalConfigurationData.environment}";
-    var clientToken = "${client_token}";
-    var googleMerchantId = "${googleMerchantId}";
-    var googlePayCountryCode = "${googlePayCountryCode}";
-    var googlePayEnabled = ${googlePayEnable};
     var accountPaymentInfoPage = "accountPaymentInfoPage";
     </script>
 

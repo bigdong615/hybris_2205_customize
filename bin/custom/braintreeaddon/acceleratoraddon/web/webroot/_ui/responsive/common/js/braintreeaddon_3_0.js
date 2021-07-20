@@ -178,7 +178,8 @@ jQuery(document).ready(function ($) {
         configureAccountPaymentInfoPage();
     }
 
-    if ((typeof addPaymentMethodsPage != 'undefined')) {
+   /* if ((typeof addPaymentMethodsPage != 'undefined')) {
+    	alert("Hi");
         enableShippingAddress = "false";
         checkVenmoPaymentMethods();
         createClientInstance(CONST.GLOBAL_MESSAGES, function(){
@@ -187,7 +188,7 @@ jQuery(document).ready(function ($) {
             }
             configurePayPalAlongWithHostedFields();
         })
-    }
+    }*/
 
     // PayPal Shopping Cart Shortcut checkout configuration
     if (typeof shoppingCart != 'undefined' && shoppingCart != '') {
@@ -217,6 +218,17 @@ $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
 		}
 	}
 });
+
+
+jQuery(document).ready(function () {
+	initializeBTclientSDK();
+});
+
+/*$('.cc-click').click(function (e) {
+
+initializeBTclientSDK();
+
+});*/
 
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
 	$('.page-loader-new-layout').show();
@@ -434,9 +446,9 @@ function initializeBTclientSDK() {
             }
 
 
-            if (isBrainTreeMethodSelected()) {
+           /* if (isBrainTreeMethodSelected() ||  ) {*/
             	createHostedFields(clientInstance);                
-            }
+            /*}*/
 
 
             dataCollector.client = clientInstance;
@@ -899,7 +911,7 @@ function createHostedFields(clientInstance) {
 							var isLiabilityShifted = '';
 							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
 							var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
-							
+							var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
 							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
 							submitForm.find("input[name='billTo_country']").val("US");
 							submitForm.append($(paymentNonce));
@@ -924,6 +936,7 @@ function createHostedFields(clientInstance) {
 							submitForm.append($(cardType));
 							submitForm.append($(cardDetails));
 							submitForm.append($(cardholder));
+							submitForm.append($(defaultCard));
 							submitForm.submit();
 						}
 					});
@@ -1234,4 +1247,46 @@ $(function() {
         }
         inputQuantity[$thisIndex]=val;
     });
+});
+
+
+$(".edit-cc-form").on("click",function(e){
+	e.preventDefault();
+	
+	var id = $(this).data("id");
+	$("#paymentInfoId").val(id);
+	$("#braintree-payment-edit-form").submit();
+});
+
+$(".delete-link").on("click",function(e){
+	e.preventDefault();
+	
+	var id = $(this).data("payment-id");
+	var tokan = $(this).data("tokan");
+	$("#paymentInfoIdRemove").val(id);
+	$("#paymentMethodTokenRomove").val(tokan);
+	
+	
+});
+
+$(".js-set-default-card").on("click",function(e){
+	e.preventDefault();
+	var paymentInfoIdDefault = $(this).attr('data-payment-default-id');
+    var paymentMethodTokenDefault = $(this).attr('data-payment-default-token');
+    var defaultCard = $(this).attr('data-card-default');
+    $.ajax({
+        url: ACC.config.encodedContextPath + "/my-account/default-credit-card",
+        type: 'POST',
+        data: {paymentInfoId: paymentInfoIdDefault, paymentMethodToken:paymentMethodTokenDefault},
+        
+        success: function (response) {
+        	
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+              $('.modal-backdrop').addClass('remove-popup-background');
+              // log the error to the console
+              console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+        }
+});
+    
 });

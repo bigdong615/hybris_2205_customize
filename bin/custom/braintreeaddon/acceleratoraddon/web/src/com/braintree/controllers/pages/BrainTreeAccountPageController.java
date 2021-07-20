@@ -1,5 +1,7 @@
 package com.braintree.controllers.pages;
 
+import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.exceptions.ResourceErrorMessage;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
@@ -13,9 +15,13 @@ import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadc
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
+import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
+import de.hybris.platform.commercefacades.user.data.CountryData;
+import de.hybris.platform.commercefacades.user.data.RegionData;
 import de.hybris.platform.payment.AdapterException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,11 +34,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+
 import java.io.IOException;
 import java.util.List;
 
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
 
 
 @Controller
@@ -60,10 +69,13 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	@Resource(name = "paymentMethodValidator")
 	private PaymentMethodValidator paymentMethodValidator;
 
+	@Resource(name = "customerFacade")
+	private BlCustomerFacade blCustomerFacade;
+	
 	@RequestMapping(value = "/remove-payment-method-bt", method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String removePaymentMethod(@RequestParam(value = "paymentInfoId") final String paymentInfoId,
-                                      @RequestParam(value = "paymentMethodToken") final String paymentMethodNonce, final RedirectAttributes redirectAttributes)
+	public String removePaymentMethod(@RequestParam(value = "paymentInfoIdRemove") final String paymentInfoId,
+                                      @RequestParam(value = "paymentMethodTokenRomove") final String paymentMethodNonce, final RedirectAttributes redirectAttributes)
 			throws CMSItemNotFoundException
 	{
 		userFacade.unlinkCCPaymentInfo(paymentInfoId);
@@ -112,19 +124,18 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	@RequireHardLogIn
 	public String editPaymentMethod(final Model model, @RequestParam(value = "paymentInfoId") final String paymentMethodId,
                                     @RequestParam(value = "billingAddressId") final String billingAddressId,
-                                    @RequestParam(value = "cardholder") final String cardholder,
                                     @RequestParam(value = "expirationDate") final String expirationDate, @RequestParam(value = "cvv") final String cvv,
                                     final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		try
 		{
-			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(cardholder, expirationDate, cvv);
+			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(expirationDate, cvv);
 			if (validationMessage != null && StringUtils.isNotBlank(validationMessage.getMessageKey()))
 			{
 				String localizedErrorMessage = getLocalizedString(validationMessage.getMessageKey());
 				LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.");
 				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
-				return redirectToEditPage(paymentMethodId, cardholder, expirationDate, redirectAttributes, localizedErrorMessage);
+				return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
 			}
 			else
 			{
@@ -133,7 +144,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				List<AddressData> addressBook = userFacade.getAddressBook();
 				AddressData addressData = getAddressForPaymentInfo(ccPaymentInfo, billingAddressId, addressBook);
 
-				userFacade.editPaymentMethod(ccPaymentInfo, cardholder, expirationDate, cvv, addressData);
+				userFacade.editPaymentMethod(ccPaymentInfo, expirationDate, cvv, addressData);
 			}
 		}
 		catch (AdapterException e)
@@ -143,17 +154,17 @@ public class BrainTreeAccountPageController extends AbstractPageController
 			LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.", e);
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
 
-			return redirectToEditPage(paymentMethodId, cardholder, expirationDate, redirectAttributes, localizedErrorMessage);
+			return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
 		}
 
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 
-	private String redirectToEditPage(final String paymentMethodId, final String cardholder, final String expirationDate,
+	private String redirectToEditPage(final String paymentMethodId,  final String expirationDate,
                                       RedirectAttributes redirectAttributes, final String localizedErrorMessage)
 	{
         redirectAttributes.addAttribute("paymentInfoId", paymentMethodId);
-        redirectAttributes.addAttribute("cardholder", cardholder);
+//        redirectAttributes.addAttribute("cardholder", cardholder);
         redirectAttributes.addAttribute("expirationDate", expirationDate);
         redirectAttributes.addAttribute("errorMessage", localizedErrorMessage);
 		return REDIRECT_TO_EDIT_PAYMENT_INFO_PAGE;
@@ -191,7 +202,9 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		setupAdditionalFields(model);
 		final List<AddressData> addressBook = userFacade.getAddressBook();
 		model.addAttribute("deliveryAddresses", addressBook);
-		model.addAttribute("selectedAddressCode", selectedAddressCode);
+	//	model.addAttribute("selectedAddressCode", selectedAddressCode);
+		model.addAttribute("billingAddresses", blCustomerFacade.getAllVisibleBillingAddressesOnUser());
+		model.addAttribute("defaultBillingAddress", blCustomerFacade.getDefaultBillingAddress());
 		model.addAttribute("addressForm", new AddressForm());
 		model.addAttribute("breadcrumbs", breadcrumbs);
 		model.addAttribute("metaRobots", "noindex,nofollow");
@@ -223,9 +236,12 @@ public class BrainTreeAccountPageController extends AbstractPageController
 			@RequestParam(value = "card_details") final String cardDetails,
 			@RequestParam(value = "device_data") final String deviceData,
 			@RequestParam(value = "liability_shifted") final String liabilityShifted,
-			@RequestParam(value = "selectedAddressCode") final String selectedAddressCode,
+			@RequestParam(value = "save_billing_address") final String saveBillingAddress,
+		    @RequestParam(value = "company_name") final String companyName,
+			@RequestParam(value = "selected_Billing_Address_Id") final String selectedAddressCode,
 			@RequestParam(value = "cardholder", required = false) final String cardholder,
-			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
+			@RequestParam(value = "default_Card") final String defaultCard,
+			final RedirectAttributes redirectAttributes, @Valid final SopPaymentDetailsForm sopPaymentDetailsForm) throws CMSItemNotFoundException
 	{
 		if (StringUtils.isEmpty(nonce))
 		{
@@ -244,8 +260,23 @@ public class BrainTreeAccountPageController extends AbstractPageController
 					getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.forbidden"));
 			return REDIRECT_TO_PAYMENT_INFO_PAGE;
 		}
-
-		final AddressData addressData = userFacade.getAddressForCode(selectedAddressCode);
+		
+		if (StringUtils.isBlank(selectedAddressCode))
+	    {
+	      try
+	      {
+	        final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm, companyName);
+	        newAddress.setVisibleInAddressBook(StringUtils.isNotBlank(saveBillingAddress) && Boolean.TRUE.toString().equals(saveBillingAddress));
+	        getUserFacade().addAddress(newAddress);
+	      }
+	      catch (final Exception exception)
+	      {
+	    	  LOGGER.error("Error occurred while adding new billing address", exception);
+	      }
+	    }
+		
+		final AddressData addressData = interpretResponseAddressData(selectedAddressCode, sopPaymentDetailsForm, companyName);
+	
 		if (addressData == null)
 		{
 			LOGGER.error("Failed to create payment method. Error occurred while address selection");
@@ -255,7 +286,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		}
 
 		final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(nonce, paymentProvider, cardDetails, cardType,
-				payPalEmail, deviceData, liabilityShifted, addressData, cardholder);
+				payPalEmail, deviceData, liabilityShifted, addressData, cardholder, defaultCard);
 
 		try
 		{
@@ -283,7 +314,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	private BrainTreeSubscriptionInfoData buildSubscriptionInfo(final String nonce, final String paymentProvider,
                                                                 final String cardDetails, final String cardType, final String email, final String deviceData,
-                                                                final String liabilityShifted, final AddressData addressData, final String cardholder)
+                                                                final String liabilityShifted, final AddressData addressData, final String cardholder, final String defaultCard  )
 	{
 		final BrainTreeSubscriptionInfoData subscriptionInfo = new BrainTreeSubscriptionInfoData();
 		subscriptionInfo.setPaymentProvider(paymentProvider);
@@ -296,6 +327,11 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		subscriptionInfo.setSavePaymentInfo(Boolean.TRUE);
 		subscriptionInfo.setShouldBeSaved(Boolean.TRUE);
 		subscriptionInfo.setCardholder(cardholder);
+		if(StringUtils.isNotBlank(defaultCard) && Boolean.TRUE.toString().equals(defaultCard))
+		{
+			subscriptionInfo.setIsDefault(Boolean.TRUE);
+		}
+		
 		if (StringUtils.isNotBlank(liabilityShifted))
 		{
 			subscriptionInfo.setLiabilityShifted(Boolean.valueOf(liabilityShifted));
@@ -329,4 +365,36 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		}
 		return addressForPaymentInfo;
 	}
+	
+	private AddressData interpretResponseAddressData(final String selectedAddressId, final SopPaymentDetailsForm sopPaymentDetailsForm, 
+		      final String companyName)
+		  {
+		    if (StringUtils.isNotBlank(selectedAddressId))
+		    {
+		      return blCustomerFacade.getAddressForCode(selectedAddressId);
+		    }
+		    final AddressData address = new AddressData();
+		    final CountryData country = new CountryData();
+		    country.setIsocode("US");
+		    address.setCountry(country);
+		    final RegionData region = new RegionData();
+		    region.setIsocode(sopPaymentDetailsForm.getBillTo_state());
+		    address.setRegion(region);
+		    address.setTitleCode(sopPaymentDetailsForm.getBillTo_titleCode());
+		    address.setFirstName(sopPaymentDetailsForm.getBillTo_firstName());
+		    address.setLastName(sopPaymentDetailsForm.getBillTo_lastName());
+		    address.setCompanyName(companyName);
+		    address.setTown(sopPaymentDetailsForm.getBillTo_city());
+		    address.setLine1(sopPaymentDetailsForm.getBillTo_street1());
+		    address.setLine2(sopPaymentDetailsForm.getBillTo_street2());
+		    address.setPostalCode(sopPaymentDetailsForm.getBillTo_postalCode());
+		    address.setEmail(sopPaymentDetailsForm.getBillTo_email());
+		    address.setPhone(sopPaymentDetailsForm.getBillTo_phoneNumber());
+		    address.setBillingAddress(Boolean.TRUE);
+		    address.setShippingAddress(Boolean.FALSE);
+		    address.setPickStoreAddress(Boolean.FALSE);
+		    address.setUpsStoreAddress(Boolean.FALSE);
+		    return address;
+		  }
+	
 }

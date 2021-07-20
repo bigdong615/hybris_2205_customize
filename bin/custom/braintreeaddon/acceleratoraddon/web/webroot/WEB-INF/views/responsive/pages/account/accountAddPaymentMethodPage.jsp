@@ -8,7 +8,7 @@
 
 <jsp:include page="../../../messages/braintreeErrorMessages.jsp" />
 <spring:eval expression="@configurationService.configuration.getProperty('braintree.store.in.vault')" var="storeInVault"/>
-<div class="container">
+<%-- <div class="container">
 	<div class="account-section-content	 account-section-content-small">
 		<div class="account-addressbook">
 			<c:if test="${payPalConfigurationData.storeInVault}">
@@ -121,7 +121,7 @@
 				<c:when test="${hostedFieldsEnable}">
 					<div style="overflow: auto;" id="braintree-container">
 						<input id="paymentMethodBT" type="radio" name="paymentMethodSelection" value="bt"
-							   class="paypalselection" checked="true"/>
+							   class="paypalselection" style="visibility: visible;position: static;" checked="true"/>
 						<c:if test="${(not empty paymentsImagesURL)}">
 							<c:forEach items="${paymentsImagesURL}" var="url">
 								<img src="${url.value}" alt="${url.key}" />
@@ -215,19 +215,242 @@
 				</ycommerce:testId>
 			</c:if>
 	</c:if>
-		</div>
-	</div>
-</div>
+		</div> --%>
+	<section id="myAccount">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div id="accountMenu" class="col-lg-3 sticky-lg-top">
+                    <h6 class="mb-4">Hello, John!</h6>
+                    <div id="accountMobileNav" class="d-block d-lg-none dropdown my-4">
+                        <button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="accountMobile" data-bs-toggle="dropdown" aria-expanded="false">
+                            Credit Card
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="accountMobile">
+                            <li><a href="#" class="dropdown-item">Orders</a></li>
+                            <li><a href="#" class="dropdown-item">Addresses</a></li>
+                            <li><a href="#" class="dropdown-item">Change Email</a></li>
+                            <li><a href="#" class="dropdown-item">Change Password</a></li>
+                            <li><a href="#" class="dropdown-item">Saved Carts</a></li>
+                            <li><a href="#" class="dropdown-item">Bookmarks</a></li>
+                            <li><a href="#" class="dropdown-item">Verification Documents</a></li>
+                            <li><a href="#" class="dropdown-item cc-click"><b>Credit Cards</b></a></li>
+                        </ul>
+                    </div>
+                    <div class="d-none d-lg-block">
+                        <p><a href="#">Orders</a></p>
+                        <hr>
+                        <p><a href="#">Addresses</a></p>
+                        <hr>
+                        <p><a href="#">Change Email</a></p>
+                        <hr>
+                        <p><a href="#">Change Password</a></p>
+                        <hr>
+                        <p><a href="#">Saved Carts</a></p>
+                        <hr>
+                        <p><a href="#">Bookmarks</a></p>
+                        <hr>
+                        <p><a href="#">Verification Documents</a></p>
+                        <hr>
+                        <p><a href="#" class="active">Credit Cards</a></p>
+                    </div>
+                </div>
+                <div id="accountContent" class="col-lg-8 offset-lg-1">
+                    <h1>Credit Card</h1>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <b>Add New <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png" style="max-width: 220px; "></b>
+                       <ycommerce:testId code="paymentDetailsForm">
+					<div class="account-section-content">
+						<form:form id="braintree-payment-form"
+									modelAttribute="sopPaymentDetailsForm"
+								   action="${request.contextPath}/my-account/add-payment-method" method="POST">
+							<div class="hostedFields">
+								<%-- <div class="account-section-header">
+									<spring:theme code="checkout.multi.paymentMethod.addPaymentDetails.paymentCard" text="Card Details"/>
+								</div> --%>
+								<%-- <div class="description">
+									<spring:theme code="checkout.multi.paymentMethod.addPaymentDetails.enterYourCardDetails" text="Please enter your card details for payment"/></br>
+								</div> --%>
+								<div class="control-group cardForm" style="dispaly: none;" id="cardForn">
+									<%-- <label for="cardholderName" class="control-label ">
+										<spring:theme code="braintree.text.cc.cardholder" />
+									</label>
+									<div class="controls" >
+										<input id="cardholderName" value="" maxlength="175"/>
+									</div> --%>
+									<%-- <label for="number" class="controls form-control secure testing ">
+										<spring:theme code="braintree.text.cc.number" /></label> --%>
+									<div id="number" class="controls form-control secure testing"></div>
+											<div class="row">
+												<div class="col-4">
+													<div id="expirationMonth" class="controls form-control"></div>
+												</div>
+												<div class="col-4">
+													<div id="expirationYear" class="controls form-control"></div>
+												</div>
+												<div class="col-4">
+													<div id="cvv" class="controls form-control"></div>
+												</div>
+											</div>
+											<input type="checkbox" id="default-card"><label for="default-card"><span class="gray80">Default card</span></label>
+										</div>
+							</div>
+							<br/>
+							
+							
+
+							<input type="hidden" name="paypal_email" id="paypal_email"/>
+							<%-- <input type="hidden" name="selectedAddressCode" id="selectedAddressCode" value="${selectedAddressCode}"/> --%>
+							
+							<div class="form-additionals"/>
+							
+									<%-- <div class="col-md-2 col-lg-3">
+										
+										<c:url value="/my-account/payment-details"  var="accountPaymentMethodUrl" />
+										<a class="btn btn-block btn-default" href="${accountPaymentMethodUrl}">
+											<spring:theme code="account.add.paymentMethod.cancel" text="Cancel" />
+										</a>
+									</div> --%>
+									<input type="hidden" id="isAddressPresent" name="isAddressPresent" value="true"/>
+									<div id="billing-address-saved" class="collapse" data-bs-parent="#billingDetails">
+								
+									<c:choose>
+											<c:when test="${not empty paymentInfoBillingAddress and empty billingAddresses}">
+									<div class="mt-5" id="billingAddress">
+                                    <b>Saved Billing Addresses</b>
+                                   
+										<b class="mt-4">Saved Billing Addresses</b>
+											<div class="dropdown my-2">
+																				
+											<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+														${paymentInfoBillingAddress.formattedAddress }
+											</a>
+																				
+									</div>
+									
+									<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+									</c:when>
+									<c:when test="${not empty defaultBillingAddress and empty billingAddresses}">
+										<b class="mt-4">Saved Billing Addresses</b>
+											<div class="dropdown my-2">
+																				
+											<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+															${defaultBillingAddress.formattedAddress }
+										    </a>
+																				
+											</div>
+											
+												<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+									</c:when>
+									<c:otherwise>
+																		<c:if test="${not empty billingAddresses and billingAddresses.size() > 0 }">
+																		
+																			<b class="mt-4">Saved Billing Addresses</b>
+																	<div class="dropdown my-2">
+																		<a class="btn btn-block btn-outline dropdown-toggle text-start" href="#" role="button" id="savedAddresses" data-bs-toggle="dropdown" aria-expanded="false">
+																			<c:choose>
+																				<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
+																					${paymentInfoBillingAddress.formattedAddress }
+																				</c:when>
+																				<c:when test="${not empty defaultBillingAddress.formattedAddress }">
+																					${defaultBillingAddress.formattedAddress }
+																				</c:when>
+																				<c:otherwise>
+																					Select Saved Billing Address
+																				</c:otherwise>
+																			</c:choose>
+																		</a>
+																		<ul class="dropdown-menu selectSavedBillingAddress" aria-labelledby="savedAddresses">
+																		<c:if test="${not empty defaultBillingAddress.formattedAddress }">
+																			<li><a class="dropdown-item" href="#" data-id="${defaultBillingAddress.id }" data-address="${defaultBillingAddress.formattedAddress }">${defaultBillingAddress.formattedAddress }</a></li>
+																		</c:if>																		
+																			<c:forEach items="${billingAddresses}" var="billingAddress">
+																			<c:if test="${empty defaultBillingAddress or fn:containsIgnoreCase(billingAddress.id, defaultBillingAddress.id) == false}">
+																				<li><a class="dropdown-item" href="#" data-id="${billingAddress.id }" data-address="${billingAddress.formattedAddress }">${billingAddress.formattedAddress }</a></li>
+																			</c:if>
+																			</c:forEach>
+																		
+																		</ul>
+																	</div>
+																	<a href="#" class="gray80" id="paymentAddNewAddress" data-bs-toggle="collapse" data-bs-target="#billing-address-form-expand" aria-expanded="false" aria-controls="billing-address-form-expand">+ Add a new address</a>
+																	</c:if>
+																		</c:otherwise>
+																	</c:choose>	
+                                </div> 
+                                
+                                <div class="collapse" id="billing-address-form-expand">
+														<div class="mb-5">
+															
+																 <div id="useDeliveryAddressData"
+																	 <%-- data-firstname="${deliveryAddress.firstName}"
+																	 data-lastname="${deliveryAddress.lastName}"
+																	 data-line1="${deliveryAddress.line1}"
+																	 data-line2="${deliveryAddress.line2}"
+																	 data-town="${deliveryAddress.town}"
+																	 data-postalcode="${deliveryAddress.postalCode}" --%>
+																	 data-countryisocode="US"
+																	 <%-- data-regionisocode="deliveryAddress.region.isocode"
+																	 data-email="${deliveryAddress.email}"
+																	 data-address-id="${deliveryAddress.id}" --%>></div> 
+																   	<b class="mt-4 mb-3">Add Your Billing Address</b>
+																   	<%-- <input type="checkbox" class="form-control ${hideUseShipping}" id="ccUseDeliveryAddress" name="useDeliveryAddress"/> --%>
+																   	<%-- <label for="ccUseDeliveryAddress" class="${hideUseShipping}">
+																   		<span class="gray80"><spring:theme code="checkout.multi.sop.useMyDeliveryAddress" /></span>
+																   	</label> --%>     
+															
+															<!-- <input type="hidden" name="paypal_email" id="paypal_email" /> 
+														    <input type="hidden" name="billTo_country" id="address.country" value="US"> -->
+														    
+															<div id="billingAddressForm" class="billingAddressForm"></div>
+															</div>
+															<a href="#" class="gray80" id="showSavedAddresses" data-bs-toggle="collapse" data-bs-target="#billing-address-saved" aria-expanded="false" aria-controls="billing-address-saved">+ Use a saved billing address</a>
+														</div>
+                                </div>
+									<%-- <div class="text-end mt-4">
+									    <c:url value="/my-account/payment-details"  var="accountPaymentMethodUrl" />
+                                       <button class="btn btn-outline"><spring:theme code="account.add.paymentMethod.cancel" text="Cancel" /></button>
+                                       
+                                       <button class="btn btn-primary" id="submit_silentOrderPostForm" type="submit">
+											<spring:theme code="account.add.paymentMethod.save" text="Save" />
+										</button>
+                                </div> --%>
+							
+						</form:form>
+						<input type="hidden" id="savedBillingAddressId" name="savedBillingAddressId" value=""/>
+						<div id="validationMessage"></div>
+                        <div id="allFieldvalidationMessage"></div>
+						<div class="text-end mt-4">
+									    <c:url value="/my-account/payment-details"  var="accountPaymentMethodUrl" />
+                                       <button class="btn btn-outline"><spring:theme code="account.add.paymentMethod.cancel" text="Cancel" /></button>
+                                       
+                                       <button class="btn btn-primary" id="submit_silentOrderPostForm" type="submit">
+											<spring:theme code="account.add.paymentMethod.save" text="Save" />
+										</button>
+                                </div>
+					</div>
+					</div>
+				</ycommerce:testId>
+                        </div>    
+                    </div>    
+                </div>
+            </div>
+        </div>    
+    </section> 
+	
+
 <spring:eval expression="@configurationService.configuration.getProperty('braintree.user.action')" var="userAction"/>
 
-<util:importBtSDK
+<%--<util:importBtSDK
 		sdkVersion="3.69.0"
 		enablePayPal="${payPalStandardEnabled}"
 		enableHostedFields="${hostedFieldsEnable}"
 		enableGooglePay="${googlePayEnable}"
 		enableVenmo="${venmoEnabled}"
-		enableSecure3d="${payPalCheckoutData.secure3d}"/>
-
+		enableSecure3d="${payPalCheckoutData.secure3d}"/>--%>
+<script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
+<script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/hosted-fields.min.js"></script>
+<script type="text/javascript" src="https://js.braintreegateway.com/web/3.69.0/js/data-collector.min.js"></script>
 <script>
 	var addPaymentMethodsPage = "addPaymentMethodsPage";
 	var deliveryAddressId = "${selectedAddressCode}";
