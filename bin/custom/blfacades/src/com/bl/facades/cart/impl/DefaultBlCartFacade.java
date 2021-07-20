@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -130,9 +131,19 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			if (StringUtils.isNotEmpty(serialCode) && !StringUtils
 					.equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
 					.isNotEmpty(blProductModel.getSerialProducts())) {
-				blSerialProductModel = getBlSerialProductModelAndSetCommerceCartParameter(serialCode,
-						blSerialProductModel, blProductModel,
-						parameter);
+				final Optional<BlSerialProductModel> blSerialProductModelOptional = blProductModel
+						.getSerialProducts().stream()
+						.filter(blSerialProduct -> blSerialProduct.getProductId().equals(serialCode))
+						.findFirst();
+				if (blSerialProductModelOptional.isPresent()) {
+					blSerialProductModel = blSerialProductModelOptional.get();
+					parameter.setProduct(blSerialProductModel);
+					parameter.setIsNoDamageWaiverSelected(Boolean.TRUE);
+					parameter.setIsDamageWaiverProSelected(Boolean.FALSE);
+					parameter.setIsDamageWaiverSelected(Boolean.FALSE);
+					parameter.setUnit(blSerialProductModel.getUnit());
+					parameter.setCreateNewEntry(false);
+				}
 			} else {
         //For rental product
         parameter.setProduct(blProductModel);
@@ -155,35 +166,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     return getCartModificationConverter().convert(commerceCartModification);
   }
 
-	/**
-	 * It initializes BlSerialProductModel and sets value in CommerceCartParameter.
-	 *
-	 * @param serialCode           the serial code
-	 * @param blSerialProductModel the BlSerialProductModel
-	 * @param blProductModel       the BlProductModel
-	 * @param parameter            the CommerceCartParameter
-	 * @return BlSerialProductModel
-	 */
-	private BlSerialProductModel getBlSerialProductModelAndSetCommerceCartParameter(
-			final String serialCode,
-			BlSerialProductModel blSerialProductModel, final BlProductModel blProductModel,
-			final CommerceCartParameter parameter) {
-		for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
-			if (blSerialProduct.getProductId().equals(serialCode)) {
-				blSerialProductModel = blSerialProduct;
-				parameter.setProduct(blSerialProductModel);
-				parameter.setIsNoDamageWaiverSelected(Boolean.TRUE);
-				parameter.setIsDamageWaiverProSelected(Boolean.FALSE);
-				parameter.setIsDamageWaiverSelected(Boolean.FALSE);
-				parameter.setUnit(blSerialProductModel.getUnit());
-				parameter.setCreateNewEntry(false);
-				break;
-			}
-		}
-		return blSerialProductModel;
-	}
-
-	/**
+  /**
    * Set cart type rental or used gear based on product added to cart.
    * @param blSerialProductModel
    * @param cartModel
@@ -216,10 +199,7 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     CartModel cartModel = blCartService.getSessionCart();
     BlProductModel blProductModel = (BlProductModel) getProductService()
         .getProductForCode(productCode);
-    BlSerialProductModel blSerialProductModel = null;
-
-		blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel,
-				blSerialProductModel);
+    BlSerialProductModel blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel);
 
 		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
       //It prevents user to add product to cart, if current cart is rental cart and user tries to add used gear product.
@@ -240,24 +220,23 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	/**
 	 * It initialize blSerialProductModel is case of used gear product added to cart.
 	 *
-	 * @param serialCode           the serial code
-	 * @param blProductModel       the BlProductModel
-	 * @param blSerialProductModel the BlSerialProductModel
+	 * @param serialCode     the serial code
+	 * @param blProductModel the BlProductModel
 	 * @return BlSerialProductModel
 	 */
 	private BlSerialProductModel getBlSerialProductModel(final String serialCode,
-			final BlProductModel blProductModel, BlSerialProductModel blSerialProductModel) {
+			final BlProductModel blProductModel) {
 		if (StringUtils.isNotEmpty(serialCode) && !StringUtils
 				.equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
 				.isNotEmpty(blProductModel.getSerialProducts())) {
-			for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
-				if (blSerialProduct.getProductId().equals(serialCode)) {
-					blSerialProductModel = blSerialProduct;
-					break;
-				}
+			final Optional<BlSerialProductModel> blSerialProductModelOptional = blProductModel
+					.getSerialProducts().stream()
+					.filter(blSerialProduct -> blSerialProduct.getProductId().equals(serialCode)).findFirst();
+			if (blSerialProductModelOptional.isPresent()) {
+				return blSerialProductModelOptional.get();
 			}
 		}
-		return blSerialProductModel;
+		return null;
 	}
 
 	/**
