@@ -285,10 +285,10 @@
   
   <bean class="de.hybris.platform.commerceservices.service.data.CommerceCartParameter">
 		  <property name="isFromAddToCartPopup" type="Boolean"/>
-		  <property name="isFromRentAgainPage" type="java.lang.Boolean"/>
-		  <property name="isDamageWaiverSelected" type="java.lang.Boolean"/>
-		  <property name="isDamageWaiverProSelected" type="java.lang.Boolean"/>
-		  <property name="isNODamageWaiverSelected" type="java.lang.Boolean"/>
+			<property name="isFromRentAgainPage" type="java.lang.Boolean"/>
+			<property name="isDamageWaiverSelected" type="java.lang.Boolean"/>
+			<property name="isDamageWaiverProSelected" type="java.lang.Boolean"/>
+			<property name="isNoDamageWaiverSelected" type="java.lang.Boolean"/>
 	</bean>
 
   <!--BL-563 Gift Card-->

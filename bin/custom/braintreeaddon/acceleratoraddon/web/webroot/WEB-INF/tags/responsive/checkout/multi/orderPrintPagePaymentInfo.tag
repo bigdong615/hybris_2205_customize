@@ -61,7 +61,7 @@
 					<b class="gray100"><spring:theme
 							code="text.review.page.order.notes" /></b>
 					<c:choose>
-						<c:when test="${orderData.orderNotes == ''}">
+						<c:when test="${empty orderData.orderNotes}">
 							<spring:theme code="text.review.page.payment.notes.na" />
 						</c:when>
 						<c:otherwise>
@@ -101,7 +101,7 @@
 						<b class="gray100"><spring:theme
 								code="text.review.page.payment.notes" /></b>
 						<c:choose>
-							<c:when test="${orderData.orderNotes == ''}">
+							<c:when test="${empty orderData.orderNotes}">
 								<spring:theme code="text.review.page.payment.notes.na" />
 							</c:when>
 							<c:otherwise>
@@ -113,7 +113,7 @@
           	<b class="gray100"><spring:theme
           		 code="text.order.confirmation.print.page.po.notes" /></b>
           	<c:choose>
-          		<c:when test="${orderData.poNotes == ''}">
+          		<c:when test="${empty orderData.poNotes}">
           			<spring:theme code="text.review.page.payment.notes.na" />
           		</c:when>
           		<c:otherwise>
