@@ -41,12 +41,12 @@
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
-	        <value code="ADDED_TO_CART" />
-	        <value code="PARTIALLY_UNBOXED" />
+            <value code="ADDED_TO_CART" />
+            <value code="PARTIALLY_UNBOXED" />
             <value code="UNBOXED" />
-	        <value code="RECEIVED_OR_RETURNED" />
-	        <value code="REPAIR_NEEDED" />
-	        <value code="PARTS_NEEDED" />
+            <value code="RECEIVED_OR_RETURNED" />
+            <value code="REPAIR_NEEDED" />
+            <value code="PARTS_NEEDED" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>

@@ -213,116 +213,138 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
  		modelService.save(blInventoryLocationScanHistory);
  		modelService.refresh(blInventoryLocationScanHistory);
  	}
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int isValidTechEngLocationBarcode(final List<String> barcodes, final List<String> memberAllowedLocationList) {
-        return checkLocationWithType(barcodes, BlInventoryScanLoggingConstants.getDefaultTechEngLocation(), memberAllowedLocationList);
-    }
-    
-    private int checkLocationWithType(final List<String> barcodes, final List<String> defaultLocations, final List<String> memberAllowedLocationList) {
-   	 final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream()
-   			 .anyMatch(b::startsWith)).collect(Collectors.toList());
-   	 return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
-   			 filteredLocationList, memberAllowedLocationList);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes) {   	 
-   	 final BlInventoryLocationModel techEngLocation = getBlInventoryLocation();
-   	 if(Objects.nonNull(techEngLocation) && Objects.nonNull(techEngLocation.getLocationCategory())) {
-   		 final String locationCategoryCode = techEngLocation.getLocationCategory().getCode();
-   		 if(BlInventoryScanLoggingConstants.getTechEngWorkStationLocations().contains(locationCategoryCode)) {
-   			 return doUpdateLocation(barcodes);
-      	 }
-   		 else if(BlInventoryScanLoggingConstants.getTechEngCleanCartLocations().contains(locationCategoryCode)) {
-   			 return updateCleanCartLocation(barcodes, techEngLocation);
-   		 }
-   		 else if(BlInventoryScanLoggingConstants.getTechEngCleanPriorityCartLocations().contains(locationCategoryCode)) {
-   			 return updateCleanPriorityCartLocation(barcodes, techEngLocation);
-   		 }
-   		 else if(BlInventoryScanLoggingConstants.getTechEngRepairLocations().contains(locationCategoryCode)) {
-   			 return doUpdateLocation(barcodes);
-   		 }
-   	 }
-   	 return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.SOMETHING_WENT_WRONG,barcodes));
-    }
 
-	/**
-	 * Do update location on items.
-	 *
-	 * @param barcodes the barcodes
-	 * @return the map
-	 */
-	private Map<String, List<String>> doUpdateLocation(final List<String> barcodes)
-	{
-		final List<String> failedBarcodeList = getFailedBarcodeList(barcodes);
-		 return Maps.newHashMap(
-				 CollectionUtils.isNotEmpty(failedBarcodeList) 
-				 	? ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,failedBarcodeList)
-				 			: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS,Collections.emptyList()));
-	}
-    
-    /**
-     * Update clean cart location of item.
-     *
-     * @param barcodes the barcodes
-     * @param blCleanCartLocation the bl clean cart location
-     * @return the map
-     */
-    private Map<String,List<String>> updateCleanCartLocation(final List<String> barcodes, final BlInventoryLocationModel blCleanCartLocation){
-   	 final List<String> failedBarcodeList = new ArrayList<>();
-       final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
-       final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
-       if(blSerialProducts.size() == subList.size()) {
-      	 blSerialProducts.forEach(serial -> {
-      		 if(BooleanUtils.isFalse(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial 
-      			 updateLocationOnItem(serial, blCleanCartLocation);
-             }
-             else {
-            	 failedBarcodeList.add(serial.getBarcode());
-             }
-      	 });
-      	 return Maps.newHashMap(
-					 CollectionUtils.isNotEmpty(failedBarcodeList) 
-					 	? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART,failedBarcodeList)
-					 			: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS,Collections.emptyList()));
-       }   	 
-   	 return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,barcodes));
-    }
-    
-    /**
-     * Update clean priority cart location of item.
-     *
-     * @param barcodes the barcodes
-     * @param blCleanCartLocation the bl clean cart location
-     * @return the map
-     */
-    private Map<String,List<String>> updateCleanPriorityCartLocation(final List<String> barcodes, final BlInventoryLocationModel blCleanCartLocation){
-   	 final List<String> failedBarcodeList = new ArrayList<>();
-       final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
-       final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
-       if(blSerialProducts.size() == subList.size()) {
-      	 blSerialProducts.forEach(serial -> {
-      		 if(BooleanUtils.isTrue(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial 
-      			 updateLocationOnItem(serial, blCleanCartLocation);
-             }
-             else {
-            	 failedBarcodeList.add(serial.getBarcode());
-             }
-      	 });
-      	 return Maps.newHashMap(
-					 CollectionUtils.isNotEmpty(failedBarcodeList) 
-					 	? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART,failedBarcodeList)
-					 			: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS,Collections.emptyList()));
-       }   	 
-   	 return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,barcodes));
-    }
+ 	/**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public int isValidTechEngLocationBarcode(final List<String> barcodes, final List<String> memberAllowedLocationList)
+ 	{
+ 		return checkLocationWithType(barcodes, BlInventoryScanLoggingConstants.getDefaultTechEngLocation(),
+ 				memberAllowedLocationList);
+ 	}
+
+ 	private int checkLocationWithType(final List<String> barcodes, final List<String> defaultLocations,
+ 			final List<String> memberAllowedLocationList)
+ 	{
+ 		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith))
+ 				.collect(Collectors.toList());
+ 		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
+ 				filteredLocationList, memberAllowedLocationList);
+ 	}
+
+ 	/**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public Map<String, List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes)
+ 	{
+ 		final BlInventoryLocationModel techEngLocation = getBlInventoryLocation();
+ 		if (Objects.nonNull(techEngLocation) && Objects.nonNull(techEngLocation.getLocationCategory()))
+ 		{
+ 			final String locationCategoryCode = techEngLocation.getLocationCategory().getCode();
+ 			if (BlInventoryScanLoggingConstants.getTechEngWorkStationLocations().contains(locationCategoryCode))
+ 			{
+ 				return doUpdateLocation(barcodes);
+ 			}
+ 			else if (BlInventoryScanLoggingConstants.getTechEngCleanCartLocations().contains(locationCategoryCode))
+ 			{
+ 				return updateCleanCartLocation(barcodes, techEngLocation);
+ 			}
+ 			else if (BlInventoryScanLoggingConstants.getTechEngCleanPriorityCartLocations().contains(locationCategoryCode))
+ 			{
+ 				return updateCleanPriorityCartLocation(barcodes, techEngLocation);
+ 			}
+ 			else if (BlInventoryScanLoggingConstants.getTechEngRepairLocations().contains(locationCategoryCode))
+ 			{
+ 				return doUpdateLocation(barcodes);
+ 			}
+ 		}
+ 		return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.SOMETHING_WENT_WRONG, barcodes));
+ 	}
+
+ 	/**
+ 	 * Do update location on items.
+ 	 *
+ 	 * @param barcodes
+ 	 *           the barcodes
+ 	 * @return the map
+ 	 */
+ 	private Map<String, List<String>> doUpdateLocation(final List<String> barcodes)
+ 	{
+ 		final List<String> failedBarcodeList = getFailedBarcodeList(barcodes);
+ 		return Maps.newHashMap(CollectionUtils.isNotEmpty(failedBarcodeList)
+ 				? ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS, failedBarcodeList)
+ 				: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS, Collections.emptyList()));
+ 	}
+
+ 	/**
+ 	 * Update clean cart location of item.
+ 	 *
+ 	 * @param barcodes
+ 	 *           the barcodes
+ 	 * @param blCleanCartLocation
+ 	 *           the bl clean cart location
+ 	 * @return the map
+ 	 */
+ 	private Map<String, List<String>> updateCleanCartLocation(final List<String> barcodes,
+ 			final BlInventoryLocationModel blCleanCartLocation)
+ 	{
+ 		final List<String> failedBarcodeList = new ArrayList<>();
+ 		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+ 		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+ 		if (blSerialProducts.size() == subList.size())
+ 		{
+ 			blSerialProducts.forEach(serial -> {
+ 				if (BooleanUtils.isFalse(serial.isDirtyPriorityStatus()))
+ 				{ // check for dirtycart flag on serial 
+ 					updateLocationOnItem(serial, blCleanCartLocation);
+ 				}
+ 				else
+ 				{
+ 					failedBarcodeList.add(serial.getBarcode());
+ 				}
+ 			});
+ 			return Maps.newHashMap(CollectionUtils.isNotEmpty(failedBarcodeList)
+ 					? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART, failedBarcodeList)
+ 					: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS, Collections.emptyList()));
+ 		}
+ 		return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS, barcodes));
+ 	}
+
+ 	/**
+ 	 * Update clean priority cart location of item.
+ 	 *
+ 	 * @param barcodes
+ 	 *           the barcodes
+ 	 * @param blCleanCartLocation
+ 	 *           the bl clean cart location
+ 	 * @return the map
+ 	 */
+ 	private Map<String, List<String>> updateCleanPriorityCartLocation(final List<String> barcodes,
+ 			final BlInventoryLocationModel blCleanCartLocation)
+ 	{
+ 		final List<String> failedBarcodeList = new ArrayList<>();
+ 		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+ 		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+ 		if (blSerialProducts.size() == subList.size())
+ 		{
+ 			blSerialProducts.forEach(serial -> {
+ 				if (BooleanUtils.isTrue(serial.isDirtyPriorityStatus()))
+ 				{ // check for dirtycart flag on serial 
+ 					updateLocationOnItem(serial, blCleanCartLocation);
+ 				}
+ 				else
+ 				{
+ 					failedBarcodeList.add(serial.getBarcode());
+ 				}
+ 			});
+ 			return Maps.newHashMap(CollectionUtils.isNotEmpty(failedBarcodeList)
+ 					? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART, failedBarcodeList)
+ 					: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS, Collections.emptyList()));
+ 		}
+ 		return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS, barcodes));
+ 	}
 
     public BlInventoryLocationModel getBlInventoryLocation() {
         return blInventoryLocation;
