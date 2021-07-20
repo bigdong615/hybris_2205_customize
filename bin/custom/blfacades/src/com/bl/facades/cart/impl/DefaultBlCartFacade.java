@@ -127,9 +127,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
     try {
       //For used gear product
-      if (StringUtils.isNotEmpty(serialCode) && !StringUtils
-          .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
-          .isNotEmpty(blProductModel.getSerialProducts())) {
+			if (StringUtils.isNotEmpty(serialCode) && !StringUtils
+					.equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
+					.isNotEmpty(blProductModel.getSerialProducts())) {
 				blSerialProductModel = getBlSerialProductModelAndSetCommerceCartParameter(serialCode,
 						blSerialProductModel, blProductModel,
 						parameter);
@@ -157,13 +157,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
 	/**
 	 * It initializes BlSerialProductModel and sets value in CommerceCartParameter.
-	 * @param serialCode the serial code
+	 *
+	 * @param serialCode           the serial code
 	 * @param blSerialProductModel the BlSerialProductModel
-	 * @param blProductModel the BlProductModel
-	 * @param parameter the CommerceCartParameter
+	 * @param blProductModel       the BlProductModel
+	 * @param parameter            the CommerceCartParameter
 	 * @return BlSerialProductModel
 	 */
-	private BlSerialProductModel getBlSerialProductModelAndSetCommerceCartParameter(final String serialCode,
+	private BlSerialProductModel getBlSerialProductModelAndSetCommerceCartParameter(
+			final String serialCode,
 			BlSerialProductModel blSerialProductModel, final BlProductModel blProductModel,
 			final CommerceCartParameter parameter) {
 		for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
@@ -237,8 +239,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
 	/**
 	 * It initialize blSerialProductModel is case of used gear product added to cart.
-	 * @param serialCode the serial code
-	 * @param blProductModel the BlProductModel
+	 *
+	 * @param serialCode           the serial code
+	 * @param blProductModel       the BlProductModel
 	 * @param blSerialProductModel the BlSerialProductModel
 	 * @return BlSerialProductModel
 	 */

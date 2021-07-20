@@ -50,7 +50,8 @@ public class DefaultBlCommerceAddToCartStrategy extends
         // We are allowed to add items to the cart
         final CartEntryModel entryModel = addCartEntry(parameter, actualAllowedQuantityChange);
         // For used gear damage waiver don't need to set.
-        if(Objects.nonNull(entryModel) && (entryModel.getProduct() instanceof BlSerialProductModel || BooleanUtils.isTrue(parameter.getIsFromRentAgainPage()))) {
+        if (Objects.nonNull(entryModel) && (entryModel.getProduct() instanceof BlSerialProductModel
+            || BooleanUtils.isTrue(parameter.getIsFromRentAgainPage()))) {
           setDamageWaiverOptions(entryModel, parameter.getIsDamageWaiverProSelected(),
               parameter.getIsDamageWaiverSelected(), parameter.getIsNoDamageWaiverSelected());
         }
@@ -82,12 +83,14 @@ public class DefaultBlCommerceAddToCartStrategy extends
 
   /**
    * Setting damage waiver options in entry model.
-   * @param entryModel
-   * @param isGearGuardProFullWaiverSelected
-   * @param isGearGuardWaiverSelected
-   * @param isNoDamageWaiverSelected
+   *
+   * @param entryModel the CartEntryModel
+   * @param isGearGuardProFullWaiverSelected the isGearGuardProFullWaiverSelected
+   * @param isGearGuardWaiverSelected the isGearGuardWaiverSelected
+   * @param isNoDamageWaiverSelected the isNoDamageWaiverSelected
    */
-  private void setDamageWaiverOptions(final CartEntryModel entryModel, final boolean isGearGuardProFullWaiverSelected,
+  private void setDamageWaiverOptions(final CartEntryModel entryModel,
+      final boolean isGearGuardProFullWaiverSelected,
       final boolean isGearGuardWaiverSelected, final boolean isNoDamageWaiverSelected) {
     entryModel.setGearGuardProFullWaiverSelected(isGearGuardProFullWaiverSelected);
     entryModel.setGearGuardWaiverSelected(isGearGuardWaiverSelected);

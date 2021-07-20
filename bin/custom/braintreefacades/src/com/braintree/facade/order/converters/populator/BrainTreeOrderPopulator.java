@@ -60,7 +60,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 		}
 		final double promoDiscount = source.getTotalDiscounts();
 		final double gifCardDiscount = source.getGiftCardAmount();
-		target.setTotalDiscounts(createPrice(source , promoDiscount + gifCardDiscount));
+		target.setTotalDiscounts(createPrice(source, promoDiscount + gifCardDiscount));
 	}
 
 	/**
@@ -179,13 +179,13 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 
 	/**
 	 * Overriding to remove discounts from subtotal
+	 *
 	 * @param source abstractOrderModel
 	 * @param target target object
 	 */
 	@Override
-	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData target)
-	{
-		super.addTotals(source,target);
+	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData target) {
+		super.addTotals(source, target);
 		final double subTotal = source.getSubtotal();
 		final PriceData subTotalPriceData = createPrice(source, subTotal);
 		target.setSubTotal(subTotalPriceData);
@@ -195,13 +195,13 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 	 * This method overridden to calculate the totalPrice with tax
 	 */
 	@Override
-	protected Double calcTotalWithTax(final AbstractOrderModel source)
-	{
-		if (Objects.isNull(source))
-		{
-			BlLogger.logMessage(LOGGER , Level.ERROR , "source order must not be null" , new IllegalArgumentException());
+	protected Double calcTotalWithTax(final AbstractOrderModel source) {
+		if (Objects.isNull(source)) {
+			BlLogger.logMessage(LOGGER, Level.ERROR, "source order must not be null",
+					new IllegalArgumentException());
 		}
 		// Since we have already calculated the total with Tax , so returning cart total as total price with tax
-		return Objects.nonNull(source) && Objects.nonNull(source.getTotalPrice()) ? source.getTotalPrice() : 0.0d;
+		return Objects.nonNull(source) && Objects.nonNull(source.getTotalPrice()) ? source
+				.getTotalPrice() : 0.0d;
 	}
 }

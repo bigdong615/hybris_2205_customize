@@ -207,9 +207,9 @@ public class CheckoutController extends AbstractCheckoutController
 			final OrderData orderData = orderFacade.getOrderDetailsForCode(orderCode);
 			model.addAttribute("orderData", orderData);
 			blCheckoutFacade.getModifiedTotalForPrintQuote(orderData);
-			if(Boolean.TRUE.equals(orderData.getIsRentalCart())) {
+			if (Boolean.TRUE.equals(orderData.getIsRentalCart())) {
 				return Checkout.PrintOrderConfirmation;
-			}else{
+			} else {
 				return Checkout.PrintUsedGearOrderConfirmation;
 			}
 		} catch (final Exception exception) {
