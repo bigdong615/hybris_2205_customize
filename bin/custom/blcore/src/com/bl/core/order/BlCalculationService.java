@@ -16,13 +16,24 @@ import de.hybris.platform.util.PriceValue;
  */
 public interface BlCalculationService extends CalculationService
 {
-	// TO-DO Add custom calculation logic
 
- void recalculateForExtendOrder(final AbstractOrderModel orderModel , int defaultAddedTimeForExtendRental) throws CalculationException;
+ /**
+  * this method created to calculate extend order
+  */
+ void recalculateForExtendOrder(final AbstractOrderModel orderModel , final int defaultAddedTimeForExtendRental) throws CalculationException;
 
- void calculateEntriesForExtendOrder(final AbstractOrderModel order, final boolean forceRecalculate , int defaultAddedTimeForExtendRental) throws CalculationException;
+ /**
+  * This method created to calculate entries for extend rent
+  */
+ void calculateEntriesForExtendOrder(final AbstractOrderModel order, final boolean forceRecalculate , final int defaultAddedTimeForExtendRental) throws CalculationException;
 
-  void resetAllValuesForExtendOrder(final AbstractOrderEntryModel entry , int defaultAddedTimeForExtendRental) throws CalculationException;
+  /**
+  * This method created to reset entry level changes for extend rent
+  */
+  void resetAllValuesForExtendOrder(final AbstractOrderEntryModel entry , final int defaultAddedTimeForExtendRental) throws CalculationException;
 
- PriceValue getDynamicBasePriceForRentalExtendOrderSku(final PriceValue basePrice, final ProductModel product , int defaultAddedTimeForExtendRental);
+ /**
+  * This method created to get dynamic price based on dates selected for extend rent
+  */
+ PriceValue getDynamicBasePriceForRentalExtendOrderSku(final PriceValue basePrice, final ProductModel product , final int defaultAddedTimeForExtendRental);
 }

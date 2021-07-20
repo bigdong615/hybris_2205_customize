@@ -94,6 +94,9 @@ public interface BlStockLevelDao {
 	public Collection<StockLevelModel> findSerialStockLevelsForDateAndCodes(
 			final Set<String> serialProductCodes, final Date startDay, final Date endDay);
 
+	/**
+	 * This method created to find the stock level for extended order based on extend start date and extend end date
+	 */
 	Collection<StockLevelModel> findSerialStockLevelForExtendDate(final String serialProductCode, final Collection<WarehouseModel> warehouseModels,
 			final Date startDay, final Date endDay);
 

@@ -1,5 +1,10 @@
 package com.bl.core.payment.service.impl;
 
+import com.bl.core.order.dao.BlOrderDao;
+import com.bl.core.payment.service.BlPaymentService;
+import com.bl.logging.BlLogger;
+import com.braintree.exceptions.BraintreeErrorException;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.dto.TransactionStatus;
@@ -7,20 +12,12 @@ import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.bl.core.order.dao.BlOrderDao;
-import com.bl.core.payment.service.BlPaymentService;
-import com.bl.logging.BlLogger;
-import com.braintree.exceptions.BraintreeErrorException;
-import com.braintree.transaction.service.BrainTreeTransactionService;
 
 
 /**
@@ -43,8 +40,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 		final List<AbstractOrderModel> ordersToAuthorizePayment = getOrderDao().getOrdersForAuthorization();
 		ordersToAuthorizePayment.forEach(order -> {
 			if(order.getTotalPrice() > 0) {
-				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order,
-						BigDecimal.valueOf(order.getTotalPrice().doubleValue()), Boolean.FALSE, null);
+				final boolean isSuccessAuth = getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(order);
 				if (isSuccessAuth) {
 					order.setIsAuthorised(Boolean.TRUE);
 					getModelService().save(order);
@@ -90,10 +86,10 @@ public class DefaultBlPaymentService implements BlPaymentService
 	 * It gets the authorization entry of the order
 	 * @param order
 	 */
-	private PaymentTransactionEntryModel getAUthEntry(final OrderModel order) {
-		final List<PaymentTransactionModel> transactions = order.getPaymentTransactions();
+	private PaymentTransactionEntryModel getAUthEntry(OrderModel order) {
+		List<PaymentTransactionModel> transactions = order.getPaymentTransactions();
 		if(CollectionUtils.isNotEmpty(transactions)) {
-			final List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
+			List<PaymentTransactionEntryModel> transactionEntries = transactions.get(0).getEntries();
 			final Optional<PaymentTransactionEntryModel> authEntry = transactionEntries.stream()
 					.filter(transactionEntry ->
 							transactionEntry.getType().equals(PaymentTransactionType.AUTHORIZATION))
@@ -110,7 +106,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 	 * It sets isAuthorized flag as true when order total price is 0
 	 * @param order
 	 */
-	private void setIsAuthorizedFlagForGiftCard(final AbstractOrderModel order) {
+	private void setIsAuthorizedFlagForGiftCard(AbstractOrderModel order) {
 		if(CollectionUtils.isNotEmpty(order.getGiftCard()) && (BigDecimal.valueOf(order
 				.getTotalPrice())).compareTo(BigDecimal.ZERO) == 0) {
 			order.setIsAuthorised(Boolean.TRUE);
@@ -157,7 +153,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 		return modelService;
 	}
 
-	public void setModelService(final ModelService modelService) {
+	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
 

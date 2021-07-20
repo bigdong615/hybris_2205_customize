@@ -11,10 +11,17 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import org.apache.commons.lang3.BooleanUtils;
 
+/**
+ * This class created to add custom logic for extend order promotion
+ * @author Manikandan
+ */
 public class DefaultBlCouponFacade implements BlCouponFacade {
 
   private DefaultBlCouponService defaultBlCouponService;
 
+  /**
+   * This method created to add custom logic extend order promotion
+   */
   @Override
   public void applyVoucherForExtendOrder(final String voucherCode)
       throws VoucherOperationException {
@@ -29,6 +36,9 @@ public class DefaultBlCouponFacade implements BlCouponFacade {
 
   }
 
+  /**
+   * This method created to add custom logic extend order promotion
+   */
   @Override
   public <R> R applyIfCartExists(final String code, final BiFunction<String, OrderModel, R> orderConsumer) throws VoucherOperationException {
 

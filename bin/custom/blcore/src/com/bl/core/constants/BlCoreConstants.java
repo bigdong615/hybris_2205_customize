@@ -193,8 +193,6 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
 	public static final String IS_DISCONTINUED = "isDiscontinued";
 
-	public static final String ITEMS_ON_SALE = "Items On Sale";
-
 	public static final String COMPLETED = "Completed";
 	public static final String CONFIRM_OUTPUT = "confirmOutput";
 	
@@ -202,6 +200,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
 
 	public static final String EXTEND_ORDER = "extendOrder";
+
+	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
 
 	private BlCoreConstants()
 	{

@@ -126,6 +126,9 @@ public class DefaultBlCommercePriceService extends DefaultCommercePriceService i
 				: rentalDaysFromSession;
 	}
 
+	/**
+	 * This method created to get dynamic price for extend rental products
+	 */
 
 	@Override
 	public PriceInformation getWebPriceForExtendProduct(final ProductModel product , final Long rentalDays)

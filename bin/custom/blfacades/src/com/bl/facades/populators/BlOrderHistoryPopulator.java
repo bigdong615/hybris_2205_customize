@@ -82,10 +82,12 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     return BlDateTimeUtils.convertDateToStringDate(rentalDate, BlFacadesConstants.RENTAL_DATE_FORMAT);
   }
 
+  /**
+   * This method created to update rental details if order already contains extend order
+   */
   private void updateRentalDetailsIfExtendOrderExist(final OrderModel orderModel , final OrderHistoryData orderData){
 
     final List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
-
     final int size = orderModelList.size();
     for (final AbstractOrderModel extendOrder :orderModelList) {
       if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder

@@ -48,7 +48,7 @@ public class DefaultBlCommerceAddToCartStrategy extends
         // We are allowed to add items to the cart
         final CartEntryModel entryModel = addCartEntry(parameter, actualAllowedQuantityChange);
 
-        // To update the Damage waiver same as order
+        // To update the Damage waiver same as existing order for extend rental
         if(BooleanUtils.isTrue(parameter.getIsFromRentAgainPage())) {
           entryModel.setGearGuardProFullWaiverSelected(parameter.getIsDamageWaiverProSelected());
           entryModel.setGearGuardWaiverSelected(parameter.getIsDamageWaiverSelected());

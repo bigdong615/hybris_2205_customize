@@ -42,7 +42,7 @@
                                       </p>
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                                   <p class="my-2"><i class="icon-check-teal"></i>Completed</p>
+                                   <p class="my-2"><i class="icon-check-teal"></i><spring:theme code="text.myaccount.order.completed"/></p>
                                  </div>
                         </c:if>
                 					<c:if test="${order.rentalCart}">
@@ -85,9 +85,9 @@
                 						<div class="row">
                 							<div class="col-4 col-md-2">
                 								<p class="body14">
-                									<c:if test="${order.rentalCart}">Rental Total </c:if>
-                									<c:if test="${!order.rentalCart}">Total </c:if>
-                									<br> Order #</p>
+                									<c:if test="${order.rentalCart}"><spring:theme code="text.myaccount.order.rental.total"/></c:if>
+                									<c:if test="${!order.rentalCart}"><spring:theme code="text.myaccount.order.rental.total.cost"/></c:if>
+                									<br><spring:theme code="text.myaccount.order"/> </p>
                 							</div>
                 							<div class="col-8 col-md-10">
                 								<p class="body14 gray60">${fn:escapeXml(order.total.formattedValue)}

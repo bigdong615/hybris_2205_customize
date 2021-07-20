@@ -60,7 +60,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * This class is created for My account rent again and extend order functionality
@@ -92,7 +91,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
    * This method created to add all the products from existing order
    */
   @Override
-  public boolean addToCartAllOrderEnrties(final String orderCode , final Model model , final RedirectAttributes redirectAttributes) throws CommerceCartModificationException
+  public boolean addToCartAllOrderEnrties(final String orderCode , final Model model) throws CommerceCartModificationException
   {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
     final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
@@ -387,25 +386,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   @Override
   public void updateOrderExtendDetails(final OrderModel orderModel) {
     getDefaultBlExtendOrderService().updateExtendOrder(orderModel);
-  }
-
-  /**
-   * This method created to all products to cart for rent again
-   */
-  @Override
-  public boolean addToCartAllRentalOrderEnrties(final String orderCode , final Model model) {
-    final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
-
-    if(BooleanUtils.isTrue(orderModel.getIsRentalCart())) {
-      getSessionService().setAttribute("orderModelForRentAgain", orderModel);
-      return true;
-    }
-    if(BooleanUtils.isFalse(orderModel.getIsRentalCart())) {
-      model.addAttribute("isUsedGearCartActive" , true);
-      return false;
-    }
-    return false;
   }
 
   /**

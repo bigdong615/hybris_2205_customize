@@ -666,8 +666,4 @@
 		<property name="defaultBlCouponService" ref="defaultBlCouponService"/>
 	</bean>
 
-
-	<bean id="blExtendOrderPopulator" class="com.bl.facades.populators.BlExtendOrderPopulator">
-	</bean>
-
 </beans>

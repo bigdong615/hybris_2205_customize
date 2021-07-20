@@ -38,7 +38,6 @@ import com.braintreegateway.CreditCard;
 import com.braintreegateway.PayPalAccount;
 import com.braintreegateway.WebhookNotification;
 import de.hybris.platform.braintree.data.BrainTreeWebhookNotificationRequest;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -210,14 +209,4 @@ public interface BrainTreePaymentService extends PaymentMethod
 	WebhookNotification getWebhookNotification(BrainTreeWebhookNotificationRequest webhookNotificationRequest);
 
 	PayPalAccount getPaymentMethodFromBTByToken(final String paymentMethodToken);
-
-	/**
-	 * It fetches the payment info model by payment info id
-	 * @param customer
-	 * @param paymentInfoId
-	 * @param nonce
-	 * @return BrainTreePaymentInfoModel
-	 */
-	public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCode(final CustomerModel customer, final String
-			paymentInfoId, final String nonce);
 }

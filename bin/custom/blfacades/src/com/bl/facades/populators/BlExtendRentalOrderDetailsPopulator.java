@@ -4,15 +4,11 @@ import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.core.utils.BlExtendOrderUtils;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.promotions.PromotionsService;
@@ -27,8 +23,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * This populatar created to populate custom attributes for extend rental page
+ * @author Manikandan
+ */
 public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
 
@@ -44,10 +43,12 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
   private  TimeService timeService;
 
 
+  /**
+   * This method created to populate custom attribute to order data
+   */
 
   @Override
   public void populate(final AbstractOrderModel orderModel, final OrderData target) throws ConversionException {
-
 
      PriceDataType priceType = PriceDataType.BUY;
 

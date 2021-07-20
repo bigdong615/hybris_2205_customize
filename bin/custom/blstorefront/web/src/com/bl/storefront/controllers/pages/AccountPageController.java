@@ -1147,18 +1147,17 @@ public class AccountPageController extends AbstractSearchPageController
 	}
 
 	/**
-	 * This method used for renting the order again
+	 * This method used for renting the order again from order details page
 	 */
 	@RequestMapping(value = "/rentAgain/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
-	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request ,
-			final RedirectAttributes redirectAttributes)
-			throws CommerceCartModificationException {
+	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel ,
+			final HttpServletRequest request) throws CommerceCartModificationException {
 
 		 boolean isAddProductToCartAllowed;
 
 		  if(StringUtils.isNotEmpty(orderCode)) {
-			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel , redirectAttributes);
+			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel);
 			if(BooleanUtils.isTrue(isAddProductToCartAllowed)) {
 				pModel.addAttribute("isfromExtendOrder" , true);
 				return BlControllerConstants.REDIRECT_CART_URL;
@@ -1170,15 +1169,13 @@ public class AccountPageController extends AbstractSearchPageController
 		 return "/my-account/order/"+ orderCode;
 	}
 
-
-
 	/**
 	 * This method created for extend only rental orders from MyAccount Page
 	 */
 	@GetMapping(value = "/extendRent/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String extendRent(@PathVariable(value = "orderCode" ,required = false) final String orderCode, final Model model , final HttpServletRequest request)
-			throws CommerceCartModificationException, CMSItemNotFoundException {
+			throws CMSItemNotFoundException {
 
 		// To remove seesion if current order and session order when mismatch
 		if(null != BlExtendOrderUtils.getCurrentExtendOrderToSession() &&
@@ -1267,6 +1264,9 @@ public class AccountPageController extends AbstractSearchPageController
 	}
 
 
+	/**
+	 * To set the payment details for extend rental page
+	 */
 	private void setupAdditionalFields(final Model model)
 	{
 		String clientToken = StringUtils.EMPTY;
@@ -1283,6 +1283,9 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(CLIENT_TOKEN, clientToken);
 	}
 
+	/**
+	 * To extend the order once payment is captured
+	 */
 
 	@PostMapping(value = "/extendOrder/"+  ORDER_CODE_PATH_VARIABLE_PATTERN)
 	public String placeExtendOrder(@PathVariable(value = "orderCode" ,required = false) final String orderCode ,
@@ -1323,36 +1326,6 @@ public class AccountPageController extends AbstractSearchPageController
 
 		}
 			return REDIRECT_PREFIX + "/my-account/extendRent/"+ orderCode;
-	}
-
-	public void setGlobalErrorForEmptyCart( final String orderCode, final Model pModel , final RedirectAttributes redirectAttributes) {
-		final OrderModel orderModel = blOrderFacade.getOrderModelFromOrderCode(orderCode);
-		if (null != orderModel) {
-			final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-			if(CollectionUtils.isNotEmpty(orderModel.getEntries()) && orderModel.getEntries().size() == 1){
-				AbstractOrderEntryModel abstractOrderEntryModel = orderModel.getEntries().listIterator().next();
-				final String nextAvailabilityDate = blCommerceStockService
-						.getNextAvailabilityDateInCheckout(abstractOrderEntryModel.getProduct().getCode(),
-								rentalDateDto, null,
-								abstractOrderEntryModel.getQuantity().intValue());
-
-				if (StringUtils.isNotBlank(nextAvailabilityDate)) {
-					GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
-							"This item are not available until"+ nextAvailabilityDate +
-									". Change your dates or select a different item to continue.",
-							null);
-				}
-				else {
-					GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
-							"This item is no longer available for your selected date range. Change your dates.", null);
-				}
-			}
-			else {
-				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
-						"This item is no longer available for your selected date range. Change your dates.", null);
-			}
-
-		}
 	}
 
 	}

@@ -31,7 +31,6 @@
 		<property name="brainTreeConfigService" ref="brainTreeConfigService" />
 		<property name="brainTreePaymentFacade" ref="brainTreePaymentFacadeImpl" />
 		<property name="customFieldsService" ref="customFieldsService"/>
-		<property name="orderDao" ref="orderDao"/>
 	</bean>
 
 

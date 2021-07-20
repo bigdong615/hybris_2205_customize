@@ -142,7 +142,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
 
-			// Set Delivery Cost as 0 for Extend rental order based on falg -> isExtendedOrder
+			// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
 			if(BooleanUtils.isTrue(order.getIsExtendedOrder())){
 				order.setDeliveryCost(0.0);
 			}
@@ -159,6 +159,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
 			saveOrder(order);
+
+			// To set the current extend order in session
 			if(BooleanUtils.isTrue(order.getIsExtendedOrder())) {
 				BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
 			}
@@ -426,17 +428,16 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	}
 
 	/**
-	 * Created for rental Extend Order
+	 * this method Created for rental Extend Order to do calculate bases on extend rental selection
 	 */
-
 	@Override
-	public void recalculateForExtendOrder(final AbstractOrderModel order , int defaultAddedTimeForExtendRental) throws CalculationException
+	public void recalculateForExtendOrder(final AbstractOrderModel order , final int defaultAddedTimeForExtendRental) throws CalculationException
 	{
 		try
 		{
 			saveOrderEntryUnneeded.set(Boolean.TRUE);
 			calculateEntriesForExtendOrder(order, true , defaultAddedTimeForExtendRental);
-			resetAllValues(order); // Needs to remove if not needed
+			resetAllValues(order);
 			calculateTotals(order, true, calculateSubtotal(order , true));
 		}
 		finally
@@ -445,14 +446,17 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		}
 	}
 
+	/**
+	 * This method created to calculate entries for extend order
+	 */
 	@Override
-	public void calculateEntriesForExtendOrder(final AbstractOrderModel order, final boolean forceRecalculate , int defaultAddedTimeForExtendRental) throws CalculationException
+	public void calculateEntriesForExtendOrder(final AbstractOrderModel order, final boolean forceRecalculate , final int defaultAddedTimeForExtendRental)
+			throws CalculationException
 	{
 		double subtotal = 0.0;
 		double totalDamageWaiverCost = 0.0;
 		for (final AbstractOrderEntryModel entryModel : order.getEntries())
 		{
-			//recalculateOrderEntryIfNeeded(entryModel, forceRecalculate);
 			resetAllValuesForExtendOrder(entryModel , defaultAddedTimeForExtendRental);
 			super.calculateTotals(entryModel , true);
 			subtotal += entryModel.getTotalPrice().doubleValue();
@@ -460,7 +464,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		}
 		final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
 		order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", finaltotalDamageWaiverCost);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.DAMAGE_WAIVER_ERROR, finaltotalDamageWaiverCost);
 		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
 		order.setTotalPrice(totalPriceWithDamageWaiverCost);
 		order.setDeliveryCost(0.0);
@@ -468,8 +472,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
 	}
 
+	/**
+	 * This method created to reset entries for extend rental order
+	 */
 	@Override
-	public void resetAllValuesForExtendOrder(final AbstractOrderEntryModel entry , int defaultAddedTimeForExtendRental) throws CalculationException
+	public void resetAllValuesForExtendOrder(final AbstractOrderEntryModel entry , final int defaultAddedTimeForExtendRental) throws CalculationException
 	{
 		final ProductModel product = entry.getProduct();
 		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
@@ -484,8 +491,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		setDamageWaiverPrices(entry, product);
 	}
 
+	/**
+	 * This method created to get dynamic price for extend rental based on extend rental days
+	 */
 	@Override
-	public PriceValue getDynamicBasePriceForRentalExtendOrderSku(final PriceValue basePrice, final ProductModel product , int defaultAddedTimeForExtendRental)
+	public PriceValue getDynamicBasePriceForRentalExtendOrderSku(final PriceValue basePrice, final ProductModel product , final int defaultAddedTimeForExtendRental)
 	{
 		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product)
 				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))

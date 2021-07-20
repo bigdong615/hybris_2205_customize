@@ -597,7 +597,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 
 	/**
 	 * This method created to get stock based on serial products from existing order
-	 * {@inheritDoc}
+	 *
 	 */
 	@Override
 	public StockResult getStockForEntireExtendDuration(final String productCode, final Collection<WarehouseModel> warehouses,
@@ -641,9 +641,6 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	{
 		return getBlStockLevelDao().findSerialStockLevelForExtendDate(productCode, warehouses, startDate, endDate);
 	}
-
-
-
 
 	/**
 	 * Gets the next date by adding number of days.

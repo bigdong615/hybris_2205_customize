@@ -64,22 +64,17 @@ public interface BrainTreeTransactionService
 
 	/**
 	 * To create the auth transaction of the order
-	 * @param orderModel the order code
-	 * @param amountToAuthorize the amount to authorize
-	 * @param submitForSettlement submit for settlement flag
-	 * @param paymentInfo the payment info model
+	 * @param orderModel
 	 * @return  boolean
 	 */
-	boolean createAuthorizationTransactionOfOrder(final AbstractOrderModel orderModel, final BigDecimal
-			amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo);
+	boolean createAuthorizationTransactionOfOrder(final AbstractOrderModel orderModel);
 
 	/**
 	 * To create the capture transaction of the order
-	 * @param orderModel the order model
-	 * @param amount the amount
-	 * @param requestId the request id
+	 * @param orderModel
+	 * @param amount
+	 * @param requestId
 	 * @return  boolean
-	 * @throws BraintreeErrorException braintree error exception
 	 */
 	boolean captureAuthorizationTransaction(final OrderModel orderModel, final BigDecimal amount,
 			final String requestId) throws BraintreeErrorException;

@@ -24,12 +24,19 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
+/**
+ * This Populator created to populate order details
+ * @author Manikandan
+ */
 public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
 
   private PriceDataFactory priceDataFactory;
   private BlAddressPopulator blAddressPopulator;
 
+  /**
+   * This method created to populate order details for custom attributes
+   */
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
 
@@ -83,6 +90,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   }
 
+  /**
+   * This method poulates extend order details to order data
+   */
   private void populateExtendOrderDetails(final OrderModel orderModel , final OrderData orderData) {
 
     final List<ExtendOrderData> extendOrderDataList = new ArrayList<>();
@@ -139,6 +149,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     return BlDateTimeUtils.convertDateToStringDate(rentalDate,dateFormat);
   }
 
+  /**
+   * This method converts double to price data
+   */
   private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
     return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
   }

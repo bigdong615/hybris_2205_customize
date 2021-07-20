@@ -136,7 +136,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * This method created to find the stock level for same serial from existing order to extending rental
 	 */
 	@Override
 	public Collection<StockLevelModel> findSerialStockLevelForExtendDate(final String serialProductCode, final Collection<WarehouseModel> warehouseModels,
