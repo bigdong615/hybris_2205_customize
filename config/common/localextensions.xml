@@ -139,6 +139,7 @@
 
     <!-- BL custom extensions -->
     <extension name='blassistedservicestorefront'/>
+    <extension name='assistedservicefacades'/>
     <extension name='blbackoffice'/>
     <extension name='blpcmbackoffice'/>
     <extension name='blconfigurablebundleaddon'/>
@@ -163,6 +164,7 @@
       <extension name='braintreecustomersupportbackoffice' />
       <extension name='braintreefacades' />
       <extension name='braintreehac' />
+      <extension name='tealiumiqaddon' />
 
   </extensions>
 </hybrisconfig>
