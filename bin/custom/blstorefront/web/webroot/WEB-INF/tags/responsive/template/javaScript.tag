@@ -86,6 +86,7 @@
 		<script src="${commonResourcePathHtml}/js/acc.cookienotification.js"></script>
 		<script src="${commonResourcePathHtml}/js/acc.closeaccount.js"></script>
     <script src="${commonResourcePathHtml}/js/acc.wishlist.js"></script>
+    <script src="${commonResourcePathHtml}/js/acc.blanalyticsevent.js"></script>
 
 		<script src="${commonResourcePathHtml}/js/acc.csv-import.js"></script>
 
@@ -420,6 +421,7 @@
                 setup: (picker) => {
         			picker.on('button:apply', (date1, date2) => {
         				var searchText = document.getElementById('js-site-search-input').value;
+        				trackDateSelection(date1,date2);
           				var rentalGear = 'rentalGear';
           				var contextPath = ACC.config.contextPath;
           				$.ajax({
@@ -487,6 +489,7 @@
                 setup: (picker) => {
           			picker.on('button:apply', (date1, date2) => {
           				var searchText = document.getElementById('js-site-search-input-mob').value;
+          				trackDateSelection(date1,date2);
           				var rentalGear = 'rentalGear';
           				var contextPath = ACC.config.contextPath;
           				$.ajax({
@@ -705,6 +708,7 @@
 												},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
+                                           			trackDateSelection(date1,date2);
                                           				$.ajax({
                                       	                    url: ACC.config.encodedContextPath + '/datepicker',
                                       	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -767,6 +771,7 @@
                                      				},
                                                  setup: (picker) => {
                                            			picker.on('button:apply', (date1, date2) => {
+                                           			trackDateSelection(date1,date2);
                                            			$.ajax({
                                                          url: ACC.config.encodedContextPath + '/datepicker',
                                                          data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1165,6 +1170,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                    }else{
+                                   trackDateSelection(date1,date2);
                       				$.ajax({
                   	                    url: ACC.config.encodedContextPath + '/datepicker',
                   	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1231,6 +1237,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                       }else{
+                                      trackDateSelection(date1,date2);
                       			$.ajax({
                                     url: ACC.config.encodedContextPath + '/datepicker',
                                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1353,6 +1360,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                    }else{
+                                   trackDateSelection(date1,date2);
                       				$.ajax({
                   	                    url: ACC.config.encodedContextPath + '/datepicker',
                   	                    data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1419,6 +1427,7 @@
                                       $("#rentalEndDate").val(date2.toDateString());
                                       $('#editWarning').modal('show');
                                       }else{
+                                      trackDateSelection(date1,date2);
                       			$.ajax({
                                     url: ACC.config.encodedContextPath + '/datepicker',
                                     data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
@@ -1604,6 +1613,7 @@
 								}
 								else
 								{
+								trackDateSelection(date1,date2);
 									$.ajax({
 										url: ACC.config.encodedContextPath + '/datepicker',
 										data: {selectedFromDate: date1.toDateString(), selectedToDate: date2.toDateString()},
