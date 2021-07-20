@@ -558,6 +558,7 @@
 	<bean id="blOrderDetailsPopulator"
 		class="com.bl.facades.populators.BlOrderDetailsPopulator">
 		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="blAddressPopulator" ref="addressPopulator"/>
 	</bean>
 
   <!--Added for extend rental order-->

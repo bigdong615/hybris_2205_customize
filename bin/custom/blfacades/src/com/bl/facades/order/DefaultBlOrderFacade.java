@@ -17,7 +17,6 @@ import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator;
-import com.bl.facades.product.data.RentalDateDto;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -38,7 +37,6 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.product.ProductService;
 import de.hybris.platform.promotions.PromotionsService;
 import de.hybris.platform.promotions.jalo.PromotionsManager.AutoApplyMode;
@@ -55,10 +53,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -93,106 +88,30 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private BlExtendRentalOrderDetailsPopulator blExtendRentalOrderDetailsPopulator;
   private BlDatePickerService blDatePickerService;
 
-  public static final int SKIP_TWO_DAYS = 2;
-
-  public static final String ERROR_MSG_TYPE_FOR_RENT_AGAIN = "errorMsgForRentAgain";
-  public static final String ERROR_MSG_TYPE_FOR_LOW_QTY = "errorMsgForLowQuantity";
-
   /**
    * This method created to add all the products from existing order
    */
   @Override
-  public boolean addToCartAllOrderEnrties(final String orderCode , final Model model , final RedirectAttributes redirectAttributes ,
-      final List<String> emptyCart) throws CommerceCartModificationException
+  public boolean addToCartAllOrderEnrties(final String orderCode , final Model model , final RedirectAttributes redirectAttributes) throws CommerceCartModificationException
   {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
     final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
 
     final CartModel cartModel = getBlCartService().getSessionCart();
 
-    if(null != cartModel && BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+    if(null != cartModel && CollectionUtils.isNotEmpty(cartModel.getEntries()) && BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
       return false;
     }
 
-    final RentalDateDto rentalDateDto = blDatePickerService.getRentalDatesFromSession();
-
-    final Map<String, String> errorMessageMap = new HashMap<>();
     for (final AbstractOrderEntryModel lEntryModel : orderModel.getEntries())
     {
-      if(Objects.nonNull(rentalDateDto)) {
-        final ProductModel lProductModel = lEntryModel.getProduct();
-        final long availableStockForProduct = getAvailableStockForProduct(rentalDateDto,
-            lProductModel.getCode());
-
-        if(availableStockForProduct != 0 ) {
-          if(availableStockForProduct < lEntryModel.getQuantity())
-          {
-            lEntryModel.setQuantity(availableStockForProduct);
-            redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE_FOR_LOW_QTY,
-                "Only" + availableStockForProduct + "copies of this item are available for your selected date range. Change your quantity or dates to continue.");
-          }
-          boolean allowed = true;
-          if(CollectionUtils.isNotEmpty(cartModel.getEntries())){
-            for(AbstractOrderEntryModel abstractOrderEntryModel : cartModel.getEntries()){
-              if(StringUtils.endsWithIgnoreCase(abstractOrderEntryModel.getProduct().getCode() , lEntryModel.getProduct().getCode())) {
-                if(abstractOrderEntryModel.getQuantity().compareTo(availableStockForProduct) == 0) {
-                  redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE_FOR_LOW_QTY,
-                      "Only" + availableStockForProduct + "copies of this item are available for your selected date range. Change your quantity or dates to continue.");
-                  lEntryModel.setQuantity((long) 0);
-                  allowed = false;
-                }
-              }
-            }
-          }
-          if(BooleanUtils.isTrue(allowed)) {
-          addToCart(lProductModel, lEntryModel.getQuantity().intValue(), lEntryModel); }
-
-        }
-        else if(availableStockForProduct == 0) {
-          final String nextAvailabilityDate = blCommerceStockService.getNextAvailabilityDateInCheckout(lEntryModel.getProduct().getCode(),
-              rentalDateDto, null,
-              lEntryModel.getQuantity().intValue());
-
-          if(StringUtils.isNotBlank(nextAvailabilityDate) && cartModel.getEntries().size() == 1) {
-            boolean sameProduct = false;
-            for(AbstractOrderEntryModel abstractOrderEntryModel : orderModel.getEntries()) {
-              if(abstractOrderEntryModel.getProduct().getCode().equalsIgnoreCase(cartModel.getEntries().iterator().next().getProduct().getCode())) {
-                sameProduct = true;
-              }
-            }
-            if(BooleanUtils.isFalse(sameProduct)) {
-            redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE_FOR_RENT_AGAIN,
-                "This item "+ lEntryModel.getProduct().getName() +" is not available until" + nextAvailabilityDate +
-                    ". Change your dates or select a different item to continue."); }
-            else {
-              redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE_FOR_RENT_AGAIN,
-                  "This item is no longer available for your selected date range. Change your dates or select a comparable item.");
-            }
-          }
-          else {
-         redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE_FOR_RENT_AGAIN,
-              "This item is no longer available for your selected date range. Change your dates or select a comparable item."); }
-        }
-      }
-      else {
         final ProductModel lProductModel = lEntryModel.getProduct();
         addToCart(lProductModel, lEntryModel.getQuantity().intValue(), lEntryModel);
-      }
     }
-    if(CollectionUtils.isEmpty(cartModel.getEntries())) {
-      emptyCart.add(ERROR_MSG_TYPE_FOR_RENT_AGAIN);
-    }
+
     return true;
   }
 
-    private long getAvailableStockForProduct(final RentalDateDto rentalDateDto, final String productCode)
-    {
-      final List<WarehouseModel> warehouseModelList = getBaseStoreService().getCurrentBaseStore().getWarehouses();
-      final List<Date> blackOutDates = blDatePickerService.getListOfBlackOutDates();
-      final Date startDay = BlDateTimeUtils.subtractDaysInRentalDates(SKIP_TWO_DAYS, rentalDateDto.getSelectedFromDate(), blackOutDates);
-      final Date endDay = BlDateTimeUtils.addDaysInRentalDates(SKIP_TWO_DAYS, rentalDateDto.getSelectedToDate(), blackOutDates);
-      return blCommerceStockService.getAvailableCount(productCode, warehouseModelList, startDay, endDay);
-    }
 
   public CartModificationData addToCart(final ProductModel blProductModel, final long quantity , final AbstractOrderEntryModel abstractOrderEntryModel)
       throws CommerceCartModificationException {

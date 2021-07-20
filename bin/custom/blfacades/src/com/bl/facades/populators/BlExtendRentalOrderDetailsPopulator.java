@@ -3,6 +3,7 @@ package com.bl.facades.populators;
 import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlExtendOrderUtils;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
@@ -25,6 +26,7 @@ import de.hybris.platform.site.BaseSiteService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderModel, TARGET extends OrderData> implements
@@ -76,7 +78,15 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
 
      //To set customer Mail
     target.setCustomerMail(orderModel.getUser().getUid());
+    target.setExtendOrderConfirmationDate(convertDateToString(orderModel.getRentalEndDate() , "MMM d , YYYY"));
 
+  }
+
+  /**
+   * This Method converts rental startDate and rental endDate to String
+   */
+  private String convertDateToString(final Date rentalDate , final String dateFormat) {
+    return BlDateTimeUtils.convertDateToStringDate(rentalDate,dateFormat);
   }
 
   public PriceDataFactory getPriceDataFactory() {

@@ -159,7 +159,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
 			saveOrder(order);
-			if(order.getIsExtendedOrder()) {
+			if(BooleanUtils.isTrue(order.getIsExtendedOrder())) {
 				BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
 			}
 		}

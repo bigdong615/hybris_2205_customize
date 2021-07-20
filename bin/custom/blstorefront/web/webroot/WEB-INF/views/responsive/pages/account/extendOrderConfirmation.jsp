@@ -14,7 +14,7 @@
 <div id="accountContent" class="col-lg-5 offset-lg-1">
                     <h1> <spring:theme code="text.extend.order" /></h1>
                     <hr>
-                    <h5 class="mb-5"><spring:theme code="text.extend.order.new.returndate" />Feb 2, 2021</h5>
+                    <h5 class="mb-5"><spring:theme code="text.extend.order.new.returndate" />${extendOrderData.extendOrderConfirmationDate}</h5>
              <p><spring:theme code="text.extend.order.text"/> <format:blPrice priceData="${extendOrderData.orderTotalWithTaxForExtendRental}"/>&nbsp;<spring:theme code="text.extend.order.additional"/>${extendOrderData.addedTimeForExtendRental}
                     <spring:theme code="text.extend.order.confirmation"/><b>${extendOrderData.customerMail}</b></p>
                     <div class="confirmation-actions my-5">

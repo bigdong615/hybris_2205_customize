@@ -140,6 +140,7 @@
 		<property name="addedTimeForExtendRental" type="java.lang.Integer"/>
 		<property name="newEndDateForExtendRental" type="java.lang.Integer"/>
 		<property name="customerMail" type="String"/>
+		<property name="extendOrderConfirmationDate" type="String"/>
 
 			<property name="isPOEnabled" type="java.lang.Boolean"/>
 			<property name="poNumber" type="java.lang.String"/>

@@ -31,8 +31,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyCon
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.PaymentDetailsForm;
-import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateEmailForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdatePasswordForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.UpdateProfileForm;
@@ -185,7 +183,6 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String EXTEND_RENTAL_ORDER_DETAILS = "extendRentalOrderDetails";
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
-
 
 	final String CLIENT_TOKEN = "client_token";
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
@@ -420,7 +417,13 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		setUpMetaDataForContentPage(model, orderDetailPage);
 		model.addAttribute("pageType" , "orderDetails");
-		model.addAttribute("isUsedGearCartActive" , BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+		if(null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries())) {
+			model.addAttribute("isUsedGearCartActive",
+					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
+		}
+		else {
+			model.addAttribute("isUsedGearCartActive", false);
+		}
 		return getViewForPage(model);
 	}
 
@@ -1151,18 +1154,13 @@ public class AccountPageController extends AbstractSearchPageController
 	public String rentAgain(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request ,
 			final RedirectAttributes redirectAttributes)
 			throws CommerceCartModificationException {
+
 		 boolean isAddProductToCartAllowed;
+
 		  if(StringUtils.isNotEmpty(orderCode)) {
-		  	final List<String> emptyCart = new ArrayList<>();
-			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel , redirectAttributes , emptyCart );
+			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel , redirectAttributes);
 			if(BooleanUtils.isTrue(isAddProductToCartAllowed)) {
 				pModel.addAttribute("isfromExtendOrder" , true);
-
-				if(CollectionUtils.isNotEmpty(emptyCart)) {
-					setGlobalErrorForEmptyCart(orderCode , pModel , redirectAttributes);
-
-				}
-
 				return BlControllerConstants.REDIRECT_CART_URL;
 			}
 			else {
@@ -1171,6 +1169,7 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 		 return "/my-account/order/"+ orderCode;
 	}
+
 
 
 	/**

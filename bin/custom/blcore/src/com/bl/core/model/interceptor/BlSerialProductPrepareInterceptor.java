@@ -49,12 +49,12 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
 		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
-		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
+		//calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
-		calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
-		updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
-		updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
-		updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
+		//calculateIncentivizedPriceForSerial(blSerialProduct, ctx);
+		//updateStockRecordsOnSerialStatusUpdate(blSerialProduct, ctx);
+		//updateStockRecordsOnForRentFlagUpdate(blSerialProduct, ctx);
+		//updateWarehouseInStockRecordsOnWHLocUpdate(blSerialProduct, ctx);
 	}
 
 	/**

@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public interface BlOrderFacade extends OrderFacade {
 
-  boolean addToCartAllOrderEnrties(final String orderCode , final Model model ,final RedirectAttributes redirectAttributes , List<String> emptyCart) throws CommerceCartModificationException;
+  boolean addToCartAllOrderEnrties(final String orderCode , final Model model ,final RedirectAttributes redirectAttributes) throws CommerceCartModificationException;
 
   CartModificationData addToCart(final ProductModel blProductModel, final long quantity , final AbstractOrderEntryModel abstractOrderEntryModel)  throws CommerceCartModificationException;
 

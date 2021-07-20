@@ -43,11 +43,13 @@
 				</div>
 			</div>
 		</div>
+		<c:if test="${not empty orderData.orderNotes}">
 		 <div class="col-12 col-md-5">
 			<p class="gray80 body14">
-				<b class="gray100">Order Notes</b> JayZ Superbowl Shoot
+				<b class="gray100">Order Notes</b> ${orderData.orderNotes}
 			</p>
 		</div>
+	 </c:if>
 	</div>
 </c:if>
 

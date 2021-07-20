@@ -1,6 +1,8 @@
 package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ExtendOrderData;
@@ -8,6 +10,7 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.constants.GeneratedCommerceServicesConstants.Attributes.Order;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
@@ -24,9 +27,8 @@ import org.apache.commons.lang.BooleanUtils;
 public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
 
-
-
   private PriceDataFactory priceDataFactory;
+  private BlAddressPopulator blAddressPopulator;
 
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
@@ -58,14 +60,27 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    target.setPickUpPersonEmail(source.getPickUpPersonEmail());
    target.setPickUpPersonPhone(source.getPickUpPersonPhone());
     target.setOrderedFormatDateForExtendRental(convertDateToString(source.getDate() , "MMM d , YYYY"));
-    target.setRentalEndDateForJs(convertDateToString(source.getRentalEndDate() , "MM/dd/yyyy"));
-    target.setRentalStartDateForJs(convertDateToString(source.getRentalStartDate() , "yyyy ,MM, dd"));
-    populateExtendOrderDetails(source , target);
+    if(BooleanUtils.isTrue(source.getIsRentalCart())) {
+      target.setRentalEndDateForJs(convertDateToString(source.getRentalEndDate(), "MM/dd/yyyy"));
+      target.setRentalStartDateForJs(
+          convertDateToString(source.getRentalStartDate(), "yyyy ,MM, dd"));
+      populateExtendOrderDetails(source, target);
+    }
 
     // To set the date for selecting in calendar
     if(CollectionUtils.isNotEmpty(target.getExtendOrderEntrie())) {
       populateRentalEndDateForJs(source, target);
     }
+
+    populateOrderNotes(source , target);
+
+    if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
+      final AddressData addressData = new AddressData();
+      BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) source.getDeliveryMode();
+      getBlAddressPopulator().populate(blPickUpZoneDeliveryModeModel.getInternalStoreAddress() , addressData);
+      target.setDeliveryAddress(addressData);
+    }
+
   }
 
   private void populateExtendOrderDetails(final OrderModel orderModel , final OrderData orderData) {
@@ -101,6 +116,22 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   }
 
+  private void populateOrderNotes(final OrderModel orderModel , final OrderData orderData) {
+
+    String orderNotes = "";
+    final List<NotesModel> notesModelList = orderModel.getOrderNotes();
+    if(CollectionUtils.isNotEmpty(notesModelList)) {
+      int notesModelSize = notesModelList.size();
+      for (NotesModel notesModel :notesModelList) {
+        if(notesModelList.get(notesModelSize -1).getPk().equals(notesModel.getPk())) {
+          orderNotes = notesModel.getNote();
+        }
+      }
+    }
+
+    orderData.setOrderNotes(orderNotes);
+  }
+
   /**
    * This Method converts rental startDate and rental endDate to String
    */
@@ -120,5 +151,13 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   public void setPriceDataFactory(
       PriceDataFactory priceDataFactory) {
     this.priceDataFactory = priceDataFactory;
+  }
+
+  public BlAddressPopulator getBlAddressPopulator() {
+    return blAddressPopulator;
+  }
+
+  public void setBlAddressPopulator(BlAddressPopulator blAddressPopulator) {
+    this.blAddressPopulator = blAddressPopulator;
   }
 }

@@ -121,14 +121,14 @@
                                    </c:forEach>
                             </div>
                             <div class="reviewCart">
-                            <c:choose>
+                            							<c:choose>
                             								<c:when
                             									test="${fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'SHIP_UPS_OFFICE') == true or fn:containsIgnoreCase(orderData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == true}">
-                            									<h5 class="mb-4">
-                            										<spring:theme code="text.review.page.delivery.pickup.title" />
-                            									</h5>
+                            								<h5 class="mb-4">
+                                            <spring:theme code="text.review.page.delivery.pickup.title" />
+                                            </h5>
                             									<div class="row mb-4">
-                            										<div class="col-6">
+                            										<%-- <div class="col-6">
                             											<p class="gray80 body14">
                             												<b class="gray100"><spring:theme
                             														code="text.review.page.delivery.mode.pickup" /></b>
@@ -136,37 +136,40 @@
                             												<br /> ${orderData.pickUpPersonEmail} <br />
                             												${orderData.pickUpPersonPhone} <br />
                             											</p>
-                            										</div>
-                            										<c:if test ="${not empty orderData.deliveryAddress}">
+                            										</div> --%>
+                            										<c:if test="${not empty orderData.deliveryAddress}">
                             											<div class="col-6">
                             												<p class="gray80 body14">
                             													<b class="gray100"><spring:theme
-                            															code="text.review.page.delivery.pickup.from" /></b>
+                            															code="text.review.page.delivery.pickup.from" /></b></br>
                             													<order:addressItem address="${orderData.deliveryAddress}" />
                             												</p>
                             											</div>
                             										</c:if>
                             									</div>
                             								</c:when>
-                                <c:otherwise>
-                                <h5 class="mb-4"><spring:theme code="text.myaccount.order.delivery"/></h5>
-                                <div class="row mb-4">
-                                    <div class="col-6">
-                                        <p class="gray80 body14">
-                                            <b class="gray100"><spring:theme code="text.myaccount.order.delivery.method"/></b>
-                                           ${orderData.deliveryMode.name}
-                                        </p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p class="gray80 body14">
-                                            <b class="gray100"><spring:theme code="text.myaccount.order.shippingto"/></b>
-                                            <order:addressItem address="${orderData.deliveryAddress}"/>
-                                        </p>
-                                    </div>
-                                </div>
-                                </c:otherwise>
-                            </c:choose>
-                            </div>
+                            								<c:otherwise>
+                            									<div class="row mb-4">
+                            										<div class="col-6">
+                            											<p class="gray80 body14">
+                            												<b class="gray100"><spring:theme
+                            														code="text.review.page.delivery.mode" /></b>
+                            												${orderData.deliveryMode.name}
+                            											</p>
+                            										</div>
+                            										<c:if test="${not empty orderData.deliveryAddress}">
+                            											<div class="col-6">
+                            												<p class="gray80 body14">
+                            													<b class="gray100"><spring:theme
+                            															code="text.review.page.delivery.shipping.to" /></b>
+                            													<order:addressItem address="${orderData.deliveryAddress}" />
+                            												</p>
+                            											</div>
+                            										</c:if>
+                            									</div>
+                            								</c:otherwise>
+                            							</c:choose>
+                            						</div>
 
                             <div class="reviewCart">
                              <c:if test="${not empty orderData.paymentInfo}">
@@ -287,7 +290,7 @@
                 <div class="row mb-4">
                     <div class="text-center col-md-3 col-lg-2">
                         <img src="${themeResourcePath}/assets/gear-guard.png">
-                    </div>
+                    </div>gray100
                     <div class="col-md-9 col-lg-10">
                         <p><b><spring:theme code="text.damage.Waiver.model.option.gear"/></b></p>
                         <p class="body14"><spring:theme code="text.damage.Waiver.model.option.gear.description"/></p>
