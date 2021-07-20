@@ -81,3 +81,6 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; creditCarts                  ; Credit Carts Pages              ; AccountPageTemplate                 ; creditCarts
                           ;                         ;update-email                  ;Update Email Page                ;AccountPageTemplate                  ;update-email
                           ;                         ;order                         ;Order Details Page                ;AccountPageTemplate                 ;order
+                          ;                         ;extendRentalOrderDetails      ;Extend Rental Order Details Page  ; AccountPageTemplate                ;extendRentalOrderDetails
+                          ;                         ;extendRentalOrderConfirmation ;Extend Rental Order Confirmation Page;AccountPageTemplate               ;extendRentalOrderConfirmation
+

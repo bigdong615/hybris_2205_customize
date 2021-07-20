@@ -186,10 +186,6 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
 
-	public static final String ERROR_MSG_TYPE_FOR_RENT_AGAIN = "errorMsgForRentAgain";
-	public static final String ERROR_MSG_TYPE_FOR_LOW_QTY = "errorMsgForLowQuantity";
-
-
 
 	final String CLIENT_TOKEN = "client_token";
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
@@ -1178,32 +1174,6 @@ public class AccountPageController extends AbstractSearchPageController
 
 
 	/**
-	 * This method used for renting the order again
-	 */
-	@RequestMapping(value = "/rentAgainOrder/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
-	@RequireHardLogIn
-	public String rentAgainOrder(@PathVariable(value = "orderCode", required = false) final String orderCode, final Model pModel , final HttpServletRequest request)
-			throws CommerceCartModificationException {
-
-		if(null != getSessionService().getAttribute("orderModelForRentAgain")) {
-			getSessionService().removeAttribute("orderModelForRentAgain");
-		}
-
-		 boolean isRentAgainAllowed = false;
-			if(StringUtils.isNotBlank(orderCode)) {
-				isRentAgainAllowed = blOrderFacade.addToCartAllRentalOrderEnrties(orderCode, pModel);
-				GlobalMessages
-						.addFlashMessage((Map<String, Object>) pModel, GlobalMessages.CONF_MESSAGES_HOLDER,
-								BlControllerConstants.DISCONTINUE_MESSAGE_KEY, new Object[]{"testremoved"});
-			}
-			if(BooleanUtils.isTrue(isRentAgainAllowed)) {
-				return BlControllerConstants.REDIRECT_CART_URL;
-			}
-			return "/my-account/order/" + orderCode;
-	}
-
-
-	/**
 	 * This method created for extend only rental orders from MyAccount Page
 	 */
 	@GetMapping(value = "/extendRent/" +  ORDER_CODE_PATH_VARIABLE_PATTERN)
@@ -1220,11 +1190,6 @@ public class AccountPageController extends AbstractSearchPageController
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
 		orderDetails.setIsExtendOrderPage(true);
 		model.addAttribute("orderData", orderDetails);
-		/*if(Objects.nonNull(orderDetails) && Objects.nonNull(orderDetails.getPaymentInfo()))
-		{
-			final CCPaymentInfoData paymentInfo = orderDetails.getPaymentInfo();
-			setPaymentDetailForPage(paymentInfo, model);
-		}*/
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 		setupAdditionalFields(model); //Add braintree detils
 		final ContentPageModel extendOrderDetailPage = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_DETAILS);
@@ -1234,31 +1199,6 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-	/**
-	 * This method created to set the payment details for extend rental page
-	 */
-	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
-	{
-		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
-		{
-			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
-			model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
-			model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
-			model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
-		}
-		else if(BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
-		{
-			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
-		}
-
-		final PaymentDetailsForm paymentDetailsForm = new PaymentDetailsForm();
-		final AddressForm addressForm = new AddressForm();
-		paymentDetailsForm.setBillingAddress(addressForm);
-		model.addAttribute("paymentDetailsForm" , paymentDetailsForm);
-		model.addAttribute("sopPaymentDetailsForm", new SopPaymentDetailsForm());
-		model.addAttribute("silentOrderPostForm", new PaymentDetailsForm());
-
-	}
 
 	/**
 	 * This method created for seleting the new return for extend order
@@ -1280,16 +1220,6 @@ public class AccountPageController extends AbstractSearchPageController
 		return Account.AccountOrderExtendSummaryPage;
 	}
 
-	/**
-	 * To reset the selected dates for extend order
-	 */
-
-	@GetMapping(value = "/resetExtendDate")
-	public String resetExtendRenatalEndDate(final HttpServletRequest request, final HttpServletResponse response, final Model model,
-			final RedirectAttributes redirectModel) {
-
-		return "";
-	}
 
 	@PostMapping(value = "/voucher/apply")
 	public String applyVoucherAction(@Valid final VoucherForm form, final BindingResult bindingResult,
