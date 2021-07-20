@@ -14,6 +14,7 @@ import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
+import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
@@ -21,11 +22,9 @@ import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import de.hybris.platform.servicelayer.keygenerator.KeyGenerator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -117,55 +116,66 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         extendOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED)) {
 
       final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
-      final OrderModel originalOrder = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), extendOrderModel.getCode(),
-          baseStoreModel);
-      if(extendOrderModel.getExtendOrderStatus().getCode().equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode())) {
+      final OrderModel originalOrder = getCustomerAccountService()
+          .getOrderForCode((CustomerModel) getUserService().getCurrentUser(),
+              extendOrderModel.getCode(),
+              baseStoreModel);
+      if (extendOrderModel.getExtendOrderStatus().getCode()
+          .equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode())) {
         extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.COMPLETED);
       }
       getModelService().save(extendOrderModel);
       getModelService().refresh(extendOrderModel);
-      if(CollectionUtils.isNotEmpty(originalOrder.getExtendedOrderCopyList())) {
+      if (CollectionUtils.isNotEmpty(originalOrder.getExtendedOrderCopyList())) {
         final List<AbstractOrderModel> extendOrderModelList = new ArrayList<>(
             originalOrder.getExtendedOrderCopyList());
         extendOrderModelList.add(extendOrderModel);
         originalOrder.setExtendedOrderCopyList(extendOrderModelList);
-      }
-      else {
+      } else {
         final List<AbstractOrderModel> orderModelList = new ArrayList<>();
         orderModelList.add(extendOrderModel);
         originalOrder.setExtendedOrderCopyList(orderModelList);
       }
-        originalOrder.setExtendedOrderCopy(null);
+      originalOrder.setExtendedOrderCopy(null);
 
       getModelService().save(originalOrder);
       getModelService().refresh(originalOrder);
+      updateStockForExtendedOrder(extendOrderModel);
+    }
+    }
 
+    private void updateStockForExtendedOrder(final AbstractOrderModel extendOrderModel) {
       final List<String> allocatedProductCodes = new ArrayList<>();
-      // add in private method
       if(CollectionUtils.isNotEmpty(extendOrderModel.getConsignments())) {
         for (final ConsignmentModel consignmentModel : extendOrderModel.getConsignments()) {
           for (final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
             for (final BlProductModel blProductModel : consignmentEntryModel.getSerialProducts()) {
-              if (blProductModel instanceof BlSerialProductModel && !blProductModel.getProductType()
-                  .equals(ProductTypeEnum.SUBPARTS)) {
-                final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-                allocatedProductCodes.add(blSerialProductModel.getCode());
-              }
+              getAllocatedProductCode(blProductModel , allocatedProductCodes);
             }
           }
         }
       }
+      updateSerialStocks(allocatedProductCodes , extendOrderModel);
+  }
 
-      final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(extendOrderModel,
-          new HashSet<>(allocatedProductCodes));
-
-      if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
-          .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
-        serialStocks.forEach(stock -> stock.setReservedStatus(true));
-        this.getModelService().saveAll(serialStocks);
-      }
-      }
+  private void getAllocatedProductCode(final BlProductModel blProductModel , final List<String> allocatedProductCodes) {
+    if (blProductModel instanceof BlSerialProductModel && !blProductModel.getProductType()
+        .equals(ProductTypeEnum.SUBPARTS)) {
+      final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+      allocatedProductCodes.add(blSerialProductModel.getCode());
     }
+  }
+  private void updateSerialStocks(final List<String> allocatedProductCodes , final AbstractOrderModel extendOrderModel) {
+    final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(extendOrderModel,
+        new HashSet<>(allocatedProductCodes));
+
+    if (CollectionUtils.isNotEmpty(allocatedProductCodes) && serialStocks.stream()
+        .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+      serialStocks.forEach(stock -> stock.setReservedStatus(true));
+      this.getModelService().saveAll(serialStocks);
+    }
+  }
+
 
 
   /**

@@ -15,7 +15,7 @@ public class BlExtendOrderUtils {
 
   private static SessionService sessionService;
 
-  public BlExtendOrderUtils() {
+  private BlExtendOrderUtils() {
     //empty to avoid instantiating utils class
   }
 

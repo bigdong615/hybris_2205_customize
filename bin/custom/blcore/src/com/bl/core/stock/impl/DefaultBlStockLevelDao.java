@@ -151,7 +151,7 @@ public class DefaultBlStockLevelDao extends DefaultStockLevelDao implements BlSt
 
 		addQueryParameter(startDay, endDay, fQuery);
 
-		final SearchResult result = getFlexibleSearchService().search(fQuery);
+		final SearchResult result = getFlexibleSearchService().search(fQuery); // NOSONAR
 		final List<StockLevelModel> stockLevels = result.getResult();
 		if (CollectionUtils.isEmpty(stockLevels))
 		{

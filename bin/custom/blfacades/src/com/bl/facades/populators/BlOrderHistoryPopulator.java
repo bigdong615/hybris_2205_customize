@@ -1,15 +1,11 @@
 package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
-import com.bl.core.jalo.BlSerialProduct;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.fasterxml.jackson.databind.util.Converter;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderHistoryPopulator;
-import de.hybris.platform.commercefacades.order.data.OrderData;
-import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoryData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -20,7 +16,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.util.Assert;
@@ -47,7 +42,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     target.setStatusDisplay(source.getStatusDisplay());
     if (source.getTotalPrice() != null)
     {
-      BigDecimal totalPrice = BigDecimal.valueOf(source.getTotalPrice());
+      final BigDecimal totalPrice = BigDecimal.valueOf(source.getTotalPrice());
       target.setTotal(getPriceDataFactory().create(PriceDataType.BUY, totalPrice, source.getCurrency()));
     }
 
@@ -64,7 +59,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
      for (AbstractOrderEntryModel abstractOrderEntryModel : source.getEntries()) {
        final ProductModel product = abstractOrderEntryModel.getProduct();
        if(product instanceof BlSerialProductModel) {
-         BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
+         final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
          productQtyAndName.add(abstractOrderEntryModel.getQuantity() + " x " + productModel.getName());
        }
      }
@@ -96,7 +91,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
           && orderModelList.get(size - 1).getPk()
           .equals(extendOrder.getPk())) {
         orderData.setRentalEndDate(convertDateToString(extendOrder.getRentalEndDate()));
-        BigDecimal totalPrice = BigDecimal.valueOf(extendOrder.getTotalPrice());
+        final BigDecimal totalPrice = BigDecimal.valueOf(extendOrder.getTotalPrice());
         orderData.setTotal(getPriceDataFactory().create(PriceDataType.BUY, totalPrice, extendOrder.getCurrency()));
       }
     }

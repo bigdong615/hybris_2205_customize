@@ -35,6 +35,13 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String COMMA_SEPERATER =",";
   public static final String REMOVE_ENTRIES = "removedEntries";
   public static final String ROUND_TRIP = "Round Trip";
+  public static final String START_DATE_PATTERN = "MM/dd/yyyy";
+  public static final String END_DATE_PATTERN = "EE MMM dd yyyy";
+  public static final String ORDER_FORMAT_PATTERN = "MMM d , YYYY hh:mm a";
+  public static final String EXTEND_ORDER_FORMAT_PATTERN = "MMM d , YYYY";
+  public static final String EXTEND_ORDER_FORMAT_PATTERN_FOR_JS = "yyyy ,MM, dd";
+  public static final String DAYS = "days";
+  public static final String EMPTY = "";
 
 
   private BlFacadesConstants() {

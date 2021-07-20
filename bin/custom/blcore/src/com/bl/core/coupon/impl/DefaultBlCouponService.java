@@ -16,10 +16,10 @@ import org.apache.commons.lang.BooleanUtils;
  * This class is created to customize when coupon is applied from exend rental page
  * @author Manikandan
  */
-public class DefaultBlCouponService  extends DefaultCouponService implements BlCouponService {
+public class DefaultBlCouponService extends DefaultCouponService implements BlCouponService {
 
     /**
-    * This method created for customing coupon code for extend order
+    * This method created for customize coupon code for extend order
     */
   public CouponResponse redeemCouponForExtendOrder(final String couponCode, final OrderModel orderModel) {
     ServicesUtil.validateParameterNotNullStandardMessage("couponCode", couponCode);

@@ -20,7 +20,6 @@ import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
-import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
@@ -70,16 +69,12 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
-import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -184,7 +179,7 @@ public class AccountPageController extends AbstractSearchPageController
 	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
 
-	final String CLIENT_TOKEN = "client_token";
+
 	private static final Logger LOG = Logger.getLogger(AccountPageController.class);
 
 	@Resource(name = "acceleratorCheckoutFacade")
@@ -369,7 +364,7 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-	@RequestMapping(value = "/orders", method = RequestMethod.GET)
+	@GetMapping(value = "/orders")
 	@RequireHardLogIn
 	public String orders(@RequestParam(value = "page", defaultValue = "0") final int page,
 			@RequestParam(value = "show", defaultValue = "Page") final ShowMode showMode,
@@ -388,7 +383,7 @@ public class AccountPageController extends AbstractSearchPageController
 		return getViewForPage(model);
 	}
 
-	@RequestMapping(value = "/order/" + ORDER_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.GET)
+	@GetMapping(value = "/order/" + ORDER_CODE_PATH_VARIABLE_PATTERN)
 	@RequireHardLogIn
 	public String order(@PathVariable("orderCode") final String orderCode, final Model model,
 			final RedirectAttributes redirectModel) throws CMSItemNotFoundException
@@ -396,7 +391,7 @@ public class AccountPageController extends AbstractSearchPageController
 		try
 		{
 			final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
-			model.addAttribute("orderData", orderDetails);
+			model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 
 			final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
 			breadcrumbs.add(new Breadcrumb("/my-account/orders",
@@ -408,7 +403,7 @@ public class AccountPageController extends AbstractSearchPageController
 		}
 		catch (final UnknownIdentifierException e)
 		{
-			LOG.warn("Attempted to load a order that does not exist or is not visible", e);
+			BlLogger.logMessage(LOG, Level.ERROR , "Attempted to load a order that does not exist or is not visible", e);
 			GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "system.error.page.not.found", null);
 			return REDIRECT_TO_ORDER_HISTORY_PAGE;
 		}
@@ -416,13 +411,13 @@ public class AccountPageController extends AbstractSearchPageController
 		storeCmsPageInModel(model, orderDetailPage);
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		setUpMetaDataForContentPage(model, orderDetailPage);
-		model.addAttribute("pageType" , "orderDetails");
+		model.addAttribute(BlControllerConstants.PAGE_TYPE, BlControllerConstants.ORDER_DETAILS);
 		if(null != blCartService.getSessionCart() && CollectionUtils.isNotEmpty(blCartService.getSessionCart().getEntries())) {
-			model.addAttribute("isUsedGearCartActive",
+			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE,
 					BooleanUtils.isFalse(blCartService.getSessionCart().getIsRentalCart()));
 		}
 		else {
-			model.addAttribute("isUsedGearCartActive", false);
+			model.addAttribute(BlControllerConstants.IS_USED_GEAR_CART_ACTIVE, false);
 		}
 		return getViewForPage(model);
 	}
@@ -1159,14 +1154,13 @@ public class AccountPageController extends AbstractSearchPageController
 		  if(StringUtils.isNotEmpty(orderCode)) {
 			isAddProductToCartAllowed = blOrderFacade.addToCartAllOrderEnrties(orderCode, pModel);
 			if(BooleanUtils.isTrue(isAddProductToCartAllowed)) {
-				pModel.addAttribute("isfromExtendOrder" , true);
 				return BlControllerConstants.REDIRECT_CART_URL;
 			}
 			else {
-				return "/my-account/order/"+ orderCode;
+				return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_ORDER + orderCode;
 			}
 		}
-		 return "/my-account/order/"+ orderCode;
+		 return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_ORDER + orderCode;
 	}
 
 	/**
@@ -1185,7 +1179,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 		final OrderData orderDetails = blOrderFacade.getOrderDetailsForCode(orderCode);
 		orderDetails.setIsExtendOrderPage(true);
-		model.addAttribute("orderData", orderDetails);
+		model.addAttribute(BlControllerConstants.ORDER_DATA, orderDetails);
 		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
 		setupAdditionalFields(model); //Add braintree detils
 		final ContentPageModel extendOrderDetailPage = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_DETAILS);
@@ -1207,7 +1201,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 		final OrderData orderData = blOrderFacade.setRentalExtendOrderDetails(orderCode , orderEndDate, selectedEndDate);
 
-		model.addAttribute("orderData" , orderData);
+		model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
 
 		if (!model.containsAttribute(BlControllerConstants.VOUCHER_FORM))
 		{
@@ -1280,7 +1274,7 @@ public class AccountPageController extends AbstractSearchPageController
 			BlLogger.logMessage(LOG , Level.ERROR , "[ExtendOrderController] Error during token generation!" , exception);
 		}
 
-		model.addAttribute(CLIENT_TOKEN, clientToken);
+		model.addAttribute(BlControllerConstants.CLIENT_TOKEN, clientToken);
 	}
 
 	/**
@@ -1292,8 +1286,8 @@ public class AccountPageController extends AbstractSearchPageController
 			final HttpServletRequest request, final HttpServletResponse response, final Model model)
 			throws CMSItemNotFoundException {
 
-		String paymentInfoId = request.getParameter("paymentId");
-		String paymentMethodNonce = request.getParameter("paymentNonce");
+		String paymentInfoId = request.getParameter(BlControllerConstants.PAYMENT_ID);
+		String paymentMethodNonce = request.getParameter(BlControllerConstants.PAYMENT_NONCE);
 
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
@@ -1302,7 +1296,8 @@ public class AccountPageController extends AbstractSearchPageController
 			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 
 			if(null != orderModel) {
-				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+				// Needs to uncomment below code once Payment related PR merged
+				/*final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
 						.getBrainTreePaymentInfoForCode(
 								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
 				if(null != paymentInfo) {
@@ -1310,13 +1305,13 @@ public class AccountPageController extends AbstractSearchPageController
 					isSuccess = brainTreeTransactionService
 							.createAuthorizationTransactionOfOrder(orderModel,
 									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
-				}
+				}*/
 			}
 
 			if(isSuccess) {
 				blOrderFacade.updateOrderExtendDetails(orderModel); //to update extend order details to DB
 				final OrderData extendOrderData = blOrderFacade.getExtendedOrderDetailsFromOrderCode(orderCode);
-				model.addAttribute("extendOrderData", extendOrderData);
+				model.addAttribute(BlControllerConstants.EXTEND_ORDER_DATA, extendOrderData);
 				final ContentPageModel extendOrderConfirmation = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_CONFIRMATION);
 				storeCmsPageInModel(model, extendOrderConfirmation);
 				model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
@@ -1325,7 +1320,7 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 
 		}
-			return REDIRECT_PREFIX + "/my-account/extendRent/"+ orderCode;
+			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
 	}
 
 	}

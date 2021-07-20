@@ -4,6 +4,8 @@ import com.bl.core.order.impl.DefaultBlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService;
 import com.bl.core.utils.BlDateTimeUtils;
+import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
@@ -23,6 +25,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This populatar created to populate custom attributes for extend rental page
@@ -30,6 +34,8 @@ import java.util.Date;
  */
 public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderModel, TARGET extends OrderData> implements
     Populator<SOURCE, TARGET> {
+
+  private static final Logger LOG = Logger.getLogger(BlExtendRentalOrderDetailsPopulator.class);
 
   private PriceDataFactory priceDataFactory;
   private BlCommercePriceService commercePriceService;
@@ -59,7 +65,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
                AutoApplyMode.APPLY_ALL, AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
          }
        } catch (CalculationException e) {
-         e.printStackTrace();
+         BlLogger.logMessage(LOG , Level.ERROR , "Error while calculating" + orderModel.getCode() , e);
        }
 
        target.setCode(orderModel.getCode());
@@ -79,7 +85,8 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
 
      //To set customer Mail
     target.setCustomerMail(orderModel.getUser().getUid());
-    target.setExtendOrderConfirmationDate(convertDateToString(orderModel.getRentalEndDate() , "MMM d , YYYY"));
+    target.setExtendOrderConfirmationDate(convertDateToString(orderModel.getRentalEndDate() ,
+        BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
 
   }
 
@@ -157,7 +164,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
 
   protected Collection<PromotionGroupModel> getPromotionGroups()
   {
-    final Collection<PromotionGroupModel> promotionGroupModels = new ArrayList<PromotionGroupModel>();
+    final Collection<PromotionGroupModel> promotionGroupModels = new ArrayList<>();
     if (getBaseSiteService().getCurrentBaseSite() != null
         && getBaseSiteService().getCurrentBaseSite().getDefaultPromotionGroup() != null)
     {
