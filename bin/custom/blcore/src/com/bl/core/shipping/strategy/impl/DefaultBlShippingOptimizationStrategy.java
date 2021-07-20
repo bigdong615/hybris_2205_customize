@@ -8,6 +8,7 @@ import com.bl.core.enums.AddressTypeEnum;
 import com.bl.core.enums.CarrierEnum;
 import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.enums.OptimizedShippingTypeEnum;
+import com.bl.core.model.OptimizedShippingMethodModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
 import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.core.stock.BlCommerceStockService;
@@ -188,7 +189,7 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             return getOptimizedShippingMethod(consignmentModel, BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder()
                             .getRentalStartDate(), BlCoreConstants.DATE_FORMAT),
                     BlDateTimeUtils.convertDateToStringDate(consignmentModel.getOrder().getRentalEndDate(), BlCoreConstants.DATE_FORMAT),
-                    result, consignmentModel.getOptimizedShippingMethod(),
+                    result, consignmentModel.getOptimizedShippingType(),
                     getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()), getWarehouseCode(consignmentModel.getWarehouse()),
                     getAddressZip(consignmentModel.getShippingAddress()));
         }
@@ -210,13 +211,13 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      */
     private boolean getOptimizedShippingMethod(final ConsignmentModel consignmentModel, final String rentalStartDate,
                                                final String rentalEndDate, final int result,
-                                               final OptimizedShippingMethodEnum optimizedShippingMethodEnum, final int carrierId,
+                                               final OptimizedShippingMethodModel optimizedShippingMethodEnum, final int carrierId,
                                                final int warehouseCode, final String addressZip) {
-        if (optimizedShippingMethodEnum.equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND)) {
+        if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode())) {
             return checkTwoDayGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
-        } else if (optimizedShippingMethodEnum.equals(OptimizedShippingMethodEnum.TWO_DAY_GROUND)) {
+        } else if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.TWO_DAY_GROUND.getCode())) {
             return checkOvernightGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
-        } else if (optimizedShippingMethodEnum.equals(OptimizedShippingMethodEnum.ONE_DAY_GROUND)) {
+        } else if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode())) {
             if (result == BlInventoryScanLoggingConstants.ZERO) {
                 setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
                         consignmentModel.getOrder().getRentalEndDate(), OptimizedShippingMethodEnum.DEFAULT);
@@ -225,8 +226,8 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                 return result == BlInventoryScanLoggingConstants.ONE ? checkNextDayAir(consignmentModel, rentalStartDate,
                         rentalEndDate) : checkTwoDayAir(consignmentModel, rentalStartDate, rentalEndDate);
             }
-        } else if (optimizedShippingMethodEnum.equals(OptimizedShippingMethodEnum.TWO_DAY_AIR) ||
-                optimizedShippingMethodEnum.equals(OptimizedShippingMethodEnum.TWO_DAY_AIR_AM)) {
+        } else if (optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.TWO_DAY_AIR.getCode()) ||
+                optimizedShippingMethodEnum.getCode().equals(OptimizedShippingMethodEnum.TWO_DAY_AIR_AM.getCode())) {
             return checkNextDayAir(consignmentModel, rentalStartDate, rentalEndDate);
         } else {
             setOptimizedDetailsOnConsignment(consignmentModel, result, consignmentModel.getOrder().getRentalStartDate(),
@@ -422,12 +423,17 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
         consignmentModel.setOptimizedShippingEndDate(optimizedEndDate);
         if (result != BlInventoryScanLoggingConstants.ZERO) {
             final OptimizedShippingTypeEnum optimizedShippingType = checkConsignmentShippingType(consignmentModel, result);
-            if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
-                consignmentModel.setOptimizedShippingMethod(OptimizedShippingMethodEnum.ONE_DAY_GROUND);
-            } else {
-                consignmentModel.setOptimizedShippingMethod(optimizedShippingMethod);
+            if(optimizedShippingType != null) {
+                if (OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.equals(optimizedShippingType)) {
+                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                            OptimizedShippingMethodEnum.ONE_DAY_GROUND.getCode()));
+                } else {
+                    consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                            optimizedShippingMethod.getCode()));
+                }
+                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
+                        optimizedShippingType.getCode()));
             }
-            consignmentModel.setOptimizedShippingType(optimizedShippingType);
         } else {
             consignmentModel.setOptimizedShippingType(null);
         }

@@ -321,4 +321,13 @@ public interface BlDeliveryModeService {
      * @return Collection<ConsignmentModel>
      */
     Collection<ConsignmentModel> getAllGroundedConsignments();
+
+    /**
+     * javadoc
+     * this method will return optimized shipping method model from dao
+     *
+     * @param code value
+     * @return model
+     */
+    OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
 }

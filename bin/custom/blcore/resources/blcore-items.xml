@@ -1176,8 +1176,7 @@
                         <description>To store cosmetic rating data</description>
                         <custom-properties>
                             <property name="description">
-                                <value>"[Rating 1 -> Very Poor] [Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 ->
-                                    Good] [Rating 5 -> Very Good]"
+                                <value>"[Rating 1 -> Very Poor] [Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"
                                 </value>
                             </property>
                         </custom-properties>
@@ -1190,8 +1189,7 @@
                         <description>To store functional rating data</description>
                         <custom-properties>
                             <property name="description">
-                                <value>"[Rating 1 -> Very Poor] [Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 ->
-                                    Good] [Rating 5 -> Very Good]"
+                                <value>"[Rating 1 -> Very Poor] [Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"
                                 </value>
                             </property>
                         </custom-properties>

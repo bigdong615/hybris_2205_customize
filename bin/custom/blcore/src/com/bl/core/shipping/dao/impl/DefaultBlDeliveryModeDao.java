@@ -5,6 +5,7 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.*;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.daos.impl.DefaultZoneDeliveryModeDao;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -317,8 +318,21 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
         return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OptimizedShippingMethodModel getOptimizedShippingMethod(final String code) {
+        final String barcodeList = "select {pk} from {OptimizedShippingMethod} where {code} = ?code";
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("code", code);
+        final Collection<OptimizedShippingMethodModel> results = getFlexibleSearchService().<OptimizedShippingMethodModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIPPING_OPTIMIZATION);
+        return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
+    }
 
-   /**
+
+    /**
     * This method is used to fetch ShipToHomeDeliveryMode data.
     * @param mode
     * @return

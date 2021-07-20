@@ -1,5 +1,7 @@
 package com.bl.core.shipping.service.impl;
 
+import com.bl.core.model.*;
+import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
@@ -44,12 +46,6 @@ import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.data.StockResult;
 import com.bl.core.enums.CarrierEnum;
-import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.model.BlRushDeliveryModeModel;
-import com.bl.core.model.PartnerPickUpStoreModel;
-import com.bl.core.model.ShippingCostModel;
-import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.services.cart.BlCartService;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
 import com.bl.core.shipping.service.BlDeliveryModeService;
@@ -753,6 +749,14 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
                 BlDeliveryModeLoggingConstants.ZONE_PST, BlDateTimeUtils.getStringToDateWithTimeZone(BlDateTimeUtils.getYesterdayDate(),
                         BlDeliveryModeLoggingConstants.ZONE_PST)) ,BlDateTimeUtils.getCurrentDateUsingCalendar(
                                 BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OptimizedShippingMethodModel getOptimizedShippingMethod(final String code) {
+        return getBlZoneDeliveryModeDao().getOptimizedShippingMethod(code);
     }
 
     /**
