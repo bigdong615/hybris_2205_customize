@@ -42,6 +42,11 @@
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
 	        <value code="ADDED_TO_CART" />
+	        <value code="PARTIALLY_UNBOXED" />
+            <value code="UNBOXED" />
+	        <value code="RECEIVED_OR_RETURNED" />
+	        <value code="REPAIR_NEEDED" />
+	        <value code="PARTS_NEEDED" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -165,6 +170,23 @@
       <enumtype generate="true" code="ExtendOrderStatusEnum" autocreate="true" dynamic="true">
         <value code="PROCESSING"/>
         <value code="COMPLETED"/>
+      </enumtype>
+      
+      <!-- BL-798 : Adding repair reason enum to set by Tech. Eng. Team Member -->
+      <enumtype generate="true" code="RepairReasonsEnum" autocreate="true" dynamic="true">
+      	<value code="NONE"/>
+      	<value code="OTHERS"/>
+      </enumtype>
+      
+      <!-- Extend the ConsignmentStatus with values used during OMS Process -->
+      <enumtype generate="true" code="ConsignmentStatus" autocreate="false" dynamic="true">
+      	<value code="COMPLETED" />
+      	<value code="INCOMPLETE" />
+      	<value code="INCOMPLETE_ITEMS_IN_REPAIR" />
+      	<value code="INCOMPLETE_MISSING_ITEMS" />
+      	<value code="INCOMPLETE_MISSING_AND_BROKEN_ITEMS" />
+      	<value code="INCOMPLETE_RECOVERED" />
+      	<value code="MANUAL_REVIEW" />
       </enumtype>
 
 	  </enumtypes>
@@ -1129,6 +1151,28 @@
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>To determine if the Gear is Rated by Tech. Eng. Member</description>
                     </attribute>
+                    <attribute qualifier="repairReasons" type="RepairReasonsEnum">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("RepairReasonsEnum", "NONE")</defaultvalue>
+                         <description>Determines what type of repair is required</description>
+                     </attribute>
+                     <attribute qualifier="otherRepairReasons" type="java.lang.String">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true" />
+                         <description>Tech Eng. Team member can specify the reason, if not present in repair reasons dropdown</description>
+                     </attribute>
+                     <attribute qualifier="dirtyPriorityStatus" type="boolean">
+                         <persistence type="property" />
+                         <modifiers read="true" write="true" optional="true" search="true"/>
+                         <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                         <description>If this item will IN and OUT on same day then DirtyPriorityStatus to be TRUE</description>
+                     </attribute>
+                     <attribute qualifier="associatedConsignment" type="Consignment">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated consignment on serial</description>
+                     </attribute>
                  </attributes>
              </itemtype>
 
@@ -2331,7 +2375,7 @@
               <persistence type="property"/>
             </attribute>
             <attribute qualifier="userID" type="java.lang.String">
-              <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+              <modifiers read="true" write="true" search="true" optional="true" initial="true"/>
               <description>contain the userID who created that note.</description>
               <persistence type="property"/>
             </attribute>

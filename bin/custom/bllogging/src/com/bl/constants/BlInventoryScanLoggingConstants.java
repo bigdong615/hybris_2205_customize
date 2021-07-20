@@ -10,8 +10,8 @@ import java.util.List;
  * Scanning specific response messages
  */
 public class BlInventoryScanLoggingConstants {
-    
-    public static final int ZERO = 0;
+
+	public static final int ZERO = 0;
     public static final double ZERO_FIVE = 0.5;
     public static final int ONE = 1;
     public static final int TWO = 2;
@@ -74,6 +74,34 @@ public class BlInventoryScanLoggingConstants {
     public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
     
     public static final String TECH_ENG_NOTIFICATION_HANDLER = "techEngSanToolNotification";
+    public static final String TECH_ENGINEERING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
+    public static final String VIP_WORKSTATION_TECH_ENG = "VIP_WORKSTATION_TECH_ENG";
+    public static final String CLEAN_PRIORITY_GEAR_CART = "CLEAN_PRIORITY_GEAR_CART";
+    public static final String CLEAN_GEAR_MOBILE_CART = "CLEAN_GEAR_MOBILE_CART";
+    public static final String REPAIR_SHELF = "REPAIR_SHELF";
+    public static final String MISSING_BARCODE_ITEMS = "MISSING_BARCODE_ITEMS";
+    public static final String SOMETHING_WENT_WRONG = "SOMETHING_WENT_WRONG";
+    public static final String WRONG_ITEM_CLEAN_CART = "WRONG_ITEM_CLEAN_CART";
+    public static final String WRONG_ITEM_CLEAN_PRIORITY_CART = "WRONG_ITEM_CLEAN_PRIORITY_CART";
+    public static final String SUCCESS = "SUCCESS";
+    public static final String LOG_SOMETHING_WENT_WRONG = "SOMETHING WENT WRONG";
+    public static final String SCAN_ERROR_FAILURE = "somethingWentWrong";
+    public static final String WRONG_CLEAN_CART_LOCATION = "Should Move To Clean Priority Cart";
+    public static final String CLEAN_CART_SCAN_ERROR_FAILURE = "cleanCartScanError";
+    public static final String WRONG_CLEAN_PRIORITY_CART_LOCATION = "Should Move To Clean Cart";
+    public static final String CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE = "cleanPriorityCartScanError";
+    public static final String CAR = "CAR";
+    public static final String MAR = "MAR";
+    public static final String CAM = "CAM";
+    public static final String MAM = "MAM";
+    public static final String CLEAN_FRONT_DESK_CART = "CLEAN_FRONT_DESK_CART";
+    public static final String CLEAN_GEAR_AISLE_IN_CAGE = "CLEAN_GEAR_AISLE_IN_CAGE";
+    public static final String CLEAN_GEAR_CAGE = "CLEAN_GEAR_CAGE";
+    public static final String CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART = "CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART";
+    public static final String CLEAN_GEAR_SHIPPING_MOBILE_CART = "CLEAN_GEAR_SHIPPING_MOBILE_CART";
+    public static final String CLEAN_MOBILE_LAUNDRY_BIN = "CLEAN_MOBILE_LAUNDRY_BIN";
+    public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
+    public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
 
     private BlInventoryScanLoggingConstants() { }
 
@@ -97,14 +125,95 @@ public class BlInventoryScanLoggingConstants {
     }
     
     /**
-    * Gets the default tech eng location Initials.
+    * Gets all the tech eng location Initials.
     *
     * @return the list of  default tech eng location
     */
    public static List<String> getDefaultTechEngLocation() {
       List<String> defaultLocations = new ArrayList<>();
+
       defaultLocations.add(MAW);
-      defaultLocations.add(CAW);      
+      defaultLocations.add(CAW);
+      defaultLocations.add(MAR);
+      defaultLocations.add(MA);
+      defaultLocations.add(MAM);
+      defaultLocations.add(CAM);
+      defaultLocations.add(CAR);
+      defaultLocations.add(BIN);
+      
       return defaultLocations;
   }
+   
+   /**
+	 * Gets all the tech eng allowed locations.
+	 *
+	 * @return the tech eng allowed locations
+	 */
+	public static List<String> getTechEngAllowedLocations()
+	{
+		final List<String> defaultLocations = new ArrayList<>();
+		defaultLocations.addAll(getTechEngWorkStationLocations());
+		defaultLocations.addAll(getTechEngCleanCartLocations());
+		defaultLocations.addAll(getTechEngCleanPriorityCartLocations());
+		defaultLocations.addAll(getTechEngRepairLocations());
+
+		return defaultLocations;
+	}
+
+	/**
+	 * Gets the tech eng work station locations.
+	 *
+	 * @return the tech eng work station locations
+	 */
+	public static List<String> getTechEngWorkStationLocations()
+	{
+		final List<String> workStationLocations = new ArrayList<>();
+		workStationLocations.add(TECH_ENGINEERING_WORKSTATION);
+		workStationLocations.add(VIP_WORKSTATION_TECH_ENG);
+		return workStationLocations;
+	}
+
+	/**
+	 * Gets the tech eng clean cart locations.
+	 *
+	 * @return the tech eng clean cart locations
+	 */
+	public static List<String> getTechEngCleanCartLocations()
+	{
+		final List<String> cleanCartLocations = new ArrayList<>();
+		cleanCartLocations.add(CLEAN_FRONT_DESK_CART);
+		cleanCartLocations.add(CLEAN_GEAR_AISLE_IN_CAGE);
+		cleanCartLocations.add(CLEAN_GEAR_CAGE);
+		cleanCartLocations.add(CLEAN_GEAR_MOBILE_CART);
+		cleanCartLocations.add(CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART);
+		cleanCartLocations.add(CLEAN_GEAR_SHIPPING_MOBILE_CART);
+		cleanCartLocations.add(CLEAN_MOBILE_LAUNDRY_BIN);
+		return cleanCartLocations;
+	}
+
+	/**
+	 * Gets the tech eng clean priority cart locations.
+	 *
+	 * @return the tech eng clean priority cart locations
+	 */
+	public static List<String> getTechEngCleanPriorityCartLocations()
+	{
+		final List<String> cleanPriorityCartLocations = new ArrayList<>();
+		cleanPriorityCartLocations.add(CLEAN_PRIORITY_GEAR_CART);
+		cleanPriorityCartLocations.add(CLEAN_PRIORITY_MOBILE_CART);
+		cleanPriorityCartLocations.add(VIP_CLEAN_PRIORITY_GEAR);
+		return cleanPriorityCartLocations;
+	}
+
+	/**
+	 * Gets the tech eng repair locations.
+	 *
+	 * @return the tech eng repair locations
+	 */
+	public static List<String> getTechEngRepairLocations()
+	{
+		final List<String> repairLocations = new ArrayList<>();
+		repairLocations.add(REPAIR_SHELF);
+		return repairLocations;
+	}
 }

@@ -8,9 +8,13 @@ import com.bl.core.model.BlInventoryLocationScanHistoryModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,26 +167,52 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         final BlSerialProductModel blSerialProduct = blSerialProducts.stream()
                 .filter(p -> p.getBarcode().equals(iteratorBarcode)).findFirst().orElse(null);
         if (blSerialProduct != null) {
-            final BlInventoryLocationModel blInventoryLocationLocal = getBlInventoryLocation();
-            blSerialProduct.setOcLocation(blInventoryLocationLocal.getCode());
-            blSerialProduct.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null ?
-                    blInventoryLocationLocal.getParentInventoryLocation().getCode() : null);
-            blSerialProduct.setOcLocationDetails(blInventoryLocationLocal);
-            modelService.save(blSerialProduct);
-            modelService.refresh(blSerialProduct);
-
-            /* Scan History Entry*/
-            final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService.create(BlInventoryLocationScanHistoryModel.class);
-            blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
-            blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
-            blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);
-            blInventoryLocationScanHistory.setScanTime(new Date());
-            modelService.save(blInventoryLocationScanHistory);
-            modelService.refresh(blInventoryLocationScanHistory);
+      	  final BlInventoryLocationModel blInventoryLocationLocal = getBlInventoryLocation();
+            updateLocationOnItem(blSerialProduct, blInventoryLocationLocal);     
         } else {
             failedBarcodeList.add(iteratorBarcode);
         }
     }
+
+    /**
+ 	 * Update location on item.
+ 	 *
+ 	 * @param blSerialProduct
+ 	 *           the bl serial product
+ 	 * @param blInventoryLocationLocal
+ 	 *           the bl inventory location local
+ 	 */
+ 	private void updateLocationOnItem(final BlSerialProductModel blSerialProduct,
+ 			final BlInventoryLocationModel blInventoryLocationLocal)
+ 	{
+ 		blSerialProduct.setOcLocation(blInventoryLocationLocal.getCode());
+ 		blSerialProduct.setLastLocationScanParent(blInventoryLocationLocal.getParentInventoryLocation() != null
+ 				? blInventoryLocationLocal.getParentInventoryLocation().getCode()
+ 				: null);
+ 		blSerialProduct.setOcLocationDetails(blInventoryLocationLocal);
+ 		modelService.save(blSerialProduct);
+ 		modelService.refresh(blSerialProduct);
+ 		/* Scan History Entry */
+ 		setBlLocationScanHistory(blSerialProduct);
+ 	}
+
+ 	/**
+ 	 * Sets the Location scan history.
+ 	 *
+ 	 * @param blSerialProduct
+ 	 *           the new bl location scan history
+ 	 */
+ 	private void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct)
+ 	{
+ 		final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService
+ 				.create(BlInventoryLocationScanHistoryModel.class);
+ 		blInventoryLocationScanHistory.setSerialProduct(blSerialProduct);
+ 		blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
+ 		blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);
+ 		blInventoryLocationScanHistory.setScanTime(new Date());
+ 		modelService.save(blInventoryLocationScanHistory);
+ 		modelService.refresh(blInventoryLocationScanHistory);
+ 	}
     
     /**
      * {@inheritDoc}
@@ -203,8 +233,95 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
      * {@inheritDoc}
      */
     @Override
-    public List<String> doTechEngSerialLocationUpdate(final List<String> barcodes) {
-   	 return getFailedBarcodeList(barcodes);
+    public Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes) {   	 
+   	 final BlInventoryLocationModel techEngLocation = getBlInventoryLocation();
+   	 if(Objects.nonNull(techEngLocation) && Objects.nonNull(techEngLocation.getLocationCategory())) {
+   		 final String locationCategoryCode = techEngLocation.getLocationCategory().getCode();
+   		 if(BlInventoryScanLoggingConstants.getTechEngWorkStationLocations().contains(locationCategoryCode)) {
+   			 return doUpdateLocation(barcodes);
+      	 }
+   		 else if(BlInventoryScanLoggingConstants.getTechEngCleanCartLocations().contains(locationCategoryCode)) {
+   			 return updateCleanCartLocation(barcodes, techEngLocation);
+   		 }
+   		 else if(BlInventoryScanLoggingConstants.getTechEngCleanPriorityCartLocations().contains(locationCategoryCode)) {
+   			 return updateCleanPriorityCartLocation(barcodes, techEngLocation);
+   		 }
+   		 else if(BlInventoryScanLoggingConstants.getTechEngRepairLocations().contains(locationCategoryCode)) {
+   			 return doUpdateLocation(barcodes);
+   		 }
+   	 }
+   	 return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.SOMETHING_WENT_WRONG,barcodes));
+    }
+
+	/**
+	 * Do update location on items.
+	 *
+	 * @param barcodes the barcodes
+	 * @return the map
+	 */
+	private Map<String, List<String>> doUpdateLocation(final List<String> barcodes)
+	{
+		final List<String> failedBarcodeList = getFailedBarcodeList(barcodes);
+		 return Maps.newHashMap(
+				 CollectionUtils.isNotEmpty(failedBarcodeList) 
+				 	? ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,failedBarcodeList)
+				 			: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS,Collections.emptyList()));
+	}
+    
+    /**
+     * Update clean cart location of item.
+     *
+     * @param barcodes the barcodes
+     * @param blCleanCartLocation the bl clean cart location
+     * @return the map
+     */
+    private Map<String,List<String>> updateCleanCartLocation(final List<String> barcodes, final BlInventoryLocationModel blCleanCartLocation){
+   	 final List<String> failedBarcodeList = new ArrayList<>();
+       final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+       final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+       if(blSerialProducts.size() == subList.size()) {
+      	 blSerialProducts.forEach(serial -> {
+      		 if(BooleanUtils.isFalse(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial 
+      			 updateLocationOnItem(serial, blCleanCartLocation);
+             }
+             else {
+            	 failedBarcodeList.add(serial.getBarcode());
+             }
+      	 });
+      	 return Maps.newHashMap(
+					 CollectionUtils.isNotEmpty(failedBarcodeList) 
+					 	? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART,failedBarcodeList)
+					 			: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS,Collections.emptyList()));
+       }   	 
+   	 return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,barcodes));
+    }
+    
+    /**
+     * Update clean priority cart location of item.
+     *
+     * @param barcodes the barcodes
+     * @param blCleanCartLocation the bl clean cart location
+     * @return the map
+     */
+    private Map<String,List<String>> updateCleanPriorityCartLocation(final List<String> barcodes, final BlInventoryLocationModel blCleanCartLocation){
+   	 final List<String> failedBarcodeList = new ArrayList<>();
+       final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+       final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+       if(blSerialProducts.size() == subList.size()) {
+      	 blSerialProducts.forEach(serial -> {
+      		 if(BooleanUtils.isTrue(serial.isDirtyPriorityStatus())) { // check for dirtycart flag on serial 
+      			 updateLocationOnItem(serial, blCleanCartLocation);
+             }
+             else {
+            	 failedBarcodeList.add(serial.getBarcode());
+             }
+      	 });
+      	 return Maps.newHashMap(
+					 CollectionUtils.isNotEmpty(failedBarcodeList) 
+					 	? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART,failedBarcodeList)
+					 			: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS,Collections.emptyList()));
+       }   	 
+   	 return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,barcodes));
     }
 
     public BlInventoryLocationModel getBlInventoryLocation() {

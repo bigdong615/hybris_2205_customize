@@ -198,6 +198,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String ZERO_RATING = "0";
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
+	
+	public static final int STATUS_LIST_SIZE_ONE = 1;
+	public static final int STATUS_LIST_SIZE_TWO = 2;
+	public static final int STATUS_LIST_SIZE_THREE = 3;
 
 	private BlCoreConstants()
 	{

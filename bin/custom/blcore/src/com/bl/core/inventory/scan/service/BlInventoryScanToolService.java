@@ -5,6 +5,7 @@ import com.bl.core.model.BlSerialProductModel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {javadoc}
@@ -71,5 +72,5 @@ public interface BlInventoryScanToolService {
      * @param barcodes the barcodes
      * @return the map
      */
-    List<String> doTechEngSerialLocationUpdate(final List<String> barcodes);
+    Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
 }
