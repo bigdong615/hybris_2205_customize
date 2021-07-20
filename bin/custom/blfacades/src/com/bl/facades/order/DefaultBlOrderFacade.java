@@ -171,7 +171,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     parameter.setIsFromRentAgainPage(true);
     parameter.setIsDamageWaiverProSelected(abstractOrderEntryModel.getGearGuardProFullWaiverSelected());
     parameter.setIsDamageWaiverSelected(abstractOrderEntryModel.getGearGuardWaiverSelected());
-    parameter.setIsNODamageWaiverSelected(abstractOrderEntryModel.getNoDamageWaiverSelected());
+    parameter.setIsNoDamageWaiverSelected(abstractOrderEntryModel.getNoDamageWaiverSelected());
   }
 
   /**
