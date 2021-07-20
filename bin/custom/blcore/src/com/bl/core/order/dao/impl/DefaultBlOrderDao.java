@@ -27,9 +27,6 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 	private static final String GET_ORDERS_FOR_AUTHORIZATION_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
 			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.ISAUTHORISED + "} = ?isAuthorized ";
 
-	private static final String GET_ORDERS_BY_CODE_QUERY = "SELECT {" + ItemModel.PK + "} FROM {"
-			+ OrderModel._TYPECODE + " AS o} WHERE {o:" + AbstractOrderModel.CODE + "} = ?code ";
-
 	/**
  	* {@inheritDoc}
  	*/
@@ -46,26 +43,6 @@ public class DefaultBlOrderDao extends DefaultOrderDao implements BlOrderDao
 			return Collections.emptyList();
 		}
 		return ordersToAuthorizePayment;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public AbstractOrderModel getOrderByCode(final String orderNumber)
-	{
-		final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(GET_ORDERS_BY_CODE_QUERY);
-		fQuery.addQueryParameter(BlCoreConstants.CODE, orderNumber);
-		final SearchResult result = getFlexibleSearchService().search(fQuery);
-		final List<AbstractOrderModel> orders = result.getResult();
-		if (CollectionUtils.isEmpty(orders))
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No orders with code {} exists", orderNumber);
-			return null;
-		} else if(orders.size() > 1) {
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "More than two orders were found with code {} ", orderNumber);
-		}
-		return orders.get(0);
 	}
 
 }

@@ -29,6 +29,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
+/**
+ * This method created for cloning and updating extend order
+ * @author Manikandan
+ */
 public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
   private ModelService modelService;
@@ -36,14 +40,16 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   private UserService userService;
   private CustomerAccountService customerAccountService;
   private BaseStoreService baseStoreService;
-
   private BlStockLevelDao blStockLevelDao;
 
+  /**
+   * This method created to clone the extend order from order model
+   */
   @Override
   public OrderModel cloneOrderModelForExtendRental(final OrderModel originalOrder , long defaultAddedTimeForExtendRental) {
 
     if(null == originalOrder.getExtendedOrderCopy()) {
-      OrderModel extendOrderModel = getModelService().clone(originalOrder);
+      final OrderModel extendOrderModel = getModelService().clone(originalOrder);
       extendOrderModel.setTotalDiscounts(0.0);
       extendOrderModel.setAppliedCouponCodes(Collections.emptyList());
       extendOrderModel.setDeliveryCost(0.0);
@@ -102,9 +108,13 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
 
   }
 
+  /**
+   * This method created to update the extend order details once the extend is successfully
+   */
   public void updateExtendOrder(final AbstractOrderModel extendOrderModel) {
 
-    if(BooleanUtils.isTrue(extendOrderModel.getIsExtendedOrder()) && extendOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED)) {
+    if(BooleanUtils.isTrue(extendOrderModel.getIsExtendedOrder()) &&
+        extendOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED)) {
 
       final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
       final OrderModel originalOrder = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), extendOrderModel.getCode(),
@@ -158,7 +168,9 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     }
 
 
-
+  /**
+   * This method created for getting stock for serial product
+   */
   private Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
       final Set<String> serialProductCodes) {
 

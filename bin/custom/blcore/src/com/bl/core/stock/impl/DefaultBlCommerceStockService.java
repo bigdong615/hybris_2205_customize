@@ -595,9 +595,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	}
 
 
-	//
-
 	/**
+	 * This method created to get stock based on serial products from existing order
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -623,6 +622,9 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		return stockResult;
 	}
 
+	/**
+	 * This method created for collecting stock availability for extend rental duration
+	 */
 	protected void collectAvailabilityForExtend(final Date startDate, final Date endDate, final String productCode,
 			final Collection<WarehouseModel> warehouses, final List<Long> availability, final List<Long> totalUnits)
 	{
@@ -631,6 +633,9 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		collectAvailableQty(startDate, endDate, stockLevels, availability, totalUnits, productCode);
 	}
 
+	/**
+	 * This method created to get stock for extend rental products
+	 */
 	public Collection<StockLevelModel> getStockForExtendDate(final String productCode, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate)
 	{

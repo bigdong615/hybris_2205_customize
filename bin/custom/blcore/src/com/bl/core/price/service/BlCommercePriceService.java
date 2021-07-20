@@ -40,6 +40,12 @@ public interface BlCommercePriceService extends CommercePriceService
 	 */
 	public BigDecimal getDynamicPriceDataForProduct(final Boolean isConstrainedProduct, final Double priceValue, final Long rentalDays);
 
+	/**
+	 * Gets the dynamic price data for for extend rental product.
+	 * @param product product
+	 * @param rentalDays number of rental days
+	 * @return the dynamic price data for product
+	 */
 	public PriceInformation getWebPriceForExtendProduct(final ProductModel product , final Long rentalDays);
 
 }

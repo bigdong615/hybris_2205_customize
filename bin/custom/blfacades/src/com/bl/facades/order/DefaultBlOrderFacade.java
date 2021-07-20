@@ -113,25 +113,29 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   }
 
 
-  public CartModificationData addToCart(final ProductModel blProductModel, final long quantity , final AbstractOrderEntryModel abstractOrderEntryModel)
-      throws CommerceCartModificationException {
+  /**
+   * This method created for adding product to cart when user renting again from previous order
+   */
+  public CartModificationData addToCart(final ProductModel blProductModel, final long quantity ,
+      final AbstractOrderEntryModel abstractOrderEntryModel) throws CommerceCartModificationException {
 
     CartModel cartModel = blCartService.getSessionCart();
     final CommerceCartParameter parameter = new CommerceCartParameter();
 
     try {
-        //For rental product
+        //For rental product rental products
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
     } catch (Exception exception) {
-     //
+      BlLogger.logMessage(LOG, Level.ERROR , "Error while adding products from rent again" + blProductModel.getCode() , exception);
     }
 
     parameter.setEnableHooks(true);
     parameter.setCart(cartModel);
     parameter.setQuantity(quantity);
 
+    // To update damage waiver price same as previous order
     updateDamegeWaiverSelectedFromOrder(abstractOrderEntryModel , parameter);
     final CommerceCartModification commerceCartModification = getCommerceCartService()
         .addToCart(parameter);
@@ -140,12 +144,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return getCartModificationConverter().convert(commerceCartModification);
   }
 
+  /**
+   * To set the cart type while adding produdts to cart
+   */
+
   private void setCartType(final BlSerialProductModel blSerialProductModel,
-      final CartModel cartModel,
-      final CommerceCartModification commerceCartModification) {
+      final CartModel cartModel, final CommerceCartModification commerceCartModification) {
     if (commerceCartModification != null && commerceCartModification.getStatusCode()
         .equals(BlFacadesConstants.SUCCESS)) {
-      if (blSerialProductModel == null) {
+      if (null == blSerialProductModel) {
         cartModel.setIsRentalCart(Boolean.TRUE);
       } else {
         cartModel.setIsRentalCart(Boolean.FALSE);
@@ -168,6 +175,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     parameter.setIsNODamageWaiverSelected(abstractOrderEntryModel.getNoDamageWaiverSelected());
   }
 
+  /**
+   * This method created to calculate extend order price based on extend rental date
+   */
 
   @Override
   public OrderData calculatePriceForExtendOrders(final OrderModel orderModel , final OrderData orderData, final String orderEndDate,
@@ -178,16 +188,16 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     startDate = setAdditionalDaysForStartDate(startDate);
     final Date stockStartDate = setAdditionalDaysForStock(startDate);
     final Date stockEndDate = setAdditionalDaysForStock(endDate);
-    List<StockResult> stockResults = new ArrayList<>();
+    final List<StockResult> stockResults = new ArrayList<>();
 
-    for (ConsignmentModel consignmentModel : orderModel.getConsignments()) {
-      for (ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
-        for (BlProductModel blProductModel : consignmentEntryModel
+    for (final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
+      for (final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
+        for (final BlProductModel blProductModel : consignmentEntryModel
             .getSerialProducts()) {
           if (blProductModel instanceof BlSerialProductModel && !blProductModel.getProductType().equals(
               ProductTypeEnum.SUBPARTS)){
-            BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
-            StockResult stockResult = getBlCommerceStockService()
+            final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
+            final StockResult stockResult = getBlCommerceStockService()
                 .getStockForEntireExtendDuration(blSerialProductModel.getCode(),
                     Collections.singleton(blSerialProductModel.getWarehouseLocation())
                     , stockStartDate, stockEndDate);
@@ -214,7 +224,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       }
       orderData.setAddedTimeForExtendRental(
           (int) defaultAddedTimeForExtendRental); // Default value which added for extend order
-      PriceDataType priceType = PriceDataType.BUY;
+      final PriceDataType priceType = PriceDataType.BUY;
       final OrderModel extendOrderModel = getDefaultBlExtendOrderService()
           .cloneOrderModelForExtendRental(orderModel , defaultAddedTimeForExtendRental);
 
@@ -254,16 +264,17 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       orderData.setOrderTotalWithTaxForExtendRental(getPriceDataFactory()
           .create(priceType, orderTotalWithTax, extendOrderModel.getCurrency().getIsocode()));
 
-
-
       // To set current extendOrderModel to session
       BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
     }
     return orderData;
   }
 
+  /**
+   * This method created to set the extend order details
+   */
   @Override
-  public OrderData setRentalExtendOrderDetails(final String orderCode , final String rentalEndDate ,final  String selectedDate) {
+  public OrderData setRentalExtendOrderDetails(final String orderCode , final String rentalEndDate ,final String selectedDate) {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
    final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
         baseStoreModel);
@@ -271,7 +282,11 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return calculatePriceForExtendOrders(orderModel , getOrderConverter().convert(orderModel), rentalEndDate , selectedDate);
   }
 
-  protected Collection<PromotionGroupModel> getPromotionGroups()
+
+  /**
+   * This method created to get the promotion group
+   */
+  private Collection<PromotionGroupModel> getPromotionGroups()
   {
     final Collection<PromotionGroupModel> promotionGroupModels = new ArrayList<>();
     if (getBaseSiteService().getCurrentBaseSite() != null
@@ -282,31 +297,43 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return promotionGroupModels;
   }
 
+  /**
+   * To set additional dated to check status
+   */
  private Date setAdditionalDaysForStock(final Date dateToAdd) {
-   Calendar calendar = Calendar.getInstance();
+   final Calendar calendar = Calendar.getInstance();
    calendar.setTime(dateToAdd);
    calendar.add(Calendar.DAY_OF_MONTH ,2);
    return calendar.getTime();
  }
 
+  /**
+   * To set additional date for startDate
+   */
   private Date setAdditionalDaysForStartDate(final Date dateToAdd) {
-    Calendar calendar = Calendar.getInstance();
+    final Calendar calendar = Calendar.getInstance();
     calendar.setTime(dateToAdd);
     calendar.add(Calendar.DAY_OF_MONTH ,1);
     return calendar.getTime();
   }
 
+  /**
+   * This method created to get the extend order data
+   */
   @Override
   public OrderData getExtendedOrderDetailsFromOrderCode(final String orderCode) {
+
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
     final OrderModel orderModel = getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
         baseStoreModel);
-
     final OrderData orderData = new OrderData();
     getBlExtendRentalOrderDetailsPopulator().populate(getExtendOrderAfterPlaceingOrder(orderModel), orderData);
     return orderData;
   }
 
+  /**
+   * This method created to get extend order once extend order is extended successfully
+   */
   @Override
   public AbstractOrderModel getExtendOrderAfterPlaceingOrder(final OrderModel orderModel) {
 
@@ -330,6 +357,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return orderModel;
   }
 
+  /**
+   * This method created to get extend order from order
+   */
   @Override
   public OrderModel getExtendOrderFromOrderModel(final OrderModel orderModel) {
 
@@ -340,6 +370,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return orderModel;
   }
 
+  /**
+   * This method created to get extend order from order code
+   */
   @Override
   public OrderModel getExtendedOrderModelFromCode(final String orderCode) {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
@@ -348,11 +381,17 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return getExtendOrderFromOrderModel(orderModel);
   }
 
+  /**
+   * This method created to update the extend order details
+   */
   @Override
   public void updateOrderExtendDetails(final OrderModel orderModel) {
     getDefaultBlExtendOrderService().updateExtendOrder(orderModel);
   }
 
+  /**
+   * This method created to all products to cart for rent again
+   */
   @Override
   public boolean addToCartAllRentalOrderEnrties(final String orderCode , final Model model) {
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
@@ -369,12 +408,14 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return false;
   }
 
+  /**
+   * This method created to get order model from order code
+   */
   @Override
-  public OrderModel getOrderModelFromOrderCode(String orderCode){
+  public OrderModel getOrderModelFromOrderCode(final String orderCode){
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
     return getCustomerAccountService().getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode, baseStoreModel);
   }
-
 
 
   public BlCartService getBlCartService() {
@@ -385,7 +426,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.blCartService = blCartService;
   }
 
-
   public CommerceCartService getCommerceCartService() {
     return commerceCartService;
   }
@@ -395,7 +435,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.commerceCartService = commerceCartService;
   }
 
-
   public BlCartFacade getBlCartFacade() {
     return blCartFacade;
   }
@@ -404,7 +443,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.blCartFacade = blCartFacade;
   }
 
-
   public ModelService getModelService() {
     return modelService;
   }
@@ -412,7 +450,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   public void setModelService(ModelService modelService) {
     this.modelService = modelService;
   }
-
 
   public Converter<CommerceCartModification, CartModificationData> getCartModificationConverter() {
     return cartModificationConverter;
@@ -423,7 +460,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.cartModificationConverter = cartModificationConverter;
   }
 
-
   public PriceDataFactory getPriceDataFactory() {
     return priceDataFactory;
   }
@@ -433,7 +469,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     this.priceDataFactory = priceDataFactory;
   }
 
-
   public BlCommercePriceService getCommercePriceService() {
     return commercePriceService;
   }
@@ -442,7 +477,6 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
       BlCommercePriceService commercePriceService) {
     this.commercePriceService = commercePriceService;
   }
-
 
   public ProductService getProductService() {
     return productService;
