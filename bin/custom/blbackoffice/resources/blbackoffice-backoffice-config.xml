@@ -1103,6 +1103,32 @@
         </y:actions>
     </context>
 
+	<!--Create Wizard for CS Role for Notes type -->
+	<context component="create-wizard" type="Notes" principal="customersupportagentrole">
+		<wz:flow id="cs-Notes-create-wizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="csNotesPrepare">
+				<wz:initialize property="newCSNotes" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newCSNotes.order" value="ctx.parentObject"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.notes.essential.label">
+				<wz:content id="step1.content">
+					<wz:property-list root="newCSNotes">
+						<wz:property qualifier="type"/>
+						<wz:property qualifier="userID"/>
+						<wz:property qualifier="fraud"/>
+						<wz:property qualifier="note"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newCSNotes"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
 
 
 <!--To calculate the total without tax -->

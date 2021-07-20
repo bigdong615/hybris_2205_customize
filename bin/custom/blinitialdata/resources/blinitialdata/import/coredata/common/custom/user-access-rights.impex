@@ -63,34 +63,46 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 $END_USERRIGHTS;;;;;
 
 
-$START_USERRIGHTS;;;;;;;;;
-Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
+$START_USERRIGHTS; ; ; ; ; ; ; ; ;
+Type      ; UID                       ; MemberOfGroups ; Password                       ; Target           ; read ; change ; create ; remove ; change_perm
 # Access Rights for Customer Support cockpit
-UserGroup;customersupportagentgroup;;;;;;;;
+UserGroup ; customersupportagentgroup ;                ;                                ;                  ;      ;        ;        ;        ;
 
-;;;;Order;+;+;-;-;-
-;;;;Order.orderNotes;+;+;-;-;-
-;;;;Notes;+;+;+;+;-
-;;;;Notes.note;+;+;-;-;-
-;;;;Notes.order;+;+;-;-;-
-;;;;NotesEnum;+;+;+;+;-
-;;;;Order2OrderNotes;+;+;+;+;-
+
+          ;                           ;                ;                                ; Order            ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;                                ; Order.orderNotes ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;                                ; Notes            ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;                                ; Notes.note       ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;                                ; Notes.order      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;                                ; NotesEnum        ; +    ; +      ; -      ; -      ; -
 
 # Access Rights for customer notes on cs cockpit;;;;;;;;
-;;;Customer;+;+;-;-
-;;;Customer.customerNotes;+;+;+;+
-;;;Customer2CustomerNotes;+;+;+;+
-;;;CustomerNotesEnum;+;+;+;+
-;;;CustomerNotes;+;+;+;+
-;;;CustomerNotes.customerNoteType;+;+;+;+
-;;;CustomerNotes.fraud;+;+;+;+
-;;;CustomerNotes.customer;+;+;+;+
-;;;CustomerNotes.type;-;-;-;-
-;;;;Notes.type;+;+;+;+;-
-;;;;Notes.userID;+;+;-;-;-
+          ;                           ;                ; Customer                       ; +                ; +    ; -      ; -
+          ;                           ;                ; Customer.customerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ; Customer2CustomerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ; CustomerNotesEnum              ; +                ; +    ; +      ; +
+          ;                           ;                ; CustomerNotes                  ; +                ; +    ; +      ; +
+          ;                           ;                ; CustomerNotes.customerNoteType ; +                ; +    ; +      ; +
+          ;                           ;                ; CustomerNotes.fraud            ; +                ; +    ; +      ; +
+          ;                           ;                ; CustomerNotes.customer         ; +                ; +    ; +      ; +
+          ;                           ;                ; CustomerNotes.type             ; -                ; -    ; -      ; -
+          ;                           ;                ;                                ; Notes.type       ; +    ; +      ; +      ; +      ; -
+          ;                           ;                ;                                ; Notes.userID     ; +    ; +      ; -      ; -      ; -
 
-$END_USERRIGHTS;;;;;;;;;
+$END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
+$START_USERRIGHTS; ; ; ; ; ; ; ; ;
+Type      ; UID                       ; MemberOfGroups ; Password ; Target           ; read ; change ; create ; remove ; change_perm
+# Access Rights for Customer Support group cockpit
+UserGroup ; customersupportagentrole  ;                ;          ;                  ;      ;        ;        ;        ;
+
+          ;                           ;                ;          ; Order            ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Order.orderNotes ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Notes            ; +    ; +      ; +      ; -      ; -
+          ;                           ;                ;          ; Notes.note       ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; Notes.order      ; +    ; +      ; -      ; -      ; -
+          ;                           ;                ;          ; NotesEnum        ; +    ; +      ; -      ; -      ; -
+$END_USERRIGHTS; ; ; ; ; ; ; ; ;
 
 $START_USERRIGHTS;;;;;;;;;
 Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
