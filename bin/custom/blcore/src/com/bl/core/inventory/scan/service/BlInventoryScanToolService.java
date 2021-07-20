@@ -24,6 +24,15 @@ public interface BlInventoryScanToolService {
 
     /**
      * javadoc
+     *
+     * @param barcodes from input list
+     * @return int method will check the valid Location provided in barcode list for bin and return
+     * int with appropriate notification number to notify employee
+     */
+    int checkValidLocationInBarcodeListForBin(final List<String> barcodes);
+
+    /**
+     * javadoc
      * @param locationId for BlInventoryLocation
      * @return BlInventoryLocation
      * method will fetch InventoryLocation by its Id from dao
@@ -46,6 +55,15 @@ public interface BlInventoryScanToolService {
      * its location in db
      */
     List<String> getFailedBarcodeList(final List<String> barcodes);
+
+    /**
+     * javadoc
+     * @param barcodes for BlSerialProduct
+     * @return List<String>
+     * method will verify the list of barcodes and result into list of failed barcodes
+     * that has been failed to update its location in db for Bin.
+     */
+    List<String> getFailedBarcodeListForBin(final List<String> barcodes);
 
     /**
      * javadoc

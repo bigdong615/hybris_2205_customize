@@ -9,8 +9,14 @@ import com.hybris.cockpitng.annotations.ViewEvent;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
+import de.hybris.platform.payment.enums.PaymentTransactionType;
+import de.hybris.platform.payment.model.PaymentTransactionEntryModel;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.util.localization.Localization;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -50,7 +56,8 @@ public class CapturePaymentController extends DefaultWidgetController {
 
   @SocketEvent(socketId = "inputObject")
   public void init(final ConsignmentModel inputObject) {
-    this.getWidgetInstanceManager().setTitle(TITLE_MESSG + " : " + inputObject.getOrder().getCode());
+    this.getWidgetInstanceManager()
+        .setTitle(TITLE_MESSG + " : " + inputObject.getOrder().getCode());
     if (inputObject.getOrder() instanceof OrderModel) {
       this.setOrderModel((OrderModel) inputObject.getOrder());
     }
@@ -66,7 +73,7 @@ public class CapturePaymentController extends DefaultWidgetController {
   public void capturePayment() {
     BlLogger.logMessage(LOG, Level.DEBUG, "Payment Capturing starts");
     if (getOrderModel() == null || StringUtils.isEmpty(getOrderModel().getCode())
-        || BooleanUtils.isTrue(getOrderModel().getIsCaptured())) {
+        || isPaymentCaptured(getOrderModel())) {
       showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER));
       return;
     }
@@ -74,9 +81,33 @@ public class CapturePaymentController extends DefaultWidgetController {
     showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
   }
 
+  private boolean isPaymentCaptured(final OrderModel order) {
+    final Double totalPrice = order.getTotalPrice(); //130
+    final List<PaymentTransactionModel> paymentTxns = order.getPaymentTransactions();
+    if (CollectionUtils.isEmpty(paymentTxns)) {
+      return true;
+    }
+    for (final PaymentTransactionModel txn : paymentTxns) {
+      if (CollectionUtils.isEmpty(txn.getEntries())) {
+        BlLogger.logMessage(LOG, Level.DEBUG, "No Transaction Entry Found");
+        continue;
+      }
+      final List<PaymentTransactionEntryModel> paymentTxnEntries = txn.getEntries().stream()
+          .filter(entry -> PaymentTransactionType.CAPTURE.equals(entry.getType())).collect(
+              Collectors.toList());
+      if (CollectionUtils.isNotEmpty(paymentTxnEntries)) {
+        final double amount = paymentTxnEntries.stream()
+            .mapToDouble(entry -> entry.getAmount().doubleValue()).sum(); //100
+        if (amount > totalPrice) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   @ViewEvent(componentID = "cancelChanges", eventName = "onClick")
-  public void close()
-  {
+  public void close() {
     this.sendOutput(OUT_CONFIRM, COMPLETE);
   }
 

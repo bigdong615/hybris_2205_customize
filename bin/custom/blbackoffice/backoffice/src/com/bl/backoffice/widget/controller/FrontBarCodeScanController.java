@@ -20,6 +20,10 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
+/**
+ *
+ * @author Krishan Vashishth
+ */
 public class FrontBarCodeScanController extends DefaultWidgetController {
 
   private static final Logger LOG = Logger.getLogger(FrontBarCodeScanController.class);
@@ -37,15 +41,12 @@ public class FrontBarCodeScanController extends DefaultWidgetController {
   @Wire
   private Textbox barCodes;
 
-  private ConsignmentModel selectedConsignment;
-
   private WebScanToolData shippingScanToolData;
 
   @SocketEvent(socketId = "inputObject")
   public void initCustomerAddressForm(final ConsignmentModel inputObject) {
     this.getWidgetInstanceManager()
         .setTitle(TITLE_MESSG + " : " + inputObject.getOrder().getCode());
-    selectedConsignment = inputObject;
     shippingScanToolData = new WebScanToolData();
   }
 
@@ -87,7 +88,34 @@ public class FrontBarCodeScanController extends DefaultWidgetController {
           this.getLabel("blbackoffice.frontbarcode.scan.error.emptybarcode"));
     }
     final List<String> barCodeList = shippingScanToolData.getBarcodeInputField();
-    createResponseForScanResult(barCodeList);
+    if (barCodeList.size() == 2) {
+      createResponseForBinScanResult(barCodeList);
+    } else {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+          BlInventoryScanLoggingConstants.SCAN_STRING + barCodes);
+      throw new WrongValueException(this.barCodes, this.getLabel(MUST_TWO_BARCODE_ERROR_FAILURE));
+    }
+  }
+
+  /**
+   * Method to create the response for bar code scan for bin
+   *
+   * @param barCodeList - the original bar code scan list
+   */
+  private void createResponseForBinScanResult(final List<String> barCodeList) {
+    final int result = getBlInventoryScanToolService()
+        .checkValidLocationInBarcodeListForBin(barCodeList);
+    if (result == BlInventoryScanLoggingConstants.ONE) {
+      final List<String> failedBarCodeList = getBlInventoryScanToolService()
+          .getFailedBarcodeListForBin(barCodeList);
+      checkFailedBarCodes(barCodeList, failedBarCodeList);
+    } else {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG, StringUtils.EMPTY);
+      throw new WrongValueException(this.barCodes,
+          this.getLabel("blbackoffice.frontbarcode.scan.many.location.error"));
+    }
   }
 
   /**
@@ -119,24 +147,15 @@ public class FrontBarCodeScanController extends DefaultWidgetController {
   /**
    * javadoc
    *
-   * @param result
-   * @param barcodes method will notify user according to result number calculated in previous
-   *                 method
+   * @param result - the item count
+   * @param barCodeList method will notify user according to result number calculated in previous
+   *                    method
    */
-  private void createResponseMegForScan(final int result, final List<String> barcodes) {
+  private void createResponseMegForScan(final int result, final List<String> barCodeList) {
     if (result == BlInventoryScanLoggingConstants.ONE) {
-      final List<String> failedBarcodeList = getBlInventoryScanToolService()
-          .getFailedBarcodeList(barcodes);
-      if (CollectionUtils.isNotEmpty(failedBarcodeList)) {
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO,
-            BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
-            failedBarcodeList);
-        throw new WrongValueException(this.barCodes,
-            this.getLabel("blbackoffice.frontbarcode.scan.batch.error"));
-      } else {
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, SUCCESS_MSG, barcodes.size());
-        this.showMessageBox(SUCCESS_MSG);
-      }
+      final List<String> failedBarCodeList = getBlInventoryScanToolService()
+          .getFailedBarcodeList(barCodeList);
+      checkFailedBarCodes(barCodeList, failedBarCodeList);
     } else if (result == BlInventoryScanLoggingConstants.TWO) {
       BlLogger.logFormatMessageInfo(LOG, Level.INFO,
           BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG, StringUtils.EMPTY);
@@ -155,6 +174,26 @@ public class FrontBarCodeScanController extends DefaultWidgetController {
     }
   }
 
+  /**
+   * Method to show the errors or success message in case if failed bar codes is found or not.
+   *
+   * @param barCodeList - the original bar code list from editor
+   * @param failedBarCodeList - the bar codes which are not present in the system
+   */
+  private void checkFailedBarCodes(final List<String> barCodeList,
+      final List<String> failedBarCodeList) {
+    if (CollectionUtils.isNotEmpty(failedBarCodeList)) {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO,
+          BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
+          failedBarCodeList);
+      throw new WrongValueException(this.barCodes,
+          this.getLabel("blbackoffice.frontbarcode.scan.batch.error"));
+    } else {
+      BlLogger.logFormatMessageInfo(LOG, Level.INFO, SUCCESS_MSG, barCodeList.size());
+      this.showMessageBox();
+    }
+  }
+
   public BlInventoryScanToolService getBlInventoryScanToolService() {
     return blInventoryScanToolService;
   }
@@ -162,10 +201,9 @@ public class FrontBarCodeScanController extends DefaultWidgetController {
   /**
    * Method to render the message box
    *
-   * @param message
    */
-  private void showMessageBox(final String message) {
-    Messagebox.show(message);
+  private void showMessageBox() {
+    Messagebox.show(SUCCESS_MSG);
     this.sendOutput(OUT_CONFIRM, COMPLETE);
   }
 }

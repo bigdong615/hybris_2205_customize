@@ -66,6 +66,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE), filteredLocationList);
     }
 
+    @Override
+    public int checkValidLocationInBarcodeListForBin(final List<String> barcodes) {
+        final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultBinInventoryLocations();
+        final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream()
+            .anyMatch(b::startsWith)).collect(Collectors.toList());
+        return checkValidInventoryLocation(barcodes.get(0), filteredLocationList);
+    }
+
     /**
      * javadoc
      * @param inventoryLocation    for update
@@ -118,6 +126,24 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
         subList.forEach(barcode -> setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode));
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST + failedBarcodeList);
+        return failedBarcodeList;
+    }
+
+    @Override
+    public List<String> getFailedBarcodeListForBin(final List<String> barcodes) {
+        final List<String> failedBarcodeList = new ArrayList<>();
+        final BlInventoryLocationModel existingBlInventoryLocation = getBlInventoryLocation();
+        final int noOfSize = checkValidLocationInBarcodeListForBin(barcodes);
+        if (noOfSize == 1) {
+            final BlInventoryLocationModel newBlInventoryLocation = modelService.create(BlInventoryLocationModel.class);
+            newBlInventoryLocation.setCode(existingBlInventoryLocation.getCode());
+            newBlInventoryLocation.setParentInventoryLocation(existingBlInventoryLocation);
+            modelService.save(newBlInventoryLocation);
+            modelService.refresh(newBlInventoryLocation);
+        } else {
+            failedBarcodeList.addAll(barcodes);
+            BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST + failedBarcodeList);
+        }
         return failedBarcodeList;
     }
 

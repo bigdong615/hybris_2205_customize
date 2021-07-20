@@ -8,6 +8,18 @@ INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
 INSERT_UPDATE Employee;UID[unique=true];name;groups(uid);description;password
                       ;CustomerSupportAgent;Customer Support Agent;customersupportagentgroup;This generic Customer Support Agent is assigned and has access to the Backoffice Customer Support Agent Group views and ASM - to provide restricted Backoffice and ASM customer sales and service manager support.;1234
 
+#Employee creation for frondesk user rols/group
+INSERT_UPDATE BackofficeRole; UID[unique = true]; locname[lang = de]; locname[lang = en]; backOfficeLoginDisabled; authorities
+                            ; frontdeskuserrole ; Bl User Role      ; Bl User Role      ; FALSE                  ; frontdeskuserrole
+
+INSERT_UPDATE Usergroup; uid[unique = true]; groups(uid)
+                       ; frondeskusergroup ; employeegroup,frontdeskuserrole
+
+INSERT_UPDATE PrincipalGroupRelation; source(uid)[unique = true]; target(uid)[unique = true]
+                                    ; frondeskusergroup         ; frontdeskuserrole
+
+INSERT_UPDATE Employee; uid[unique = true]; name                 ; description; groups(uid)       ; password
+                      ; frontdeskteamuser ; Front desk team user ; Bl User    ; frondeskusergroup ; 1234
 
 $START_USERRIGHTS;;;;;;;;;
 Type;UID;MemberOfGroups;Password;Target;read;change;create;remove;change_perm
@@ -106,3 +118,29 @@ UserGroup;warehouseagentgroup;;;;;;;;
 ;;;;Consignment2OrderNotes;+;+;+;+;-
 
 $END_USERRIGHTS;;;;;;;;;
+
+#Access right for frontdeskusergroup
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;frondeskusergroup;;;;;;;
+# Access Rights for Warehousing agent group;;;;;;;;
+;;;Consignment;+;+;-;-
+;;;FrontDeskQueue;+;+;-;-
+;;;Order;+;+;-;-
+;;;User;+;-;-;-
+;;;Address;+;-;-;-
+;;;DeliveryMode;+;-;-;-
+$END_USERRIGHTS;;;;
+
+#Access rights for frontdeskuserrole
+$START_USERRIGHTS;;;;;;;;
+Type;UID;MemberOfGroups;Target;read;change;create;remove;change_perm
+Usergroup;frontdeskuserrole;;;;;;;
+# Access Rights for Warehousing agent group;;;;;;;;
+;;;Consignment;+;+;-;-
+;;;FrontDeskQueue;+;+;-;-
+;;;Order;+;+;-;-
+;;;User;+;-;-;-
+;;;Address;+;-;-;-
+;;;DeliveryMode;+;-;-;-
+$END_USERRIGHTS;;;;

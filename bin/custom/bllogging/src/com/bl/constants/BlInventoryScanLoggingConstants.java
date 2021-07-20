@@ -82,7 +82,6 @@ public class BlInventoryScanLoggingConstants {
      */
     public static List<String> getDefaultInventoryLocation() {
         List<String> defaultLocations = new ArrayList<>();
-        defaultLocations.add(BIN);
         defaultLocations.add(MA);
         defaultLocations.add(CA);
         defaultLocations.add(FEDEX);
@@ -104,8 +103,7 @@ public class BlInventoryScanLoggingConstants {
      */
     public static List<String> getDefaultBinInventoryLocations() {
         final List<String> defaultLocations = new ArrayList<>();
-        defaultLocations.addAll(getDefaultInventoryLocation());
-        defaultLocations.add(BIN_LOCATION);
+        defaultLocations.add(BIN);
         return defaultLocations;
     }
 }
