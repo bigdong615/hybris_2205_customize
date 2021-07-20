@@ -106,9 +106,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	  getBlCartService().setRentalDatesOnCart(rentalStartDate, rentalEndDate);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+	/**
+	 * It performs add to cart operation based on product type.
+	 * @param productCode the product code
+	 * @param quantity the quantity
+	 * @param serialCode the serial code
+	 * @return CartModificationData
+	 * @throws CommerceCartModificationException the exception
+	 */
   public CartModificationData addToCart(final String productCode, final long quantity,
       final String serialCode)
       throws CommerceCartModificationException {
@@ -125,22 +130,16 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
       if (StringUtils.isNotEmpty(serialCode) && !StringUtils
           .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
           .isNotEmpty(blProductModel.getSerialProducts())) {
-        for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
-          if (blSerialProduct.getProductId().equals(serialCode)) {
-            blSerialProductModel = blSerialProduct;
-            parameter.setProduct(blSerialProductModel);
-            parameter.setUnit(blSerialProductModel.getUnit());
-            parameter.setCreateNewEntry(false);
-            break;
-          }
-        }
-      } else {
+				blSerialProductModel = getBlSerialProductModelAndSetCommerceCartParameter(serialCode,
+						blSerialProductModel, blProductModel,
+						parameter);
+			} else {
         //For rental product
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
       }
-    } catch (Exception exception) {
+    } catch (final RuntimeException exception) {
       BlLogger.logMessage(LOGGER, Level.ERROR,
           "Unable to set product model, unit and new entry to CommerceCartParameter", exception);
     }
@@ -156,7 +155,33 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     return getCartModificationConverter().convert(commerceCartModification);
   }
 
-  /**
+	/**
+	 * It initializes BlSerialProductModel and sets value in CommerceCartParameter.
+	 * @param serialCode the serial code
+	 * @param blSerialProductModel the BlSerialProductModel
+	 * @param blProductModel the BlProductModel
+	 * @param parameter the CommerceCartParameter
+	 * @return BlSerialProductModel
+	 */
+	private BlSerialProductModel getBlSerialProductModelAndSetCommerceCartParameter(final String serialCode,
+			BlSerialProductModel blSerialProductModel, final BlProductModel blProductModel,
+			final CommerceCartParameter parameter) {
+		for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
+			if (blSerialProduct.getProductId().equals(serialCode)) {
+				blSerialProductModel = blSerialProduct;
+				parameter.setProduct(blSerialProductModel);
+				parameter.setIsNoDamageWaiverSelected(Boolean.TRUE);
+				parameter.setIsDamageWaiverProSelected(Boolean.FALSE);
+				parameter.setIsDamageWaiverSelected(Boolean.FALSE);
+				parameter.setUnit(blSerialProductModel.getUnit());
+				parameter.setCreateNewEntry(false);
+				break;
+			}
+		}
+		return blSerialProductModel;
+	}
+
+	/**
    * Set cart type rental or used gear based on product added to cart.
    * @param blSerialProductModel
    * @param cartModel
@@ -191,18 +216,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
         .getProductForCode(productCode);
     BlSerialProductModel blSerialProductModel = null;
 
-    if (StringUtils.isNotEmpty(serialCode) && !StringUtils
-        .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
-        .isNotEmpty(blProductModel.getSerialProducts())) {
-      for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
-        if (blSerialProduct.getProductId().equals(serialCode)) {
-          blSerialProductModel = blSerialProduct;
-          break;
-        }
-      }
-    }
+		blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel,
+				blSerialProductModel);
 
-    if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
       //It prevents user to add product to cart, if current cart is rental cart and user tries to add used gear product.
       if (Boolean.TRUE.equals(cartModel.getIsRentalCart())
           && blSerialProductModel != null) {
@@ -217,8 +234,30 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     }
     return isAddToCartNotAllowed;
   }
-  
-  /**
+
+	/**
+	 * It initialize blSerialProductModel is case of used gear product added to cart.
+	 * @param serialCode the serial code
+	 * @param blProductModel the BlProductModel
+	 * @param blSerialProductModel the BlSerialProductModel
+	 * @return BlSerialProductModel
+	 */
+	private BlSerialProductModel getBlSerialProductModel(final String serialCode,
+			final BlProductModel blProductModel, BlSerialProductModel blSerialProductModel) {
+		if (StringUtils.isNotEmpty(serialCode) && !StringUtils
+				.equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
+				.isNotEmpty(blProductModel.getSerialProducts())) {
+			for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
+				if (blSerialProduct.getProductId().equals(serialCode)) {
+					blSerialProductModel = blSerialProduct;
+					break;
+				}
+			}
+		}
+		return blSerialProductModel;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

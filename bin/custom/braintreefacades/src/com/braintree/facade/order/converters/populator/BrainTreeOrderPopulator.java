@@ -54,6 +54,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 				target.setOrderNotes(notesModel.get().getNote());
 			}
 		}
+		target.setTotalDiscounts(createPrice(source , source.getTotalDiscounts()));
 	}
 
 	/**

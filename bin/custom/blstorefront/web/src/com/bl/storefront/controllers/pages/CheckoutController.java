@@ -207,7 +207,11 @@ public class CheckoutController extends AbstractCheckoutController
 			final OrderData orderData = orderFacade.getOrderDetailsForCode(orderCode);
 			model.addAttribute("orderData", orderData);
 			blCheckoutFacade.getModifiedTotalForPrintQuote(orderData);
-			return Checkout.PrintOrderConfirmation;
+			if(Boolean.TRUE.equals(orderData.getIsRentalCart())) {
+				return Checkout.PrintOrderConfirmation;
+			}else{
+				return Checkout.PrintUsedGearOrderConfirmation;
+			}
 		} catch (final Exception exception) {
 			BlLogger.logMessage(LOG, Level.ERROR,
 					"Error while creating data for Print Page from order confirmation page", exception);
