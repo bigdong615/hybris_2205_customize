@@ -2,6 +2,7 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -222,7 +223,11 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
       itemsMap.put(serial.getCode(), ItemStatusEnum.NOT_INCLUDED);
 
-      List<BlProductModel> subPartProducts = getSessionService()
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "Serial product with code {} added to the products list on consignment entry.",
+          serial.getCode());
+
+      final List<BlProductModel> subPartProducts = getSessionService()
           .executeInLocalView(new SessionExecutionBody() {
             @Override
             public List<BlProductModel> execute() {
@@ -236,9 +241,18 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           });
 
       subPartProducts.forEach(product -> {
+
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+            "Sub part with code {} and quantity {} added to the products list on consignment entry.",
+            product.getCode(), product.getSubpartQuantity());
+
         for (int i = 1; i <= product.getSubpartQuantity(); i++) {
           entry.getSerialProducts().add(product);
-          itemsMap.put(product.getName() + "-" + i, ItemStatusEnum.NOT_INCLUDED);
+          itemsMap.put(product.getName() + BlCoreConstants.HYPHEN + i, ItemStatusEnum.NOT_INCLUDED);
+
+          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+              "Sub part with name {} added to the products list on consignment entry.",
+              product.getName());
         }
       });
 
