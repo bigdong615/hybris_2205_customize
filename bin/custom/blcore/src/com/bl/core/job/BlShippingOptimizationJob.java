@@ -31,9 +31,10 @@ public class BlShippingOptimizationJob extends AbstractJobPerformable<CronJobMod
         if(!getBlShippingOptimizationStrategy().checkCurrentDayInBlackOutDays()) {
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Start performing BlShippingOptimizationJob...");
             changeGroundStatus(getZoneDeliveryModeService().getAllGroundedConsignments());
+        } else {
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stopped performing BlShippingOptimizationJob as current " +
+                    "day falls under black days...");
         }
-        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stopped performing BlShippingOptimizationJob as current " +
-                "day falls under black days...");
         return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
     }
 

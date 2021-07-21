@@ -1,8 +1,6 @@
 package com.bl.core.shipping.dao;
 
-import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.*;
-import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
@@ -85,7 +83,6 @@ public interface BlDeliveryModeDao {
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store.
      *
      * @param mode i.e, standard or Overnight
-     * @param pstCutOffTime for time condition
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode, final boolean payByCustomer);

@@ -1,7 +1,6 @@
 package com.bl.core.shipping.service.impl;
 
 import com.bl.core.model.*;
-import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;

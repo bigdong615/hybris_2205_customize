@@ -691,4 +691,15 @@ public final class BlDateTimeUtils
 		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN).format(calendar.getTime());
 	}
 
+	/**
+	 * javadoc
+	 * this method will convert E MMM dd HH:mm:ss Z yyyy to dd-MM-yyyy
+	 *
+	 * @param date date
+	 * @return string date
+	 */
+	public static String getDateInStringFormat(final Date date) {
+		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN).format(date);
+	}
+
 }

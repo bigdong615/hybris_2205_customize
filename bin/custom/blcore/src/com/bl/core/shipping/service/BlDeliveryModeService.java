@@ -1,8 +1,6 @@
 package com.bl.core.shipping.service;
 
-import com.bl.core.enums.OptimizedShippingMethodEnum;
 import com.bl.core.model.*;
-import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
@@ -38,8 +36,6 @@ public interface BlDeliveryModeService {
     
     /**
      * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes
-     * @param rentalStart date
-     * @param rentalEnd date
      * @param carrier UPS/FedEx
      * @param payByCustomer to get customer related delivery modes
      * @return Collection of object with delivery-modes differentiating in UPS and FedEx
@@ -59,8 +55,6 @@ public interface BlDeliveryModeService {
     
     /**
      * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes to fetch all modes
-     * @param rentalStart date
-     * @param rentalEnd date
      * @param payByCustomer to get customer related delivery modes
      * @return Map object with delivery-modes differentiating in UPS and FedEx
      */
@@ -83,7 +77,6 @@ public interface BlDeliveryModeService {
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group from dao.
      * @param carrier which will differentiate UPS or FedEx
      * @param mode i.e., Standard or Overnight
-     * @param pstCutOffTime to check cutOffTime
      * @param payByCustomer ge delivery modes based on customer
      * @return Collection of ZoneDeliveryModeModels
      */
@@ -209,8 +202,6 @@ public interface BlDeliveryModeService {
      *  depending on the selected zone from dao.
      *
      * @param partnerZone i.e., name
-     * @param rentalStart date
-     * @param rentalEnd date
      * @param payByCustomer to get customer related delivery modes
      * @return Collection of BlPickUpZoneDeliveryModeModel
      * @throws ParseException the parse exception

@@ -5,7 +5,6 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.*;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
 import com.bl.logging.BlLogger;
-import de.hybris.platform.core.model.ShippingOptimizationModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.daos.impl.DefaultZoneDeliveryModeDao;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -292,7 +291,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     public ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, final String customerZip,
                                                                 final int serviceDays, final int inbound) {
         final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {homeBaseID} = ?warehouseCode" +
-                " and {zip} = ?customerZip and {serviceDays} = ?serviceDays and {inbound} = ?inbound";
+                " and {zip} = ?zip and {serviceDays} = ?serviceDays and {inbound} = ?inbound";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("carrierID", carrierId);
         query.addQueryParameter("warehouseCode", warehouseCode);
@@ -310,7 +309,7 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
     @Override
     public Collection<ConsignmentModel> getAllGroundedConsignments(final String yDay, final String today) {
         final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs}" +
-                " where to_char({c.optimizedShippingStartDate},'" + BlCoreConstants.DATE_FORMAT + "') in ('" + yDay + "', '" + today + "') " +
+                " where to_char({c.optimizedShippingStartDate},'" + BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN + "') in ('" + yDay + "', '" + today + "') " +
                 "and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         final Collection<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel>search(query).getResult();
