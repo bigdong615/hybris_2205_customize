@@ -62,7 +62,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       saveAndRefreshModel(extendOrderModel);
 
       final Set<ConsignmentModel> clonedList = new HashSet<>();
-      // clone consignment and consignment extries for extend order
+      // clone consignment and consignment entries for extend order
       cloneConsignmentForExtendOrder(originalOrder , clonedList);
       extendOrderModel.setConsignments(clonedList);
       saveAndRefreshModel(extendOrderModel);
