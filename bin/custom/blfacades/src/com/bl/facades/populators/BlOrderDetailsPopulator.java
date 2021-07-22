@@ -39,6 +39,23 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
 
     target.setIsRentalCart(source.getIsRentalCart());
+    populateDatesForOrderDetails(source , target);
+    populatePriceDetails(source , target);
+    populateOrderDetailsForRentalOrder(source , target);
+    populateOrderNotes(source , target);
+    if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
+      final AddressData addressData = new AddressData();
+      BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) source.getDeliveryMode();
+      getBlAddressPopulator().populate(blPickUpZoneDeliveryModeModel.getInternalStoreAddress() , addressData);
+      target.setDeliveryAddress(addressData);
+    }
+
+  }
+
+  /**
+   * This method created to populate dates for order details
+   */
+  private void populateDatesForOrderDetails(final OrderModel source , final OrderData target) {
     if(null != source.getRentalStartDate() && null != source.getRentalEndDate()) {
       target.setRentalStartDate(
           convertDateToString(source.getRentalStartDate(), BlFacadesConstants.RENTAL_DATE_FORMAT));
@@ -53,23 +70,32 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
     target.setOrderedDate(convertDateToString(source.getDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE));
     target.setOrderedFormatDate(convertDateToString(source.getDate() , BlFacadesConstants.ORDER_FORMAT_PATTERN));
+  }
+
+  /**
+   * This method created to populate prices for order details
+   */
+  private void populatePriceDetails(final OrderModel source , final OrderData target) {
     target.setTotalDamageWaiverCost(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalDamageWaiverCost() ,
         BlFacadesConstants.DAMAGE_WAIVER_FIELD) , source));
-   target.setTaxAvalaraCalculated(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalTax() ,
-       BlFacadesConstants.TOTAL_TAX_FIELD) , source));
-   target.setTotalPriceWithTax(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getTotalPrice() ,
-       BlFacadesConstants.TOTAL_PRICE_FIELD), source));
+    target.setTaxAvalaraCalculated(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalTax() ,
+        BlFacadesConstants.TOTAL_TAX_FIELD) , source));
+    target.setTotalPriceWithTax(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getTotalPrice() ,
+        BlFacadesConstants.TOTAL_PRICE_FIELD), source));
     target.setSubTotal(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getSubtotal() ,
         BlFacadesConstants.SUB_TOTAL_FIELD), source));
-   final Double discountAmount = source.getTotalDiscounts();
-   final Double giftCartAMount = source.getGiftCardAmount();
-   final Double totalDisount = discountAmount + giftCartAMount;
-   target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
-       BlFacadesConstants.DISCOUNT_FIELD), source));
-   target.setPickUpPersonEmail(source.getPickUpPersonFirstName());
-   target.setPickUpPersonLastName(source.getPickUpPersonLastName());
-   target.setPickUpPersonEmail(source.getPickUpPersonEmail());
-   target.setPickUpPersonPhone(source.getPickUpPersonPhone());
+    final Double discountAmount = source.getTotalDiscounts();
+    final Double giftCartAMount = source.getGiftCardAmount();
+    final Double totalDisount = discountAmount + giftCartAMount;
+    target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
+        BlFacadesConstants.DISCOUNT_FIELD), source));
+
+  }
+
+  /**
+   * This method created to populate dates  for rental order details
+   */
+  private void populateOrderDetailsForRentalOrder(final OrderModel source , final OrderData target) {
     target.setOrderedFormatDateForExtendRental(convertDateToString(source.getDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
     if(BooleanUtils.isTrue(source.getIsRentalCart())) {
       target.setRentalEndDateForJs(convertDateToString(source.getRentalEndDate(), BlFacadesConstants.START_DATE_PATTERN));
@@ -82,16 +108,6 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     if(CollectionUtils.isNotEmpty(target.getExtendOrderEntrie())) {
       populateRentalEndDateForJs(source, target);
     }
-
-    populateOrderNotes(source , target);
-
-    if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
-      final AddressData addressData = new AddressData();
-      BlPickUpZoneDeliveryModeModel blPickUpZoneDeliveryModeModel = (BlPickUpZoneDeliveryModeModel) source.getDeliveryMode();
-      getBlAddressPopulator().populate(blPickUpZoneDeliveryModeModel.getInternalStoreAddress() , addressData);
-      target.setDeliveryAddress(addressData);
-    }
-
   }
 
   /**
