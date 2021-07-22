@@ -17,7 +17,6 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -74,13 +73,13 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                 BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), rentalStart, sourcingLocation.getWarehouse().getCutOffTime());
 
         if (result >= BlInventoryScanLoggingConstants.THREE) {
-            final Map<ProductModel, Long> availability = sourcingLocation.getAvailability();
-            if (availability != null) {
-                final Set<String> productCodes = getProductCodes(availability);
+            final Map<String, Long> allocatedMap = sourcingLocation.getAllocatedMap();
+            if (allocatedMap != null) {
+                final Set<String> productCodes = allocatedMap.keySet();
                 final Collection<StockLevelModel> threeStockLevelModels = getStockLevelModels(sourcingLocation, order, productCodes);
                 if (CollectionUtils.isNotEmpty(productCodes) && CollectionUtils.isNotEmpty(threeStockLevelModels)) {
-                    return getSourcingLocationForStock(sourcingLocation, availability, threeStockLevelModels.stream().collect(
-                            Collectors.groupingBy(StockLevelModel::getProductCode)));
+                    return getSourcingLocationForStock(sourcingLocation, allocatedMap, threeStockLevelModels.stream().collect(
+                            Collectors.groupingBy(StockLevelModel::getProductCode)), order);
                 }
             }
         }
@@ -91,24 +90,25 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      * This method will validate total stock against required stock and set in map
      *
      * @param sourcingLocation       consignment details
-     * @param availability           map
+     * @param allocatedMap           map
      * @param stockLevelsProductWise map
      * @return SourcingLocation
      */
-    private SourcingLocation getSourcingLocationForStock(final SourcingLocation sourcingLocation, final Map<ProductModel, Long> availability,
-                                                         final Map<String, List<StockLevelModel>> stockLevelsProductWise) {
+    private SourcingLocation getSourcingLocationForStock(final SourcingLocation sourcingLocation, final Map<String, Long> allocatedMap,
+                                                         final Map<String, List<StockLevelModel>> stockLevelsProductWise, final AbstractOrderModel order) {
         if (stockLevelsProductWise != null) {
             Map<String, List<StockLevelModel>> availabilityMap = new HashMap<>();
             int i = BlInventoryScanLoggingConstants.ZERO;
-            for (Map.Entry<ProductModel, Long> entry : availability.entrySet()) {
-                if (stockLevelsProductWise.get(entry.getKey().getCode()).size() >= entry.getValue()) {
-                    availabilityMap.put(entry.getKey().getCode(), stockLevelsProductWise.get(entry.getKey().getCode()));
+            for (Map.Entry<String, Long> entry : allocatedMap.entrySet()) {
+                final String key = entry.getKey().substring(0, entry.getKey().lastIndexOf('_'));
+                if (stockLevelsProductWise.get(key).size() >= entry.getValue()) {
+                    availabilityMap.put(key, stockLevelsProductWise.get(key));
                 } else {
                     i = BlInventoryScanLoggingConstants.ONE;
                     break;
                 }
             }
-            return getSourcingLocationForGroundStock(sourcingLocation, i, availabilityMap);
+            return getSourcingLocationForGroundStock(sourcingLocation, i, availabilityMap, order);
         }
         return setFalseSourcingLocation(sourcingLocation);
     }
@@ -122,12 +122,19 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      * @return SourcingLocation
      */
     private SourcingLocation getSourcingLocationForGroundStock(final SourcingLocation sourcingLocation, final int i,
-                                                               final Map<String, List<StockLevelModel>> availabilityMap) {
+                                                               final Map<String, List<StockLevelModel>> availabilityMap,
+                                                               final AbstractOrderModel order) {
         if (i == BlInventoryScanLoggingConstants.ZERO) {
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Returning three day ground availability stock!!");
             sourcingLocation.setGroundAvailability(Boolean.TRUE);
             sourcingLocation.setGroundAvailabilityCode(OptimizedShippingMethodEnum.THREE_DAY_GROUND.getCode());
             sourcingLocation.setAvailabilityMap(availabilityMap);
+            sourcingLocation.getContext().getOrderEntries().iterator().next().getOrder().setActualRentalStartDate(
+                    BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(
+                            order.getRentalStartDate()),getBlDatePickerService().getListOfBlackOutDates()));
+            sourcingLocation.getContext().getOrderEntries().iterator().next().getOrder().setActualRentalEndDate(
+                    BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(
+                            order.getRentalEndDate()), getBlDatePickerService().getListOfBlackOutDates()));
             return sourcingLocation;
         } else {
             return setFalseSourcingLocation(sourcingLocation);
@@ -144,24 +151,14 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      */
     private Collection<StockLevelModel> getStockLevelModels(final SourcingLocation sourcingLocation, final AbstractOrderModel order,
                                                             final Set<String> productCodes) {
-        return getBlCommerceStockService().getStockForProductCodesAndDate(productCodes, sourcingLocation.getWarehouse(),
+        final Set<String> newProductCodes = new HashSet<>();
+        for(final String product : productCodes) {
+            newProductCodes.add(product.substring(0, product.lastIndexOf('_')));
+        }
+        return getBlCommerceStockService().getStockForProductCodesAndDate(newProductCodes, sourcingLocation.getWarehouse(),
                 BlDateTimeUtils.subtractDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS, BlDateTimeUtils.getDateInStringFormat(order.getRentalStartDate()),
                         getBlDatePickerService().getListOfBlackOutDates()), BlDateTimeUtils.addDaysInRentalDates(BlCoreConstants.SKIP_THREE_DAYS,
                         BlDateTimeUtils.getDateInStringFormat(order.getRentalEndDate()), getBlDatePickerService().getListOfBlackOutDates()));
-    }
-
-    /**
-     * This method will take ProductModel and will return set of string of product code
-     *
-     * @param availability map
-     * @return Set<String>
-     */
-    private Set<String> getProductCodes(final Map<ProductModel, Long> availability) {
-        final Set<String> productCodes = new HashSet<>();
-        for (ProductModel model : availability.keySet()) {
-            productCodes.add(model.getCode());
-        }
-        return productCodes;
     }
 
     /**
@@ -242,15 +239,13 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
     public boolean getOptimizedShippingMethodForOrder(final ConsignmentModel consignmentModel) {
         final String rentalStartDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalStartDate());
         final String rentalEndDate = BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalEndDate());
-        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getShippingDate(),
-                BlDateTimeUtils.convertStringDateToDate(BlDateTimeUtils.getDateInStringFormat(consignmentModel.getOrder().getRentalStartDate()),
-                        BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN), consignmentModel.getWarehouse().getCutOffTime());
-        //kush will confirm first parameter which to use
+        final int result = BlDateTimeUtils.getBusinessDaysDifferenceWithCutOffTime(consignmentModel.getOrder().getActualRentalStartDate(),
+                consignmentModel.getOrder().getRentalStartDate(), consignmentModel.getWarehouse().getCutOffTime());
         final int carrierId = getCarrierId((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode());
         final int warehouseCode = getWarehouseCode(consignmentModel.getWarehouse());
         final String addressZip = getAddressZip(consignmentModel.getShippingAddress());
 
-        if (result >= BlInventoryScanLoggingConstants.THREE) {
+        if (consignmentModel.isThreeDayGroundAvailability() && result >= BlInventoryScanLoggingConstants.THREE) {
             return checkThreeDayGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
         } else if (result == BlInventoryScanLoggingConstants.TWO) {
             return checkTwoDayGround(result, carrierId, warehouseCode, addressZip, consignmentModel, rentalStartDate, rentalEndDate);
@@ -431,15 +426,10 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                     consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
                             optimizedShippingMethod.getCode()));
                 }
-                consignmentModel.setOptimizedShippingType(getZoneDeliveryModeService().getOptimizedShippingMethod(
-                        optimizedShippingType.getCode()));
             }
         } else {
             consignmentModel.setOptimizedShippingType(null);
         }
-
-        getModelService().save(consignmentModel);
-        getModelService().refresh(consignmentModel);
     }
 
     /**
@@ -455,20 +445,20 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
             final String shippingGroup = zoneDeliveryModeModel.getShippingGroup().getCode();
             if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
                 BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE,
-                        OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER);
+                        OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER.getCode());
                 return OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER;
             } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
                 BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE,
-                        OptimizedShippingTypeEnum.WAREHOUSE2PICKUP);
+                        OptimizedShippingTypeEnum.WAREHOUSE2PICKUP.getCode());
                 return OptimizedShippingTypeEnum.WAREHOUSE2PICKUP;
             } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup)) {
                 if (zoneDeliveryModeModel.getCode().startsWith("BL_")) {
                     BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE,
-                            OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE);
+                            OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.getCode());
                     return OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE;
                 } else {
                     BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE,
-                            OptimizedShippingTypeEnum.WAREHOUSE2PICKUP);
+                            OptimizedShippingTypeEnum.WAREHOUSE2PICKUP.getCode());
                     return OptimizedShippingTypeEnum.WAREHOUSE2PICKUP;
                 }
             } else if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup)) {
@@ -495,14 +485,17 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
                                                                              final ZoneDeliveryModeModel zoneDeliveryModeModel, final int days) {
         if (result >= days) {
             if (zoneDeliveryModeModel.getWarehouse().getCode().equals(consignmentModel.getWarehouse().getCode())) {
-                BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE, OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER);
+                BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE,
+                        OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER.getCode());
                 return OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER;
             } else {
-                BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE, OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE);
+                BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE,
+                        OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE.getCode());
                 return OptimizedShippingTypeEnum.WAREHOUSE2WAREHOUSE;
             }
         } else {
-            BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE, OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER);
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlDeliveryModeLoggingConstants.OPTIMIZED_SHIPPING_TYPE,
+                    OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER.getCode());
             return OptimizedShippingTypeEnum.WAREHOUSE2CUSTOMER;
         }
     }
@@ -514,7 +507,17 @@ public class DefaultBlShippingOptimizationStrategy extends AbstractBusinessServi
      * @return result
      */
     private String getAddressZip(final AddressModel addressModel) {
-        return addressModel != null && addressModel.getPostalcode() != null ? addressModel.getPostalcode() : StringUtils.EMPTY;
+        String newZip;
+        if(addressModel != null && addressModel.getPostalcode() != null) {
+            if(addressModel.getPostalcode().contains("-")) {
+                newZip = addressModel.getPostalcode().split("-")[0];
+            } else {
+                newZip = addressModel.getPostalcode();
+            }
+        } else {
+             newZip = StringUtils.EMPTY;
+        }
+        return newZip;
     }
 
     /**

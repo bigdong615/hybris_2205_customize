@@ -1,11 +1,13 @@
 package com.bl.Ordermanagement.services.impl;
 
+import com.bl.Ordermanagement.exceptions.BlShippingOptimizationException;
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAllocationService;
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.shipping.strategy.BlShippingOptimizationStrategy;
 import com.bl.core.stock.BlStockLevelDao;
 import com.bl.logging.BlLogger;
 import com.google.common.base.Strings;
@@ -46,9 +48,11 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
   private static final Logger LOG = Logger.getLogger(DefaultBlAllocationService.class);
   public static final String ERROR_WHILE_ALLOCATING_THE_ORDER = "Error while allocating the order.";
+  public static final String ERROR_WHILE_OPTIMIZING_THE_ORDER = "Error while optimizing the order.";
   private BlStockLevelDao blStockLevelDao;
   private SessionService sessionService;
   private SearchRestrictionService searchRestrictionService;
+  private BlShippingOptimizationStrategy blShippingOptimizationStrategy;
 
   /**
    * Create consignment.
@@ -118,12 +122,13 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         allocatedProductCodes.addAll(productSet.stream().map(BlSerialProductModel::getCode).collect(
             Collectors.toSet()));
       }
+
       final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
-          new HashSet<>(allocatedProductCodes));
+              new HashSet<>(allocatedProductCodes));
 
       if ((!serialStocks.isEmpty()) && serialStocks.stream()
           .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
-
+        this.optimizeShippingMethodForConsignment(consignment, result);
         this.getModelService().save(consignment);
         serialStocks.forEach(stock -> stock.setReservedStatus(true));
         this.getModelService().saveAll(serialStocks);
@@ -145,8 +150,22 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
+  }
 
-
+  /**
+   * javadoc
+   * this method will call optimization flow for consignment
+   *
+   * @param consignment model
+   * @param result sourcingResult
+   */
+  private void optimizeShippingMethodForConsignment(final ConsignmentModel consignment, final SourcingResult result) {
+    try {
+      consignment.setThreeDayGroundAvailability(result.isThreeDayGroundAvailability());
+      getBlShippingOptimizationStrategy().getOptimizedShippingMethodForOrder(consignment);
+    } catch (final Exception e) {
+       throw new BlShippingOptimizationException(ERROR_WHILE_OPTIMIZING_THE_ORDER, e);
+    }
   }
 
   private Collection<StockLevelModel> getSerialsForDateAndCodes(final AbstractOrderModel order,
@@ -287,5 +306,11 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
     this.searchRestrictionService = searchRestrictionService;
   }
 
+  public BlShippingOptimizationStrategy getBlShippingOptimizationStrategy() {
+    return blShippingOptimizationStrategy;
+  }
 
+  public void setBlShippingOptimizationStrategy(BlShippingOptimizationStrategy blShippingOptimizationStrategy) {
+    this.blShippingOptimizationStrategy = blShippingOptimizationStrategy;
+  }
 }

@@ -11,7 +11,9 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.store.BaseStoreModel;
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -288,10 +290,10 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
      * {@inheritDoc}
      */
     @Override
-    public ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, final String customerZip,
+    public ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, String customerZip,
                                                                 final int serviceDays, final int inbound) {
         final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {homeBaseID} = ?warehouseCode" +
-                " and {zip} = ?zip and {serviceDays} = ?serviceDays and {inbound} = ?inbound";
+                " and {zip} = ?customerZip and {serviceDays} = ?serviceDays and {inbound} = ?inbound";
         final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
         query.addQueryParameter("carrierID", carrierId);
         query.addQueryParameter("warehouseCode", warehouseCode);

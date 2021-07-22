@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;

@@ -2171,11 +2171,6 @@
             <modifiers read="true" write="true"/>
             <persistence type="property"/>
           </attribute>
-          <!--  <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
-               <description>Shipping method optimization type</description>
-               <modifiers read="true" write="true"/>
-               <persistence type="property"/>
-           </attribute> -->
           <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
             <description>Shipping method optimization type</description>
             <modifiers read="true" write="true"/>
@@ -2193,6 +2188,12 @@
             <persistence type="property"/>
             <defaultvalue>Boolean.FALSE</defaultvalue>
             <description>It tells whether the consignment is clean complete or dirty.</description>
+          </attribute>
+          <attribute autocreate="true" qualifier="threeDayGroundAvailability" type="boolean">
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <persistence type="property"/>
+              <defaultvalue>Boolean.FALSE</defaultvalue>
+              <description>It tells whether the consignment is threeDayGround marked or not.</description>
           </attribute>
         </attributes>
       </itemtype>
