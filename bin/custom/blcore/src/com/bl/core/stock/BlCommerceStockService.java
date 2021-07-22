@@ -177,4 +177,10 @@ public interface BlCommerceStockService
 	 */
 	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
 			final Collection<StockLevelModel> stockLevels);
+
+	/**
+	 * this method created to get stock duration for same serial includes in active rental for extending order
+	 */
+	 StockResult getStockForEntireExtendDuration(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate);
 }

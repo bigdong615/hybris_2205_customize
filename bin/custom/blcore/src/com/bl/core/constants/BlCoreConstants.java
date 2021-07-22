@@ -205,6 +205,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String ZERO_RATING = "0";
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
 
+	public static final String EXTEND_ORDER = "extendOrder";
+
+	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
+
 	private BlCoreConstants()
 	{
 		//empty

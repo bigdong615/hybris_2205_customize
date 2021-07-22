@@ -62,7 +62,9 @@
 													<c:url value="${productImage.url}" var="primaryImageUrl" />
 	                       							<c:set value="this is alternate" var="altTextHtml"/>
 	                       							<c:url var="rentUrl" value="/rent/product/${product.code}"/>
-													<li class="splide__slide"><a href="${rentUrl}"><img src="${primaryImageUrl}"></a></li>
+													<li class="splide__slide"><a href="${rentUrl}" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="${product.manufacturer}"
+                               data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
+													<img src="${primaryImageUrl}"></a></li>
 												</c:if>
 											</c:forEach>
 										</ul>
@@ -70,7 +72,9 @@
 								</div>
 								<p class="overline"><a href="#">${product.manufacturer}</a></p>
 								<c:url var="rentalPDPUrl" value="/rent/product/${product.code}"/>
-								<h6 class="product"><a href="${rentalPDPUrl}"><c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a></h6>
+								<h6 class="product"><a href="${rentalPDPUrl}" class="js-pdplinkUrl" data-productCode="${product.code}"
+                 data-brand="${product.manufacturer}" data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="rental">
+								<c:out escapeXml="false" value="${ycommerce:sanitizeHTML(product.name)}" /></a></h6>
                                 <h6 class="price"><format:price priceData="${product.price}"/> <span class="period">
                                 <c:choose>
                                 	<c:when test="${not empty rentalDate.selectedFromDate and not empty rentalDate.selectedToDate}">

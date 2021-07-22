@@ -82,6 +82,7 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     // Pull the values directly from the SearchResult object
     target.setCode(this.<String>getValue(source, "code"));
     target.setName(this.<String>getValue(source, "name"));
+    target.setDisplayName(this.<String>getValue(source, "displayName"));
     target.setManufacturer(this.<String>getValue(source, "manufacturerName"));
     target.setDescription(this.<String>getValue(source, "description"));
     target.setSummary(this.<String>getValue(source, "summary"));

@@ -164,6 +164,7 @@
       <extension name='braintreecustomersupportbackoffice' />
       <extension name='braintreefacades' />
       <extension name='braintreehac' />
+      <extension name='tealiumiqaddon' />
 
   </extensions>
 </hybrisconfig>

@@ -8,7 +8,7 @@ import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.converters.Populator;
-import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ruleengineservices.rao.CartRAO;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -16,12 +16,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
 
-public class BlCartRaoPopulator implements Populator<CartModel, CartRAO> {
+public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO> {
 
   private BlProductDao blProductDao;
 
   @Override
-  public void populate(final CartModel source, final CartRAO target)
+  public void populate(final AbstractOrderModel source, final CartRAO target)
   {
 
     target.setRentalCart(source.getIsRentalCart());
