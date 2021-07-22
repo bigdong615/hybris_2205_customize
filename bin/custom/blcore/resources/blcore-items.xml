@@ -155,7 +155,7 @@
         <value code="NOT_INCLUDED"/>
       </enumtype>
 
-      
+
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
       
       <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
