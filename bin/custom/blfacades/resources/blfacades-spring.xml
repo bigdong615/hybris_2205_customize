@@ -518,9 +518,7 @@
 	</bean>
 
 	<!--[BL-643]: Custom Promotions-->
-	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator">
-		<property name="blProductDao" ref="productDao"/>
-	</bean>
+	<bean id="blCartRaoPopulator" class="com.bl.facades.promotions.populator.BlCartRaoPopulator"/>
 
 	<alias name="defaultCartRaoConverter" alias="cartRaoConverter" />
 	<bean id="defaultCartRaoConverter" parent="abstractPopulatingConverter">

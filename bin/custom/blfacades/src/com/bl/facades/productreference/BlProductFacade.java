@@ -18,4 +18,5 @@ public interface BlProductFacade extends ProductFacade{
    */
   List<ProductReferenceData> getProductReferencesForCode(final ProductModel currentProduct, final List<ProductOption> options, final Integer limit);
 
+
 }

@@ -55,7 +55,6 @@ public class DefaultBlProductFacade<REF_TARGET> extends DefaultProductFacade imp
       BlCommerceProductReferenceService<ProductReferenceTypeEnum, REF_TARGET> blCommerceProductReferenceService) {
     this.blCommerceProductReferenceService = blCommerceProductReferenceService;
   }
-
 }
 
 

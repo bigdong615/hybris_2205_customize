@@ -1,9 +1,6 @@
 package com.bl.facades.promotions.populator;
 
 import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.enums.SerialStatusEnum;
-import com.bl.core.model.BlProductModel;
-import com.bl.core.product.dao.BlProductDao;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.product.data.RentalDateDto;
@@ -12,13 +9,10 @@ import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ruleengineservices.rao.CartRAO;
 import java.math.BigDecimal;
 import java.util.Date;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 
 
 public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO> {
 
-  private BlProductDao blProductDao;
 
   @Override
   public void populate(final AbstractOrderModel source, final CartRAO target)
@@ -36,26 +30,8 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
     }
     target.setTotalIncludingDamageWaiver(
         BigDecimal.valueOf(source.getSubtotal() + source.getTotalDamageWaiverCost()));
-    target.setUsedGearOnSale(true);
 
  }
-
-  private boolean hasEligibleProductsForSale() {
-    boolean hasOnSaleTrue = false;
-    for (BlProductModel blProductModel : getBlProductDao().getAllActiveSkuProducts()) {
-      if (blProductModel.getOnSale() != null && BooleanUtils.isTrue(blProductModel.getOnSale())
-          && BooleanUtils.isTrue(blProductModel.getForSale()) && CollectionUtils
-          .isNotEmpty(blProductModel.getSerialProducts())) {
-        hasOnSaleTrue = blProductModel.getSerialProducts().stream().anyMatch(blSerialProductModel ->
-            (blSerialProductModel.getSerialStatus() != null && blSerialProductModel
-                .getSerialStatus().equals(SerialStatusEnum.ACTIVE)) &&
-                (blSerialProductModel.getOnSale() != null && BooleanUtils
-                    .isTrue(blSerialProductModel.getOnSale())) && BooleanUtils
-                .isTrue(blSerialProductModel.getForSale()));
-      }
-    }
-    return  hasOnSaleTrue;
-  }
 
   /**
    * Get the formatted date
@@ -67,11 +43,4 @@ public class BlCartRaoPopulator implements Populator<AbstractOrderModel, CartRAO
   }
 
 
-  public BlProductDao getBlProductDao() {
-    return blProductDao;
-  }
-
-  public void setBlProductDao(BlProductDao blProductDao) {
-    this.blProductDao = blProductDao;
-  }
 }

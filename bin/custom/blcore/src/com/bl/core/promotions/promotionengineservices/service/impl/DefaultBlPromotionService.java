@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * This class is addded to check if usedgearCategory promotion is active
  *
+ * @author Ritika
  */
 public class DefaultBlPromotionService implements BlPromotionService {
 

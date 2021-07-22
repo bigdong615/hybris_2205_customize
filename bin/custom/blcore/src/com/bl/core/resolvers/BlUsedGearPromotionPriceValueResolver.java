@@ -25,6 +25,11 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * This resolver is added to get promotion price for SKU product on PLP and SLP
+ *
+ * @author Ritika
+ */
 public class BlUsedGearPromotionPriceValueResolver extends AbstractValueResolver<BlProductModel, Object, Object>
 {
   private static final Logger LOG = Logger.getLogger(BlUsedGearPromotionPriceValueResolver.class);
@@ -96,7 +101,7 @@ public class BlUsedGearPromotionPriceValueResolver extends AbstractValueResolver
   }
 
   /**
-   * Get Minimum Incentivized Price
+   * Get Minimum Incentive Price
    * @param blProductModel
    * @param serialProducts
    * @return
@@ -108,6 +113,13 @@ public class BlUsedGearPromotionPriceValueResolver extends AbstractValueResolver
         .collect(Collectors.minBy(Comparator.comparing(serialProduct -> serialProduct.getIncentivizedPrice())));
      return minSerialIncentivizedPrice.isPresent() ? minSerialIncentivizedPrice.get() : null;
   }
+
+  /**
+   * Get Minimum Final Serial Price
+   * @param blProductModel
+   * @param serialProducts
+   * @return
+   */
   private BlSerialProductModel getMinFinalPriceSerialProduct(final BlProductModel blProductModel, final Collection<BlSerialProductModel> serialProducts) {
     final Optional<BlSerialProductModel> minSerialfinalSalePrice = blProductModel.getSerialProducts().stream()
         .filter(serialProductModel -> BooleanUtils.isTrue(serialProductModel.getForSale())

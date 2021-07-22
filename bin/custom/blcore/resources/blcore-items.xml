@@ -155,6 +155,7 @@
         <value code="NOT_INCLUDED"/>
       </enumtype>
 
+
       <enumtype generate="true" code="ConditionRatingValueEnum" autocreate="true" dynamic="true"/>
       
       <enumtype generate="true" code="BlInventoryLocationCategoryEnum" autocreate="true" dynamic="true">
@@ -167,7 +168,6 @@
       </enumtype>
 
 	  </enumtypes>
-
 
     <maptypes>
         <maptype code="OpeningDaysMap" argumenttype="java.lang.String" returntype="java.lang.String" />
@@ -945,7 +945,7 @@
                    </attribute>
                      <attribute qualifier="barcode" type="java.lang.String">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" unique="true" optional="true"
+                         <modifiers read="true" write="true" unique="true" optional="false"
                            initial="true"/>
                          <description>Serial barcode assigned specifically to the serial</description>
                      </attribute>
@@ -1102,15 +1102,27 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
-                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum">
+                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store cosmetic rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
-                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" >
+                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
                          <description>To store functional rating data</description>
+                         <custom-properties>
+                           <property name="description">
+                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
+                           </property>
+                         </custom-properties>
                      </attribute>
                      <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
                          <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
