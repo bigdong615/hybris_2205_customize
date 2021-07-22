@@ -46,67 +46,75 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
    */
   @Override
   public OrderModel cloneOrderModelForExtendRental(final OrderModel originalOrder , long defaultAddedTimeForExtendRental) {
+    return null == originalOrder.getExtendedOrderCopy() ?
+        getExtendOrder(originalOrder , defaultAddedTimeForExtendRental) : originalOrder.getExtendedOrderCopy();
+  }
 
-    if(null == originalOrder.getExtendedOrderCopy()) {
+  /**
+   * This method is created to get extend order once order is cloned
+   */
+  private OrderModel getExtendOrder(final OrderModel originalOrder ,final long defaultAddedTimeForExtendRental)
+  {
       final OrderModel extendOrderModel = getModelService().clone(originalOrder);
-      extendOrderModel.setTotalDiscounts(0.0);
-      extendOrderModel.setAppliedCouponCodes(Collections.emptyList());
-      extendOrderModel.setDeliveryCost(0.0);
-      extendOrderModel.setAllPromotionResults(Collections.emptySet());
-      extendOrderModel.setTotalTax(0.0);
-      extendOrderModel.setTotalTaxValues(Collections.emptyList());
-      extendOrderModel.setDeliveryCost(0.0);
-      extendOrderModel.setAvalaraTaxCalculated(false);
-      extendOrderModel.setCalculated(false);
-      extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));
-      extendOrderModel.setIsExtendedOrder(true);
-      extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
-      extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental);
-      extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
 
-      getModelService().save(extendOrderModel);
-      getModelService().refresh(extendOrderModel);
+      // Set default values once order is cloned
+      setDefaultValuesForExtendOrder(extendOrderModel ,defaultAddedTimeForExtendRental);
+      saveAndRefreshModel(extendOrderModel);
 
       final Set<ConsignmentModel> clonedList = new HashSet<>();
-
-      for(ConsignmentModel consignmentModel : originalOrder.getConsignments()) {
-
-        final ConsignmentModel clonedConsignment = getModelService().clone(consignmentModel);
-
-        final Set<ConsignmentEntryModel> consignmentEntryModellist = new HashSet<>();
-
-        for(ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
-         final ConsignmentEntryModel consignmentEntryModel1 = getModelService().clone(consignmentEntryModel);
-          consignmentEntryModel1.setConsignment(clonedConsignment);
-          getModelService().save(consignmentEntryModel1);
-          getModelService().refresh(consignmentEntryModel1);
-          consignmentEntryModellist.add(consignmentEntryModel1);
-        }
-        clonedConsignment.setConsignmentEntries(consignmentEntryModellist);
-          clonedList.add(clonedConsignment);
-      }
+      // clone consignment and consignment extries for extend order
+      cloneConsignmentForExtendOrder(originalOrder , clonedList);
       extendOrderModel.setConsignments(clonedList);
-      getModelService().save(extendOrderModel);
-      getModelService().refresh(extendOrderModel);
+      saveAndRefreshModel(extendOrderModel);
       getModelService().saveAll(clonedList);
-
-
       if(CollectionUtils.isNotEmpty(originalOrder.getOrderNotes())) {
         extendOrderModel.setOrderNotes(originalOrder.getOrderNotes());
       }
-      getModelService().save(extendOrderModel);
-      getModelService().refresh(extendOrderModel);
-
+      saveAndRefreshModel(extendOrderModel);
       originalOrder.setExtendedOrderCopy(extendOrderModel);
-
-      getModelService().save(originalOrder);
-      getModelService().refresh(originalOrder);
+      saveAndRefreshModel(originalOrder);
       return extendOrderModel;
-    }
-    return originalOrder.getExtendedOrderCopy();
-
   }
 
+  /**
+   * This method created to set the default values , once order is cloned
+   */
+  private void setDefaultValuesForExtendOrder(final OrderModel extendOrderModel , final long defaultAddedTimeForExtendRental){
+    extendOrderModel.setTotalDiscounts(0.0);
+    extendOrderModel.setAppliedCouponCodes(Collections.emptyList());
+    extendOrderModel.setDeliveryCost(0.0);
+    extendOrderModel.setAllPromotionResults(Collections.emptySet());
+    extendOrderModel.setTotalTax(0.0);
+    extendOrderModel.setTotalTaxValues(Collections.emptyList());
+    extendOrderModel.setDeliveryCost(0.0);
+    extendOrderModel.setAvalaraTaxCalculated(false);
+    extendOrderModel.setCalculated(false);
+    extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));
+    extendOrderModel.setIsExtendedOrder(true);
+    extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
+    extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental);
+    extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
+  }
+
+  /**
+   * This method is created to  clone ths consignment and consignment entries
+   */
+  private void cloneConsignmentForExtendOrder(final OrderModel originalOrder ,final Set<ConsignmentModel> clonedList)
+  {
+    for(final ConsignmentModel consignmentModel : originalOrder.getConsignments()) {
+      final ConsignmentModel clonedConsignment = getModelService().clone(consignmentModel);
+      final Set<ConsignmentEntryModel> consignmentEntryModellist = new HashSet<>();
+      for(final ConsignmentEntryModel consignmentEntryModel : consignmentModel.getConsignmentEntries()) {
+        final ConsignmentEntryModel consignmentEntryModel1 = getModelService().clone(consignmentEntryModel);
+        consignmentEntryModel1.setConsignment(clonedConsignment);
+        getModelService().save(consignmentEntryModel1);
+        getModelService().refresh(consignmentEntryModel1);
+        consignmentEntryModellist.add(consignmentEntryModel1);
+      }
+      clonedConsignment.setConsignmentEntries(consignmentEntryModellist);
+      clonedList.add(clonedConsignment);
+    }
+  }
   /**
    * This method created to update the extend order details once the extend is successfully
    */
@@ -124,8 +132,19 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
           .equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode())) {
         extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.COMPLETED);
       }
-      getModelService().save(extendOrderModel);
-      getModelService().refresh(extendOrderModel);
+      saveAndRefreshModel(extendOrderModel);
+      setExtendedOrderCopyListToOrder(originalOrder , extendOrderModel);
+      originalOrder.setExtendedOrderCopy(null);
+
+      saveAndRefreshModel(originalOrder);
+      updateStockForExtendedOrder(extendOrderModel);
+    }
+    }
+
+  /**
+   * This method created to copy the extendOrder to extendOrder list of original order
+   */
+    private void setExtendedOrderCopyListToOrder(final AbstractOrderModel originalOrder , final AbstractOrderModel extendOrderModel) {
       if (CollectionUtils.isNotEmpty(originalOrder.getExtendedOrderCopyList())) {
         final List<AbstractOrderModel> extendOrderModelList = new ArrayList<>(
             originalOrder.getExtendedOrderCopyList());
@@ -136,15 +155,12 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
         orderModelList.add(extendOrderModel);
         originalOrder.setExtendedOrderCopyList(orderModelList);
       }
-      originalOrder.setExtendedOrderCopy(null);
-
-      getModelService().save(originalOrder);
-      getModelService().refresh(originalOrder);
-      updateStockForExtendedOrder(extendOrderModel);
-    }
     }
 
-    private void updateStockForExtendedOrder(final AbstractOrderModel extendOrderModel) {
+  /**
+   * This method created to update the stock for extend order
+   */
+  private void updateStockForExtendedOrder(final AbstractOrderModel extendOrderModel) {
       final List<String> allocatedProductCodes = new ArrayList<>();
       if(CollectionUtils.isNotEmpty(extendOrderModel.getConsignments())) {
         for (final ConsignmentModel consignmentModel : extendOrderModel.getConsignments()) {
@@ -158,6 +174,9 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       updateSerialStocks(allocatedProductCodes , extendOrderModel);
   }
 
+  /**
+   * This method created to get the serial product codes
+   */
   private void getAllocatedProductCode(final BlProductModel blProductModel , final List<String> allocatedProductCodes) {
     if (blProductModel instanceof BlSerialProductModel && !blProductModel.getProductType()
         .equals(ProductTypeEnum.SUBPARTS)) {
@@ -165,6 +184,10 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
       allocatedProductCodes.add(blSerialProductModel.getCode());
     }
   }
+
+  /**
+   * This method create to allocate the stocks for respective serials which are extended
+   */
   private void updateSerialStocks(final List<String> allocatedProductCodes , final AbstractOrderModel extendOrderModel) {
     final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(extendOrderModel,
         new HashSet<>(allocatedProductCodes));
@@ -176,8 +199,6 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     }
   }
 
-
-
   /**
    * This method created for getting stock for serial product
    */
@@ -187,6 +208,16 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     return getBlStockLevelDao().findSerialStockLevelsForDateAndCodes(serialProductCodes, order.getActualRentalStartDate(),
             order.getActualRentalEndDate());
   }
+
+
+  /**
+   * This method created as common for saving and refreshing model
+   */
+  private void saveAndRefreshModel(final AbstractOrderModel orderModel) {
+    getModelService().save(orderModel);
+    getModelService().refresh(orderModel);
+  }
+
 
   public ModelService getModelService() {
     return modelService;
