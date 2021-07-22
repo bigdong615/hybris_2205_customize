@@ -910,10 +910,6 @@
 	<alias alias="ruleTotalDamageWaiverConditionTranslator" name="defaultRuleTotalDamageWaiverConditionTranslator" />
 	<bean id="defaultRuleTotalDamageWaiverConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleTotalDamageWaiverConditionTranslator" />
 
-	<!--[Bl-663] condition-->
-	<alias alias="ruleUsedGearOnSaleConditionTranslator" name="defaultRuleUsedGearOnSaleConditionTranslator" />
-	<bean id="defaultRuleUsedGearOnSaleConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleUsedGearOnSaleConditionTranslator" />
-
 	<alias name="defaultBlShippingActionStrategy" alias="blShippingActionStrategy"/>
 	<bean id="defaultBlShippingActionStrategy" parent="abstractRuleActionStrategy" class="com.bl.core.promotions.promotionengineservices.action.impl.DefaultBlShippingActionStrategy" >
 		<property name="deliveryModeDao" ref="deliveryModeDao"/>
@@ -940,7 +936,7 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
-	<!-- SOLR Field value Resolver for OnSale solr attribute -->
+	<!-- [BL-663]  SOLR Field value Resolver for OnSale solr attribute  and min promotion price-->
 	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
 	<bean id="blUsedGearPromotionPriceValueResolver" class="com.bl.core.resolvers.BlUsedGearPromotionPriceValueResolver" parent="abstractValueResolver">
 			<property name="baseStoreService" ref="baseStoreService"/>
@@ -948,12 +944,13 @@
 			<property name="blPricingService" ref="blPricingService"/>
 	</bean>
 
+	<!--[BL-663] Added promotion Service for promotion active or not-->
 	<alias name="defaultBlPromotionService" alias="blPromotionService"/>
 	<bean id="defaultBlPromotionService" class="com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService">
 		<property name="promotionDao" ref="promotionDao"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 	</bean>
-
+	<!--[BL-663] Added facet on sale on PLP/SLP -->
 	<bean id="blOnSaleFacetNameProvider"
 		class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider"/>
 	<!-- BL-753:This interceptor is added to update consignment in order notes -->

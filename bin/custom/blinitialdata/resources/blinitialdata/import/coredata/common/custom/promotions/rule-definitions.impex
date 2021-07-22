@@ -9,7 +9,6 @@ INSERT_UPDATE RuleConditionDefinition;id[unique=true]  ;name[lang=$lang];breadcr
                                      ;y_rental_cart_condition;Rental Cart Condition;Is Rental Product Promotion {value}      ;         ;false         ;ruleRentalCartConditionTranslator   ;            ;cart
                                      ;y_rental_arrival_date_condition;Rental Arrival Date Condition;Rental Arrival Date {operator} {rentalArrivalDate}   ;         ;false         ;ruleRentalArrivalDateConditionTranslator   ;            ;cart
                                      ;y_total_with_damage_waiver ; Total Damage Waiver; Total Including Damage Waiver Cost{operator} {totalwithDamageWaiver} ; ;false         ; ruleTotalDamageWaiverConditionTranslator ;                     ; cart
-                                     ;y_used_gear_onSale_condition;Used Gear On Sale condition;Used Gear eligible for Sale condition {value}      ;         ;false         ;ruleUsedGearOnSaleConditionTranslator   ;            ;cart
 
 
 
@@ -25,14 +24,12 @@ INSERT_UPDATE RuleConditionDefinitionParameter;definition(id)[unique=true];id[un
 
 INSERT_UPDATE RuleConditionDefinitionParameter; definition(id)[unique = true]; id[unique = true]        ; priority; name[lang = $lang]                ; description[lang = $lang]                                                                                    ; type                                                                                 ; value                       ; required[default = true]; validators
                                               ; y_rental_cart_condition           ; value                    ; 1000    ; Rental Cart Condition   ; Rental Cart Condition ; java.lang.Boolean                                                                    ; true                        ;
-                                              ; y_used_gear_onSale_condition           ; value                    ; 1000    ; Used Gear On Sale Product Condition   ; Used Gear On Sale Product Condition ; java.lang.Boolean                                                                    ; true                        ;
 
 INSERT_UPDATE RuleConditionDefinitionRuleTypeMapping;definition(id)[unique=true];ruleType(code)[default=PromotionSourceRule][unique=true]
                                                     ;y_rental_duration_condition   ;
                                                     ;y_rental_cart_condition   ;
                                                     ;y_rental_arrival_date_condition;
                                                     ;y_total_with_damage_waiver;
-                                                    ;y_used_gear_onSale_condition;
 
 
 ####Promotion Actions#####
