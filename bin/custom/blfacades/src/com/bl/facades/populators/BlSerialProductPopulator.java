@@ -8,7 +8,6 @@ import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.stock.BlCommerceStockService;
 import com.bl.facades.product.data.SerialProductData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
-import de.hybris.platform.commercefacades.product.converters.populator.ProductPromotionsPopulator;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -42,7 +41,6 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	private BlPromotionService blPromotionService;
 	private BlPricingService blPricingService;
 	private BlCommerceStockService blCommerceStockService;
-  private ProductPromotionsPopulator productPromotionsPopulator;
 	private BlProductService blProductService;
 
 	@Override
@@ -80,7 +78,6 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 			}
 			serialProductData.setConditionRating(serialProductModel.getConditionRatingOverallScore());
 			serialProductData.setSerialId(serialProductModel.getProductId());
-			productPromotionsPopulator.populate(serialProductModel,serialProductData);
 			populateSerialPromotionData(serialProductModel,serialProductData);
 			//onSale changes
 			serialProductData.setOnSale(serialProductModel.getOnSale() != null && serialProductModel.getOnSale());
@@ -243,15 +240,6 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 		this.blProductService = blProductService;
 	}
 
-
-	public ProductPromotionsPopulator getProductPromotionsPopulator() {
-		return productPromotionsPopulator;
-	}
-
-	public void setProductPromotionsPopulator(
-			ProductPromotionsPopulator productPromotionsPopulator) {
-		this.productPromotionsPopulator = productPromotionsPopulator;
-	}
 
 	public BaseStoreService getBaseStoreService() {
 		return baseStoreService;

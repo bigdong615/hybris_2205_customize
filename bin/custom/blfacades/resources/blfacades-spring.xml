@@ -275,7 +275,6 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
-		<property name="productPromotionsPopulator" ref="productPromotionsPopulator"/>
 		<property name="blProductService" ref="productService"/>
 		<property name="baseStoreService" ref="baseStoreService"/>
 		<property name="blPromotionService" ref="blPromotionService"/>
