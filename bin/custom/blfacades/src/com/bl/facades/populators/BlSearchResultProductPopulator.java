@@ -5,7 +5,6 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.price.service.BlCommercePriceService;
 import com.bl.core.promotions.promotionengineservices.service.BlPromotionService;
 import com.bl.facades.constants.BlFacadesConstants;
-import com.bl.facades.productreference.BlProductFacade;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.catalog.model.classification.ClassAttributeAssignmentModel;
@@ -63,7 +62,6 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
   private UrlResolver<ProductData> productDataUrlResolver;
   private Populator<FeatureList, ProductData> productFeatureListPopulator;
   private ProductService productService;
-  private BlProductFacade blProductFacade;
   private BaseStoreService baseStoreService;
   private BlPromotionService blPromotionService;
   private CommonI18NService commonI18NService;
@@ -523,13 +521,6 @@ public void setCommercePriceService(final BlCommercePriceService commercePriceSe
     this.stockNotificationFacade = stockNotificationFacade;
   }
 
-  public BlProductFacade getBlProductFacade() {
-    return blProductFacade;
-  }
-
-  public void setBlProductFacade(BlProductFacade blProductFacade) {
-    this.blProductFacade = blProductFacade;
-  }
   public BlWishlistOptionsPopulator getBlWishlistOptionsPopulator() {
     return blWishlistOptionsPopulator;
   }
