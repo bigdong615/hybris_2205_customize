@@ -28,11 +28,17 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 			Arrays.asList("product_id", "product_sku", "product_name", "product_brand", "product_category", "product_subcategory",
 					"product_unit_price", "product_quantity", "continue_to_checkout"));
 
-	private final static ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
-			Arrays.asList("order_id  ", "order_subtotal", "order_payment_type", "order_total", "order_discount", "order_shipping",
-					"order_tax", "order_currency", "order_coupon_code", "order_type", "product_id", "product_sku", "product_name",
-					"product_brand", "product_category", "product_subcategory", "product_unit_price", "product_quantity",
-					"customer_email", "state", "postal_code", "guest_order", "customer_account_number"));
+/*	private final static ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
+    Arrays.asList("order_id  ", "order_subtotal", "order_payment_type", "order_total", "order_discount", "order_shipping",
+        "order_tax", "order_currency", "order_coupon_code", "order_type", "product_id", "product_sku", "product_name",
+        "product_brand", "product_category", "product_subcategory", "product_unit_price", "product_quantity",
+        "customer_email", "state", "postal_code", "guest_order", "customer_account_number"));*/
+
+  private final static ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
+      Arrays.asList("orderID  ","AccountID","cartSize","couponCode","damage waiver cost","isBuy","productList","ProductName",
+          "productSKU","searchTerm","shipping cost","subtotal","rentalDays","isVideo","pagetype","totalvalue","userEmail",
+          "userFirstName","userLastName","marketingOptin","quantity","unit_price"));
+
 
 	private final static ArrayList<String> customerDetailPageFields = new ArrayList<>(
 			Arrays.asList("customer_name", "customer_email"));

@@ -66,7 +66,7 @@
 		<bean class="com.bl.storefront.interceptors.beforecontroller.SecurityUserCheckBeforeControllerHandler" />
 		<bean class="com.bl.storefront.interceptors.beforecontroller.RequireHardLoginBeforeControllerHandler" >
 				<property name="redirectStrategy" ref="redirectStrategy"/>
-				<property name="loginUrl" value="/login"/>
+				<property name="loginUrl" value="/"/>
 				<property name="loginAndCheckoutUrl" value="/login/checkout"/>
 				<property name="requireHardLoginEvaluator" ref="requireHardLoginEvaluator"/>
 		</bean>
@@ -289,7 +289,7 @@
 		<entry key="saved-carts" value="/my-account/saved-carts"/>
 		<entry key="savedCartDetailsPage" value="/my-account/saved-carts"/>
 		<entry key="storefinderPage" value="/store-finder"/>
-		<entry key="login" value="/login"/>
+		<entry key="login" value="/"/>
 		<entry key="checkout-login" value="/login/checkout"/>
 		<entry key="forgottenPassword" value="/login/pw/request"/>
 		<entry key="updatePassword" value="/my-account/update-password"/>
@@ -369,5 +369,12 @@
 	<!--BL-542 Shipping-->
 	<alias name="blAddressDataUtil" alias="addressDataUtil"/>
 	<bean id="blAddressDataUtil" class="com.bl.storefront.util.BlAddressDataUtil" parent="defaultAddressDataUtil"/>
+
+	<bean id="tealiumContextBeforeViewHandler" class="com.bl.storefront.interceptors.beforeview.TealiumContextBeforeViewHandler">
+		<property name="cartService" ref="cartService"/>
+		<property name="productService" ref="productService"/>
+		<property name="userService" ref="userService"/>
+		<property name="cartConverter" ref="cartConverter"/>
+	</bean>
 
 </beans>
