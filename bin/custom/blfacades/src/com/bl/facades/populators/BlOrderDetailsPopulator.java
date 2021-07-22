@@ -43,23 +43,29 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       target.setRentalStartDate(
           convertDateToString(source.getRentalStartDate(), BlFacadesConstants.RENTAL_DATE_FORMAT));
       target.setRentalEndDate(
-          convertDateToString(source.getRentalEndDate(), BlFacadesConstants.RENTAL_DATE_FORMAT));
+          convertDateToString(updateRentalDatesIfOrderIsExtended(source),  BlFacadesConstants.RENTAL_DATE_FORMAT));
       target.setRentalFormattedStartDate(convertDateToString(source.getRentalStartDate(),
           BlFacadesConstants.FORMATTED_RENTAL_DATE));
       target.setRentalFormattedEndDate(
-          convertDateToString(source.getRentalEndDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE));
+          convertDateToString(updateRentalDatesIfOrderIsExtended(source), BlFacadesConstants.FORMATTED_RENTAL_DATE));
       target.setTotalRentalDays(String.valueOf(BlDateTimeUtils
-          .getDaysBetweenDates(source.getRentalStartDate(), source.getRentalEndDate()) + 1));
+          .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source)) + 1));
     }
     target.setOrderedDate(convertDateToString(source.getDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE));
     target.setOrderedFormatDate(convertDateToString(source.getDate() , BlFacadesConstants.ORDER_FORMAT_PATTERN));
-    target.setTotalDamageWaiverCost(convertDoubleToPriceData(source.getTotalDamageWaiverCost() , source));
-   target.setTaxAvalaraCalculated(convertDoubleToPriceData(source.getTotalTax() , source));
-   target.setTotalPriceWithTax(convertDoubleToPriceData(source.getTotalPrice(), source));
+    target.setTotalDamageWaiverCost(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalDamageWaiverCost() ,
+        BlFacadesConstants.DAMAGE_WAIVER_FIELD) , source));
+   target.setTaxAvalaraCalculated(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , source.getTotalTax() ,
+       BlFacadesConstants.TOTAL_TAX_FIELD) , source));
+   target.setTotalPriceWithTax(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getTotalPrice() ,
+       BlFacadesConstants.TOTAL_PRICE_FIELD), source));
+    target.setSubTotal(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source ,source.getSubtotal() ,
+        BlFacadesConstants.SUB_TOTAL_FIELD), source));
    final Double discountAmount = source.getTotalDiscounts();
    final Double giftCartAMount = source.getGiftCardAmount();
    final Double totalDisount = discountAmount + giftCartAMount;
-   target.setTotalDiscounts(convertDoubleToPriceData(totalDisount, source));
+   target.setTotalDiscounts(convertDoubleToPriceData(updateOrderDetailsIfOrderExtended(source , totalDisount ,
+       BlFacadesConstants.DISCOUNT_FIELD), source));
    target.setPickUpPersonEmail(source.getPickUpPersonFirstName());
    target.setPickUpPersonLastName(source.getPickUpPersonLastName());
    target.setPickUpPersonEmail(source.getPickUpPersonEmail());
@@ -138,6 +144,55 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     }
 
     orderData.setOrderNotes(orderNotes);
+  }
+
+
+  private Date updateRentalDatesIfOrderIsExtended(final OrderModel orderModel) {
+    final List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
+
+    if(CollectionUtils.isNotEmpty(orderModelList)) {
+      final int size = orderModelList.size();
+      for (final AbstractOrderModel extendOrder : orderModelList) {
+        if (BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) && extendOrder
+            .getExtendOrderStatus().getCode()
+            .equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())
+            && orderModelList.get(size - 1).getPk()
+            .equals(extendOrder.getPk())) {
+          return extendOrder.getRentalEndDate();
+        }
+      }
+    }
+
+    return orderModel.getRentalEndDate();
+  }
+
+  private Double updateOrderDetailsIfOrderExtended(final OrderModel orderModel , final Double actualPrice , final  String field) {
+
+    BigDecimal price = BigDecimal.valueOf(actualPrice);
+    if(CollectionUtils.isNotEmpty(orderModel.getExtendedOrderCopyList())) {
+
+      for(final AbstractOrderModel extendOrder : orderModel.getExtendedOrderCopyList()){
+        if(BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) &&
+            extendOrder.getExtendOrderStatus().getCode().equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())){
+          if(BlFacadesConstants.TOTAL_PRICE_FIELD.equalsIgnoreCase(field)) {
+            price = price.add(BigDecimal.valueOf(extendOrder.getTotalPrice()));
+          }
+          else if(BlFacadesConstants.TOTAL_TAX_FIELD.equalsIgnoreCase(field)) {
+            price = price.add(BigDecimal.valueOf(extendOrder.getTotalTax()));
+          }
+          else if(BlFacadesConstants.SUB_TOTAL_FIELD.equalsIgnoreCase(field)) {
+            price = price.add(BigDecimal.valueOf(extendOrder.getSubtotal()));
+          }
+          else if(BlFacadesConstants.DAMAGE_WAIVER_FIELD.equalsIgnoreCase(field)){
+            price = price.add(BigDecimal.valueOf(extendOrder.getTotalDamageWaiverCost()));
+          }
+          else if(BlFacadesConstants.DISCOUNT_FIELD.equalsIgnoreCase(field)){
+            price = price.add(BigDecimal.valueOf(extendOrder.getTotalDiscounts()));
+          }
+        }
+      }
+    }
+    return price.doubleValue();
   }
 
   /**

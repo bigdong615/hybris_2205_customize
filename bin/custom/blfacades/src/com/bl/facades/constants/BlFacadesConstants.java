@@ -43,6 +43,13 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String DAYS = "days";
   public static final String EMPTY = "";
 
+  public static final String DAMAGE_WAIVER_FIELD = "damageWaiver";
+  public static final String TOTAL_TAX_FIELD = "totalTax";
+  public static final String TOTAL_PRICE_FIELD = "totalPrice";
+  public static final String DISCOUNT_FIELD = "discount";
+  public static final String SUB_TOTAL_FIELD = "subTotal";
+  public static final String PRODUCT_SEPERATOR = "x";
+
 
   private BlFacadesConstants() {
     //empty

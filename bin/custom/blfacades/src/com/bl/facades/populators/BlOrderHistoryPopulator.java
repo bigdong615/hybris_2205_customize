@@ -42,8 +42,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     target.setStatusDisplay(source.getStatusDisplay());
     if (source.getTotalPrice() != null)
     {
-      final BigDecimal totalPrice = BigDecimal.valueOf(source.getTotalPrice());
-      target.setTotal(getPriceDataFactory().create(PriceDataType.BUY, totalPrice, source.getCurrency()));
+      target.setTotal(getPriceDataFactory().create(PriceDataType.BUY, updateTotalIfOrderExtended(source), source.getCurrency()));
     }
 
    if(null != source.getRentalStartDate()){
@@ -60,7 +59,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
        final ProductModel product = abstractOrderEntryModel.getProduct();
        if(product instanceof BlSerialProductModel) {
          final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
-         productQtyAndName.add(abstractOrderEntryModel.getQuantity() + " x " + productModel.getName());
+         productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.PRODUCT_SEPERATOR + productModel.getName());
        }
      }
      target.setProductNameAndQuantity(productQtyAndName);
@@ -68,6 +67,21 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    if(CollectionUtils.isNotEmpty(source.getExtendedOrderCopyList())) {
      updateRentalDetailsIfExtendOrderExist(source, target);
    }
+  }
+
+  private BigDecimal updateTotalIfOrderExtended(final OrderModel orderModel) {
+
+    BigDecimal price = BigDecimal.valueOf(orderModel.getTotalPrice());
+    if(CollectionUtils.isNotEmpty(orderModel.getExtendedOrderCopyList())) {
+
+      for(final AbstractOrderModel extendOrder : orderModel.getExtendedOrderCopyList()){
+        if(BooleanUtils.isTrue(extendOrder.getIsExtendedOrder()) &&
+            extendOrder.getExtendOrderStatus().getCode().equalsIgnoreCase(ExtendOrderStatusEnum.COMPLETED.getCode())){
+          price = price.add(BigDecimal.valueOf(extendOrder.getTotalPrice()));
+        }
+      }
+    }
+    return price;
   }
 
   /**
@@ -81,7 +95,6 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    * This method created to update rental details if order already contains extend order
    */
   private void updateRentalDetailsIfExtendOrderExist(final OrderModel orderModel , final OrderHistoryData orderData){
-
     final List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
     final int size = orderModelList.size();
     for (final AbstractOrderModel extendOrder :orderModelList) {
@@ -91,11 +104,8 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
           && orderModelList.get(size - 1).getPk()
           .equals(extendOrder.getPk())) {
         orderData.setRentalEndDate(convertDateToString(extendOrder.getRentalEndDate()));
-        final BigDecimal totalPrice = BigDecimal.valueOf(extendOrder.getTotalPrice());
-        orderData.setTotal(getPriceDataFactory().create(PriceDataType.BUY, totalPrice, extendOrder.getCurrency()));
       }
     }
-
   }
 
 }
