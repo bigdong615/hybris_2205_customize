@@ -379,6 +379,7 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 		{
 			associatedConsignment.setStatus(consignmentStatus);
 			ctx.getModelService().save(associatedConsignment);
+			ctx.getModelService().refresh(associatedConsignment);
 		}
 		catch (final ModelSavingException exception)
 		{

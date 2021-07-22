@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import com.bl.backoffice.wizards.util.WebScanToolData;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
+import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.hybris.backoffice.widgets.notificationarea.event.NotificationEvent;
 import com.hybris.cockpitng.config.jaxb.wizard.CustomType;
@@ -64,17 +65,17 @@ public class TechEngScanToolHandler implements FlowActionHandler
 		else
 		{
 			final List<String> barcodes = webScanToolData.getBarcodeInputField();
-			if (CollectionUtils.isNotEmpty(barcodes))
-			{
-				createResponseForScanResult(barcodes);
-			}
-			else
+			if (CollectionUtils.isEmpty(barcodes))
 			{
 				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
 						StringUtils.EMPTY);
 				this.getNotificationService().notifyUser(BlInventoryScanLoggingConstants.TECH_ENG_NOTIFICATION_HANDLER,
 						BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
 						StringUtils.EMPTY);
+			}
+			else
+			{
+				createResponseForScanResult(barcodes);
 			}
 		}
 	}
@@ -91,7 +92,7 @@ public class TechEngScanToolHandler implements FlowActionHandler
 		if (barcodes.size() >= BlInventoryScanLoggingConstants.TWO)
 		{
 			createResponseMsgForScan(getBlInventoryScanToolService().isValidTechEngLocationBarcode(barcodes,
-					BlInventoryScanLoggingConstants.getTechEngAllowedLocations()), barcodes);
+					BlInventoryScanUtility.getTechEngAllowedLocations()), barcodes);
 		}
 		else
 		{
