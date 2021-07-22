@@ -195,6 +195,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return orderData;
   }
 
+  /**
+   * This method created to check the stock availability for extend order
+   */
   private void checkStockAvailablity(final OrderModel orderModel , final OrderData orderData , final Date stockStartDate ,
       final Date stockEndDate , List<StockResult> stockResults) {
     for (final ConsignmentModel consignmentModel : orderModel.getConsignments()) {
@@ -208,6 +211,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     }
   }
 
+  /**
+   * This method created to check for product availability bases on serial product of existing order
+   */
   private void checkProductForAvailablity(final BlProductModel blProductModel , final Date stockStartDate ,
       final Date stockEndDate , final List<StockResult> stockResults , final OrderData orderData )
     {
@@ -223,7 +229,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
           stockResults.add(stockResult);
           orderData.setIsAllProductExtendabe(false);
           orderData
-              .setExtendErrorMessage("This item is no longer available for your Extend Order.");
+              .setExtendErrorMessage("One or more of your items is unavailable to be extended. Please contact us if you are unable to return your order by its scheduled return date.");
           BlLogger.logMessage(LOG, Level.INFO, "product cannot be extend",
               blSerialProductModel.getCode());
         }
@@ -231,6 +237,9 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     }
 
 
+  /**
+   * This method created to populate the extend order details
+   */
   private void populateExtendOrderDetails(final Date startDate ,final Date endDate , final String selectedDate ,
       final OrderModel orderModel , final OrderData orderData , final Date stockEndDate) {
     long defaultAddedTimeForExtendRental = BlDateTimeUtils
