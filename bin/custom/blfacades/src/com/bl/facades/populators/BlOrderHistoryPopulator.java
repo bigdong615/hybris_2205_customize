@@ -69,6 +69,9 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    }
   }
 
+  /**
+   * This method created to update the total price if order is extended
+   */
   private BigDecimal updateTotalIfOrderExtended(final OrderModel orderModel) {
 
     BigDecimal price = BigDecimal.valueOf(orderModel.getTotalPrice());

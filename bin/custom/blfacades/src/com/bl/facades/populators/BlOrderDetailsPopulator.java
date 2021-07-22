@@ -95,7 +95,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
   }
 
   /**
-   * This method poulates extend order details to order data
+   * This method populate extend order details to order data
    */
   private void populateExtendOrderDetails(final OrderModel orderModel , final OrderData orderData) {
 
@@ -113,6 +113,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     orderData.setExtendOrderEntrie(extendOrderDataList);
   }
 
+  /**
+   * This method created to update the rental end date for calendar if order is extended
+   */
   private void populateRentalEndDateForJs(final OrderModel orderModel , final OrderData orderData) {
 
     final List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
@@ -130,6 +133,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
 
   }
 
+  /**
+   * This method created to populate the order notes
+   */
   private void populateOrderNotes(final OrderModel orderModel , final OrderData orderData) {
 
     String orderNotes = BlFacadesConstants.EMPTY;
@@ -146,6 +152,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     orderData.setOrderNotes(orderNotes);
   }
 
+  /**
+   * This method is created to update the rental end date , if order is extended
+   */
 
   private Date updateRentalDatesIfOrderIsExtended(final OrderModel orderModel) {
     final List<AbstractOrderModel> orderModelList = orderModel.getExtendedOrderCopyList();
@@ -166,6 +175,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     return orderModel.getRentalEndDate();
   }
 
+  /**
+   * This method to update order summary section , if order is extended
+   */
   private Double updateOrderDetailsIfOrderExtended(final OrderModel orderModel , final Double actualPrice , final  String field) {
 
     BigDecimal price = BigDecimal.valueOf(actualPrice);
