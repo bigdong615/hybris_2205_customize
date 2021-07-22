@@ -366,7 +366,7 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
 
     final Set<BlProductModel> entrySerialProducts = new HashSet<>(entry.getSerialProducts());
     entrySerialProducts.addAll(serialProductsToAssign);
-    entry.setSerialProducts(entrySerialProducts);
+    entry.setSerialProducts(new ArrayList<>(entrySerialProducts));
 
     final Map<Integer, Set<BlSerialProductModel>> serialProductMap =
         MapUtils.isNotEmpty(result.getSerialProductMap()) ? result.getSerialProductMap()
