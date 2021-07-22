@@ -11,11 +11,13 @@ import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 import com.braintree.model.BrainTreePaymentInfoModel;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderPopulator;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.CreditCardPaymentInfoModel;
@@ -30,10 +32,14 @@ import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 public class BrainTreeOrderPopulator extends OrderPopulator
 {
+	private static final Logger LOGGER = Logger.getLogger(BrainTreeOrderPopulator.class);
+
 	private Converter<BrainTreePaymentInfoModel, CCPaymentInfoData> brainTreePaymentInfoConverter;
 	private static final int ROUND_OFF_SCALE = 2;
 	@Override
@@ -50,10 +56,11 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 			final Optional<NotesModel> notesModel = source.getOrderNotes().stream()
 					.filter(orderNote -> orderNote.getType().equals(NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES))
 					.findFirst();
-			if (notesModel.isPresent()) {
-				target.setOrderNotes(notesModel.get().getNote());
-			}
+			notesModel.ifPresent(model -> target.setOrderNotes(model.getNote()));
 		}
+		final double promoDiscount = source.getTotalDiscounts();
+		final double gifCardDiscount = source.getGiftCardAmount();
+		target.setTotalDiscounts(createPrice(source, promoDiscount + gifCardDiscount));
 	}
 
 	/**
@@ -168,5 +175,33 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 	private String getFormattedDate(final Date date)
 	{
 		return BlDateTimeUtils.convertDateToStringDate(date, BlCoreConstants.REVIEW_PAGE_DATE_FORMAT);
+	}
+
+	/**
+	 * Overriding to remove discounts from subtotal
+	 *
+	 * @param source abstractOrderModel
+	 * @param target target object
+	 */
+	@Override
+	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData target) {
+		super.addTotals(source, target);
+		final double subTotal = source.getSubtotal();
+		final PriceData subTotalPriceData = createPrice(source, subTotal);
+		target.setSubTotal(subTotalPriceData);
+	}
+
+	/**
+	 * This method overridden to calculate the totalPrice with tax
+	 */
+	@Override
+	protected Double calcTotalWithTax(final AbstractOrderModel source) {
+		if (Objects.isNull(source)) {
+			BlLogger.logMessage(LOGGER, Level.ERROR, "source order must not be null",
+					new IllegalArgumentException());
+		}
+		// Since we have already calculated the total with Tax , so returning cart total as total price with tax
+		return Objects.nonNull(source) && Objects.nonNull(source.getTotalPrice()) ? source
+				.getTotalPrice() : 0.0d;
 	}
 }

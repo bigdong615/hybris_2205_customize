@@ -198,6 +198,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String ZERO_RATING = "0";
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
+	public static final String BL_PRODUCTCATALOG = "blProductCatalog";
 
 	private BlCoreConstants()
 	{
