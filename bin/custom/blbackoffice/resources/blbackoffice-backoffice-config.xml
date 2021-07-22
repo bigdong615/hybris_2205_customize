@@ -1170,6 +1170,26 @@
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType"/>
 				</editorArea:section>
+				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
+					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
+						<editorArea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+							qualifier="consignmentEntries" readonly="false"
+							label="warehousingbackoffice.section.entries">
+							<editorArea:editor-parameter>
+								<editorArea:name>listConfigContext</editorArea:name>
+								<editorArea:value>referenceListViewConsignmentEntries</editorArea:value>
+							</editorArea:editor-parameter>
+							<editorArea:editor-parameter>
+								<editorArea:name>disableDisplayingDetails</editorArea:name>
+								<editorArea:value>false</editorArea:value>
+							</editorArea:editor-parameter>
+							<editorArea:editor-parameter>
+								<editorArea:name>disableRemoveReference</editorArea:name>
+								<editorArea:value>true</editorArea:value>
+							</editorArea:editor-parameter>
+						</editorArea:attribute>
+					</editorArea:panel>
+				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
@@ -1408,6 +1428,36 @@
 					<editorArea:attribute qualifier="functionalRating"/>
 					<editorArea:attribute qualifier="conditionRatingOverallScore"/>
 					<editorArea:attribute qualifier="associatedConsignment"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context type="CustomerNotes" component="editorAreaDynamicForms" merge-by="module" principal="customersupportagentrole">
+		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
+			<df:attribute id="disbaleNoteType" qualifier="customerNoteType" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableNote" qualifier="note" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disablefraud" qualifier="fraud" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableuserId" qualifier="userID" disabledIf="true" triggeredOn="*"/>
+		</df:dynamicForms>
+	</context>
+
+	<context type="Notes" component="editorAreaDynamicForms" merge-by="module" principal="customersupportagentrole,warehouseagentrole,blinventoryuserrole">
+		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
+			<df:attribute id="disbaleType" qualifier="type" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableNote" qualifier="note" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableuserId" qualifier="userID" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableOrder" qualifier="order" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableConsignment" qualifier="consignment" disabledIf="true" triggeredOn="*"/>
+		</df:dynamicForms>
+	</context>
+
+	<context merge-by="type" parent="GenericItem" type="ConsignmentEntry"	component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:lv="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<editorArea:tab name="blbackoffice.consignmententry.tab.serialproducts.name" position="2">
+				<editorArea:section columns="1" name="blbackoffice.consignmententry.section.general.name">
+					<editorArea:attribute qualifier="items" readonly="false"/>
+					<editorArea:attribute qualifier="serialProducts" readonly="false"/>
 				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>

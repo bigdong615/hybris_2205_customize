@@ -203,6 +203,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final int STATUS_LIST_SIZE_TWO = 2;
 	public static final int STATUS_LIST_SIZE_THREE = 3;
 
+	public static final String EXTEND_ORDER = "extendOrder";
+
+	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
+
 	private BlCoreConstants()
 	{
 		//empty

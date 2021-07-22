@@ -974,7 +974,7 @@
 
 	<!--BL-795 Adding attribute handler class for dynamic attribute skuFirmwareVersion-->
 	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
-	
+
 	<alias alias="productService" name="defaultBlProductService"/>
 	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
 	
@@ -983,6 +983,25 @@
 		<property name="blPricingService" ref="blPricingService"/>
 		<property name="blProductService" ref="productService"/>
 	</bean>
+
+
+	<!--Added for extend rental order -->
+
+	<bean id="defaultBlExtendOrderService" class="com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService">
+		<property name="modelService" ref="modelService"/>
+		<property name="orderIDGenerator" ref="orderCodeGenerator"/>
+		<property name="userService" ref="userService"/>
+		<property name="customerAccountService" ref="customerAccountService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+
+	<!--Coupon for rental extend order -->
+	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService" parent="defaultCouponService">
+	</bean>
+
+	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
+	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
 	
 	<!-- Interceptor for NotesModel to perform custom logic before saving the model -->
 	<alias name="blNotesPrepareInterceptor" alias="blNotesPrepareInterceptor"/>
