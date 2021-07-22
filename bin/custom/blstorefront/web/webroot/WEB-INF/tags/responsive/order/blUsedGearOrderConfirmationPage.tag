@@ -7,8 +7,6 @@
 <c:url var="homepageUrl" value="/" />
 <c:url value="/my-account/order/"
 	var="reviewOrderUrl" />
-<c:url value="/checkout/printOrderConfirmation"
-	var="printOrderConfirmationUrl" />
 <div class="screen"></div>
 <section id="confirmationWindow">
 	<div class="container">
@@ -44,14 +42,6 @@
 								code="order.confirmation.page.review.order.button" /></a> <a
 							href="${homepageUrl}" class="btn btn-outline mx-3 mb-4 mb-sm-0"><spring:theme
 								code="order.confirmation.page.continue.shopping.button" /></a>
-					</div>
-					<div class="order-actions text-center mb-4">
-					  <form action="${printOrderConfirmationUrl}" id="printOrderConfirmationForm" method="GET">
-                 <input type="hidden" id="orderCode" name="orderCode" value="${orderCode}"/>
-            </form>
-						<a href="#" class="mx-2" alt="Print Order" id="printOrderConfirmation"> <i
-							class="icon-print"></i>
-						</a>
 					</div>
 				</div>
 			</div>
