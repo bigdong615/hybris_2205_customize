@@ -6,7 +6,11 @@ package com.bl.core.promotions.promotionengineservices.service;
  */
 public interface BlPromotionService {
 
-
+  /**
+   * This method will validate if used gear Category promotion is
+   * active or not
+   * @return
+   */
   boolean isUsedGearCategoryPromotionActive();
 
 }

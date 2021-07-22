@@ -1103,6 +1103,8 @@
         </y:actions>
     </context>
 
+
+
 <!--To calculate the total without tax -->
 	<context parent="GenericItem" merge-by="type" type="Order" component="cs-editor-area">
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"

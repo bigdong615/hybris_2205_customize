@@ -4,7 +4,6 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.product.ProductService;
-import de.hybris.platform.ruleengineservices.rao.AbstractRuleActionRAO;
 import de.hybris.platform.ruleengineservices.rao.DiscountRAO;
 import de.hybris.platform.ruleengineservices.rao.OrderEntryRAO;
 import de.hybris.platform.ruleengineservices.rao.RuleEngineResultRAO;
@@ -19,14 +18,26 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * Added to discount only used gear onSale products
+ *
+ * @author Ritika
+ */
 public class BlUGOrderEntryPercentageDiscountRAOAction extends AbstractRuleExecutableSupport {
 
   private static final Logger LOG = Logger.getLogger(BlUGOrderEntryPercentageDiscountRAOAction.class);
   private ProductService productService;
 
   public BlUGOrderEntryPercentageDiscountRAOAction() {
+    //No code
   }
 
+  /**
+   * Perform action
+   * @param context
+   * @return
+   */
+  @Override
   public boolean performActionInternal(final RuleActionContext context) {
     boolean isPerformed = false;
     Optional<BigDecimal> amount = this.extractAmountForCurrency(context, context.getParameter("value"));
@@ -34,8 +45,8 @@ public class BlUGOrderEntryPercentageDiscountRAOAction extends AbstractRuleExecu
       Set<OrderEntryRAO> orderEntries = context.getCartRao().getEntries();
       OrderEntryRAO orderEntryRAO;
       if (CollectionUtils.isNotEmpty(orderEntries)) {
-        for(Iterator var6 = orderEntries.iterator(); var6.hasNext(); isPerformed |= this.processOrderEntry(context, orderEntryRAO, (BigDecimal)amount.get())) {
-          orderEntryRAO = (OrderEntryRAO)var6.next();
+        for(Iterator<OrderEntryRAO> var6 = orderEntries.iterator(); var6.hasNext(); isPerformed |= this.processOrderEntry(context, orderEntryRAO, amount.get())) {
+          orderEntryRAO = var6.next();
         }
       }
     }
@@ -43,17 +54,24 @@ public class BlUGOrderEntryPercentageDiscountRAOAction extends AbstractRuleExecu
     return isPerformed;
   }
 
+  /**
+   * Process Order Entry for discounts
+   * @param context
+   * @param orderEntryRao
+   * @param value
+   * @return
+   */
   protected boolean processOrderEntry(final RuleActionContext context, final OrderEntryRAO orderEntryRao, final BigDecimal value) {
     boolean isPerformed = false;
     int consumableQuantity = this.getConsumptionSupport().getConsumableQuantity(orderEntryRao);
     if (consumableQuantity > 0 && isUsedGearProductEntry(orderEntryRao.getProductCode())) {
       DiscountRAO discount = this.getRuleEngineCalculationService().addOrderEntryLevelDiscount(orderEntryRao, false, value);
-      this.setRAOMetaData(context, new AbstractRuleActionRAO[]{discount});
+      this.setRAOMetaData(context, discount);
       this.getConsumptionSupport().consumeOrderEntry(orderEntryRao, consumableQuantity, discount);
-      RuleEngineResultRAO result = (RuleEngineResultRAO)context.getValue(RuleEngineResultRAO.class);
+      RuleEngineResultRAO result = context.getValue(RuleEngineResultRAO.class);
       result.getActions().add(discount);
-      context.scheduleForUpdate(new Object[]{orderEntryRao, orderEntryRao.getOrder(), result});
-      context.insertFacts(new Object[]{discount});
+      context.scheduleForUpdate(orderEntryRao, orderEntryRao.getOrder(), result);
+      context.insertFacts(discount);
       context.insertFacts(discount.getConsumedEntries());
       isPerformed = true;
     }
