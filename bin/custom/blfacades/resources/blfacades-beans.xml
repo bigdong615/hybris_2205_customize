@@ -120,10 +120,52 @@
       <property name="giftCardDiscount" type="PriceData"/>
       <property name="giftCardData" type="java.util.List&lt;com.bl.facades.giftcard.data.BLGiftCardData>"/>
       <property name="rentalDates" type="com.bl.facades.product.data.RentalDateDto"/>
+		  <property name="rentalStartDate" type="String"/>
+		  <property name="rentalEndDate" type="String"/>
+	   	<property name="orderedDate" type="String"/>
+		<property name="rentalFormattedStartDate" type="String"/>
+		<property name="rentalFormattedEndDate" type="String"/>
+		<property name="orderedFormatDate" type="String"/>
+		<property name="totalRentalDays" type="String"/>
+		<property name="orderedFormatDateForExtendRental" type="String"/>
+		<property name="rentalEndDateForJs" type="String"/>
+		<property name="rentalStartDateForJs" type="String"/>
+		<!--Added for extend rental order -->
+		<property name="totalCostForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="totalDamageWaiverCostForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="totalTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="subTotalTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="OrderTotalWithTaxForExtendRental" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="extendOrderDiscount" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="addedTimeForExtendRental" type="java.lang.Integer"/>
+		<property name="newEndDateForExtendRental" type="java.lang.Integer"/>
+		<property name="customerMail" type="String"/>
+		<property name="extendOrderConfirmationDate" type="String"/>
+
 			<property name="isPOEnabled" type="java.lang.Boolean"/>
 			<property name="poNumber" type="java.lang.String"/>
 			<property name="poNotes" type="java.lang.String"/>
+			<property name="isAllProductExtendabe" type="java.lang.Boolean"/>
+			<property name="extendErrorMessage" type="java.lang.String"/>
+			<property name="isExtendOrderPage" type="java.lang.Boolean"/>
+			<property name="orderNotes" type="java.lang.String"/>
+		  <property name="rentalDatesOnPrint" type="com.bl.facades.product.data.RentalDateDto"/>
+
+		<property name="extendOrderEntrie" type="java.util.List&lt;com.bl.facades.product.data.ExtendOrderData&gt;"/>
+
   </bean>
+
+	<!-- ExtendOrderData -->
+	<bean class="com.bl.facades.product.data.ExtendOrderData">
+		<property name="extendOrderStartDate" type="String"/>
+		<property name="extendOrderEndDate" type="String"/>
+		<property name="extendOrderCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="extendOrderDamageWaiverCost" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+		<property name="extendOrderDaysWithoutPrevOrder" type="String"/>
+		<property name="extendOrderDaysIncludingPrevOrder" type="String"/>
+	</bean>
+
+
 
     <!-- Shipping -->
     <bean class="de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData">
@@ -243,6 +285,10 @@
   
   <bean class="de.hybris.platform.commerceservices.service.data.CommerceCartParameter">
 		  <property name="isFromAddToCartPopup" type="Boolean"/>
+			<property name="isFromRentAgainPage" type="java.lang.Boolean"/>
+			<property name="isDamageWaiverSelected" type="java.lang.Boolean"/>
+			<property name="isDamageWaiverProSelected" type="java.lang.Boolean"/>
+			<property name="isNoDamageWaiverSelected" type="java.lang.Boolean"/>
 	</bean>
 
   <!--BL-563 Gift Card-->
@@ -517,6 +563,17 @@
 		<property name="showPickupLocation" type="Boolean"/>
 	</bean>
 
+
+	<!--Added for rental Start date and Rental End date on MyAccount Order Page -->
+	<bean class="de.hybris.platform.commercefacades.order.data.OrderHistoryData">
+		<property name="rentalStartDate" type="String"/>
+		<property name="rentalEndDate" type="String"/>
+		<property name="orderDate" type="String"/>
+		<property name="rentalCart" type="Boolean"/>
+		<property name="productDetails" type="java.util.List&lt;String>"/>
+		<property name="productNameAndQuantity" type="java.util.List&lt;String>"/>
+	</bean>
+	
   <!--BL-781 For Wishlist2data -->
   <bean class="com.bl.facades.wishlist.data.Wishlist2Data">
     <property name="name" type="String"/>

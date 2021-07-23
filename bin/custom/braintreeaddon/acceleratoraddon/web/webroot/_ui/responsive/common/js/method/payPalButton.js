@@ -20,9 +20,14 @@ function createPayPalPaymentMarkFlow(paypalOptions) {
 				}, function (err, dataCollectorInstance) {
 					if (err) 
 					{
+					var trackError= ACC.payPalError.paypalPaymentFail;
+            window.mediator.publish('applyPayPal', {
+            	paymentError: trackError
+           	});
 						// Handle error
 						$('#payPalErrorMessage').empty();
 						var payPalErrorMessage = $('<div class="notification notification-error mb-4 paypalNotification" />').text(ACC.payPalError.paypalPaymentFail);
+
 						$('#payPalErrorMessage').append(payPalErrorMessage);
 						$('.page-loader-new-layout').hide();
 						console.log('Error while getting data collection for device');

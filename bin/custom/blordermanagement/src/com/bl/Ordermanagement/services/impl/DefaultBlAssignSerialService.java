@@ -2,13 +2,13 @@ package com.bl.Ordermanagement.services.impl;
 
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlAssignSerialService;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.ordersplitting.model.StockLevelModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.search.restriction.SearchRestrictionService;
@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import org.apache.commons.collections.ClosureUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Level;
@@ -365,9 +364,9 @@ public class DefaultBlAssignSerialService implements BlAssignSerialService {
         MapUtils.isNotEmpty(result.getAllocation()) ? result.getAllocation() : new HashMap<>();
     allocationMap.put(entry, (long) serialProductsToAssign.size());
 
-    final Set<BlSerialProductModel> entrySerialProducts = new HashSet<>(entry.getSerialProducts());
+    final Set<BlProductModel> entrySerialProducts = new HashSet<>(entry.getSerialProducts());
     entrySerialProducts.addAll(serialProductsToAssign);
-    entry.setSerialProducts(entrySerialProducts);
+    entry.setSerialProducts(new ArrayList<>(entrySerialProducts));
 
     final Map<Integer, Set<BlSerialProductModel>> serialProductMap =
         MapUtils.isNotEmpty(result.getSerialProductMap()) ? result.getSerialProductMap()
