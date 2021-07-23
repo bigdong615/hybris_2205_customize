@@ -275,9 +275,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private Map<String, List<String>> doUpdateLocation(final List<String> barcodes)
 	{
 		final List<String> failedBarcodeList = getFailedBarcodeList(barcodes);
-		return Maps.newHashMap(CollectionUtils.isNotEmpty(failedBarcodeList)
-				? ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS, failedBarcodeList)
-				: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS, Collections.emptyList()));
+		return getFailedBarcodesMap(failedBarcodeList, BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS);
 	}
 
 	/**
