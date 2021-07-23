@@ -54,6 +54,11 @@
 
 	<bean id="blStockLevelForDateCellRenderer" class="com.bl.backoffice.wizards.renderer.BlStockLevelForDateCellRenderer">
 	</bean>
-
+	
+	<!-- BL-793 TechEng Scan Tool Handler -->
+	<bean id="defaultTechEngScanToolHandler" class="com.bl.backoffice.wizards.handler.TechEngScanToolHandler">
+		<property name="notificationService" ref="notificationService"/>
+		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
+	</bean>
 
 </beans>

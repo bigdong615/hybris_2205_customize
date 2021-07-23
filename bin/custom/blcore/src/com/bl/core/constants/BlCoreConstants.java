@@ -166,10 +166,18 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String LENSES = "lenses";
 	public static final String CAMERAS = "cameras";
 	public static final String PRODUCTION = "production";
+
+	public static final int SKIP_THREE_DAYS = 3;
 	public static final int SKIP_TWO_DAYS = 2;
+	public static final int SKIP_ONE_DAYS = 1;
+
 	public static final String GIFT_CARD = "giftcard-";
 	public static final String GIFT_CARD_EMAIL_PROCESS = "giftCardEmailProcess";
 	public static final String HYPHEN = "-";
+
+	public static final String RUSH_SAN_CARLOS = "SAME_DAY_DELIVERY";
+	public static final String RUSH_NYC_NEXT_DAY = "NEXT_DAY_RUSH_DELIVERY";
+
 	public static final String IS_AUTHORISED = "isAuthorized";
 	public static final String COUPON_ID = "couponId";
 
@@ -198,6 +206,10 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String ZERO_RATING = "0";
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
+	
+	public static final int STATUS_LIST_SIZE_ONE = 1;
+	public static final int STATUS_LIST_SIZE_TWO = 2;
+	public static final int STATUS_LIST_SIZE_THREE = 3;
 
 	public static final String EXTEND_ORDER = "extendOrder";
 
