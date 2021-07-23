@@ -1218,7 +1218,7 @@
             <attributes>
               <attribute qualifier="optionId" type="java.lang.String" >
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="false" unique="true"/>
+                <modifiers read="true" write="true" optional="false"  unique="true"/>
                 <description>The identifier on the options</description>
               </attribute>
               <attribute qualifier="optionType" type="OptionTypeEnum" >

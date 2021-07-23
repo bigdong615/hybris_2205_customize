@@ -807,7 +807,6 @@ INSERT_UPDATE BlOptions;options(optionId);optionId[unique=true];code;name;descri
 ;4289	        ;10591	               ;yesplate                     ;Yes Plate                          ;         ;TRUE	;0	;6	;0
 
 
-
 $productCatalog=blProductCatalog
 $productCatalogName=BL Product Catalog
 $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
