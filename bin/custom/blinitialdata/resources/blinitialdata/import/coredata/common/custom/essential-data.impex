@@ -237,8 +237,8 @@ INSERT_UPDATE ConditionRatingValueEnum ; code[unique=true] ; name[lang=en]
                                        
 # BL-794 Adding tooltip data for FunctionalRating and CosmeticRating attributes
 UPDATE AttributeDescriptor ; qualifier[unique=true] ; attributeType(code)      ; enclosingType(code)[unique=true] ; description[lang=en]                                                                                           
-                           ; functionalRating       ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]" 
-                           ; cosmeticRating         ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]" 
+                           ; functionalRating       ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[10 - Near flawless] [9 – [Sensors/Lenses] No visible debris, images are clean. [Monitors/Other] No visible scuffing or other damage] [8 - [Sensors/Lenses] Very light internal dust, but images are clean. [Monitors/Other] Showing some light scuffing and wear from use, reference image clean (Monitors/Other Items).] [7 - [Sensors/Lenses] Light scuffs and debris behind glass, images may be affected at f/16 or above. [Monitors/Other] Scuffing and some obvious wear may be starting to show on reference image.] [6 - [Sensors/Lenses] Faint scratches and internal dust, images will be affected at f/11 and above. [Monitors/Other] Scratches and scuffs are noticeable on reference image, but still useable.] [5-1 - Scratches and scuffs are noticeable on reference image, but still useable.]" 
+                           ; cosmeticRating         ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[10 - No signs of wear and tear: almost like new!]	[9 - Light wear and tear: Hard to find any scuffs, dings, or dulling paint.] [8 - Mild wear and tear: Faint impacts and scuffs are starting to show and item has lost a little of its shine.] [7 - Heavy wear and tear: Noticeable wear from light impacts, scuffs, and the paint job is dulling, but fully functional.] [6 - Severe wear and tear: Noticeable wear from heavy impacts, scuffs, and the paint job is diminishing, but fully functional.] [5-1: Very worn and torn but fully functional.]" 
 
 INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]                     ; name[lang=en]                                    
                                               ; BABY_CAGE_WORKSTATION                 ; Baby Cage Workstation                            
@@ -287,6 +287,7 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
                                               ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
                                               
+<<<<<<< HEAD
 
 INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
                             ;COMPACT;COMPACT
@@ -294,3 +295,27 @@ INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
                             ;EXPANDED;EXPANDED
                             ;EXPANDEDINPUT;EXPANDEDINPUT
 
+# BL-798 Enum values for RepairReasonsEnum
+INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en]                
+                                ; NO_POWER                        ; No Power                     
+                                ; ERROR_CODE                      ; Error Code                   
+                                ; SENSOR_MALFUNCTION              ; Sensor malfunction           
+                                ; SENSOR_SCRATCH                  ; Sensor scratch               
+                                ; MIRROR_DAMAGE_OR_MALFUNCTION    ; Mirror Damage/Malfunction    
+                                ; WATER_DAMAGE                    ; Water Damage                 
+                                ; LCD_DAMAGE_OR_MALFUNCTION       ; LCD Damage/Malfunction       
+                                ; MODE_DIAL_CAP_FELL_OFF          ; Mode dial cap fell off       
+                                ; BUTTONS_OR_DIALS_NOT_RESPONDING ; Buttons/Dials not responding 
+                                ; HOT_SHOE_DAMAGE_OR_MALFUNCTION  ; Hot shoe damage/Malfunction  
+                                ; FOCUS_SCREEN_DAMAGE             ; Focus screen damage          
+                                ; VIEWFINDER_DEBRIS               ; Viewfinder debris            
+                                ; CF_OR_SD_SLOT_DAMAGE            ; CF/SD slot damage            
+                                ; CARDS_NOT_READING_OR_RECORDING  ; Cards not reading/recording  
+                                ; HOUSING_DAMAGE                  ; Housing Damage               
+                                ; NO_AF_FUNCTION                  ; No AF Function               
+                                ; NO_AUDIO                        ; No Audio                     
+                                ; FLASH_NOT_FIRING_OR_POPPING_UP  ; Flash not firing/popping up  
+                                ; PORT_OR_JACK_MALFUNCTION        ; Port/jack malfunction        
+                                ; STREAMING_ISSUES                ; Streaming issues             
+                                ; WIFI_ISSUES                     ; Wifi issues                  
+                                              

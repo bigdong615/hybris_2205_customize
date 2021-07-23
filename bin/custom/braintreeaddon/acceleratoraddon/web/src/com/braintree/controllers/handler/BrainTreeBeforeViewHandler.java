@@ -29,6 +29,7 @@ import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.util.config.ConfigIntf;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,7 +187,7 @@ public class BrainTreeBeforeViewHandler implements BeforeViewHandlerAdaptee
       {
         // add BRAIN_TREE_PAYMENT_DATA for order view page
         final OrderData orderData = (OrderData) model.get(ORDER_DATA);
-        if (orderData != null)
+        if (orderData != null && BooleanUtils.isFalse(orderData.getIsExtendOrderPage()))
         {
           final String orderCode = orderData.getCode();
           if (isNotBlank(orderCode))
