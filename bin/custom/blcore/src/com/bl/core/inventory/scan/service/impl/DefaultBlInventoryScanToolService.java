@@ -329,9 +329,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				failedBarcodeList.add(serial.getBarcode());
 			}
 		});
-		return Maps.newHashMap(CollectionUtils.isNotEmpty(failedBarcodeList)
-				? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART, failedBarcodeList)
-				: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS, Collections.emptyList()));
+		return getFailedBarcodesMap(failedBarcodeList, BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART);
 	}
 
 	/**
@@ -358,8 +356,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				failedBarcodeList.add(serial.getBarcode());
 			}
 		});
-		return Maps.newHashMap(CollectionUtils.isNotEmpty(failedBarcodeList)
-				? ImmutableMap.of(BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART, failedBarcodeList)
+		return getFailedBarcodesMap(failedBarcodeList, BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART);
+	}
+	
+	/**
+	 * Gets the failed barcodes map.
+	 *
+	 * @param failedBarcodeList
+	 *           the failed barcode list
+	 * @param messageCode
+	 *           the message code
+	 * @return the failed barcodes map
+	 */
+	private Map<String, List<String>> getFailedBarcodesMap(final List<String> failedBarcodeList, final String messageCode)
+	{
+		return Maps.newHashMap(CollectionUtils.isNotEmpty(failedBarcodeList) ? ImmutableMap.of(messageCode, failedBarcodeList)
 				: ImmutableMap.of(BlInventoryScanLoggingConstants.SUCCESS, Collections.emptyList()));
 	}
 	
