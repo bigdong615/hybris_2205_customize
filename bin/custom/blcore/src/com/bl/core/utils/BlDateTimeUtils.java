@@ -512,7 +512,7 @@ public final class BlDateTimeUtils
 					BlDeliveryModeLoggingConstants.ZONE_PST)).before(sdf.parse(time)) : Boolean.FALSE;
 		} catch (ParseException e) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
-			return false;
+			return true;
 		}
 	}
 	

@@ -35,6 +35,7 @@ public class BlShippingOptimizationJob extends AbstractJobPerformable<CronJobMod
             BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stopped performing BlShippingOptimizationJob as current " +
                     "day falls under black days...");
         }
+        BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Finish performing BlShippingOptimizationJob.....");
         return new PerformResult(CronJobResult.SUCCESS, CronJobStatus.FINISHED);
     }
 
@@ -48,6 +49,9 @@ public class BlShippingOptimizationJob extends AbstractJobPerformable<CronJobMod
             for(ConsignmentModel model : groundConsignments) {
                 getBlShippingOptimizationStrategy().generateShipmentLabelForConsignment(model);
             }
+        } else {
+            BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Stopped performing BlShippingOptimizationJob as current " +
+                    "no consignment found to ship out today");
         }
     }
 
