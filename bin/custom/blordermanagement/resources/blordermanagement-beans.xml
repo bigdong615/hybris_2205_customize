@@ -13,9 +13,10 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
 
 	<bean class="de.hybris.platform.warehousing.data.sourcing.SourcingLocation">
-		<property name="availabilityMap" type="java.util.Map&lt;String, java.util.List&lt;de.hybris.platform.ordersplitting.model.StockLevelModel>>" />
-		<property name="allocatedMap" type="java.util.Map&lt;String, Long>" />
-		<property name="completeSourcePossible" type="boolean" />
+		<property name="availabilityMap"
+				  type="java.util.Map&lt;String, java.util.List&lt;de.hybris.platform.ordersplitting.model.StockLevelModel>>"/>
+		<property name="allocatedMap" type="java.util.Map&lt;String, Long>"/>
+		<property name="completeSourcePossible" type="boolean"DefaultBlAllocationService/>
 		<property name="groundAvailability" type="boolean" />
 		<property name="groundAvailabilityCode" type="java.lang.String" />
 	</bean>

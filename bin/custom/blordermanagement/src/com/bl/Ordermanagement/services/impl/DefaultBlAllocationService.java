@@ -123,8 +123,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
             Collectors.toSet()));
       }
 
-      final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
-              new HashSet<>(allocatedProductCodes));
+      final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order, new HashSet<>(allocatedProductCodes));
 
       if ((!serialStocks.isEmpty()) && serialStocks.stream()
           .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
