@@ -1019,4 +1019,16 @@
 	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
 	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
 	
+	<!-- Interceptor for NotesModel to perform custom logic before saving the model -->
+	<alias name="blNotesPrepareInterceptor" alias="blNotesPrepareInterceptor"/>
+	<bean id="blNotesPrepareInterceptor" class="com.bl.core.model.interceptor.BlNotesPrepareInterceptor">
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<!-- Adding NotesModel interceptor to Interceptor mapping list -->
+	<bean id="blNotesPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blNotesPrepareInterceptor"/>
+		<property name="typeCode" value="Notes"/>
+	</bean>
+	
 </beans>
