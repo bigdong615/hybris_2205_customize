@@ -1213,7 +1213,7 @@ public class AccountPageController extends AbstractSearchPageController
 
 
 	/**
-	 * This methodo is created to apply the voucher from extend order page
+	 * This method is created to apply the voucher from extend order page
 	 */
 	@PostMapping(value = "/voucher/apply")
 	public String applyVoucherAction(@Valid final VoucherForm form, final BindingResult bindingResult,

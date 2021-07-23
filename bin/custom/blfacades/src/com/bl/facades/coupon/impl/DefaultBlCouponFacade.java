@@ -116,7 +116,7 @@ public class DefaultBlCouponFacade implements BlCouponFacade {
   }
 
   @Override
-  public void acceptIfCartExists(String code, BiConsumer<String, AbstractOrderModel> orderConsumer) throws VoucherOperationException {
+  public void acceptIfCartExists(final String code, final BiConsumer<String, AbstractOrderModel> orderConsumer) throws VoucherOperationException {
     OrderModel orderModel = null;
     if(null != BlExtendOrderUtils.getCurrentExtendOrderToSession()){
       orderModel = BlExtendOrderUtils.getCurrentExtendOrderToSession();
