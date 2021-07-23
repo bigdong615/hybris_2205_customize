@@ -16,6 +16,12 @@ import org.apache.log4j.Logger;
 
 import java.util.Collection;
 
+/**
+ * {javadoc}
+ * Cronjob for optimizing the shipping method selected by customer on frontend to be shipped with optimistic resources!
+ *
+ * @auther Namrata Lohar
+ */
 public class BlShippingOptimizationJob extends AbstractJobPerformable<CronJobModel> {
 
     private static final Logger LOG = Logger.getLogger(BlShippingOptimizationJob.class);

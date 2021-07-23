@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import io.netty.util.internal.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
@@ -497,7 +496,7 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         if (shippingCostModel != null) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Shipping calculated amount: {} ", shippingCostModel.getAmount());
             if (BooleanUtils.isFalse(order.getIsRentalCart())) {
-                return (shippingCostModel.getAmount() / 2);
+                return (shippingCostModel.getAmount() / BlInventoryScanLoggingConstants.TWO);
             }
             return shippingCostModel.getAmount();
         }
