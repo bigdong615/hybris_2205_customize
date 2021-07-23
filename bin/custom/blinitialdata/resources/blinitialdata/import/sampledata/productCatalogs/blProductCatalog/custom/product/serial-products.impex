@@ -16,8 +16,8 @@ $approved=approvalstatus(code)[default='approved']
 
 
 
-INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code)
-                             ;;52304;5122541 ;5122541 ;Canon_24-105mm_f4_IS;;ACTIVE;40002011;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code);unit(code)[default='pieces']
+                             ;;52708;5122708 ;5122708 ;Nikon_80-400mm_f4.5-5.6D_ED_VR;;ACTIVE;40002011;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
                              ;;59663;6051076 ;6051076 ;Canon_24-105mm_f4_IS;;SOLD;40003843;true;;1090;Norman's;418.25;335999;;2;BARCODE;0344B002;4960000000000;LENSES
                              ;;59667;6128205 ;6128205 ;Canon_24-105mm_f4_IS;;ACTIVE;50003850;true;;1090;Norman's;418.25;335812;;2;BARCODE;0344B002;4960000000000;LENSES
                              ;;57196;CPL58.016;CPL58.016;58mm_CP_Filter;;ACTIVE;30116313;false;;19.95;NA;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS
@@ -63,25 +63,154 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFi
                       ;;220232 ;;;;;;;;800000000000;;;
 
 
-UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;withOrderID;finalSalePrice;dateOfSale;conditionRatingOverallScore
-                      ;;5122541 ;2586;1Z87099FNW99827320;warehouse_ca;;;;;;;;2.55
-                      ;;6051076 ;2586;1Z87099FNY95392357;warehouse_ca;;;;;9109749;;;3
-                      ;;6128205 ;2430;CAR016 S04;warehouse_ma;;;;;;;;2.55
-                      ;;CPL58.016;6432;BIN SML 1253;warehouse_ca;;;;MAM CLEAN028 S02;;;;0
-                      ;;CPL58.022;4413;BIN CAGE 5375;warehouse_ca;;;;CAR032 S04;;;;0
-                      ;;CPL58.023;763;BIN SML 325;warehouse_ca;;;;MAM DIRTY030 S04;;;;0
-                      ;;Y7ADF1SFS00078;4431;BIN CAGE 5393;warehouse_ca;;;;CAR045 S04;;;;0
-                      ;;Y7ADG1SFS00249;2918;bin cage 1075;warehouse_ca;;;;MAR059 S06;;;;0
-                      ;;Y7ADG1SFS00197;2918;bin cage 1075;warehouse_ca;;;;MAR059 S06;;;;0
-                      ;;3002962 ;5532;ca repaircab001 s04;warehouse_ca;;;;;6695408;;;3.2
-                      ;;3003088 ;876;MAR024 S05;warehouse_ca;;;;;;;;3.2
-                      ;;3003086 ;2586;1Z19E596NY98745520;warehouse_ca;;;;;;;;2.2
-                      ;;152000000000 ;2586;1Z19E5964267440264;warehouse_ca;;;;;;;;2.8
-                      ;;132000000001 ;2586;1Z19E596P294020066;warehouse_ca;;;;;9154272;;;2.2
-                      ;;132000000000 ;5532;CA REPAIRCAB001 S04;warehouse_ca;;;;;;;;2.8
-                      ;;5353841 ;2586;;warehouse_ca;;;;;;;;3.1
-                      ;;5579698 ;5484;MAM DIRTY013 S02;warehouse_ca;;;;MAM DIRTY013 S02;;;;3.1
-                      ;;5789775 ;8608;;warehouse_ma;;;;;;;;;3.1
-                      ;;198534 ;2586;1Z19E596NY92849232;warehouse_ca;;;;;9598546;;;3
-                      ;;207730 ;2586;1Z19E596NY92262106;warehouse_ca;;;;;9536469;;;3.1
-                      ;;220232 ;1926;BIN SML C679;warehouse_ca;;;;CAM FD01 S02;9605590;;;3.9
+UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;withOrderID;finalSalePrice;dateOfSale
+                      ;;5122541 ;2586;1Z87099FNW99827320;warehouse_ca;;;;;;;
+                      ;;6051076 ;2586;1Z87099FNY95392357;warehouse_ca;;;;;9109749;;
+                      ;;6128205 ;2430;CAR016 S04;warehouse_ma;;;;;;;
+                      ;;CPL58.016;6432;BIN SML 1253;warehouse_ca;;;;MAM CLEAN028 S02;;;
+                      ;;CPL58.022;4413;BIN CAGE 5375;warehouse_ca;;;;CAR032 S04;;;
+                      ;;CPL58.023;763;BIN SML 325;warehouse_ca;;;;MAM DIRTY030 S04;;;
+                      ;;Y7ADF1SFS00078;4431;BIN CAGE 5393;warehouse_ca;;;;CAR045 S04;;;
+                      ;;Y7ADG1SFS00249;2918;bin cage 1075;warehouse_ca;;;;MAR059 S06;;;
+                      ;;Y7ADG1SFS00197;2918;bin cage 1075;warehouse_ca;;;;MAR059 S06;;;
+                      ;;3002962 ;5532;ca repaircab001 s04;warehouse_ca;;;;;6695408;;
+                      ;;3003088 ;876;MAR024 S05;warehouse_ca;;;;;;;
+                      ;;3003086 ;2586;1Z19E596NY98745520;warehouse_ca;;;;;;;
+                      ;;152000000000 ;2586;1Z19E5964267440264;warehouse_ca;;;;;;;
+                      ;;132000000001 ;2586;1Z19E596P294020066;warehouse_ca;;;;;9154272;;
+                      ;;132000000000 ;5532;CA REPAIRCAB001 S04;warehouse_ca;;;;;;;
+                      ;;5353841 ;2586;;warehouse_ca;;;;;;;
+                      ;;5579698 ;5484;MAM DIRTY013 S02;warehouse_ca;;;;MAM DIRTY013 S02;;;
+                      ;;5789775 ;8608;;warehouse_ma;;;;;;;
+                      ;;198534 ;2586;1Z19E596NY92849232;warehouse_ca;;;;;9598546;;
+                      ;;207730 ;2586;1Z19E596NY92262106;warehouse_ca;;;;;9536469;;
+                      ;;220232 ;1926;BIN SML C679;warehouse_ca;;;;CAM FD01 S02;9605590;;
+
+UPDATE BlSerialProduct ; $catalogVersion ; productId[unique=true] ; cosmeticRating(code) ; functionalRating(code) 
+                       ;                 ; 59663                  ; 1                    ; 5                      
+                       ;                 ; 59667                  ; 2                    ; 6                      
+                       ;                 ; 57196                  ; 3                    ; 8                      
+                       ;                 ; 115852                 ; 4                    ; 3                      
+                       ;                 ; 115853                 ; 5                    ; 2                      
+                       ;                 ; 86338                  ; 6                    ; 4                      
+                       ;                 ; 86339                  ; 2                    ; 6                      
+                       ;                 ; 86340                  ; 3                    ; 1                      
+                       ;                 ; 20856                  ; 6                    ; 2                      
+                       ;                 ; 20857                  ; 7                    ; 9                      
+                       ;                 ; 20859                  ; 9                    ; 10                     
+                       ;                 ; 39507                  ; 10                   ; 3                      
+                       ;                 ; 41124                  ; 10                   ; 4                      
+                       ;                 ; 41775                  ; 3                    ; 6                      
+                       ;                 ; 47633                  ; 5                    ; 3                      
+                       ;                 ; 52310                  ; 2                    ; 2                      
+                       ;                 ; 53230                  ; 8                    ; 8                      
+                       ;                 ; 25674                  ; 4                    ; 6                      
+                       ;                 ; 26134                  ; 7                    ; 3                      
+                       ;                 ; 37374                  ; 8                    ; 1                      
+                       ;                 ; 52304                  ; 9                    ; 3                      
+
+# Data for setting price on serials assigned on SKU 
+UPDATE BlProduct ; $catalogVersion ; code[unique=true]                                                ; forSaleBasePrice ; forSaleDiscount 
+                 ;                 ; Canon_Rebel_XTi                                                  ; 500              ; 90              
+                 ;                 ; Canon-EOS-1D-Mark-II                                             ; 500              ; 90              
+                 ;                 ; Canon_1Ds_Mark_II                                                ; 500              ; 90              
+                 ;                 ; Canon_EOS_1D_Mk_III                                              ; 500              ; 90              
+                 ;                 ; 1DmkIIN                                                          ; 500              ; 90              
+                 ;                 ; Canon_EOS_40D                                                    ; 500              ; 90              
+                 ;                 ; Nikon_D70                                                        ; 500              ; 90              
+                 ;                 ; Nikon_d300                                                       ; 500              ; 50              
+                 ;                 ; 1Ds_MkIII                                                        ; 750              ; 50              
+                 ;                 ; Canon_EOS_5D                                                     ; 750              ; 50              
+                 ;                 ; Canon-EF-100-400mm-f4556L-IS-USM                                 ; 750              ; 50              
+                 ;                 ; Canon_EF_17-40mm_f4L_USM                                         ; 750              ; 50              
+                 ;                 ; Canon_EF_300mm_F_4_IS                                            ; 750              ; 50              
+                 ;                 ; Canon_EF_70-200mm_f4_IS                                          ; 750              ; 50              
+                 ;                 ; Canon_16-35_F2.8_L                                               ; 750              ; 50              
+                 ;                 ; Canon_24-70mm_f2.8_L                                             ; 750              ; 78              
+                 ;                 ; Canon_100mm_f2.8_Macro                                           ; 750              ; 78              
+                 ;                 ; Canon_24-105mm_f4_IS                                             ; 750              ; 78              
+                 ;                 ; Canon_17-55_f2.8_IS_EF-S                                         ; 340              ; 78              
+                 ;                 ; Canon_50mm_f1.2_L                                                ; 340              ; 78              
+                 ;                 ; Nikon_17-55mm_f2.8_AF-S_ED_DX                                    ; 340              ; 78              
+                 ;                 ; Nikon_10.5mm_f2.8_Fisheye                                        ; 340              ; 78              
+                 ;                 ; Nikon_80-400mm_f4.5-5.6D_ED_VR                                   ; 340              ; 78              
+                 ;                 ; Sigma_10-20mm_f4-5.6_EX_DC_HSM_Nikon                             ; 340              ; 78              
+                 ;                 ; Nikon_18-200_f3.5-5.6_AF-S_VR                                    ; 340              ; 78              
+                 ;                 ; Nikon_14mm_f2.8_AF_ED                                            ; 340              ; 12              
+                 ;                 ; Nikon_70-200_f2.8_VR                                             ; 340              ; 12              
+                 ;                 ; Nikon_17-35mm_f2.8 AF-S_IF_ED                                    ; 340              ; 12              
+                 ;                 ; Nikon_85mm_f1.4_AF                                               ; 340              ; 12              
+                 ;                 ; Nikkor_105mm_f2.8_Micro_AF-S_VR                                  ; 340              ; 12              
+                 ;                 ; Rode_videomic                                                    ; 340              ; 12              
+                 ;                 ; Sennheiser_MKE                                                   ; 980              ; 12              
+                 ;                 ; Tascam_DR100                                                     ; 980              ; 12              
+                 ;                 ; Rode_videomic_stereo                                             ; 980              ; 12              
+                 ;                 ; Azden_lav                                                        ; 980              ; 12              
+                 ;                 ; Sennheiser_ME66                                                  ; 980              ; 12              
+                 ;                 ; sennheiser_lav                                                   ; 980              ; 45              
+                 ;                 ; beachtek_DXA                                                     ; 980              ; 45              
+                 ;                 ; female_XLR                                                       ; 621              ; 45              
+                 ;                 ; boom_pole                                                        ; 621              ; 45              
+                 ;                 ; 67mm_CP_Filter                                                   ; 621              ; 45              
+                 ;                 ; 72mm_CP_Filter                                                   ; 621              ; 45              
+                 ;                 ; 77mm_CP_Filter                                                   ; 621              ; 45              
+                 ;                 ; 58mm_CP_Filter                                                   ; 621              ; 45              
+                 ;                 ; BW_67mm_102_ND                                                   ; 621              ; 45              
+                 ;                 ; Fotod'oX_Grad_ND_4_77mm                                          ; 621              ; 45              
+                 ;                 ; 67mm_Skylight_1B                                                 ; 621              ; 75              
+                 ;                 ; heliopan_77                                                      ; 621              ; 75              
+                 ;                 ; 77_intense                                                       ; 559              ; 75              
+                 ;                 ; RS-80N3_remote_switch                                            ; 559              ; 75              
+                 ;                 ; Sekonic_L-758DR                                                  ; 559              ; 75              
+                 ;                 ; hoodman_3                                                        ; 559              ; 75              
+                 ;                 ; zacuto_zfinder                                                   ; 559              ; 75              
+                 ;                 ; Canon_EF_135mm_f2.0L_USM                                         ; 559              ; 75              
+                 ;                 ; Canon_EF_70-200mm_f2.8L_USM                                      ; 559              ; 75              
+                 ;                 ; Canon_16_35mm_f2.8_II                                            ; 559              ; 75              
+                 ;                 ; Canon_85mm_f1.8                                                  ; 559              ; 30              
+                 ;                 ; Canon_180mm_f3.5_Macro                                           ; 378              ; 30              
+                 ;                 ; Canon_EF_28mm_f1.8_USM                                           ; 378              ; 30              
+                 ;                 ; Canon_drop_in_CP                                                 ; 378              ; 30              
+                 ;                 ; 82mm_CP                                                          ; 378              ; 30              
+                 ;                 ; Nikon_52mm_CPL                                                   ; 378              ; 30              
+                 ;                 ; Nikon_d3s                                                        ; 378              ; 30              
+                 ;                 ; Nikon_d4                                                         ; 378              ; 30              
+                 ;                 ; Canon_5DIII                                                      ; 378              ; 30              
+                 ;                 ; Nikon_d800                                                       ; 378              ; 30              
+                 ;                 ; Canon_EOS_6D_Digital_SLR                                         ; 378              ; 30              
+                 ;                 ; Hasselblad_H5D40_Medium_Format_DSLR_Camera                       ; 378              ; 30              
+                 ;                 ; Nikon_D7100_Digital_SLR                                          ; 378              ; 65              
+                 ;                 ; Hasselblad-H4X-Medium-Format-Camera-with-80MP-IQ280-Digital-Back ; 378              ; 65              
+                 ;                 ; Nikon-D610-Digital-SLR-Camera                                    ; 880              ; 65              
+                 ;                 ; Nikon-D5300-Digital-SLR-Camera                                   ; 880              ; 65              
+                 ;                 ; EN-EL3e                                                          ; 880              ; 65              
+                 ;                 ; Nikon_EN-EL4a                                                    ; 880              ; 65              
+                 ;                 ; lp-e8                                                            ; 880              ; 65              
+                 ;                 ; EN-EL15                                                          ; 880              ; 65              
+                 ;                 ; sony-battery                                                     ; 880              ; 65              
+                 ;                 ; olympus_ep2_extra_battery                                        ; 880              ; 65              
+                 ;                 ; VW-VBG6PPK                                                       ; 880              ; 99              
+                 ;                 ; sony_battery_a55                                                 ; 880              ; 99              
+                 ;                 ; Sony_NP-FV70                                                     ; 880              ; 99              
+                 ;                 ; Panasonic_Battery_DMW-BLC12                                      ; 880              ; 99              
+                 ;                 ; CPL58.016                                                        ; 990              ; 99              
+                 ;                 ; 5789775                                                          ; 990              ; 99              
+                 ;                 ; CPL58.023                                                        ; 990              ; 99              
+                 ;                 ; Y7ADF1SFS00078                                                   ; 990              ; 99              
+                 ;                 ; 3003088                                                          ; 990              ; 99              
+                 ;                 ; 3003086                                                          ; 990              ; 99              
+                 ;                 ; 5353841                                                          ; 990              ; 99              
+                 ;                 ; 5579698                                                          ; 990              ; 99              
+                 ;                 ; 198534                                                           ; 990              ; 58              
+                 ;                 ; 220232                                                           ; 990              ; 58              
+                 ;                 ; 207730                                                           ; 990              ; 58              
+                 ;                 ; 5122541                                                          ; 990              ; 58              
+                 ;                 ; 6128205                                                          ; 990              ; 58              
+                 ;                 ; 6051076                                                          ; 990              ; 58              
+                 ;                 ; CPL58.022                                                        ; 990              ; 58              
+                 ;                 ; Y7ADG1SFS00249                                                   ; 990              ; 58              
+                 ;                 ; Y7ADG1SFS00197                                                   ; 990              ; 58              
+                 ;                 ; 3002962                                                          ; 990              ; 58              
+                 ;                 ; 152000000000                                                     ; 990              ; 58              
+                 ;                 ; 132000000001                                                     ; 990              ; 58              
+                 ;                 ; 132000000000                                                     ; 990              ; 58              

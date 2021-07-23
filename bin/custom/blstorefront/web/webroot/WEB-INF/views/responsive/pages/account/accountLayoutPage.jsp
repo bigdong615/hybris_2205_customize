@@ -4,6 +4,7 @@
 <%@ taglib prefix="cms" uri="http://hybris.com/tld/cmstags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <spring:url value="/my-account/update-profile" var="updateProfileUrl"/>
 <spring:url value="/my-account/update-password" var="updatePasswordUrl"/>
@@ -11,13 +12,14 @@
 <spring:url value="/my-account/address-book" var="addressBookUrl"/>
 <spring:url value="/my-account/payment-details" var="paymentDetailsUrl"/>
 <spring:url value="/my-account/orders" var="ordersUrl"/>
+<spring:url value="/my-account/bookmarks" var="bookmarksUrl"/>
 
 <template:page pageTitle="${pageTitle}">
 <c:url var = "baseUrl" value="/my-account"/>
-
  <section id="myAccount">
     <div class="container">
        <div class="row justify-content-center">
+       <c:if test ="${pageType ne 'orderDetails'}">
           <div id="accountMenu" class="col-lg-3 sticky-lg-top">
              <h6 class="mb-4">
                 <spring:theme code="account.customer.name.prefix"/>
@@ -54,7 +56,7 @@
                       </a>
                    </li>
                    <li>
-                      <a href="${baseUrl}/bookmarks" class="dropdown-item">
+                      <a href="${baseUrl}/bookmarks" class="dropdown-item ${blPageType eq 'Bookmarks'? 'boldCustom' : ''}">
                          <spring:theme code= "text.bookmarks" />
                       </a>
                    </li>
@@ -72,8 +74,11 @@
              </div>
              <div class="d-none d-lg-block">
                 <p>
-                   <a href="${baseUrl}/orders">
-                      <spring:theme code= "text.orders" />
+                   <a href="${baseUrl}/orders"
+                          <c:if test="${fn:startsWith(pageTitle, 'Order History')}">
+                              <c:out value="class=active"/>
+                          </c:if>>
+                             <spring:theme code= "text.orders"/>
                    </a>
                 </p>
                 <hr>
@@ -105,13 +110,19 @@
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/saved-carts">
-                      <spring:theme code= "text.saved.cart" />
-                   </a>
+                <a href="${baseUrl}/saved-carts"
+                                   <c:if test="${fn:startsWith(pageTitle, 'Saved Carts')}">
+                                      <c:out value="class=active"/>
+                                   </c:if>>
+                                      <spring:theme code= "text.saved.cart" />
+                                   </a>
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/bookmarks">
+                   <a href="${baseUrl}/bookmarks"
+                   <c:if test="${blPageType eq 'Bookmarks'}">
+                                         <c:out value="class=active"/>
+                   </c:if>>
                       <spring:theme code= "text.bookmarks" />
                    </a>
                 </p>
@@ -129,11 +140,13 @@
                 </p>
              </div>
           </div>
+       </c:if>
+
           <cms:pageSlot position="BodyContent" var="feature" >
              <cms:component component="${feature}" />
           </cms:pageSlot>
+
        </div>
     </div>
  </section>
-
 </template:page>

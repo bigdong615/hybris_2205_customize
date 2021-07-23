@@ -47,7 +47,8 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                               
                               ; MobileHeaderLinkForAccountSlot                  ;                                                                                ;                           ; headerlink          
                               ; MobileHeaderBottomInfo                          ;                                                                                ;                           ; wide                
                               ; MobileMiniCartSlot                              ;                                                                                ;                           ; minicart            
-#                             ; SocialMediaSectionSlot                          ;                                                                                ;                           ; wide                
+                              ; TopHeaderSlot                          ;                                                                                ;                           ; wide
+                              ; SocialMediaSectionSlot                          ;                                                                                ;                           ; wide
                               
 ###  Define Content Slots  ###
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                                ; name                                                 ; active[default=true] 
@@ -73,7 +74,8 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MobileHeaderLinkForAccountSlot-orderConfirmationPage      ; MobileHeaderLinkForAccountSlot      ;                                                                                    ; MobileHeaderLinkForAccountSlot           ; true           
                                      ;                         ; MobileHeaderBottomInfo-orderConfirmationPage              ; MobileHeaderBottomInfo              ;                                                                                    ; MobileHeaderBottomInfo                   ; true           
                                      ;                         ; MobileMiniCartSlot-orderConfirmationPage                  ; MobileMiniCartSlot                  ;                                                                                    ; MobileMiniCartSlot                       ; true           
-#                                    ;                         ; SocialMediaSectionSlot-orderConfirmationPage              ; SocialMediaSectionSlot              ;                                                                                    ; SocialMediaSectionSlot                   ; true           
+                                    ;                         ; TopHeaderSlot-orderConfirmationPage              ; TopHeaderSlot              ;                                                                                    ; TopHeaderSlot                   ; true
+                                     ;                         ; SocialMediaSectionSlot-orderConfirmationPage              ; SocialMediaSectionSlot              ;                                                                                    ; SocialMediaSectionSlot                   ; true
                                      
 ########################### Define Content slots for page######################
 INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]                                                      ; position[unique=true]                           ; page(uid,$contentCV)[unique=true][default='orderConfirmation'] ; contentSlot(uid,$contentCV)[unique=true]        
@@ -83,4 +85,4 @@ INSERT_UPDATE ContentSlotForPage ; $contentCV[unique=true] ; uid[unique=true]   
 ###  Create Content Page (Order Confirmation Page)  ###
 INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]  ; name                    ; masterTemplate(uid,$contentCV) ; label             ; defaultPage[default='true'] ; approvalStatus(code)[default='approved'] 
                           ;                         ; orderConfirmation ; Order Confirmation Page ; OrderConfirmationPageTemplate  ; orderConfirmation ;                             ;                                          
-                          
+

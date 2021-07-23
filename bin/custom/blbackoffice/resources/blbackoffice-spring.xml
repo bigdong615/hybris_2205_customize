@@ -71,6 +71,4 @@
 	       <aop:pointcut id="profiledMethods" expression="execution(* *(..))" />
 	  -->
 
-
-
 </beans>

@@ -7,6 +7,8 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import java.util.Objects;
 
 import org.apache.commons.lang3.BooleanUtils;
+import com.bl.core.model.BlSerialProductModel;
+import de.hybris.platform.core.model.product.ProductModel;
 
 
 /**
@@ -47,5 +49,21 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		target.setNoDamageWaiverSelected(BooleanUtils.toBoolean(source.getNoDamageWaiverSelected()));
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
+	}
+
+	/**
+	 * Adds the product data.
+	 *
+	 * @param orderEntry
+	 *           the order entry
+	 * @param entry
+	 *           the entry
+	 */
+	@Override
+	protected void addProduct(final AbstractOrderEntryModel orderEntry, final OrderEntryData entry)
+	{
+		final ProductModel product = orderEntry.getProduct();
+		entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
+				? ((BlSerialProductModel) product).getBlProduct() : product));
 	}
 }

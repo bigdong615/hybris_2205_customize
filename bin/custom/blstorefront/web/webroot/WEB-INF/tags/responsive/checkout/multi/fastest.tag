@@ -23,7 +23,7 @@
         <div class="collapse" id="sameday-expand" data-bs-parent="#shippingOptions">
             <div class="tab-container">
                 <div class="tab-navigation">
-                    <select id="same-day-select-box" class="btn btn-block btn-outline text-start my-4" onChange="onChangeOfSameDayShippingMethod()">
+                    <select id="same-day-select-box" class="btn btn-block btn-outline text-start mt-4 mb-2" onChange="onChangeOfSameDayShippingMethod()">
                         <c:forEach items="${shippingGroup}" var="entry" varStatus="loop">
                             <c:if test="${entry.shippingType eq 'FASTEST'}">
                                 <c:choose>
@@ -53,7 +53,7 @@
                     </div>
                 </div>
 
-                <div id="sameDayShippingMethods">
+                <div id="sameDayShippingMethods" class="sub-option">
 
                 </div>
 

@@ -7,11 +7,13 @@ import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.order.BlCalculationService;
 import com.bl.core.price.service.BlCommercePriceService;
+import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.jalo.order.price.PriceInformation;
 import de.hybris.platform.order.exceptions.CalculationException;
 import de.hybris.platform.order.impl.DefaultCalculationService;
 import de.hybris.platform.order.strategies.calculation.OrderRequiresCalculationStrategy;
@@ -47,6 +49,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private OrderRequiresCalculationStrategy defaultOrderRequiresCalculationStrategy;
 	private CommonI18NService defaultCommonI18NService;
 	private DefaultBlExternalTaxesService defaultBlExternalTaxesService;
+	private static final ThreadLocal<Boolean> saveOrderEntryUnneeded = new ThreadLocal<>();
 
 	/**
 	 * Reset all values of entry before calculation.
@@ -121,21 +124,31 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		if (recalculate || getDefaultOrderRequiresCalculationStrategy().requiresCalculation(order))
 		{
 
+            double totalDamageWaiverCost = 0.0;
 			final CurrencyModel curr = order.getCurrency();
 			final int digits = curr.getDigits().intValue();
 			// subtotal
 			final double subtotal = order.getSubtotal().doubleValue();
 			//totalDamageWaiverCost
-			final double totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
+			if(BooleanUtils.isTrue(order.getIsRentalCart()))
+			{
+			 totalDamageWaiverCost = Objects.nonNull(order.getTotalDamageWaiverCost())
 					? order.getTotalDamageWaiverCost().doubleValue()
 					: 0.0d;
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Damage Waiver Cost : {}", totalDamageWaiverCost);
+			}
 			// discounts
 			final double totalDiscounts = calculateDiscountValues(order, recalculate);
 			final double roundedTotalDiscounts = getDefaultCommonI18NService().roundCurrency(totalDiscounts, digits);
 			order.setTotalDiscounts(Double.valueOf(roundedTotalDiscounts));
-			// set total
+
+			// Set Delivery Cost as 0 for Extend rental order based on flag -> isExtendedOrder
+			if(BooleanUtils.isTrue(order.getIsExtendedOrder())){
+				order.setDeliveryCost(0.0);
+			}
+
 			getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+			// set total
 			final double total = subtotal + totalDamageWaiverCost + order.getPaymentCost().doubleValue()
 					+ order.getDeliveryCost().doubleValue() - roundedTotalDiscounts + order.getTotalTax();
 			final double totalRounded = getDefaultCommonI18NService().roundCurrency(total, digits);
@@ -146,6 +159,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Tax Price : {}", totalRoundedTaxes);
 			setCalculatedStatus(order);
 			saveOrder(order);
+
+			// To set the current extend order in session
+			if(BooleanUtils.isTrue(order.getIsExtendedOrder())) {
+				BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
+			}
 		}
 
 	}
@@ -191,10 +209,6 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private PriceValue getPriceForSkuOrSerial(final AbstractOrderModel order, final AbstractOrderEntryModel entry,
 			final ProductModel product) throws CalculationException
 	{
-		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
-		{
-			return findBasePrice(entry);
-		}
 
 		if (PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product))
 		{
@@ -204,7 +218,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 				return createNewPriceValue(order.getCurrency().getIsocode(),
 						blSerialProductModel.getIncentivizedPrice().doubleValue(), BooleanUtils.toBoolean(order.getNet()));
 			}
-			if (Objects.nonNull(blSerialProductModel.getIncentivizedPrice()))
+			else if (Objects.nonNull(blSerialProductModel.getFinalSalePrice()))
 			{
 				return createNewPriceValue(order.getCurrency().getIsocode(), blSerialProductModel.getFinalSalePrice().doubleValue(),
 						BooleanUtils.toBoolean(order.getNet()));
@@ -212,6 +226,11 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 			throw new CalculationException(
 					"No Price defined for Serial Product with Serial Id : ".concat(blSerialProductModel.getProductId()));
 		}
+		else if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		{
+			return findBasePrice(entry);
+		}
+		
 		throw new CalculationException("Product Type is not a type of SKU or Serial Product");
 	}
 
@@ -226,7 +245,9 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	 */
 	private PriceValue getDynamicBasePriceForRentalSKU(final PriceValue basePrice, final ProductModel product)
 	{
-		if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		
+		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product) 
+				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
 			final BlProductModel blProductModel = (BlProductModel) product;
 			final BigDecimal dynamicPriceDataForProduct = getCommercePriceService()
@@ -404,6 +425,86 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 	private PriceValue createNewPriceValue(final String currencyIso, final double price, final boolean isNet)
 	{
 		return new PriceValue(currencyIso, price, isNet);
+	}
+
+	/**
+	 * this method Created for rental Extend Order to do calculate bases on extend rental selection
+	 */
+	@Override
+	public void recalculateForExtendOrder(final AbstractOrderModel order , final int defaultAddedTimeForExtendRental) throws CalculationException
+	{
+		try
+		{
+			saveOrderEntryUnneeded.set(Boolean.TRUE);
+			calculateEntriesForExtendOrder(order, true , defaultAddedTimeForExtendRental);
+			resetAllValues(order);
+			calculateTotals(order, true, calculateSubtotal(order , true));
+		}
+		finally
+		{
+			saveOrderEntryUnneeded.remove();
+		}
+	}
+
+	/**
+	 * This method created to calculate entries for extend order
+	 */
+	@Override
+	public void calculateEntriesForExtendOrder(final AbstractOrderModel order, final boolean forceRecalculate , final int defaultAddedTimeForExtendRental)
+			throws CalculationException
+	{
+		double subtotal = 0.0;
+		double totalDamageWaiverCost = 0.0;
+		for (final AbstractOrderEntryModel entryModel : order.getEntries())
+		{
+			resetAllValuesForExtendOrder(entryModel , defaultAddedTimeForExtendRental);
+			super.calculateTotals(entryModel , true);
+			subtotal += entryModel.getTotalPrice().doubleValue();
+			totalDamageWaiverCost += getDamageWaiverPriceFromEntry(entryModel);
+		}
+		final Double finaltotalDamageWaiverCost = Double.valueOf(totalDamageWaiverCost);
+		order.setTotalDamageWaiverCost(finaltotalDamageWaiverCost);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlCoreConstants.DAMAGE_WAIVER_ERROR, finaltotalDamageWaiverCost);
+		final Double totalPriceWithDamageWaiverCost = Double.valueOf(subtotal + totalDamageWaiverCost);
+		order.setTotalPrice(totalPriceWithDamageWaiverCost);
+		order.setDeliveryCost(0.0);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Total Price : {}", totalPriceWithDamageWaiverCost);
+		getDefaultBlExternalTaxesService().calculateExternalTaxes(order);
+	}
+
+	/**
+	 * This method created to reset entries for extend rental order
+	 */
+	@Override
+	public void resetAllValuesForExtendOrder(final AbstractOrderEntryModel entry , final int defaultAddedTimeForExtendRental) throws CalculationException
+	{
+		final ProductModel product = entry.getProduct();
+		final Collection<TaxValue> entryTaxes = findTaxValues(entry);
+		entry.setTaxValues(entryTaxes);
+		final AbstractOrderModel order = entry.getOrder();
+		final PriceValue pv = getPriceForSkuOrSerial(order, entry, product);
+		final PriceValue basePrice = convertPriceIfNecessary(pv, order.getNet().booleanValue(), order.getCurrency(), entryTaxes);
+		final PriceValue dynamicBasePrice = getDynamicBasePriceForRentalExtendOrderSku(basePrice, product , defaultAddedTimeForExtendRental);
+		entry.setBasePrice(Double.valueOf(dynamicBasePrice.getValue()));
+		final List<DiscountValue> entryDiscounts = findDiscountValues(entry);
+		entry.setDiscountValues(entryDiscounts);
+		setDamageWaiverPrices(entry, product);
+	}
+
+	/**
+	 * This method created to get dynamic price for extend rental based on extend rental days
+	 */
+	@Override
+	public PriceValue getDynamicBasePriceForRentalExtendOrderSku(final PriceValue basePrice, final ProductModel product , final int defaultAddedTimeForExtendRental)
+	{
+		if (!PredicateUtils.instanceofPredicate(BlSerialProductModel.class).evaluate(product)
+				&& PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
+		{
+			final PriceInformation dynamicPriceDataForProduct = getCommercePriceService()
+					.getWebPriceForExtendProduct(product, Long.valueOf(defaultAddedTimeForExtendRental));
+			return createNewPriceValue(basePrice.getCurrencyIso(), dynamicPriceDataForProduct.getPriceValue().getValue(), basePrice.isNet());
+		}
+		return basePrice;
 	}
 
 	/**

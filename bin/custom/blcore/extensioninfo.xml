@@ -15,15 +15,17 @@
         <requires-extension name="bllogging"/>
         <requires-extension name="blintegration"/>
         <requires-extension name="commercefacades"/>
+        <requires-extension name="braintree"/>
         <requires-extension name="stocknotificationservices"/>
+        <requires-extension name="ruleengineservices"/>
         <requires-extension name="ruledefinitions"/>
+        <requires-extension name="wishlist"/>
         <requires-extension name="promotionengineservices"/>
+        <requires-extension name="couponservices"/>
+	 <requires-extension name="warehousing"/>
 
         <coremodule generated="true" manager="com.bl.core.jalo.BlCoreManager" packageroot="com.bl.core"/>
                 		
-        
-        		
-	
     
     </extension>
         

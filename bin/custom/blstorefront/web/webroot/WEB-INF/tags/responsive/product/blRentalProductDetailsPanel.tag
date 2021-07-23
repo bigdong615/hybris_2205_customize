@@ -52,11 +52,24 @@
                                          </c:if>
                                       </c:otherwise>
                                     </c:choose>
-                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><img src="${themeResourcePath}/assets/stars-empty.svg"></div> <span class="review-count">(138)</span>
+                                    <product:productPageReviewsTab product="${product}" />
+                                <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
                                 </ul>
                                 <c:choose >
+                                 <c:when test="${product.isDiscontinued eq 'true'}">
+                                 <div class="notification notification-error mt-4">
+                                     <c:choose>
+                                            <c:when test="${not empty product.alternativeProduct}">
+                                            ${ycommerce:sanitizeHTML(product.alternativeProduct)}
+                                             </c:when>
+                                            <c:otherwise>
+                                            <spring:theme code="pdp.product.discontinue.text"/>
+                                            </c:otherwise>
+                                     </c:choose>
+                                 </div>
+                                 </c:when>
                                 <c:when test="${product.isUpcoming eq 'true'}">
                                 <div id="pickupDelivery">
                                   <p><span class="arrival"><spring:theme code="pdp.rental.comming.soon.text"/></span></p>
@@ -85,12 +98,16 @@
                                   </div>
                                   </c:otherwise>
                                    </c:choose>
+                                   <c:if test = "{product.isDiscontinued ne 'true'}">
                                 <div class="priceSummary">
                                 <!-- BL-483 : Getting price as per the selection on rental days or else default price for seven rentals days will be returned -->
                                   <span class="productPrice"><product:productListerItemPrice product="${product}"/></span>&emsp;<span class="rentalDates">${rentalDate.numberOfDays}&nbsp;<spring:theme code="pdp.rental.product.recommendation.section.days.rental.text"/></span>
                                 </div>
+                                </c:if>
                                 <!--BL-628: Notify Me-->
                                 <c:choose >
+                                 <c:when test="${product.isDiscontinued eq 'true'}">
+                                 </c:when>
                                 <c:when test="${product.isUpcoming eq 'true'}">
                                 <spring:theme code="text.stock.notification.subscribe.title" var="colorBoxTitle" />
                                 <sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
@@ -153,7 +170,6 @@
                                   		  </form>
                                   		</c:otherwise>
                                   </c:choose>
-
                            		</c:otherwise>
                             </c:choose>
                               </div>
@@ -216,5 +232,5 @@
                             </div>
                         </div>
                     </div>
-                </section>
+               </section>
 

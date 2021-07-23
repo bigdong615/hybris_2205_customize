@@ -41,6 +41,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
                               ; BodyContent                        ;                                                                         ;                           ;wide
                               ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                              ; TopHeaderSlot           ;                                                                             ;                           ; wide
 
 
 ###  Define ContentSlot For Template  ###
@@ -60,6 +61,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; HomePageRentingGearIsEasyTitleSlot-AccountPage ; HomePageRentingGearIsEasyTitleSlot ;                                                       ; HomePageRentingGearIsEasyTitleSlot       ; true
                                      ;                         ; HomePageRentingGearSectionSlot-AccountPage     ; HomePageRentingGearSectionSlot     ;                                                       ; HomePageRentingGearSectionSlot           ; true
                                      ;                         ; SocialMediaSectionSlot-AccountPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                     ;                         ; TopHeaderSlot-AccountPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
                                      ;                         ; MobileHeaderLinkForSupportSlot-AccountPage      ; MobileHeaderLinkForSupportSlot      ;                                                                           ; MobileHeaderLinkForSupportSlot                 ; true
                                      ;                         ; MobileHeaderLinkForAccountSlot-AccountPage      ; MobileHeaderLinkForAccountSlot      ;                                                                           ; MobileHeaderLinkForAccountSlot                 ; true
                                     ;                         ; MobileHeaderBottomInfo-AccountPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true
@@ -78,3 +80,7 @@ INSERT_UPDATE ContentPage ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; verificationImages           ; Verification Images Page        ; AccountPageTemplate                  ;verificationImages
                           ;                         ; creditCarts                  ; Credit Carts Pages              ; AccountPageTemplate                 ; creditCarts
                           ;                         ;update-email                  ;Update Email Page                ;AccountPageTemplate                  ;update-email
+                          ;                         ;order                         ;Order Details Page                ;AccountPageTemplate                 ;order
+                          ;                         ;extendRentalOrderDetails      ;Extend Rental Order Details Page  ; AccountPageTemplate                ;extendRentalOrderDetails
+                          ;                         ;extendRentalOrderConfirmation ;Extend Rental Order Confirmation Page;AccountPageTemplate               ;extendRentalOrderConfirmation
+

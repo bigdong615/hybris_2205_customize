@@ -21,9 +21,8 @@ public enum LogErrorCodeEnum implements LogError
    UPS_INTEGRATION_ERROR("0009","Error occure whiling calling UPS intergration service."),
     ORDER_SOURCING_ERROR("0010","Error occur while sourcing the order"),
   ORDER_ALLOCATION_ERROR("0011","Error occur while allocation of the order"),
-  EMAIL_SUBSCRIPTION_INTEGRATION_ERROR("0012", "Email subscription integration Error");
-
-
+   ORDER_OPTIMIZATION_ERROR("0012","Error occur while shipping optimization process for order"),
+   EMAIL_SUBSCRIPTION_INTEGRATION_ERROR("0013", "Email subscription integration Error");
 
     private String code;
     private String description;

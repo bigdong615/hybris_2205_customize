@@ -9,16 +9,17 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:if test="${not empty paymentInfo}">
-<c:set var="cardName" value="${fn:escapeXml(paymentInfo.cardType)}"/>
-<c:if test="${empty cardName }">
-	<c:choose>
-		<c:when test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'BrainTreePayPalExpress')}">
-			<c:set var="cardName" value="PayPal"/>
-		</c:when>
-	</c:choose>
-</c:if>
-	<div class="row">
+<c:choose>
+  <c:when test="${not empty paymentInfo}">
+    <c:set var="cardName" value="${fn:escapeXml(paymentInfo.cardType)}"/>
+    <c:if test="${empty cardName }">
+	    <c:choose>
+		    <c:when test="${fn:containsIgnoreCase(paymentInfo.subscriptionId, 'BrainTreePayPalExpress')}">
+			    <c:set var="cardName" value="PayPal"/>
+		    </c:when>
+	    </c:choose>
+    </c:if>
+	 <div class="row">
 		<div class="col-2 text-center">
 			<img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-${fn:replace(fn:toLowerCase(cardName),' ', '_')}.png" style="width: 50px;">
 		</div>
@@ -51,6 +52,46 @@
 				<b class="gray100">Order Notes</b> JayZ Superbowl Shoot
 			</p>
 		</div> -->
-	</div>
-</c:if>
+	 </div>
+  </c:when>
+  <c:otherwise>
+    <div class="row">
+    	<div class="col-2 text-center">
+    		<img
+    			src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-po.png"
+    			style="width: 50px;">
+    	</div>
+    	<div class="col-10 col-md-5">
+    		<b class="body14 gray100"><spring:theme code="text.review.page.payment.po" /></b>
+    		<div class="row">
+    			<div class="col-6">
+    				<p class="body14">
+    					<spring:theme code="text.review.page.payment.amount" />
+    				</p>
+    			</div>
+    			<div class="col-6">
+    				<p class="body14 gray80">
+    					<format:price priceData="${cartData.totalPriceWithTax}" />
+    				</p>
+    			</div>
+    		</div>
+    	</div>
+    	<div class="col-12 col-md-5">
+    	  <div class="po-order-notes">
+    		  <p class="gray80 body14">
+    			  <b class="gray100"><spring:theme code="text.order.confirmation.print.page.po.notes"/></b>
+    			  <c:choose>
+    				  <c:when test="${cartData.poNotes == ''}">
+                 <spring:theme code="text.review.page.payment.notes.na"/>
+    				  </c:when>
+    				  <c:otherwise>
+                ${cartData.poNotes}
+    				  </c:otherwise>
+    			  </c:choose>
+    		  </p>
+    	  </div>
+    	</div>
+    </div>
+  </c:otherwise>
+</c:choose>
 

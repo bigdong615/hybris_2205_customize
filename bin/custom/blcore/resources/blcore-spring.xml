@@ -756,7 +756,6 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-
 	<!--BL-565 Gift Card Email Start -->
 	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BlGiftCardEmailEventListener"
 		parent="abstractAcceleratorSiteEventListener">
@@ -826,6 +825,23 @@
 	</bean>
 	<!-- Notify me end -->
 
+	<!-- Shipping Optimization-->
+	<alias name="defaultBlShippingOptimizationStrategy" alias="blShippingOptimizationStrategy"/>
+	<bean id="defaultBlShippingOptimizationStrategy"
+		  class="com.bl.core.shipping.strategy.impl.DefaultBlShippingOptimizationStrategy"
+		  parent="abstractBusinessService">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+	</bean>
+
+	<bean id="blShippingOptimizationJob" class="com.bl.core.job.BlShippingOptimizationJob"
+		  parent="abstractJobPerformable">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
+		<property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
+	</bean>
+	<!-- Shipping Optimization End-->
+
 	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
     <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
         <property name="blDatePickerService" ref="blDatePickerService"/>
@@ -849,6 +865,21 @@
 	<bean id="defaultBlStoredEmailSubscriptionDao" class="com.bl.core.dao.subscription.impl.DefaultBlStoredEmailSubscriptionDao">
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
+	<!--Email Subscription changes end-->
+	
+	<alias alias="orderDao" name="defaultBlOrderDao"/>
+	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
+	</bean>
+	
+	<bean id="blPaymentService" class="com.bl.core.payment.service.impl.DefaultBlPaymentService">
+		<property name="orderDao" ref="orderDao"/>
+		<property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<bean id="blAuthorizePaymentJob" class="com.bl.core.job.BlAuthorizePaymentJob" parent="abstractJobPerformable">
+		<property name="blPaymentService" ref="blPaymentService"/>
+	</bean>
 
 	<!-- Epic [BL-637] : Custom Conditions for rental products promotion-->
 	<alias alias="ruleRentalDurationConditionTranslator" name="defaultRuleRentalDurationConditionTranslator" />
@@ -859,6 +890,7 @@
 
 	<alias alias="ruleRentalArrivalDateConditionTranslator" name="defaultRuleRentalArrivalDateConditionTranslator" />
 	<bean id="defaultRuleRentalArrivalDateConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleRentalArrivalDateConditionTranslator" />
+
 
 	<!-- [BL-655]: Custom Actions for rental products promotion-->
 	<alias alias="ruleFreeRentalDatesAction" name="defaultRuleFreeRentalDatesAction" />
@@ -877,4 +909,146 @@
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
 	</bean>
 
+	<!--Added for promo code case sensitivity check-->
+	<alias name="defaultBlCouponDao" alias="couponDao" />
+	<bean id="defaultBlCouponDao" class="com.bl.core.dao.coupon.impl.DefaultBlCouponDao" parent="defaultCouponDao"/>
+	
+	<!-- [BL-471]: Serial status change -->
+
+	<alias name="defaultUsedGearSerialStatusChangeHook" alias="usedGearSerialStatusChangeHook" />
+	<bean id="defaultUsedGearSerialStatusChangeHook"
+		class="com.bl.core.order.hook.impl.BlUsedGearSerialStatusChangeHook">
+		<property name="modelService" ref="modelService" />
+	</bean>
+	
+	<bean id="commerceUsedGearSerialStatusHookMergeDirective"
+		depends-on="commercePlaceOrderMethodHooks" parent="listMergeDirective">
+		<property name="add" ref="usedGearSerialStatusChangeHook" />
+	</bean>
+
+	<!--[Bl-652] condition and Actions-->
+	<alias alias="ruleTotalDamageWaiverConditionTranslator" name="defaultRuleTotalDamageWaiverConditionTranslator" />
+	<bean id="defaultRuleTotalDamageWaiverConditionTranslator" class="com.bl.core.promotions.ruledefinitions.conditions.RuleTotalDamageWaiverConditionTranslator" />
+
+	<alias name="defaultBlShippingActionStrategy" alias="blShippingActionStrategy"/>
+	<bean id="defaultBlShippingActionStrategy" parent="abstractRuleActionStrategy" class="com.bl.core.promotions.promotionengineservices.action.impl.DefaultBlShippingActionStrategy" >
+		<property name="deliveryModeDao" ref="deliveryModeDao"/>
+		<property name="promotionAction" value="com.bl.core.model.RuleBasedFreeDeliveryModeActionModel"/>
+	</bean>
+	<alias alias="ruleFreeDeliveryModesAction" name="defaultRuleFreeDeliveryModesAction" />
+	<bean id="defaultRuleFreeDeliveryModesAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="ruleFreeDeliveryModesRAOAction"/>
+	</bean>
+	<alias alias="ruleFreeDeliveryModesRAOAction" name="defaultBlRuleFreeDeliveryModesRAOAction" />
+	<bean id="defaultBlRuleFreeDeliveryModesRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlRuleFreeDeliveryModesRAOAction">
+		<property name="defaultBlRuleEngineCalculationService" ref="ruleEngineCalculationService"/>
+		<property name="deliveryModeService" ref="deliveryModeService"/>
+	</bean>
+	<bean id="blFreeDeliveryModesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+		<property name="key" value="defaultBlRuleFreeDeliveryModesRAOAction"/>
+		<property name="value" ref="blShippingActionStrategy"/>
+	</bean>
+	<bean id="freeDeliveryModesStrategiesMapping" depends-on="actionStrategies" parent="listMergeDirective">
+		<property name="add" ref="defaultBlShippingActionStrategy" />
+	</bean>
+
+	<alias name="defaultBlRuleEngineCalculationService" alias="ruleEngineCalculationService" />
+	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
+	</bean>
+
+	<!-- BL-753:This interceptor is added to update consignment in order notes -->
+	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
+	<bean id="blOrderPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor"/>
+
+	<bean id="blOrderPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blOrderPrepareInterceptor"/>
+		<property name="typeCode" value="AbstractOrder"/>
+	</bean>
+
+	<!-- BL-753:This interceptor is added to update order and other consignment in order notes. -->
+	<alias name="blConsignmentPrepareInterceptor" alias="blConsignmentPrepareInterceptor"/>
+	<bean id="blConsignmentPrepareInterceptor"
+		class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor"/>
+
+	<bean id="blConsignmentPrepareInterceptorMapping"
+		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+		<property name="interceptor" ref="blConsignmentPrepareInterceptor"/>
+		<property name="typeCode" value="Consignment"/>
+	</bean>
+
+	<!-- BL-633:This validator used to validate blproduct data before saving it. -->
+	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
+	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
+	</bean>
+	<bean id="blProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blProductValidateInterceptor"/>
+		<property name="typeCode" value="BlProduct"/>
+	</bean>
+
+	<!-- [BL-781]: This is to fetch the wishlist entries-->
+	<alias name="defaultBlWishlistService" alias="blwishlistService"/>
+	<bean id="defaultBlWishlistService" class="com.bl.core.services.wishlist.impl.DefaultBlWishlistService" parent="defaultWishlistService">
+		<property name="blwishlistDao" ref="blwishlistDao"/>
+	</bean>
+
+	<!-- [BL-781]: This is to fetch the wishlist entries from the Database-->
+	<alias name="defaultBlWishlistDao" alias="blwishlistDao"/>
+	<bean id="defaultBlWishlistDao" class="com.bl.core.wishlist.impl.DefaultBlWishlistDao" parent="defaultWishlistDao">
+		<property name="userService" ref="userService"/>
+		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
+	</bean>
+	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
+	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
+        <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
+    </bean>
+
+	<!-- [BL-753]: Dynamic attribute handler for attribute orderType in Type Consignment -->
+	<bean id="consignmentOrderTypeHandler" class="com.bl.core.attributes.ConsignmentOrderTypeHandler" />
+
+	<!--BL-795 Adding attribute handler class for dynamic attribute skuFirmwareVersion-->
+	<bean id="bLRequiredFirmwareVersionHandler" class="com.bl.core.model.handler.BlRequiredFirmwareVersionHandler"/>
+
+	<alias alias="productService" name="defaultBlProductService"/>
+	<bean id="defaultBlProductService" class="com.bl.core.product.service.impl.DefaultBlProductService"	parent="defaultProductService"/>
+	
+	<!--BL-795 Adding attribute handler class for dynamic attribute conditionRatingOverallScore-->
+	<bean id="blConditionRatingOverallScoreHandler" class="com.bl.core.model.handler.BlConditionRatingOverallScoreHandler">
+		<property name="blPricingService" ref="blPricingService"/>
+		<property name="blProductService" ref="productService"/>
+	</bean>
+
+
+	<!--Added for extend rental order -->
+
+	<bean id="defaultBlExtendOrderService" class="com.bl.core.services.extendorder.impl.DefaultBlExtendOrderService">
+		<property name="modelService" ref="modelService"/>
+		<property name="orderIDGenerator" ref="orderCodeGenerator"/>
+		<property name="userService" ref="userService"/>
+		<property name="customerAccountService" ref="customerAccountService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blStockLevelDao" ref="blStockLevelDao"/>
+	</bean>
+
+	<!--Coupon for rental extend order -->
+	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService" parent="defaultCouponService">
+	</bean>
+
+	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
+	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
+	
+	<!-- Interceptor for NotesModel to perform custom logic before saving the model -->
+	<alias name="blNotesPrepareInterceptor" alias="blNotesPrepareInterceptor"/>
+	<bean id="blNotesPrepareInterceptor" class="com.bl.core.model.interceptor.BlNotesPrepareInterceptor">
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<!-- Adding NotesModel interceptor to Interceptor mapping list -->
+	<bean id="blNotesPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
+		<property name="interceptor" ref="blNotesPrepareInterceptor"/>
+		<property name="typeCode" value="Notes"/>
+	</bean>
+	
 </beans>
+

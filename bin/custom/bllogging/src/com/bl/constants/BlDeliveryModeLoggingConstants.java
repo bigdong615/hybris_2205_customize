@@ -48,6 +48,7 @@ public class BlDeliveryModeLoggingConstants {
     public static final String UPS = "UPS";
 
     public static final String RUSH_NYC_NEXT_DAY_9_To_12 = "RUSH_NYC_NEXT_DAY_9_To_12";
+    public static final String OPTIMIZED_SHIPPING_TYPE = "Optimized Shipping Type Enum : ";
 
     public static final String SHIP_HOME_HOTEL_BUSINESS_MSG = "Ship to home, hotel business";
     public static final String BL_PARTNER_PICKUP_MSG = "BL-Partner pickup";
@@ -67,8 +68,19 @@ public class BlDeliveryModeLoggingConstants {
     public static final String FETCH_SHIPPING_COST = "Fetching shipping cost for : ";
     public static final String BASE_STORE_DIMENSIONAL_FACTOR = "Fetching dimensional factor from base store : ";
 
+    public static final String SHIPPING_OPTIMIZATION = "Fetching shipping optimization record!!";
+    public static final String CONSIGNMENT_FETCHING = "Fetching Consignments for yesterday and today!!";
+
 
     public static final String PAY_BY_CUSTOMER = "payByCustomer";
+    
+    public static final String SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR = "Ship to home, hotel business for Used Gear";
+    public static final String BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR = "BL-Partner pickup for Used Gear";
+    public static final String SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR = "Ship to UPS store for Used Gear";
+    public static final String SAME_DAY_DELIVERY_MSG_FOR_USEDGEAR = "Rush Same Day Delivery!! for Used Gear";
+    public static final String NEXT_DAY_RUSH_DELIVERY_MSG_FOR_USEDGEAR = "Rush Next Day Delivery!! for Used Gear";
+    public static final String DEFAULT_DELIVERY_MSG_FOR_USEDGEAR = "No Predefined shipping group found!! for Used Gear";
+
 
     private BlDeliveryModeLoggingConstants() {}
 }

@@ -32,7 +32,7 @@
                      <input type = "hidden" value="usedGear" name="blPageType"/>
                   </ycommerce:testId>
                   <div class="input-group-append  d-md-block input-button-search">
-                     <button class="btn btn-search btn-link js_search_button" type="submit"><spring:theme code="text.used.gear.search"/></button>
+                     <button class="btn btn-search btn-link js_search_button js-search-track" type="submit"><spring:theme code="text.used.gear.search"/></button>
                   </div>
                </div>
             </form>
