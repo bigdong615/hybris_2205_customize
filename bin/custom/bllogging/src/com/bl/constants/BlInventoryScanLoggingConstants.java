@@ -24,6 +24,8 @@ public class BlInventoryScanLoggingConstants {
     public static final int FORTY = 40;
 
     public static final String HUN_PER = "100%";
+    public static final String SAVING = "Saving ";
+    public static final String SPACE = ": ";
 
     public static final String SAMPLE1 = "sample1%";
     public static final String SAMPLE2 = "sample2%";

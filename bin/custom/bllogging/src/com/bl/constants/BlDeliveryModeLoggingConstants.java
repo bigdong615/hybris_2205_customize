@@ -48,6 +48,7 @@ public class BlDeliveryModeLoggingConstants {
     public static final String UPS = "UPS";
 
     public static final String RUSH_NYC_NEXT_DAY_9_To_12 = "RUSH_NYC_NEXT_DAY_9_To_12";
+    public static final String OPTIMIZED_SHIPPING_TYPE = "Optimized Shipping Type Enum : ";
 
     public static final String SHIP_HOME_HOTEL_BUSINESS_MSG = "Ship to home, hotel business";
     public static final String BL_PARTNER_PICKUP_MSG = "BL-Partner pickup";
@@ -66,6 +67,9 @@ public class BlDeliveryModeLoggingConstants {
     public static final String FETCH_RUSH_ZONE_DELIVERY_MODE = "Fetching delivery modes for rush delivery shipping groups for :";
     public static final String FETCH_SHIPPING_COST = "Fetching shipping cost for : ";
     public static final String BASE_STORE_DIMENSIONAL_FACTOR = "Fetching dimensional factor from base store : ";
+
+    public static final String SHIPPING_OPTIMIZATION = "Fetching shipping optimization record!!";
+    public static final String CONSIGNMENT_FETCHING = "Fetching Consignments for yesterday and today!!";
 
 
     public static final String PAY_BY_CUSTOMER = "payByCustomer";
