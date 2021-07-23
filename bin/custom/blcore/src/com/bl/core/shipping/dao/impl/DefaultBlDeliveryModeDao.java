@@ -1,15 +1,19 @@
 package com.bl.core.shipping.dao.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.*;
 import com.bl.core.shipping.dao.BlDeliveryModeDao;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.order.daos.impl.DefaultZoneDeliveryModeDao;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import de.hybris.platform.store.BaseStoreModel;
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -281,8 +285,55 @@ public class DefaultBlDeliveryModeDao extends DefaultZoneDeliveryModeDao impleme
   				.getResult();
   		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
   	}
-    
-   /**
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, String customerZip,
+                                                                final int serviceDays, final int inbound) {
+        final String barcodeList = "select {pk} from {ShippingOptimization} where {carrierID} = ?carrierID and {homeBaseID} = ?warehouseCode" +
+                " and {zip} = ?customerZip and {serviceDays} = ?serviceDays and {inbound} = ?inbound";
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("carrierID", carrierId);
+        query.addQueryParameter("warehouseCode", warehouseCode);
+        query.addQueryParameter("customerZip", customerZip);
+        query.addQueryParameter("serviceDays", serviceDays);
+        query.addQueryParameter("inbound", inbound);
+        final Collection<ShippingOptimizationModel> results = getFlexibleSearchService().<ShippingOptimizationModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIPPING_OPTIMIZATION);
+        return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<ConsignmentModel> getAllGroundedConsignments(final String yDay, final String today) {
+        final StringBuilder barcodeList = new StringBuilder("select {c.pk} from {Consignment as c}, {ConsignmentStatus as cs}" +
+                " where to_char({c.optimizedShippingStartDate},'" + BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN + "') in ('" + yDay + "', '" + today + "') " +
+                "and {c.status} = {cs.pk} and {cs.code} = 'READY_FOR_PICKUP'");
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        final Collection<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.CONSIGNMENT_FETCHING);
+        return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OptimizedShippingMethodModel getOptimizedShippingMethod(final String code) {
+        final String barcodeList = "select {pk} from {OptimizedShippingMethod} where {code} = ?code";
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+        query.addQueryParameter("code", code);
+        final Collection<OptimizedShippingMethodModel> results = getFlexibleSearchService().<OptimizedShippingMethodModel>search(query).getResult();
+        BlLogger.logMessage(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIPPING_OPTIMIZATION);
+        return CollectionUtils.isNotEmpty(results) ? results.iterator().next() : null;
+    }
+
+
+    /**
     * This method is used to fetch ShipToHomeDeliveryMode data.
     * @param mode
     * @return
