@@ -13,8 +13,8 @@
 <!-- BL-927: Created new file for gift card product details --> 
 <c:url value="/cart/usedgearadd" var="addToCartUrl" />
 <div class="page-loader-new-layout">
-	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="Loading.."
-		title="Loading.." id="new_loading_Img" />
+	<img src="${themeResourcePath}/assets/bl-loader.gif" alt="<spring:theme code='giftcard.pdp.load.img.alt' />"
+		title="<spring:theme code='giftcard.pdp.load.img.alt' />" id="new_loading_Img" />
 </div>
 <div class="screen"></div>
 <cms:pageSlot position="SearchBoxBl" var="component">
@@ -43,13 +43,13 @@
 							id="giftCardPurchaseForm">
 							<div class="gc-pdp-form">
 								<input type="text" class="form-control" id="amount"
-									placeholder="$25 - $500" name="amount"> <input
+									placeholder="<spring:theme code='giftcard.PurchaseForm.amount.placeholder' />" name="amount"> <input
 									type="text" class="form-control" id="first-name"
-									placeholder="Recipient's name" name="name"> <input
+									placeholder="<spring:theme code='giftcard.PurchaseForm.name.placeholder' />" name="name"> <input
 									type="text" class="form-control" id="email"
-									placeholder="Recipient's email" name="email">
+									placeholder="<spring:theme code='giftcard.PurchaseForm.email.placeholder' />" name="email">
 								<textarea class="form-control mt-2 mb-4"
-									placeholder="Recipient's message" name="message"></textarea>
+									placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />" name="message"></textarea>
 							</div>
 							<div class="notification notification-warning mb-2"
 								style="display: none;"><spring:theme
