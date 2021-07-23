@@ -207,6 +207,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
 
+	public static final String DRIVING_LICENSE = "drivingLicense";
+	public static final String UTILITY_BILL = "utilityBill";
+	public static final String INSURANCE_CERTIFICATE = "insuranceCertificate";
+	public static final String EXTRA_DOCUMENT1 = "extraDocument1";
+	public static final String EXTRA_DOCUMENT2 = "extraDocument2";
+
 	private BlCoreConstants()
 	{
 		//empty
