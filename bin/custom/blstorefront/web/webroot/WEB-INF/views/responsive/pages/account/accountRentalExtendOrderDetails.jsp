@@ -85,8 +85,9 @@
 			</div>
 			<div class="rental-images row mt-3">
 				<c:forEach items="${orderData.entries}" var="cartEntry">
+				  <c:url var="productUrl" value="/rent/product/${cartEntry.product.code}"/>
 					<div class="col-4 col-md-3 text-center">
-						<product:productPrimaryImage product="${cartEntry.product}" format="product" /> </div>
+						<a href="${productUrl}" style="text-decoration: none"><product:productPrimaryImage product="${cartEntry.product}" format="product" /></a> </div>
 				</c:forEach>
 			</div>
 		</div>
@@ -207,7 +208,7 @@
     					name="voucherCode" />
     				<div class="input-group-append">
 
-                                  	<button type="submit" class="btn btn-secondary js-voucher-apply-account-btn">
+                                  	<button type="submit" class="btn btn-secondary js-voucher-apply-account-btn" disabled="disabled">
                                        <spring:theme code="text.voucher.apply.button.label" />
                                     </button>
 
@@ -217,6 +218,8 @@
             <button class="btn btn-block btn-primary mt-4">Extend Rental</button>
 	</div>
 
+
+	<div class="notification notification-error d-none"id="js-extendOrderError-update"></div>
 
  <div class="col-12">
 <div class="notification notification-error d-none"id="errorMessages_account_voucher"></div>

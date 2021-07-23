@@ -595,6 +595,7 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
 		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
 		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="blOrderAppliedVouchersPopulator" ref="blOrderAppliedVouchersPopulator" />
 	</bean>
 
 
@@ -664,6 +665,24 @@
 
 	<bean id="defaultBlCouponFacade" class="com.bl.facades.coupon.impl.DefaultBlCouponFacade">
 		<property name="defaultBlCouponService" ref="defaultBlCouponService"/>
+		<property name="customerAccountService" ref="customerAccountService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="userService" ref="userService"/>
+		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
+		<property name="blDefaultExtendOrderConverter" ref="blDefaultExtendOrderConverter"/>
 	</bean>
+
+	<!--Added for extend order coupon promotion -->
+
+	<bean id="blDefaultExtendOrderConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.AbstractOrderData"/>
+		<property name="populators">
+			<list>
+				<ref bean="blExtendRentalOrderDetailsPopulator"/>
+				<ref bean="blOrderAppliedVouchersPopulator"/>
+			</list>
+		</property>
+	</bean>
+
 
 </beans>

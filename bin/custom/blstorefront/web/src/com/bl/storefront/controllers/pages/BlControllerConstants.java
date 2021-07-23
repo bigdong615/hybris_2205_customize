@@ -144,6 +144,9 @@ public class BlControllerConstants
 	public static final String MY_ACCOUNT_EXTEND_RENTAL = "/my-account/extendRent/";
   public static final String CLIENT_TOKEN = "client_token";
 
+  public static final String EXTEND_ORDER = "extendOrderError";
+  public static final String COUPON_INVALID = "coupon.invalid.code.provided";
+
 
 	private BlControllerConstants()
 	{
