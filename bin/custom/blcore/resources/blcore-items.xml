@@ -303,7 +303,7 @@
 
         <relation code="Consignment2OrderNotes" generate="true" localized="false" autocreate="true">
           <deployment table="ConsToOrderNotesRel" typecode="12220"/>
-          <sourceElement qualifier="consignment" type="Consignment" cardinality="many"/>
+          <sourceElement qualifier="consignment" type="Consignment" cardinality="many" collectiontype="set"/>
           <targetElement qualifier="orderNotes" type="Notes" cardinality="many"
             collectiontype="list"/>
         </relation>
@@ -2027,7 +2027,7 @@
                     <modifiers read="true" write="true" optional="true" />
                     <description>return date of a for extend order</description>
                   </attribute>
-                  <attribute qualifier="totaExtendDays" type="java.lang.Integer">
+                  <attribute qualifier="totalExtendDays" type="java.lang.Integer">
                     <persistence type="property" />
                     <modifiers read="true" write="true" optional="true" />
                     <description>To get the number of days extended .</description>
@@ -2041,6 +2041,26 @@
                     <modifiers read="true" write="true" search="true" optional="true" initial="true" />
                     <persistence type="property" />
                     <description> Copy of listed extend order to be stored in existing order model.</description>
+                  </attribute>
+                  <attribute qualifier="consolidatedOrderNote" type="localized:java.lang.String">
+                    <description>This attribute contains consolidated order notes that can be provided by different teams stored in a Notes table on a particular order in the form of String which can be used to display in the View part of backoffice. </description>
+                    <modifiers read="true" write="true" search="true" optional="true"/>
+                    <persistence type="property">
+                      <columntype database="oracle">
+                        <value>CLOB</value>
+                      </columntype>
+                      <columntype database="sap">
+                        <value>NCLOB</value>
+                      </columntype>
+                      <columntype>
+                        <value>HYBRIS.LONG_STRING</value>
+                      </columntype>
+                    </persistence>
+                    <custom-properties>
+                      <property name="hmcIndexField">
+                        <value>"thefield"</value>
+                      </property>
+                    </custom-properties>
                   </attribute>
                 </attributes>
             </itemtype>
