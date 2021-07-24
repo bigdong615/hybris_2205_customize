@@ -4,6 +4,7 @@ import com.bl.core.model.*;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -35,8 +36,6 @@ public interface BlDeliveryModeService {
     
     /**
      * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes
-     * @param rentalStart date
-     * @param rentalEnd date
      * @param carrier UPS/FedEx
      * @param payByCustomer to get customer related delivery modes
      * @return Collection of object with delivery-modes differentiating in UPS and FedEx
@@ -56,8 +55,6 @@ public interface BlDeliveryModeService {
     
     /**
      * method with contain business logic for Ship to Home, Hotel or Business Delivery Modes to fetch all modes
-     * @param rentalStart date
-     * @param rentalEnd date
      * @param payByCustomer to get customer related delivery modes
      * @return Map object with delivery-modes differentiating in UPS and FedEx
      */
@@ -80,7 +77,6 @@ public interface BlDeliveryModeService {
      * This method will return all the delivery modes after selecting Ship to Home, Hotel or Business shipping group from dao.
      * @param carrier which will differentiate UPS or FedEx
      * @param mode i.e., Standard or Overnight
-     * @param pstCutOffTime to check cutOffTime
      * @param payByCustomer ge delivery modes based on customer
      * @return Collection of ZoneDeliveryModeModels
      */
@@ -206,8 +202,6 @@ public interface BlDeliveryModeService {
      *  depending on the selected zone from dao.
      *
      * @param partnerZone i.e., name
-     * @param rentalStart date
-     * @param rentalEnd date
      * @param payByCustomer to get customer related delivery modes
      * @return Collection of BlPickUpZoneDeliveryModeModel
      * @throws ParseException the parse exception
@@ -297,4 +291,34 @@ public interface BlDeliveryModeService {
 	  */
    boolean checkCartEntriesAvailability(final String rentalStart, final String rentalEnd,
          final ZoneDeliveryModeModel deliveryModeModel);
+
+    /**
+     * This method will return ShippingOptimizationModel with input elements
+     *
+     * @param carrierId UPS/FedEx or 2/1
+     * @param warehouseCode CA/MA or 1/2
+     * @param customerZip from delivery address
+     * @param serviceDays businessDays ground availability
+     * @param inbound going/coming
+     *
+     * @return ShippingOptimizationModel
+     */
+    ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, final String customerZip,
+                                                         final int serviceDays, final int inbound);
+
+    /**
+     * This method will return Collection of Consignment models with input
+     *
+     * @return Collection<ConsignmentModel>
+     */
+    Collection<ConsignmentModel> getAllGroundedConsignments();
+
+    /**
+     * javadoc
+     * this method will return optimized shipping method model from dao
+     *
+     * @param code value
+     * @return model
+     */
+    OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
 }
