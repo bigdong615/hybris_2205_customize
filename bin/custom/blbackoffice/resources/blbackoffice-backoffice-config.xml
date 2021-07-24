@@ -1044,7 +1044,7 @@
         	</advanced-search:field-list>
         </advanced-search:advanced-search>
    		</context>
-    
+
     <!-- For Stock level -->
     <context merge-by="type" parent="GenericItem" type="StockLevel"  extends="StockLevel" component="listview">
 	    <list-view:list-view xmlns:list-view="http://www.hybris.com/cockpitng/component/listView">

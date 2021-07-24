@@ -118,10 +118,10 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
     final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
     final boolean baseStoreHasDiscount = baseStoreModel != null && baseStoreModel.getUsedGearPromotionDiscount()!= null && baseStoreModel.getUsedGearPromotionDiscount() > 0;
     final boolean baseStoreHasMessage = baseStoreModel != null && StringUtils.isNotBlank(baseStoreModel.getUsedGearPromotionMessage());
-    if( baseStoreHasDiscount && getBlPromotionService().isUsedGearCategoryPromotionActive() && baseStoreHasMessage){
-    	serialProductData.setUgPromotionMessage(baseStoreModel.getUsedGearPromotionMessage());
-    	serialProductData.setSerialPromotionPrice(setSerialPromotionPrice(serialProductModel,baseStoreModel.getUsedGearPromotionDiscount()));
-		}
+			if( baseStoreHasDiscount && getBlPromotionService().isUsedGearCategoryPromotionActive() && baseStoreHasMessage){
+				serialProductData.setUgPromotionMessage(baseStoreModel.getUsedGearPromotionMessage());
+				serialProductData.setSerialPromotionPrice(getSerialPromotionPrice(serialProductModel,baseStoreModel.getUsedGearPromotionDiscount()));
+			}
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class BlSerialProductPopulator extends AbstractBlProductPopulator impleme
 	 * @param usedGearPromotionDiscount
 	 * @return
 	 */
-	private PriceData setSerialPromotionPrice(final BlSerialProductModel serialProductModel,final Integer usedGearPromotionDiscount) {
+	private PriceData getSerialPromotionPrice(final BlSerialProductModel serialProductModel,final Integer usedGearPromotionDiscount) {
 		BigDecimal promoPrice = BigDecimal.ZERO;
 		if(serialProductModel.getIncentivizedPrice() != null && serialProductModel.getIncentivizedPrice().compareTo(BigDecimal.ZERO) > 0 ){
 	   	 promoPrice = getBlPricingService().getSerialPromotionPrice(serialProductModel.getIncentivizedPrice(),usedGearPromotionDiscount);

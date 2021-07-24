@@ -1,5 +1,6 @@
 package com.bl.core.promotions.ruledefinitions.actions;
 
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
@@ -40,9 +41,9 @@ public class BlUGOrderEntryPercentageDiscountRAOAction extends AbstractRuleExecu
   @Override
   public boolean performActionInternal(final RuleActionContext context) {
     boolean isPerformed = false;
-    Optional<BigDecimal> amount = this.extractAmountForCurrency(context, context.getParameter("value"));
+    final Optional<BigDecimal> amount = this.extractAmountForCurrency(context, context.getParameter(BlCoreConstants.UG_PERCENTAGE_DISCOUNT_VALUE));
     if (amount.isPresent()) {
-      Set<OrderEntryRAO> orderEntries = context.getCartRao().getEntries();
+      final Set<OrderEntryRAO> orderEntries = context.getCartRao().getEntries();
       OrderEntryRAO orderEntryRAO;
       if (CollectionUtils.isNotEmpty(orderEntries)) {
         for(Iterator<OrderEntryRAO> var6 = orderEntries.iterator(); var6.hasNext(); isPerformed |= this.processOrderEntry(context, orderEntryRAO, amount.get())) {
@@ -63,12 +64,12 @@ public class BlUGOrderEntryPercentageDiscountRAOAction extends AbstractRuleExecu
    */
   protected boolean processOrderEntry(final RuleActionContext context, final OrderEntryRAO orderEntryRao, final BigDecimal value) {
     boolean isPerformed = false;
-    int consumableQuantity = this.getConsumptionSupport().getConsumableQuantity(orderEntryRao);
+    final int consumableQuantity = this.getConsumptionSupport().getConsumableQuantity(orderEntryRao);
     if (consumableQuantity > 0 && isUsedGearProductEntry(orderEntryRao.getProductCode())) {
-      DiscountRAO discount = this.getRuleEngineCalculationService().addOrderEntryLevelDiscount(orderEntryRao, false, value);
+      final DiscountRAO discount = this.getRuleEngineCalculationService().addOrderEntryLevelDiscount(orderEntryRao, false, value);
       this.setRAOMetaData(context, discount);
       this.getConsumptionSupport().consumeOrderEntry(orderEntryRao, consumableQuantity, discount);
-      RuleEngineResultRAO result = context.getValue(RuleEngineResultRAO.class);
+      final RuleEngineResultRAO result = context.getValue(RuleEngineResultRAO.class);
       result.getActions().add(discount);
       context.scheduleForUpdate(orderEntryRao, orderEntryRao.getOrder(), result);
       context.insertFacts(discount);
@@ -90,8 +91,9 @@ public class BlUGOrderEntryPercentageDiscountRAOAction extends AbstractRuleExecu
      if(blSerialProduct != null && blSerialProduct.getBlProduct() != null){
        final BlProductModel blProduct = blSerialProduct.getBlProduct();
        final boolean isOnSaleUsedGearSKU =  BooleanUtils.isTrue(blProduct.getForSale()) && blProduct.getOnSale()!= null && BooleanUtils.isTrue(blProduct.getOnSale());
-       BlLogger.logMessage(LOG, Level.INFO, "The condition evaluated for the Used Gear entry"+ (isOnSaleUsedGearSKU && BooleanUtils.isTrue(blSerialProduct.getForSale()) && blSerialProduct.getOnSale() != null && BooleanUtils.isTrue(blSerialProduct.getOnSale())));
-       return  isOnSaleUsedGearSKU && BooleanUtils.isTrue(blSerialProduct.getForSale()) && blSerialProduct.getOnSale() != null && BooleanUtils.isTrue(blSerialProduct.getOnSale());
+       final boolean isUsedGearProductEntry = isOnSaleUsedGearSKU && BooleanUtils.isTrue(blSerialProduct.getForSale()) && blSerialProduct.getOnSale() != null && BooleanUtils.isTrue(blSerialProduct.getOnSale());
+       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "The condition evaluated for the Used Gear entry is {} for Product {}" ,isUsedGearProductEntry,blSerialProduct.getCode());
+       return isUsedGearProductEntry;
      }
      return  false;
     }
