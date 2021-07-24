@@ -3,6 +3,7 @@
  */
 package com.bl.core.subscription.service.impl;
 
+import com.bl.core.subscription.models.ContactResponseWrapper;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	private static final String SUBSCRIPTION_CLIENT_SECRET = "email.subscription.client.secret";//   82YtBWAokGenYTQf1UuZldBJ
 	private static final String SUBSCRIPTION_ACCOUNT_ID = "email.subscription.account.id";//   515009598
 	private static final String SUBSCRIPTION_GRANT_TYPE = "email.subscription.grant.type";//   client_credentials
+	private static final String SUBSCRIPTION_ACCESS_SCOPE = "email.subscription.access.scope"; //  list_and_subscribers_read list_and_subscribers_write journeys_read
 
 	private ConfigurationService configurationService;
 
@@ -48,7 +50,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ContactResponse subscribeEmail(final ContactRequest contactRequest) {
+	public ContactResponseWrapper subscribeEmail(final ContactRequest contactRequest) {
 
 		final String accessToken;
 		try {
@@ -58,13 +60,13 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 
 			//2. call second api to create contact
 			if (StringUtils.isNotBlank(accessToken)) {
-				return createContact(accessToken, contactRequest);
+					return createContact(accessToken, contactRequest);
 			} else {
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-						"Could not get access token.");
+						"No access token received from Access Token API.");
 				return null;
 			}
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
 					LogErrorCodeEnum.EMAIL_SUBSCRIPTION_INTEGRATION_ERROR.getCode(),
 					"Error while fetching access token.",
@@ -92,33 +94,33 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 			final HttpEntity<SubscriptionAccessTokenRequest> subscriptionAccessTokenRequest = new HttpEntity<>(
 					getSubscriptionAccessTokenRequest(),
 					headers);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Request for get access token api call :- " + getMapper().writerWithDefaultPrettyPrinter()
-							.writeValueAsString(subscriptionAccessTokenRequest));
 
 			final String accessTokenUrl =
 					getConfigurationService().getConfiguration().getString(SUBSCRIPTION_AUTH_BASE_URL)
 							+ getConfigurationService().getConfiguration().getString(GET_ACCESS_TOKEN_API);
 
-			BlLogger
-					.logFormatMessageInfo(LOG, Level.DEBUG, "Get access token rest url :- " + accessTokenUrl);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Get Access Token API request URL : {} ",
+					accessTokenUrl);
 
-			final SubscriptionAccessTokenResponse response = getRestTemplate().postForObject(accessTokenUrl,
-					subscriptionAccessTokenRequest,
-					SubscriptionAccessTokenResponse.class);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Get Access Token API request Object: {}",
+					getMapper().writerWithDefaultPrettyPrinter()
+							.writeValueAsString(subscriptionAccessTokenRequest));
+
+			final SubscriptionAccessTokenResponse response = getRestTemplate()
+					.postForObject(accessTokenUrl,
+							subscriptionAccessTokenRequest,
+							SubscriptionAccessTokenResponse.class);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Response from get access token api call :- " +
-							getMapper().writerWithDefaultPrettyPrinter()
-									.writeValueAsString(response));
+					"Get Access Token API response Object : {} ",
+					getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
 
 			if (null != response && StringUtils.isBlank(response.getErrorDescription())) {
 				accessToken = response.getAccessToken();
 
-			} else if (null != response && StringUtils.isNotBlank(response.getErrorDescription())){
+			} else if (null != response && StringUtils.isNotBlank(response.getErrorDescription())) {
 				BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-						"Got error response for getting acceess token, error is : {}",
-						response.getErrorDescription());
+						"Error while getting the access token : {}", response.getErrorDescription());
 			}
 
 		} catch (final Exception e) {
@@ -137,7 +139,7 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	 * @param contactRequest
 	 * @return response - ContactResponse
 	 */
-	private ContactResponse createContact(final String accessToken,
+	private ContactResponseWrapper createContact(final String accessToken,
 			final ContactRequest contactRequest) {
 
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
@@ -151,27 +153,37 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 			final HttpEntity<ContactRequest> subscriptionCreateContactRequest = new HttpEntity<>(
 					contactRequest, headers);
 
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Request for create contact api call :- " + getMapper().writerWithDefaultPrettyPrinter()
-							.writeValueAsString(subscriptionCreateContactRequest));
-
 			final String createContactUrl =
 					getConfigurationService().getConfiguration().getString(SUBSCRIPTION_REST_BASE_URL)
 							+ getConfigurationService().getConfiguration().getString(CREATE_CONTACT_API);
 
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Create Contact API request URL : {} ",
+					createContactUrl);
+
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Create contact for subscription rest url :- " + createContactUrl);
+					"Create Contact API request Object : {}", getMapper().writerWithDefaultPrettyPrinter()
+							.writeValueAsString(subscriptionCreateContactRequest));
 
 			final ContactResponse response = getRestTemplate()
 					.postForObject(createContactUrl, subscriptionCreateContactRequest,
 							ContactResponse.class);
 
 			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Response got from create contact api call :- " + getMapper()
-							.writerWithDefaultPrettyPrinter()
-							.writeValueAsString(response));
+					"Create Contact API response Object : {}",
+					getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response));
 
-			return response;
+			ContactResponseWrapper contactResponseWrapper = new ContactResponseWrapper();
+			contactResponseWrapper.setRequestString(getMapper().writerWithDefaultPrettyPrinter()
+					.writeValueAsString(subscriptionCreateContactRequest));
+			if (null != response) {
+				contactResponseWrapper.setResponseString(getMapper().writerWithDefaultPrettyPrinter()
+						.writeValueAsString(response));
+				contactResponseWrapper.setContactID(response.getContactID().toString());
+				contactResponseWrapper.setContactKey(response.getContactKey());
+				contactResponseWrapper.setOperationStatus(response.getOperationStatus());
+			}
+
+			return contactResponseWrapper;
 
 		} catch (final Exception e) {
 
@@ -182,6 +194,8 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 
 		return null;
 	}
+
+
 
 	/**
 	 * To get RestTemplate
@@ -215,6 +229,8 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_CLIENT_SECRET));
 		request.setGrantType(
 				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_GRANT_TYPE));
+		request.setScope(
+				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_ACCESS_SCOPE));
 
 		return request;
 	}

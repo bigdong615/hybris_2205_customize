@@ -5,7 +5,7 @@ package com.bl.facades.subscription.impl;
 
 import com.bl.core.subscription.models.ContactRequest;
 import com.bl.core.subscription.service.BlEmailSubscriptionService;
-import com.bl.facades.populators.BlEmailSubscriptionPopulator;
+import com.bl.facades.populators.BlEmailSubscriptionRequestPopulator;
 import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 
 
@@ -17,7 +17,7 @@ import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFacade {
 
 	private BlEmailSubscriptionService blEmailSubscriptionService;
-	private BlEmailSubscriptionPopulator blEmailSubscriptionPopulator;
+	private BlEmailSubscriptionRequestPopulator blEmailSubscriptionRequestPopulator;
 
 	/**
 	 * {@inheritDoc}
@@ -26,7 +26,7 @@ public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFaca
 	public void subscribe(final String emailId) {
 
 		final ContactRequest contactRequest = new ContactRequest();
-		blEmailSubscriptionPopulator.populate(emailId, contactRequest);
+		blEmailSubscriptionRequestPopulator.populate(emailId, contactRequest);
 		// call API to create contact
 		blEmailSubscriptionService.subscribe(contactRequest);
 	}
@@ -50,15 +50,15 @@ public class DefaultBlEmailSubscriptionFacade implements BlEmailSubscriptionFaca
 	/**
 	 * @return the blEmailSubscriptionPopulator
 	 */
-	public BlEmailSubscriptionPopulator getBlEmailSubscriptionPopulator() {
-		return blEmailSubscriptionPopulator;
+	public BlEmailSubscriptionRequestPopulator getBlEmailSubscriptionRequestPopulator() {
+		return blEmailSubscriptionRequestPopulator;
 	}
 
 	/**
-	 * @param blEmailSubscriptionPopulator the blEmailSubscriptionPopulator to set
+	 * @param blEmailSubscriptionRequestPopulator the blEmailSubscriptionPopulator to set
 	 */
-	public void setBlEmailSubscriptionPopulator(
-			final BlEmailSubscriptionPopulator blEmailSubscriptionPopulator) {
-		this.blEmailSubscriptionPopulator = blEmailSubscriptionPopulator;
+	public void setBlEmailSubscriptionRequestPopulator(
+			final BlEmailSubscriptionRequestPopulator blEmailSubscriptionRequestPopulator) {
+		this.blEmailSubscriptionRequestPopulator = blEmailSubscriptionRequestPopulator;
 	}
 }

@@ -21,8 +21,7 @@ import org.springframework.util.Assert;
  *
  * @author Sunil Sahu
  */
-public class BlEmailSubscriptionPopulator implements Populator<String, ContactRequest> {
-
+public class BlEmailSubscriptionRequestPopulator implements Populator<String, ContactRequest> {
 
 	/**
 	 * Populate the contactRequest instance with values from the emailId.

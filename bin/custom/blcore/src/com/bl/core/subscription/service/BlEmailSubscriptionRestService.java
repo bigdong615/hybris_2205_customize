@@ -4,7 +4,7 @@
 package com.bl.core.subscription.service;
 
 import com.bl.core.subscription.models.ContactRequest;
-import com.bl.core.subscription.models.ContactResponse;
+import com.bl.core.subscription.models.ContactResponseWrapper;
 
 
 /**
@@ -20,5 +20,5 @@ public interface BlEmailSubscriptionRestService {
 	 * @param contactRequest - Request containing email id to be subscribed.
 	 * @return contactResponse - ContactResponse from API call.
 	 */
-	ContactResponse subscribeEmail(final ContactRequest contactRequest);
+	ContactResponseWrapper subscribeEmail(final ContactRequest contactRequest);
 }
