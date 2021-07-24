@@ -853,7 +853,6 @@
 	<bean id="defaultBlEmailSubscriptionService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionService">
 		<property name="modelService" ref="modelService"/>
 		<property name="blEmailSubscriptionRestService" ref="blEmailSubscriptionRestService"/>
-		<property name="blStoredEmailSubscriptionDao" ref="blStoredEmailSubscriptionDao"/>
 	</bean>
 	
 	<alias name="defaultBlEmailSubscriptionRestService" alias="blEmailSubscriptionRestService"/>
@@ -861,10 +860,6 @@
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<alias name="defaultBlStoredEmailSubscriptionDao" alias="blStoredEmailSubscriptionDao"/>
-	<bean id="defaultBlStoredEmailSubscriptionDao" class="com.bl.core.dao.subscription.impl.DefaultBlStoredEmailSubscriptionDao">
-		<property name="flexibleSearchService" ref="flexibleSearchService"/>
-	</bean>
 	<!--Email Subscription changes end-->
 	
 	<alias alias="orderDao" name="defaultBlOrderDao"/>

@@ -3,7 +3,6 @@
  */
 package com.bl.core.subscription.service.impl;
 
-import com.bl.core.dao.subscription.BlStoredEmailSubscriptionDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +28,6 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	private static final Logger LOG = Logger.getLogger(DefaultBlEmailSubscriptionService.class);
 	private ModelService modelService;
 	private BlEmailSubscriptionRestService blEmailSubscriptionRestService;
-	private BlStoredEmailSubscriptionDao blStoredEmailSubscriptionDao;
 
 	/**
 	 * Subscribe and save the contact.
@@ -38,18 +36,9 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	@Override
 	public void subscribe(final ContactRequest contactRequest) {
 
-		final BlStoredEmailSubscriptionModel emailSubscriptionModel = getBlStoredEmailSubscriptionModel(contactRequest.getContactKey());
-
-		if (null != emailSubscriptionModel && StringUtils.isNotBlank(emailSubscriptionModel.getContactId())) {
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Email subscription contact already persisted with key : {}, and with id : {} ",
-					emailSubscriptionModel.getContactKey(), emailSubscriptionModel.getContactId());
-		} else {
-
 			//call the actual rest api and collect response
 			final ContactResponse contactResponse = blEmailSubscriptionRestService
 					.subscribeEmail(contactRequest);
-
 
 			if (null != contactResponse && StringUtils
 					.equalsIgnoreCase(BlCoreConstants.SUBSCRIPTION_API_OPERATION_STATUS,
@@ -60,18 +49,7 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
 						"Error while getting ContactResponse with key {}", contactRequest.getContactKey());
 			}
-		}
 
-	}
-
-	/**
-	 * Get BlStoredEmailSubscriptionModel by contact key.
-	 * @param contactKey, the contact key
-	 * @return BlStoredEmailSubscriptionModel
-	 */
-	public BlStoredEmailSubscriptionModel getBlStoredEmailSubscriptionModel(final String contactKey) {
-
-		return blStoredEmailSubscriptionDao.getStoredEmailSubscriptionForContactKey(contactKey);
 	}
 
 	/**
@@ -80,15 +58,16 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	 */
 	private void persistContact(final ContactResponse contactResponse) {
 
-			final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
-					.create(BlStoredEmailSubscriptionModel.class);
-			emailSubscriptionModel.setContactId(String.valueOf(contactResponse.getContactID()));
-			emailSubscriptionModel.setContactKey(contactResponse.getContactKey());
+		final BlStoredEmailSubscriptionModel emailSubscriptionModel = getModelService()
+				.create(BlStoredEmailSubscriptionModel.class);
+		emailSubscriptionModel.setContactId(String.valueOf(contactResponse.getContactID()));
+		emailSubscriptionModel.setContactKey(contactResponse.getContactKey());
+		emailSubscriptionModel.setStatusCode(contactResponse.getOperationStatus());
 
-			getModelService().save(emailSubscriptionModel);
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-					"Email contact saved for subscription with id {} and with key {}",
-					contactResponse.getContactID(), contactResponse.getContactKey());
+		getModelService().save(emailSubscriptionModel);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+				"Email contact saved for subscription with id {} and with key {}",
+				contactResponse.getContactID(), contactResponse.getContactKey());
 
 	}
 
@@ -101,7 +80,6 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	{
 		this.modelService = modelService;
 	}
-
 
 	/**
 	 * @return the blEmailSubscriptionRestService
@@ -116,21 +94,6 @@ public class DefaultBlEmailSubscriptionService implements BlEmailSubscriptionSer
 	public void setBlEmailSubscriptionRestService(
 			final BlEmailSubscriptionRestService blEmailSubscriptionRestService) {
 		this.blEmailSubscriptionRestService = blEmailSubscriptionRestService;
-	}
-
-	/**
-	 * @return the blStoredEmailSubscriptionDao
-	 */
-	public BlStoredEmailSubscriptionDao getBlStoredEmailSubscriptionDao() {
-		return blStoredEmailSubscriptionDao;
-	}
-
-	/**
-	 * @param blStoredEmailSubscriptionDao the blStoredEmailSubscriptionDao to set
-	 */
-	public void setBlStoredEmailSubscriptionDao(
-			final BlStoredEmailSubscriptionDao blStoredEmailSubscriptionDao) {
-		this.blStoredEmailSubscriptionDao = blStoredEmailSubscriptionDao;
 	}
 
 }

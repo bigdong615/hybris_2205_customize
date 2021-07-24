@@ -41,7 +41,6 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 	private static final String SUBSCRIPTION_CLIENT_SECRET = "email.subscription.client.secret";//   82YtBWAokGenYTQf1UuZldBJ
 	private static final String SUBSCRIPTION_ACCOUNT_ID = "email.subscription.account.id";//   515009598
 	private static final String SUBSCRIPTION_GRANT_TYPE = "email.subscription.grant.type";//   client_credentials
-	private static final String SUBSCRIPTION_ACCESS_SCOPE = "email.subscription.access.scope";//  email_read email_write email_send
 
 	private ConfigurationService configurationService;
 
@@ -216,8 +215,6 @@ public class DefaultBlEmailSubscriptionRestService implements BlEmailSubscriptio
 				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_CLIENT_SECRET));
 		request.setGrantType(
 				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_GRANT_TYPE));
-		request.setScope(
-				getConfigurationService().getConfiguration().getString(SUBSCRIPTION_ACCESS_SCOPE));
 
 		return request;
 	}

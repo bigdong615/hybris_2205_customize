@@ -14,6 +14,7 @@ import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.AbstractPageModel;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,11 +72,11 @@ public class HomePageController extends AbstractPageController
 	{
 		storeContentPageTitleInModel(model, getPageTitleResolver().resolveHomePageTitle(cmsPage.getTitle()));
 	}
-	
+
 	@GetMapping(value = "/subscribe-email")
-	public void subscribeEmail(@RequestParam("emailId")
-	final String emailId, final Model model, final RedirectAttributes redirectAttributes)
-	{
+	public void subscribeEmail(@RequestParam("emailId") final String emailId, final Model model,
+			final HttpServletResponse response) {
+
 		XSSFilterUtil.filter(emailId);
 		blEmailSubscriptionFacade.subscribe(emailId);
 
