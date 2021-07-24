@@ -132,6 +132,26 @@
         </enumtype>
         <!-- BL-542 End-->
 
+        <!--Shipping Optimization-->
+        <enumtype generate="true" code="OptimizedShippingMethodEnum" autocreate="true" dynamic="true">
+            <value code="THREE_DAY_GROUND"/>
+            <value code="TWO_DAY_GROUND"/>
+            <value code="ONE_DAY_GROUND"/>
+            <value code="TWO_DAY_AIR"/>
+            <value code="TWO_DAY_AIR_AM"/>
+            <value code="NEXT_DAY_AIR"/>
+            <value code="NEXT_DAY_AIR_AM"/>
+            <value code="NEXT_DAY_AIR_SAT"/>
+            <value code="DEFAULT"/>
+        </enumtype>
+
+        <enumtype generate="true" code="OptimizedShippingTypeEnum" autocreate="true" dynamic="true">
+            <value code="WAREHOUSE2WAREHOUSE"/>
+            <value code="WAREHOUSE2CUSTOMER"/>
+            <value code="WAREHOUSE2PICKUP"/>
+        </enumtype>
+        <!--Shipping Optimization End-->
+
       <enumtype generate="true" code="OrderTypeEnum" autocreate="true" dynamic="true">
         <value code="VIP"/>
         <value code="FD"/>
@@ -148,6 +168,8 @@
         <value code="BROKEN_ITEM_NOTES"/>
         <value code="ORDER_NOTES"/>
         <value code="CUSTOMER_CHECKOUT_ORDER_NOTES"/>
+        <value code="VERIFICATION_NOTES"/>
+        <value code="EXCEPTION_NOTES"/>
       </enumtype>
 
       <enumtype generate="true" code="CustomerNotesEnum" autocreate="true" dynamic="true">
@@ -2127,6 +2149,81 @@
 		  </itemtype>
 		</typegroup>
 
+        <typegroup name="ShippingOptimization">
+            <itemtype code="ShippingOptimization" autocreate="true" generate="true">
+                <description>Shipping Optimization for optimizing shipping method after order placement.</description>
+                <deployment table="ShippingOptimization" typecode="12216"/>
+                <attributes>
+                    <attribute type="java.lang.Integer" qualifier="groundShippingDaysID">
+                        <modifiers read="true" write="true" unique="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping Id</description>
+                    </attribute>
+                    <attribute type="Region" qualifier="state">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping state code</description>
+                    </attribute>
+                    <attribute type="java.lang.String" qualifier="zip">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping zip code</description>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="serviceDays">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping optimize day different</description>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="zone">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping zone code</description>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="homeBaseID">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping warehouse code</description>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="carrierID">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping carrier (UPS/FEDEX) code</description>
+                    </attribute>
+                    <attribute type="java.lang.Integer" qualifier="inbound">
+                        <modifiers read="true" write="true"/>
+                        <persistence type="property"/>
+                        <description>Ground shipping inbound (IN/OUT) code</description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+
+            <itemtype code="OptimizedShippingMethod" generate="true" autocreate="true">
+                <deployment table="optShipMethod" typecode="12215"/>
+                <attributes>
+                    <attribute type="java.lang.String" qualifier="code">
+                        <modifiers read="true" write="true" unique="true" optional="false"/>
+                        <persistence type="property"/>
+                        <description>OptimizedShippingMethod code</description>
+                    </attribute>
+                    <attribute type="java.lang.String" qualifier="name">
+                        <modifiers read="true" write="true" unique="false" optional="true"/>
+                        <persistence type="property"/>
+                        <description>OptimizedShippingMethod name</description>
+                    </attribute>
+                    <attribute type="java.lang.String" qualifier="serviceTypeCode">
+                        <modifiers read="true" write="true" unique="false" optional="true"/>
+                        <persistence type="property"/>
+                        <description>OptimizedShippingMethod service type code if any</description>
+                    </attribute>
+                    <attribute type="java.lang.String" qualifier="serviceTypeDesc">
+                        <modifiers read="true" write="true" unique="false" optional="true"/>
+                        <persistence type="property"/>
+                        <description>OptimizedShippingMethod service type description if any </description>
+                    </attribute>
+                </attributes>
+            </itemtype>
+        </typegroup>
+
 		<typegroup name="Consignment">
 
       <itemtype code="Consignment" autocreate="false" generate="false">
@@ -2142,11 +2239,6 @@
             <modifiers read="true" write="true"/>
             <persistence type="property"/>
           </attribute>
-          <!--  <attribute qualifier="optimizedShippingMethod" type="optimizedShippingMethodEnum">
-               <description>Shipping method optimization type</description>
-               <modifiers read="true" write="true"/>
-               <persistence type="property"/>
-           </attribute> -->
           <attribute qualifier="optimizedShippingType" type="OptimizedShippingMethod">
             <description>Shipping method optimization type</description>
             <modifiers read="true" write="true"/>
@@ -2165,6 +2257,12 @@
             <defaultvalue>Boolean.FALSE</defaultvalue>
             <description>It tells whether the consignment is clean complete or dirty.</description>
           </attribute>
+          <attribute autocreate="true" qualifier="threeDayGroundAvailability" type="boolean">
+              <modifiers read="true" write="true" search="true" optional="true"/>
+              <persistence type="property"/>
+              <defaultvalue>Boolean.FALSE</defaultvalue>
+              <description>It tells whether the consignment is threeDayGround marked or not.</description>
+          </attribute>
         </attributes>
       </itemtype>
 
@@ -2182,35 +2280,6 @@
         </attribute>
 			</attributes>
 		  </itemtype>
-
-      <itemtype code="OptimizedShippingMethod" generate="true"
-        autocreate="true">
-        <deployment table="optShipMethod" typecode="12215"/>
-        <attributes>
-          <attribute type="java.lang.String" qualifier="code">
-            <modifiers read="true" write="true" unique="true"
-              optional="false" />
-            <persistence type="property"/>
-          </attribute>
-          <attribute type="java.lang.String" qualifier="name">
-            <modifiers read="true" write="true" unique="false"
-              optional="true" />
-            <persistence type="property"/>
-          </attribute>
-          <attribute type="java.lang.String"
-            qualifier="serviceTypeCode">
-            <modifiers read="true" write="true" unique="false"
-              optional="true" />
-            <persistence type="property"/>
-          </attribute>
-          <attribute type="java.lang.String"
-            qualifier="serviceTypeDesc">
-            <modifiers read="true" write="true" unique="false"
-              optional="true" />
-            <persistence type="property"/>
-          </attribute>
-        </attributes>
-      </itemtype>
 		</typegroup>
 	
         <typegroup name="BaseStore">

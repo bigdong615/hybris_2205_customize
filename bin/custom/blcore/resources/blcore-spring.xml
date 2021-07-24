@@ -756,7 +756,6 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-
 	<!--BL-565 Gift Card Email Start -->
 	<bean id="giftCardEmailEventListener" class="com.bl.core.event.BlGiftCardEmailEventListener"
 		parent="abstractAcceleratorSiteEventListener">
@@ -826,12 +825,29 @@
 	</bean>
 	<!-- Notify me end -->
 
+	<!-- Shipping Optimization-->
+	<alias name="defaultBlShippingOptimizationStrategy" alias="blShippingOptimizationStrategy"/>
+	<bean id="defaultBlShippingOptimizationStrategy"
+		  class="com.bl.core.shipping.strategy.impl.DefaultBlShippingOptimizationStrategy"
+		  parent="abstractBusinessService">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
+		<property name="blDatePickerService" ref="blDatePickerService"/>
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+	</bean>
+
+	<bean id="blShippingOptimizationJob" class="com.bl.core.job.BlShippingOptimizationJob"
+		  parent="abstractJobPerformable">
+		<property name="zoneDeliveryModeService" ref="zoneDeliveryModeService"/>
+		<property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
+	</bean>
+	<!-- Shipping Optimization End-->
+
 	<alias name="defaultBlCartValidationStrategy" alias="cartValidationStrategy"/>
     <bean id="defaultBlCartValidationStrategy" class="com.bl.core.services.strategy.impl.DefaultBlCartValidationStrategy" parent="defaultCartValidationStrategy">
         <property name="blDatePickerService" ref="blDatePickerService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
     </bean>
-    	
+
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
 	</bean>
