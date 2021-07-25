@@ -47,6 +47,7 @@
             <value code="RECEIVED_OR_RETURNED" />
             <value code="REPAIR_NEEDED" />
             <value code="PARTS_NEEDED" />
+            <value code="BOXED" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -1195,6 +1196,12 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated consignment on serial</description>
                      </attribute>
+                   <attribute qualifier="hardAssigned" type="java.lang.Boolean">
+		                <persistence type="property"/>
+		                <modifiers read="true" write="true" search="true"/>
+		                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+		                <description>To identify whether it is reserved or not</description>
+              		</attribute>
                  </attributes>
              </itemtype>
 

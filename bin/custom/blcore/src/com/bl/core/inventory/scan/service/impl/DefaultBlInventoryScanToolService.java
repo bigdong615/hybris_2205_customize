@@ -1,17 +1,22 @@
 package com.bl.core.inventory.scan.service.impl;
 
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.enums.ItemStatusEnum;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.inventory.scan.service.BlInventoryScanToolService;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryLocationScanHistoryModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import org.apache.commons.collections.CollectionUtils;
@@ -263,6 +268,133 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 		}
 		return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.SOMETHING_WENT_WRONG, barcodes));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int checkValidBinLocationInBarcodeList(final List<String> barcodes, final List<String> memberAllowedLocationList)
+	{
+		final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultBinLocation();
+		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith))
+				.collect(Collectors.toList());
+		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
+				filteredLocationList, memberAllowedLocationList);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<String> getFailedBinBarcodeList(final List<String> barcodes)
+	{
+		final List<String> failedBarcodeList = new ArrayList<>();
+		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final BlInventoryLocationModel blWorkingDeskInventory = getBlInventoryLocation();
+		final int result = checkValidBinLocationInBarcodeList(subList, failedBarcodeList);
+
+		if (result == BlInventoryScanLoggingConstants.ONE)
+		{
+			final BlInventoryLocationModel blBinLocationModel = new BlInventoryLocationModel();
+			blBinLocationModel.setInventoryLocationID(blWorkingDeskInventory.getInventoryLocationID());
+			blBinLocationModel.setCode(blWorkingDeskInventory.getCode());
+			blBinLocationModel.setParentInventoryLocation(blBinLocationModel);
+			return Collections.emptyList();
+		}
+		else
+		{
+			failedBarcodeList.addAll(barcodes);
+		}
+		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST + failedBarcodeList);
+		return failedBarcodeList;
+	}
+	
+	@Override
+	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment)
+	{
+		final List<String> inValidSerialList = new ArrayList<>();
+		final List<BlSerialProductModel> validSerialList = new ArrayList<>();
+		final List<String> failedBarcodeList = new ArrayList<>();
+		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+
+		for (final ConsignmentEntryModel consignmentEntry : selectedConsignment.getConsignmentEntries())
+		{
+			final Map<String, ItemStatusEnum> updatedItemMap = new HashMap<>();
+
+			final List<BlSerialProductModel> sortedScannedProduct = blSerialProducts.stream().sorted().collect(Collectors.toList());
+			final List<BlProductModel> sortedBlProducts = consignmentEntry.getSerialProducts().stream().sorted()
+					.collect(Collectors.toList());
+			if (sortedScannedProduct.equals(sortedBlProducts))
+			{
+				final List<BlProductModel> filteredSerialProduct = consignmentEntry.getSerialProducts().stream()
+						.filter(serialProduct -> serialProduct instanceof BlSerialProductModel
+								&& !ProductTypeEnum.SUBPARTS.equals(serialProduct.getProductType()))
+						.collect(Collectors.toList());
+
+				final List<BlProductModel> filteredSubPartProduct = consignmentEntry.getSerialProducts().stream()
+						.filter(p -> p instanceof BlSerialProductModel && ProductTypeEnum.SUBPARTS.equals(p.getProductType()))
+						.collect(Collectors.toList());
+
+				final List<String> finalList = new ArrayList<>();
+
+				filteredSubPartProduct.forEach(serialProduct -> {
+					if (serialProduct instanceof BlSerialProductModel && ((BlSerialProductModel) serialProduct).getBarcode() != null)
+					{
+						finalList.add(serialProduct.getCode());
+					}
+				});
+
+				blSerialProducts.forEach(serialProduct -> {
+					if (!filteredSerialProduct.contains(serialProduct))
+					{
+						inValidSerialList.add(serialProduct.getCode());
+					}
+					else
+					{
+						final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
+						if (itemsMap.containsKey(serialProduct.getCode())
+								&& itemsMap.get(serialProduct.getCode()).equals(ItemStatusEnum.NOT_INCLUDED))
+						{
+							updatedItemMap.put(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
+						}
+						serialProduct.setHardAssigned(true);
+						validSerialList.add(serialProduct);
+					}
+				});
+
+				blSerialProducts.forEach(blSubPartProduct -> {
+					if (!finalList.contains(blSubPartProduct.getCode()))
+					{
+						inValidSerialList.add(blSubPartProduct.getCode());
+					}
+					else
+					{
+						final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
+						if (itemsMap.containsKey(blSubPartProduct.getBlProduct().getName())
+								&& itemsMap.get(blSubPartProduct.getBlProduct().getName()).equals(ItemStatusEnum.NOT_INCLUDED))
+						{
+							updatedItemMap.put(blSubPartProduct.getBlProduct().getName(), ItemStatusEnum.INCLUDED);
+						}
+						blSubPartProduct.setHardAssigned(true);
+						validSerialList.add(blSubPartProduct);
+					}
+				});
+
+
+				consignmentEntry.setItems(updatedItemMap);
+				modelService.save(consignmentEntry);
+				modelService.refresh(consignmentEntry);
+			}
+			else
+			{
+
+			}
+
+		}
+		return failedBarcodeList;
+
 	}
 
 	/**

@@ -3,6 +3,8 @@ package com.bl.core.inventory.scan.service;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlSerialProductModel;
 
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -73,4 +75,35 @@ public interface BlInventoryScanToolService {
      * @return the map
      */
     Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
+    
+    /**
+ 	 * method will check the valid Bin Location provided in barcode list and return int with appropriate notification
+ 	 * number to notify employee
+ 	 *
+ 	 * @param barcodes
+ 	 *           the barcodes
+ 	 * @param memberAllowedLocationList
+ 	 *           the member allowed location list
+ 	 * @return the int
+ 	 */
+ 	public int checkValidBinLocationInBarcodeList(final List<String> barcodes, final List<String> memberAllowedLocationList);
+
+ 	/**
+ 	 * javadoc
+ 	 *
+ 	 * @param barcodes
+ 	 *           for BlSerialProduct
+ 	 * @return List<String> method will verify the list of bin barcodes and result into list of failed barcodes that has
+ 	 *         been failed to update its location in db
+ 	 */
+ 	public List<String> getFailedBinBarcodeList(final List<String> barcodes);
+
+ 	/**
+ 	 * @param barcodes
+ 	 * @param selectedConsignment
+ 	 * @return List<String> method will verify the list of barcodes and result into list of failed barcodes that are not
+ 	 *         valid as per the order
+ 	 */
+ 	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+    
 }
