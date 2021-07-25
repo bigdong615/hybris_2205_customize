@@ -19,20 +19,14 @@ public class BlOnSaleFacetNameProvider  implements FacetDisplayNameProvider, //N
    */
   @Override
   public String getDisplayName(final SearchQuery searchQuery, final String facetValue) {
-    if (StringUtils.equals(BlCoreConstants.TRUE, facetValue)) {
-      return BlCoreConstants.ITEMS_ON_SALE;
-    }
-    return facetValue;
+     return StringUtils.equals(BlCoreConstants.TRUE, facetValue) ? BlCoreConstants.ITEMS_ON_SALE : facetValue;
   }
 
   /**
-   * This method created to display localized name for On Sale Facet
+   * This overloaded method created to display localized name for On Sale Facet
    */
   @Override
   public String getDisplayName(final SearchQuery searchQuery, final IndexedProperty indexedProperty, final String facetValue) {
-    if (StringUtils.equals(BlCoreConstants.TRUE, facetValue)) {
-      return BlCoreConstants.ITEMS_ON_SALE;
-    }
-    return facetValue;
+    return StringUtils.equals(BlCoreConstants.TRUE, facetValue) ? BlCoreConstants.ITEMS_ON_SALE : facetValue;
   }
 }
