@@ -94,16 +94,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
       final Set<Entry<AbstractOrderEntryModel, Long>> resultEntries = result.getAllocation()
           .entrySet();
-//      Optional<PointOfServiceModel> pickupPos = resultEntries.stream().map(entry ->
-//          ((AbstractOrderEntryModel) entry.getKey()).getDeliveryPointOfService()
-//      ).filter(Objects::nonNull).findFirst();
-
-//      if (pickupPos.isPresent()) {
-//        consignment.setStatus(ConsignmentStatus.READY);
-//        consignment.setDeliveryMode(this.getDeliveryModeService().getDeliveryModeForCode("pickup"));
-//        consignment.setShippingAddress(((PointOfServiceModel) pickupPos.get()).getAddress());
-//        consignment.setDeliveryPointOfService(pickupPos.get());
-//      }
 
       final Set<ConsignmentEntryModel> entries = resultEntries.stream().map(mapEntry ->
           this.createConsignmentEntry(mapEntry.getKey(), mapEntry.getValue(), consignment, result)
@@ -113,10 +103,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       if (consignment.getFulfillmentSystemConfig() == null) {
         this.getWarehousingConsignmentWorkflowService().startConsignmentWorkflow(consignment);
       }
-
-//      if (!consignment.getWarehouse().isExternal()) {
-//        this.getInventoryEventService().createAllocationEvents(consignment);
-//      }
 
       if (BooleanUtils.isTrue(order.getIsRentalCart())) {
 
