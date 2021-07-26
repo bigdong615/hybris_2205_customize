@@ -970,6 +970,12 @@
                      <modifiers read="true" write="true" optional="false" initial="true"/>
                      <defaultvalue>Integer.valueOf(0)</defaultvalue>
                    </attribute>
+                   <attribute qualifier="onSale" type="java.lang.Boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether product is OnSale or not</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -2365,6 +2371,22 @@
 						<modifiers optional="true" read="true" write="true" />
 						<description>used gear session timer value </description>
 					</attribute>
+           <attribute qualifier="usedGearPromotionCode" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear category promotion code </description>
+					</attribute>
+           <attribute qualifier="usedGearPromotionMessage" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear Site Wide promotion Message </description>
+					</attribute>
+                  <attribute qualifier="usedGearPromotionDiscount" type="java.lang.Integer">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear Site Wide promotion Discount in absolute percentage</description>
+					</attribute>
+
                 </attributes>                
             </itemtype>
         </typegroup>
