@@ -3,6 +3,7 @@
  Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 
 --><extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+
     <extension abstractclassprefix="Generated" classprefix="BlStorefront" name="blstorefront" usemaven="false">
 
         <requires-extension name="tealiumiqaddon"/>
@@ -31,4 +32,5 @@
         <webmodule jspcompile="false" webroot="/blstorefront"/>
         <meta key="extgen-template-extension" value="true"/>
     </extension>
+
 </extensioninfo>
