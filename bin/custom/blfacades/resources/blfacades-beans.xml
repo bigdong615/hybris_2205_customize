@@ -32,10 +32,13 @@
     <property name="productTagValues" type="String"/>
 	<property name="serialfinalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="serialIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
+	<property name="serialPromotionPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="hasIncentivizedPrice" type="java.lang.Boolean"/>
     <property name="isBookMarked" type="java.lang.Boolean"/>
       <property name="isWatching" type="java.lang.Boolean"/>
+		<property name="ugPromotionMessage" type="java.lang.String"/>
 		<property name="alternativeProduct" type="String"/>
+		<property name="onSale" type="java.lang.boolean"/>
 	<property name="upc" type="java.lang.String"/>
 	<property name="brandName" type="java.lang.String"/>
   </bean>
@@ -77,7 +80,7 @@
   </bean>
 
 <!-- DTO to store Serial Product Data -->
- <bean class="com.bl.facades.product.data.SerialProductData">
+ <bean class="com.bl.facades.product.data.SerialProductData" extends="de.hybris.platform.commercefacades.product.data.ProductData">
     <property name="conditionRating" type="double"/>
     <property name="finalSalePrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
 	<property name="finalIncentivizedPrice" type="de.hybris.platform.commercefacades.product.data.PriceData"/>
@@ -86,7 +89,7 @@
     <property name="functionalRating" type="float"/>
     <property name="serialStatus" type="com.bl.core.enums.SerialStatusEnum"/>
     <property name="isSerialNotAssignedToRentalOrder" type="boolean"/>
-  </bean>
+ </bean>
   
   <bean class="com.bl.facades.product.data.AvailabilityMessage">
   	<property name="messageCode" type="String"/>
@@ -314,6 +317,7 @@
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
     <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
+    <property name="usedGearDiscount" type="java.lang.Integer" />
   </bean>
   
     <!-- Creating Request Data for UPS Shipment -->

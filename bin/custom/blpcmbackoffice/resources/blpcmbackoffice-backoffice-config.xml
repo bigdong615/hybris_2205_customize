@@ -134,6 +134,7 @@
 					<ea:attribute qualifier="usedDescription" editor="com.hybris.cockpitng.editor.wysiwyg" label="lebel.pcmbackoffice.useddescription"/>
 					<ea:attribute qualifier="usedGearVideosLink" />
 					<ea:attribute qualifier="usedIncludes" editor="com.hybris.cockpitng.editor.wysiwyg"/>
+					<ea:attribute qualifier="onSale"/>
 				</ea:section>
 				<ea:section name="label.pcmbackoffice.additional">
 					<ea:attribute qualifier="staffPick"/>
@@ -418,6 +419,7 @@
 					<ea:attribute qualifier="approvalStatus"/>
 					<ea:attribute qualifier="blProduct"/>
 					<ea:attribute qualifier="forSale"/>
+					<ea:attribute qualifier="onSale"/>
 				</ea:essentialSection>
 			</ea:essentials>
 			<ea:tab name="hmc.tab.product.properties" position="2">

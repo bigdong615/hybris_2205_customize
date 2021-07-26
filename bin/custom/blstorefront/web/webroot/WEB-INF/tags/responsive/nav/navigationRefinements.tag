@@ -4,6 +4,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 
 
 <div id="productFilter" class="d-none d-lg-block col-lg-3 sticky-lg-top">
@@ -30,7 +32,9 @@
    </c:choose>
    <%-- Removed Store Facet Entry --%>
    <c:forEach items="${pageData.facets}" var="facet">
+   	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear') && ! fn:containsIgnoreCase(facet.name, 'On Sale') || fn:containsIgnoreCase(blPageType, 'usedGear')}">
             <nav:facetNavigationRefinements facetData="${facet}"/>
+   </c:if>
    </c:forEach>
 </div>
 
