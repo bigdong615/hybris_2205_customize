@@ -214,6 +214,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EXTEND_ORDER = "extendOrder";
 
 	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
+	public static final String NEW_LINE_CHARACTER =  "\n";
 
 	public static final String SUBSCRIPTION_API_OPERATION_STATUS = "OK";
 	public static final String SUBSCRIPTION_CONTACT_KEY = "contactKey";
