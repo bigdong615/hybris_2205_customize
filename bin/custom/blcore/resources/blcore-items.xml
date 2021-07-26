@@ -1251,8 +1251,7 @@
             </attributes>
           </itemtype>
 
-          <itemtype code="BlOptions" autocreate="true" generate="true"
-            jaloclass="com.bl.core.jalo.BlOptions">
+          <itemtype code="BlOptions" autocreate="true" generate="true">
             <description>These are options which are available on certain BlProducts</description>
             <deployment table="bloptions" typecode="12218"/>
             <attributes>
@@ -1312,10 +1311,12 @@
               </attribute>
               <attribute qualifier="active" type="boolean">
                 <modifiers read="true" write="true" optional="false"/>
+                <persistence type="property"/>
                 <description>Flag to indicate that this option is active.</description>
               </attribute>
               <attribute qualifier="required" type="boolean">
                 <modifiers read="true" write="true" optional="false"/>
+                <persistence type="property"/>
                 <description>Flag to indicate that this option is required.</description>
               </attribute>
               <attribute qualifier="smallImage" type="Media">

@@ -223,8 +223,9 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
 	public static final String NEW_LINE_CHARACTER =  "\n";
+  public static final String CATALOG_VERSION_NAME = "Online";
 
-	private BlCoreConstants()
+  private BlCoreConstants()
 	{
 		//empty
 	}

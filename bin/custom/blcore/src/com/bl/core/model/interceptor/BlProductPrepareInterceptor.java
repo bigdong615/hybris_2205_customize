@@ -44,7 +44,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
     Collection<BlSerialProductModel> serialProducts = blProductModel.getSerialProducts();
 
     if (interceptorContext.isNew(blProductModel) && StringUtils
-        .isBlank(blProductModel.getProductId()) && !blProductModel.getCatalogVersion().equals(getCatalogVersionService().getCatalogVersion(BlCoreConstants.BL_PRODUCTCATALOG,"Online")))  {
+        .isBlank(blProductModel.getProductId()) && !blProductModel.getCatalogVersion().equals(getCatalogVersionService().getCatalogVersion(BlCoreConstants.BL_PRODUCTCATALOG,BlCoreConstants.CATALOG_VERSION_NAME)))  {
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
     createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
