@@ -240,7 +240,7 @@
 					<ea:attribute qualifier="galleryImages"/>
 				</ea:section>
 			</ea:tab>
-			<ea:tab name="hmc.tab.product.serials" position="22">
+			<ea:tab name="hmc.tab.product.serials.subparts" position="22">
 				<ea:section description="hmc.text.serials" name="hmc.section.product.serials">
 					<ea:attribute qualifier="serialProducts">
 						<ea:editor-parameter>
@@ -249,6 +249,14 @@
 						</ea:editor-parameter>
 					</ea:attribute>
 				</ea:section>
+					<ea:section description="hmc.text.supbparts" name="hmc.section.product.subparts">
+						<ea:attribute qualifier="subParts">
+							<ea:editor-parameter>
+								<ea:name>configurableFlowConfigCtx</ea:name>
+								<ea:value>create-wizard-no-save</ea:value>
+							</ea:editor-parameter>
+						</ea:attribute>
+					</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
 				<ea:section name="hmc.section.product.extendedattributes">
