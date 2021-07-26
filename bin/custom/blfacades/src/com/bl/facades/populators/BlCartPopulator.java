@@ -1,5 +1,7 @@
 package com.bl.facades.populators;
 
+import com.bl.core.enums.ProductTypeEnum;
+import com.bl.core.model.BlProductModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
@@ -57,6 +59,15 @@ public class BlCartPopulator extends CartPopulator<CartData>
 			target.setOrderNotes(source.getOrderNotes().get(0).getNote());
 		}
 		final PriceDataType priceType = PriceDataType.BUY;
+		target.setHasGiftCart(Boolean.valueOf(false));
+		if(CollectionUtils.isNotEmpty(source.getEntries())){
+			final BlProductModel blProductModel = (BlProductModel) source.getEntries().stream().findFirst().get().getProduct();
+			if (source.getGiftCardCost() != null && blProductModel.getProductType() == ProductTypeEnum.GIFTCARD){
+				target.setGiftCardCost(source.getGiftCardCost());
+				target.setHasGiftCart(Boolean.valueOf(true));
+			}
+		}
+		
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
 		{
 			final PriceData grandTotal = getPriceDataFactory().create(priceType, BigDecimal.valueOf(source.getGrandTotal()),

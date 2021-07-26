@@ -228,7 +228,15 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		}
 		else if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
-			return findBasePrice(entry);
+			if(((BlProductModel) product).getProductType().getCode().equals("GIFTCARD"))
+			{
+				return createNewPriceValue(order.getCurrency().getIsocode(), order.getGiftCardCost().doubleValue(),
+						BooleanUtils.toBoolean(order.getNet()));
+			}
+			else{
+				return findBasePrice(entry);
+			}
+			
 		}
 		
 		throw new CalculationException("Product Type is not a type of SKU or Serial Product");

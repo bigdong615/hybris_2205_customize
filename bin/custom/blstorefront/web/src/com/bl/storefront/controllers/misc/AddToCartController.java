@@ -8,7 +8,9 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.forms.GiftCardPurchaseForm;
 
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
@@ -60,7 +62,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bl.facades.constants.BlFacadesConstants;
-
+import org.apache.log4j.Level;
 
 /**
  * Controller for Add to Cart functionality which is not specific to a certain page.
@@ -108,10 +110,11 @@ public class AddToCartController extends AbstractController {
             return getViewWithBindingErrorMessages(model, bindingErrors);
         }
 
-        if (blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode)) {
-            LOG.debug("Rental and Used gear products are not allowed together");
-            return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
-        }
+  		final String warningPopup = productAllowedInAddToCart(code, serialCode);
+  		if (warningPopup != null)
+  		{
+  			return warningPopup;
+  		}
 
         final long qty = form.getQty();
 
@@ -159,12 +162,59 @@ public class AddToCartController extends AbstractController {
 
 
     }
+ 	// Created separate method for product allowed in AddToCart.
+ 	private String productAllowedInAddToCart(final String code, final String serialCode)
+ 	{
+ 		final boolean isGiftCart = blCartFacade.cartHasGiftCard(code);
+ 		if (blCartFacade.isGiftCardProduct(code))
+ 		{
+ 			if (isGiftCart)
+ 			{
+ 				BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.MULTIPLEGIFTCARD);
+ 				return ControllerConstants.Views.Fragments.Cart.MultipleGiftCardWarningPopup;
+ 			}
+ 			else if (blCartFacade.cartHasRentalOrUsedGearProducts())
+ 			{
+ 				BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.GIFTCARDNOTALLOWE);
+ 				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
+ 			}
+ 		}
+ 		else if (isGiftCart || blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
+ 		{
+ 			BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.ADDTOCARTWARNING);
+ 			return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
+ 		}
+ 		return null;
+ 	}
+
+ 	// Created separate method for add to cart according to code.
+ 	private CartModificationData addToCart(final String code, final long qty, final String serialCode, final GiftCardPurchaseForm giftCardForm)
+ 			throws CommerceCartModificationException
+ 	{
+ 		if (blCartFacade.isGiftCardProduct(code))
+ 		{
+ 			return blCartFacade.addToCart(code, qty, serialCode, giftCardForm);
+ 		}
+ 		else
+ 		{
+ 			return blCartFacade.addToCart(code, qty, serialCode);
+ 		}
+ 	}
+
+ 	// Created separate method for to redirect gift card popup.
+ 	private String addToCartForGiftCard(final Model model, final CartModificationData cartModification, final String code)
+ 	{
+ 		model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC)));
+ 		model.addAttribute("entry", cartModification.getEntry());
+ 		return ControllerConstants.Views.Fragments.Cart.AddToCartGiftCardPopup;
+
+ 	}
 
 
     //created separate method for add serial product to cart and redirect it to cart page.
 
     @RequestMapping(value = "/cart/usedgearadd", method = RequestMethod.GET, produces = "application/json")
-    public String addToCartForUsedGear(@RequestParam(value = "productCodePost") final String code,
+    public String addToCartForUsedGear(@RequestParam(value = "productCodePost") final String code, @Valid final GiftCardPurchaseForm giftCardForm,
                                        @RequestParam(value = "serialProductCodePost") final String serialCode, final Model model,
                                        @Valid final AddToCartForm form, final BindingResult bindingErrors, final RedirectAttributes redirectAttributes) {
         validateParameterNotNull(code, "Product code must not be null");
@@ -175,10 +225,11 @@ public class AddToCartController extends AbstractController {
         }
 
         
-        if (blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode)) {
-            LOG.debug("Rental and Used gear products are not allowed together");
-            return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
-        }
+      final String warningPopup = productAllowedInAddToCart(code, serialCode);
+  		if (warningPopup != null)
+  		{
+  			return warningPopup;
+  		}
 
         final long qty = form.getQty();
 
@@ -187,12 +238,15 @@ public class AddToCartController extends AbstractController {
         } else {
             try {
 
-                final CartModificationData cartModification = blCartFacade.addToCart(code, qty, serialCode);
+            	 final CartModificationData cartModification = addToCart(code, qty, serialCode, giftCardForm);
                 if (cartModification.getQuantityAdded() == 0L) {
                    GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.noItemsAdded."), null);
                 } else if (cartModification.getQuantityAdded() < qty) {
                	 GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.information.quantity.reducedNumberOfItemsAdded."), null);
                 }
+                if (blCartFacade.isGiftCardProduct(code)){
+    					return addToCartForGiftCard(model, cartModification, code);
+    				}
             } catch (final CommerceCartModificationException ex) {
                 logDebugException(ex);
                 GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, getLocalizedString("basket.error.occurred"), null);

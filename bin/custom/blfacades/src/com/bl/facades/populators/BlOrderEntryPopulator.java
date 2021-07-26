@@ -3,6 +3,7 @@ package com.bl.facades.populators;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
+import de.hybris.platform.core.model.order.CartEntryModel;
 
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	{
 		super.populate(source, target);
 		populateDamageWaiverValues(source, target);
+		populateGiftCartPurcahseValues(source, target);
 	}
 
 	/**
@@ -50,7 +52,18 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
 	}
-
+	private void populateGiftCartPurcahseValues(final AbstractOrderEntryModel source, final OrderEntryData target)
+	{
+		if(source instanceof CartEntryModel)
+		{
+			CartEntryModel cartEntryModel =((CartEntryModel)source);
+			target.setRecipientEmail(cartEntryModel.getRecipientEmail());
+			target.setRecipientName(cartEntryModel.getRecipientName());
+			target.setRecipientMessage(cartEntryModel.getRecipientMessage());
+			
+		}
+	}
+	
 	/**
 	 * Adds the product data.
 	 *
