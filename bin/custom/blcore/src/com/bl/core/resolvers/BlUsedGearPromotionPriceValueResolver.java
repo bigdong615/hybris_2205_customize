@@ -14,7 +14,6 @@ import de.hybris.platform.solrfacetsearch.provider.impl.AbstractValueResolver;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
@@ -65,7 +64,7 @@ public class BlUsedGearPromotionPriceValueResolver extends AbstractValueResolver
       final boolean applyUsedGearPromotion = getBlPromotionService().isUsedGearCategoryPromotionActive() && ugPromotionDiscount != null && ugPromotionDiscount > 0;
       if (applyUsedGearPromotion && PredicateUtils.notNullPredicate().evaluate(blProductModel) && CollectionUtils.isNotEmpty(blProductModel.getSerialProducts()))
       {
-        final BigDecimal minPromotionPrice = getMinPromotionPrice(getMinIncentiveSerialProduct(blProductModel,blProductModel.getSerialProducts()),getMinFinalPriceSerialProduct(blProductModel,blProductModel.getSerialProducts()),ugPromotionDiscount);
+        final BigDecimal minPromotionPrice = getMinPromotionPrice(getMinIncentiveSerialProduct(blProductModel),getMinFinalPriceSerialProduct(blProductModel),ugPromotionDiscount);
         if(minPromotionPrice.compareTo(BigDecimal.ZERO) > 0){
           inputDocument.addField(indexedProperty, minPromotionPrice.doubleValue());
         }
@@ -103,10 +102,9 @@ public class BlUsedGearPromotionPriceValueResolver extends AbstractValueResolver
   /**
    * Get Minimum Incentive Price
    * @param blProductModel
-   * @param serialProducts
    * @return
    */
-  private BlSerialProductModel getMinIncentiveSerialProduct(final BlProductModel blProductModel, final Collection<BlSerialProductModel> serialProducts) {
+  private BlSerialProductModel getMinIncentiveSerialProduct(final BlProductModel blProductModel) {
     final Optional<BlSerialProductModel> minSerialIncentivizedPrice = blProductModel.getSerialProducts().stream()
         .filter(serialProductModel -> BooleanUtils.isTrue(serialProductModel.getForSale())
             && PredicateUtils.notNullPredicate().evaluate(serialProductModel.getIncentivizedPrice()))
@@ -117,10 +115,9 @@ public class BlUsedGearPromotionPriceValueResolver extends AbstractValueResolver
   /**
    * Get Minimum Final Serial Price
    * @param blProductModel
-   * @param serialProducts
    * @return
    */
-  private BlSerialProductModel getMinFinalPriceSerialProduct(final BlProductModel blProductModel, final Collection<BlSerialProductModel> serialProducts) {
+  private BlSerialProductModel getMinFinalPriceSerialProduct(final BlProductModel blProductModel) {
     final Optional<BlSerialProductModel> minSerialfinalSalePrice = blProductModel.getSerialProducts().stream()
         .filter(serialProductModel -> BooleanUtils.isTrue(serialProductModel.getForSale())
             && PredicateUtils.notNullPredicate().evaluate(serialProductModel.getFinalSalePrice()))
