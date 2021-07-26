@@ -1,10 +1,11 @@
 package com.braintree.order.submitForSettlement.service.impl;
 
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+
 import com.braintree.command.request.BrainTreeSubmitForSettlementTransactionRequest;
 import com.braintree.command.result.BrainTreeSubmitForSettlementTransactionResult;
 import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.method.BrainTreePaymentService;
-import com.braintree.order.capture.partial.services.BraintreePartialCaptureService;
 import com.braintree.order.submitForSettlement.service.BraintreeSubmitForSettlementService;
 import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
@@ -13,20 +14,13 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.enums.PaymentTransactionType;
 import de.hybris.platform.payment.model.PaymentTransactionModel;
 import de.hybris.platform.servicelayer.model.ModelService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
-
 import java.math.BigDecimal;
 import java.util.List;
-
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNull;
+import org.apache.commons.collections.CollectionUtils;
 
 
 public class BraintreeSubmitForSettlementServiceImpl implements BraintreeSubmitForSettlementService
 {
-
-	private static final Logger LOG = Logger.getLogger(BraintreeSubmitForSettlementServiceImpl.class);
-
 	private static final String ORDER_MODEL_CAN_NOT_BE_NULL_MESSAGE = "orderModel can not be null";
 
 	private BrainTreePaymentService brainTreePaymentService;
@@ -54,7 +48,7 @@ public class BraintreeSubmitForSettlementServiceImpl implements BraintreeSubmitF
 			if (getBrainTreePaymentTransactionService().isOrderFullyCaptured(orderModel))
 			{
 				getBrainTreePaymentTransactionService().setOrderStatus(orderModel, OrderStatus.PAYMENT_CAPTURED);
-				getBrainTreePaymentTransactionService().continueOrderProcess(orderModel);
+				// getBrainTreePaymentTransactionService().continueOrderProcess(orderModel); //NOSONAR
 			}
 			else
 			{

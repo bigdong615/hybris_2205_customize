@@ -48,20 +48,52 @@ import de.hybris.platform.payment.commands.result.AuthorizationResult;
 import de.hybris.platform.payment.commands.result.SubscriptionResult;
 import de.hybris.platform.payment.methods.PaymentMethod;
 
-
+/**
+ * Service class for Braintree Payment
+ */
 public interface BrainTreePaymentService extends PaymentMethod
 {
 
+	/**
+	 * It creates customer subscription
+	 * @param subscriptionRequest subscription request
+	 * @return subscription result
+	 */
 	SubscriptionResult createCustomerSubscription(final CreateSubscriptionRequest subscriptionRequest);
 
+	/**
+	 * It generates client token
+	 * @param clientTokenRequest client token request
+	 * @return BrainTreeGenerateClientTokenResult
+	 */
 	BrainTreeGenerateClientTokenResult generateClientToken(final BrainTreeGenerateClientTokenRequest clientTokenRequest);
 
+	/**
+	 * It finds the customer in Braintree
+	 * @param findCustomerRequest find Customer Request
+	 * @return customer result
+	 */
 	BrainTreeFindCustomerResult findCustomer(final BrainTreeCustomerRequest findCustomerRequest);
 
+	/**
+	 * It generates client token
+	 * @return token
+	 */
 	String generateClientToken();
 
+	/**
+	 * It authorize the payment
+	 * @param authorizationRequest authorization request
+	 * @return AuthorizationResult authorization result
+	 */
 	AuthorizationResult authorize(AuthorizationRequest authorizationRequest);
 
+	/**
+	 * It authorize the payment
+	 * @param authorizationRequest authorization request
+	 * @param customer the customer
+	 * @return AuthorizationResult authorization result
+	 */
 	AuthorizationResult authorize(BrainTreeAuthorizationRequest authorizationRequest, CustomerModel customer);
 
 	/**
@@ -83,29 +115,39 @@ public interface BrainTreePaymentService extends PaymentMethod
 	BrainTreeCloneTransactionResult cloneTransaction(BrainTreeCloneTransactionRequest request);
 
 	/**
-	 * @param customer
-	 * @param paymentInfoId
-	 * @return
+	 * It creates subscription i.e. verify and stores the payment details
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @return payment info model
 	 */
 	BrainTreePaymentInfoModel completeCreateSubscription(CustomerModel customer, String paymentInfoId);
 
+	/**
+	 * It generates client token
+	 * @param site the site
+	 * @param currency the currency
+	 * @return token
+	 */
 	String generateClientToken(final String site, final String currency);
 
 	/**
-	 * @param request
-	 * @return
+	 * It creates payment method
+	 * @param request the request
+	 * @return create payment method result
 	 */
 	BrainTreeCreatePaymentMethodResult createPaymentMethod(BrainTreeCreatePaymentMethodRequest request);
 
 	/**
-	 * @param request
-	 * @return
+	 * It creates payment method for credit card
+	 * @param request the request
+	 * @return payment method result
 	 */
 	BrainTreePaymentMethodResult createCreditCardPaymentMethod(BrainTreeCreateCreditCardPaymentMethodRequest request);
 
 	/**
-	 * @param request
-	 * @return
+	 * It creates the nonce
+	 * @param request the request
+	 * @return nonce
 	 */
 	String createPaymentMethodNonce(String request);
 
@@ -129,6 +171,7 @@ public interface BrainTreePaymentService extends PaymentMethod
 	BrainTreeUpdateCustomerResult updateCustomer(BrainTreeUpdateCustomerRequest request);
 
 	/**
+	 * It finds the merchant account in bBraintree
 	 * @param brainTreeFindMerchantAccountRequest
 	 *           BrainTreeFindMerchantAccountRequest
 	 * @return BrainTreeFindMerchantAccountResult
@@ -145,6 +188,11 @@ public interface BrainTreePaymentService extends PaymentMethod
 	 */
 	BrainTreeSaleTransactionResult saleTransaction(BrainTreeSaleTransactionRequest request);
 
+	/**
+	 * It deles the payment method
+	 * @param request the request
+	 * @return payment method result
+	 */
 	BrainTreePaymentMethodResult deletePaymentMethod(BrainTreeDeletePaymentMethodRequest request);
 
 	/**
@@ -177,36 +225,99 @@ public interface BrainTreePaymentService extends PaymentMethod
 			BrainTreeSubmitForSettlementTransactionRequest request);
 
 	/**
-	 * @param addressRequest
-	 * @return
+	 * It creates address
+	 * @param customer the customer
+	 * @param addressRequest the address request
+	 * @return address result
 	 */
 	BrainTreeAddressResult createAddress(BrainTreeAddressRequest addressRequest, CustomerModel customer);
 
 	/**
-	 *
-	 * @param addressRequest
+	 * It updates addressb
+	 * @param addressRequest the address request
+	 * @return address result
 	 */
 	BrainTreeAddressResult updateAddress(BrainTreeAddressRequest addressRequest);
 
 	/**
-	 * @param addressRequest
+	 * It removes address
+	 * @param addressRequest the address request
+	 * @return address result
 	 */
 	BrainTreeAddressResult removeAddress(BrainTreeAddressRequest addressRequest);
 
+	/**
+	 * It creates the payment method
+	 * @param customer the customer
+	 * @param billingAddress the billing address
+	 * @param braintreeInfo the braintree info
+	 * @return payment method result
+	 */
 	BrainTreeCreatePaymentMethodResult createPaymentMethodForCustomer(final CustomerModel customer,
 			final AddressModel billingAddress, final BraintreeInfo braintreeInfo);
 
+	/**
+	 * It creates partial capture transaction
+	 * @param request the request
+	 * @return transaction result
+	 */
 	BrainTreeSaleTransactionResult partialCaptureTransaction(BrainTreeSaleTransactionRequest request);
 
+	/**
+	 * It creates customer
+	 * @param customer the customer
+	 * @param billingAddress the billing address
+	 * @return customer id
+	 */
 	String createCustomer(final CustomerModel customer, final AddressModel billingAddress);
 
+	/**
+	 * It updates payment info
+	 * @param paymentInfo the payment info
+	 * @param result the result
+	 */
 	void updatePaymentInfo(final PaymentInfoModel paymentInfo, final CreditCard result);
 
+	/**
+	 * It updates payment info
+	 * @param paymentInfo the payment info
+	 * @param result the result
+	 */
 	void updatePaymentInfo(final PaymentInfoModel paymentInfo, final AndroidPayDetails result);
 
+	/**
+	 * It updates payment info
+	 * @param paymentInfo the payment info
+	 * @param result the result
+	 */
 	void updatePaymentInfo(final PaymentInfoModel paymentInfo, final PayPalAccount result);
 
+	/**
+	 * It gets webhook notification
+	 * @param webhookNotificationRequest webhook notification request
+	 * @return the webhook notification
+	 */
 	WebhookNotification getWebhookNotification(BrainTreeWebhookNotificationRequest webhookNotificationRequest);
 
+	/**
+	 * It fetches the payment method by token
+	 * @param paymentMethodToken payment method token
+	 * @return paypal account
+	 */
 	PayPalAccount getPaymentMethodFromBTByToken(final String paymentMethodToken);
+
+	/**
+	 * It fetches the payment info model by payment info id
+	 * @param customer the customer
+	 * @param paymentInfoId the payment info id
+	 * @param nonce the nonce
+	 * @return BrainTreePaymentInfoModel
+	 */
+	public BrainTreePaymentInfoModel getBrainTreePaymentInfoForCode(final CustomerModel customer, final String
+			paymentInfoId, final String nonce);
+
+	/**
+	 * It creates payment method
+	 */
+	public void createPaymentMethodTokenForOrderReplenishment();
 }

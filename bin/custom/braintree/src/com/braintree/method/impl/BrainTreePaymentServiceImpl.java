@@ -103,7 +103,7 @@ import org.apache.log4j.Logger;
 
 public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 {
-	private final static Logger LOG = Logger.getLogger(BrainTreePaymentServiceImpl.class);
+	private static final Logger LOG = Logger.getLogger(BrainTreePaymentServiceImpl.class);
 
 	private ModelService modelService;
 	private CartService cartService;
@@ -141,9 +141,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 			BlLogger.logMessage(LOG, Level.DEBUG, "authorizationRequest " + authorizationRequest);
 
 			final AuthorizationCommand command = getCommandFactory().createCommand(AuthorizationCommand.class);
-			final AuthorizationResult result = command.perform(authorizationRequest);
-
-			return result;
+			return command.perform(authorizationRequest);
 		}
 		catch (final NotFoundException exception)
 		{
@@ -183,8 +181,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeCloneCommand command = getCommandFactory().createCommand(BrainTreeCloneCommand.class);
-			final BrainTreeCloneTransactionResult result = command.perform(request);
-			return result;
+			return command.perform(request);
 		}
 		catch (final Exception exception)
 		{
@@ -199,9 +196,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeRefundCommand command = getCommandFactory().createCommand(BrainTreeRefundCommand.class);
-			final BrainTreeRefundTransactionResult result = command.perform(request);
-
-			return result;
+			return command.perform(request);
 		}
 		catch (final CommandNotSupportedException exception)
 		{
@@ -216,9 +211,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeUpdateCustomerCommand command = getCommandFactory().createCommand(BrainTreeUpdateCustomerCommand.class);
-			final BrainTreeUpdateCustomerResult result = command.perform(request);
-
-			return result;
+			return command.perform(request);
 		}
 		catch (final CommandNotSupportedException exception)
 		{
@@ -233,9 +226,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeSaleCommand command = getCommandFactory().createCommand(BrainTreeSaleCommand.class);
-			final BrainTreeSaleTransactionResult result = command.perform(request);
-
-			return result;
+			return command.perform(request);
 		}
 		catch (final CommandNotSupportedException exception)
 		{
@@ -250,9 +241,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreePartialCaptureCommand command = getCommandFactory().createCommand(BrainTreePartialCaptureCommand.class);
-			final BrainTreeSaleTransactionResult result = command.perform(request);
-
-			return result;
+			return command.perform(request);
 		}
 		catch (final CommandNotSupportedException exception)
 		{
@@ -267,9 +256,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeRemoveCustomerCommand command = getCommandFactory().createCommand(BrainTreeRemoveCustomerCommand.class);
-			final BrainTreeCustomerResult result = command.perform(request);
-
-			return result;
+			return command.perform(request);
 		}
 		catch (final CommandNotSupportedException exception)
 		{
@@ -285,9 +272,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		{
 			final BrainTreeUpdatePaymentMethodCommand command = getCommandFactory().createCommand(
 					BrainTreeUpdatePaymentMethodCommand.class);
-			final BrainTreeUpdatePaymentMethodResult result = command.perform(request);
-
-			return result;
+			return command.perform(request);
 		}
 		catch (final CommandNotSupportedException exception)
 		{
@@ -302,9 +287,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final CreateSubscriptionCommand command = getCommandFactory().createCommand(CreateSubscriptionCommand.class);
-			final SubscriptionResult result = command.perform(subscriptionRequest);
-
-			return result;
+			return command.perform(subscriptionRequest);
 		}
 		catch (final Exception exception)
 		{
@@ -321,8 +304,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 			final BrainTreeGenerateClientTokenCommand command = getCommandFactory()
 					.createCommand(BrainTreeGenerateClientTokenCommand.class);
 
-			final BrainTreeGenerateClientTokenResult result = command.perform(clientTokenRequest);
-			return result;
+			return command.perform(clientTokenRequest);
 		}
 		catch (final Exception exception)
 		{
@@ -337,8 +319,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeFindCustomerCommand command = getCommandFactory().createCommand(BrainTreeFindCustomerCommand.class);
-			final BrainTreeFindCustomerResult result = command.perform(findCustomerRequest);
-			return result;
+			return command.perform(findCustomerRequest);
 		}
 		catch (final Exception exception)
 		{
@@ -358,7 +339,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 					.createCommand(BrainTreeSubmitForSettlementCommand.class);
 			final BrainTreeSubmitForSettlementTransactionResult result = command.perform(request);
 
-			updateCaptureTransaction(result, request);
+			updateCaptureTransaction(request);
 
 			return result;
 		}
@@ -370,8 +351,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		}
 	}
 
-	private void updateCaptureTransaction(final BrainTreeSubmitForSettlementTransactionResult result,
-			final BrainTreeSubmitForSettlementTransactionRequest request)
+	private void updateCaptureTransaction(final BrainTreeSubmitForSettlementTransactionRequest request)
 	{
 		List<PaymentTransactionModel> transactions = brainTreePaymentTransactionService
 				.getTransactionsByRequestIdAndPaymentProvider(request.getTransactionId(), BraintreeConstants.BRAINTREE_PROVIDER_NAME);
@@ -395,8 +375,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		{
 			populateCustomerID(addressRequest, customer);
 			final BrainTreeCreateAddressCommand command = getCommandFactory().createCommand(BrainTreeCreateAddressCommand.class);
-			final BrainTreeAddressResult result = command.perform(addressRequest);
-			return result;
+			return command.perform(addressRequest);
 		}
 		catch (final Exception exception)
 		{
@@ -427,8 +406,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeUpdateAddressCommand command = getCommandFactory().createCommand(BrainTreeUpdateAddressCommand.class);
-			final BrainTreeAddressResult result = command.perform(addressRequest);
-			return result;
+			return command.perform(addressRequest);
 		}
 		catch (final Exception exception)
 		{
@@ -444,9 +422,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			final BrainTreeRemoveAddressCommand command = getCommandFactory().createCommand(BrainTreeRemoveAddressCommand.class);
-			final BrainTreeAddressResult result = command.perform(addressRequest);
-
-			return result;
+			return command.perform(addressRequest);
 		}
 		catch (final Exception exception)
 		{
@@ -484,15 +460,13 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 	@Override
 	public String generateClientToken()
 	{
-		final String merchantAccountId = getBrainTreeConfigService().getMerchantAccountIdForCurrentSiteAndCurrency();
-		return getClientToken(merchantAccountId);
+		return getClientToken();
 	}
 
 	@Override
 	public String generateClientToken(final String site, final String currency)
 	{
-		final String merchantAccountId = getBrainTreeConfigService().getMerchantAccountIdForSiteAndCurrencyIsoCode(site, currency);
-		return getClientToken(merchantAccountId);
+		return getClientToken();
 	}
 
 	@Override
@@ -521,8 +495,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		{
 			final BrainTreeCreateCreditCardPaymentMethodCommand command = getCommandFactory().createCommand(
 					BrainTreeCreateCreditCardPaymentMethodCommand.class);
-			final BrainTreePaymentMethodResult result = command.perform(request);
-			return result;
+			return command.perform(request);
 		}
 		catch (final Exception exception)
 		{
@@ -556,8 +529,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		{
 			final BrainTreeDeletePaymentMethodCommand command = getCommandFactory().createCommand(
 					BrainTreeDeletePaymentMethodCommand.class);
-			final BrainTreePaymentMethodResult result = command.perform(request);
-			return result;
+			return command.perform(request);
 		}
 		catch (final Exception exception)
 		{
@@ -574,8 +546,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		{
 			final BrainTreeFindMerchantAccountCommand command = getCommandFactory().createCommand(
 					BrainTreeFindMerchantAccountCommand.class);
-			final BrainTreeFindMerchantAccountResult result = command.perform(brainTreeFindMerchantAccountRequest);
-			return result;
+			return command.perform(brainTreeFindMerchantAccountRequest);
 		}
 		catch (final Exception exception)
 		{
@@ -584,12 +555,40 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		}
 	}
 
+	@Override
+	public void createPaymentMethodTokenForOrderReplenishment()
+	{
+		final CustomerModel customer = checkoutCustomerStrategy.getCurrentUserForCheckout();
+		final PaymentInfoModel paymentInfo = cartService.getSessionCart().getPaymentInfo();
+		if (paymentInfo instanceof BrainTreePaymentInfoModel)
+		{
+			if (!((BrainTreePaymentInfoModel) paymentInfo).getUsePaymentMethodToken().booleanValue())
+			{
+				final BrainTreeCreatePaymentMethodRequest request = new BrainTreeCreatePaymentMethodRequest(null,
+						((BrainTreePaymentInfoModel) paymentInfo).getNonce(), customer.getBraintreeCustomerId());
+
+				final BrainTreeCreatePaymentMethodResult result = createPaymentMethod(request);
+				if (result != null)
+				{
+					((BrainTreePaymentInfoModel) paymentInfo).setPaymentMethodToken(result.getPaymentMethodToken());
+					((BrainTreePaymentInfoModel) paymentInfo).setUsePaymentMethodToken(Boolean.TRUE);
+					modelService.save(paymentInfo);
+				}
+
+			}
+		}
+		else
+		{
+			throw new AdapterException("Error during creation payment method for replenishment.");
+		}
+	}
+
 	private CartModel getCart()
 	{
 		return cartService.getSessionCart();
 	}
 
-	private String getClientToken(final String merchantAccountId1)
+	private String getClientToken()
 	{
 		final String authenticationToken = getAuthenticationToken();
 		if (authenticationToken != null && !StringUtils.EMPTY.equals(authenticationToken))
@@ -645,8 +644,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		final CreateSubscriptionRequest createSubscriptionRequest = new CreateSubscriptionRequest(null, billingInfo, null, null,
 				null, null, null);
 
-		final SubscriptionResult response = createCustomerSubscription(createSubscriptionRequest);
-		return response;
+		return createCustomerSubscription(createSubscriptionRequest);
 	}
 
 
@@ -801,8 +799,7 @@ public class BrainTreePaymentServiceImpl implements BrainTreePaymentService
 		try
 		{
 			command = getCommandFactory().createCommand(BrainTreeWebhookNotificationCommand.class);
-			WebhookNotification webhookNotification = command.perform(webhookNotificationRequest);
-			return webhookNotification;
+			return command.perform(webhookNotificationRequest);
 		}
 		catch (final Exception exception)
 		{

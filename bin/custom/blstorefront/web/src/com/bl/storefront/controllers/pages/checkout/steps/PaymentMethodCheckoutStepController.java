@@ -59,10 +59,10 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -74,6 +74,8 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	protected static final Map<String, String> CYBERSOURCE_SOP_CARD_TYPES = new HashMap<>();
 	private static final String PAYMENT_METHOD = "payment-method";
 	private static final String CART_DATA_ATTR = "cartData";
+	private static final int END_YEAR_IN_EXPIRY_DATE = 11;
+	private static final int START_YEAR_IN_EXPIRY_DATE = 6;
 
 	private static final Logger LOGGER = Logger.getLogger(PaymentMethodCheckoutStepController.class);
 
@@ -131,7 +133,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		final List<SelectOption> startYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
-		for (int i = calender.get(Calendar.YEAR); i > calender.get(Calendar.YEAR) - 6; i--)
+		for (int i = calender.get(Calendar.YEAR); i > calender.get(Calendar.YEAR) - START_YEAR_IN_EXPIRY_DATE; i--)
 		{
 			startYears.add(new SelectOption(String.valueOf(i), String.valueOf(i)));
 		}
@@ -145,7 +147,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		final List<SelectOption> expiryYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
-		for (int i = calender.get(Calendar.YEAR); i < calender.get(Calendar.YEAR) + 11; i++)
+		for (int i = calender.get(Calendar.YEAR); i < calender.get(Calendar.YEAR) + END_YEAR_IN_EXPIRY_DATE; i++)
 		{
 			expiryYears.add(new SelectOption(String.valueOf(i), String.valueOf(i)));
 		}
@@ -161,7 +163,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	}
 
 	@Override
-	@RequestMapping(value = "/add", method = RequestMethod.GET)
+	@GetMapping(value = "/add")
 	@RequireHardLogIn
 	@PreValidateQuoteCheckoutStep
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
@@ -296,8 +298,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		}
 	}
 
-	@RequestMapping(value =
-	{ "/add" }, method = RequestMethod.POST)
+	@PostMapping(value = { "/add" })
 	@RequireHardLogIn
 	public String add(final Model model, @Valid final PaymentDetailsForm paymentDetailsForm, final BindingResult bindingResult)
 			throws CMSItemNotFoundException
@@ -389,7 +390,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		paymentInfoData.setIssueNumber(paymentDetailsForm.getIssueNumber());
 	}
 
-	@RequestMapping(value = "/remove", method = RequestMethod.POST)
+	@PostMapping(value = "/remove")
 	@RequireHardLogIn
 	public String remove(@RequestParam(value = "paymentInfoId") final String paymentMethodId,
 			final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
@@ -408,7 +409,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	 *           - the id of the payment method to use.
 	 * @return - a URL to the page to load.
 	 */
-	@RequestMapping(value = "/choose", method = RequestMethod.GET)
+	@GetMapping(value = "/choose")
 	@RequireHardLogIn
 	public String doSelectPaymentMethod(@RequestParam("selectedPaymentMethodId") final String selectedPaymentMethodId)
 	{
@@ -419,7 +420,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return getCheckoutStep().nextStep();
 	}
 
-	@RequestMapping(value = "/back", method = RequestMethod.GET)
+	@GetMapping(value = "/back")
 	@RequireHardLogIn
 	@Override
 	public String back(final RedirectAttributes redirectAttributes)
@@ -427,7 +428,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return getCheckoutStep().previousStep();
 	}
 
-	@RequestMapping(value = "/next", method = RequestMethod.GET)
+	@GetMapping(value = "/next")
 	@RequireHardLogIn
 	@Override
 	public String next(final RedirectAttributes redirectAttributes)
