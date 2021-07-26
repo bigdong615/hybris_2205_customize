@@ -45,4 +45,5 @@ $productShippingLocationPath = /blinitialdata/import/sampledata/productCatalogs/
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/rush-delivery-mode.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-cost.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/base-store.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productShippingLocationPath/shipping-optimization.impex"), "utf-8", 0, 0);
 
