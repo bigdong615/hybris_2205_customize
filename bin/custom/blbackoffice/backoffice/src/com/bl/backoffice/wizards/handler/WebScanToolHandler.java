@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public class WebScanToolHandler implements com.hybris.cockpitng.widgets.configur
                 getConfigKeyFromScanConfiguration(BlInventoryScanLoggingConstants.MAX_SEQUENCE_LIMIT_KEY);
 
         if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= Integer.parseInt(maxSequenceScan)) {
-            createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes), barcodes);
+            createResponseMegForScan(getBlInventoryScanToolService().checkValidLocationInBarcodeList(barcodes, Collections.emptyList()), barcodes);
         } else {
             if (barcodeSize < BlInventoryScanLoggingConstants.TWO) {
                 BlLogger.logFormatMessageInfo(LOG, Level.INFO,BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
