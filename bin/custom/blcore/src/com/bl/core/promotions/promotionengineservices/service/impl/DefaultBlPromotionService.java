@@ -47,7 +47,7 @@ public class DefaultBlPromotionService implements BlPromotionService {
             StringUtils.equalsIgnoreCase(rule.getCode(), baseStoreModel.getUsedGearPromotionCode())
                 && RuleStatus.PUBLISHED.equals(rule.getStatus()) && validatePromotionDates(
                 rule.getStartDate(), rule.getEndDate())).findAny();
-        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "The Used Gear Category Promotion is Active on Site ", sourceRuleModel.isPresent());
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "The Used Gear Category Promotion is Active on Site {}", sourceRuleModel.isPresent());
         return  sourceRuleModel.isPresent();
       }
     }

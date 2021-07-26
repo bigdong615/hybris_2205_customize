@@ -245,7 +245,7 @@ public class DefaultBlPricingService implements BlPricingService {
     if (serialProductPrice != null && serialProductPrice.compareTo(BigDecimal.ZERO) > 0)
     {
       final BigDecimal serialPromotionPrice = serialProductPrice.subtract(serialProductPrice.multiply(new BigDecimal(ugPromotionDiscount)).divide(new BigDecimal(100))).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Promotion price for serial product {} is : ", serialPromotionPrice);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Promotion price for serial product is : {}", serialPromotionPrice);
       return serialPromotionPrice;
     }
     return  BigDecimal.ZERO;
