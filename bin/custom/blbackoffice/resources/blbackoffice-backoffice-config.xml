@@ -53,9 +53,10 @@
 	<context parent="GenericItem" type="BlOptions" component="listview">
 		<list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
 			<list:column qualifier="code" />
+			<list:column qualifier="optionId" />
 			<list:column qualifier="name" />
-			<list:column qualifier="unitCost"/>
-			<list:column qualifier="isActive" />
+			<list:column qualifier="unitPrice"/>
+			<list:column qualifier="active" />
 		</list:list-view>
 	</context>
 
