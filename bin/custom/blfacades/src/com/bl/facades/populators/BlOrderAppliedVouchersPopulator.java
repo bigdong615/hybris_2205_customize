@@ -53,9 +53,7 @@ public class BlOrderAppliedVouchersPopulator extends OrderAppliedVouchersPopulat
    * This method created to decide which promotional results needs to call based on condition
    */
 
-  private void setCouponDiscountPrice(AbstractOrderModel source,
-      final Map<String, BigDecimal> amountMap,
-      final PromotionResultModel promotionResultModel, final Collection<String> vouchers) {
+  private void setCouponDiscountPrice(final AbstractOrderModel source, final Map<String, BigDecimal> amountMap, final PromotionResultModel promotionResultModel, final Collection<String> vouchers) {
     for (final AbstractPromotionActionModel abstractPromotionActionModel : promotionResultModel
         .getActions()) {
       if (abstractPromotionActionModel instanceof RuleBasedOrderEntryAdjustActionModel) {
