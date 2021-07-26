@@ -1,13 +1,13 @@
 package com.bl.core.model.interceptor;
 
 import com.bl.core.model.NotesModel;
+import com.bl.core.services.order.note.BlOrderNoteService;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,25 +23,27 @@ import org.apache.log4j.Logger;
 public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<ConsignmentModel> {
 
   private static final Logger LOG = Logger.getLogger(BlConsignmentPrepareInterceptor.class);
+  private BlOrderNoteService blOrderNoteService;
 
   @Override
   public void onPrepare(final ConsignmentModel consignmentModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
 
     final AbstractOrderModel abstractOrderModel = consignmentModel.getOrder();
-
-    final Set<ConsignmentModel> otherConsignmentModels = new HashSet<>(abstractOrderModel.getConsignments());
+    final Set<ConsignmentModel> otherConsignmentModels = new HashSet<>(
+        abstractOrderModel.getConsignments());
     otherConsignmentModels.remove(consignmentModel);
-
     final List<NotesModel> orderNotesFromConsignment = consignmentModel.getOrderNotes();
 
-    if (interceptorContext.isModified(consignmentModel, ConsignmentModel.ORDERNOTES)
-        && CollectionUtils.isNotEmpty(orderNotesFromConsignment)) {
-
-      setOrderAndOtherConsignmentsInNotes(abstractOrderModel, otherConsignmentModels,
-          orderNotesFromConsignment, interceptorContext);
+    if (interceptorContext.isModified(consignmentModel, ConsignmentModel.ORDERNOTES)) {
+      if (CollectionUtils.isNotEmpty(orderNotesFromConsignment)) {
+        setOrderAndOtherConsignmentsInNotes(abstractOrderModel, otherConsignmentModels,
+            orderNotesFromConsignment, interceptorContext);
+      }
+      //Setting consolidated Notes on order which can be used to display order notes in backoffice view
+      getBlOrderNoteService().setConsolidatedNoteOnOrder(abstractOrderModel);
+      interceptorContext.getModelService().save(abstractOrderModel);
     }
-
   }
 
   /**
@@ -58,7 +60,7 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
       final InterceptorContext interceptorContext) {
 
     orderNotesFromConsignment.forEach(orderNote -> {
-      final List<ConsignmentModel> orderNoteConsignments = new ArrayList<>(orderNote.getConsignment());
+      final Set<ConsignmentModel> orderNoteConsignments = new HashSet<>(orderNote.getConsignment());
       orderNoteConsignments.addAll(otherConsignmentModels);
       orderNote.setConsignment(orderNoteConsignments);
       orderNote.setOrder(abstractOrderModel);
@@ -66,6 +68,14 @@ public class BlConsignmentPrepareInterceptor implements PrepareInterceptor<Consi
     interceptorContext.getModelService().saveAll(orderNotesFromConsignment);
 
     BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Consignments and Order are set in to consignment order Notes");
+  }
+
+  public BlOrderNoteService getBlOrderNoteService() {
+    return blOrderNoteService;
+  }
+
+  public void setBlOrderNoteService(BlOrderNoteService blOrderNoteService) {
+    this.blOrderNoteService = blOrderNoteService;
   }
 
 }
