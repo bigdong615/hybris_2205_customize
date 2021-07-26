@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
@@ -117,7 +118,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 //        this.getInventoryEventService().createAllocationEvents(consignment);
 //      }
 
-      if (order.getIsRentalCart()) {
+      if (BooleanUtils.isTrue(order.getIsRentalCart())) {
 
         final List<String> allocatedProductCodes = new ArrayList<>();
         for (Set<BlSerialProductModel> productSet : result.getSerialProductMap().values()) {

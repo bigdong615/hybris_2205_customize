@@ -8,7 +8,6 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
-import com.google.common.collect.Sets;
 import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
@@ -25,12 +24,12 @@ import de.hybris.platform.warehousing.constants.WarehousingConstants;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -59,12 +58,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     SourcingResults results = null;
 
     try {
-      if (order.getIsRentalCart()) {
-        results = blSourcingService.sourceOrder(order);
-      } else {
-        //Skip allocation for Used Gear order
-        results = getResultsForUsedGearOrder(order);
-      }
+      results = getSourcingResults(order);
       isSourcingSuccessful = true;
     } catch (final IllegalArgumentException e) {
 
@@ -80,7 +74,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
           ex.getMessage() + " Changing order status to SUSPENDED", ex);
     }
 
-    if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {
+    if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {  //NOSONAR
       try {
         final Collection<ConsignmentModel> consignments = getAllocationService()
             .createConsignments(process.getOrder(),
@@ -114,6 +108,18 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
   }
 
   /**
+   * Create SourcingResults for different types of orders.
+   *
+   * @param order - the order.
+   * @return SourcingResults      - the results
+   */
+  private SourcingResults getSourcingResults(final OrderModel order) {
+
+    return BooleanUtils.isTrue(order.getIsRentalCart()) ? blSourcingService.sourceOrder(order)
+        : getResultsForUsedGearOrder(order);
+  }
+
+  /**
    * Create SourcingResults for used gear orders.
    *
    * @param order - the order.
@@ -127,7 +133,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
 
     for (AbstractOrderEntryModel entry : order.getEntries()) {
 
-      WarehouseModel warehouseModel = ((BlSerialProductModel) entry.getProduct())
+      final WarehouseModel warehouseModel = ((BlSerialProductModel) entry.getProduct())
           .getWarehouseLocation();
 
       if (null == warehouseSourcingResultMap.get(warehouseModel)) {
