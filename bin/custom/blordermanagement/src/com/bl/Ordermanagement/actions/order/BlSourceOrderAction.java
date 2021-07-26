@@ -162,14 +162,18 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     final Set<BlSerialProductModel> serialProductsToAssign = new HashSet<>();
     serialProductsToAssign.add((BlSerialProductModel) entry.getProduct());
 
-    final Map<Integer, Set<BlSerialProductModel>> serialProductMap = new HashMap<>();
-    serialProductMap.put(entry.getEntryNumber(), serialProductsToAssign);
+    final Map<Integer, Set<BlSerialProductModel>> resultSerialProductMap =
+        (null != sourcingResult.getSerialProductMap()) ? new HashMap<>(
+            sourcingResult.getSerialProductMap()) : new HashMap<>();
+    resultSerialProductMap.put(entry.getEntryNumber(), serialProductsToAssign);
 
-    final Map<AbstractOrderEntryModel, Long> allocationMap = new HashMap<>();
-    allocationMap.put(entry, (long) serialProductsToAssign.size());
+    final Map<AbstractOrderEntryModel, Long> resultAllocationMap =
+        (null != sourcingResult.getAllocation()) ? new HashMap<>(sourcingResult.getAllocation())
+            : new HashMap<>();
+    resultAllocationMap.put(entry, (long) serialProductsToAssign.size());
 
-    sourcingResult.setSerialProductMap(serialProductMap);
-    sourcingResult.setAllocation(allocationMap);
+    sourcingResult.setSerialProductMap(resultSerialProductMap);
+    sourcingResult.setAllocation(resultAllocationMap);
     sourcingResult.setWarehouse(warehouseModel);
     resultSet.add(sourcingResult);
   }
