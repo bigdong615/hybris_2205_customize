@@ -5,6 +5,7 @@ import com.bl.core.model.NotesModel;
 import com.bl.core.services.order.note.BlOrderNoteService;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.servicelayer.model.ModelService;
+import org.apache.commons.collections.CollectionUtils;
 
 public class DefaultBlOrderNoteService implements BlOrderNoteService {
 
@@ -30,9 +31,12 @@ public class DefaultBlOrderNoteService implements BlOrderNoteService {
   private String getConcatenatedNotes(final AbstractOrderModel abstractOrderModel,
       final StringBuilder consolidatedOrderNotes) {
 
-    abstractOrderModel.getOrderNotes().stream().forEach(notesModel -> {
-      concatNotes(notesModel, consolidatedOrderNotes);
-    });
+    if(CollectionUtils.isNotEmpty(abstractOrderModel.getOrderNotes())){
+      abstractOrderModel.getOrderNotes().stream().forEach(notesModel -> {
+        concatNotes(notesModel, consolidatedOrderNotes);
+      });
+    }
+
     return consolidatedOrderNotes.toString();
   }
 
