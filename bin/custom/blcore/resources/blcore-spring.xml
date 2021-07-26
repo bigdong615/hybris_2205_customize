@@ -456,6 +456,7 @@
 		<property name="keyGenerator" ref="productIdGenerator"/>
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
