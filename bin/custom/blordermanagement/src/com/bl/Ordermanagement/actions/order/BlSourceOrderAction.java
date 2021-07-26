@@ -1,6 +1,7 @@
 package com.bl.Ordermanagement.actions.order;
 
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
+import com.bl.Ordermanagement.exceptions.BlShippingOptimizationException;
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
@@ -102,6 +103,11 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         setOrderSuspendedStatus(order);
         BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
             ex.getMessage() + " Changing order status to SUSPENDED", ex);
+      } catch (final BlShippingOptimizationException soe) {
+
+        setOrderSuspendedStatus(order);
+        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_OPTIMIZATION_ERROR.getCode(), soe.getMessage() +
+                " Changing order status to SUSPENDED due to shipping optimization", soe);
       }
     }
 

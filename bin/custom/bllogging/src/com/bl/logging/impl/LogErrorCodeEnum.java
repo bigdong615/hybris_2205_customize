@@ -20,7 +20,8 @@ public enum LogErrorCodeEnum implements LogError
 	 CART_INTERNAL_ERROR("0008", "Error while updating the cart"),
    UPS_INTEGRATION_ERROR("0009","Error occure whiling calling UPS intergration service."),
     ORDER_SOURCING_ERROR("0010","Error occur while sourcing the order"),
-  ORDER_ALLOCATION_ERROR("0011","Error occur while allocation of the order");
+  ORDER_ALLOCATION_ERROR("0011","Error occur while allocation of the order"),
+  ORDER_OPTIMIZATION_ERROR("0012","Error occur while shipping optimization process for order");
 
     private String code;
     private String description;

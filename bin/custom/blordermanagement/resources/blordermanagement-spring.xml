@@ -106,6 +106,7 @@
         <property name="blStockLevelDao" ref="blStockLevelDao"/>
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
         <property name="sessionService" ref="sessionService"/>
+        <property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
     </bean>
 
     <alias name="defaultBlSourcingLocationService" alias="blSourcingLocationService" />
@@ -146,6 +147,7 @@
         <property name="searchRestrictionService" ref="searchRestrictionService"/>
         <property name="sessionService" ref="sessionService"/>
         <property name="modelService" ref="modelService"/>
+        <property name="blShippingOptimizationStrategy" ref="blShippingOptimizationStrategy"/>
     </bean>
 
     <alias name="defaultBlNoSplittingStrategy" alias="blNoSplittingStrategy"/>
