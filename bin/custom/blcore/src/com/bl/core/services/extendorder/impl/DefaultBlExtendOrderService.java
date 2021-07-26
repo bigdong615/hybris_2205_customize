@@ -92,7 +92,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));
     extendOrderModel.setIsExtendedOrder(true);
     extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
-    extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental);
+    extendOrderModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
     extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
   }
 

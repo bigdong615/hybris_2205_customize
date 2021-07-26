@@ -941,7 +941,9 @@
 	<!-- BL-753:This interceptor is added to update consignment in order notes -->
 	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
 	<bean id="blOrderPrepareInterceptor"
-		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor"/>
+		class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor">
+		<property name="blOrderNoteService" ref="blOrderNoteService"/>
+	</bean>
 
 	<bean id="blOrderPrepareInterceptorMapping"
 		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
@@ -951,8 +953,9 @@
 
 	<!-- BL-753:This interceptor is added to update order and other consignment in order notes. -->
 	<alias name="blConsignmentPrepareInterceptor" alias="blConsignmentPrepareInterceptor"/>
-	<bean id="blConsignmentPrepareInterceptor"
-		class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor"/>
+	<bean id="blConsignmentPrepareInterceptor" class="com.bl.core.model.interceptor.BlConsignmentPrepareInterceptor">
+		<property name="blOrderNoteService" ref="blOrderNoteService"/>
+	</bean>
 
 	<bean id="blConsignmentPrepareInterceptorMapping"
 		class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
@@ -1031,5 +1034,10 @@
 		<property name="interceptor" ref="blNotesPrepareInterceptor"/>
 		<property name="typeCode" value="Notes"/>
 	</bean>
-	
+
+	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
+	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
 </beans>
