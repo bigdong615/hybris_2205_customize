@@ -1551,6 +1551,69 @@
           </itemtype>
           <!--Gift Card End-->
 
+          <itemtype code="BlStoredEmailSubscription" autocreate="true" generate="true"
+            jaloclass="com.bl.core.jalo.BlStoredEmailSubscription">
+            <description>Contact details for EmailSubscription</description>
+            <deployment table="blEmailSubscription" typecode="12224"/>
+            <attributes>
+              <attribute qualifier="contactKey" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>This attribute is used to store the contact Key value received from
+                  Email subscription API response.
+                </description>
+              </attribute>
+              <attribute qualifier="contactId" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>This attribute is used to store the contact ID value received from
+                  Email subscription API response.
+                </description>
+              </attribute>
+              <attribute qualifier="statusCode" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>This attribute is used to store the response code received from Email
+                  subscription API response.
+                </description>
+              </attribute>
+              <attribute qualifier="requestString" type="java.lang.String">
+                <description>This attribute is used to store the request json string for create
+                  contact API.
+                </description>
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+              </attribute>
+              <attribute qualifier="responseString" type="java.lang.String">
+                <description>This attribute is used to store the response json string for create
+                  contact API.
+                </description>
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+              </attribute>
+            </attributes>
+          </itemtype>
+            
          </typegroup>
          
         <typegroup name="Pricing">
