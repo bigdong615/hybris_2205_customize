@@ -197,6 +197,8 @@
 		<property name="commercePriceService" ref="commercePriceService"/>
 		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
 		<property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blPromotionService" ref="blPromotionService"/>
 	</bean>
 
 
@@ -273,6 +275,9 @@
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
 		<property name="blProductService" ref="productService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blPromotionService" ref="blPromotionService"/>
+		<property name="blPricingService" ref="blPricingService"/>
 	</bean>
 	
 	<!-- BL-166:This bean is override to configure bl related populator-->
@@ -510,6 +515,7 @@
 	<!--BL-657 added to override orderAppliedVouchersPopulator -->
 	<alias name="blOrderAppliedVouchersPopulator" alias="orderAppliedVouchersPopulator"/>
 	<bean id="blOrderAppliedVouchersPopulator" class="com.bl.facades.populators.BlOrderAppliedVouchersPopulator">
+		<property name="blPromotionService" ref="blPromotionService"/>
 	</bean>
 
 	<!--[BL-643]: Custom Promotions-->
