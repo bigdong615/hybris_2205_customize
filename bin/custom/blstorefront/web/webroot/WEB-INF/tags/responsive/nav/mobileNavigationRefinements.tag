@@ -4,13 +4,22 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <div id="mobileFilter" class="col-12 d-block d-lg-none mb-4">
 
 	<c:choose>
 		<c:when test="${pageType == 'CATEGORY'}">
-			<c:url var="clearUrl" value="${breadcrumbs[0].url}" />
+		<c:if test="${clearAllQuery ne null}">
+          <c:url var= "clearUrl" value ="${clearAllQuery}"/>
+    </c:if>
+    <c:if test="${clearAllQuery eq null && breadcrumbs.size()>1}">
+         <c:url var= "clearUrl" value ="${breadcrumbs[1].url}"/>
+    </c:if>
+    <c:if test="${clearAllQuery eq null && breadcrumbs.size()<2}">
+        <c:url var= "clearUrl" value ="${breadcrumbs[0].url}"/>
+    </c:if>
 		<h6>
 		<a href="#filter-menu" class="filter-button"><i
 			class="icon-filter"></i> Filters</a><a class="clear-filters" href="${clearUrl}"><spring:theme
@@ -28,17 +37,13 @@
 	 <ul>
 	 <li>
 	 <span>
-     	<c:forEach items="${pageData.facets}" var="facet">
-        	<c:choose>
-            	<c:when test="${facet.code eq 'availableInStores'}">
-                </c:when>
-             <c:otherwise>
-               	<nav:mobileFacetNavigationRefinements facetData="${facet}"/>
-             </c:otherwise>
-             </c:choose>
-                </c:forEach>
-                </span>
-                </li>
+      <c:forEach items="${pageData.facets}" var="facet">
+         	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear') && ! fn:containsIgnoreCase(facet.name, 'On Sale') || fn:containsIgnoreCase(blPageType, 'usedGear')}">
+                 <nav:mobileFacetNavigationRefinements  facetData="${facet}"/>
+          </c:if>
+        </c:forEach>
+   </span>
+   </li>
 	 </ul>
       </nav>
 

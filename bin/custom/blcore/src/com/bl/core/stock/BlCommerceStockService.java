@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.bl.core.data.StockResult;
 import com.bl.facades.product.data.RentalDateDto;
+import java.util.Set;
 
 
 /**
@@ -29,6 +30,18 @@ public interface BlCommerceStockService
 	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
 	 */
 	Collection<StockLevelModel> getStockForDate(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate);
+
+	/**
+	 * This is to get the stock details for a collection of SKUs for the given date range
+	 *
+	 * @param productCodes the product code
+	 * @param warehouse the warehouse
+	 * @param startDate the start date
+	 * @param endDate the end date
+	 * @return Collection<StockLevelModel> The list of stockLevelModels associated to the SKU
+	 */
+	Collection<StockLevelModel> getStockForProductCodesAndDate(final Set<String> productCodes, final WarehouseModel warehouse,
 			final Date startDate, final Date endDate);
 
 	/**
@@ -79,7 +92,7 @@ public interface BlCommerceStockService
 	 * @return boolean
 	 */
 	public boolean isUsedGearSerialNotAssignedToRentalOrder(final String serialProductCode, final String productCode);
-	
+
 	/**
 	 * Gets the next availability date for the product against the quantity to check.
 	 *
@@ -154,4 +167,20 @@ public interface BlCommerceStockService
 	 * @return the next availability date for PDP
 	 */
 	String getNextAvailabilityDateInPDP(final String productCode, final RentalDateDto rentalDate);
+	
+	/**
+	 * This method returns the map of sku product with their stock levels. It takes all stock levels
+	 * and group it by product sku with their respective stock levels and add it in Map.
+	 *
+	 * @param stockLevels the stockLevels
+	 * @return map of stock levels group by product codes.
+	 */
+	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
+			final Collection<StockLevelModel> stockLevels);
+
+	/**
+	 * this method created to get stock duration for same serial includes in active rental for extending order
+	 */
+	 StockResult getStockForEntireExtendDuration(final String productCode, final Collection<WarehouseModel> warehouses,
+			final Date startDate, final Date endDate);
 }

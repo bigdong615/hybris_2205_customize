@@ -5,11 +5,13 @@ import com.bl.core.model.GiftCardMovementModel;
 import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.commercefacades.order.converters.populator.CartPopulator;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -37,14 +39,23 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	{
 		super.populate(source, target);
 		target.setTotalDamageWaiverCost(createPrice(source, source.getTotalDamageWaiverCost()));
-		target.setPickUpPersonFirstName(source.getPickUpPersonFirstName());
-		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
-		target.setPickUpPersonEmail(source.getPickUpPersonEmail());
-		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
+//		For now removing I am or someone else option for pick up
+//		target.setPickUpPersonFirstName(source.getPickUpPersonFirstName());
+//		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
+//		target.setPickUpPersonEmail(source.getPickUpPersonEmail());
+//		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
 		target.setIsRentalCart(source.getIsRentalCart());
-
+		target.setPoNumber(source.getPoNumber());
+		target.setPoNotes(source.getPoNotes());
+		if(source.getUser() instanceof CustomerModel){
+			final CustomerModel customerModel = (CustomerModel)source.getUser();
+			target.setIsPOEnabled(customerModel.isPoEnabled());
+		}
+		if (CollectionUtils.isNotEmpty(source.getOrderNotes())){
+			target.setOrderNotes(source.getOrderNotes().get(0).getNote());
+		}
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
 		{
@@ -55,16 +66,19 @@ public class BlCartPopulator extends CartPopulator<CartData>
 				target.setGrandTotal(grandTotal);
 			}
 		}
-		if (source.getGiftCardAmount() != null)
-		{
-			final PriceData giftDiscount = getPriceDataFactory().create(priceType,
-					BigDecimal.valueOf(source.getGiftCardAmount().doubleValue()),
-					source.getCurrency() != null ? source.getCurrency().getIsocode() : "");
-			if (giftDiscount != null)
-			{
-				target.setGiftCardDiscount(giftDiscount);
-			}
+
+		// BL-657 to add total discount with gift cart discount to display on order summary section
+		 Double totalPromotionDiscount = 0.0;
+		 Double totalGiftCardDiscount = 0.0;
+		if(null != source.getTotalDiscounts()){
+			totalPromotionDiscount = source.getTotalDiscounts();
 		}
+		if(null != source.getGiftCardAmount()){
+			totalGiftCardDiscount = source.getGiftCardAmount();
+		}
+			final Double totalDiscount = totalPromotionDiscount + totalGiftCardDiscount;
+			target.setTotalDiscounts(createPrice(source , totalDiscount));
+
 
 		if (CollectionUtils.isNotEmpty(source.getGiftCard()))
 		{
@@ -76,12 +90,26 @@ public class BlCartPopulator extends CartPopulator<CartData>
 				final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
 				//rounding off double value to 2 decimal places
 				BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
-				blGiftCardData.setRedeemamount(gcRedeemedAmount.doubleValue());
-				blGiftCardData.setBalanceamount(giftCardModel.getBalance());
+				blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
+				blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
 				blGiftCardDataList.add(blGiftCardData);
 			}
 			target.setGiftCardData(blGiftCardDataList);
 		}
+	}
+
+	/**
+	 * Overriding to remove discounts from subtotal
+	 * @param source abstractOrderModel
+	 * @param target target object
+	 */
+	@Override
+	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData target)
+	{
+		super.addTotals(source,target);
+		final double subTotal = source.getSubtotal().doubleValue();
+		final PriceData subTotalPriceData = createPrice(source, Double.valueOf(subTotal));
+		target.setSubTotal(subTotalPriceData);
 	}
 
 	/**
@@ -97,4 +125,6 @@ public class BlCartPopulator extends CartPopulator<CartData>
     // Since we have already calculated the total with Tax , so returning cart total as total price with tax
     return null != source && source.getTotalPrice() != null ? source.getTotalPrice() : 0.0d;
   }
+
+
 }

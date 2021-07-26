@@ -45,7 +45,7 @@ public class OrderManualCheckedAction extends AbstractOrderAction<OrderProcessMo
 	@Override
 	public final String execute(final OrderProcessModel process) throws RetryLaterException, Exception
 	{
-		return executeAction(process).toString();
+		return this.executeAction(process).toString();
 	}
 
 	protected Transition executeAction(final OrderProcessModel process)
@@ -59,7 +59,7 @@ public class OrderManualCheckedAction extends AbstractOrderAction<OrderProcessMo
 		//If order is cancelled, moving the order process to end state
 		if (OrderStatus.CANCELLED.equals(order.getStatus()))
 		{
-			return Transition.CANCELLED;
+			return Transition.CANCELLED;   // TEMPORARY code added, Transition.CANCELLED
 		}
 
 		ServicesUtil.validateParameterNotNull(order.getFraudulent(), "Fraudulent value in order cannot be null");

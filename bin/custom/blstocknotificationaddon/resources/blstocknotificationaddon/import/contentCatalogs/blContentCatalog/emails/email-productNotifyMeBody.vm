@@ -1,0 +1,145 @@
+## messageSource=classpath:/blstocknotificationaddon/messages/email-productOutOfStock_$lang.properties
+#macro( genHtmlBoldFont $text )
+<font color="#414a4f" size="2" face="Arial, Helvetica, sans-serif"><b>$text</b></font>
+#end
+#macro(genHtmlLinkStartTag $url)
+<a href="$url"><font color="#666666">
+#end
+#macro(genHtmlLinkEndTag)
+</font></a>
+#end
+#macro(genHtmlLink $url $textColor $bodyContent)
+<a href="$url"><font color="$textColor">$bodyContent</font></a>
+#end
+
+
+<head>
+</head>
+
+<html>
+<body bgcolor="#ffffff" text="#000000" style="background-color: #ffffff; color: #000000; padding: 15px; -webkit-text-size-adjust:none; font-size: 16px; font-family:arial,helvetica,sans-serif;">
+  <span class="mcnPreview Text" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;">Updates on your order status.</span>
+    <div style="font-size:0; line-height:0;"><custom name="opencounter" type="tracking"><custom name="usermatch" type="tracking" /></div>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
+      <tr>
+        <td align="center" valign="top">
+          <custom type="header"/>
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <table cellspacing="0" cellpadding="0" border="0" width="600" class="container" align="center">
+            <tr>
+              <td>
+                <table class="tb_properties border_style" style="background-color:#FFFFFF;" cellspacing="0" cellpadding="0" bgcolor="#ffffff" width="100%">
+                  <tr>
+                    <td align="center" valign="top">
+                      <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                          <!-- added padding here -->
+                          <td class="content_padding" style="">
+                            <!-- end of comment -->
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                              <tr> <!-- top slot -->
+                                <td align="center" class="header" valign="top">
+                                  <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tbody>
+                                        <tr>
+                                          <td align="left" valign="top">
+                                            <table cellspacing="0" cellpadding="0" style="width:100%">
+                                              <tbody>
+                                              <tr>
+                                                <td class="responsive-td" valign="top" style="width: 100%;">
+                                                  <table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><table width="100%" colspan="0" cellpadding="0" border="0">
+
+${ctx.cmsSlotContents.BlSiteLogo}
+
+</table></td></tr></table><table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td style="padding-top: 10px; padding-right: 10px; padding-left: 10px; " class="stylingblock-content-wrapper camarker-inner"><table cellspacing="0" cellpadding="0" style="width: 100%;"><tr><td><table cellspacing="0" cellpadding="0" style="width: 100%;"><tr><td class="responsive-td" valign="top" style="width: 100%;"><table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td style="padding-bottom: 10px; " class="stylingblock-content-wrapper camarker-inner">
+
+<hr noshade />
+
+<h1 style="font-family: Tahoma,helvetica, sans-serif; font-size: 36px; color: rgb(0, 0, 0); line-height: 1.2em; font-weight: 800; font-style: normal;text-align:center;text-transform:uppercase">
+${ctx.messages.newGearAlert}</h1>
+
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.salutation}</h3>
+
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.getMessage('paragraphFirst', ${ctx.productData.name})}
+</p>
+
+<h3 style="font-family: Tahoma,helvetica, sans-serif; font-size: 20px; color: rgb(0, 0, 0); line-height: 1.2em; font-weight: 800; font-style: normal;text-align:center;">
+
+<a href="${ctx.productPageURL}">${ctx.productData.name}<br /></a>
+
+<a href="${ctx.productPageURL}">
+#foreach($image in $ctx.productData.images) #if($image.imageType == "PRIMARY" && $image.format == "thumbnail" )
+  <img src="$image.url" alt="${ctx.productData.name} photo" title="$ctx.productData.name" style="max-width:500px;"/>
+#end #end
+</a>
+</h3>
+
+
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.getMessage('paragraphSecond', "<a href=""${ctx.addressUrl}"">your account's</a>",${ctx.productData.name})}
+</p>
+
+<p style="font-family : helvetica,arial,sans-serif; font-size : 14px; color : #000; line-height : 1.3em; font-weight : 300; font-style : normal; ">
+${ctx.messages.getMessage('paragraphThird', "<a href=""${ctx.recentUrl}"">recently arrived</a>")}
+</p>
+
+<p style="font-family: helvetica,arial,sans-serif; font-size: 14px; color: #000; line-height: 1.3em; font-weight: 500; font-style: normal;">
+${ctx.messages.signature}<br/>
+<a href="${ctx.secureBaseUrl}">${ctx.messages.siteName}</a><br/>
+</p></td></tr></table></td></tr></table></td></tr></table></td></tr></table>
+
+<table cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><style>
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,800');
+@media only screen and (max-width: 479px) {
+  .hidden-xs { display: none; }
+}
+</style>
+
+<hr noshade />
+
+<table width="100%"><tr><td align="center">
+<table>
+${ctx.cmsSlotContents.BlBottomSocialLink}
+
+</table>
+</td></tr></table>
+
+<hr noshade />
+${ctx.cmsSlotContents.BlBottomContent}
+
+<p></p><a href="#" style="color:#000000;font-weight:normal;text-decoration:none;line-height:100%;"> </a></div></td></tr></table>
+                                                </td>
+                                              </tr>
+                                              </tbody>
+                                            </table>
+                                          </td>
+                                        </tr>
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+          <custom type="footer" />
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

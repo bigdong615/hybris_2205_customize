@@ -11,7 +11,9 @@
 	<script>
 		/*<![CDATA[*/
 		<%-- Define a javascript variable to hold the content path --%>
-		var ACC = { config: {} };
+		var ACC = { config: {},
+				ccError: {},
+				payPalError: {}};
 			ACC.config.contextPath = '${ycommerce:encodeJavaScript(contextPath)}';
 			ACC.config.encodedContextPath = '${ycommerce:encodeJavaScript(encodedContextPath)}';
 			ACC.config.commonResourcePath = '${ycommerce:encodeJavaScript(commonResourcePath)}';
@@ -31,7 +33,19 @@
 			ACC.accessibilityStoresLoaded = '<spring:theme code="aria.pickupinstore.storesloaded" htmlEscape="false" javaScriptEscape="true" />';
 			ACC.config.googleApiKey='${ycommerce:encodeJavaScript(googleApiKey)}';
 			ACC.config.googleApiVersion='${ycommerce:encodeJavaScript(googleApiVersion)}';
-
+			
+			ACC.ccError.cardNumberInValid = '<spring:theme code="payment.cc.error.card.number.invalid" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.cardNumber = '<spring:theme code="payment.cc.error.card.number" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.cardYear = '<spring:theme code="payment.cc.error.card.year" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.cardMonth = '<spring:theme code="payment.cc.error.card.month" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.cardCVV = '<spring:theme code="payment.cc.error.card.cvv" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.cardCVVInValid = '<spring:theme code="payment.cc.error.card.cvv.invalid" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.allFieldsNotSelected ='<spring:theme code="payment.all.field.not.selected" htmlEscape="false" javaScriptEscape="true" />';
+			ACC.ccError.onlyGCSelected = '<spring:theme code="payment.only.giftCard.selected" htmlEscape="false" javaScriptEscape="true" />'
+			ACC.ccError.poNumber = '<spring:theme code="payment.error.po.number" htmlEscape="false" javaScriptEscape="true" />'
+			
+			ACC.payPalError.paypalPaymentFail = '<spring:theme code="text.paypal.payment.error.message" htmlEscape="false" javaScriptEscape="true" />'
+			
 			<c:if test="${request.secure}">
 				<c:url var="autocompleteUrl" value="/search/autocompleteSecure" />
 			</c:if>
@@ -57,4 +71,3 @@
 	
 	<%-- generated variables from commonVariables.properties --%>
 	<script src="${fn:escapeXml(sharedResourcePath)}/js/generatedVariables.js"></script>
-	

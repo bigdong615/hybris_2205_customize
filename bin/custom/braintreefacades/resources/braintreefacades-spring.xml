@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ [y] hybris Platform
+
+ Copyright (c) 2000-2013 hybris AG
+ All rights reserved.
+
+ This software is the confidential and proprietary information of hybris
+ ("Confidential Information"). You shall not disclose such Confidential
+ Information and shall use it only in accordance with the terms of the
+ license agreement you entered into with hybris.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<alias name="brainTreeCheckoutFacade" alias="acceleratorCheckoutFacade" />
+	<bean id="brainTreeCheckoutFacade" class="com.braintree.facade.impl.BrainTreeCheckoutFacade"
+		parent="defaultAcceleratorCheckoutFacade">
+		<property name="brainTreePaymentInfoConverter" ref="brainTreePaymentInfoConverter" />
+		<property name="brainTreePaymentService" ref="brainTreePaymentService" />
+		<property name="brainTreeTransactionService" ref="brainTreeTransactionService" />
+		<property name="cartService" ref="cartService" />
+		<property name="userService" ref="userService" />
+		<property name="payPalAddressDataConverter" ref="payPalAddressDataConverter" />
+		<property name="payPalCardDataConverter" ref="payPalCardDataConverter" />
+		<property name="brainTreeConfigService" ref="brainTreeConfigService" />
+		<property name="brainTreePaymentFacade" ref="brainTreePaymentFacadeImpl" />
+		<property name="customFieldsService" ref="customFieldsService"/>
+	</bean>
+
+
+	<bean id="brainTreeAccountFacade" class="com.braintree.facade.impl.BrainTreeAccountFacadeImpl">
+		<property name="brainTreeConfigService" ref="brainTreeConfigService" />
+		<property name="i18NService" ref="i18NService" />
+	</bean>
+
+	<bean id="braintreeBackofficeOrderFacade" class="com.braintree.facade.backoffice.impl.BraintreeBackofficeVoidFacadeImpl">
+	</bean>
+
+	<bean id="braintreeBackofficeMultiCaptureFacade" class="com.braintree.facade.backoffice.impl.BraintreeBackofficeMultiCaptureFacadeImpl">
+	</bean>
+
+	<bean id="braintreeBackofficePartialRefundFacade" class="com.braintree.facade.backoffice.impl.BraintreeBackofficePartialRefundFacadeImpl">
+	</bean>
+
+    <bean id="braintreeBackofficeAuthorizeFacade" class="com.braintree.facade.backoffice.impl.BraintreeBackofficeAuthorizeFacadeImpl">
+    </bean>
+
+	<alias name="defaultBrainTreePaymentFacadeImpl" alias="brainTreePaymentFacadeImpl"/>
+	<bean id="defaultBrainTreePaymentFacadeImpl" class="com.braintree.facade.impl.BrainTreePaymentFacadeImpl"
+		parent="defaultPaymentFacade">
+		<property name="brainTreeUserFacade" ref="brainTreeUserFacade" />
+		<property name="brainTreePaymentService" ref="brainTreePaymentService" />
+		<property name="cartService" ref="cartService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="brainTreeCustomerAccountService" ref="brainTreeCustomerAccountService" />
+		<property name="commerceCartService" ref="commerceCartService" />
+		<property name="modelService" ref="modelService" />
+		<property name="userService" ref="userService" />
+		<property name="customerEmailResolutionService" ref="customerEmailResolutionService" />
+		<property name="brainTreeTransactionService" ref="brainTreeTransactionService" />
+		<property name="brainTreePaymentInfoDataConverter" ref="brainTreePaymentInfoDataConverter" />
+		<property name="addressConverter" ref="addressConverter"/>
+		<property name="addressReverseConverter" ref="addressReverseConverter"/>
+		<property name="billingAddressConverter" ref="billingAddressConverter"/>
+		<property name="brainTreeSubscriptionInfoConverter" ref="brainTreeSubscriptionInfoConverter"/>
+		<property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+		<property name="braintreeLocalPaymentMethodsService" ref="braintreeLocalPaymentMethodsService" />
+		<property name="orderConverter" ref="orderConverter"/>
+	</bean>
+
+	<alias name="brainTreeUserFacade" alias="userFacade"/>
+	<bean name="brainTreeUserFacade" class="com.braintree.facade.impl.BrainTreeUserFacadeImpl" parent="defaultUserFacade">
+		<property name="brainTreePaymentInfoConverter" ref="brainTreePaymentInfoConverter"/>
+		<property name="brainTreeCustomerAccountService" ref="brainTreeCustomerAccountService"/>
+		<property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+		<property name="checkoutCustomerStrategy" ref="checkoutCustomerStrategy"/>
+		<property name="brainTreeTransactionService" ref="brainTreeTransactionService" />
+		<property name="customerNameStrategy" ref="customerNameStrategy"/>
+		<property name="addressReverseConverter" ref="addressReverseConverter"/>
+		<property name="brainTreeSubscriptionInfoConverter" ref="brainTreeSubscriptionInfoConverter"/>
+        <property name="paymentMethodConverter" ref="paymentMethodConverter"/>
+        <property name="paymentInfoService" ref="paymentInfoService"/>
+		<property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+		<property name="userService" ref="userService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="customerAccountService" ref="customerAccountService"/>
+	</bean>
+
+	<alias name="brainTreeStoreSessionFacade" alias="storeSessionFacade" />
+	<bean id="brainTreeStoreSessionFacade" class="com.braintree.store.currency.BrainTreeStoreSessionFacade" parent="defaultStoreSessionFacade">
+		<property name="modelService" ref="modelService" />
+		<property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+	</bean>
+
+	<alias name="brainTreeOrderPopulator" alias="orderPopulator"/>
+	<bean id="brainTreeOrderPopulator"
+			class="com.braintree.facade.order.converters.populator.BrainTreeOrderPopulator"
+			parent="defaultOrderPopulator">
+			<property name="brainTreePaymentInfoConverter" ref="brainTreePaymentInfoConverter"/>
+	</bean>
+
+	<alias name="defaultBrainTreePaymentInfoDataConverter" alias="brainTreePaymentInfoDataConverter"/>
+	<bean id="defaultBrainTreePaymentInfoDataConverter" class="com.braintree.paypal.converters.impl.BrainTreePaymentInfoDataConverter"/>
+
+	<alias name="defaultPayPalAddressDataConverter" alias="payPalAddressDataConverter" />
+	<bean id="defaultPayPalAddressDataConverter"
+		class="com.braintree.paypal.converters.impl.PayPalAddressDataConverter">
+		<property name="payPalAddressDetailValidator" ref="payPalAddressDetailValidator" />
+	</bean>
+
+	<alias name="defaultPayPalCardDataConverter" alias="payPalCardDataConverter" />
+	<bean id="defaultPayPalCardDataConverter"
+		class="com.braintree.paypal.converters.impl.PayPalCardDataConverter">
+		<property name="i18NService" ref="i18NService" />
+		<property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+		<property name="checkoutFacade" ref="checkoutFacade"/>
+	</bean>
+
+	<alias name="braintreeDefaultAddressPopulator" alias="addressPopulator"/>
+	<bean id="braintreeDefaultAddressPopulator"
+		  class="com.braintree.user.converters.populator.BrainTreeAddressPopulator" parent="defaultAddressPopulator">
+	</bean>
+	
+    <alias name="defaultBrainTreeSubscriptionInfoConverter" alias="brainTreeSubscriptionInfoConverter"/>
+	<bean id="defaultBrainTreeSubscriptionInfoConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="com.braintree.payment.dto.BraintreeInfo" />
+		<property name="populators">
+			<list>
+				<ref bean="braintreeInfoPopulator" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="braintreeInfoPopulator" class="com.braintree.converters.populators.impl.BrainTreeInfoPopulator" />
+
+	<bean id="braintreeBackofficeResponseResultDataConverter"
+		  class=" com.braintree.facade.backoffice.converter.BraintreeBackofficeResponseResultDataConverter">
+		<property name="targetClass" value="com.braintree.hybris.data.BrainTreeResponseResultData"/>
+	</bean>
+
+</beans>

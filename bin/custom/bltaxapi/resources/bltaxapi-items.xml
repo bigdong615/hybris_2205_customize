@@ -87,6 +87,12 @@
 				optional="true" />
 			<persistence type="property" />
 		</attribute>
+		
+		<attribute qualifier="accountNumber" type="java.lang.String">
+			<modifiers read="true" write="true" partof="false" search="true"
+				optional="true" />
+			<persistence type="property" />
+		</attribute>
 			</attributes>
 		</itemtype>
 		</typegroup>

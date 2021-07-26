@@ -31,6 +31,9 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; BreadcrumbSection                 ;                                                                        ;                           ;wide
                              ; SearchBoxBl                   ;                                                                                    ;                          ; searchbox
                              ; buyingUsedGearEasySection           ;                                                                             ;                           ; wide
+                             ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                             ; TopHeaderSlot           ;                                                                             ;                           ; wide
+
 
 
 INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]                   ; name                                   ; active[default=true]
@@ -60,6 +63,8 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                    ;                         ; MobileHeaderLinkForShipOrPickupSlot-productDetails ; MobileHeaderLinkForShipOrPickupSlot ;                                                                           ; MobileHeaderLinkForShipOrPickupSlot            ; true
                                    ;                         ; MobileMiniCartSlot-productDetails                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
                                    ;                         ; BuyingUsedGearComponentSectionSlot-productDetails ; buyingUsedGearEasySection ;                                                       ; buyingUsedGearEasySectionSlot  ; true
+                                   ;                         ; SocialMediaSectionSlot-productDetails              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                   ;                         ; TopHeaderSlot-productDetails              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
 
 
 

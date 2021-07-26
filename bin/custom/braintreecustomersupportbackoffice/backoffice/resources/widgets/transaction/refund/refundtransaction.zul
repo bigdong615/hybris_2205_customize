@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.zkoss.org/2005/zul" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.hybris.com/schema/cockpitng/zul/zul.xsd"
+        sclass="bt-widget-refundtransaction-configuration"
+        id="refundtransactionview" height="100%" width="100%">
+
+    <separator width="100%" height="10px"/>
+
+    <hlayout height="60px" sclass="bt-widget-refundtransaction--header">
+        <hbox sclass="bt-widget-refundtransaction--body">
+            <vbox>
+                <label value="${labels.braintreecustomersupportbackoffice.refundtransaction.transactionid}" width="100%"/>
+                <textbox sclass="bt-widget-refundtransaction--input-text-box" readonly="true" id="transactionId"
+                         width="140px"/>
+            </vbox>
+        </hbox>
+        <hbox sclass="bt-widget-refundtransaction--body">
+            <vbox>
+                <label value="${labels.braintreecustomersupportbackoffice.refundtransaction.amount}" width="100%"/>
+                <textbox sclass="bt-widget-refundtransaction--input-text-box" readonly="false" id="amount"
+                         width="240px"/>
+            </vbox>
+        </hbox>
+
+        <hbox style="float:right;">
+            <div sclass="bt-widget-refundtransaction--controller-area">
+                <div sclass="bt-widget-refundtransaction--confirm-area" style="">
+                    <button id="refundrequest" width="100%"
+                            label="${labels.braintreecustomersupportbackoffice.refundtransaction.button.refund}"
+                            sclass="bt-widget-refundtransaction-configuration-button bt-widget-refundtransaction-configuration-save-button"/>
+                    <separator width="100%" height="10px"/>
+                </div>
+            </div>
+        </hbox>
+
+    </hlayout>
+
+</widget>

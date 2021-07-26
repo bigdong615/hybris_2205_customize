@@ -17,7 +17,6 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -294,15 +293,12 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
    * @param currentCart
    */
   private void clearInactiveCarts(final GiftCardModel giftCardModel, final CartModel currentCart) {
-    final List<AbstractOrderModel> abstractOrderModelList = giftCardModel.getOrder();
+    List<AbstractOrderModel> abstractOrderModelList = new ArrayList<>(giftCardModel.getOrder());
     if (CollectionUtils.isEmpty(abstractOrderModelList)) {
       return;
     }
-    final List<AbstractOrderModel> filteredList = abstractOrderModelList.stream()
-        .filter(abstractOrder -> StringUtils.equals(abstractOrder.getCode(), currentCart.getCode())
-            || abstractOrder instanceof OrderModel)
-        .collect(Collectors.toList());
-    giftCardModel.setOrder(filteredList);
+    abstractOrderModelList.add(currentCart);
+    giftCardModel.setOrder(abstractOrderModelList);
     getModelService().save(giftCardModel);
     getModelService().refresh(giftCardModel);
   }
@@ -315,7 +311,7 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
     try {
       return getGiftCardDao().getGiftCard(giftCardCode);
     }catch (final Exception exception){
-      BlLogger.logFormatMessageInfo(LOGGER,Level.ERROR,"Error while fetching gift card code {} from backend", giftCardCode, exception);
+      BlLogger.logMessage(LOGGER, Level.ERROR, "Error while fetching gift card code {} from backend", giftCardCode, exception);
     }
     return null;
   }

@@ -10,6 +10,11 @@
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
+<cms:pageSlot position="TopHeaderSlot" var="component" element="div" class="container">
+  <cms:component component="${component}" />
+</cms:pageSlot>
+
+<span id="timer-count" value="${usedGearTimer}"></span>
 
       <cms:pageSlot position="PromoBannerSlot" var="component" element="div" > 
          <cms:component component="${component}" />
@@ -126,33 +131,16 @@
        </div>
     </div>
 
+    <!-- Get notify modal start-->
+    <div class="modal fade signinbox" id="getNotified" tabindex="-1" aria-hidden="true">
+       <div class="modal-dialog modal-dialog-centered modal-sm">
+       </div>
+    </div>
+   <!-- Get notify modal end -->
+
     <!-- modal for forgot password -->
         <div class="modal fade signinbox" id="forgotPass" tabindex="-1" aria-hidden="true">
            <div class="modal-dialog modal-dialog-centered modal-sm">
-              <div class="modal-content">
-                 <div class="modal-header">
-                    <h5 class="modal-title text-center"><img class="logo" src="${themeResourcePath}/assets/bl-logo@2x.png"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                 </div>
-                 <div class="modal-body">
-                    <h5>
-                       <spring:theme code="forgottenPwd.header"/>
-                    </h5>
-                    <p class="body14">
-                       <spring:theme code="forgottenPwd.description"/>
-                    </p>
-                    <form>
-                       <input type="text" class="form-control mb-3" placeholder="register.email">
-                       <button type="submit" class="btn btn-block btn-primary mt-4">
-                          <spring:theme code="forgottenPwd.title"/>
-                       </button>
-                       <p class="body14 text-center mb-0 mt-4">
-                           <a class="js-login-popup" href="#signIn" data-link="<c:url value='/login/loginpopup'/>" data-bs-dismiss="modal">
-                                   <spring:theme code="login.login" />
-                            </a>
-                       </p>
-                    </form>
-                 </div>
-              </div>
+
            </div>
         </div>

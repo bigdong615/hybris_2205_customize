@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- [y] hybris Platform Copyright (c) 2000-2013 hybris AG All rights reserved. 
+	This software is the confidential and proprietary information of hybris ("Confidential 
+	Information"). You shall not disclose such Confidential Information and shall 
+	use it only in accordance with the terms of the license agreement you entered 
+	into with hybris. -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd" >
+
+    <alias name="defaultBrainTreePaymentService" alias="brainTreePaymentService"/>
+    <bean id="defaultBrainTreePaymentService" class="com.braintree.method.impl.BrainTreePaymentServiceImpl">
+        <property name="modelService" ref="modelService"/>
+        <property name="cartService" ref="cartService"/>
+        <property name="commandFactoryRegistry" ref="commandFactoryRegistry"/>
+        <property name="brainTreeCustomerAccountService" ref="brainTreeCustomerAccountService"/>
+        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+        <property name="checkoutCustomerStrategy" ref="checkoutCustomerStrategy"/>
+        <property name="billingAddressConverter" ref="billingAddressConverter"/>
+        <property name="brainTreePaymentTransactionService" ref="brainTreePaymentTransactionService"/>
+        <property name="brainTreePaymentInfoDao" ref="brainTreePaymentInfoDao"/>
+    </bean>
+
+    <alias name="defaultBrainTreeCodeTranslator" alias="brainTreeCodeTranslator"/>
+    <bean id="defaultBrainTreeCodeTranslator" class="com.braintree.commands.impl.BraintreeCodeTranslator"/>
+
+    <alias name="defaultBrainTreeErrorTranslator" alias="brainTreeErrorTranslator"/>
+    <bean id="defaultBrainTreeErrorTranslator"
+          class="com.braintree.commands.impl.BraintreeErrorTranslator"/>
+
+    <alias name="defaultBrainTreeLoggingHandler" alias="brainTreeLoggingHandler"/>
+    <bean id="defaultBrainTreeLoggingHandler" class="com.braintree.commands.impl.BrainTreeLoggingHandler"/>
+
+    <alias name="defaultBrainTreeAbstractCommand" alias="brainTreeAbstractCommand"/>
+    <bean name="defaultBrainTreeAbstractCommand" abstract="true">
+        <property name="loggingHandler" ref="brainTreeLoggingHandler"/>
+        <property name="codeTranslator" ref="brainTreeCodeTranslator"/>
+        <property name="errorTranslator" ref="brainTreeErrorTranslator"/>
+        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+    </bean>
+
+    <!-- Command Factory that lists all available command goes here. Commands
+        must be put into a map like this: Map<Class<CommandType>, CommandInstance> -->
+    <alias name="defaultBrainTreeCommandFactory" alias="brainTreeCommandFactory"/>
+    <bean name="defaultBrainTreeCommandFactory"
+          class="de.hybris.platform.payment.commands.factory.impl.DefaultCommandFactoryImpl">
+        <property name="paymentProvider" value="BrainTree"/>
+        <property name="commands">
+            <map>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">de.hybris.platform.payment.commands.CreateSubscriptionCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.CreateSubscriptionCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">de.hybris.platform.payment.commands.CaptureCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.CaptureCommandImpl"
+                          parent="brainTreeAbstractCommand">
+                        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+                        <property name="orderRetrievalService" ref="orderRetrievalService"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeGenerateClientTokenCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.GenerateClientTokenCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeFindCustomerCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.FindCustomerCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">de.hybris.platform.payment.commands.AuthorizationCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.AuthorizationCommandImpl"
+                          parent="brainTreeAbstractCommand">
+                        <property name="cartService" ref="cartService"/>
+                        <property name="configurationService" ref="configurationService"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeFindTransactionCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.FindTransactionCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeCreatePaymentMethodCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.CreatePaymentMethodCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">
+                            com.braintree.commands.BrainTreeCreateCreditCardPaymentMethodCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.CreateCreditCardPaymentMethodCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeVoidCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.VoidCommandImpl" parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeCloneCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.CloneTransactionCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeRefundCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.RefundTransactionCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeUpdateCustomerCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.UpdateCustomerCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeFindMerchantAccountCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.FindMerchantAccountCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreePartialCaptureCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.PartialCaptureCommandImpl"
+                          parent="brainTreeAbstractCommand">
+                        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeSaleCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.SaleTransactionCommandImpl"
+                          parent="brainTreeAbstractCommand">
+                        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeDeletePaymentMethodCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.DeletePaymentMethodCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeRemoveCustomerCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.RemoveCustomerCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeUpdatePaymentMethodCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.UpdatePaymentMethodCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeCreateAddressCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.CreateAddressCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeUpdateAddressCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.UpdateAddressCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeRemoveAddressCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.RemoveAddressCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeSubmitForSettlementCommand
+                        </value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.SubmitForSettlementTransactionCommandImpl"
+                          parent="brainTreeAbstractCommand">
+                        <property name="orderRetrievalService" ref="orderRetrievalService"/>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeCreatePaymentMethodNonceCommand</value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.CreatePaymentMethodNonceCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.BrainTreeWebhookNotificationCommand</value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.WebhookNotificationCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+                <entry>
+                    <key>
+                        <value type="java.lang.Class">com.braintree.commands.GetPaymentMethodByTokenCommand</value>
+                    </key>
+                    <bean class="com.braintree.commands.impl.GetPaymentMethodByTokenCommandImpl"
+                          parent="brainTreeAbstractCommand"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <alias name="defaultBrainTreeCustomerAccountService" alias="brainTreeCustomerAccountService"/>
+    <bean name="defaultBrainTreeCustomerAccountService"
+          class="com.braintree.customer.service.BrainTreeCustomerAccountService" parent="defaultCustomerAccountService">
+        <property name="brainTreeCustomerAccountDao" ref="brainTreeCustomerAccountDao"/>
+        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+        <property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+    </bean>
+
+    <alias name="defaultBrainTreeCustomerAccountDao" alias="brainTreeCustomerAccountDao"/>
+    <bean name="defaultBrainTreeCustomerAccountDao" class="com.braintree.customer.dao.BrainTreeCustomerAccountDao"
+          parent="defaultCustomerAccountDao"/>
+
+    <alias name="defaultBrainTreeTransactionService" alias="brainTreeTransactionService"/>
+    <bean id="defaultBrainTreeTransactionService"
+          class="com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl">
+        <property name="cartService" ref="cartService"/>
+        <property name="modelService" ref="modelService"/>
+        <property name="userService" ref="userService"/>
+        <property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+        <property name="brainTreePaymentTransactionService" ref="brainTreePaymentTransactionService"/>
+        <property name="paymentService" ref="paymentService"/>
+        <property name="billingAddressConverter" ref="billingAddressConverter"/>
+        <property name="checkoutCustomerStrategy" ref="checkoutCustomerStrategy"/>
+        <property name="commonI18NService" ref="commonI18NService"/>
+        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+        <property name="customFieldsService" ref="customFieldsService"/>
+        <property name="braintreeSubmitForSettlementService" ref="braintreeSubmitForSettlementService" />
+    </bean>
+
+    <alias name="braintreeTransactionConverter" alias="transactionSearchResultConverter"/>
+    <bean id="braintreeTransactionConverter"
+          class="com.braintree.converters.BraintreeTransactionConverter">
+        <property name="targetClass" value="com.braintree.hybris.data.BraintreeTransactionData"/>
+    </bean>
+
+    <alias name="braintreeTransactionDetailConverter" alias="transactionDetailPopulator"/>
+    <bean id="braintreeTransactionDetailConverter"
+          class="com.braintree.converters.BraintreeTransactionDetailConverter">
+        <property name="targetClass" value="com.braintree.model.BrainTreeTransactionDetailModel"/>
+    </bean>
+
+    <alias name="defaultBillingAddressConverter" alias="billingAddressConverter"/>
+    <bean id="defaultBillingAddressConverter" class="com.braintree.paypal.converters.impl.BillingAddressConverter"/>
+
+    <alias name="braintreeAddressConverter" alias="braintreeAddressPopulator"/>
+    <bean id="braintreeAddressConverter"
+          class="com.braintree.converters.BraintreeAddressConverter">
+        <property name="targetClass" value="de.hybris.platform.core.model.user.AddressModel"/>
+        <property name="commonI18NService" ref="commonI18NService"/>
+        <property name="regionI18NService" ref="regionI18NService"/>
+    </bean>
+    <bean id="paymentMethodConverter"
+          class="com.braintree.converters.BraintreePaymentMethodConverter">
+        <property name="targetClass" value="com.braintree.model.BrainTreePaymentInfoModel"/>
+        <property name="braintreeAddressConverter" ref="braintreeAddressPopulator"/>
+    </bean>
+
+    <alias name="braintreeCustomerDetailsConverter" alias="customerDetailsPopulator"/>
+    <bean id="braintreeCustomerDetailsConverter"
+          class="com.braintree.converters.BraintreeCustomerDetailsConverter">
+        <property name="targetClass" value="com.braintree.model.BraintreeCustomerDetailsModel"/>
+        <property name="braintreeAddressConverter" ref="braintreeAddressPopulator"/>
+        <property name="paymentMethodConverter" ref="paymentMethodConverter"/>
+    </bean>
+
+    <alias name="defaultPayPalAddressDetailValidator" alias="payPalAddressDetailValidator"/>
+    <bean id="defaultPayPalAddressDetailValidator"
+          class="com.braintree.paypal.validator.PayPalAddressDetailValidator">
+        <property name="commonI18NService" ref="commonI18NService"/>
+    </bean>
+
+    <alias name="defaultBrainTreeConfigService" alias="brainTreeConfigService"/>
+    <bean id="defaultBrainTreeConfigService"
+          class="com.braintree.configuration.service.BrainTreeConfigService">
+        <property name="baseSiteService" ref="baseSiteService"/>
+        <property name="commonI18NService" ref="commonI18NService"/>
+        <property name="configurationService" ref="configurationService"/>
+        <property name="userService" ref="userService"/>
+    </bean>
+
+    <alias name="defaultPaymentInfoService" alias="paymentInfoService"/>
+    <bean id="defaultPaymentInfoService" class="com.braintree.payment.info.service.impl.PaymentInfoServiceImpl" >
+        <property name="modelService" ref="modelService"/>
+        <property name="brainTreeCustomerAccountDao" ref="brainTreeCustomerAccountDao"/>
+        <property name="brainTreePaymentInfoDao" ref="brainTreePaymentInfoDao"/>
+        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+    </bean>
+
+    <alias name="defaultBrainTreePaymentInfoDao" alias="brainTreePaymentInfoDao"/>
+    <bean name="defaultBrainTreePaymentInfoDao" class="com.braintree.payment.info.dao.DefaultBrainTreePaymentInfoDao"
+          parent="abstractItemDao"/>
+
+    <alias alias="refundService" name="defaultBTRefundService"/>
+    <bean id="defaultBTRefundService" class="com.braintree.order.refund.DefaultBraintreeRefundService"
+          parent="defaultRefundService" scope="tenant">
+        <property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+        <property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+    </bean>
+
+    <alias alias="regionI18NService" name="defaultBraintreeRegionI18NService"/>
+    <bean id="defaultBraintreeRegionI18NService"
+          class="com.braintree.servicelayer.i18n.impl.DefaultBraintreeRegionI18NService">
+        <property name="commonI18NService" ref="commonI18NService"/>
+    </bean>
+
+    <alias alias="braintreePartialCaptureService" name="defaultBraintreePartialCaptureService"/>
+    <bean id="defaultBraintreePartialCaptureService"
+          class=" com.braintree.order.capture.partial.services.BraintreePartialCaptureServiceImpl">
+        <property name="partialOrderCalculationStrategy" ref="braintreePartialOrderCalculationStrategy"/>
+        <property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+        <property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+        <property name="brainTreePaymentTransactionService" ref="brainTreePaymentTransactionService"/>
+        <property name="modelService" ref="modelService"/>
+        <property name="brainTreeConfigService" ref="brainTreeConfigService"/>
+        <property name="orderCompleteProcessService" ref="braintreeOrderCompleteProcessService"/>
+    </bean>
+
+    <alias alias="braintreeSubmitForSettlementService" name="defaultBraintreeSubmitForSettlementService"/>
+    <bean id="defaultBraintreeSubmitForSettlementService"
+          class="com.braintree.order.submitForSettlement.service.impl.BraintreeSubmitForSettlementServiceImpl">
+        <property name="brainTreePaymentTransactionService" ref="brainTreePaymentTransactionService"/>
+        <property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+        <property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+        <property name="modelService" ref="modelService"/>
+    </bean>
+
+    <alias alias="braintreePartialOrderCalculationStrategy" name="defaultBraintreePartialOrderCalculationStrategy"/>
+    <bean id="defaultBraintreePartialOrderCalculationStrategy"
+          class="com.braintree.order.capture.partial.strategy.BraintreePartialOrderCalculationStrategyImpl">
+    </bean>
+
+    <alias alias="braintreeOrderCompleteProcessService" name="defaultBraintreeOrderCompleteProcessService"/>
+    <bean id="defaultBraintreeOrderCompleteProcessService"
+          class="com.braintree.order.capture.partial.process.BraintreeOrderCompleteProcessService">
+        <property name="configurationService" ref="configurationService"/>
+        <property name="businessProcessService" ref="businessProcessService"/>
+        <property name="modelService" ref="modelService"/>
+    </bean>
+
+    <alias alias="braintreePartialRefundOrderRecalculationStrategy" name="defaultBraintreePartialRefundOrderRecalculationStrategy"/>
+    <bean id="defaultBraintreePartialRefundOrderRecalculationStrategy"
+          class="com.braintree.order.refund.partial.strategy.impl.DefaultBraintreePartialRefundOrderRecalculationStrategy">
+        <property name="modelService" ref="modelService"/>
+        <property name="orderService" ref="orderService"/>
+    </bean>
+
+    <alias alias="braintreePartialRefundService" name="defaultBraintreePartialRefundService"/>
+    <bean id="defaultBraintreePartialRefundService"
+          class="com.braintree.order.refund.partial.services.impl.BraintreePartialRefundServiceImpl">
+        <property name="modelService" ref="modelService"/>
+        <property name="brainTreePaymentService" ref="brainTreePaymentService"/>
+        <property name="brainTreeTransactionService" ref="brainTreeTransactionService"/>
+        <property name="userService" ref="userService"/>
+        <property name="recalculationStrategy" ref="braintreePartialRefundOrderRecalculationStrategy"/>
+    </bean>
+
+    <bean id="brainTreePaymentTransactionService" class="com.braintree.transaction.service.impl.BrainTreePaymentTransactionServiceImpl">
+        <property name="flexibleSearchService" ref="flexibleSearchService"/>
+        <property name="businessProcessService" ref="businessProcessService"/>
+        <property name="orderCompleteProcessService" ref="braintreeOrderCompleteProcessService"/>
+        <property name="modelService" ref="modelService"/>
+    </bean>
+
+    <alias name="braintreeOrderRetrievalService" alias="orderRetrievalService"/>
+    <bean id="braintreeOrderRetrievalService" class="com.braintree.order.service.impl.OrderRetrievalServiceImpl">
+        <property name="sessionService" ref="sessionService"/>
+        <property name="searchRestrictionService" ref="searchRestrictionService"/>
+        <property name="brainTreePaymentTransactionService" ref="brainTreePaymentTransactionService"/>
+    </bean>
+
+    <alias name="braintreeCustomFieldsService" alias="customFieldsService"/>
+    <bean id="braintreeCustomFieldsService" class="com.braintree.customfield.service.impl.CustomFieldsServiceImpl">
+        <property name="configurationService" ref="configurationService"/>
+    </bean>
+
+    <alias alias="eventPublishingSubmitOrderStrategy" name="braintreeEventPublishingSubmitOrderStrategy" />
+    <bean id="braintreeEventPublishingSubmitOrderStrategy"
+          class="com.braintree.order.strategy.BraintreeEventPublishingSubmitOrderStrategy">
+        <property name="eventService" ref="eventService"/>
+        <property name="modelService" ref="modelService"/>
+    </bean>
+
+    <alias name="braintreeOrderThresholdSymptom" alias="orderThresholdSymptom"/>
+    <bean id="braintreeOrderThresholdSymptom"
+          class="com.braintree.fraud.symptom.impl.BraintreeOrderThresholdSymptom">
+        <property name="symptomName" value="Price threshold"/>
+        <property name="increment" value="50"/>
+        <property name="thresholdLimit" value="1000"/>
+        <property name="thresholdDelta" value="100"/>
+    </bean>
+
+    <bean name="braintreeLocalPaymentMethodsDao" class="com.braintree.payment.local.methods.dao.impl.BraintreeLocalPaymentMethodsDaoImpl"
+          parent="defaultCommerceCartDao">
+    </bean>
+
+    <bean id="braintreeLocalPaymentMethodsService" class="com.braintree.payment.local.methods.service.impl.BraintreeLocalLocalPaymentMethodsServiceImpl">
+        <property name="braintreeLocalPaymentMethodsDao" ref="braintreeLocalPaymentMethodsDao"/>
+    </bean>
+
+</beans>

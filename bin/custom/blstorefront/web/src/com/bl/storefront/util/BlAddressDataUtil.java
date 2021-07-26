@@ -5,8 +5,8 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +20,8 @@ public class BlAddressDataUtil extends AddressDataUtil {
     public AddressData convertToAddressData(final AddressForm addressForm)
     {
         final AddressData addressData = super.convertToAddressData(addressForm);
+        addressData.setBillingAddress(BooleanUtils.toBoolean(addressForm.getBillingAddress()));
+        addressData.setShippingAddress(BooleanUtils.toBoolean(addressForm.getShippingAddress()));
         fillExtendedAttributes(addressForm, addressData);
         return addressData;
     }
@@ -28,6 +30,7 @@ public class BlAddressDataUtil extends AddressDataUtil {
         if(addressForm instanceof BlAddressForm) {
             final BlAddressForm blAddressForm = (BlAddressForm) addressForm;
             addressData.setEmail(blAddressForm.getEmail());
+            addressData.setCompanyName(blAddressForm.getCompanyName());
             addressData.setAddressType(blAddressForm.getAddressType());
             addressData.setUpsStoreAddress(blAddressForm.isUpsStoreAddress());
             final java.lang.String openingDays = blAddressForm.getOpeningDaysDetails();
@@ -45,23 +48,27 @@ public class BlAddressDataUtil extends AddressDataUtil {
         }
     }
 
-    @Override
-    public void convertBasic(final AddressData source, final AddressForm target)
-    {
-        super.convertBasic(source, target);
-        fillExtendedAttributes(target, source);
+    /**
+     * This method was created to populate extended attribute of address data to address form.
+     * @param addressData
+     * @param addressForm
+     */
+    private void fillExtendedAttributesToAddressForm( final AddressData addressData,AddressForm addressForm) {
+        if(addressForm instanceof BlAddressForm) {
+            final BlAddressForm blAddressForm = (BlAddressForm) addressForm;
+            blAddressForm.setEmail(addressData.getEmail());
+            blAddressForm.setCompanyName(addressData.getCompanyName());
+            blAddressForm.setAddressType(addressData.getAddressType());
+            blAddressForm.setUpsStoreAddress(addressData.getUpsStoreAddress());
+        }
     }
+
 
     @Override
     public void convert(final AddressData source, final AddressForm target)
     {
         super.convert(source, target);
-        fillExtendedAttributes(target, source);
+       fillExtendedAttributesToAddressForm(source,target);
     }
 
-    @Override
-    public AddressData convertToVisibleAddressData(final AddressForm addressForm)
-    {
-        return super.convertToVisibleAddressData(addressForm);
-    }
 }

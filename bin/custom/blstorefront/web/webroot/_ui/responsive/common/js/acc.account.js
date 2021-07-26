@@ -8,11 +8,14 @@ ACC.account = {
 		/* This function is responsible for providing form object for the login popup*/
 		$(document).on("click", ".js-login-popup", function (e) {
 			e.preventDefault();
+			var serialClick = $(this).data('click');
 			$('#signIn').html("");
 			$.ajax({
 				url: $(this).data("link"),
 				success: function (result) {
 					$('#signIn').html(result);
+					$('#serialClick').val(serialClick);
+					$('#serialSignUp').attr("data-serial", serialClick);
 					setTimeout(function(){$("#signIn").modal('show');},500);
 				}
 			})
@@ -21,19 +24,17 @@ ACC.account = {
 		/*This function is responsible for providing form object for the sign up popup*/
 		$(document).on("click", ".js-signUp-popup", function (e) {
 			e.preventDefault();
+			var serialClick = $(this).data('serial');
 			$('#signUp').html("");
 			$.ajax({
 				url: $(this).data("link"),
 				success: function (result) {
 					$('#signUp').html(result);
+					$('#serialClickSignUP').val(serialClick);
+					$('#serialSignInInstead').attr("data-click", serialClick);
 					setTimeout(function(){$("#signUp").modal('show');},500)
 				}
 			})
-		});
-
-		$(document).on("click", ".js-forgot-password", function (e) {
-			e.preventDefault();
-					setTimeout(function(){$("#forgotPass").modal('show');},500)
 		});
 
 		/** Added for BL-31 to make validation for registration **/
@@ -74,7 +75,7 @@ ACC.account = {
 								if($("#errorMessages_sigin_errorbox").hasClass("d-none")){
 									$("#errorMessages_sigin_errorbox").removeClass("d-none");
 								}
-								$("#errorMessages_sigin_chkPwd").html("Your passwords did not match, please enter them again");
+								$("#errorMessages_sigin_chkPwd").html("Your passwords did not match, please enter them again.");
 								// BL-689: below line added
 								$("#errorMessages_sigin_chkPwd").removeClass("d-none");
 							}
@@ -84,10 +85,21 @@ ACC.account = {
 							}
 							// BL-689: below line added
 							$("#errorMessages_sigin_email").removeClass("d-none");
-							$("#errorMessages_sigin_email").html("Whoops, it looks like you’re already signed up with a BorrowLenses account");
+							$("#errorMessages_sigin_email").html("Whoops, it looks like you’re already signed up with a BorrowLenses account.");
 						} else {
+							
 							$("#errorMessages_sigin_errorbox").addClass("d-none");
-							location.reload();
+							var serialId = $('#signUppopup-validation').find('input[name="serialClickSignUP"]').val();
+							if(serialId == "" || serialId  == undefined)
+							{
+							window.mediator.publish('registerClick',{
+                   userId: $('#register-form-id').val()
+                 });
+								location.reload();
+							}else{
+								$("#doReload").val("true");
+								$('.' + serialId).click();
+							}	
 						}
 					},
 					error: function (e) {
@@ -130,7 +142,6 @@ ACC.account = {
 			}
 		});
 
-
 		$(document).on("click", ".js-login-popup-validation", function (e) {
 			e.preventDefault();
 			var formValues = $('#login-popup-validation').serialize();
@@ -144,18 +155,37 @@ ACC.account = {
 					 // This code added temporary to show the error message. Once we have the user story needs to change the code accordingly
 						if (response === 'login.error.account.not.found.title') {
 							$("#errorMessages_login").removeClass("d-none");
-							$("#errorMessages_login").html("Your Email or password was incorrect");
+							$("#errorMessages_login").html("Your Email or Password was incorrect");
 						} else {
-							location.reload();
+							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+							if(serialId == "" || serialId  == undefined)
+							{
+							 window.mediator.publish('loginClick',{
+                    userId: $('#j_username').val()
+                  });
+								location.reload();
+							}
+							
 						}
 					},
+					complete: function(){
+						var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
+						if(serialId == "" || serialId  == undefined)
+						{
+							/*do nothing*/
+						}else{
+							$("#doReload").val("true");
+							$('.' + serialId).click();
+							$("#signIn").hide();
+						}
+					},					
 					error: function (e) {
 						// do nothing
 					}
 				});
 			} else {
 				$("#errorMessages_login").removeClass("d-none");
-				$("#errorMessages_login").html("Your Email or password was incorrect");
+				$("#errorMessages_login").html("Your Email or Password was incorrect");
 			}
 		});
 

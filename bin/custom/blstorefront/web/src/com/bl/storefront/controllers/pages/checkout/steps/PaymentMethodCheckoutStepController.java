@@ -4,8 +4,18 @@
 package com.bl.storefront.controllers.pages.checkout.steps;
 
 
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.utils.BlRentalDateUtils;
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.customer.BlCustomerFacade;
+import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.logging.BlLogger;
+import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.bl.storefront.forms.GiftCardForm;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorservices.payment.constants.PaymentConstants;
 import de.hybris.platform.acceleratorservices.payment.data.PaymentData;
@@ -19,6 +29,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMe
 import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.PaymentDetailsForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
+import de.hybris.platform.acceleratorstorefrontcommons.forms.VoucherForm;
 import de.hybris.platform.acceleratorstorefrontcommons.util.AddressDataUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.cms2.model.pages.ContentPageModel;
@@ -28,8 +39,6 @@ import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commerceservices.enums.CountryType;
-import com.bl.storefront.controllers.ControllerConstants;
-
 import de.hybris.platform.servicelayer.session.SessionService;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,17 +46,21 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-
+import java.util.Objects;
 import javax.annotation.Resource;
 import javax.validation.Valid;
-
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,8 +83,14 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@Resource(name = "addressDataUtil")
 	private AddressDataUtil addressDataUtil;
 
+	@Resource(name = "customerFacade")
+	private BlCustomerFacade blCustomerFacade;
+
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
+
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
 
 	@ModelAttribute("billingCountries")
 	public Collection<CountryData> getBillingCountries()
@@ -88,7 +107,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("months")
 	public List<SelectOption> getMonths()
 	{
-		final List<SelectOption> months = new ArrayList<SelectOption>();
+		final List<SelectOption> months = new ArrayList<>();
 
 		months.add(new SelectOption("1", "01"));
 		months.add(new SelectOption("2", "02"));
@@ -109,7 +128,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("startYears")
 	public List<SelectOption> getStartYears()
 	{
-		final List<SelectOption> startYears = new ArrayList<SelectOption>();
+		final List<SelectOption> startYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
 		for (int i = calender.get(Calendar.YEAR); i > calender.get(Calendar.YEAR) - 6; i--)
@@ -123,7 +142,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@ModelAttribute("expiryYears")
 	public List<SelectOption> getExpiryYears()
 	{
-		final List<SelectOption> expiryYears = new ArrayList<SelectOption>();
+		final List<SelectOption> expiryYears = new ArrayList<>();
 		final Calendar calender = new GregorianCalendar();
 
 		for (int i = calender.get(Calendar.YEAR); i < calender.get(Calendar.YEAR) + 11; i++)
@@ -134,6 +153,13 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		return expiryYears;
 	}
 
+
+	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
+	private RentalDateDto getRentalsDuration()
+	{
+		return BlRentalDateUtils.getRentalsDuration();
+	}
+
 	@Override
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	@RequireHardLogIn
@@ -141,9 +167,12 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
+		showMessageForRemovedGiftCard(model);
 		getCheckoutFacade().setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
 
+		model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		model.addAttribute(BlControllerConstants.GIFT_CARD_FORM, new GiftCardForm());
 		// Use the checkout PCI strategy for getting the URL for creating new subscriptions.
 		final CheckoutPciOptionEnum subscriptionPciOption = getCheckoutFlowFacade().getSubscriptionPciOption();
 		setCheckoutStepLinksForModel(model, getCheckoutStep());
@@ -175,6 +204,19 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			try
 			{
 				setupSilentOrderPostPage(sopPaymentDetailsForm, model);
+				final CartData cartData = getCheckoutFlowFacade().getCheckoutCart();
+        if(Objects.nonNull(cartData) && StringUtils.isNotEmpty(cartData.getPoNumber())){
+          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NUMBER, cartData.getPoNumber());
+          model.addAttribute(BlControllerConstants.USER_SELECTED_PO_NOTES, cartData.getPoNotes());
+        }
+				if(Objects.nonNull(cartData) && Objects.nonNull(cartData.getPaymentInfo()))
+				{
+					final CCPaymentInfoData paymentInfo = cartData.getPaymentInfo();
+					setPaymentDetailForPage(paymentInfo, model);					
+				}
+				// adding model attribute to disable other payment excluding Credit card if Gift card is applied
+				disableOtherPayments(cartData, model);
+				model.addAttribute(BlControllerConstants.DEFAULT_BILLING_ADDRESS, getBlCustomerFacade().getDefaultBillingAddress());
 				return ControllerConstants.Views.Pages.MultiStepCheckout.SilentOrderPostPage;
 			}
 			catch (final Exception e)
@@ -193,10 +235,65 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 		final CartData cartData = getCheckoutFacade().getCheckoutCart();
 		model.addAttribute(CART_DATA_ATTR, cartData);
-		if(Boolean.TRUE.equals(cartData.getIsRentalCart())){
+
+		if (Boolean.TRUE.equals(cartData.getIsRentalCart()))
+		{
 			model.addAttribute(BlCoreConstants.BL_PAGE_TYPE, BlCoreConstants.RENTAL_SUMMARY_DATE);
 		}
 		return ControllerConstants.Views.Pages.MultiStepCheckout.AddPaymentMethodPage;
+	}
+	
+	/**
+	 * Disable other payments excluding Credit Card.
+	 *
+	 * @param cart the cart
+	 * @param model the model
+	 */
+	private void disableOtherPayments(final CartData cart, final Model model){
+		model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.FALSE);
+		if(Objects.nonNull(cart) && CollectionUtils.isNotEmpty(cart.getGiftCardData()))
+		{
+			model.addAttribute(BlControllerConstants.DISABLE_PAYMENT, Boolean.TRUE);
+		}		
+	}
+	
+	/**
+	 * Sets the payment detail for payment page if already selected.
+	 *
+	 * @param paymentInfo the payment info
+	 * @param model the model
+	 */
+	private void setPaymentDetailForPage(final CCPaymentInfoData paymentInfo, final Model model)
+	{
+		if(BlControllerConstants.CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYMENT_INFO, paymentInfo);
+			model.addAttribute(BlControllerConstants.SELECTED_PAYMENT_METHOD_NONCE, paymentInfo.getPaymentMethodNonce());
+			model.addAttribute(BlControllerConstants.PAYMENT_INFO_BILLING_ADDRESS, paymentInfo.getBillingAddress());
+			model.addAttribute(BlControllerConstants.IS_SAVED_CARD_ORDER, Boolean.TRUE);
+		}
+		else if(BlControllerConstants.PAYPAL_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+		{
+			model.addAttribute(BlControllerConstants.USER_SELECTED_PAYPAL_PAYMENT_INFO, paymentInfo);
+		}
+	}
+	
+	/**
+	 * If gift card removed from cart then it add message to model attribute for removed gift card.
+	 * @param model
+	 */
+	private void showMessageForRemovedGiftCard(final Model model) {
+		final List<String> removedGiftCardCodeList = getCheckoutFacade().recalculateCartForGiftCard();
+		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
+			final Locale locale = getI18nService().getCurrentLocale();
+			List<String> removeGiftCardMessage = new ArrayList<>();
+			for (String gcCode : removedGiftCardCodeList) {
+				removeGiftCardMessage
+						.add(getMessageSource().getMessage("text.gift.cart.insufficient.balance", new Object[]
+								{gcCode}, locale));
+			}
+			model.addAttribute(BlControllerConstants.GIFT_CARD_REMOVE, removeGiftCardMessage);
+		}
 	}
 
 	@RequestMapping(value =
@@ -384,12 +481,17 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 		model.addAttribute("sopPaymentDetailsForm", sopPaymentDetailsForm);
 		model.addAttribute("paymentInfos", getUserFacade().getCCPaymentInfos(true));
 		model.addAttribute("sopCardTypes", getSopCardTypes());
-		if (StringUtils.isNotBlank(sopPaymentDetailsForm.getBillTo_country()))
+		model.addAttribute("billingAddresses", getBlCustomerFacade().getAllVisibleBillingAddressesOnUser());
+		if (MapUtils.isNotEmpty(sopPaymentDetailsForm.getParameters())
+				&& sopPaymentDetailsForm.getParameters().containsKey(BlControllerConstants.BILL_TO_COUNTRY)
+				&& StringUtils.isNotBlank(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)))
 		{
-			model.addAttribute("regions", getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getBillTo_country()));
+			model.addAttribute("regions",
+					getI18NFacade().getRegionsForCountryIso(sopPaymentDetailsForm.getParameters().get(BlControllerConstants.BILL_TO_COUNTRY)));
 			model.addAttribute("country", sopPaymentDetailsForm.getBillTo_country());
 		}
-		if(sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null) {
+		if (sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG) != null)
+		{
 			model.addAttribute(BlCoreConstants.COUPON_APPLIED_MSG, sessionService.getAttribute(BlCoreConstants.COUPON_APPLIED_MSG));
 			sessionService.removeAttribute(BlCoreConstants.COUPON_APPLIED_MSG);
 		}
@@ -397,7 +499,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 
 	protected Collection<CardTypeData> getSopCardTypes()
 	{
-		final Collection<CardTypeData> sopCardTypes = new ArrayList<CardTypeData>();
+		final Collection<CardTypeData> sopCardTypes = new ArrayList<>();
 
 		final List<CardTypeData> supportedCardTypes = getCheckoutFacade().getSupportedCardTypes();
 		for (final CardTypeData supportedCardType : supportedCardTypes)
@@ -410,6 +512,32 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 			}
 		}
 		return sopCardTypes;
+	}
+
+  /**
+   * It saves PO payment details.
+   * @param poNumber
+   * @param poNotes
+   * @param model
+   * @param redirectAttributes
+   * @return
+   */
+	@PostMapping(value = "/reviewSavePoPayment")
+	@RequireHardLogIn
+	public String savePoPaymentMethod(@RequestParam("poNumber") final String poNumber, @RequestParam("poNotes") final String poNotes,
+      final Model model, final RedirectAttributes redirectAttributes){
+		try {
+			if(StringUtils.isNotBlank(poNumber)) {
+				blCartFacade.savePoPaymentDetails(poNumber, poNotes);
+			}
+		} catch (final Exception exception) {
+			BlLogger.logMessage(LOGGER, Level.ERROR,
+					"Error occurred while setting selected PO payment details", exception);
+			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
+					getLocalizedString("braintree.billing.general.error"), null);
+			return getCheckoutStep().currentStep();
+		}
+		return getCheckoutStep().nextStep();
 	}
 
 	protected CheckoutStep getCheckoutStep()
@@ -428,12 +556,30 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	}
 
 	@Override
-	public BlCheckoutFacade getCheckoutFacade() {
+	public BlCheckoutFacade getCheckoutFacade()
+	{
 		return checkoutFacade;
 	}
 
-	public void setCheckoutFacade(BlCheckoutFacade checkoutFacade) {
+	public void setCheckoutFacade(final BlCheckoutFacade checkoutFacade)
+	{
 		this.checkoutFacade = checkoutFacade;
 	}
 
+	/**
+	 * @return the blCustomerFacade
+	 */
+	public BlCustomerFacade getBlCustomerFacade()
+	{
+		return blCustomerFacade;
+	}
+
+	/**
+	 * @param blCustomerFacade
+	 *           the blCustomerFacade to set
+	 */
+	public void setBlCustomerFacade(final BlCustomerFacade blCustomerFacade)
+	{
+		this.blCustomerFacade = blCustomerFacade;
+	}
 }

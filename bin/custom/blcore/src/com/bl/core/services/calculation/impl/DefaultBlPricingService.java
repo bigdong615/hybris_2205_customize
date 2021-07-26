@@ -9,6 +9,7 @@ import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlPricingLogicModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.services.calculation.BlPricingService;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.product.UnitService;
@@ -17,6 +18,7 @@ import de.hybris.platform.servicelayer.internal.dao.GenericDao;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * This class has implementation of methods related to duration prices
@@ -33,6 +37,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 public class DefaultBlPricingService implements BlPricingService {
 
+  private static final Logger LOG = Logger.getLogger(DefaultBlPricingService.class);
   private GenericDao<BlPricingLogicModel> blPricingGenericDao;
   private GenericDao<PriceRowModel> priceRowGenericDao;
   private ModelService modelService;
@@ -169,7 +174,7 @@ public class DefaultBlPricingService implements BlPricingService {
         .getEnumerationValue(DurationEnum.class, duration);
     final Map<String, Object> queryParams = new HashMap<>();
     queryParams.put(PriceRowModel.DURATION, durationEnum);
-    queryParams.put(PriceRowModel.PRODUCT, blProductModel);
+    queryParams.put(PriceRowModel.PRODUCT, blProductModel); // NOSONAR
     List<PriceRowModel> resultSet = getPriceRowGenericDao().find(queryParams);
     return CollectionUtils.isNotEmpty(resultSet) ? resultSet.get(0) : null;
   }
@@ -194,18 +199,18 @@ public class DefaultBlPricingService implements BlPricingService {
    */
   private int getPricePercentageByRating(final Double conditionRatingOverallScore) {
     int pricePercent = 0;
-    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_FOUR) {
+    if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_HIGH) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovefour.price.percentage"));
-    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_THREE 
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_FOUR) {
+    } else if (conditionRatingOverallScore > BlCoreConstants.CONDITION_RATING_MEDIUM
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_HIGH) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.abovethree.price.percentage"));
-    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_TWO 
-   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_THREE) {
+    } else if (conditionRatingOverallScore >= BlCoreConstants.CONDITION_RATING_LOW
+   		 && conditionRatingOverallScore <= BlCoreConstants.CONDITION_RATING_MEDIUM) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowthree.price.percentage"));
-    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_TWO 
+    } else if (conditionRatingOverallScore < BlCoreConstants.CONDITION_RATING_LOW
    		 && conditionRatingOverallScore > 0) {
       pricePercent = Integer
           .parseInt(Config.getParameter("conditionrating.belowtwo.price.percentage"));
@@ -213,6 +218,38 @@ public class DefaultBlPricingService implements BlPricingService {
     return pricePercent;
   }
 
+  /**
+   * calculate conditional rating on the basis of cosmetic and functional rating.
+   * @param cosmeticRating
+   * @param functionalRating
+   * @return
+   */
+  @Override
+  public Double getCalculatedConditionalRating(final float cosmeticRating, final float functionalRating){
+    final float calculatedCosmeticValue = cosmeticRating * Integer.parseInt(Config.getParameter("conditioning.cosmetic.rating.percentage"))/ BlCoreConstants.DIVIDE_BY_HUNDRED;
+    final float calculatedFunctionalValue = functionalRating * Integer.parseInt(Config.getParameter("conditioning.functional.rating.percentage"))/BlCoreConstants.DIVIDE_BY_HUNDRED;
+    BigDecimal bigDecimal = new BigDecimal(Float.toString(calculatedCosmeticValue+calculatedFunctionalValue));
+    bigDecimal = bigDecimal.setScale(1, RoundingMode.HALF_DOWN);
+    return bigDecimal.doubleValue();
+  }
+
+  /**
+   * Get the min promotion price for serial
+   * @param serialProductPrice
+   * @param ugPromotionDiscount
+   * @return
+   */
+  @Override
+  public BigDecimal getSerialPromotionPrice(final BigDecimal serialProductPrice, final Integer ugPromotionDiscount) {
+
+    if (serialProductPrice != null && serialProductPrice.compareTo(BigDecimal.ZERO) > 0)
+    {
+      final BigDecimal serialPromotionPrice = serialProductPrice.subtract(serialProductPrice.multiply(new BigDecimal(ugPromotionDiscount)).divide(new BigDecimal(100))).setScale(BlCoreConstants.DECIMAL_PRECISION, BlCoreConstants.ROUNDING_MODE);
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,"Promotion price for serial product is : {}", serialPromotionPrice);
+      return serialPromotionPrice;
+    }
+    return  BigDecimal.ZERO;
+  }
 
   public ModelService getModelService() {
     return modelService;
@@ -263,4 +300,5 @@ public class DefaultBlPricingService implements BlPricingService {
       GenericDao<PriceRowModel> priceRowGenericDao) {
     this.priceRowGenericDao = priceRowGenericDao;
   }
+
 }

@@ -79,7 +79,8 @@
     <extension name='cmsfacades'/>
 
     <!-- Extension to enable customers to receive back-in-stock notifications for their interested products -->
-    <extension name='stocknotificationaddon'/>
+    <extension name='blstocknotificationaddon'/>
+    <extension name='customerinterestsaddon' />
 
     <!-- Extension to enable to support Groovy Programming Language -->
     <extension name='groovynature'/>
@@ -138,6 +139,7 @@
 
     <!-- BL custom extensions -->
     <extension name='blassistedservicestorefront'/>
+    <extension name='assistedservicefacades'/>
     <extension name='blbackoffice'/>
     <extension name='blpcmbackoffice'/>
     <extension name='blconfigurablebundleaddon'/>
@@ -155,6 +157,16 @@
     <extension name='blintegration'/>
 	<extension name='blcustomersupportbackoffice'/>
 	<extension name='blwarehousingbackoffice'/>
+
+	
+	<extension name='braintree' />
+      <extension name='braintreeacceleratorfacades' />
+      <extension name='braintreeaddon' />
+      <!-- <extension name='braintreecscockpit' /> -->
+      <extension name='braintreecustomersupportbackoffice' />
+      <extension name='braintreefacades' />
+      <extension name='braintreehac' />
+      <extension name='tealiumiqaddon' />
 
   </extensions>
 </hybrisconfig>

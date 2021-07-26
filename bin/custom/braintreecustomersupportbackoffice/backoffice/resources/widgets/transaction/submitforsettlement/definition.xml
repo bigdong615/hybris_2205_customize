@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<widget-definition id="com.braintree.customersupportbackoffice.widgets.submitforsettlementtransaction"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd">
+
+    <name>Submit For Settlement</name>
+    <description>Submit For Settlement widget.</description>
+    <defaultTitle>Submit For Settlement</defaultTitle>
+    <author>braintree</author>
+    <version>0.1</version>
+
+    <sockets>
+        <input type="com.braintree.model.BrainTreeTransactionDetailModel" id="inputObject"/>
+        <output type="java.lang.String" id="confirm"/>
+    </sockets>
+
+    <keywords>
+        <keyword>Submit For Settlement</keyword>
+    </keywords>
+
+    <controller class="com.braintree.customersupportbackoffice.widgets.transaction.submitforsettlement.BrainTreeSubmitForSettlementTransactionController"/>
+
+    <view src="submitforsettlementtransaction.zul"/>
+
+</widget-definition>

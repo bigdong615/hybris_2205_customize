@@ -21,13 +21,14 @@
           inputCSS="form-control mb-3" placeholder="Email"/>
         <formElement:formPasswordBox idKey="j_password"
           path="j_password" inputCSS="form-control mb-2"  placeholder="Password" />
+           <input type="hidden" id="serialClick" name="serialClick" value=""/>
         <input type="checkbox" name="remember-me" id="_spring_security_remember_me">
         <label for="_spring_security_remember_me">
           <small>
             <spring:theme code="login.rememberme"/>
           </small>
         </label>
-        <a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password float-end">
+        <a href="#forgotPass" data-bs-dismiss="modal" class="js-forgot-password float-end" data-link="<c:url value='/login/pw/request'/>">
           <small>
             <spring:theme code="login.link.forgottenPwd"/>
           </small>
@@ -46,7 +47,7 @@
         </c:if>
         <div class ="notification notification-error d-none" id="errorMessages_login"> </div>
         <p class="body14 text-center mb-0 mt-4">
-          <a class="js-signUp-popup" data-link="<c:url value='/login/register'/>"
+          <a class="js-signUp-popup" id="serialSignUp" data-serial="" data-link="<c:url value='/login/register'/>"
             href="#signUp" data-bs-dismiss="modal">
             <spring:theme code="register.new.customer"/>
           </a>
