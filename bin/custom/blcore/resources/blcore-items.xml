@@ -972,6 +972,18 @@
                      <modifiers read="true" write="true" optional="false" initial="true"/>
                      <defaultvalue>Integer.valueOf(0)</defaultvalue>
                    </attribute>
+                   <attribute qualifier="retailGear" type="java.lang.Boolean">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" search="true" optional="false"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>Determines the product is new gear</description>
+                   </attribute>
+                   <attribute qualifier="retailGearPrice" type="java.math.BigDecimal">
+                     <persistence type="property" />
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>java.math.BigDecimal.ZERO</defaultvalue>
+                     <description>New Gear Price field</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -1233,7 +1245,7 @@
               </attribute>
               <attribute qualifier="name" type="java.lang.String" >
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="true" unique="true"/>
+                <modifiers read="true" write="true" optional="true"/>
                 <description>The name of the option</description>
               </attribute>
               <attribute qualifier="description" type="java.lang.String" >
@@ -1250,13 +1262,13 @@
               <attribute qualifier="altPrice" type="java.lang.Double">
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="true" unique="true"/>
+                <modifiers read="true" write="true" optional="true" />
                 <description>The unique identifier on the options</description>
               </attribute>
               <attribute qualifier="unitPrice" type="java.lang.Double">
                 <defaultvalue>Double.valueOf(0.0D)</defaultvalue>
                 <persistence type="property"/>
-                <modifiers read="true" write="true" optional="true" unique="true"/>
+                <modifiers read="true" write="true" optional="false" />
                 <description>The unique identifier on the options</description>
               </attribute>
               <attribute qualifier="defaultOptionId" type="java.lang.String">
@@ -1759,6 +1771,11 @@
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true"/>
 						<description>Serial products for the entry</description>
+					</attribute>
+          <attribute qualifier="option" type="BlOptions">
+						<persistence type="property"/>
+						<modifiers read="true" write="true" optional="true"/>
+						<description>Option Associated to the Product</description>
 					</attribute>
 				</attributes>
          	</itemtype>

@@ -4,823 +4,554 @@
 # ImpEx for Importing Products
 #% impex.info("=============================== Importing content from BLInitialData sampledata/productCatalogs options.impex =========================");
 
-$productCatalog=blProductCatalog
-$productCatalogName=BL Product Catalog
-$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
-$superCategories=supercategories(code, $catalogVersion)
-$blProduct=blProduct(productId,$catalogVersion)
-$approved=approvalstatus(code)[default='approved']
+#Main Options
+INSERT_UPDATE BlOptions;optionId[unique=true];code[unique=true];name;description;active[default=true];optionType(code);unitCost;unitPrice;altPrice;weight;smallImage;largeImage;defaultOptionId;required[default=true]
+                       ;232;Shirt_size;Size;;true;EXPANDED;0;0;0;0;;;;true
+                       ;252;honeycomb;Honeycomb grid;;true;EXPANDED;0;0;0;0;;;1466;true
+                       ;417;redrock_micro_ring;Additional Focus Rings;;true;EXPANDED;0;0;2242;0;;;14413;false
+                       ;424;Hoodman_HoodLoupe;Hoodman HoodLoupe;This is an optional piece that can be included with your rental should you want one. Manufacturer site can be found <a href="http://www.hoodmanusa.com/prodinfo.asp?number=H-LCKIT">here</a>.;false;EXPANDED;0;0;2251;0;;;2251;false
+                       ;444;CLONED-redrock_micro_ring;Additional Focus Rings;;true;EXPANDED;0;0;2334;0;;;14442;false
+                       ;507;CLONED-honeycomb;Honeycomb grid;;true;EXPANDED;0;0;0;0;;;;true
+                       ;1056;eye_piece;Sports Shield Eyepiece;;true;EXPANDED;0;0;0;0;;;;true
+                       ;1391;shirt;shirt;;true;EXPANDED;0;0;0;0;;;;true
+                       ;1826;CLONED-redrock_micro_ring;Additional Focus Rings;;true;EXPANDED;0;0;2242;0;;;9648;false
+                       ;2008;Giottos_Rocket_Air_Blower_Large;Giottos Rocket Air Blower;;false;EXPANDED;0;13;0;0;0;;;;true
+                       ;2248;battery_tray;Battery Tray;;false;EXPANDED;0;0;0;0;;;19854;false
+                       ;2279;A99_Hotshoe_adapter;Sony A99 Hotshoe Adapter;;true;EXPANDED;0;0;0;0;;;11787;true
+                       ;2284;Pearstone-Duo-Battery-Charger-for-Canon-LP-E6;Pearstone Duo Battery Charger for Canon LP-E6;;false;EXPANDED;0;0;0;0;;;;false
+                       ;2400;Sekonic-Prodigi-Color-C500R-Color-Meter-with-Built-in-Wireless-Triggering-Module;Sekonic Prodigi Color C-500R Color Meter with Built-in Wireless Triggering Module;;false;COMPACT;0;0;0;0;;;;true
+                       ;2532;flash-cable;Flash Cable;;true;EXPANDED;0;0;0;0;;;14451;true
+                       ;2568;size-shirt;Select Shirt Size;;true;EXPANDED;0;0;0;0;;;14446;false
+                       ;2590;flash-foot;Flash foot;;false;EXPANDED;0;0;0;0;;;13270;false
+                       ;2742;CLONED-flash-cable;Flash Cable;;true;EXPANDED;0;0;0;0;;;14450;true
+                       ;2770;surfboard-mount;Surfboard Mounts;;true;EXPANDED;0;0;0;0;;;14097;false
+                       ;3213;CLONED-CLONED-redrock_micro_ring;Additional Focus Rings;;false;EXPANDED;0;0;2334;0;;;16328;false
+                       ;3238;CLONED-flash-cable;Flash Cable;;false;EXPANDED;0;0;0;0;;;16451;true
+                       ;3263;gopro_sticky_mount;Additional Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;3406;Sync_Cable_Length;Sync Cable Length;;true;EXPANDED;0;0;0;0;;;17323;true
+                       ;3441;WEAPON_RED_mount;WEAPON RED Mount;;true;EXPANDED;0;0;0;0;;;17518;true
+                       ;3796;Amira_mount;Amira Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;3810;CLONED-gopro_sticky_mount;Additional Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;3840;Freefly-MIMIC-Insurance;Freefly MIMIC Insurance;;true;EXPANDED;0;0;0;0;;;19379;true
+                       ;3882;CLONED-gopro_sticky_mount;Additional Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;4090;SCARLET_RED_mount;WEAPON RED Mount;;true;EXPANDED;0;0;0;0;;;22598;true
+                       ;4133;Weapon_RED_mount;WEAPON RED Mount;;true;EXPANDED;0;0;0;0;;;22826;true
+                       ;4149;tungsten-gel;Westcott Ice Light Tungsten Gel;;true;COMPACT;0;0;0;0;;;22895;true
+                       ;4238;CLONED-redrock_micro_ring;Additional Focus Rings;;true;EXPANDED;0;0;2242;0;;;23325;false
+                       ;4275;varicam_mount;Varicam Mount;;true;EXPANDED;0;0;0;0;;;23509;true
+                       ;4300;600EX-IIRT-Flash-Foot;Flash foot;;false;EXPANDED;0;0;0;0;;;23634;false
+                       ;4309;RED-WEAPON-8K;WEAPON RED Mount;;true;EXPANDED;0;0;0;0;;;23679;true
+                       ;4335;alexa_mount;Alexa Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;4345;64GB-SD-2000x;64GB 2000x UHS-II SD;;false;EXPANDED;0;0;0;0;;;;true
+                       ;4405;CLONED-gopro_sticky_mount;Additional Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;4415;RED-EPIC-W-8K;WEAPON RED Mount;;true;EXPANDED;0;0;0;0;;;24218;true
+                       ;4517;A99II_Hotshoe_adapter;Sony A99 Hotshoe Adapter;;true;EXPANDED;0;0;0;0;;;24729;true
+                       ;4538;TEST-flash-cable;Flash Cable;;true;EXPANDED;0;0;0;0;;;24832;true
+                       ;5043;bnc_converter_cable;GH5S BNC Conversion Cable;;true;EXPANDED;0;0;0;0;;;;true
+                       ;5050;Canon-Speedlite-430EX-IIIRT-Flash-Foot;Flash foot;;false;EXPANDED;0;0;0;0;;;27438;false
+                       ;5144;RED-EPIC-W-5K-Gemini-Mount;WEAPON RED Mount;;true;EXPANDED;0;0;0;0;;;29813;true
+                       ;5159;fusion-mount;Fusion Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;5436;CLONED-flash-foot;Flash foot;;false;EXPANDED;0;0;0;0;;;31125;false
+                       ;5558;s1h_bnc_converter_cable;S1H BNC Conversion Cable;;true;EXPANDED;0;0;0;0;;;;true
+                       ;5679;Osmo-Action-Sticky-Mount;Additional Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;5957;GoPro-HERO8-Black-Camera;Additional Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;5960;GoPro-MAX-360-Camera-Mount;MAX Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;6221;usb_c_audio_adapter;USB-C Audio Adapter;;true;EXPANDED;0;0;0;0;;;;true
+                       ;6242;Self_Capture_Kit_Ordered;Self Capture Kit Ordered;;false;EXPANDED;0;500;0;0;;;;false
+                       ;6378;GoPro-HERO9-Black-Camera;Additional Sticky Mount;;true;EXPANDED;0;0;0;0;;;;true
+                       ;6410;URSA-Mini-Pro-12K-Mount;URSA Mini Pro 12K Mount;;true;EXPANDED;0;0;0;0;;;;true
 
-INSERT_UPDATE BlOptions;optionId[unique=true];code;name;description;active[default=true];optionType(code);unitCost;unitPrice;altPrice;weight;smallImage;largeImage;defaultOptionId;required[default=true]
-                       ;2770;surfboard-mount;Surfboard Mounts;;TRUE;EXPANDED;0;0;0;0;;;14097;FALSE
-                       ;3263;gopro_sticky_mount;Additional Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;3441;WEAPON_RED_mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;17518;TRUE
-                       ;3796;Amira_mount;Amira Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;4090;SCARLET_RED_mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;22598;TRUE
-                       ;4094;STUDIO_SCARLET_RED_mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;22617;TRUE
-                       ;4275;varicam_mount;Varicam Mount;;TRUE;EXPANDED;0;0;0;0;;;23509;TRUE
-                       ;4335;alexa_mount;Alexa Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;5159;fusion-mount;Fusion Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;5407;RED-MONSTRO-8K-Mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;30963;TRUE
-                       ;5679;Osmo-Action-Sticky-Mount;Additional Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;5960;GoPro-MAX-360-Camera-Mount;MAX Sticky Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;6410;URSA-Mini-Pro-12K-Mount;URSA Mini Pro 12K Mount;;TRUE;EXPANDED;0;0;0;0;;;0;TRUE
-                       ;5144;RED-EPIC-W-5K-Gemini-Mount;WEAPON RED Mount;;TRUE;EXPANDED;0;0;0;0;;;29813;TRUE
-;2776	             ;128-memory-card	                                                                ;128GB Memory Card	                    ;;	TRUE	;EXPANDED	    ;0  ;0  ;0      ;0  ;;;0        ;TRUE
-;4345	             ;64GB-SD-2000x	                                                                    ;64GB 2000x UHS-II SD	                ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;417	                 ;redrock_micro_ring	                                                            ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2242	;0	;;;14413	;FALSE
-;444	                 ;CLONED-redrock_micro_ring	                                                        ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2334	;0	;;;14442	;FALSE
-;1826	             ;CLONED-redrock_micro_ring	                                                        ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2242	;0	;;;9648	    ;FALSE
-;3213	             ;CLONED-CLONED-redrock_micro_ring	                                                ;Additional Focus Rings	                ;;	FALSE	;EXPANDED	    ;0	;0	;2334	;0	;;;16328	;FALSE
-;4238	             ;CLONED-redrock_micro_ring	                                                        ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2242	;0	;;;23325	;FALSE
-;4799	             ;CLONED-redrock_micro_ring	                                                        ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2242	;0	;;;26162	;FALSE
-;6338	             ;CLONED-CLONED-redrock_micro_ring	                                                ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2242	;0	;;;39976	;FALSE
-;6355	             ;CLONED-redrock_micro_ring	                                                        ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2242	;0	;;;40071	;FALSE
-;6374	             ;CLONED-redrock_micro_ring	                                                        ;Additional Focus Rings	                ;;	TRUE	;EXPANDED	    ;0	;0	;2242	;0	;;;40178	;FALSE
-;448	                 ;CLONED-redrock_micro_ring	                                                        ;Additional Redrock Micro focus ring	;;	TRUE	;EXPANDED	    ;0	;0	;2349	;0	;;;2349	    ;FALSE
-;474	                 ;CLONED-redrock_micro_ring	                                                        ;Additional Redrock Micro focus ring	;;	TRUE	;EXPANDED	    ;0	;0	;2492	;0	;;;2492	    ;FALSE
-;625	                 ;CLONED-CLONED-redrock_micro_ring	                                                ;Additional Redrock Micro focus ring	;;	TRUE	;EXPANDED	    ;0	;0	;3146	;0	;;;3146	    ;FALSE
-;1167	             ;CLONED-CLONED-redrock_micro_ring	                                                ;Additional Redrock Micro focus ring	;;	TRUE	;EXPANDED	    ;0	;0	;2334	;0	;;;6503	    ;FALSE
-;1328	             ;Redrock_Mattebox_Bundleredrock_micro_ring	                                        ;Additional Redrock Micro focus ring	;;	TRUE	;EXPANDED	    ;0	;0	;2334	;0	;;;7243	    ;FALSE
-;3810	             ;CLONED-gopro_sticky_mount	                                                        ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;3882	             ;CLONED-gopro_sticky_mount	                                                        ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;3984	             ;CLONED-gopro_sticky_mount	                                                        ;Additional Sticky Mount	            ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;4265	             ;CLONED-gopro_sticky_mount	                                                        ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;4297	             ;CLONED-gopro_sticky_mount	                                                        ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;4405	             ;CLONED-gopro_sticky_mount	                                                        ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;4631	             ;CLONED-CLONED-gopro_sticky_mount	                                                ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;4954	             ;GoPro-HERO6-Black-Camera-Sticky-Mount	                                            ;Additional Sticky Mount	            ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;5398	             ;GoPro-HERO7-Black-Camera-Sticky-Mount	                                            ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;5957	             ;GoPro-HERO8-Black-Camera	                                                        ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;6378	             ;GoPro-HERO9-Black-Camera	                                                        ;Additional Sticky Mount	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;2248	             ;battery_tray	                                                                    ;Battery Tray	                        ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;19854	;FALSE
-;2985	             ;CLONED-battery_tray	                                                            ;Battery Tray	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;15080	;TRUE
-;3607	             ;CLONED-battery_tray	                                                            ;Battery Tray	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;18332	;TRUE
-;4213	             ;CLONED-battery_tray	                                                            ;Battery Tray	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;23203	;TRUE
-;4366	             ;CLONED-battery_tray	                                                            ;Battery Tray	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;23957	;TRUE
-;4388	             ;CLONED-battery_tray	                                                            ;Battery Tray	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;24079	;TRUE
-;6123	             ;CLONED-battery_tray	                                                            ;Battery Tray	                        ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;38800	;FALSE
-;3898	             ;BL-Lens-Cloth-FS	                                                                ;BL Lens Cloth	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;3899	             ;BL-Mug-FS	                                                                        ;BL Mug	                                ;;    TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;4037	             ;CLONED-CLONED-t-shirt3                                                            ;BL T-Shirt: Classic White	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;4036	             ;CLONED-t-shirt3	                                                                ;BL T-Shirt: Colorful Cameras	        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;2559	             ;BL-tshirts	                                                                    ;BL T-shirts	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;14445    ;	TRUE
-;2560	             ;t-shirt2	                                                                        ;Black (Checking Out My Glass)	        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;2315	             ;t-shirt	                                                                        ;Black (Rent.Shoot.Love.Repeat)	        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;2842	             ;CLONED-t-shirt	                                                                ;Black (Rent.Shoot.Love.Repeat)	        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;FALSE
-;3461	             ;camera_control_cable	                                                            ;Camera Control Cable                   ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;744	                 ;GiftCertificateEmail	                                                            ;Email Code to	                        ;;	TRUE	;COMPACTINPUT	;0	;0	;0	    ;0	;;;0	    ;FALSE
-;372	                 ;expedited	                                                                        ;Expedited	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;0	    ;TRUE
-;2532	             ;flash-cable	                                                                    ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;14451	;TRUE
-;2742	             ;CLONED-flash-cable	                                                            ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;14450	;TRUE
-;3238	             ;CLONED-flash-cable	                                                            ;Flash Cable	                        ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;16451	;TRUE
-;4538	             ;TEST-flash-cable	                                                                ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;24832	;TRUE
-;6158	             ;CLONED-flash-cable	                                                            ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;38989	;TRUE
-;6161	             ;CLONED-flash-cable	                                                            ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;39004	;TRUE
-;6174	             ;CLONED-flash-cable	                                                            ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;39074	;TRUE
-;6179	             ;CLONED-flash-cable	                                                            ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;39100	;TRUE
-;6182	             ;CLONED-flash-cable	                                                            ;Flash Cable	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;39115	;TRUE
-;2590	             ;flash-foot	                                                                    ;Flash foot	                            ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;13270	;FALSE
-;4300	             ;600EX-IIRT-Flash-Foot	                                                            ;Flash foot	                            ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;23634	;FALSE
-;4850	             ;CLONED-flash-foot	                                                                ;Flash foot	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;26413	;FALSE
-;5050	             ;Canon-Speedlite-430EX-IIIRT-Flash-Foot                                            ;Flash foot	                            ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;27438	;FALSE
-;5436	             ;CLONED-flash-foot	                                                                ;Flash foot	                            ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;31125	;FALSE
-;6527	             ;CLONED-600EX-IIRT-Flash-Foot	                                                    ;Flash foot	                            ;;	FALSE	;EXPANDED	    ;0	;0	;0	    ;0	;;;41050	;FALSE
-;3840	             ;Freefly-MIMIC-Insurance	                                                        ;Freefly MIMIC Insurance	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	    ;0	;;;19379	;TRUE
-;742	                 ;GiftCertificateMessageFrom	                                                    ;From	                                ;;	TRUE	;COMPACTINPUT	;   ;	;       ;   ;;;0        ;	FALSE
-;5043	             ;bnc_converter_cable	                                                            ;GH5S BNC Conversion Cable	            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;TRUE
-;76	                 ;gift_certificate	                                                                ;Gift Certificate	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;TRUE
-;698	                 ;CLONED-gift_certificate	                                                        ;Gift Certificate	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;TRUE
-;2008	             ;Giottos_Rocket_Air_Blower_Large	                                                ;Giottos Rocket Air Blower	            ;;	FALSE	;EXPANDED	    ;0	;13	;0	;0	;;;0	;TRUE
-;6245	             ;CLONED-Giottos_Rocket_Air_Blower_Large                                            ;Giottos Rocket Air Blower	            ;;	FALSE	;EXPANDED	    ;0	;13	;0	;0	;;;0	;TRUE
-;2562	             ;t-shirt4	                                                                        ;Gray (BL Original)	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;FALSE
-;2840	             ;CLONED-t-shirt4	                                                                ;Gray (BL Original)	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;FALSE
-;252	                 ;honeycomb	                                                                        ;Honeycomb grid	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;1466	;TRUE
-;267	                 ;d1_air_500w-honeycomb	                                                            ;Honeycomb grid	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;TRUE
-;507	                 ;CLONED-honeycomb	                                                                ;Honeycomb grid	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;TRUE
-;739	                 ;CLONED-CLONED-honeycomb	                                                        ;Honeycomb grid	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;TRUE
-;2503	             ;CLONED-honeycomb	                                                                ;Honeycomb grid	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;0	;TRUE
-;424	                 ;Hoodman_HoodLoupe	                                                                ;Hoodman HoodLoupe	                    ;This is an optional piece that can be included with your rental should you want one. Manufacturer site can be found <a href="http://www.hoodmanusa.com/prodinfo.asp?number=H-LCKIT">here</a>.	;FALSE	;EXPANDED;	0	;0	;2251	;0	;;;2251	;FALSE
-;445	                 ;CLONED-Hoodman_HoodLoupe	                                                        ;Hoodman HoodLoupe	                    ;This is an optional piece that can be included with your rental should you want one. Manufacturer site can be found <a href="http://www.hoodmanusa.com/prodinfo.asp?number=H-LCKIT">here</a>.	;FALSE	;EXPANDED;	0	;0	;2340	;0	;;;2340	;FALSE
-;449	                 ;CLONED-Hoodman_HoodLoupe	                                                        ;Hoodman HoodLoupe	                    ;This is an optional piece that can be included with your rental should you want one. Manufacturer site can be found <a href="http://www.hoodmanusa.com/prodinfo.asp?number=H-LCKIT">here</a>.	;FALSE	;EXPANDED;	0	;0	;2355	;0	;;;2355	;FALSE
-;475	                 ;CLONED-Hoodman_HoodLoupe	                                                        ;Hoodman HoodLoupe	                    ;This is an optional piece that can be included with your rental should you want one. Manufacturer site can be found <a href="http://www.hoodmanusa.com/prodinfo.asp?number=H-LCKIT">here</a>.	;FALSE	;EXPANDED;	0	;0	;2498	;0	;;;2498	;FALSE
-;1827	             ;CLONED-Hoodman_HoodLoupe	                                                        ;Hoodman HoodLoupe	                    ;This is an optional piece that can be included with your rental should you want one. Manufacturer site can be found <a href="http://www.hoodmanusa.com/prodinfo.asp?number=H-LCKIT">here</a>.	;FALSE	;EXPANDED;	0	;0	;2251	;0	;;;9654	;FALSE
-;4814	             ;karma-harness-type	                                                            ;Karma Harness   	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	;TRUE
-;745	                 ;GiftCertificateMessage	                                                        ;Message	                                    ;;	TRUE	;EXPANDEDINPUT	;   ;	;   ;	;;;	0	;FALSE
-;431	                 ;nd_type	                                                                        ;ND Type	                                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;2284	             ;Pearstone-Duo-Battery-Charger-for-Canon-LP-E6	                                    ;Pearstone Duo Battery Charger for Canon LP-E6	;;	FALSE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;FALSE
-;2706	             ;CLONED-Pearstone-Duo-Battery-Charger-for-Canon-LP-E6	                            ;Pearstone Duo Battery Charger for Canon LP-E6	;;	FALSE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;FALSE
-;4839	             ;placeholder-dropdown-selection-attribute	                                        ;Placeholder Dropdown Selection	                ;;	FALSE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;2567	             ;shirt-size	                                                                    ;Please List Shirt Size	                        ;;	TRUE	;COMPACTINPUT	;0	;0	;0	;0	;;;	0	    ;TRUE
-;1843	             ;sync_cables	                                                                    ;Pocket Wizard Sync Cables	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;2407	             ;CLONED-sync_cables	                                                            ;Pocket Wizard Sync Cables	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	14447	;TRUE
-;4392	             ;RED-Raven-Dragon-Camera	                                                        ;RAVEN RED Mount                            	;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;5558	             ;s1h_bnc_converter_cable	                                                        ;S1H BNC Conversion Cable	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;2400	             ;Sekonic-Prodigi-Color-C500R-Color-Meter-with-Built-in-Wireless-Triggering-Module	;Sekonic Prodigi Color C-500R Color Meter with Built-in Wireless Triggering Module;;	FALSE;	COMPACT;	0;	0;	0;	0;;;	0	;TRUE
-;2568	             ;size-shirt	                                                                    ;Select Shirt Size	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	14446	;FALSE
-;6242	             ;Self_Capture_Kit_Ordered	                                                        ;Self Capture Kit Ordered 	                    ;;	FALSE	;EXPANDED	    ;0	;500;0	;0	;;;	0	    ;FALSE
-;1391	             ;shirt	                                                                            ;shirt	                                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;232	                 ;Shirt_size	                                                                    ;Size	                                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;464	                 ;Lenscloth	                                                                        ;Size	                                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;2279	             ;A99_Hotshoe_adapter	                                                            ;Sony A99 Hotshoe Adapter	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	11787	;TRUE
-;4517	             ;A99II_Hotshoe_adapter	                                                            ;Sony A99 Hotshoe Adapter	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	24729	;TRUE
-;1053	             ;eye_piece	                                                                        ;Sports Shield eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;1056	             ;eye_piece	                                                                        ;Sports Shield Eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;1059	             ;CLONED-CLONED-eye_piece	                                                        ;Sports Shield eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;2853	             ;CLONED-eye_piece	                                                                ;Sports Shield eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;4108	             ;CLONED-eye_piece	                                                                ;Sports Shield Eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;4111	             ;CLONED-CLONED-eye_piece	                                                        ;Sports Shield Eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;4114	             ;CLONED-CLONED-CLONED-eye_piece	                                                ;Sports Shield Eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;4117	             ;CLONED-CLONED-CLONED-CLONED-eye_piece                                            	;Sports Shield Eyepiece	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	    ;TRUE
-;2770	             ;surfboard-mount	                                                                ;Surfboard Mounts	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	14097	;FALSE
-;2991	             ;CLONED-surfboard-mount	                                                        ;Surfboard Mounts	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	15106	;FALSE
-;3003	             ;CLONED-CLONED-surfboard-mount	                                                    ;Surfboard Mounts	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	15160	;FALSE
-;4333	             ;CLONED-surfboard-mount	                                                        ;Surfboard Mounts	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23794	;FALSE
-;3406	             ;Sync_Cable_Length	                                                                ;Sync Cable Length	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	17323	;TRUE
-;3408	             ;Devs_To_Delete	                                                                ;Sync Cable Length	                            ;;	FALSE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	;FALSE
-;2581	             ;tape-color	                                                                    ;Tape Color	                                    ;;	TRUE	;COMPACT	    ;0	;0	;0	;0	;;;	0	;TRUE
-;743	                 ;GiftCertificateMessageTo	                                                        ;To	                                            ;;	TRUE	;COMPACTINPUT	;   ;   ;   ;	;   	;      ;0	;FALSE
-;6221	             ;usb_c_audio_adapter	                                                            ;USB-C Audio Adapter	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	   ;TRUE
-;4313	             ;CLONED-varicam_mount	                                                            ;Varicam Mount	                                ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23697	;TRUE
-;4315	             ;CLONED-varicam_mount	                                                            ;Varicam Mount	                                ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23706	;TRUE
-;4317	             ;CLONED-varicam_mount	                                                            ;Varicam Mount	                                ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23715	;TRUE
-;4319	             ;CLONED-varicam_mount	                                                            ;Varicam Mount	                                ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23724	;TRUE
-;4321	             ;CLONED-varicam_mount	                                                            ;Varicam Mount	                                ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23733	;TRUE
-;4323	             ;CLONED-varicam_mount	                                                            ;Varicam Mount	                                ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23742	;TRUE
-;4492	             ;CLONED-varicam_mount	                                                            ;Varicam Mount	                                ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	24604	;TRUE
-;4133	             ;Weapon_RED_mount	                                                                ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	22826	;TRUE
-;4309	             ;RED-WEAPON-8K	                                                                    ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23679	;TRUE
-;4311	             ;CLONED-SCARLET_RED_mount	                                                        ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23688	;TRUE
-;4325	             ;CLONED-SCARLET_RED_mount	                                                        ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23751	;TRUE
-;4327	             ;CLONED-SCARLET_RED_mount	                                                        ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23760	;TRUE
-;4411	             ;CLONED-WEAPON_RED_mount	                                                        ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	24200	;TRUE
-;4413	             ;CLONED-WEAPON_RED_mount	                                                        ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	24209	;TRUE
-;4415	             ;RED-EPIC-W-8K	                                                                    ;WEAPON RED Mount	                            ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	24218	;TRUE
-;4149	             ;tungsten-gel	                                                                    ;Westcott Ice Light Tungsten Gel	            ;;	TRUE	;COMPACT	    ;0	;0	;0	;0	;;;	22895	;TRUE
-;5403	             ;CLONED-tungsten-gel	                                                            ;Westcott Ice Light Tungsten Gel	            ;;	TRUE	;COMPACT	    ;0	;0	;0	;0	;;;	30949	;TRUE
-;5450	             ;CLONED-CLONED-tungsten-gel	                                                    ;Westcott Ice Light Tungsten Gel	            ;;	TRUE	;COMPACT	    ;0	;0	;0	;0	;;;	31203	;TRUE
-;2561	             ;t-shirt3	                                                                        ;White (Commitment Issues)	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	   ;FALSE
-;2841	             ;CLONED-t-shirt3	                                                                ;White (Commitment Issues)	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	   ;FALSE
-;6246	             ;CLONED-t-shirt3	                                                                ;White (Commitment Issues)	                    ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	0	   ;FALSE
-;4289	             ;wimberleyplate	                                                                ;Wimberley P40 Plate	                        ;;	TRUE	;EXPANDED	    ;0	;0	;0	;0	;;;	23580	;TRUE
-
+#suboptions
 INSERT_UPDATE BlOptions;options(optionId);optionId[unique=true];code;name;description;active[default=true];unitCost;unitPrice;altPrice
-                       ;alexa_mount;alexa_mount_error;Select a Mount;null;TRUE;0;0;0
-                       ;alexa_mount;alexa_mount_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;alexa_mount;alexa_mount_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;Amira_mount;Amira_error;Select a Mount;null;TRUE;0;0;0
-                       ;Amira_mount;Amira_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;Amira_mount;Amira_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;fusion-mount;fusion_error;Select Sticky Mount;null;TRUE;0;0;0
-                       ;fusion-mount;fusion_None;No Sticky Mounts;null;TRUE;0;0;0
-                       ;fusion-mount;fusion_curved_mount;1 Fusion Curved Mount;null;TRUE;0;6;0
-                       ;fusion-mount;fusion_flat_mount;1 Fusion Flat Mount;null;TRUE;0;6;0
-                       ;fusion-mount;fusion_both_mounts;"1 Fusion Flat; 1 Curved (2 Total)";null;TRUE;4;11;0
-                       ;fusion-mount;fusion_two_flat_mounts;2 Fusion Flat Mounts;null;TRUE;0;11;0
-                       ;fusion-mount;fusion_two_curved_mounts;2 Fusion Curved Mounts;null;TRUE;0;11;0
-                       ;gopro_sticky_mount;gopro_error;Select Sticky Mount;null;TRUE;0;0;0
-                       ;gopro_sticky_mount;gopro_None;No Extra Sticky Mount;null;TRUE;0;0;0
-                       ;gopro_sticky_mount;gopro_curved_mount;Curved;null;TRUE;0;2;0
-                       ;gopro_sticky_mount;gopro_flat_mount;Flat;null;TRUE;0;2;0
-                       ;gopro_sticky_mount;gopro_both_mounts;Curved and Flat;null;TRUE;0;4;0
-                       ;Osmo-Action-Sticky-Mount;Osmo_error;Select Sticky Mount;null;TRUE;0;0;0
-                       ;Osmo-Action-Sticky-Mount;Osmo_None;No Extra Sticky Mount;null;TRUE;0;0;0
-                       ;Osmo-Action-Sticky-Mount;Osmo_curved_mount;Curved;null;TRUE;0;2;0
-                       ;Osmo-Action-Sticky-Mount;Osmo_flat_mount;Flat;null;TRUE;0;2;0
-                       ;Osmo-Action-Sticky-Mount;Osmo_both_mounts;Curved and Flat;null;TRUE;0;4;0
-                       ;RED-EPIC-W-5K-Gemini-Mount;red_epic_error;Select a Mount;null;TRUE;0;0;0
-                       ;RED-EPIC-W-5K-Gemini-Mount;red_epic_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;RED-EPIC-W-5K-Gemini-Mount;red_epic_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;RED-MONSTRO-8K-Mount;red_monstro_error;Select a Mount;null;TRUE;0;0;0
-                       ;RED-MONSTRO-8K-Mount;red_monstro_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;RED-MONSTRO-8K-Mount;red_monstro_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;RED_mount;redm_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;RED_mount;redm_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;RED_mount;redm_error;Select a Mount;null;TRUE;0;0;0
-                       ;SCARLET_RED_mount;scarlet_error;Select a Mount;null;TRUE;0;0;0
-                       ;SCARLET_RED_mount;scarlet_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;SCARLET_RED_mount;scarlet_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;STUDIO_SCARLET_RED_mount;ss_error;Select a Mount;null;TRUE;0;0;0
-                       ;STUDIO_SCARLET_RED_mount;ss_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;STUDIO_SCARLET_RED_mount;ss_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;surfboard-mount;sf_mounts;Add Mounts;null;TRUE;0;20;0
-                       ;surfboard-mount;sf_None;None;null;TRUE;0;0;0
-                       ;URSA-Mini-Pro-12K-Mount;URSA_error;Select a Mount;null;TRUE;0;0;0
-                       ;URSA-Mini-Pro-12K-Mount;URSA_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;URSA-Mini-Pro-12K-Mount;URSA_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;varicam_mount;varicam_error;Select a Mount;null;TRUE;0;0;0
-                       ;varicam_mount;varicam_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;varicam_mount;varicam_PL-mount;PL Mount;null;TRUE;0;0;0
-                       ;WEAPON_RED_mount;weapon_error;Select a Mount;null;TRUE;0;0;0
-                       ;WEAPON_RED_mount;weapon_canon_ef-mount;Canon EF Mount;null;TRUE;0;0;0
-                       ;WEAPON_RED_mount;weapon_PL-mount;PL Mount;null;TRUE;0;0;0
-;2776	         ;10001	               ;none                         ;None                             ;           ;TRUE	;0	     ;0       	;0
-;4300	         ;10002	               ;no-foot                      ;No Flash Foot                    ;           ;TRUE	;0	     ;0       ;	0
-;4300	         ;10003	               ;yes-foot                     ;Include Flash Foot               ;           ;TRUE	;0	     ;0       ;	0
-;4345	         ;10004	               ;None                         ;No Extra SD Cards                ;           ;TRUE	;0	     ;0       ;	0
-;4345	         ;10005	               ;2cards                       ;2 x 64GB SD Cards                ;           ;TRUE	;0	     ;40	  ; 0
-;4345	         ;10006	               ;4cards                       ;4 x 64GB SD Cards                ;           ;TRUE	;0	     ;80	  ; 0
-;4345	         ;10007	               ;6cards                       ;6 x 64GB SD Cards                ;           ;TRUE	;0	     ;100	  ; 0
-;2833	         ;10008	               ;14-Feet                      ;14 Feet                          ;           ;TRUE	;0	     ;18	  ; 0
-;4517	         ;10009	               ;no_adapter                   ;Dont Include Hotshoe Adapter     ;           ;TRUE	;0	     ;0	      ; 0
-;4517	         ;10010	               ;adapter                      ;Include Hotshoe Adapter          ;           ;TRUE	;0	     ;0	      ; 0
-;2279	         ;10011	               ;no_adapter                   ;Dont Include Hotshoe Adapter     ;           ;TRUE	;0	     ;0	      ; 0
-;2279	         ;10012	               ;adapter                      ;Include Hotshoe Adapter          ;           ;TRUE	;0	     ;0	      ; 0
-;4335	         ;10013	               ;error                        ;Select a Mount                   ;           ;TRUE	;0	     ;0	      ; 0
-;4335	         ;10014	               ;canon_ef-mount               ;Canon EF Mount                   ;           ;TRUE	;0	     ;0	      ; 0
-;4335	         ;10015	               ;PL-mount                     ;PL Mount                         ;           ;TRUE	;0	     ;0	      ; 0
-;3796	         ;10016	               ;error                        ;Select a Mount                   ;           ;TRUE	;0	     ;0	      ; 0
-;3796	         ;10017	               ;canon_ef-mount               ;Canon EF Mount                   ;           ;TRUE	;0	     ;0	      ; 0
-;3796	         ;10018	               ;PL-mount                     ;PL Mount                         ;           ;TRUE	;0	     ;0	      ; 0
-;2248	         ;10019	               ;Include                      ;Include AA Battery Tray          ;           ;TRUE	;0	     ;0	      ; 0
-;2248	         ;10020	               ;Dont                         ;No AA Battery Tray               ;           ;TRUE	;0	     ;0	      ; 0
-;2248	         ;10021	               ;error                        ;Need AA Battery Tray?            ;           ;TRUE	;0	     ;0	      ; 0
-;3982	         ;10022	               ;Knit-Cap-New                 ;Knit-Cap-New                     ;           ;TRUE	;0	     ;15	  ; 0
-;3898	         ;10023	               ;BL-Cloth-Sale                ;BL-Lens-Cloth-Sale-Price         ;           ;TRUE	;0	     ;5	      ; 0
-;3899	         ;10024	               ;BL-Mug-Sale                  ;BL-Mug-Sale-Price                ;           ;TRUE	;0	     ;10	  ; 0
-;3981	         ;10025	               ;Performance-Cap-New          ;Performance-Cap-New              ;           ;TRUE	;0	     ;15	  ; 0
-;2559	         ;10026	               ;gray-borrowlenses            ;Gray (BorrowLenses)              ;           ;TRUE	;0	     ;0	      ; 0
-;2559	         ;10027	               ;white-commitment-issues      ;White (Commitment Issues)        ;           ;TRUE	;0	     ;0	      ; 0
-;2559	         ;10028	               ;Black-checking-out-my-glass  ;Black (Checking Out My Glass)    ;           ;TRUE	;0	     ;0	      ; 0
-;2559	         ;10029	               ;black-rent-shoot-love        ;Black (Rent.Shoot.Love)          ;           ;TRUE	;0	     ;0	      ; 0
-;2559	         ;10030	               ;error                        ;Select a Shirt Design            ;           ;TRUE	;0	     ;0	      ; 0
-;5043	         ;10031	               ;error                        ;Need Timecode Cable?             ;           ;TRUE	;0	     ;0	      ; 0
-;5043	         ;10032	               ;none                         ;No Timecode Cable                ;           ;TRUE	;0	     ;0	      ; 0
-;5043	         ;10033	               ;BNC_converter_cable          ;Yes-$6                           ;           ;TRUE	;0	     ;6	      ; 0
-;3461	         ;10034	               ;error                        ;Select Cable                     ;           ;TRUE	;0	     ;0	      ; 0
-;3461	         ;10035	               ;None                          ;No Cable                          ;           ;TRUE	;0	     ;0	      ; 0
-;3461	         ;10036	               ;N3                            ;N3+                               ;           ;TRUE	;0	     ;13      ; 0
-;3461	         ;10037	               ;DC0                           ;DC0                               ;           ;TRUE	;0	     ;13      ; 0
-;3461	         ;10038	               ;RS1                           ;RS1                               ;           ;TRUE	;0	     ;13      ; 0
-;3461	         ;10039	               ;RED_E_SCA                     ;RED Epic/Scarlet                  ;           ;TRUE	;0	     ;38	      ; 0
-;5050	         ;10040	               ;no-foot                       ;No Flash Foot                     ;           ;TRUE	;0	     ;0	      ; 0
-;5050	         ;10041	               ;yes-foot                      ;Include Flash Foot                ;           ;TRUE	;0	     ;0	      ; 0
-;6527	         ;10042	               ;no-foot                       ;No Flash Foot                     ;           ;TRUE	;0	     ;0	      ; 0
-;6527	         ;10043	               ;yes-foot                      ;Include Flash Foot                ;           ;TRUE	;0	     ;0	      ; 0
-;3153	         ;10044	               ;14-Feet                       ;14 Feet                           ;           ;TRUE	;0	     ;18      ; 0
-;2985	         ;10045	               ;Dont                          ;No AA Battery Tray                ;           ;TRUE	;0	     ;0	      ; 0
-;2985	         ;10046	               ;Include                       ;Include AA Battery Tray           ;           ;TRUE	;0	     ;0	      ; 0
-;3607	         ;10047	               ;Dont                          ;No AA Battery Tray                ;           ;TRUE	;0	     ;0	      ; 0
-;3607	         ;10048	               ;Include                       ;Include AA Battery Tray           ;           ;TRUE	;0	     ;0	      ; 0
-;4213	         ;10049	               ;error                         ;Need AA Battery Tray?             ;           ;TRUE	;0	     ;0	      ; 0
-;4213	         ;10050	               ;Dont                          ;No AA Battery Tray                ;           ;TRUE	;0	     ;0	      ; 0
-;4213	         ;10051	               ;Include                       ;Include AA Battery Tray           ;           ;TRUE	;0	     ;0	      ; 0
-;4366	         ;10052	               ;error                         ;Need AA Battery Tray?             ;           ;TRUE	;0	     ;0	      ; 0
-;4366	         ;10053	               ;Dont                          ;No AA Battery Tray                ;           ;TRUE	;0	     ;0	      ; 0
-;4366	         ;10054	               ;Include                       ;Include AA Battery Tray           ;           ;TRUE	;0	     ;0	      ; 0
-;4388	         ;10055	               ;error                         ;Need AA Battery Tray?             ;           ;TRUE	;0	     ;0	      ; 0
-;4388	         ;10056	               ;Dont                          ;No AA Battery Tray                ;           ;TRUE	;0	     ;0	      ; 0
-;4388	         ;10057	               ;Include                       ;Include AA Battery Tray           ;           ;TRUE	;0	     ;0	      ; 0
-;6123	         ;10058	               ;error                         ;Need AA Battery Tray?             ;           ;TRUE	;0	     ;0	      ; 0
-;6123	         ;10059	               ;Dont                          ;No AA Battery Tray                ;           ;TRUE	;0	     ;0	      ; 0
-;6123	         ;10060	               ;Include                       ;Include AA Battery Tray           ;           ;TRUE	;0	     ;0	      ; 0
-;3373	         ;10061	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3373	         ;10062	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3373	         ;10063	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3387	         ;10064	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3387	         ;10065	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3387	         ;10066	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3375	         ;10067	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3375	         ;10068	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3375	         ;10069	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3389	         ;10070	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3389	         ;10071	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3389	         ;10072	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;4374	         ;10073	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;4374	         ;10074	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;4374	         ;10075	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;5945	         ;10076	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;5945	         ;10077	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;5945	         ;10078	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3377	         ;10079	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3377	         ;10080	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3377	         ;10081	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3395	         ;10082	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3395	         ;10083	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3395	         ;10084	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3379	         ;10085	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3379	         ;10086	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3379	         ;10087	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3381	         ;10088	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3381	         ;10089	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3381	         ;10090	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;3383	         ;10091	               ;error                         ;Select Ring                       ;           ;TRUE	;0	     ;0	      ; 0
-;3383	         ;10092	               ;None                          ;No Ring                           ;           ;TRUE	;0	     ;0	      ; 0
-;3383	         ;10093	               ;30mm_Ring                     ;30mm Ext Ring                     ;           ;TRUE	;0	     ;0	      ; 0
-;4117	         ;10094	               ;None                          ;No Eyepiece                       ;           ;TRUE	;0	     ;0	      ; 0
-;4117	         ;10095	               ;NEP-1                         ;NEP-1                             ;           ;TRUE	;0	     ;4	      ; 0
-;4117	         ;10096	               ;CEP-1                         ;CEP-1                             ;           ;TRUE	;0	     ;4	      ;0
-;4117	         ;10097	               ;CEP-7                         ;CEP -7                            ;           ;TRUE	;0	     ;4	      ;0
-;4117	         ;10098	               ;NEP-80                        ;NEP-80                            ;           ;TRUE	;0	     ;4	      ;0
-;4117	         ;10099	               ;CEP-1X                        ;CEP- 1X                           ;           ;TRUE	;0	     ;4	      ;0
-;4114	         ;10100	               ;None                          ;No Eyepiece                       ;           ;TRUE	;0	     ;0	      ;0
-;4114	         ;10101	               ;NEP-1                         ;NEP-1                             ;           ;TRUE	;0	     ;4	      ;0
-;4114	         ;10102	               ;CEP-1                         ;CEP-1                             ;           ;TRUE	;0	     ;4	      ;0
-;4114	         ;10103	               ;CEP-7                         ;CEP -7                            ;           ;TRUE	;0	     ;4	      ;0
-;4114	         ;10104	               ;NEP-80                        ;NEP-80                            ;           ;TRUE	;0	     ;4	      ;0
-;4114	         ;10105	               ;CEP-1X                        ;CEP- 1X                           ;           ;TRUE	;0	     ;4	      ;0
-;1059	         ;10106	               ;NEP-1                         ;NEP-1                             ;           ;TRUE	;0	     ;4	      ;0
-;1059	         ;10107	               ;CEP-1                         ;CEP-1                             ;           ;TRUE	;0	     ;4	      ;0
-;1059	         ;10108	               ;CEP-7                         ;CEP -7                            ;           ;TRUE	;0	     ;4	      ;0
-;1059	         ;10109	               ;NEP-80                        ;NEP-80                            ;           ;TRUE	;0	     ;4	      ;0
-;1059	         ;10110	               ;CEP-1X                        ;CEP- 1X                           ;           ;TRUE	;0	     ;4	      ;0
-;4111	         ;10111	               ;None                          ;No Eyepiece                       ;           ;TRUE	;0	     ;0	      ;0
-;4111	         ;10112	               ;NEP-1                         ;NEP-1                             ;           ;TRUE	;0	     ;4	      ;0
-;4111	         ;10113	               ;CEP-1                         ;CEP-1                             ;           ;TRUE	;0	     ;4	      ;0
-;4111	         ;10114	               ;CEP-7                         ;CEP -7                            ;           ;TRUE	;0	     ;4	      ;0
-;4111	         ;10115	               ;NEP-80                        ;NEP-80                            ;           ;TRUE	;0	     ;4	      ;0
-;4111	         ;10116	               ;CEP-1X                        ;CEP- 1X                           ;           ;TRUE	;0	     ;4	      ;0
-;4631	         ;10117	               ;error                         ;Select Sticky Mount               ;           ;TRUE	;0	     ;0	      ;0
-;4631	         ;10118	               ;None                          ;No Extra Sticky Mount             ;           ;TRUE	;0	     ;0	      ;0
-;4631	         ;10119	               ;curved_mount                  ;Curved                            ;           ;TRUE	;0	     ;2	      ;0
-;4631	         ;10120	               ;flat_mount                    ;Flat                              ;           ;TRUE	;0	     ;2	      ;0
-;4631	         ;10121	               ;both_mounts                   ;Curved and Flat                   ;           ;TRUE	;0	     ;4	      ;0
-;739	             ;10122	               ;10degree                      ;10 degree                         ;           ;TRUE	;0	     ;5	      ;0
-;739	             ;10123	               ;20degree                      ;20 degree                         ;           ;TRUE	;0	     ;5	      ;0
-;739	             ;10124	               ;30degree                      ;30 degree                         ;           ;TRUE	;0	     ;5	      ;0
-;739	             ;10125	               ;40degree                      ;40 degree                         ;           ;TRUE	;0	     ;5	      ;0
-;739	             ;10126	               ;None                          ;None                              ;           ;TRUE	;0	     ;0	      ;0
-;625	             ;10127	               ;None                          ;None                              ;           ;TRUE	;0	     ;0	      ;0
-;625	             ;10128	               ;type_a                        ;Type A                            ;           ;TRUE	;0	     ;15      ;	0
-;625	             ;10129	               ;type_b                        ;Type B                            ;           ;TRUE	;0	     ;15	;0
-;625	             ;10130	               ;type_c                        ;Type C                            ;           ;TRUE	;0	     ;15	;0
-;625	             ;10131	               ;type_d                        ;Type D                            ;           ;TRUE	;0	     ;15	;0
-;1167	         ;10132	               ;None                          ;None                              ;           ;TRUE	;0	     ;0	    ;0
-;1167	         ;10133	               ;type_a                        ;Type A                            ;           ;TRUE	;0	     ;15	;0
-;1167	         ;10134	               ;type_b                        ;Type B                            ;           ;TRUE	;0	     ;15	;0
-;1167	         ;10135	               ;type_c                        ;Type C                            ;           ;TRUE	;0	     ;15	;0
-;1167	         ;10136	               ;type_d                        ;Type D                            ;           ;TRUE	;0	     ;15	;0
-;3213	         ;10137	               ;error                         ;Select Extra Focus Ring           ;           ;TRUE	;0	     ;0	    ;0
-;3213	         ;10138	               ;None                          ;No Extra Focus Ring               ;           ;TRUE	;0	     ;0	    ;0
-;3213	         ;10139	               ;type_a                        ;Type A                            ;           ;TRUE	;0	     ;15	;0
-;3213	         ;10140	               ;type_b                        ;Type B                            ;           ;TRUE	;0	     ;15	;0
-;3213	         ;10141	               ;type_c                        ;Type C                            ;           ;TRUE	;0	     ;15	;0
-;3213	         ;10142	               ;type_d                        ;Type D                            ;           ;TRUE	;0	     ;15	;0
-;6338	         ;10143	               ;error                         ;Select Extra Focus Ring           ;           ;TRUE	;0	     ;0	    ;0
-;6338	         ;10144	               ;None                          ;No Extra Focus Ring               ;           ;TRUE	;0	     ;0	    ;0
-;6338	         ;10145	               ;type_a                        ;Type A                            ;           ;TRUE	;0	     ;15	;0
-;6338	         ;10146	               ;type_b                        ;Type B                            ;           ;TRUE	;0	     ;15	;0
-;6338	         ;10147	               ;type_c                        ;Type C                            ;           ;TRUE	;0	     ;15	;0
-;6338	         ;10148	               ;type_d                        ;Type D                            ;           ;TRUE	;0	     ;15	;0
-;3003	         ;10149	               ;None                          ;None                              ;           ;TRUE	;0	     ;0  	;0
-;3003	         ;10150	               ;mounts                        ;Add Mounts                        ;           ;TRUE	;0	     ;20	;0
-;4037	         ;10151	               ;small                         ;Small                             ;           ;TRUE	;0	     ;0	    ;0
-;4037	         ;10152	               ;medium                        ;Medium                            ;           ;TRUE	;0	     ;0	    ;0
-;4037	         ;10153	               ;large                         ;Large                             ;           ;TRUE	;0	     ;0	    ;0
-;4037	         ;10154	               ;xlarge                        ;Extra Large                       ;           ;TRUE	;0	     ;0	    ;0
-;4037	         ;10155	               ;xxlarge                       ;XX Large                          ;           ;TRUE	;0	     ;0	    ;0
-;4037	         ;10156	               ;3x                            ;3X Large                          ;           ;TRUE	;0	     ;0	    ;0
-;4037	         ;10157	               ;4x                            ;4X Large                          ;           ;TRUE	;0	     ;0	    ;0
-;5450	         ;10158	               ;None                          ;No Gel                            ;           ;TRUE	;0	     ;0	    ;0
-;5450	         ;10159	               ;tungstengel                   ;Tungsten Gel                      ;           ;TRUE	;0	     ;7	    ;0
-;2853	          ;10160	           ;NEP-1                         ;NEP-1 - Compatible with Nikon D-1, D-1H, D-1X, D-2X, D-2H, F-100, F-6, F-5, F-4, F-3, N90, N90s, N8008, N8008S, D3, D3X and D700 cameras                                                                                 ;;TRUE	;0	;4	;0
-;2853	          ;10161	           ;CEP-1                         ;CEP-1 -     Compatible with Rebel Xti, XSi, XS, XT/350D, T1i, T2i, T3i, 60D, 5D Mark II, 5D, 50D, 40D, 30D, 20D, 1D Mark 1V, 1Ds Mark II, 1D Mark II, ID Mark II N                                                       ;;TRUE	;0	;4	;0
-;2853	          ;10162	           ;CEP-7                         ;CEP -7 - Canon EOS 7D or EOS ID Mark IV                                                                                                                                                                                  ;;TRUE	;0	;4	;0
-;2853	          ;10163	           ;NEP-80                        ;NEP-80 - Compatible with Nikon D50, D60, D70, D70s, D80, D90, D40x, D100, D200, D300, D300s, D3000, D5000, D7000, Fuji S1s, S2, S3, S5, Olympus E3, E300, E330, E410, E420, E500, E510, E520, E620 and Pentax K10D, K20D ;;TRUE	;0	;4	;0
-;4108	          ;10164	           ;None                          ;No Eyepiece         ;;TRUE	;0	;0	;0
-;4108	          ;10165	           ;NEP-1                         ;NEP-1               ;;TRUE	;0	;4	;0
-;4108	          ;10166	           ;CEP-1                         ;CEP-1               ;;TRUE	;0	;4	;0
-;4108	          ;10167	           ;CEP-7                         ;CEP -7              ;;TRUE	;0	;4	;0
-;4108	          ;10168	           ;NEP-80                        ;NEP-80              ;;TRUE	;0	;4	;0
-;4108	          ;10169	           ;CEP-1X                        ;CEP- 1X             ;;TRUE	;0	;4	;0
-;2742	          ;10170	           ;none                          ;No Flash Cable      ;;TRUE	;0	;0	;0
-;2742	          ;10171	           ;cz-cable                      ;CZ Flash Cable      ;;TRUE	;0	;0	;0
-;2742	          ;10172	           ;cke-cable                     ;CKE Flash Cable     ;;TRUE	;0	;0	;0
-;2742	          ;10173	           ;error                         ;Select Flash Cable  ;;TRUE	;0	;0	;0
-;3238	          ;10174	           ;error                         ;Select Flash Cable  ;;TRUE	;0	;0	;0
-;3238	          ;10175	           ;none                          ;No Flash Cable      ;;TRUE	;0	;0	;0
-;3238	          ;10176	           ;cz-cable                      ;CZ Flash Cable      ;;TRUE	;0	;0	;0
-;3238	          ;10177	           ;cke-cable                     ;CKE Flash Cable     ;;TRUE	;0	;0	;0
-;6158	          ;10178	           ;error                         ;Select Flash Cable  ;;TRUE	;0	;0	;0
-;6158	          ;10179	           ;none                          ;No Flash Cable      ;;TRUE	;0	;0	;0
-;6158	          ;10180	           ;cz-cable                      ;Canon CZ Cable      ;;TRUE	;0	;0	;0
-;6158	          ;10181	           ;cke-cable                     ;Nikon CKE Cable     ;;TRUE	;0	;0	;0
-;6161	          ;10182	           ;error                         ;Select Flash Cable  ;;TRUE	;0	;0	;0
-;6161	          ;10183	           ;none                          ;No Flash Cable      ;;TRUE	;0	;0	;0
-;6161	          ;10184	           ;cz-cable                      ;Canon CZ Cable      ;;TRUE	;0	;0	;0
-;6161	          ;10185	           ;cke-cable                     ;Nikon CKE Cable     ;;TRUE	;0	;0	;0
-;6174	          ;10186	           ;error                         ;Select Flash Cable  ;;TRUE	;0	;0	;0
-;6174	          ;10187	           ;none                          ;No Flash Cable      ;;TRUE	;0	;0	;0
-;6174	          ;10188	           ;cz-cable                      ;Canon CZ Cable      ;;TRUE	;0	;0	;0
-;6174	          ;10189	           ;cke-cable                     ;Nikon CKE Cable     ;;TRUE	;0	;0	;0
-;6179	          ;10190	           ;error                         ;Select Flash Cable  ;;TRUE	;0	;0	;0
-;6179	          ;10191	           ;none                          ;No Flash Cable      ;;TRUE	;0	;0	;0
-;6179	          ;10192	           ;cz-cable                      ;Canon CZ Cable      ;;TRUE	;0	;0	;0
-;6179	          ;10193	           ;cke-cable                     ;Nikon CKE Cable     ;;TRUE	;0	;0	;0
-;6182	          ;10194	           ;error                         ;Select Flash Cable       ;      ;TRUE	;0	;0	;0
-;6182	          ;10195	           ;none                          ;No Flash Cable           ;      ;TRUE	;0	;0	;0
-;6182	          ;10196	           ;cz-cable                      ;Canon CZ Cable           ;      ;TRUE	;0	;0	;0
-;6182	          ;10197	           ;cke-cable                     ;Nikon CKE Cable          ;      ;TRUE	;0	;0	;0
-;4850	          ;10198	           ;no-foot                       ;No Flash Foot            ;      ;TRUE	;0	;0	;0
-;4850	          ;10199	           ;yes-foot                      ;Include Flash Foot       ;      ;TRUE	;0	;0	;0
-;5436	          ;10200	           ;no-foot                       ;No Flash Foot            ;      ;TRUE	;0	;0	;0
-;5436	          ;10201	           ;yes-foot                      ;Include Flash Foot       ;      ;TRUE	;0	;0	;0
-;6245	          ;10202	           ;blower                        ;Blower                   ;      ;TRUE	;0	;18	;0
-;3810	          ;10203	           ;error                         ;Select Sticky Mount      ;      ;TRUE	;0	;0	;0
-;3810	          ;10204	           ;None                          ;No Extra Sticky Mount    ;      ;TRUE	;0	;0	;0
-;3810	          ;10205	           ;curved_mount                  ;Curved                   ;      ;TRUE	;0	;2	;0
-;3810	          ;10206	           ;flat_mount                    ;Flat                     ;      ;TRUE	;0	;2	;0
-;3810	          ;10207	           ;both_mounts                   ;Curved and Flat          ;      ;TRUE	;0	;4	;0
-;3882	          ;10208	           ;error                         ;Select Sticky Mount      ;      ;TRUE	;0	;0	;0
-;3882	          ;10209	           ;None                          ;No Extra Sticky Mount    ;      ;TRUE	;0	;0	;0
-;3882	          ;10210	           ;curved_mount                  ;Curved                   ;      ;TRUE	;0	;2	;0
-;3882	          ;10211	           ;flat_mount                    ;Flat                     ;      ;TRUE	;0	;2	;0
-;3882	          ;10212	           ;both_mounts                   ;Curved and Flat          ;      ;TRUE	;0	;4	;0
-;3984	          ;10213	           ;error                         ;Select Sticky Mount      ;      ;TRUE	;0	;0	;0
-;3984	          ;10214	           ;None                          ;No Extra Sticky Mount    ;      ;TRUE	;0	;0	;0
-;3984	          ;10215	           ;curved_mount                  ;Curved                   ;      ;TRUE	;0	;2	;0
-;3984	          ;10216	           ;flat_mount                    ;Flat                     ;      ;TRUE	;0	;2	;0
-;3984	          ;10217	           ;both_mounts                   ;Curved and Flat          ;      ;TRUE	;0	;4	;0
-;4265	          ;10218	           ;error                         ;Select Sticky Mount      ;      ;TRUE	;0	;0	;0
-;4265	          ;10219	           ;None                          ;No Extra Sticky Mount    ;      ;TRUE	;0	;0	;0
-;4265	          ;10220	           ;curved_mount                  ;Curved                   ;      ;TRUE	;0	;2	;0
-;4265	          ;10221	           ;flat_mount                    ;Flat                     ;      ;TRUE	;0	;2	;0
-;4265	          ;10222	           ;both_mounts                   ;Curved and Flat          ;      ;TRUE	;0	;4	;0
-;4297	          ;10223	           ;error                         ;Select Sticky Mount      ;      ;TRUE	;0	;0	;0
-;4297	          ;10224	           ;None                          ;No Extra Sticky Mount    ;      ;TRUE	;0	;0	;0
-;4297	          ;10225	           ;curved_mount                  ;Curved                   ;      ;TRUE	;0	;2	;0
-;4297	          ;10226	           ;flat_mount                    ;Flat                     ;      ;TRUE	;0	;2	;0
-;4297	          ;10227	           ;both_mounts                   ;Curved and Flat          ;      ;TRUE	;0	;4	;0
-;4405            ;10228	               ;error                        ;Select Sticky Mount           ;   ;TRUE	;0	;0	 ;0
-;4405            ;10229	               ;None                         ;No Extra Sticky Mount         ;   ;TRUE	;0	;0	 ;0
-;4405            ;10230	               ;curved_mount                 ;Curved                        ;   ;TRUE	;0	;2	 ;0
-;4405            ;10231	               ;flat_mount                   ;Flat                          ;   ;TRUE	;0	;2	 ;0
-;4405            ;10232	               ;both_mounts                  ;Curved and Flat               ;   ;TRUE	;0	;4	 ;0
-;507	            ;10233	               ;10degree                     ;10 degree                     ;   ;TRUE	;0	;5	 ;0
-;507	            ;10234	               ;20degree                     ;20 degree                     ;   ;TRUE	;0	;5	 ;0
-;507	            ;10235	               ;30degree                     ;30 degree                     ;   ;TRUE	;0	;5	 ;0
-;507	            ;10236	               ;40degree                     ;40 degree                     ;   ;TRUE	;0	;5	 ;0
-;507	            ;10237	               ;None                         ;No Honeycomb Grid             ;   ;TRUE	;0	;0	 ;0
-;2503            ;10238	               ;10degree                     ;10 degree                     ;   ;TRUE	;0	;5	 ;0
-;2503            ;10239	               ;20degree                     ;20 degree                     ;   ;TRUE	;0	;5	 ;0
-;2503            ;10240	               ;30degree                     ;30 degree                     ;   ;TRUE	;0	;5	 ;0
-;2503            ;10241	               ;40degree                     ;40 degree                     ;   ;TRUE	;0	;5	 ;0
-;2503            ;10242	               ;None                         ;None                          ;   ;TRUE	;0	;0	 ;0
-;2706            ;10243	               ;Dont                         ;Do Not Include AA Battery Tray;   ;FALSE	;0	;0	 ;0
-;2706            ;10244	               ;Include                      ;Include AA Battery Tray       ;   ;FALSE	;0	;0	 ;0
-;444	            ;10245	               ;None                         ;No Extra Focus Ring           ;   ;TRUE	;0	;0	 ;0
-;444	            ;10246	               ;type_a                       ;Type A                        ;   ;TRUE	;0	;15	 ;0
-;444	            ;10247	               ;type_b                       ;Type B                        ;   ;TRUE	;0	;15	 ;0
-;444	            ;10248	               ;type_c                       ;Type C                        ;   ;TRUE	;0	;15	 ;0
-;444	            ;10249	               ;type_d                       ;Type D                        ;   ;TRUE	;0	;15	 ;0
-;444	            ;10250	               ;error                        ;Select Extra Focus Ring       ;   ;TRUE	;0	;0	 ;0
-;448	            ;10251	               ;None                         ;None                          ;   ;TRUE	;0	;0	 ;0
-;448	            ;10252	               ;type_a                       ;Type A                        ;   ;TRUE	;0	;15	 ;0
-;448	            ;10253	               ;type_b                       ;Type B                        ;   ;TRUE	;0	;15	 ;0
-;448	            ;10254	               ;type_c                       ;Type C                        ;   ;TRUE	;0	;15	 ;0
-;448	            ;10255	               ;type_d                       ;Type D                        ;   ;TRUE	;0	;15	 ;0
-;474	            ;10256	               ;None                         ;None                          ;   ;TRUE	;0	;0	 ;0
-;474	            ;10257	               ;type_a                       ;Type A                        ;   ;TRUE	;0	;15	 ;0
-;474	            ;10258	               ;type_b                       ;Type B                        ;   ;TRUE	;0	;15	 ;0
-;474	            ;10259	               ;type_c                       ;Type C                        ;   ;TRUE	;0	;15	 ;0
-;474	            ;10260	               ;type_d                       ;Type D                        ;   ;TRUE	;0	;15	 ;0
-;1826	        ;10261	               ;None                         ;No Extra Focus Ring           ;       ;TRUE	;0	;0	 ;0
-;1826	        ;10262	               ;type_a                       ;Type A                        ;       ;TRUE	;0	;15	 ;0
-;1826	        ;10263	               ;type_b                       ;Type B                        ;       ;TRUE	;0	;15	 ;0
-;1826	        ;10264	               ;type_c                       ;Type C                        ;       ;TRUE	;0	;15	 ;0
-;1826	        ;10265	               ;type_d                       ;Type D                        ;       ;TRUE	;0	;15	 ;0
-;1826	        ;10266	               ;error                        ;Add Extra Focus Ring          ;       ;TRUE	;0	;0	 ;0
-;4238	        ;10267	               ;error                        ;Select Extra Focus Ring       ;       ;TRUE	;0	;0	 ;0
-;4238	        ;10268	               ;None                         ;No Extra Focus Ring           ;       ;TRUE	;0	;0	 ;0
-;4238	        ;10269	               ;type_a                       ;Type A                        ;       ;TRUE	;0	;15	 ;0
-;4238	        ;10270	               ;type_b                       ;Type B                        ;       ;TRUE	;0	;15	 ;0
-;4238	        ;10271	               ;type_c                       ;Type C                        ;       ;TRUE	;0	;15	 ;0
-;4238	        ;10272	               ;type_d                       ;Type D                        ;       ;TRUE	;0	;15	 ;0
-;4799	        ;10273	               ;error                        ;Select Extra Focus Ring       ;       ;TRUE	;0	;0	 ;0
-;4799	        ;10274	               ;None                         ;No Extra Focus Ring           ;       ;TRUE	;0	;0	 ;0
-;4799	        ;10275	               ;type_a                       ;Type A                        ;       ;TRUE	;0	;15	 ;0
-;4799	        ;10276	               ;type_b                       ;Type B                        ;       ;TRUE	;0	;15	 ;0
-;4799	        ;10277	               ;type_c                       ;Type C                        ;       ;TRUE	;0	;15	 ;0
-;4799	        ;10278	               ;type_d                       ;Type D                        ;       ;TRUE	;0	;15	 ;0
-;6355	        ;10279	               ;error                        ;Select Extra Focus Ring       ;       ;TRUE	;0	;0	 ;0
-;6355	        ;10280	               ;None                         ;No Extra Focus Ring           ;       ;TRUE	;0	;0	 ;0
-;6355	        ;10281	               ;type_a                       ;Type A                        ;       ;TRUE	;0	;15	 ;0
-;6355	        ;10282	               ;type_b                       ;Type B                        ;       ;TRUE	;0	;15	 ;0
-;6355	        ;10283	               ;type_c                       ;Type C                        ;       ;TRUE	;0	;15	 ;0
-;6355	        ;10284	               ;type_d                       ;Type D                        ;       ;TRUE	;0	;15	 ;0
-;6374	        ;10285	               ;error                        ;Select Extra Focus Ring       ;       ;TRUE	;0	;0	 ;0
-;6374	        ;10286	               ;None                         ;No Extra Focus Ring           ;       ;TRUE	;0	;0	 ;0
-;6374	        ;10287	               ;type_a                       ;Type A                        ;       ;TRUE	;0	;15	 ;0
-;6374	        ;10288	               ;type_b                       ;Type B                        ;       ;TRUE	;0	;15	 ;0
-;6374	        ;10289	               ;type_c                       ;Type C                        ;       ;TRUE	;0	;15	 ;0
-;6374	        ;10290	               ;type_d                       ;Type D                        ;       ;TRUE	;0	;15	 ;0
-;4311	        ;10291	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	 ;0
-;4311	        ;10292	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	 ;0
-;4311	        ;10293	               ;PL-mount                     ;PL Mount                      ;       ;TRUE	;0	;0	 ;0
-;4325	        ;10294	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	 ;0
-;4325	        ;10295	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	;0
-;4325	        ;10296	               ;PL-mount                     ;PL Mount                      ;       ;TRUE	;0	;0	;0
-;4327	        ;10297	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	;0
-;4327	        ;10298	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	;0
-;4327	        ;10299	               ;PL-mount                     ;PL Mount                      ;       ;TRUE	;0	;0	;0
-;2991	        ;10300	               ;None                         ;None                          ;       ;TRUE	;0	;0	;0
-;2991	        ;10301	               ;mounts                       ;Add Mounts                    ;       ;TRUE	;0	;20	;0
-;4333	        ;10302	               ;None                         ;None                          ;       ;TRUE	;0	;0	;0
-;4333	        ;10303	               ;mounts                       ;Add Mounts                    ;       ;TRUE	;0	;20	;0
-;2407	        ;10304	               ;1_8toPC12in                  ;1/8 to PC Sync 12in           ;       ;TRUE	;0	;0	;0
-;2407	        ;10305	               ;1_8toPC17ft                  ;1/8 to PC Sync 17ft           ;       ;TRUE	;0	;0	;0
-;2407	        ;10306	               ;1_4toPCsync17ft              ;1/4 to PC Sync 17ft           ;       ;TRUE	;0	;0	;0
-;2407	        ;10307	               ;1_8toAC12in                  ;1/8 to AC Sync 12in           ;       ;TRUE	;0	;0	;0
-;2407	        ;10308	               ;PCtoAC12in                   ;PC to AC Sync 12in            ;       ;TRUE	;0	;0	;0
-;2407	        ;10309	               ;1_8to1_812in                 ;1/8 to 1/8 Sync 12in          ;       ;TRUE	;0	;0	;0
-;2407	        ;10310	               ;1_8to1_412in                 ;1/8 to 1/4 Sync 12in          ;       ;TRUE	;0	;0	;0
-;2407	        ;10311	               ;1_8toHotshoe12in             ;1/8 to Hotshoe Sync 12in      ;       ;TRUE	;0	;0	;0
-;2407	        ;10312	               ;none                         ;No Sync Cable                 ;       ;TRUE	;0	;0	;0
-;2407	        ;10313	               ;error                        ;Need a Sync Cable?            ;       ;TRUE	;0	;0	;0
-;2842	        ;10314	               ;small                        ;Small                         ;       ;FALSE	;0	;15	;0
-;2842	        ;10315	               ;medium                       ;Medium                        ;       ;FALSE	;0	;15	;0
-;2842	        ;10316	               ;large                        ;Large                         ;       ;TRUE	;0	;15	;0
-;2842	        ;10317	               ;xlarge                       ;Extra Large                   ;       ;TRUE	;0	;15	;0
-;2842	        ;10318	               ;xxlarge                      ;XX Large                      ;       ;FALSE	;0	;15	;0
-;2841	        ;10319	               ;small                        ;Small                         ;       ;TRUE	;0	;15	;0
-;2841	        ;10320	               ;medium                       ;Medium                        ;       ;TRUE	;0	;15	;0
-;2841	        ;10321	               ;large                        ;Large                         ;       ;TRUE	;0	;15	;0
-;2841	        ;10322	               ;xlarge                       ;Extra Large                   ;       ;TRUE	;0	;15	;0
-;2841	        ;10323	               ;xxlarge                      ;XX Large                      ;       ;TRUE	;0	;15	;0
-;2841	        ;10324	               ;3x                           ;3X Large                      ;       ;TRUE	;0	;15	;0
-;2841	        ;10325	               ;4x                           ;4X Large                      ;       ;TRUE	;0	;15	;0
-;4036	        ;10326	               ;small                        ;Small                         ;       ;TRUE	;0	;0	;0
-;4036	        ;10327	               ;medium                       ;Medium                        ;       ;TRUE	;0	;0	;0
-;4036	        ;10328	               ;large                        ;Large                         ;       ;TRUE	;0	;0	;0
-;4036	        ;10329	               ;xlarge                       ;Extra Large                   ;       ;TRUE	;0	;0	;0
-;4036	        ;10330	               ;xxlarge                      ;XX Large                      ;       ;TRUE	;0	;0	;0
-;4036	        ;10331	               ;3x                           ;3X Large                      ;       ;TRUE	;0	;0	;0
-;4036	        ;10332	               ;4x                           ;4X Large                      ;       ;TRUE	;0	;0	;0
-;6246	        ;10333	               ;small                        ;Small                         ;       ;FALSE	;0	;0	;0
-;6246	        ;10334	               ;medium                       ;Medium                        ;       ;FALSE	;0	;0	;0
-;6246	        ;10335	               ;large                        ;Large                         ;       ;FALSE	;0	;0	;0
-;6246	        ;10336	               ;xlarge                       ;Extra Large                   ;       ;FALSE	;0	;0	;0
-;6246	        ;10337	               ;xxlarge                      ;XX Large                      ;       ;TRUE	;0	;0	;0
-;6246	        ;10338	               ;3x                           ;3X Large                      ;       ;FALSE	;0	;0	;0
-;6246	        ;10339	               ;4x                           ;4X Large                      ;       ;FALSE	;0	;0	;0
-;2840	        ;10340	               ;small                        ;Small                         ;       ;TRUE	;0	;15	;0
-;2840	        ;10341	               ;medium                       ;Medium                        ;       ;TRUE	;0	;15	;0
-;2840	        ;10342	               ;large                        ;Large                         ;       ;TRUE	;0	;15	;0
-;2840	        ;10343	               ;xlarge                       ;Extra Large                   ;       ;TRUE	;0	;15	;0
-;2840	        ;10344	               ;xxlarge                      ;XX Large                      ;       ;TRUE	;0	;15	;0
-;2840	        ;10345	               ;3x                           ;3X Large                      ;       ;TRUE	;0	;15	;0
-;2840	        ;10346	               ;4x                           ;4X Large                      ;       ;TRUE	;0	;15	;0
-;5403	        ;10347	               ;None                         ;No Gel                        ;       ;TRUE	;0	;0	;0
-;5403	        ;10348	               ;tungstengel                  ;Tungsten Gel                  ;       ;TRUE	;0	;7	;0
-;4313	        ;10349	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	;0
-;4313	        ;10350	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	;0
-;4313	        ;10351	               ;PL-mount                     ;PL Mount                      ;       ;TRUE	;0	;0	;0
-;4315	        ;10352	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	;0
-;4315	        ;10353	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	;0
-;4315	        ;10354	               ;PL-mount                     ;PL Mount                      ;       ;TRUE	;0	;0	;0
-;4317	        ;10355	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	;0
-;4317	        ;10356	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	;0
-;4317	        ;10357	               ;PL-mount                     ;PL Mount                      ;       ;TRUE	;0	;0	;0
-;4319	        ;10358	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	;0
-;4319	        ;10359	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	;0
-;4319	        ;10360	               ;PL-mount                     ;PL Mount                      ;       ;TRUE	;0	;0	;0
-;4321	        ;10361	               ;error                        ;Select a Mount                ;       ;TRUE	;0	;0	;0
-;4321	        ;10362	               ;canon_ef-mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	;0
-;4321	        ;10363	               ;PL Mount                     ;PL Mount                      ;       ;TRUE	;0	;0	 ;0
-;4323	        ;10364	               ;Select a Mount               ;Select a Mount                ;       ;TRUE	;0	;0	 ;0
-;4323	        ;10365	               ;Canon EF Mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	 ;0
-;4323	        ;10366	               ;PL Mount                     ;PL Mount                      ;       ;TRUE	;0	;0	 ;0
-;4492	        ;10367	               ;Select a Mount               ;Select a Mount                ;       ;TRUE	;0	;0	 ;0
-;4492	        ;10368	               ;Canon EF Mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	 ;0
-;4492	        ;10369	               ;PL Mount                     ;PL Mount                      ;       ;TRUE	;0	;0	 ;0
-;4411	        ;10370	               ;Select a Mount               ;Select a Mount                ;       ;TRUE	;0	;0	 ;0
-;4411	        ;10371	               ;Canon EF Mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	 ;0
-;4411	        ;10372	               ;PL Mount                     ;PL Mount                      ;       ;TRUE	;0	;0	 ;0
-;4413	        ;10373	               ;Select a Mount               ;Select a Mount                ;       ;TRUE	;0	;0	 ;0
-;4413	        ;10374	               ;Canon EF Mount               ;Canon EF Mount                ;       ;TRUE	;0	;0	 ;0
-;4413	        ;10375	               ;PL Mount                     ;PL Mount                      ;       ;TRUE	;0	;0	 ;0
-;267	            ;10376	               ;10 degree                    ;10 degree                     ;       ;TRUE	;0	;5	 ;0
-;267	            ;10377	               ;20 degree                    ;20 degree                     ;       ;TRUE	;0	;5	 ;0
-;267	            ;10378	               ;30 degree                    ;30 degree                     ;       ;TRUE	;0	;5	 ;0
-;267	            ;10379	               ;40 degree                    ;40 degree                     ;       ;TRUE	;0	;5	 ;0
-;267	            ;10380	               ;None                         ;None                          ;       ;TRUE	;0	;0	 ;0
-;4136	        ;10381	               ;Spyder5 - New                ;Spyder5 - New                 ;       ;TRUE	;0	;425 ;	0
-;372	            ;10382	               ;Do Not Expedite              ;Do Not Expedite               ;       ;TRUE	;0	;0	 ;0
-;372	            ;10383	               ;Yes, Expedite                ;Yes, Expedite                 ;       ;TRUE	;0	;15	 ;0
-;372	            ;10384	               ;Expedite Cleaning?           ;Expedite Cleaning?            ;       ;TRUE	;0	;0	 ;0
-;1053	        ;10385	               ;CEP-1                        ;CEP-1 -     Compatible with Rebel Xti, XSi, XS, XT/350D, T1i, T2i, T3i, 60D, 5D Mark II, 5D, 50D, 40D, 30D, 20D, 1D Mark 1V, 1Ds Mark II, 1D Mark II, ID Mark II N                                                       ;  ;TRUE	;0	;4	;0
-;1053	        ;10386	               ;CEP-7                        ;CEP -7 - Canon EOS 7D or EOS ID Mark IV                                                                                                                                                                                  ;  ;TRUE	;0	;4	;0
-;1053	        ;10387	               ;NEP-1                        ;NEP-1 - Compatible with Nikon D-1, D-1H, D-1X, D-2X, D-2H, F-100, F-6, F-5, F-4, F-3, N90, N90s, N8008, N8008S, D3, D3X and D700 cameras                                                                                 ;  ;TRUE	;0	;4	;0
-;1053	        ;10388	               ;NEP-80                       ; NEP-80 - Compatible with Nikon D50, D60, D70, D70s, D80, D90, D40x, D100, D200, D300, D300s, D3000, D5000, D7000, Fuji S1s, S2, S3, S5, Olympus E3, E300, E330, E410, E420, E500, E510, E520, E620 and Pentax K10D, K20D ; ;TRUE	;0	;4	;0
-;1056	        ;10389	               ;NEP-1                        ;NEP-1                              ;        ;TRUE	 ;0	  ;4	;0
-;1056	        ;10390	               ;CEP-1                        ;CEP-1                              ;        ;TRUE	 ;0	  ;4	;0
-;1056	        ;10391	               ;CEP-7                        ;CEP -7                             ;        ;TRUE	 ;0	  ;4	;0
-;1056	        ;10392	               ;NEP-80                       ;NEP-80                             ;        ;TRUE	 ;0	  ;4	;0
-;1056	        ;10393	               ;7-Sep                        ;7-Sep                              ;        ;TRUE	 ;0	  ;4	;0
-;1056	        ;10394	               ;None                         ;No Eyepiece                        ;        ;TRUE	 ;0	  ;0	;0
-;2532	        ;10395	               ;cz-cable                     ;Canon CZ Cable                     ;        ;TRUE	 ;0	  ;0	;0
-;2532	        ;10396	               ;cke-cable                    ;Nikon CKE Cable                    ;        ;TRUE	 ;0	  ;0	;0
-;2532	        ;10397	               ;none                         ;No Flash Cable                     ;        ;TRUE	 ;0	  ;0	;0
-;2532	        ;10398	               ;error                        ;Select Flash Cable                 ;        ;TRUE	 ;0	  ;0	;0
-;2590	        ;10399	               ;no-foot                      ;No Flash Foot                      ;        ;TRUE	 ;0	  ;0	;0
-;2590	        ;10400	               ;yes-foot                     ;Include Flash Foot                 ;        ;TRUE	 ;0	  ;0	;0
-;5159	        ;10401	               ;error                        ;Select Sticky Mount                ;        ;TRUE	 ;0	  ;0	;0
-;5159	        ;10402	               ;None                         ;No Sticky Mounts                   ;        ;TRUE	 ;0	  ;0	;0
-;5159	        ;10403	               ;curved_mount                 ;1 Fusion Curved Mount              ;        ;TRUE	 ;0	  ;6	;0
-;5159	        ;10404	               ;flat_mount                   ;1 Fusion Flat Mount                ;        ;TRUE	 ;0	  ;6	;0
-;5159	        ;10405	               ;both_mounts                  ;1 Fusion Flat, 1 Curved (2 Total)  ;        ;TRUE	 ;4	  ;11	;0
-;5159	        ;10406	               ;two_flat_mounts              ;2 Fusion Flat Mounts               ;        ;TRUE	 ;0	  ;11	;0
-;5159	        ;10407	               ;two_curved_mounts            ;2 Fusion Curved Mounts             ;        ;TRUE	 ;0	  ;11	;0
-;2900	        ;10408	               ;orange-tape                  ;Orange Tape                        ;        ;TRUE	 ;0	  ;0	;0
-;2011	        ;10409	               ;black-tape-12                ;Black Tape                         ;        ;TRUE	 ;0	  ;0	;0
-;2008	        ;10410	               ;blower                       ;Blower                             ;        ;TRUE	 ;0	  ;18	;0
-;4954	        ;10411	               ;error                        ;Select Sticky Mount                ;        ;TRUE	 ;0	  ;0	;0
-;4954	        ;10412	               ;None                         ;No Extra Sticky Mount              ;        ;TRUE	 ;0	  ;0	;0
-;4954	        ;10413	               ;curved_mount                 ;Curved                             ;        ;TRUE	 ;0	  ;2	;0
-;4954	        ;10414	               ;flat_mount                   ;Flat                               ;        ;TRUE	 ;0	  ;2	;0
-;4954	        ;10415	               ;both_mounts                  ;Curved and Flat                    ;        ;TRUE	 ;0	  ;4	;0
-;5398	        ;10416	               ;error                        ;Select Sticky Mount                ;        ;TRUE	 ;0	  ;0	;0
-;5398	        ;10417	               ;None                         ;No Extra Sticky Mount              ;        ;TRUE	 ;0	  ;0	;0
-;5398	        ;10418	               ;curved_mount                 ;Curved                             ;        ;TRUE	 ;0	  ;2	;0
-;5398	        ;10419	               ;flat_mount                   ;Flat                               ;        ;TRUE	 ;0	  ;2	;0
-;5398	        ;10420	               ;both_mounts                  ;Curved and Flat                    ;        ;TRUE	 ;0	  ;4	;0
-;5957	        ;10421	               ;error                        ;Select Sticky Mount                ;        ;TRUE	 ;0	  ;0	;0
-;5957	        ;10422	               ;None                         ;No Extra Sticky Mount              ;        ;TRUE	 ;0	  ;0	;0
-;5957	        ;10423	               ;curved_mount                 ;Curved                             ;        ;TRUE	  ;0	;2	  ;0
-;5957	        ;10424	               ;flat_mount                   ;Flat                               ;        ;TRUE	  ;0	;2	  ;0
-;5957	        ;10425	               ;both_mounts                  ;Curved and Flat                    ;        ;TRUE	  ;0	;4	  ;0
-;6378	        ;10426	               ;error                        ;Select Sticky Mount                ;        ;TRUE	  ;0	;0	  ;0
-;6378	        ;10427	               ;None                         ;No Extra Sticky Mount              ;        ;TRUE	  ;0	;0	  ;0
-;6378	        ;10428	               ;curved_mount                 ;Curved                             ;        ;TRUE	  ;0	;2	  ;0
-;6378	        ;10429	               ;flat_mount                   ;Flat                               ;        ;TRUE	  ;0	;2	  ;0
-;6378	        ;10430	               ;both_mounts                  ;Curved and Flat                    ;        ;TRUE	  ;0	;4	  ;0
-;5960	        ;10431	               ;error                        ;Select Sticky Mount                ;        ;TRUE	  ;0	;0	  ;0
-;5960	        ;10432	               ;None                         ;No Sticky Mounts                   ;        ;TRUE	  ;0	;0	  ;0
-;5960	        ;10433	               ;curved_mount                 ;1 MAX Curved Mount                 ;        ;TRUE	  ;0	;6	  ;0
-;5960	        ;10434	               ;flat_mount                   ;1 MAX Flat Mount                   ;        ;TRUE	  ;0	;6	  ;0
-;5960	        ;10435	               ;both_mounts                  ;1 MAX Flat, 1 Curved (2 Total)     ;        ;TRUE	  ;4	;11	  ;0
-;5960	        ;10436	               ;two_flat_mounts              ;2 MAX Flat Mounts                  ;        ;TRUE	  ;0	;11	  ;0
-;5960	        ;10437	               ;two_curved_mounts            ;2 MAX Curved Mounts                ;        ;TRUE	  ;0	;11	  ;0
-;3263	        ;10438	               ;error                        ;Select Sticky Mount                ;        ;TRUE	  ;0	;0	  ;0
-;3263	        ;10439	               ;None                         ;No Extra Sticky Mount              ;        ;TRUE	  ;0	;0	  ;0
-;3263	        ;10440	               ;curved_mount                 ;Curved                             ;        ;TRUE	  ;0	;2	  ;0
-;3263	        ;10441	               ;flat_mount                   ;Flat                               ;        ;TRUE	  ;0	;2	  ;0
-;3263	        ;10442	               ;both_mounts                  ;Curved and Flat                    ;        ;TRUE	  ;0	;4	  ;0
-;252	            ;10443	               ;20degree                     ;20 degree                          ;        ;TRUE	  ;0	;5	  ;0
-;252	            ;10444	               ;None                         ;No Honeycomb Grid                  ;        ;TRUE	  ;0	;0	  ;0
-;252	            ;10445	               ;10degree                     ;10 degree                          ;        ;TRUE	  ;0	;5	  ;0
-;252	            ;10446	               ;30degree                     ;30 degree                          ;        ;TRUE	  ;0	;5	  ;0
-;252	            ;10447	               ;40degree                     ;40 degree                          ;        ;TRUE	  ;0	;5	  ;0
-;4814	        ;10448	               ;error                        ;Select Harness                     ;        ;TRUE	  ;0	;0	  ;0
-;4814	        ;10449	               ;hero4-harness                ;HERO4 Harness                      ;        ;TRUE	  ;0	;0	  ;0
-;4814	        ;10450	               ;hero5-harness                ;HERO5 Harness                      ;        ;TRUE	  ;0	;0	  ;0
-;5893	        ;10451	               ;nikon-d610                   ;KEH Nikon D610 30120314            ;        ;TRUE	  ;0	;659.6;0
-;5892	        ;10452	               ;nikon-d610                   ;KEH Nikon D610 30115066            ;        ;TRUE	  ;0	;618.8;0
-;464	            ;10453	               ;price                        ;Price                              ;        ;TRUE	  ;0	;5	  ;0
-;431	            ;10454	               ;nd_4                         ;ND 4                               ;        ;TRUE	  ;0	;0	  ;0
-;431	            ;10455	               ;ND_6                         ;ND 6                               ;        ;TRUE	  ;0	;0	  ;0
-;431	            ;10456	               ;nd_8                         ;ND 8                               ;        ;TRUE	  ;0	;0	  ;0
-;5679	        ;10457	               ;error                        ;Select Sticky Mount                ;         ;TRUE	;0	;0	;0
-;5679	        ;10458	               ;None                         ;No Extra Sticky Mount              ;         ;TRUE	;0	;0	;0
-;5679	        ;10459	               ;curved_mount                 ;Curved                             ;         ;TRUE	;0	;2	;0
-;5679	        ;10460	               ;flat_mount                   ;Flat                               ;         ;TRUE	;0	;2	;0
-;5679	        ;10461	               ;both_mounts                  ;Curved and Flat                    ;         ;TRUE	;0	;4	;0
-;2284	        ;10462	               ;Dont                         ;Do Not Include AA Battery Tray     ;         ;FALSE	;0	;0	;0
-;2284	        ;10463	               ;Include                      ;Include AA Battery Tray            ;         ;FALSE	;0	;0	;0
-;4839	        ;10464	               ;error                        ;Select (Insert Product Name Here)  ;         ;TRUE	;0	;0	;0
-;4839	        ;10465	               ;None                         ;No (Insert Product Name Here)      ;         ;TRUE	;0	;0	;0
-;4839	        ;10466	               ;item-name-1                  ;Item Name 1                        ;         ;TRUE	;0	;1	;0
-;4839	        ;10467	               ;item-name-2                  ;Item Name 2                        ;         ;TRUE	;0	;1	;0
-;4839	        ;10468	               ;item-name-3                  ;Item Name 3                        ;         ;TRUE	;0	;1	;0
-;4839	        ;10469	               ;item-name-4                  ;Item Name 4                        ;         ;TRUE	;0	;1	;0
-;5144	        ;10470	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;5144	        ;10471	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;5144	        ;10472	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;4415	        ;10473	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;4415	        ;10474	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;4415	        ;10475	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;5407	        ;10476	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;5407	        ;10477	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;5407	        ;10478	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;4392	        ;10479	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;4392	        ;10480	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;4392	        ;10481	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;4309	        ;10482	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;4309	        ;10483	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;4309	        ;10484	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;1328	        ;10485	               ;None                         ;None                               ;         ;TRUE	;0	;0	;0
-;1328	        ;10486	               ;type_a                       ;Type A                             ;         ;TRUE	;0	;15	;0
-;1328	        ;10487	               ;type_b                       ;Type B                             ;         ;TRUE	;0	;15	;0
-;1328	        ;10488	               ;type_c                       ;Type C                             ;         ;TRUE	;0	;15	;0
-;1328	        ;10489	               ;type_d                       ;Type D                             ;         ;TRUE	;0	;15	;0
-;417 	        ;10490	               ;type_a                       ;Type A                             ;         ;TRUE	;0	;15	;0
-;417	            ;10491	               ;type_b                       ;Type B                             ;         ;TRUE	;0	;15	;0
-;417	            ;10492	               ;type_c                       ;Type C                             ;         ;TRUE	;0	;15	;0
-;417	            ;10493	               ;type_d                       ;Type D                             ;         ;TRUE	;0	;15	;0
-;417	            ;10494	               ;None                         ;No Extra Focus Ring                ;         ;TRUE	;0	;0	;0
-;417	            ;10495	               ;error                        ;Select Extra Focus Ring            ;         ;TRUE	;0	;0	;0
-;2173	        ;10496	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;2173	        ;10497	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;2173	        ;10498	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;5558	        ;10499	               ;error                        ;Need Timecode Cable?               ;         ;TRUE	;0	;0	;0
-;5558	        ;10500	               ;none                         ;No Timecode Cable                  ;         ;TRUE	;0	;0	;0
-;5558	        ;10501	               ;BNC_converter_cable          ;Yes-$3                             ;         ;TRUE	;0	;3	;0
-;4090	        ;10502	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;4090	        ;10503	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;4090	        ;10504	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;6242	        ;10505	               ;zillow                       ;Zillow                             ;         ;TRUE	;0	;500;	0
-;2077	        ;10506	               ;sensor-cleaning              ;Sensor Cleaning                    ;         ;TRUE	;0	;0	;0
-;1391	        ;10507	               ;small                        ;Small                              ;         ;TRUE	;0	;15	;0
-;1391	        ;10508	               ;medium                       ;Medium                             ;         ;TRUE	;0	;15	;0
-;1391	        ;10509	               ;large                        ;Large                              ;         ;TRUE	;0	;15	;0
-;1391	        ;10510	               ;xlarge                       ;Extra Large                        ;         ;TRUE	;0	;15	;0
-;1391	        ;10511	               ;xxlarge                      ;XX Large                           ;         ;TRUE	;0	;15	;0
-;232	            ;10512	               ;Small                        ;Small                              ;         ;FALSE	;0	;15	;0
-;232	            ;10513	               ;Medium                       ;Medium                             ;         ;FALSE	;0	;15	;0
-;232	            ;10514	               ;Large                        ;Large                              ;         ;FALSE	;0	;15	;0
-;232	            ;10515	               ;XLarge                       ;Extra Large                        ;         ;FALSE	;0	;15	;0
-;232	            ;10516	               ;XXLarge                      ;XXLarge                            ;         ;TRUE	;0	;15	;0
-;2568	        ;10517	               ;small                        ;Small                              ;         ;TRUE	;0	;0	;0
-;2568	        ;10518	               ;medium                       ;Medium                             ;         ;TRUE	;0	;0	;0
-;2568	        ;10519	               ;large                        ;Large                              ;         ;TRUE	;0	;0	;0
-;2568	        ;10520	               ;xlarge                       ;Extra Large                        ;         ;TRUE	;0	;0	;0
-;2568	        ;10521	               ;xxlarge                      ;XX Large                           ;         ;TRUE	;0	;0	;0
-;2568	        ;10522	               ;error                        ;Select a Shirt Size                ;         ;TRUE	;0	;0	;0
-;4094	        ;10523	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;4094	        ;10524	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;4094	        ;10525	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;2770	        ;10526	               ;mounts                       ;Add Mounts                         ;         ;TRUE	;0	;20	;0
-;2770	        ;10527	               ;None                         ;None                               ;         ;TRUE	;0	;0	;0
-;1843	        ;10528	               ;1_8toPC12in                  ;1/8 to PC Sync 12in                ;         ;TRUE	;0	;0	;0
-;1843	        ;10529	               ;1_8toPC17ft                  ;1/8 to PC Sync 17ft                ;         ;TRUE	;0	;0	;0
-;1843	        ;10530	               ;1_4toPCsync17ft              ;1/4 to PC Sync 17ft                ;         ;TRUE	;0	;0	;0
-;1843	        ;10531	               ;1_8toAC12in                  ;1/8 to AC Sync 12in                ;         ;TRUE	;0	;0	;0
-;1843	        ;10532	               ;PCtoAC12in                   ;PC to AC Sync 12in                 ;         ;TRUE	;0	;0	;0
-;1843	        ;10533	               ;1_8to1_812in                 ;1/8 to 1/8 Sync 12in               ;         ;TRUE	;0	;0	;0
-;1843	        ;10534	               ;1_8to1_412in                 ;1/8 to 1/4 Sync 12in               ;         ;TRUE	;0	;0	;0
-;1843	        ;10535	               ;1_8toHotshoe12in             ;1/8 to Hotshoe Sync 12in           ;         ;TRUE	;0	;0	;0
-;1843	        ;10536	               ;none                         ;No Sync Cable                      ;         ;TRUE	;0	;0	;0
-;1843	        ;10537	               ;error                        ;Need a Sync Cable?                 ;         ;TRUE	;0	;0	;0
-;3406	        ;10538	               ;6_Sync_Cable                 ;6' Sync Cable                      ;         ;TRUE	;0	;0	;0
-;3406	        ;10539	               ;12_Sync_Cable                ;12' Sync Cable                     ;         ;TRUE	;0	;0	;0
-;3406	        ;10540	               ;30_Sync_Cable                ;30' Sync Cable                     ;         ;TRUE	;0	;0	;0
-;2315	        ;10541	               ;small                        ;Small                              ;         ;FALSE	;0	;15	;0
-;2315	        ;10542	               ;medium                       ;Medium                             ;         ;FALSE	;0	;15	;0
-;2315	        ;10543	               ;large                        ;Large                              ;         ;TRUE	;0	;15	;0
-;2315	        ;10544	               ;xlarge                       ;Extra Large                        ;         ;TRUE	;0	;15	;0
-;2315	        ;10545	               ;xxlarge                      ;XX Large                           ;         ;FALSE	;0	;15	;0
-;2560	        ;10546	               ;small                        ;Small                              ;         ;FALSE	;0	;0	;0
-;2560	        ;10547	               ;medium                       ;Medium                             ;         ;FALSE	;0	;0	;0
-;2560	        ;10548	               ;large                        ;Large                              ;         ;TRUE	;0	;0	;0
-;2560	        ;10549	               ;xlarge                       ;Extra Large                        ;         ;TRUE	;0	;0	;0
-;2560	        ;10550	               ;xxlarge                      ;XX Large                           ;         ;FALSE	;0	;0	;0
-;2561	        ;10551	               ;small                        ;Small                              ;         ;FALSE	;0	;0	;0
-;2561	        ;10552	               ;medium                       ;Medium                             ;         ;FALSE	;0	;0	;0
-;2561	        ;10553	               ;large                        ;Large                              ;         ;FALSE	;0	;0	;0
-;2561	        ;10554	               ;xlarge                       ;Extra Large                        ;         ;FALSE	;0	;0	;0
-;2561	        ;10555	               ;xxlarge                      ;XX Large                           ;         ;TRUE	;0	;0	;0
-;2561	        ;10556	               ;3x                           ;3X Large                           ;         ;FALSE	;0	;0	;0
-;2561	        ;10557	               ;4x                           ;4X Large                           ;         ;FALSE	;0	;0	;0
-;2562	        ;10558	               ;small                        ;Small                              ;         ;TRUE	;0	;0	;0
-;2562	        ;10559	               ;medium                       ;Medium                             ;         ;TRUE	;0	;0	;0
-;2562	        ;10560	               ;large                        ;Large                              ;         ;FALSE	;0	;0	;0
-;2562	        ;10561	               ;xlarge                       ;Extra Large                        ;         ;TRUE	;0	;0	;0
-;2562	        ;10562	               ;xxlarge                      ;XX Large                           ;         ;TRUE	;0	;0	;0
-;2562	        ;10563	               ;3x                           ;3X Large                           ;         ;TRUE	;0	;0	;0
-;2562	        ;10564	               ;4x                           ;4X Large                           ;         ;TRUE	;0	;0	;0
-;2562	        ;10565	               ;error                        ;Select T-shirt Size                ;         ;TRUE	;0	;0	;0
-;2581	        ;10566	               ;black                        ;Black                              ;         ;TRUE	;0	;20	;0
-;3922	        ;10567	               ;Tenba-TTP34-New              ;Tenba TTP34 - New                  ;         ;FALSE	;0	;75	;0
-;4538	        ;10568	               ;error                        ;Select Flash Cable                 ;         ;TRUE	;0	;0	;0
-;4538	        ;10569	               ;none                         ;No Flash Cable                     ;         ;TRUE	;0	;0	;0
-;4538	        ;10570	               ;cz-cable                     ;CZ Flash Cable                     ;         ;TRUE	;0	;0	;0
-;4538	        ;10571	               ;cke-cable                    ;CKE Flash Cable                    ;         ;TRUE	;0	;0	;0
-;4149	        ;10572	               ;None                         ;No Gel                             ;         ;TRUE	;0	;0	;0
-;4149	        ;10573	               ;tungstengel                  ;Tungsten Gel                       ;         ;TRUE	;0	;7	;0
-;6410	        ;10574	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;6410	        ;10575	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;6410	        ;10576	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;6221	        ;10577	               ;error                        ;Need USB-C Audio Adapter?          ;         ;TRUE	;0	;0	;0
-;6221	        ;10578	               ;none                         ;No USB-C Audio Adapter             ;         ;TRUE	;0	;0	;0
-;6221	        ;10579	               ;usb_c_audio_adapter          ;Yes-$4                             ;         ;TRUE	;0	;4	;0
-;4275	        ;10580	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;4275	        ;10581	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;4275	        ;10582	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;3441	        ;10583	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;3441	        ;10584	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;3441	        ;10585	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;4133	        ;10586	               ;error                        ;Select a Mount                     ;         ;TRUE	;0	;0	;0
-;4133	        ;10587	               ;canon_ef-mount               ;Canon EF Mount                     ;         ;TRUE	;0	;0	;0
-;4133	        ;10588	               ;PL-mount                     ;PL Mount                           ;         ;TRUE	;0	;0	;0
-;4289	        ;10589	               ;None                         ;No Plate                           ;         ;TRUE	;0	;0	;0
-;4289	        ;10590	               ;error                        ;Select Plate                       ;         ;TRUE	;0	;0	;0
-;4289	        ;10591	               ;yesplate                     ;Yes Plate                          ;         ;TRUE	;0	;6	;0
+                        ;232;10512;Small                      ;Small                              ;;false	;0	;15	;0
+                        ;232;10513;Medium                     ;Medium                             ;;false	;0	;15	;0
+                        ;232;10514;Large                      ;Large                              ;;false	;0	;15	;0
+                        ;232;10515;XLarge                     ;Extra Large                        ;;false	;0	;15	;0
+                        ;232;10516;XXLarge                    ;XXLarge                            ;;true	;0	;15	;0
+                        ;252;10443;20degree                   ;20 degree                          ;;true	  ;0	;5	  ;0
+                        ;252;10444;None                       ;No Honeycomb Grid                  ;;true	  ;0	;0	  ;0
+                        ;252;10445;10degree                   ;10 degree                          ;;true	  ;0	;5	  ;0
+                        ;252;10446;30degree                   ;30 degree                          ;;true	  ;0	;5	  ;0
+                        ;252;10447;40degree                   ;40 degree                          ;;true	  ;0	;5	  ;0
+                        ;417;10490;type_a                     ;Type A                             ;;true	;0	;15	;0
+                        ;417;10491;type_b                     ;Type B                             ;;true	;0	;15	;0
+                        ;417;10492;type_c                     ;Type C                             ;;true	;0	;15	;0
+                        ;417;10493;type_d                     ;Type D                             ;;true	;0	;15	;0
+                        ;417;10494;None                       ;No Extra Focus Ring                ;;true	;0	;0	;0
+                        ;417;10495;error                      ;Select Extra Focus Ring            ;;true	;0	;0	;0
+                        ;444;10245;None                       ;No Extra Focus Ring           ;   ;true	;0	;0	 ;0
+                        ;444;10246;type_a                     ;Type A                        ;   ;true	;0	;15	 ;0
+                        ;444;10247;type_b                     ;Type B                        ;   ;true	;0	;15	 ;0
+                        ;444;10248;type_c                     ;Type C                        ;   ;true	;0	;15	 ;0
+                        ;444;10249;type_d                     ;Type D                        ;   ;true	;0	;15	 ;0
+                        ;444;10250;error                      ;Select Extra Focus Ring       ;   ;true	;0	;0	 ;0
+                        ;507;10233;10degree                   ;10 degree              ;;true	;0	;5	 ;0
+                        ;507;10234;20degree                   ;20 degree              ;;true	;0	;5	 ;0
+                        ;507;10235;30degree                   ;30 degree              ;;true	;0	;5	 ;0
+                        ;507;10236;40degree                   ;40 degree              ;;true	;0	;5	 ;0
+                        ;507;10237;None                       ;No Honeycomb Grid      ;;true	;0	;0	 ;0
+                        ;1056;10393;7-Sep                      ;7-Sep                              ;;true;0	  ;4	;0
+                        ;1056;10394;None                       ;No Eyepiece                        ;;true;0	  ;0	;0
+                        ;1391;10507;small                      ;Small                              ;;true	;0	;15	;0
+                        ;1391;10508;medium                     ;Medium                             ;;true	;0	;15	;0
+                        ;1391;10509;large                      ;Large                              ;;true	;0	;15	;0
+                        ;1391;10510;xlarge                     ;Extra Large                        ;;true	;0	;15	;0
+                        ;1391;10511;xxlarge                    ;XX Large                           ;;true	;0	;15	;0
+                        ;1826;10261;None                       ;No Extra Focus Ring           ;       ;true	;0	;0	 ;0
+                        ;1826;10262;type_a                     ;Type A                        ;       ;true	;0	;15	 ;0
+                        ;1826;10263;type_b                     ;Type B                        ;       ;true	;0	;15	 ;0
+                        ;1826;10264;type_c                     ;Type C                        ;       ;true	;0	;15	 ;0
+                        ;1826;10265;type_d                     ;Type D                        ;       ;true	;0	;15	 ;0
+                        ;1826;10266;error                      ;Add Extra Focus Ring          ;       ;true	;0	;0	 ;0
+                        ;2248;19;Include                      ;Include AA Battery Tray          ;;true;0;0	      ;0
+                        ;2248;20;Dont                         ;No AA Battery Tray               ;;true;0;0	      ;0
+                        ;2248;21;error                        ;Need AA Battery Tray?            ;;true;0;0	      ;0
+                        ;2279;11;no_adapter                   ;Dont Include Hotshoe Adapter     ;;true;0;0	      ;0
+                        ;2279;12;adapter                      ;Include Hotshoe Adapter          ;;true;0;0	      ;0
+                        ;2284;10462;Dont                       ;Do Not Include AA Battery Tray     ;;false	;0	;0	;0
+                        ;2284;10463;Include                    ;Include AA Battery Tray            ;;false	;0	;0	;0
+                        ;2532;10395;cz-cable                   ;Canon CZ Cable                     ;;true	 ;0	  ;0	;0
+                        ;2532;10396;cke-cable                  ;Nikon CKE Cable                    ;;true	 ;0	  ;0	;0
+                        ;2532;10397;none                       ;No Flash Cable                     ;;true	 ;0	  ;0	;0
+                        ;2532;10398;error                      ;Select Flash Cable                 ;;true	 ;0	  ;0	;0
+                        ;2568;10517;small                      ;Small                              ;;true	;0	;0	;0
+                        ;2568;10518;medium                     ;Medium                             ;;true	;0	;0	;0
+                        ;2568;10519;large                      ;Large                              ;;true	;0	;0	;0
+                        ;2568;10520;xlarge                     ;Extra Large                        ;;true	;0	;0	;0
+                        ;2568;10521;xxlarge                    ;XX Large                           ;;true	;0	;0	;0
+                        ;2568;10522;error                      ;Select a Shirt Size                ;;true	;0	;0	;0
+                        ;2590;10399;no-foot                    ;No Flash Foot                      ;;true	 ;0	  ;0	;0
+                        ;2590;10400;yes-foot                   ;Include Flash Foot                 ;;true	 ;0	  ;0	;0
+                        ;2742;170;none                        ;No Flash Cable      ;;true;0;0;0
+                        ;2742;171;cz-cable                    ;CZ Flash Cable      ;;true;0;0;0
+                        ;2742;172;cke-cable                   ;CKE Flash Cable     ;;true;0;0;0
+                        ;2742;173;error                       ;Select Flash Cable  ;;true;0;0;0
+                        ;2770;10526;mounts                     ;Add Mounts                         ;;true	;0	;20	;0
+                        ;2770;10527;None                       ;None                               ;;true	;0	;0	;0
+                        ;3213;137;error                        ;Select Extra Focus Ring          ;;true;0;0	    ;0
+                        ;3213;138;None                         ;No Extra Focus Ring              ;;true;0;0	    ;0
+                        ;3213;139;type_a                       ;Type A                           ;;true;0;15	    ;0
+                        ;3213;140;type_b                       ;Type B                           ;;true;0;15	    ;0
+                        ;3213;141;type_c                       ;Type C                           ;;true;0;15	    ;0
+                        ;3213;142;type_d                       ;Type D                           ;;true;0;15	    ;0
+                        ;3238;174;error                       ;Select Flash Cable  ;;true;0;0;0
+                        ;3238;175;none                        ;No Flash Cable      ;;true;0;0;0
+                        ;3238;176;cz-cable                    ;CZ Flash Cable      ;;true;0;0;0
+                        ;3238;177;cke-cable                   ;CKE Flash Cable     ;;true;0;0;0
+                        ;3263;10438;error                      ;Select Sticky Mount                ;;true	  ;0	;0	  ;0
+                        ;3263;10439;None                       ;No Extra Sticky Mount              ;;true	  ;0	;0	  ;0
+                        ;3263;10440;curved_mount               ;Curved                             ;;true	  ;0	;2	  ;0
+                        ;3263;10441;flat_mount                 ;Flat                               ;;true	  ;0	;2	  ;0
+                        ;3263;10442;both_mounts                ;Curved and Flat                    ;;true	  ;0	;4	  ;0
+                        ;3406;10538;6_Sync_Cable               ;6' Sync Cable                      ;;true	;0	;0	;0
+                        ;3406;10539;12_Sync_Cable              ;12' Sync Cable                     ;;true	;0	;0	;0
+                        ;3406;10540;30_Sync_Cable              ;30' Sync Cable                     ;;true	;0	;0	;0
+                        ;3441;10583;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;3441;10584;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;3441;10585;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
+                        ;3796;16;error                        ;Select a Mount                   ;;true;0;0	      ;0
+                        ;3796;17;canon_ef-mount               ;Canon EF Mount                   ;;true;0;0	      ;0
+                        ;3796;18;PL-mount                     ;PL Mount                         ;;true;0;0	      ;0
+                        ;3810;203;error                       ;Select Sticky Mount    ;;true	;0	;0	;0
+                        ;3810;204;None                        ;No Extra Sticky Mount  ;;true	;0	;0	;0
+                        ;3810;205;curved_mount                ;Curved                 ;;true	;0	;2	;0
+                        ;3810;206;flat_mount                  ;Flat                   ;;true	;0	;2	;0
+                        ;3810;207;both_mounts                 ;Curved and Flat        ;;true	;0	;4	;0
+                        ;3882;208;error                       ;Select Sticky Mount    ;;true	;0	;0	;0
+                        ;3882;209;None                        ;No Extra Sticky Mount  ;;true	;0	;0	;0
+                        ;3882;210;curved_mount                ;Curved                 ;;true	;0	;2	;0
+                        ;3882;211;flat_mount                  ;Flat                   ;;true	;0	;2	;0
+                        ;3882;212;both_mounts                 ;Curved and Flat        ;;true	;0	;4	;0
+                        ;4090;10502;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;4090;10503;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;4090;10504;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
+                         ;4133;10586;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;4133;10587;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;4133;10588;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
+                        ;4149;10572;None                       ;No Gel                             ;;true	;0	;0	;0
+                        ;4149;10573;tungstengel                ;Tungsten Gel                       ;;true	;0	;7	;0
+                       ;4238;10267;error                      ;Select Extra Focus Ring       ;       ;true	;0	;0	 ;0
+                        ;4238;10268;None                       ;No Extra Focus Ring           ;       ;true	;0	;0	 ;0
+                        ;4238;10269;type_a                     ;Type A                        ;       ;true	;0	;15	 ;0
+                        ;4238;10270;type_b                     ;Type B                        ;       ;true	;0	;15	 ;0
+                        ;4238;10271;type_c                     ;Type C                        ;       ;true	;0	;15	 ;0
+                        ;4238;10272;type_d                     ;Type D                        ;       ;true	;0	;15	 ;0
+                        ;4275;10580;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;4275;10581;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;4275;10582;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
+                        ;4300;2;no-foot                      ;No Flash Foot                    ;;true;0;0;	0
+                        ;4300;3;yes-foot                     ;Include Flash Foot               ;;true;0;0;	0
+                        ;4309;10482;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;4309;10483;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;4309;10484;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
+                        ;4335;13;error                        ;Select a Mount                   ;;true;0;0	      ;0
+                        ;4335;14;canon_ef-mount               ;Canon EF Mount                   ;;true;0;0	      ;0
+                        ;4335;15;PL-mount                     ;PL Mount                         ;;true;0;0	      ;0
+                        ;4345;4;None                         ;No Extra SD Cards                ;;true;0;0;	0
+                        ;4345;5;2cards                       ;2 x 64GB SD Cards                ;;true;0;40	      ;0
+                        ;4345;6;4cards                       ;4 x 64GB SD Cards                ;;true;0;80	      ;0
+                        ;4345;7;6cards                       ;6 x 64GB SD Cards                ;;true;0;100	  ;0
+                        ;4405;10228;error                      ;Select Sticky Mount    ;;true	;0	;0	 ;0
+                        ;4405;10229;None                       ;No Extra Sticky Mount  ;;true	;0	;0	 ;0
+                        ;4405;10230;curved_mount               ;Curved                 ;;true	;0	;2	 ;0
+                        ;4405;10231;flat_mount                 ;Flat                   ;;true	;0	;2	 ;0
+                        ;4405;10232;both_mounts                ;Curved and Flat        ;;true	;0	;4	 ;0
+                       ;4415;10473;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;4415;10474;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;4415;10475;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
+                        ;4517;9;no_adapter                   ;Dont Include Hotshoe Adapter     ;;true;0;0	      ;0
+                        ;4517;10;adapter                      ;Include Hotshoe Adapter          ;;true;0;0	      ;0
+                        ;4538;10568;error                      ;Select Flash Cable                 ;;true	;0	;0	;0
+                        ;4538;10569;none                       ;No Flash Cable                     ;;true	;0	;0	;0
+                        ;4538;10570;cz-cable                   ;CZ Flash Cable                     ;;true	;0	;0	;0
+                        ;4538;10571;cke-cable                  ;CKE Flash Cable                    ;;true	;0	;0	;0
+                        ;5043;31;error                        ;Need Timecode Cable?             ;;true;0;0	      ;0
+                        ;5043;32;none                         ;No Timecode Cable                ;;true;0;0	      ;0
+                        ;5043;33;BNC_converter_cable          ;Yes-$6                           ;;true;0;6	      ;0
+                        ;5050;40;no-foot                      ;No Flash Foot                    ;;true;0;0	     ;0
+                        ;5050;41;yes-foot                     ;Include Flash Foot               ;;true;0;0	     ;0
+                        ;5144;10470;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;5144;10471;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;5144;10472;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
+                        ;5159;10401;error                      ;Select Sticky Mount                ;;true	 ;0	  ;0	;0
+                        ;5159;10402;None                       ;No Sticky Mounts                   ;;true	 ;0	  ;0	;0
+                        ;5159;10403;curved_mount               ;1 Fusion Curved Mount              ;;true	 ;0	  ;6	;0
+                        ;5159;10404;flat_mount                 ;1 Fusion Flat Mount                ;;true	 ;0	  ;6	;0
+                        ;5159;10405;both_mounts                ;1 Fusion Flat, 1 Curved (2 Total)  ;;true	 ;4	  ;11
+                        ;5159;10406;two_flat_mounts            ;2 Fusion Flat Mounts               ;;true	 ;0	  ;11	;0
+                        ;5159;10407;two_curved_mounts          ;2 Fusion Curved Mounts             ;;true	 ;0	  ;11	;0
+                        ;5436;200;no-foot                     ;No Flash Foot          ;;true	;0	;0	;0
+                        ;5436;201;yes-foot                    ;Include Flash Foot     ;;true	;0	;0	;0
+                        ;5558;10499;error                      ;Need Timecode Cable?               ;;true	;0	;0	;0
+                        ;5558;10500;none                       ;No Timecode Cable                  ;;true	;0	;0	;0
+                        ;5558;10501;BNC_converter_cable        ;Yes-$3                             ;;true	;0	;3	;0
+                        ;5679;10457;error                      ;Select Sticky Mount                ;;true	;0	;0	;0
+                        ;5679;10458;None                       ;No Extra Sticky Mount              ;;true	;0	;0	;0
+                        ;5679;10459;curved_mount               ;Curved                             ;;true	;0	;2	;0
+                        ;5679;10460;flat_mount                 ;Flat                               ;;true	;0	;2	;0
+                        ;5679;10461;both_mounts                ;Curved and Flat                    ;;true	;0	;4	;0
+                        ;5957;10421;error                      ;Select Sticky Mount                ;;true	 ;0	  ;0	;0
+                        ;5957;10422;None                       ;No Extra Sticky Mount              ;;true	 ;0	  ;0	;0
+                        ;5957;10423;curved_mount               ;Curved                             ;;true	  ;0	;2	  ;0
+                        ;5957;10424;flat_mount                 ;Flat                               ;;true	  ;0	;2	  ;0
+                        ;5957;10425;both_mounts                ;Curved and Flat                    ;;true	  ;0	;4	  ;0
+                        ;5960;10431;error                      ;Select Sticky Mount                ;;true	  ;0	;0	  ;0
+                        ;5960;10432;None                       ;No Sticky Mounts                   ;;true	  ;0	;0	  ;0
+                        ;5960;10433;curved_mount               ;1 MAX Curved Mount                 ;;true	  ;0	;6	  ;0
+                        ;5960;10434;flat_mount                 ;1 MAX Flat Mount                   ;;true	  ;0	;6	  ;0
+                        ;5960;10435;both_mounts                ;1 MAX Flat, 1 Curved (2 Total)     ;;true	  ;4	;11
+                        ;5960;10436;two_flat_mounts            ;2 MAX Flat Mounts                  ;;true	  ;0	;11	  ;0
+                        ;5960;10437;two_curved_mounts          ;2 MAX Curved Mounts                ;;true	  ;0	;11	  ;0
+                        ;6221;10577;error                      ;Need USB-C Audio Adapter?          ;;true	;0	;0	;0
+                        ;6221;10578;none                       ;No USB-C Audio Adapter             ;;true	;0	;0	;0
+                        ;6221;10579;usb_c_audio_adapter        ;Yes-$4                             ;;true	;0	;4	;0
+                        ;6378;10426;error                      ;Select Sticky Mount                ;;true	  ;0	;0	  ;0
+                        ;6378;10427;None                       ;No Extra Sticky Mount              ;;true	  ;0	;0	  ;0
+                        ;6378;10428;curved_mount               ;Curved                             ;;true	  ;0	;2	  ;0
+                        ;6378;10429;flat_mount                 ;Flat                               ;;true	  ;0	;2	  ;0
+                        ;6378;10430;both_mounts                ;Curved and Flat                    ;;true	  ;0	;4	  ;0
+                        ;6410;10574;error                      ;Select a Mount                     ;;true	;0	;0	;0
+                        ;6410;10575;canon_ef-mount             ;Canon EF Mount                     ;;true	;0	;0	;0
+                        ;6410;10576;PL-mount                   ;PL Mount                           ;;true	;0	;0	;0
 
+$Options=source(optionId)[unique=true]
+$SubOptions=target(optionId)[unique=true]
 
+INSERT_UPDATE Option2OptionsRelation;$Options;$SubOptions
+                                    ;232;10512
+                                    ;232;10513
+                                    ;232;10514
+                                    ;232;10515
+                                    ;232;10516
+                                    ;252;10443
+                                    ;252;10444
+                                    ;252;10445
+                                    ;252;10446
+                                    ;252;10447
+                                    ;417;10490
+                                    ;417;10491
+                                    ;417;10492
+                                    ;417;10493
+                                    ;417;10494
+                                    ;417;10495
+                                    ;444;10245
+                                    ;444;10246
+                                    ;444;10247
+                                    ;444;10248
+                                    ;444;10249
+                                    ;444;10250
+                                    ;507;10233
+                                    ;507;10234
+                                    ;507;10235
+                                    ;507;10236
+                                    ;507;10237
+                                    ;1056;10393
+                                    ;1056;10394
+                                    ;1391;10507
+                                    ;1391;10508
+                                    ;1391;10509
+                                    ;1391;10510
+                                    ;1391;10511
+                                    ;1826;10261
+                                    ;1826;10262
+                                    ;1826;10263
+                                    ;1826;10264
+                                    ;1826;10265
+                                    ;1826;10266
+                                    ;2248;19
+                                    ;2248;20
+                                    ;2248;21
+                                    ;2279;11
+                                    ;2279;12
+                                    ;2284;10462
+                                    ;2284;10463
+                                    ;2532;10395
+                                    ;2532;10396
+                                    ;2532;10397
+                                    ;2532;10398
+                                    ;2568;10517
+                                    ;2568;10518
+                                    ;2568;10519
+                                    ;2568;10520
+                                    ;2568;10521
+                                    ;2568;10522
+                                    ;2590;10399
+                                    ;2590;10400
+                                    ;2742;170
+                                    ;2742;171
+                                    ;2742;172
+                                    ;2742;173
+                                    ;2770;10526
+                                    ;2770;10527
+                                    ;3213;137
+                                    ;3213;138
+                                    ;3213;139
+                                    ;3213;140
+                                    ;3213;141
+                                    ;3213;142
+                                    ;3238;174
+                                    ;3238;175
+                                    ;3238;176
+                                    ;3238;177
+                                    ;3263;10438
+                                    ;3263;10439
+                                    ;3263;10440
+                                    ;3263;10441
+                                    ;3263;10442
+                                    ;3406;10538
+                                    ;3406;10539
+                                    ;3406;10540
+                                    ;3441;10583
+                                    ;3441;10584
+                                    ;3441;10585
+                                    ;3796;16
+                                    ;3796;17
+                                    ;3796;18
+                                    ;3810;203
+                                    ;3810;204
+                                    ;3810;205
+                                    ;3810;206
+                                    ;3810;207
+                                    ;3882;208
+                                    ;3882;209
+                                    ;3882;210
+                                    ;3882;211
+                                    ;3882;212
+                                    ;4090;10502
+                                    ;4090;10503
+                                    ;4090;10504
+                                    ;4133;10586
+                                    ;4133;10587
+                                    ;4133;10588
+                                    ;4149;10572
+                                    ;4149;10573
+                                    ;4238;10267
+                                    ;4238;10268
+                                    ;4238;10269
+                                    ;4238;10270
+                                    ;4238;10271
+                                    ;4238;10272
+                                    ;4275;10580
+                                    ;4275;10581
+                                    ;4275;10582
+                                    ;4300;2
+                                    ;4300;3
+                                    ;4309;10482
+                                    ;4309;10483
+                                    ;4309;10484
+                                    ;4335;13
+                                    ;4335;14
+                                    ;4335;15
+                                    ;4345;4
+                                    ;4345;5
+                                    ;4345;6
+                                    ;4345;7
+                                    ;4405;10228
+                                    ;4405;10229
+                                    ;4405;10230
+                                    ;4405;10231
+                                    ;4405;10232
+                                    ;4415;10473
+                                    ;4415;10474
+                                    ;4415;10475
+                                    ;4517;9
+                                    ;4517;10
+                                    ;4538;10568
+                                    ;4538;10569
+                                    ;4538;10570
+                                    ;4538;10571
+                                    ;5043;31
+                                    ;5043;32
+                                    ;5043;33
+                                    ;5050;40
+                                    ;5050;41
+                                    ;5144;10470
+                                    ;5144;10471
+                                    ;5144;10472
+                                    ;5159;10401
+                                    ;5159;10402
+                                    ;5159;10403
+                                    ;5159;10404
+                                    ;5159;10405
+                                    ;5159;10406
+                                    ;5159;10407
+                                    ;5436;200
+                                    ;5436;201
+                                    ;5558;10499
+                                    ;5558;10500
+                                    ;5558;10501
+                                    ;5679;10457
+                                    ;5679;10458
+                                    ;5679;10459
+                                    ;5679;10460
+                                    ;5679;10461
+                                    ;5957;10421
+                                    ;5957;10422
+                                    ;5957;10423
+                                    ;5957;10424
+                                    ;5957;10425
+                                    ;5960;10431
+                                    ;5960;10432
+                                    ;5960;10433
+                                    ;5960;10434
+                                    ;5960;10435
+                                    ;5960;10436
+                                    ;5960;10437
+                                    ;6221;10577
+                                    ;6221;10578
+                                    ;6221;10579
+                                    ;6378;10426
+                                    ;6378;10427
+                                    ;6378;10428
+                                    ;6378;10429
+                                    ;6378;10430
+                                    ;6410;10574
+                                    ;6410;10575
+                                    ;6410;10576
 $productCatalog=blProductCatalog
 $productCatalogName=BL Product Catalog
 $catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
 $superCategories=supercategories(code, $catalogVersion)
 $blProduct=source(productId,$catalogVersion)[unique=true]
-$Options=target(code)[unique=true]
+$Options=target(optionId)[unique=true]
 
 INSERT_UPDATE BlProduct2OptionsRelation;$blProduct;$Options
-;12;RED_mount
-;8 ;surfboard-mount
-;3 ;gopro_sticky_mount
-;5 ;WEAPON_RED_mount
-;6 ;Amira_mount
-;15;fusion-mount
-;94;Osmo-Action-Sticky-Mount
-;97;GoPro-MAX-360-Camera-Mount
-;88;URSA-Mini-Pro-12K-Mount
+                                        ;83	;    76
+                                        ;276	;    252
+                                        ;275	;    252
+                                        ;361	;    417
+                                        ;362	;    417
+                                        ;361	;    424
+                                        ;362	;    424
+                                        ;402	;    444
+                                        ;445	;    507
+                                        ;83	;    742
+                                        ;83	;    743
+                                        ;83	;    744
+                                        ;83	;    745
+                                        ;699	;    1056
+                                        ;1592;	232
+                                        ;258	;    1391
+                                        ;2344;	1826
+                                        ;2569;	417
+                                        ;2597;	2008
+                                        ;1816;	2173
+                                        ;2760;	2248
+                                        ;2233;	2248
+                                        ;627 ; 	2248
+                                        ;155 ; 	2248
+                                        ;2471;	2248
+                                        ;532	;    2248
+                                        ;368	;    2248
+                                        ;2754;	2279
+                                        ;2890;	2284
+                                        ;3021;	2400
+                                        ;3183;	252
+                                        ;3219;	252
+                                        ;3284;	2532
+                                        ;2189;	2590
+                                        ;77	;    2590
+                                        ;2741;	2590
+                                        ;1519;	2590
+                                        ;1528;	2590
+                                        ;3461;	2248
+                                        ;3492;	2742
+                                        ;192	;    2532
+                                        ;1523;	2532
+                                        ;2890;	2248
+                                        ;3500;	2590
+                                        ;3337;	2770
+                                        ;4216;	3238
+                                        ;4210;	3263
+                                        ;4209;	3263
+                                        ;4211;	3263
+                                        ;4415;	3406
+                                        ;4469;	3796
+                                        ;4957;	3810
+                                        ;4985;	3840
+                                        ;4951;	3441
+                                        ;5066;	3882
+                                        ;3912;	2248
+                                        ;120	;2248
+                                        ;4669;	2248
+                                        ;577	; 252
+                                        ;700	;1056
+                                        ;698	;1056
+                                        ;5373;	2590
+                                        ;5402;	4090
+                                        ;5430;	1056
+                                        ;5431;	1056
+                                        ;5432;	1056
+                                        ;5433;	1056
+                                        ;5453;	4133
+                                        ;5385;	4149
+                                        ;5570;	4238
+                                        ;278;	2568
+                                        ;5586;	4275
+                                        ;5702;	4300
+                                        ;5710;	4309
+                                        ;5721;	4335
+                                        ;5680;	4345
+                                        ;5863;	4405
+                                        ;5869;	4415
+                                        ;5951;	4517
+                                        ;5983;	4538
+                                        ;6876;	5043
+                                        ;6932;	5050
+                                        ;536 ;    2590
+                                        ;7067;	5144
+                                        ;6989;	5159
+                                        ;7355;	5436
+                                        ;7321;	2173
+                                        ;7824;	5679
+                                        ;8178;	5558
+                                        ;8245;	5957
+                                        ;8246;	5960
+                                        ;8612;	6221
+                                        ;8684;	6242
+                                        ;8285;	6221
+                                        ;8806;	6378
+                                        ;8753;	6410
+                                        ;4189;	3213
+                                        ;9002;	6221
+
