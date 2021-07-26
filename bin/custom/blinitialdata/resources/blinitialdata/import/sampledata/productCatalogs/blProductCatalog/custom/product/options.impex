@@ -456,7 +456,6 @@ $blProduct=source(productId,$catalogVersion)[unique=true]
 $Options=target(optionId)[unique=true]
 
 INSERT_UPDATE BlProduct2OptionsRelation;$blProduct;$Options
-                                        ;83	;    76
                                         ;276	;    252
                                         ;275	;    252
                                         ;361	;    417
@@ -465,17 +464,13 @@ INSERT_UPDATE BlProduct2OptionsRelation;$blProduct;$Options
                                         ;362	;    424
                                         ;402	;    444
                                         ;445	;    507
-                                        ;83	;    742
-                                        ;83	;    743
-                                        ;83	;    744
-                                        ;83	;    745
                                         ;699	;    1056
                                         ;1592;	232
                                         ;258	;    1391
                                         ;2344;	1826
                                         ;2569;	417
                                         ;2597;	2008
-                                        ;1816;	2173
+                                        #;1816;	2173
                                         ;2760;	2248
                                         ;2233;	2248
                                         ;627 ; 	2248
@@ -496,8 +491,6 @@ INSERT_UPDATE BlProduct2OptionsRelation;$blProduct;$Options
                                         ;1528;	2590
                                         ;3461;	2248
                                         ;3492;	2742
-                                        ;192	;    2532
-                                        ;1523;	2532
                                         ;2890;	2248
                                         ;3500;	2590
                                         ;3337;	2770
@@ -542,7 +535,7 @@ INSERT_UPDATE BlProduct2OptionsRelation;$blProduct;$Options
                                         ;7067;	5144
                                         ;6989;	5159
                                         ;7355;	5436
-                                        ;7321;	2173
+                                        #;7321;	2173
                                         ;7824;	5679
                                         ;8178;	5558
                                         ;8245;	5957
