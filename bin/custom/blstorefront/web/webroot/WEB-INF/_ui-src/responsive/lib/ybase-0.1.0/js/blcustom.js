@@ -642,6 +642,21 @@ $('.emptyCart-modalClose').click(function(e){
 });
 }
 
+$('.emailSubscr_btn').click(function (e){
+
+		var email = document.getElementById("emailSubscr_txt").value;
+		//validate email
+			$.ajax({
+				 url: ACC.config.encodedContextPath + "/subscribe-email/?emailId="+email,
+				 type: "GET",
+				success: function (data) {
+					if (data == "success") {
+
+					}
+				}
+			});
+});
+
 //Added code for used gear addToCart 
 $('.bl-serial-add').click(function (e)
 	{
@@ -877,3 +892,4 @@ $('#printOrderConfirmation').on("click",function(e) {
 		var submitForm = $("#printOrderConfirmationForm");
 		submitForm.submit();
 });
+

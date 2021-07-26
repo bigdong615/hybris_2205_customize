@@ -225,7 +225,14 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String NEW_LINE_CHARACTER =  "\n";
   public static final String CATALOG_VERSION_NAME = "Online";
 
-  private BlCoreConstants()
+	public static final String SUBSCRIPTION_API_OPERATION_STATUS = "OK";
+	public static final String SUBSCRIPTION_CONTACT_KEY = "contactKey";
+	public static final String EMAIL_ADDRESS = "Email Address";
+	public static final String EMAIL_ADDRESSES = "Email Addresses";
+	public static final String HTML_ENABLED = "HTML Enabled";
+
+
+	private BlCoreConstants()
 	{
 		//empty
 	}
