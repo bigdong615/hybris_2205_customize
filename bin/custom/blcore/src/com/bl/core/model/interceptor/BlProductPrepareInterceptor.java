@@ -2,10 +2,12 @@ package com.bl.core.model.interceptor;
 
 import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.enums.DurationEnum;
+import com.bl.core.enums.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.logging.BlLogger;
+import de.hybris.platform.catalog.CatalogVersionService;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.europe1.model.PriceRowModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
@@ -33,6 +35,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
 
   private KeyGenerator keyGenerator;
   private EnumerationService enumerationService;
+  private CatalogVersionService catalogVersionService;
   private BlPricingService blPricingService;
 
   @Override
@@ -41,7 +44,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
     Collection<BlSerialProductModel> serialProducts = blProductModel.getSerialProducts();
 
     if (interceptorContext.isNew(blProductModel) && StringUtils
-        .isBlank(blProductModel.getProductId())) {
+        .isBlank(blProductModel.getProductId()) && !blProductModel.getCatalogVersion().equals(getCatalogVersionService().getCatalogVersion(BlCoreConstants.BL_PRODUCTCATALOG,BlCoreConstants.CATALOG_VERSION_NAME)))  {
       blProductModel.setProductId(getKeyGenerator().generate().toString());
     }
     createOrUpdateRentalBlProductPrice(blProductModel, interceptorContext);
@@ -127,7 +130,7 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
             .getEnumerationValue(DurationEnum.class, BlCoreConstants.SEVEN_DAY_PRICE)
             .equals(price.getDuration())).findAny();
     final Double retailPrice = blProductModel.getRetailPrice();
-    if (retailPrice != null && retailPrice > 0.0D) {
+    if (retailPrice != null && retailPrice > 0.0D && !ProductTypeEnum.SUBPARTS.equals(blProductModel.getProductType())) {
       if (sevenDayPrice.isEmpty()) {
         blProductModel.setEurope1Prices(Collections.singletonList(getBlPricingService()
             .createOrUpdateSevenDayPrice(blProductModel, retailPrice, true)));
@@ -162,6 +165,15 @@ public class BlProductPrepareInterceptor implements PrepareInterceptor<BlProduct
 
   public void setBlPricingService(BlPricingService blPricingService) {
     this.blPricingService = blPricingService;
+  }
+
+  public CatalogVersionService getCatalogVersionService() {
+    return catalogVersionService;
+  }
+
+  public void setCatalogVersionService(
+      CatalogVersionService catalogVersionService) {
+    this.catalogVersionService = catalogVersionService;
   }
 
 }
