@@ -318,7 +318,6 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 			}
 
 			paymentMethodRequest.billingAddressId(billingAddress.getBrainTreeAddressId());
-			//paymentMethodRequest.options().makeDefault(brainTreeSubscriptionInfoData.getIsDefault());
 			request.setIsDefault(brainTreeSubscriptionInfoData.getIsDefault());
 			request.setRequest(paymentMethodRequest);
 			final BrainTreePaymentMethodResult creditCardPaymentMethod = getBrainTreePaymentService().createCreditCardPaymentMethod(

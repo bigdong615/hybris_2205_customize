@@ -43,21 +43,7 @@ public class BraintreeInfo
 	
 	private Boolean isDefault;
 
-  /**
-	 * @return the isDefault
-	 */
-	public Boolean getIsDefault() {
-		return isDefault;
-	}
-
-	/**
-	 * @param isDefault the isDefault to set
-	 */
-	public void setIsDefault(Boolean isDefault) {
-		this.isDefault = isDefault;
-	}
-
-private String braintreeAddressId;
+    private String braintreeAddressId;
 
 	public BraintreeInfo()
 	{
@@ -349,4 +335,18 @@ private String braintreeAddressId;
   {
     this.braintreeAddressId = braintreeAddressId;
   }
+  
+  /**
+	 * @return the isDefault
+	 */
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	/**
+	 * @param isDefault the isDefault to set
+	 */
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
+	}
 }

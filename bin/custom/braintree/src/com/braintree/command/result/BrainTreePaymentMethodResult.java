@@ -11,8 +11,6 @@ public class BrainTreePaymentMethodResult extends BrainTreeCreatePaymentMethodRe
 	private PaymentMethod paymentMethod;
 	private Boolean isDefault;
 	
-	
-
 	public BrainTreePaymentMethodResult( final PaymentMethod paymentMethod, Boolean isDefault) {
 		super();
 		this.paymentMethod = paymentMethod;

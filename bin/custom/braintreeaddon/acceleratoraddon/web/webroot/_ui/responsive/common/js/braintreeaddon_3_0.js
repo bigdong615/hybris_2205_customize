@@ -178,17 +178,7 @@ jQuery(document).ready(function ($) {
         configureAccountPaymentInfoPage();
     }
 
-   /* if ((typeof addPaymentMethodsPage != 'undefined')) {
-    	alert("Hi");
-        enableShippingAddress = "false";
-        checkVenmoPaymentMethods();
-        createClientInstance(CONST.GLOBAL_MESSAGES, function(){
-            if (googlePayEnabled) {
-                initialiseGooglePay();
-            }
-            configurePayPalAlongWithHostedFields();
-        })
-    }*/
+   
 
     // PayPal Shopping Cart Shortcut checkout configuration
     if (typeof shoppingCart != 'undefined' && shoppingCart != '') {
