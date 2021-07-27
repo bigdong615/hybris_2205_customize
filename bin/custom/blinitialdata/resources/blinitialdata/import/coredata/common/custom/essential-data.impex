@@ -287,7 +287,14 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
                                               ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
                                               
-# BL-798 Enum values for RepairReasonsEnum                                              
+
+INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
+                            ;COMPACT;COMPACT
+                            ;COMPACTINPUT;COMPACTINPUT
+                            ;EXPANDED;EXPANDED
+                            ;EXPANDEDINPUT;EXPANDEDINPUT
+
+# BL-798 Enum values for RepairReasonsEnum
 INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en]                
                                 ; NO_POWER                        ; No Power                     
                                 ; ERROR_CODE                      ; Error Code                   
@@ -313,5 +320,3 @@ INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en
                                 
 INSERT_UPDATE ProductTypeEnum ; code[unique=true]               ; name[lang=en]                
                                 ; GIFTCARD                        ; Gift Card                     
-                                          
-                                              
