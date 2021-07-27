@@ -145,6 +145,10 @@ public class BlControllerConstants
   public static final String CLIENT_TOKEN = "client_token";
 
 
+	public static final String PO_NUMBER = "extendPoNumber";
+	public static final String PO_NOTES = "extendPoNotes";
+
+
 	private BlControllerConstants()
 	{
 		//empty

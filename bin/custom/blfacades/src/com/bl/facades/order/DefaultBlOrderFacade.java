@@ -380,6 +380,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
     return orderModel;
   }
 
+
   /**
    * This method created to get extend order from order
    */
@@ -411,6 +412,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   public void updateOrderExtendDetails(final OrderModel orderModel) {
     getDefaultBlExtendOrderService().updateExtendOrder(orderModel);
   }
+
+  /**
+   * This method created to store the po number to extend order
+   */
+  @Override
+  public boolean savePoPaymentForExtendOrder(final String poNumber , final String poNotes, final String orderCode) {
+    return getDefaultBlExtendOrderService().savePoPayment(poNumber , poNotes , getExtendedOrderModelFromCode(orderCode));
+  }
+
 
   /**
    * This method created to get order model from order code

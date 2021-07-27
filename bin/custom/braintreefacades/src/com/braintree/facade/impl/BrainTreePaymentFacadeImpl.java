@@ -1,5 +1,14 @@
 package com.braintree.facade.impl;
 
+import static com.braintree.constants.BraintreeConstants.ANDROID_PAY_CARD;
+import static com.braintree.constants.BraintreeConstants.APPLE_PAY_CARD;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_CREDITCARD_PAYMENT;
+import static com.braintree.constants.BraintreeConstants.CARD_NUMBER_MASK;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_SALE;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import com.braintree.command.result.BrainTreeCreatePaymentMethodResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
@@ -23,10 +32,10 @@ import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.customer.CustomerEmailResolutionService;
 import de.hybris.platform.commerceservices.order.CommerceCartService;
-import de.hybris.platform.converters.impl.AbstractPopulatingConverter;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -37,22 +46,15 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static com.braintree.constants.BraintreeConstants.ANDROID_PAY_CARD;
-import static com.braintree.constants.BraintreeConstants.APPLE_PAY_CARD;
-import static com.braintree.constants.BraintreeConstants.BRAINTREE_CREDITCARD_PAYMENT;
-import static com.braintree.constants.BraintreeConstants.CARD_NUMBER_MASK;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_SALE;
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 {
@@ -456,6 +458,40 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 
 	public List<CCPaymentInfoData> getAvailablePayments(List<CCPaymentInfoData> brainTreeCCPaymentInfos){
 		return brainTreeCCPaymentInfos.stream().filter(payment -> payment.getPaymentMethodNonce() != null).collect(Collectors.toList());
+	}
+
+
+	/**
+	 * This method created to create subscription for extend order
+	 */
+	public void completeCreateSubscriptionForExtendOrder(final BrainTreeSubscriptionInfoData subscriptionInfo, final  boolean isCreditEnabled ,
+			final HttpServletRequest request)
+	{
+		final CustomerModel customer = getCurrentUserForCheckout();
+		final String orderCode = request.getParameter("extend_Order_Code");
+		if(StringUtils.isNotEmpty(orderCode)) {
+				completeCreateSubscription(subscriptionInfo, customer, gerExtendOrderFromOrderCode(orderCode),
+						isCreditEnabled);
+		}
+	}
+
+	public OrderModel gerExtendOrderFromOrderCode(final String orderCode){
+		final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
+		final OrderModel orderModel = getCustomerAccountService()
+				.getOrderForCode((CustomerModel) getUserService().getCurrentUser(), orderCode,
+						baseStoreModel);
+		if (BooleanUtils.isFalse(orderModel.getIsExtendedOrder()) && null != orderModel
+				.getExtendedOrderCopy()) {
+			return orderModel.getExtendedOrderCopy();
+		}
+		return orderModel;
+	}
+
+	public void setDeliverModeForExtendOrder(final DeliveryModeModel selectedDeliveryMode , final String orderCode){
+		OrderModel extendOrder = gerExtendOrderFromOrderCode(orderCode);
+		extendOrder.setDeliveryMode(selectedDeliveryMode);
+		modelService.save(extendOrder);
+		modelService.refresh(extendOrder);
 	}
 
 	/**

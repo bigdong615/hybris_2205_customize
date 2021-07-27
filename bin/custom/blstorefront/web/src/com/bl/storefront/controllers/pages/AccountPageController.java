@@ -1289,14 +1289,23 @@ public class AccountPageController extends AbstractSearchPageController
 		String paymentInfoId = request.getParameter(BlControllerConstants.PAYMENT_ID);
 		String paymentMethodNonce = request.getParameter(BlControllerConstants.PAYMENT_NONCE);
 
+		String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
+		String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
+
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce)) {
+				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
 
 			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 
 			if(null != orderModel) {
-				// Needs to uncomment below code once Payment related PR merged
+
+				if(StringUtils.isNotBlank(poNumber)) {
+						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);
+					}
+				else {
+
+					// Needs to uncomment below code once Payment related PR merged
 				/*final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
 						.getBrainTreePaymentInfoForCode(
 								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
@@ -1306,6 +1315,7 @@ public class AccountPageController extends AbstractSearchPageController
 							.createAuthorizationTransactionOfOrder(orderModel,
 									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
 				}*/
+				}
 			}
 
 			if(isSuccess) {

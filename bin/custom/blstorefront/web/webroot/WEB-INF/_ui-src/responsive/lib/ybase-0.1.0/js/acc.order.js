@@ -116,6 +116,25 @@ ACC.order = {
       				});
 
       	});
-      }
+
+         // To enable extend order button once payment is selected
+        $(document).on("click", ".js-enable-extend-button", function (e) {
+        if($('#js-isAllProductExtendabe').val() === '') {
+          $('.js-enable-extend-order').attr('disabled',false);
+          }
+        });
+
+
+   	$('#saved-payment-action-ExtendBill').on('change',function(e){
+   	    					 var optionSelected = $("option:selected", this);
+    					 var paymentId = optionSelected.data("id");
+    						var paymentnonce = optionSelected.data("nonce");
+    						alert(paymentId)
+    						if($('#js-isAllProductExtendabe').val() === '' && paymentId !== '' && paymentId !== 'undefined' && paymentnonce !== '' && paymentnonce !=='undefined' ) {
+                          $('.js-enable-extend-order').attr('disabled',false);
+                }
+    				 });
+
+     }
 
 };

@@ -14,6 +14,7 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -49,7 +50,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       getBlAddressPopulator().populate(blPickUpZoneDeliveryModeModel.getInternalStoreAddress() , addressData);
       target.setDeliveryAddress(addressData);
     }
-
+    if(source.getUser() instanceof CustomerModel){
+      target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
+    }
   }
 
   /**
