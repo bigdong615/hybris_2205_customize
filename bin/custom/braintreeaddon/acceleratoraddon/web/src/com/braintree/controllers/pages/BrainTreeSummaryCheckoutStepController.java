@@ -5,6 +5,7 @@ import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.braintree.configuration.service.BrainTreeConfigService;
@@ -13,6 +14,7 @@ import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
@@ -80,7 +82,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@Resource(name = "blRentalDateCookieGenerator")
 	private BlRentalDateCookieGenerator blRentalDateCookieGenerator;
-	
+
+	@Resource(name = "blEmailSubscriptionFacade")
+	private BlEmailSubscriptionFacade blEmailSubscriptionFacade;
+
 	@ModelAttribute(name = BraintreeaddonControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -230,7 +235,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		final OrderData orderData;
 		try
 		{
-			LOG.info("getCheckoutFacade: " + getCheckoutFacade());
+			LOG.error("getCheckoutFacade: " + getCheckoutFacade());
 			if(paymentInfo != null) {
 				brainTreeCheckoutFacade.storeIntentToCart();
 				brainTreeCheckoutFacade
@@ -239,7 +244,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 						.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
 			}
 			orderData = getCheckoutFacade().placeOrder();
-			LOG.info("Order has been placed, number/code: " + orderData.getCode());
+			LOG.error("Order has been placed, number/code: " + orderData.getCode());
+			if(paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
+				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
+			}
 			blRentalDateCookieGenerator.removeCookie(response);
 			blDatePickerService.removeRentalDatesFromSession();
 		}

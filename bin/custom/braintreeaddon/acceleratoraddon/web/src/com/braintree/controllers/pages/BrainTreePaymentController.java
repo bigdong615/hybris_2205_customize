@@ -109,7 +109,7 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     try
     {
       setupAddPaymentPage(model);
-      setupParametersSilentOrderPostPage(sopPaymentDetailsForm, model, paymentProvider);
+      setupParametersSilentOrderPostPage(sopPaymentDetailsForm, model, paymentProvider, String.valueOf(sopPaymentDetailsForm.isSavePaymentInfo()));
 
       subscriptionInfo = buildSubscriptionInfo(nonce, paymentProvider, cardDetails, cardType, payPalEmail,
           deviceData, liabilityShifted, sopPaymentDetailsForm.isSavePaymentInfo(), cardholder);
@@ -138,7 +138,21 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
       return REDIRECT_TO_PAYMENT_METHOD;
     }
 
-    associateAddressToCustomer(selectedBillingAddressId, sopPaymentDetailsForm, companyName, saveBillingAddress);
+    if (StringUtils.isBlank(selectedBillingAddressId))
+    {
+      try
+      {
+        final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm, companyName);
+        newAddress.setVisibleInAddressBook(StringUtils.isNotBlank(saveBillingAddress) && Boolean.TRUE.toString().equals(saveBillingAddress));
+        getUserFacade().addAddress(newAddress);
+      }
+      catch (final Exception exception)
+      {
+        LOG.error("Error occurred while adding new billing address", exception);
+      }
+    }
+
+
 
     if (Boolean.TRUE.toString().equals(useBillingAddress))
     {
@@ -189,30 +203,6 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     return getCheckoutStep().nextStep();
   }
 
-  /**
-   * It creates the address and set into customer
-   * @param selectedBillingAddressId
-   * @param sopPaymentDetailsForm
-   * @param companyName
-   * @param saveBillingAddress
-   */
-  private void associateAddressToCustomer(String selectedBillingAddressId, SopPaymentDetailsForm sopPaymentDetailsForm,
-      String companyName, String saveBillingAddress) {
-    if (StringUtils.isBlank(selectedBillingAddressId))
-    {
-      try
-      {
-        final AddressData newAddress = interpretResponseAddressData(StringUtils.EMPTY, sopPaymentDetailsForm, companyName);
-        newAddress.setVisibleInAddressBook(StringUtils.isNotBlank(saveBillingAddress) && Boolean.TRUE.toString().equals(saveBillingAddress));
-        getUserFacade().addAddress(newAddress);
-      }
-      catch (final Exception exception)
-      {
-        LOG.error("Error occurred while adding new billing address", exception);
-      }
-    }
-  }
-
   private boolean checkSavePaymentForCurrentConfig(boolean savePayment)
   {
     return isAvailableSavePayment(savePayment);
@@ -245,7 +235,8 @@ public class BrainTreePaymentController extends AbstractCheckoutStepController
     return cardTypeData;
   }
 
-  private void setupParametersSilentOrderPostPage(final SopPaymentDetailsForm sopPaymentDetailsForm, final Model model, final String paymentProvider)
+  private void setupParametersSilentOrderPostPage(final SopPaymentDetailsForm sopPaymentDetailsForm, final Model model, final String paymentProvider,
+      final String isSingleUseSelected)
   {
     setupSilentOrderPostPage(sopPaymentDetailsForm, model);
     final PayPalCheckoutData payPalCheckoutData = brainTreeCheckoutFacade.getPayPalCheckoutData();

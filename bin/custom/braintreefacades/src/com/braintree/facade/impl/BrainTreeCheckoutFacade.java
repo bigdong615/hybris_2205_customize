@@ -58,7 +58,6 @@ import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParamete
 public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 {
 	private static final Logger LOG = Logger.getLogger(BrainTreeCheckoutFacade.class);
-	private static final String PAYMENT_INFO_ID ="paymentInfoId";
 
 	private Converter<BrainTreePaymentInfoModel, CCPaymentInfoData> brainTreePaymentInfoConverter;
 	private BrainTreePaymentService brainTreePaymentService;
@@ -167,7 +166,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
   public boolean setPaymentDetails(final String paymentInfoId, final String paymentMethodNonce, final String addressId,
       final AddressData billingAddress)
   {
-    validateParameterNotNullStandardMessage(PAYMENT_INFO_ID, paymentInfoId);
+    validateParameterNotNullStandardMessage("paymentInfoId", paymentInfoId);
 
     if (checkIfCurrentUserIsTheCartUser())
     {
@@ -330,7 +329,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
   }
 
 	public boolean setPaymentDetails(final String paymentInfoId, final String paymentMethodNonce) {
-		validateParameterNotNullStandardMessage(PAYMENT_INFO_ID, paymentInfoId);
+		validateParameterNotNullStandardMessage("paymentInfoId", paymentInfoId);
 
 		if (checkIfCurrentUserIsTheCartUser()) {
 			final CustomerModel currentUserForCheckout = getCurrentUserForCheckout();
@@ -353,7 +352,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	@Override
 	public boolean setPaymentDetails(final String paymentInfoId)
 	{
-		validateParameterNotNullStandardMessage(PAYMENT_INFO_ID, paymentInfoId);
+		validateParameterNotNullStandardMessage("paymentInfoId", paymentInfoId);
 
 		if (checkIfCurrentUserIsTheCartUser())
 		{
@@ -379,7 +378,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 
 	public String generateClientToken()
 	{
-		return brainTreePaymentService.generateClientToken();
+		final String clientToken = brainTreePaymentService.generateClientToken();
+		return clientToken;
 	}
 
 	public PayPalCheckoutData getPayPalCheckoutData()
@@ -410,7 +410,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	private boolean isCreditCard()
 	{
 		PaymentInfoModel paymentInfoModel = getCart().getPaymentInfo();
-		if (paymentInfoModel instanceof BrainTreePaymentInfoModel)
+		if (paymentInfoModel != null && paymentInfoModel instanceof BrainTreePaymentInfoModel)
 		{
 			return BrainTreePaymentMethod.CREDITCARD.getCode().equalsIgnoreCase(((BrainTreePaymentInfoModel) paymentInfoModel).getPaymentProvider());
 		}
@@ -420,7 +420,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	private boolean isApplePay()
 	{
 		PaymentInfoModel paymentInfoModel = getCart().getPaymentInfo();
-		if (paymentInfoModel instanceof BrainTreePaymentInfoModel)
+		if (paymentInfoModel != null && paymentInfoModel instanceof BrainTreePaymentInfoModel)
 		{
 			return BrainTreePaymentMethod.APPLEPAYCARD.getCode().equalsIgnoreCase(((BrainTreePaymentInfoModel) paymentInfoModel).getPaymentProvider());
 		}
@@ -430,7 +430,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	private boolean isGooglePay()
 	{
 		PaymentInfoModel paymentInfoModel = getCart().getPaymentInfo();
-		if (paymentInfoModel instanceof BrainTreePaymentInfoModel)
+		if (paymentInfoModel != null && paymentInfoModel instanceof BrainTreePaymentInfoModel)
 		{
 			return BrainTreePaymentMethod.ANDROIDPAYCARD.getCode().equalsIgnoreCase(((BrainTreePaymentInfoModel) paymentInfoModel).getPaymentProvider());
 		}
@@ -440,7 +440,7 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 	private boolean isVenmo()
 	{
 		PaymentInfoModel paymentInfoModel = getCart().getPaymentInfo();
-		if (paymentInfoModel instanceof BrainTreePaymentInfoModel)
+		if (paymentInfoModel != null && paymentInfoModel instanceof BrainTreePaymentInfoModel)
 		{
 			return BrainTreePaymentMethod.VENMOACCOUNT.getCode().equalsIgnoreCase(((BrainTreePaymentInfoModel) paymentInfoModel).getPaymentProvider());
 		}
@@ -455,7 +455,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
 
 	public Map<String, String> getAcceptedPaymentMethodImages()
 	{
-		return brainTreeConfigService.getAcceptedPaymentMethodImages();
+		final Map<String, String> acceptedPaymentMethodImages = brainTreeConfigService.getAcceptedPaymentMethodImages();
+		return acceptedPaymentMethodImages;
 	}
 
 	private boolean authorizePaymentIfIntentOrder(Map<String, String> customFields)
@@ -506,6 +507,8 @@ public class BrainTreeCheckoutFacade extends DefaultAcceleratorCheckoutFacade
     public void handleOrderIntentViaSubscription(final OrderModel order) {
        	getModelService().refresh(order);
         UserModel user = order.getUser();
+
+        CustomerModel customer = (CustomerModel) order.getPlacedBy();
 
         final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo((BrainTreePaymentInfoModel) order.getPaymentInfo(), true);
         subscriptionInfo.setIntent(BraintreeConstants.PAYPAL_INTENT_ORDER);
