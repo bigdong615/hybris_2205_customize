@@ -41,7 +41,6 @@
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
-	        <value code="ADDED_TO_CART" />
 	        <value code="BOX"/>
             <value code="ADDED_TO_CART" />
             <value code="PARTIALLY_UNBOXED" />
@@ -1181,14 +1180,12 @@
                         <defaultvalue>Boolean.FALSE</defaultvalue>
                         <description>To determine if the Gear is Rated by Tech. Eng. Member</description>
                     </attribute>
-<<<<<<< HEAD
                      <attribute qualifier="hardAssigned" type="java.lang.Boolean">
 		                <persistence type="property"/>
 		                <modifiers read="true" write="true" search="true"/>
 		                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
 		                <description>To identify whether it is reserved or not</description>
 	              </attribute>
-=======
                     <attribute qualifier="repairReasons" type="RepairReasonsEnum">
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
@@ -1211,7 +1208,6 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated consignment on serial</description>
                      </attribute>
->>>>>>> 28a9c29f53be043d32c8c72815bc425c71c698c3
                  </attributes>
              </itemtype>
 
