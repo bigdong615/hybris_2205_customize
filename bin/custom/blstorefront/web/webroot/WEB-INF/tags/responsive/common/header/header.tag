@@ -11,7 +11,6 @@
 <%@ taglib prefix="livechat" tagdir="/WEB-INF/tags/shared/livechat" %>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
 <cms:pageSlot position="TopHeaderSlot" var="component" element="div" class="container">
   <cms:component component="${component}" />
 </cms:pageSlot>
