@@ -304,7 +304,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 			LOGGER.error("Failed to create payment method. Error occurred while payment method creation: " + e.getMessage());
 			GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER,
 					getLocalizedString("text.account.profile.paymentCart.addPaymentMethod.general.error"));
-			return REDIRECT_TO_ADD_PAYMENT_INFO_PAGE;
+			return REDIRECT_TO_PAYMENT_INFO_PAGE;
 		}
 
 		GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.CONF_MESSAGES_HOLDER,
