@@ -181,10 +181,9 @@
 				<div class="text-end mt-4">
 					<c:url value="/my-account/payment-details"
 						var="accountPaymentMethodUrl" />
-					<button class="btn btn-outline">
-						<spring:theme code="account.add.paymentMethod.cancel"
-							text="Cancel" />
-					</button>
+					<a class="btn btn-outline" href="${accountPaymentMethodUrl}"> 
+					<spring:theme code="account.add.paymentMethod.cancel"
+							text="Cancel" /> </a>
 
 					<button class="btn btn-primary" id="submit_silentOrderPostForm"
 						type="submit">
