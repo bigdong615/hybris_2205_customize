@@ -1867,7 +1867,22 @@
 						<modifiers read="true" write="true" optional="true"/>
 						<description>Option Associated to the Product</description>
 					</attribute>
-				</attributes>
+                    <attribute qualifier="recipientEmail" type="java.lang.String">
+                        <description>Email address of the gift card recipient</description>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
+                    <attribute qualifier="recipientName" type="java.lang.String">
+                        <description>Name of the gift card recipient</description>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
+                    <attribute qualifier="recipientMessage" type="java.lang.String">
+                        <description>Message for the gift card recipient</description>
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true"/>
+                    </attribute>
+                 </attributes>
          	</itemtype>
          </typegroup>
 
@@ -2047,28 +2062,6 @@
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
                 </attributes>
-            </itemtype>
-        </typegroup>
-  <typegroup>
-            <itemtype code="CartEntry" autocreate="false" generate="false" extends="AbstractOrderEntry">
-           <description> Extending to Cart Entry containing the additional attributes.</description>
-                <attributes>
-                    <attribute qualifier="recipientEmail" type="java.lang.String">
-                        <description>Email address of the gift card recipient</description>
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true"/>
-                    </attribute>
-                    <attribute qualifier="recipientName" type="java.lang.String">
-                        <description>Name of the gift card recipient</description>
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true"/>
-                    </attribute>
-                    <attribute qualifier="recipientMessage" type="java.lang.String">
-                        <description>Message for the gift card recipient</description>
-                        <persistence type="property" />
-                        <modifiers read="true" write="true" search="true"/>
-                    </attribute>
-                 </attributes>
             </itemtype>
         </typegroup>
         <typegroup name="Order">

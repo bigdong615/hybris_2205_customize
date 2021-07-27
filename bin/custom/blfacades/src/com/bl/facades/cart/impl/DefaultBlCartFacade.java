@@ -181,6 +181,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 *           the quantity
 	 * @param serialCode
 	 *           the serial code
+	 * @param GiftCardPurchaseForm
+	 *           the giftCardForm
 	 * @return CartModificationData
 	 * @throws CommerceCartModificationException
 	 *            the exception

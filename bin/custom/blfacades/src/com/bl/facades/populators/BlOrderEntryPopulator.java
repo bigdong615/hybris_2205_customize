@@ -63,12 +63,9 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 
 	private void populateGiftCartPurcahseValues(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
-		if(source instanceof CartEntryModel)
-		{
-			CartEntryModel cartEntryModel =((CartEntryModel)source);
-			target.setRecipientEmail(cartEntryModel.getRecipientEmail());
-			target.setRecipientName(cartEntryModel.getRecipientName());
-			target.setRecipientMessage(cartEntryModel.getRecipientMessage());
+			target.setRecipientEmail(source.getRecipientEmail());
+			target.setRecipientName(source.getRecipientName());
+			target.setRecipientMessage(source.getRecipientMessage());
 			
 		}
 	}
