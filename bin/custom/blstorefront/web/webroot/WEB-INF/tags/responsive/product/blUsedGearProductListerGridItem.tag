@@ -22,7 +22,7 @@
 <span class="badge badge-new">${product.productTagValues}</span>
 </c:if>
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
-<c:if test="${product.code ne 'bl_giftcard'}">
+<c:if test="${product.productType ne 'GIFTCARD'}">
  <span class="bookmark"></span>
  </c:if>
 <!-- BL-926: Added new file for Gift Card --> 
@@ -30,7 +30,7 @@
 		
 
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
-      <c:if test="${product.code ne 'bl_giftcard'}">
+      <c:if test="${product.productType ne 'GIFTCARD'}">
 		<p class="overline">${product.manufacturer}</p>
 	  </c:if>
  <h6 class="product">
@@ -51,7 +51,7 @@
 	<h6 class="price">
 	<!-- BL-926: Added condition for Gift Card as per requirement --> 
 	<c:choose>
-	    <c:when test="${product.code eq 'bl_giftcard'}">
+	    <c:when test="${product.productType eq 'GIFTCARD'}">
 	     <spring:theme code="slp.giftcard.price" /> 
 	    </c:when>
 	   <c:otherwise>
@@ -95,7 +95,7 @@
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
 		<c:url var="usedUrl" value="/buy/product/${product.code}"/>
 			<c:choose>
-				<c:when test="${product.code eq 'bl_giftcard'}">
+				<c:when test="${product.productType eq 'GIFTCARD'}">
 					<a href="${usedUrl}" class="btn btn-primary js-pdplinkUrl" data-productCode="${product.code}" data-brand="gift cart"
               data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="used gear">
 					<spring:theme code="text.product.list.by.now" /></a>

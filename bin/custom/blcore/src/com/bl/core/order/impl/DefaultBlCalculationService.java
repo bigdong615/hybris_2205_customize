@@ -2,6 +2,7 @@ package com.bl.core.order.impl;
 
 import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.constants.GeneratedBlCoreConstants.Enumerations.ProductTypeEnum;
 import com.bl.core.model.BlDamageWaiverPricingModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -228,7 +229,8 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		}
 		else if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
-			if(((BlProductModel) product).getProductType().getCode().equals("GIFTCARD"))
+			// Create new price value for gift card purchase
+			if(((BlProductModel) product).getProductType().getCode().equals(ProductTypeEnum.GIFTCARD))
 			{
 				return createNewPriceValue(order.getCurrency().getIsocode(), order.getGiftCardCost().doubleValue(),
 						BooleanUtils.toBoolean(order.getNet()));

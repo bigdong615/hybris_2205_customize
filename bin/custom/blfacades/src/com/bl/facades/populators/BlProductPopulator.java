@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.constants.GeneratedBlCoreConstants.Enumerations.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
@@ -41,6 +42,9 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         if (CollectionUtils.isNotEmpty(dataSheets)) {
             populateResourceData(dataSheets, target);
         }
+     
+        target.setProductType(source.getProductType().getCode());
+      
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
         target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));

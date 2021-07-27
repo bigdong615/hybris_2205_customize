@@ -11,6 +11,7 @@ import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -18,6 +19,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -61,11 +64,13 @@ public class BlCartPopulator extends CartPopulator<CartData>
 		final PriceDataType priceType = PriceDataType.BUY;
 		target.setHasGiftCart(Boolean.valueOf(false));
 		if(CollectionUtils.isNotEmpty(source.getEntries())){
-			final BlProductModel blProductModel = (BlProductModel) source.getEntries().stream().findFirst().get().getProduct();
-			if (source.getGiftCardCost() != null && blProductModel.getProductType() == ProductTypeEnum.GIFTCARD){
+			final Optional<AbstractOrderEntryModel> giftCardEntry = source.getEntries().stream().findFirst();
+			if(giftCardEntry.isPresent() && source.getGiftCardCost() != null 
+					&& ProductTypeEnum.GIFTCARD.equals(((BlProductModel)giftCardEntry.get().getProduct()).getProductType())){
 				target.setGiftCardCost(source.getGiftCardCost());
 				target.setHasGiftCart(Boolean.valueOf(true));
 			}
+			
 		}
 		
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)

@@ -57,7 +57,7 @@ public class DefaultBlCommerceAddToCartStrategy extends
               parameter.getIsDamageWaiverSelected(), parameter.getIsNoDamageWaiverSelected());
         }
         // Set gift card purchase values to entry model
-        if(Objects.nonNull(parameter.getGiftCardAmount())){
+        if(Objects.nonNull(entryModel) && Objects.nonNull(parameter.getGiftCardAmount())){
       	  entryModel.setRecipientEmail(parameter.getRecipientEmail());
       	  entryModel.setRecipientName(parameter.getRecipientName());
       	  entryModel.setRecipientMessage(parameter.getRecipientMessage());

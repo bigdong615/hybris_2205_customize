@@ -22,6 +22,7 @@ import de.hybris.platform.commercefacades.order.impl.DefaultCartFacade;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
@@ -46,7 +47,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
 import com.bl.core.enums.ProductTypeEnum;
-import org.codehaus.stax2.ri.typed.ValueEncoderFactory;
+
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -297,17 +298,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	 */
 	@Override
 	public boolean cartHasGiftCard(final String productCode){
-	   
 		CartModel cartModel = blCartService.getSessionCart();
-				
-		boolean isGiftCardFound = false;
-	   if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
-	   	BlProductModel blProductModel = (BlProductModel)cartModel.getEntries().stream().findFirst().get().getProduct();
-			if(blProductModel != null && blProductModel.getProductType().equals(ProductTypeEnum.GIFTCARD)) {
-				isGiftCardFound = true;
-			}
+		
+      if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+	   	final Optional<AbstractOrderEntryModel> giftCardEntry = cartModel.getEntries().stream().findFirst();
+	   	if(giftCardEntry.isPresent()){
+	   		return  ProductTypeEnum.GIFTCARD.equals(((BlProductModel)giftCardEntry.get().getProduct()).getProductType());
+         }
 		}
-	   return isGiftCardFound;
+	   return false;
 	}
 	
 
@@ -317,13 +316,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	@Override
 	public boolean isGiftCardProduct(final String code)
 	{
-
-		boolean isGiftCardProduct = false;
-		if (code.equalsIgnoreCase(BlFacadesConstants.GIFTCARD))
-		{
-			isGiftCardProduct = true;
-		}
-		return isGiftCardProduct;
+		final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(code);
+		return (blProductModel != null && ProductTypeEnum.GIFTCARD.equals(blProductModel.getProductType()));
 	}
 	/**
 	 * It initialize blSerialProductModel is case of used gear product added to cart.
