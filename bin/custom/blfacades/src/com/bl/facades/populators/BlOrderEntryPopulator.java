@@ -54,7 +54,7 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 	}
 	
 	/**
-	 * Populate gift cart purchase value from cart entry
+	 * Populate gift cart purchase value from order entry
 	 * @param source
 	 *           the source
 	 * @param target
@@ -66,8 +66,6 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 			target.setRecipientEmail(source.getRecipientEmail());
 			target.setRecipientName(source.getRecipientName());
 			target.setRecipientMessage(source.getRecipientMessage());
-			
-		}
 	}
 	
 	/**
