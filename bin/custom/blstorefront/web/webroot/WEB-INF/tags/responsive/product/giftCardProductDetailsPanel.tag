@@ -65,7 +65,7 @@
 							code="giftcard.pdp.amount.limit" /></div>
 
 							<sec:authorize access="hasAnyRole('ROLE_ANONYMOUS')">
-						=========================		<c:set value=" hide" var="hidebutton" />
+						       <c:set value=" hide" var="hidebutton" />
 							</sec:authorize>
 							<button type="button"
 								data-link="<c:url value='/login/loginpopup'/>"

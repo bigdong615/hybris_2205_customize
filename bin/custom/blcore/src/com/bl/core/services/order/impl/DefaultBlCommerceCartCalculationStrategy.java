@@ -17,7 +17,7 @@ public class DefaultBlCommerceCartCalculationStrategy extends
     DefaultCommerceCartCalculationStrategy {
 
  
-private BlGiftCardService giftCardService;
+  private BlGiftCardService giftCardService;
   private ModelService modelService;
 
   /**
@@ -42,7 +42,11 @@ private BlGiftCardService giftCardService;
     }
     return result;
   }
-  public void setGiftCardAmount(final CartModel order, final CommerceCartParameter parameter) 
+  
+  /**
+   * This method save gift card amount on order 
+   */
+  private void setGiftCardAmount(final CartModel order, final CommerceCartParameter parameter) 
   {
 	  order.setGiftCardCost(parameter.getGiftCardAmount());
 	  getModelService().save(order);

@@ -230,7 +230,7 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		else if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
 			// Create new price value for gift card purchase
-			if(((BlProductModel) product).getProductType().getCode().equals(ProductTypeEnum.GIFTCARD))
+			if (ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType().getCode()))
 			{
 				return createNewPriceValue(order.getCurrency().getIsocode(), order.getGiftCardCost().doubleValue(),
 						BooleanUtils.toBoolean(order.getNet()));

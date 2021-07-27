@@ -284,13 +284,8 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	@Override
   
   public boolean cartHasRentalOrUsedGearProducts(){
-		
 		CartModel cartModel = blCartService.getSessionCart();
-		boolean isRentalOrUsedGearProduct = false;
-	   if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
-	   	isRentalOrUsedGearProduct = true;
-		}
-	   return isRentalOrUsedGearProduct;
+		return (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) ? true : false;
 	}
 
 	/**

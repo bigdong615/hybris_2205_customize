@@ -52,6 +52,15 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		target.setGearGuardWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardWaiverSelected()));
 		target.setGearGuardProFullWaiverSelected(BooleanUtils.toBoolean(source.getGearGuardProFullWaiverSelected()));
 	}
+	
+	/**
+	 * Populate gift cart purchase value from cart entry
+	 * @param source
+	 *           the source
+	 * @param target
+	 *           the target
+	 */
+
 	private void populateGiftCartPurcahseValues(final AbstractOrderEntryModel source, final OrderEntryData target)
 	{
 		if(source instanceof CartEntryModel)

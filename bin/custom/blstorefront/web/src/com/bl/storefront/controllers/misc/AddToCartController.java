@@ -191,14 +191,7 @@ public class AddToCartController extends AbstractController {
  	private CartModificationData addToCart(final String code, final long qty, final String serialCode, final GiftCardPurchaseForm giftCardForm)
  			throws CommerceCartModificationException
  	{
- 		if (blCartFacade.isGiftCardProduct(code))
- 		{
- 			return blCartFacade.addToCart(code, qty, serialCode, giftCardForm);
- 		}
- 		else
- 		{
- 			return blCartFacade.addToCart(code, qty, serialCode);
- 		}
+ 		return (blCartFacade.isGiftCardProduct(code)) ? blCartFacade.addToCart(code, qty, serialCode, giftCardForm) : blCartFacade.addToCart(code, qty, serialCode);
  	}
 
  	// Created separate method for to redirect gift card popup.

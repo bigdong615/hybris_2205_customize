@@ -2054,14 +2054,17 @@
            <description> Extending to Cart Entry containing the additional attributes.</description>
                 <attributes>
                     <attribute qualifier="recipientEmail" type="java.lang.String">
+                        <description>Email address of the gift card recipient</description>
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true"/>
                     </attribute>
                     <attribute qualifier="recipientName" type="java.lang.String">
+                        <description>Name of the gift card recipient</description>
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true"/>
                     </attribute>
                     <attribute qualifier="recipientMessage" type="java.lang.String">
+                        <description>Message for the gift card recipient</description>
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true"/>
                     </attribute>
