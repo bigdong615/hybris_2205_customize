@@ -19,6 +19,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
@@ -48,6 +50,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     BlInventoryScanToolDao blInventoryScanToolDao;
 
     private BlInventoryLocationModel blInventoryLocation;
+    
+    private PackagingInfoModel packagingInfoModel;
 
     /**
      * {@inheritDoc}
@@ -274,13 +278,18 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int checkValidBinLocationInBarcodeList(final List<String> barcodes, final List<String> memberAllowedLocationList)
+	public int checkValidBinLocationInBarcodeList(final String barcodes, final List<String> memberAllowedLocationList)
 	{
 		final List<String> defaultLocations = BlInventoryScanLoggingConstants.getDefaultBinLocation();
-		final List<String> filteredLocationList = barcodes.stream().filter(b -> defaultLocations.stream().anyMatch(b::startsWith))
-				.collect(Collectors.toList());
-		return checkValidInventoryLocation(barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE),
-				filteredLocationList, memberAllowedLocationList);
+		final List<String> filteredLocationList = new ArrayList<String>();
+		for (final String binLocation : defaultLocations)
+		{
+			if (barcodes.startsWith(binLocation))
+			{
+				filteredLocationList.add(barcodes);
+			}
+		}
+		return checkValidInventoryLocation(barcodes, filteredLocationList, memberAllowedLocationList);
 	}
 	
 	/**
@@ -290,16 +299,17 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public List<String> getFailedBinBarcodeList(final List<String> barcodes)
 	{
 		final List<String> failedBarcodeList = new ArrayList<>();
-		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
+		final String subList = barcodes.get(0);
 		final BlInventoryLocationModel blWorkingDeskInventory = getBlInventoryLocation();
 		final int result = checkValidBinLocationInBarcodeList(subList, failedBarcodeList);
 
 		if (result == BlInventoryScanLoggingConstants.ONE)
 		{
-			final BlInventoryLocationModel blBinLocationModel = new BlInventoryLocationModel();
-			blBinLocationModel.setInventoryLocationID(blWorkingDeskInventory.getInventoryLocationID());
-			blBinLocationModel.setCode(blWorkingDeskInventory.getCode());
-			blBinLocationModel.setParentInventoryLocation(blBinLocationModel);
+			final BlInventoryLocationModel blBinLocationModel = getBlInventoryLocation();
+			blBinLocationModel.setOcLocation(blWorkingDeskInventory.getCode());
+			blBinLocationModel.setInventoryType(blWorkingDeskInventory.getInventoryType());
+			modelService.save(blBinLocationModel);
+			modelService.refresh(blBinLocationModel);
 			return Collections.emptyList();
 		}
 		else
@@ -313,89 +323,230 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment)
 	{
-		final List<String> inValidSerialList = new ArrayList<>();
-		final List<BlSerialProductModel> validSerialList = new ArrayList<>();
-		final List<String> failedBarcodeList = new ArrayList<>();
-		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
-		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
+		final Collection<BlSerialProductModel> blScannedProduct = getBlInventoryScanToolDao().getSerialProductsByBarcode(barcodes);
 
+		final List<BlProductModel> filteredSerialProduct = new ArrayList<>();
+		final List<BlProductModel> filteredSubPartProduct = new ArrayList<>();
+
+		final List<BlSerialProductModel> scannedSerialProduct = new ArrayList<>();
+		final List<BlSerialProductModel> scannedSubpartProduct = new ArrayList<>();
+
+		getScannedSerial(blScannedProduct, scannedSerialProduct, scannedSubpartProduct);
+
+		return validateConsignmentEntry(barcodes, selectedConsignment, blScannedProduct, filteredSerialProduct,
+				filteredSubPartProduct, scannedSerialProduct, scannedSubpartProduct);
+
+	}
+
+	/**
+	 * @param barcodes
+	 * @param selectedConsignment
+	 * @param failedBarcodeList
+	 * @param blScannedProduct
+	 * @param filteredSerialProduct
+	 * @param filteredSubPartProduct
+	 * @param scannedSerialProduct
+	 * @param scannedSubpartProduct
+	 */
+	private List<String> validateConsignmentEntry(final List<String> barcodes, final ConsignmentModel selectedConsignment,
+		 final Collection<BlSerialProductModel> blScannedProduct,
+			final List<BlProductModel> filteredSerialProduct, final List<BlProductModel> filteredSubPartProduct,
+			final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct)
+	{
+		final List<String> failedBarcodeList = new ArrayList<>();
+		
 		for (final ConsignmentEntryModel consignmentEntry : selectedConsignment.getConsignmentEntries())
 		{
 			final Map<String, ItemStatusEnum> updatedItemMap = new HashMap<>();
 
-			final List<BlSerialProductModel> sortedScannedProduct = blSerialProducts.stream().sorted().collect(Collectors.toList());
-			final List<BlProductModel> sortedBlProducts = consignmentEntry.getSerialProducts().stream().sorted()
-					.collect(Collectors.toList());
-			if (sortedScannedProduct.equals(sortedBlProducts))
+			if (CollectionUtils.isEqualCollection(blScannedProduct, consignmentEntry.getSerialProducts()))
 			{
-				final List<BlProductModel> filteredSerialProduct = consignmentEntry.getSerialProducts().stream()
-						.filter(serialProduct -> serialProduct instanceof BlSerialProductModel
-								&& !ProductTypeEnum.SUBPARTS.equals(serialProduct.getProductType()))
-						.collect(Collectors.toList());
-
-				final List<BlProductModel> filteredSubPartProduct = consignmentEntry.getSerialProducts().stream()
-						.filter(p -> p instanceof BlSerialProductModel && ProductTypeEnum.SUBPARTS.equals(p.getProductType()))
-						.collect(Collectors.toList());
-
-				final List<String> finalList = new ArrayList<>();
-
-				filteredSubPartProduct.forEach(serialProduct -> {
-					if (serialProduct instanceof BlSerialProductModel && ((BlSerialProductModel) serialProduct).getBarcode() != null)
-					{
-						finalList.add(serialProduct.getCode());
-					}
-				});
-
-				blSerialProducts.forEach(serialProduct -> {
-					if (!filteredSerialProduct.contains(serialProduct))
-					{
-						inValidSerialList.add(serialProduct.getCode());
-					}
-					else
-					{
-						final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
-						if (itemsMap.containsKey(serialProduct.getCode())
-								&& itemsMap.get(serialProduct.getCode()).equals(ItemStatusEnum.NOT_INCLUDED))
-						{
-							updatedItemMap.put(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
-						}
-						serialProduct.setHardAssigned(true);
-						validSerialList.add(serialProduct);
-					}
-				});
-
-				blSerialProducts.forEach(blSubPartProduct -> {
-					if (!finalList.contains(blSubPartProduct.getCode()))
-					{
-						inValidSerialList.add(blSubPartProduct.getCode());
-					}
-					else
-					{
-						final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
-						if (itemsMap.containsKey(blSubPartProduct.getBlProduct().getName())
-								&& itemsMap.get(blSubPartProduct.getBlProduct().getName()).equals(ItemStatusEnum.NOT_INCLUDED))
-						{
-							updatedItemMap.put(blSubPartProduct.getBlProduct().getName(), ItemStatusEnum.INCLUDED);
-						}
-						blSubPartProduct.setHardAssigned(true);
-						validSerialList.add(blSubPartProduct);
-					}
-				});
-
-
-				consignmentEntry.setItems(updatedItemMap);
-				modelService.save(consignmentEntry);
-				modelService.refresh(consignmentEntry);
+				verifyScan(failedBarcodeList, filteredSerialProduct, filteredSubPartProduct, scannedSerialProduct,
+						scannedSubpartProduct, consignmentEntry, updatedItemMap);
 			}
 			else
 			{
-
+				failedBarcodeList.addAll(barcodes);
 			}
 
 		}
 		return failedBarcodeList;
-
 	}
+	
+	@Override
+	public int checkValidTrackingId(final List<String> barcodes)
+	{
+
+		final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
+		final PackagingInfoModel packagingInfo = getBlInventoryScanToolDao().getPackageInfoByCode(lastScannedItem);
+		if (packagingInfo != null)
+		{
+			setPackagingInfoModel(packagingInfo);
+			return BlInventoryScanLoggingConstants.ONE;
+		}
+		return BlInventoryScanLoggingConstants.TWO;
+	}
+	
+	/**
+	 * @param filteredSerialProduct
+	 * @param filteredSubPartProduct
+	 * @param scannedSerialProduct
+	 * @param scannedSubpartProduct
+	 * @param consignmentEntry
+	 * @param updatedItemMap
+	 */
+	private void verifyScan(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
+			final List<BlProductModel> filteredSubPartProduct, final List<BlSerialProductModel> scannedSerialProduct,
+			final List<BlSerialProductModel> scannedSubpartProduct, final ConsignmentEntryModel consignmentEntry,
+			final Map<String, ItemStatusEnum> updatedItemMap)
+	{
+		consignmentEntry.getSerialProducts().forEach(serialItem -> {
+			getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem);
+		});
+
+		validateScannedSerial(failedBarcodeList, filteredSerialProduct, scannedSerialProduct, consignmentEntry, updatedItemMap);
+
+		final List<BlProductModel> serialProductsList = new ArrayList<>(consignmentEntry.getSerialProducts());
+		validateScannedSubpart(failedBarcodeList, filteredSubPartProduct, scannedSubpartProduct, consignmentEntry, updatedItemMap,
+				serialProductsList);
+
+		consignmentEntry.setItems(updatedItemMap);
+		consignmentEntry.setSerialProducts(serialProductsList);
+		modelService.save(consignmentEntry);
+		modelService.refresh(consignmentEntry);
+	}
+
+	/**
+	 * @param failedBarcodeList
+	 * @param filteredSubPartProduct
+	 * @param scannedSubpartProduct
+	 * @param consignmentEntry
+	 * @param updatedItemMap
+	 * @param serialProductsList
+	 */
+	private void validateScannedSubpart(final List<String> failedBarcodeList, final List<BlProductModel> filteredSubPartProduct,
+			final List<BlSerialProductModel> scannedSubpartProduct, final ConsignmentEntryModel consignmentEntry,
+			final Map<String, ItemStatusEnum> updatedItemMap, final List<BlProductModel> serialProductsList)
+	{
+		scannedSubpartProduct.forEach(subpartProduct -> {
+			if (!filteredSubPartProduct.contains(subpartProduct))
+			{
+				failedBarcodeList.add(subpartProduct.getCode());
+			}
+			else
+			{
+				updateSubpartMap(consignmentEntry, updatedItemMap, serialProductsList, subpartProduct);
+			}
+		});
+	}
+
+	/**
+	 * @param failedBarcodeList
+	 * @param filteredSerialProduct
+	 * @param scannedSerialProduct
+	 * @param consignmentEntry
+	 * @param updatedItemMap
+	 */
+	private void validateScannedSerial(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
+			final List<BlSerialProductModel> scannedSerialProduct, final ConsignmentEntryModel consignmentEntry,
+			final Map<String, ItemStatusEnum> updatedItemMap)
+	{
+		scannedSerialProduct.forEach(serialProduct -> {
+			if (!filteredSerialProduct.contains(serialProduct))
+			{
+				failedBarcodeList.add(serialProduct.getCode());
+			}
+			else
+			{
+				updateSerialProductMap(consignmentEntry, updatedItemMap, serialProduct);
+			}
+		});
+	}
+	
+	/**
+	 * @param validSerialList
+	 * @param consignmentEntry
+	 * @param updatedItemMap
+	 * @param serialProductsList
+	 * @param subpartProduct
+	 */
+	private void updateSubpartMap(final ConsignmentEntryModel consignmentEntry, final Map<String, ItemStatusEnum> updatedItemMap,
+			final List<BlProductModel> serialProductsList, final BlSerialProductModel subpartProduct)
+	{
+		final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
+		if (itemsMap.containsKey(subpartProduct.getBlProduct().getName())
+				&& itemsMap.get(subpartProduct.getBlProduct().getName()).equals(ItemStatusEnum.NOT_INCLUDED))
+		{
+			updatedItemMap.put(subpartProduct.getBlProduct().getCode(), ItemStatusEnum.INCLUDED);
+			subpartProduct.setHardAssigned(true);
+		}
+		if (serialProductsList.contains(subpartProduct.getBlProduct()))
+		{
+			serialProductsList.remove(subpartProduct.getBlProduct());
+			serialProductsList.add(subpartProduct);
+		}
+	}
+
+	/**
+	 * @param validSerialList
+	 * @param consignmentEntry
+	 * @param updatedItemMap
+	 * @param serialProduct
+	 */
+	private void updateSerialProductMap(final ConsignmentEntryModel consignmentEntry,
+			final Map<String, ItemStatusEnum> updatedItemMap, final BlSerialProductModel serialProduct)
+	{
+		final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
+		if (itemsMap.containsKey(serialProduct.getCode())
+				&& itemsMap.get(serialProduct.getCode()).equals(ItemStatusEnum.NOT_INCLUDED))
+		{
+			updatedItemMap.put(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
+			serialProduct.setHardAssigned(true);
+		}
+	}
+
+	/**
+	 * @param filteredSerialProduct
+	 * @param filteredSubPartProduct
+	 * @param serialItem
+	 */
+	private void getSerialFromConsignment(final List<BlProductModel> filteredSerialProduct,
+			final List<BlProductModel> filteredSubPartProduct, final BlProductModel serialItem)
+	{
+		if (serialItem instanceof BlSerialProductModel)
+		{
+			if (!ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType()))
+			{
+				filteredSerialProduct.add(serialItem);
+			}
+			else if (((BlSerialProductModel) serialItem).getBarcode() !=null && ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType()))
+			{
+				filteredSubPartProduct.add(serialItem);
+			}
+		}
+	}
+	
+	/**
+	 * @param blScannedProduct
+	 * @param scannedSerialProduct
+	 * @param scannedSubpartProduct
+	 */
+	private void getScannedSerial(final Collection<BlSerialProductModel> blScannedProduct,
+			final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct)
+	{
+		blScannedProduct.forEach(scannedProduct -> {
+			if (!ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
+			{
+				scannedSerialProduct.add(scannedProduct);
+			}
+			else if (ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
+			{
+				scannedSubpartProduct.add(scannedProduct);
+			}
+		});
+	}
+
+
 
 	/**
 	 * Do update location on items.
@@ -519,4 +670,21 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     public void setBlInventoryScanToolDao(final BlInventoryScanToolDao blInventoryScanToolDao) {
         this.blInventoryScanToolDao = blInventoryScanToolDao;
     }
+    
+ 	/**
+ 	 * @return the packagingInfoModel
+ 	 */
+ 	public PackagingInfoModel getPackagingInfoModel()
+ 	{
+ 		return packagingInfoModel;
+ 	}
+
+ 	/**
+ 	 * @param packagingInfoModel
+ 	 *           the packagingInfoModel to set
+ 	 */
+ 	public void setPackagingInfoModel(final PackagingInfoModel packagingInfoModel)
+ 	{
+ 		this.packagingInfoModel = packagingInfoModel;
+ 	}
 }

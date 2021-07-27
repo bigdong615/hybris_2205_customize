@@ -42,7 +42,6 @@
             <value code="STOLEN_PAID_12_PERCENT"/>
             <value code="SCRAPPED"/>
             <value code="ARCHIVED"/>
-	        <value code="BOX"/>
             <value code="ADDED_TO_CART" />
             <value code="PARTIALLY_UNBOXED" />
             <value code="UNBOXED" />
@@ -1246,12 +1245,6 @@
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated consignment on serial</description>
                      </attribute>
-                   <attribute qualifier="hardAssigned" type="java.lang.Boolean">
-		                <persistence type="property"/>
-		                <modifiers read="true" write="true" search="true"/>
-		                <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
-		                <description>To identify whether it is reserved or not</description>
-              		</attribute>
                  </attributes>
              </itemtype>
 
@@ -1486,6 +1479,11 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <description>BL Inventory location category</description>
                     </attribute>
+                     <attribute qualifier="ocLocation" type="java.lang.String">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" optional="true"/>
+                     <description>Inventory Location for serial product</description>
+                   </attribute>
                 </attributes>
             </itemtype>
 

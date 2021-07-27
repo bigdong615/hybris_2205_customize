@@ -122,6 +122,8 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(EMPLOYEE);
         defaultLocations.add(BOS);
         defaultLocations.add(IN_HOUSE);
+     		defaultLocations.add(MAW);
+     		defaultLocations.add(CAW);
         return defaultLocations;
     }
     

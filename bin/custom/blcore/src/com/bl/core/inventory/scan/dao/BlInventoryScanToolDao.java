@@ -4,6 +4,8 @@ import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
 
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
 import java.util.Collection;
 
 /**
@@ -35,5 +37,11 @@ public interface BlInventoryScanToolDao {
      * method will fetch ConfigurationKey by its key
      */
     BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key);
+    
+    /**
+    * @param scannedItem
+    * @return
+    */
+   PackagingInfoModel getPackageInfoByCode(String scannedItem);
 
 }

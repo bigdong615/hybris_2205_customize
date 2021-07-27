@@ -17,28 +17,32 @@
         sclass="oms-widget-reallocationconsignment-configuration" height="100%" width="100%"
         id="createPackage">
 
-<hlayout sclass="oms-widget-reallocationconsignment-header">
-        <hbox sclass="oms-widget-reallocationconsignment-body">
-         <label value="${labels.blbackoffice.package.scan.title.code}" width="100%"/>
-            <vbox>
-                <textbox id="scanningArea" width="140px"/>
-            </vbox>
-        </hbox>
-    </hlayout>
+  <grid style="margin-left:50px;margin-top:10px">
+    <rows>
+      <row>
+       <label value="${labels.blbackoffice.order.scan.title.code}" width="100%"/>
+      </row>
+      <row>
+        <hlayout>
+          <textbox id="scanningArea" width="300px" height="150px" multiline="true"/>
+        </hlayout>
+      </row>
+    </rows>
+  </grid>
 
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
         <button id="cancel"
-				label="${labels.blbackoffice.package.scan.cancel.button}" 
+				label="${labels.blbackoffice.order.scan.cancel.button}" 
 				sclass="oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-revert-button" />
 	    <button id="scanToBin" 
-				label="${labels.blbackoffice.package.scan.bin.location.button}" 
+				label="${labels.blbackoffice.order.scan.bin.location.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
 	    <button id="scanToTrackingLabel" 
-				label="${labels.blbackoffice.package.scan.verify.button}" 
+				label="${labels.blbackoffice.order.scan.verify.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
 
 	    <button id="scanToOutBoundCart" 
-				label="${labels.blbackoffice.package.scan.outbound.cart.location.button}" 
+				label="${labels.blbackoffice.order.scan.outbound.cart.location.button}" 
 				sclass="y-btn-primary oms-widget-updateorder-configuration-button oms-widget-updateorder-configuration-save-button" />
 
     </div>            	

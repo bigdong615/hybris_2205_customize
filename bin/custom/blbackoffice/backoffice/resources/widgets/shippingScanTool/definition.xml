@@ -20,6 +20,6 @@
         <keyword>OMS</keyword>
     </keywords>
     
-    <controller class="com.bl.backoffice.widget.controller.BlShippingScanControllerr" />
+    <controller class="com.bl.backoffice.widget.controller.BlShippingScanController" />
     
 </widget-definition>

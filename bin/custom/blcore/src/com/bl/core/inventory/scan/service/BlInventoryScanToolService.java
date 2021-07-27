@@ -86,7 +86,7 @@ public interface BlInventoryScanToolService {
  	 *           the member allowed location list
  	 * @return the int
  	 */
- 	public int checkValidBinLocationInBarcodeList(final List<String> barcodes, final List<String> memberAllowedLocationList);
+ 	public int checkValidBinLocationInBarcodeList(final String barcodes, final List<String> memberAllowedLocationList);
 
  	/**
  	 * javadoc
@@ -105,5 +105,11 @@ public interface BlInventoryScanToolService {
  	 *         valid as per the order
  	 */
  	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
+ 	
+	/**
+	 * @param barcodes
+	 * @return the int
+	 */
+	public int checkValidTrackingId(final List<String> barcodes);
     
 }

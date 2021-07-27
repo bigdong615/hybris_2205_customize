@@ -17,14 +17,19 @@
         sclass="oms-widget-reallocationconsignment-configuration" height="100%" width="100%"
         id="createPackage">
 
-<hlayout sclass="oms-widget-reallocationconsignment-header">
-        <hbox sclass="oms-widget-reallocationconsignment-body">
-         <label value="${labels.blbackoffice.shipping.scan.title.code}" width="100%"/>
-            <vbox>
-                <textbox id="scanningArea" width="140px"/>
-            </vbox>
-        </hbox>
-    </hlayout>
+    <grid style="margin-left:50px;margin-top:10px">
+    <rows>
+      <row>
+       <label value="${labels.blbackoffice.shipping.scan.title.code}" width="100%"/>
+      </row>
+      <row>
+        <hlayout>
+          <textbox id="scanningArea" width="300px" height="150px" multiline="true"/>
+        </hlayout>
+      </row>
+    </rows>
+  </grid>
+  
 
     <div class="oms-widget-cancelorder-configuration-footer oms-widget-footer" style = "position:relative;top:5%">
         <button id="cancel"

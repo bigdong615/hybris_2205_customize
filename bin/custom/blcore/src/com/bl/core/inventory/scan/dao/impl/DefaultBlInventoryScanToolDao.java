@@ -8,6 +8,8 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -66,6 +68,17 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         final List<BlInventoryScanConfigurationModel> results = getFlexibleSearchService().<BlInventoryScanConfigurationModel>search(query).getResult();
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + key);
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+    }
+    
+    @Override
+	public PackagingInfoModel getPackageInfoByCode(String lastScannedItem) {
+   	 final String barcodeList = "SELECT {pk} FROM {PackagingInfo!} WHERE {trackingNumber} = ?lastScannedItem";
+       final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+       query.addQueryParameter("lastScannedItem", lastScannedItem);
+       final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel>search(query).getResult();
+       BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + lastScannedItem);
+       return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
+   	 
     }
 
     public FlexibleSearchService getFlexibleSearchService() {
