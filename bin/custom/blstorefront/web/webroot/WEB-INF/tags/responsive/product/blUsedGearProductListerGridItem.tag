@@ -19,7 +19,7 @@
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <c:if test ="${product.productTagValues ne null && product.productTagValues ne 'Great Value' && product.productTagValues ne 'Staff Pick'}">
-<span class="badge badge-limited-stock">${product.productTagValues}</span>
+<span class="badge badge-new">${product.productTagValues}</span>
 </c:if>
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
 <c:if test="${product.code ne 'bl_giftcard'}">
@@ -66,7 +66,11 @@
 					<format:price priceData="${product.serialfinalSalePrice}" />
 				</c:otherwise>
 			</c:choose>
-	</h6>		
+	</h6>
+	<c:if test="${product.ugPromotionMessage ne null && product.serialPromotionPrice.value > 0 && product.onSale eq true}">
+  	<p class="sale"><span class="saleprice"><format:price	priceData="${product.serialPromotionPrice}" />&nbsp;&nbsp;${fn:escapeXml(product.ugPromotionMessage)} </p>
+	</c:if>
+
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">
