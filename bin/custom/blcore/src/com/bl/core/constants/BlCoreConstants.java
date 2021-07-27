@@ -213,7 +213,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String ZERO_RATING = "0";
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
-	
+	public static final String BL_PRODUCTCATALOG = "blProductCatalog";
+
 	public static final int STATUS_LIST_SIZE_ONE = 1;
 	public static final int STATUS_LIST_SIZE_TWO = 2;
 	public static final int STATUS_LIST_SIZE_THREE = 3;
@@ -222,6 +223,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
 	public static final String NEW_LINE_CHARACTER =  "\n";
+  public static final String CATALOG_VERSION_NAME = "Online";
 
 	public static final String SUBSCRIPTION_API_OPERATION_STATUS = "OK";
 	public static final String SUBSCRIPTION_CONTACT_KEY = "contactKey";
