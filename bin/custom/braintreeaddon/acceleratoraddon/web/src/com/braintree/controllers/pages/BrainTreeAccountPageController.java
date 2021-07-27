@@ -327,6 +327,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		subscriptionInfo.setSavePaymentInfo(Boolean.TRUE);
 		subscriptionInfo.setShouldBeSaved(Boolean.TRUE);
 		subscriptionInfo.setCardholder(cardholder);
+		//Added condition for default Card
 		if(StringUtils.isNotBlank(defaultCard) && Boolean.TRUE.toString().equals(defaultCard))
 		{
 			subscriptionInfo.setIsDefault(Boolean.TRUE);
@@ -397,4 +398,17 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		    return address;
 		  }
 	
+	//Added method to set default credit card from frontend
+	@RequestMapping(value = "/set-default-cc-payment-details", method = RequestMethod.POST)
+	@RequireHardLogIn
+	public String setDefaultPaymentDetails(@RequestParam(value = "paymentInfoId") final String paymentInfoId) {
+		CCPaymentInfoData paymentInfoData = null;
+
+		if (StringUtils.isNotBlank(paymentInfoId)) {
+			paymentInfoData = userFacade.getCCPaymentInfoForCode(paymentInfoId);
+		}
+		userFacade.setDefaultPaymentInfo(paymentInfoData);
+		return REDIRECT_TO_PAYMENT_INFO_PAGE;
+	}
+
 }

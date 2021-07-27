@@ -224,12 +224,6 @@ jQuery(document).ready(function () {
 	initializeBTclientSDK();
 });
 
-/*$('.cc-click').click(function (e) {
-
-initializeBTclientSDK();
-
-});*/
-
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
 	$('.page-loader-new-layout').show();
 	$("#mark-paypal-button").empty();
@@ -446,9 +440,9 @@ function initializeBTclientSDK() {
             }
 
 
-           /* if (isBrainTreeMethodSelected() ||  ) {*/
+            if (isBrainTreeMethodSelected() || (typeof addPaymentMethodsPage != 'undefined')) {
             	createHostedFields(clientInstance);                
-            /*}*/
+            }
 
 
             dataCollector.client = clientInstance;
@@ -544,13 +538,13 @@ function isBrainTreeMethodSelected() {
 
 function creditCardValidation(errorMessage){
 	
-	 var validationDiv = $('<div class="notification notification-warning mb-4" />').text(errorMessage);
+	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
 	  $('#validationMessage').append(validationDiv);
 }
 
 function allFieldValidation(errorMessage){
 	
-	 var validationDiv = $('<div class="notification notification-warning mb-4" />').text(errorMessage);
+	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
 	  $('#allFieldvalidationMessage').append(validationDiv);
 }
 
@@ -872,7 +866,7 @@ function createHostedFields(clientInstance) {
 				if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+					var validationDiv = $('<div class="notification notification-error mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
@@ -1114,11 +1108,13 @@ $('#submit_silentOrderPostForm').click(function () {
 	
 	if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
 	{
+		
 		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
 		$('#validationMessage').append(validationDiv);
 	}
 	else if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == true)
 	{
+		
 		var billingFormErrorCounts = validateBillingAddressFields();
 		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
@@ -1258,6 +1254,20 @@ $(".edit-cc-form").on("click",function(e){
 	$("#braintree-payment-edit-form").submit();
 });
 
+
+/*$(".edit-save-click").on("click",function(e){
+	e.preventDefault();
+	var savedCardForm = $("#braintree-payment-form");
+	//var expMonth = savedCardForm.find('input[id="expirationMonth"]').val());
+	var expMonth = document.getElementById('expirationMonth').val();
+	alert(expMonth);
+    var expYear = savedCardForm.find('input[id="expirationYear"]').val());
+    var expirationDate = createHiddenParameter("expirationDate", expMonth / expYear);
+	alert(expirationDate);
+    savedCardForm.submit();
+});*/
+
+
 $(".delete-link").on("click",function(e){
 	e.preventDefault();
 	
@@ -1275,12 +1285,12 @@ $(".js-set-default-card").on("click",function(e){
     var paymentMethodTokenDefault = $(this).attr('data-payment-default-token');
     var defaultCard = $(this).attr('data-card-default');
     $.ajax({
-        url: ACC.config.encodedContextPath + "/my-account/default-credit-card",
+        url: ACC.config.encodedContextPath + "/my-account/set-default-cc-payment-details",
         type: 'POST',
-        data: {paymentInfoId: paymentInfoIdDefault, paymentMethodToken:paymentMethodTokenDefault},
+        data: {paymentInfoId: paymentInfoIdDefault},
         
         success: function (response) {
-        	
+        	location.reload();
         },
         error: function (jqXHR, textStatus, errorThrown) {
               $('.modal-backdrop').addClass('remove-popup-background');

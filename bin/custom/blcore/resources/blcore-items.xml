@@ -917,7 +917,7 @@
                    </attribute>
                    <attribute qualifier="brandName" type="java.lang.String">
                      <persistence type="property" />
-                     <modifiers read="true" write="true" optional="false" initial="true"/>
+                     <modifiers read="true" write="true" optional="true" />
                      <description>Brand name for the BL Product</description>
                      </attribute>
                    <attribute qualifier="subpartQuantity" type="java.lang.Integer">

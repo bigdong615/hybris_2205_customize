@@ -460,4 +460,23 @@ margin: 0;
 .gift-card-pdp img{width: 100%;}
 .gc-pdp-form input{margin:0 0 7px 0;height:42px ;}
 
+/* for default Credit card  */
+.js-set-default-card {
+  position: absolute !important;
+    top: 10px;
+    left: 10px;
+    z-index: 99;
+    font-size:10px;
+    outline: none !important;
+   text-transform: none;
+    background-color: transparent;
+    border: 1px solid #d4d4d3;
+    color: #212529;
+}
+.js-set-default-card:hover {
+    background: #efefef;
+}
+    
+
+
 
