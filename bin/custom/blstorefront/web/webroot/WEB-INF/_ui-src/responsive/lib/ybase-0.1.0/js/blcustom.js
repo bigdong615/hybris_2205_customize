@@ -904,3 +904,9 @@ $('#printOrderConfirmation').on("click",function(e) {
 		submitForm.submit();
 });
 
+function hideShorting(){ 
+    $('.container').on('click', function(){  
+	   $(".product-sort").find(".bootstrap-select").removeClass('open')
+   });
+  }; 
+  hideShorting();
