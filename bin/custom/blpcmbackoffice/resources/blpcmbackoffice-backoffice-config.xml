@@ -258,6 +258,14 @@
 							</ea:editor-parameter>
 						</ea:attribute>
 					</ea:section>
+				<ea:section description="hmc.text.options" name="hmc.section.product.options">
+						<ea:attribute qualifier="options">
+							<ea:editor-parameter>
+								<ea:name>configurableFlowConfigCtx</ea:name>
+								<ea:value>create-wizard-no-save</ea:value>
+							</ea:editor-parameter>
+						</ea:attribute>
+					</ea:section>
 			</ea:tab>
 			<ea:tab name="hmc.tab.product.extendedattributes" position="26">
 				<ea:section name="hmc.section.product.extendedattributes">

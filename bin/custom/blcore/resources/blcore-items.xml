@@ -7,6 +7,7 @@
     <collectiontypes>
         <collectiontype code="ProductVideoCollection" elementtype="ProductVideo" autocreate="true" generate="true" type="list"/>
         <collectiontype code="SkuProductList" elementtype="BlProduct" type="list"/>
+        <collectiontype code="optionsList" elementtype="BlOptions" type="list"/>
         <collectiontype code="DaysCollection" elementtype="DayOfWeek" autocreate="true" generate="false"/>
 		<collectiontype code="serialProducts" elementtype="BlProduct" autocreate="true"
       generate="false" type="list"/>
@@ -1864,7 +1865,7 @@
 						<modifiers read="true" write="true" optional="true"/>
 						<description>Serial products for the entry</description>
 					</attribute>
-          <attribute qualifier="option" type="BlOptions">
+          <attribute qualifier="options" type="optionsList">
 						<persistence type="property"/>
 						<modifiers read="true" write="true" optional="true"/>
 						<description>Option Associated to the Product</description>
