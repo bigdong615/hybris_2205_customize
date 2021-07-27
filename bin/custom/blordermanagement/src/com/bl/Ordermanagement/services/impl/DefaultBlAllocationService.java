@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
@@ -93,16 +94,6 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
       final Set<Entry<AbstractOrderEntryModel, Long>> resultEntries = result.getAllocation()
           .entrySet();
-//      Optional<PointOfServiceModel> pickupPos = resultEntries.stream().map(entry ->
-//          ((AbstractOrderEntryModel) entry.getKey()).getDeliveryPointOfService()
-//      ).filter(Objects::nonNull).findFirst();
-
-//      if (pickupPos.isPresent()) {
-//        consignment.setStatus(ConsignmentStatus.READY);
-//        consignment.setDeliveryMode(this.getDeliveryModeService().getDeliveryModeForCode("pickup"));
-//        consignment.setShippingAddress(((PointOfServiceModel) pickupPos.get()).getAddress());
-//        consignment.setDeliveryPointOfService(pickupPos.get());
-//      }
 
       final Set<ConsignmentEntryModel> entries = resultEntries.stream().map(mapEntry ->
           this.createConsignmentEntry(mapEntry.getKey(), mapEntry.getValue(), consignment, result)
@@ -113,39 +104,46 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
         this.getWarehousingConsignmentWorkflowService().startConsignmentWorkflow(consignment);
       }
 
-//      if (!consignment.getWarehouse().isExternal()) {
-//        this.getInventoryEventService().createAllocationEvents(consignment);
-//      }
+      if (BooleanUtils.isTrue(order.getIsRentalCart())) {
 
-      final List<String> allocatedProductCodes = new ArrayList<>();
-      for (Set<BlSerialProductModel> productSet : result.getSerialProductMap().values()) {
-        allocatedProductCodes.addAll(productSet.stream().map(BlSerialProductModel::getCode).collect(
-            Collectors.toSet()));
-      }
+        final List<String> allocatedProductCodes = new ArrayList<>();
+        for (Set<BlSerialProductModel> productSet : result.getSerialProductMap().values()) {
+          allocatedProductCodes
+              .addAll(productSet.stream().map(BlSerialProductModel::getCode).collect(
+                  Collectors.toSet()));
+        }
 
-      final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order, new HashSet<>(allocatedProductCodes));
+        final Collection<StockLevelModel> serialStocks = getSerialsForDateAndCodes(order,
+            new HashSet<>(allocatedProductCodes));
 
-      if ((!serialStocks.isEmpty()) && serialStocks.stream()
-          .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
-        this.optimizeShippingMethodForConsignment(consignment, result);
+        if ((!serialStocks.isEmpty()) && serialStocks.stream()
+            .allMatch(stock -> allocatedProductCodes.contains(stock.getSerialProductCode()))) {
+          this.optimizeShippingMethodForConsignment(consignment, result);
+          this.getModelService().save(consignment);
+          serialStocks.forEach(stock -> stock.setReservedStatus(true));
+          this.getModelService().saveAll(serialStocks);
+
+          return consignment;
+
+        } else {
+
+          order.setStatus(OrderStatus.SUSPENDED);
+          order.setConsignments(null);
+          order.getEntries().stream().forEach(entry -> entry.setConsignmentEntries(null));
+          getModelService().save(order);
+          BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
+              "At the time of consignment creation, the availability of the allocated serial products not found.");
+
+          throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
+        }
+
+      } else{   // used gear cart
+
+        //this.optimizeShippingMethodForConsignment(consignment, result);   // need clarification
         this.getModelService().save(consignment);
-        serialStocks.forEach(stock -> stock.setReservedStatus(true));
-        this.getModelService().saveAll(serialStocks);
 
         return consignment;
-
-      } else {
-
-        order.setStatus(OrderStatus.SUSPENDED);
-        order.setConsignments(null);
-        order.getEntries().stream().forEach(entry -> entry.setConsignmentEntries(null));
-        getModelService().save(order);
-        BlLogger.logFormatMessageInfo(LOG, Level.ERROR,
-            "At the time of consignment creation, the availability of the allocated serial products not found.");
-
-        throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER);
       }
-
     } catch (final Exception ex) {
       throw new BlSourcingException(ERROR_WHILE_ALLOCATING_THE_ORDER, ex);
     }
