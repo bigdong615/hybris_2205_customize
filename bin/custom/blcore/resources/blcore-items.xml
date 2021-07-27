@@ -1240,17 +1240,6 @@
                      </attribute>
                  </attributes>
              </itemtype>
-          <itemtype code="BlSubpart" extends="BlSerialProduct" autocreate="true" generate="true"
-            jaloclass="com.bl.core.jalo.BlSubpart">
-            <description>Extending BlSubPart with additional attributes</description>
-            <attributes>
-              <attribute qualifier="barcode" type="java.lang.String" redeclare="true">
-                <persistence type="property"/>
-                <modifiers read="true" write="true" unique="true"  optional="true"/>
-                <description>Unique Barcode associated to a subpart</description>
-              </attribute>
-            </attributes>
-          </itemtype>
 
           <itemtype code="BlOptions" autocreate="true" generate="true">
             <description>These are options which are available on certain BlProducts</description>
