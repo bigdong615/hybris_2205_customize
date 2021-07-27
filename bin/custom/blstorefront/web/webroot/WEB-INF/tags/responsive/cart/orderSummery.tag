@@ -141,27 +141,28 @@
 	<small class="gray60"><spring:theme
 			code="text.checkout.multi.order.summary.msg" /></small>
 	<c:url value="/cart/voucher/remove" var="voucherRemoveUrl" />
-	<c:forEach items="${cartData.appliedVouchers}" var="voucher"
-		varStatus="loop">
-		<form:form action="${voucherRemoveUrl}" modelAttribute="voucherForm"
-			method="POST" id="removeVoucherForm${loop.index}">
-			<p class="body14">
-				<c:if test="${cartData.totalDiscounts.value > 0 || cartData.productDiscounts.value > 0}">
-					<span class="gray60">${fn:escapeXml(voucher)}</span>
+      <c:forEach items="${cartData.appliedVouchers}" var="voucher"
+        varStatus="loop">
+        <form:form action="${voucherRemoveUrl}" modelAttribute="voucherForm"
+          method="POST" id="removeVoucherForm${loop.index}">
+          <p class="body14">
+            <c:if test="${cartData.totalDiscounts.value > 0 || cartData.productDiscounts.value > 0}">
+              <span class="gray60">${fn:escapeXml(voucher)}</span>
 
-					<form:input hidden="hidden" value="${fn:escapeXml(voucher)}"
-						path="voucherCode" name="voucherCode" />
-					<a href="#" class="js-cart-release-voucher-remove-btn"
-						id="removeVoucherForm${loop.index}"><small><spring:theme code="text.remove"/></small></a>
-					<c:forEach items="${cartData.promotionAmountMap}" var="amountMap">
-						<c:if test="${amountMap.key eq voucher}">
-							<span class="float-end">-${amountMap.value}</span>
-						</c:if>
-					</c:forEach>
-				</c:if>
-			</p>
-		</form:form>
-	</c:forEach>
+              <form:input hidden="hidden" value="${fn:escapeXml(voucher)}"
+                path="voucherCode" name="voucherCode" />
+              <a href="#" class="js-cart-release-voucher-remove-btn"
+                id="removeVoucherForm${loop.index}"><small><spring:theme code="text.remove"/></small></a>
+              <c:forEach items="${cartData.promotionAmountMap}" var="amountMap">
+                <c:if test="${amountMap.key eq voucher}">
+                  <span class="float-end">-${amountMap.value}</span>
+                </c:if>
+              </c:forEach>
+            </c:if>
+          </p>
+        </form:form>
+      </c:forEach>
+
 	<c:forEach items="${cartData.giftCardData}" var="gift" varStatus="loop">
 		<form:form id="removeGiftCardForm${loop.index}"
 			action="${removeGiftCardAction}" method="POST"
