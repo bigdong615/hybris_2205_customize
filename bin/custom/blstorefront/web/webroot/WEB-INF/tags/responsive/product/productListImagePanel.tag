@@ -27,9 +27,9 @@
 						<c:if test="${mediaLi.format eq 'product'}">
 							<c:url value="${mediaLi.url}" var="primaryImageUrl" />
 							<c:set value="this is alternate" var="altTextHtml" />
-							<li class="splide__slide""><c:url var="rentUrl" value="${productTypeUrl}/${product.code}" />
-									 <a href="${rentUrl}" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="gift cart"
-                      data-productName="${ycommerce:sanitizeHTML(product.name)}" data-productType="${productType eq 'RentalGearProduct' ? 'rental' : 'used gear' }"> <img
+							<li class="splide__slide""><c:url var="giftCardUrl" value="${productTypeUrl}/${product.code}" />
+									 <a href="${giftCardUrl}" class="js-pdplinkUrl" data-productCode="${product.code}" data-brand="gift cart"
+                      data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="Gift Cart"> <img
 									src="${fn:escapeXml(primaryImageUrl)}" />
 							</a></li>
 						</c:if>
