@@ -12,6 +12,8 @@ import org.zkoss.zk.ui.Component;
 
 
 /**
+ * BL-769 : This class is being used to render the current date in Advanced search.
+ * 
  * @author Krishan Vashishth
  *
  */
