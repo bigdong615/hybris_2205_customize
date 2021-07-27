@@ -160,7 +160,7 @@ public class CreatePackageController extends DefaultWidgetController
 
 		for (final PackagingInfoModel packagingInfoModel : packageInfo)
 		{
-			final Set<BlProductModel> packageSerails = packagingInfoModel.getSerialProducts();
+			final List<BlProductModel> packageSerails = packagingInfoModel.getSerialProducts();
 			if (CollectionUtils.isNotEmpty(packageSerails))
 			{
 				this.allSerialProducts.removeAll(packageSerails);
@@ -253,7 +253,7 @@ public class CreatePackageController extends DefaultWidgetController
 
 			if (null != packagingInfo)
 			{
-				packagingInfo.setSerialProducts(this.selectedSerialProducts);
+				packagingInfo.setSerialProducts((List<BlProductModel>)this.selectedSerialProducts);
 				modelService.save(packagingInfo);
 				modelService.refresh(packagingInfo);
 				this.showMessageBox();

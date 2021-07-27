@@ -886,7 +886,12 @@ function createHostedFields(clientInstance) {
 					hostedFieldsInstance.tokenize(function (tokenizeErr, payload) 
 					{
 						if (tokenizeErr) 
-						{    hasNoError = false;
+						{
+						 window.mediator.publish('applyCreditCart', {
+            	paymentError: tokenizeErr.message
+           	});
+
+						 hasNoError = false;
 						   $('#submit_silentOrderPostForm').removeAttr("disabled");
 						    creditCardValidation(tokenizeErr);
 							$(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).removeClass("disbleButtonColor");
@@ -1231,13 +1236,11 @@ $("#submit_silentOrderSavedForm").on("click",function(e)
 var inputQuantity = [];
 $(function() {
     $(".po-number").on("keyup", function (e) {
+      //  alert('tt')
         var $field = $(this),
             val=this.value;
-        if (this.validity && this.validity.badInput || isNaN(val) || $field.is(":invalid") ) {
-            this.value = inputQuantity[$thisIndex];
-            return;
-        }
-        if (val.length > Number($field.attr("maxlength"))) {
+           $thisIndex=parseInt($field.data("idx"),10); 
+               if (val.length > Number($field.attr("maxlength"))) {
           val=val.slice(0, 5);
           $field.val(val);
         }

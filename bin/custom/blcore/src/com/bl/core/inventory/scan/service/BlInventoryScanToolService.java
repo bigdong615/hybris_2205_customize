@@ -5,6 +5,7 @@ import com.bl.core.model.BlSerialProductModel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * {javadoc}
@@ -14,13 +15,14 @@ import java.util.List;
 public interface BlInventoryScanToolService {
 
     /**
-     * javadoc
-     * @param barcodes from input list
-     * @return int
      * method will check the valid Location provided in barcode list and return int with appropriate notification
      * number to notify employee
+     *
+     * @param barcodes the barcodes
+     * @param memberAllowedLocationList the member allowed location list
+     * @return the int
      */
-    int checkValidLocationInBarcodeList(final List<String> barcodes);
+    int checkValidLocationInBarcodeList(final List<String> barcodes, final List<String> memberAllowedLocationList);
 
     /**
      * javadoc
@@ -54,4 +56,21 @@ public interface BlInventoryScanToolService {
      * method will fetch ConfigurationKey by its key from dao
      */
     String getConfigKeyFromScanConfiguration(final String key);
+    
+    /**
+     * Checks if is valid tech eng location barcode.
+     *
+     * @param barcodes the barcodes
+     * @param memberAllowedLocationList the member allowed location list
+     * @return the int
+     */
+    int isValidTechEngLocationBarcode(final List<String> barcodes, final List<String> memberAllowedLocationList);
+    
+    /**
+     * Do tech eng serial location update.
+     *
+     * @param barcodes the barcodes
+     * @return the map
+     */
+    Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
 }

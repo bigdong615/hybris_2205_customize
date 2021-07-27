@@ -47,8 +47,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	var productCode = form.find('input[name=productCode]').val();
             	var initialCartQuantity = form.find('input[name=initialQuantity]');
             	var cartQuantity = form.find('input[name=quantity]');
-
-            	ACC.track.trackRemoveFromCart(productCode, initialCartQuantity.val());
+              var productName = form.find('input[name=productName]').val();
+            	ACC.track.trackRemoveFromCart(productCode, productName ,initialCartQuantity.val());
             	cartQuantity.val(0);
             	initialCartQuantity.val(0);
             	$(".shopping-cart__item-remove").attr("disabled", "disabled");
@@ -311,6 +311,17 @@ $('#applyGcCode').click(function (e) {
        console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
     }
 	});
+});
+
+//BL-927 Gift Card Purchase Amount
+$('#add-to-gc').click(function(e) {
+    $('.page-loader-new-layout').hide();
+    var form = $('#giftCardPurchaseForm');
+    var amount = form.find('input[name=amount]').val();
+    if (amount < 25 || amount > 500) {
+        $('.notification').show();
+        return false;
+    }
 });
 
 //BL-563 Remove Gift Card
@@ -642,6 +653,21 @@ $('.emptyCart-modalClose').click(function(e){
 });
 }
 
+$('.emailSubscr_btn').click(function (e){
+
+		var email = document.getElementById("emailSubscr_txt").value;
+		//validate email
+			$.ajax({
+				 url: ACC.config.encodedContextPath + "/subscribe-email/?emailId="+email,
+				 type: "GET",
+				success: function (data) {
+					if (data == "success") {
+
+					}
+				}
+			});
+});
+
 //Added code for used gear addToCart 
 $('.bl-serial-add').click(function (e)
 	{
@@ -862,11 +888,7 @@ $(function() {
 			"keyup",
 			function(e) {
 				var $field = $(this), val = this.value;
-				if (this.validity && this.validity.badInput || isNaN(val)
-						|| $field.is(":invalid")) {
-					this.value = inputQuantity[$thisIndex];
-					return;
-				}
+				$thisIndex=parseInt($field.data("idx"),10); 
 				if (val.length > Number($field.attr("maxlength"))) {
 					val = val.slice(0, 5);
 					$field.val(val);
@@ -881,3 +903,4 @@ $('#printOrderConfirmation').on("click",function(e) {
 		var submitForm = $("#printOrderConfirmationForm");
 		submitForm.submit();
 });
+

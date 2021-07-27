@@ -46,7 +46,7 @@
 		</ycommerce:testId>
 
 		<div class="input-group-append d-md-block input-button-search">
-			<button class="btn btn-search btn-link js_search_button"
+			<button class="btn btn-search btn-link js_search_button js-search-track"
 				type="submit">
 				<spring:theme code="text.footer.subscription.button.search" />
 			</button>

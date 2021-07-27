@@ -19,6 +19,7 @@
  <section id="myAccount">
     <div class="container">
        <div class="row justify-content-center">
+       <c:if test ="${pageType ne 'orderDetails'}">
           <div id="accountMenu" class="col-lg-3 sticky-lg-top">
              <h6 class="mb-4">
                 <spring:theme code="account.customer.name.prefix"/>
@@ -73,8 +74,11 @@
              </div>
              <div class="d-none d-lg-block">
                 <p>
-                   <a href="${baseUrl}/orders">
-                      <spring:theme code= "text.orders" />
+                   <a href="${baseUrl}/orders"
+                          <c:if test="${fn:startsWith(pageTitle, 'Order History')}">
+                              <c:out value="class=active"/>
+                          </c:if>>
+                             <spring:theme code= "text.orders"/>
                    </a>
                 </p>
                 <hr>
@@ -139,11 +143,13 @@
                 </p>
              </div>
           </div>
+       </c:if>
+
           <cms:pageSlot position="BodyContent" var="feature" >
              <cms:component component="${feature}" />
           </cms:pageSlot>
+
        </div>
     </div>
  </section>
-
 </template:page>
