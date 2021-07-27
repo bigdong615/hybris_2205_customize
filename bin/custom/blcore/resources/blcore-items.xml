@@ -1695,12 +1695,12 @@
               <description>BL Rental Return Date</description>
               <modifiers read="true" write="true" search="true"/>
             </attribute>
+            <attribute qualifier="serialProducts" type="serialProducts">
+              <persistence type="property"/>
+              <modifiers read="true" write="true" optional="true"/>
+              <description>Serial products for the entry</description>
+            </attribute>
           </attributes>
-          <attribute qualifier="serialProducts" type="serialProducts">
-            <persistence type="property"/>
-            <modifiers read="true" write="true" optional="true"/>
-            <description>Serial products for the entry</description>
-          </attribute>
         </itemtype>
       </typegroup>
 
