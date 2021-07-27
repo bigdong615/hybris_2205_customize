@@ -11,6 +11,7 @@ import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PriceDataType;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -38,14 +39,23 @@ public class BlCartPopulator extends CartPopulator<CartData>
 	{
 		super.populate(source, target);
 		target.setTotalDamageWaiverCost(createPrice(source, source.getTotalDamageWaiverCost()));
-		target.setPickUpPersonFirstName(source.getPickUpPersonFirstName());
-		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
-		target.setPickUpPersonEmail(source.getPickUpPersonEmail());
-		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
+//		For now removing I am or someone else option for pick up
+//		target.setPickUpPersonFirstName(source.getPickUpPersonFirstName());
+//		target.setPickUpPersonLastName(source.getPickUpPersonLastName());
+//		target.setPickUpPersonEmail(source.getPickUpPersonEmail());
+//		target.setPickUpPersonPhone(source.getPickUpPersonPhone());
 		target.setAvalaraCalculated(source.getAvalaraTaxCalculated());
 		target.setTaxAvalaraCalculated(createPrice(source , source.getTotalTax()));
 		target.setIsRentalCart(source.getIsRentalCart());
-
+		target.setPoNumber(source.getPoNumber());
+		target.setPoNotes(source.getPoNotes());
+		if(source.getUser() instanceof CustomerModel){
+			final CustomerModel customerModel = (CustomerModel)source.getUser();
+			target.setIsPOEnabled(customerModel.isPoEnabled());
+		}
+		if (CollectionUtils.isNotEmpty(source.getOrderNotes())){
+			target.setOrderNotes(source.getOrderNotes().get(0).getNote());
+		}
 		final PriceDataType priceType = PriceDataType.BUY;
 		if (source.getTotalPrice() != null && source.getGiftCardAmount() != null)
 		{

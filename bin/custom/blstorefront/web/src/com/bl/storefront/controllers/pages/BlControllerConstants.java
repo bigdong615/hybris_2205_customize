@@ -129,6 +129,22 @@ public class BlControllerConstants
 	public static final String BRAINTREE_GENERAL_ERROR_KEY = "braintree.billing.general.error";
 	public static final String CART_PAGE = "cartPage";
 	public static final String FROM_PAGE = "fromPage";
+	public static final String USER_SELECTED_PO_NUMBER = "selectedPoNumber";
+	public static final String USER_SELECTED_PO_NOTES = "selectedPoNotes";
+
+
+	public static final String ORDER_DATA = "orderData";
+	public static final String PAGE_TYPE = "pageType";
+	public static final String ORDER_DETAILS = "orderDetails";
+	public static final String IS_USED_GEAR_CART_ACTIVE = "isUsedGearCartActive";
+	public static final String MY_ACCOUNT_ORDER = "/my-account/order/";
+	public static final String PAYMENT_ID = "paymentId";
+	public static final String PAYMENT_NONCE= "paymentNonce";
+	public static final String EXTEND_ORDER_DATA = "extendOrderData";
+	public static final String MY_ACCOUNT_EXTEND_RENTAL = "/my-account/extendRent/";
+  public static final String CLIENT_TOKEN = "client_token";
+
+
 	private BlControllerConstants()
 	{
 		//empty

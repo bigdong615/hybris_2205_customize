@@ -370,7 +370,13 @@ ACC.cart = {
     },
 
     bindApplyVoucher: function () {
-
+        var voucherError = $('.js-promo-error').html();
+            if( voucherError!= undefined){
+             voucherError = voucherError.trim();
+              window.mediator.publish('applyPromo', {
+              				voucherError: voucherError
+              			});
+              }
         $(".js-voucher-apply-btn").on("click", function (e) {
          e.preventDefault();
             ACC.cart.handleApplyVoucher(e);

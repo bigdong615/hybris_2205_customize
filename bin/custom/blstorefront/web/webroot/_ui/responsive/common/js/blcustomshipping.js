@@ -201,7 +201,7 @@ function removeClass(){
         },
         success: function (data) {
             if(data != null && data.length != 0) {
-                let shippingModes = '<b class="mt-4">Shipping Methods</b>';
+                let shippingModes = '<b class="mt-4">Shipping Method</b>';
                 shippingModes += '<select id="ship-UPS-shipping-methods-select-box" class="selectpicker mt-2"' +
                                     'onchange="onChangeOfShipItShipToUPS()">';
                 let numberSelected = 0;
@@ -353,11 +353,11 @@ function removeClass(){
              if(stores[i].locationId == upsSelectedStoreId) {
                 $('#ship-it-SHIP_UPS_OFFICE').html('');
                 upsStores += '<div id="ups-location-1" class="row store-location mb-3">' +
-                                  '<div class="col-1">' +
+                                  '<div class="col-1 on-select-hide">' +
                                       '<input type="hidden" id="' + stores[i].locationId + '" name="ups-location"><label for="' +
                                          stores[i].locationId + '"></label>' +
                                   '</div>' +
-                                  '<div class="col-11 col-md-7">' +
+                                  '<div class="col-11 col-md-8 mt-5">' +
                                       '<p>' + stores[i].consigneeName + '<br>' +
                                       '<a href="https://maps.google.com/maps?q='+
                                           stores[i].addressLine + ',' + stores[i].politicalDivision1 + ' ' +
@@ -372,7 +372,7 @@ function removeClass(){
                                          if(stores[i].distance != null) {
                                              upsStores += stores[i].contactNumber;
                                          }
-                        upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0">';
+                        upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0 mt-5">';
                                   if(stores[i].latestGroundDropOffTime != null && stores[i].latestGroundDropOffTime.length != 0) {
                                                       if(stores[i].latestGroundDropOffTime[0] != null && stores[i].latestGroundDropOffTime[0].split(': ')[0] == 'Mon-Fri') {
                                        upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
@@ -395,6 +395,7 @@ function removeClass(){
                 $('#ship-it-pickup-gear').show();
                 $('#ship-it-ups-zip-code').val('');
                 $('#checkZipForUPSPickup').hide();
+                $('.on-select-hide').hide();
              }
          }
      }
@@ -582,7 +583,7 @@ function removeClass(){
                 if(data.length == 1) {
                     $('#partnerPickUpShippingMethods #pickup-nyc').first().find('input[name="pickup-locations"]').prop("checked", true);
                 }
-                showErrorNotificationForPickUpId('They must show ID at time of pickup');
+                /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
             } else {
             	$('#cart-shipping-cost').text('-');
             	 calculateCartTotal();
@@ -653,7 +654,7 @@ function removeClass(){
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').removeClass('error');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
-     showErrorNotificationForPickUpId('They must show ID at time of pickup');
+     /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
  }
 
  function pickUpByMeClick() {
@@ -927,7 +928,7 @@ function removeClass(){
                             ' required fields.' +
                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
     }
-    notification += '</div>';
+    notification += '</div>' + '<br>';
     $('#showErrorForInputValidation').html(notification);
     $('#showErrorForInputValidation').show();
  }

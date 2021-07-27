@@ -10,8 +10,8 @@ import java.util.List;
  * Scanning specific response messages
  */
 public class BlInventoryScanLoggingConstants {
-    
-    public static final int ZERO = 0;
+
+	public static final int ZERO = 0;
     public static final double ZERO_FIVE = 0.5;
     public static final int ONE = 1;
     public static final int TWO = 2;
@@ -24,6 +24,8 @@ public class BlInventoryScanLoggingConstants {
     public static final int FORTY = 40;
 
     public static final String HUN_PER = "100%";
+    public static final String SAVING = "Saving ";
+    public static final String SPACE = ": ";
 
     public static final String SAMPLE1 = "sample1%";
     public static final String SAMPLE2 = "sample2%";
@@ -40,6 +42,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String BOS = "BOS";
     public static final String IN_HOUSE = "In House Scrapped Items";
     public static final String UNKNOWN = "Unknown Carrier";
+    
+    public static final String MAW = "MAW";
+    public static final String CAW = "CAW";
 
     public static final String FAILED_BARCODE_LIST = "Failed barcode list: ";
 
@@ -69,6 +74,36 @@ public class BlInventoryScanLoggingConstants {
     public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: ";
     public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: ";
     public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
+    
+    public static final String TECH_ENG_NOTIFICATION_HANDLER = "techEngSanToolNotification";
+    public static final String TECH_ENGINEERING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
+    public static final String VIP_WORKSTATION_TECH_ENG = "VIP_WORKSTATION_TECH_ENG";
+    public static final String CLEAN_PRIORITY_GEAR_CART = "CLEAN_PRIORITY_GEAR_CART";
+    public static final String CLEAN_GEAR_MOBILE_CART = "CLEAN_GEAR_MOBILE_CART";
+    public static final String REPAIR_SHELF = "REPAIR_SHELF";
+    public static final String MISSING_BARCODE_ITEMS = "MISSING_BARCODE_ITEMS";
+    public static final String SOMETHING_WENT_WRONG = "SOMETHING_WENT_WRONG";
+    public static final String WRONG_ITEM_CLEAN_CART = "WRONG_ITEM_CLEAN_CART";
+    public static final String WRONG_ITEM_CLEAN_PRIORITY_CART = "WRONG_ITEM_CLEAN_PRIORITY_CART";
+    public static final String SUCCESS = "SUCCESS";
+    public static final String LOG_SOMETHING_WENT_WRONG = "SOMETHING WENT WRONG";
+    public static final String SCAN_ERROR_FAILURE = "somethingWentWrong";
+    public static final String WRONG_CLEAN_CART_LOCATION = "Should Move To Clean Priority Cart";
+    public static final String CLEAN_CART_SCAN_ERROR_FAILURE = "cleanCartScanError";
+    public static final String WRONG_CLEAN_PRIORITY_CART_LOCATION = "Should Move To Clean Cart";
+    public static final String CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE = "cleanPriorityCartScanError";
+    public static final String CAR = "CAR";
+    public static final String MAR = "MAR";
+    public static final String CAM = "CAM";
+    public static final String MAM = "MAM";
+    public static final String CLEAN_FRONT_DESK_CART = "CLEAN_FRONT_DESK_CART";
+    public static final String CLEAN_GEAR_AISLE_IN_CAGE = "CLEAN_GEAR_AISLE_IN_CAGE";
+    public static final String CLEAN_GEAR_CAGE = "CLEAN_GEAR_CAGE";
+    public static final String CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART = "CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART";
+    public static final String CLEAN_GEAR_SHIPPING_MOBILE_CART = "CLEAN_GEAR_SHIPPING_MOBILE_CART";
+    public static final String CLEAN_MOBILE_LAUNDRY_BIN = "CLEAN_MOBILE_LAUNDRY_BIN";
+    public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
+    public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
 
     private BlInventoryScanLoggingConstants() { }
 
@@ -90,4 +125,5 @@ public class BlInventoryScanLoggingConstants {
         defaultLocations.add(IN_HOUSE);
         return defaultLocations;
     }
+    
 }

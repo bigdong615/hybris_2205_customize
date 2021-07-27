@@ -116,7 +116,7 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
  			final CustomerModel currentUser = getCurrentSessionCustomer();
  			if (Objects.nonNull(currentUser) && !getUserService().isAnonymousUser(currentUser))
  			{
- 				final AddressModel defaultPaymentAddress = currentUser.getDefaultPaymentAddress();
+ 				final AddressModel defaultPaymentAddress = currentUser.getDefaultBillingAddress();
  				return Objects.nonNull(defaultPaymentAddress) && BooleanUtils.isTrue(defaultPaymentAddress.getBillingAddress())
  						? getAddressConverter().convert(defaultPaymentAddress)
  						: null;

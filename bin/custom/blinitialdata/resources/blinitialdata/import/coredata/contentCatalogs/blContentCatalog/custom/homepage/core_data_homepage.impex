@@ -61,6 +61,7 @@ INSERT_UPDATE ContentSlotName ; name[unique=true]                  ; template(ui
                               ; HomePageBannerSearchBoxSlot              ;                                                                       ;                           ; searchbox            
                               ; MobileHomePageBannerSearchBoxSlot        ;                                                                       ;                           ; searchbox
                               ; SocialMediaSectionSlot           ;                                                                             ;                           ; wide
+                              ; TopHeaderSlot                    ;                                                                             ;                           ; wide
 
 
 INSERT_UPDATE ComponentTypeGroup ; code[unique=true] 
@@ -109,7 +110,7 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; HomePageHeroBannerSlot             ; HomePage Hero Banner Slot              
                           ;                         ; HomePageBannerSearchBoxSlot        ; HomePage Banner Search Box Slot        
                           ;                         ; HomePageBannerTextSlot             ; HomePage Banner Text Slot              
-                          ;                         ; HomePageRentingGearSectionSlot     ; HomePage RentingGear Section slot      
+                          ;                         ; HomePageRentingGearSectionSlot     ; Home & PDP Renting Gear is Easy Slot
                           ;                         ; HomePageCategorySectionSlot        ; HomePage Category Section slot         
                           ;                         ; HomePageBrandSectionSlot           ; HomePage Brand Section Slot            
                           ;                         ; HomePageFeaturedGearSectionSlot    ; HomePage FeaturedGear Section Slot     
@@ -118,7 +119,7 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; HomePageFeaturedStoriesSectionSlot ; HomePage FeaturedStories Section Slot  
                           ;                         ; HomePageFeaturedStoriesTitleSlot   ; HomePage FeaturedStories Title Slot    
                           ;                         ; HomePageBrandTitleSlot             ; HomePage BrandTitle Slot               
-                          ;                         ; HomePageRentingGearIsEasyTitleSlot ; HomePage RentingGearIsEasy Title Slot  
+                          ;                         ; HomePageRentingGearIsEasyTitleSlot ; Home & PDP Renting Gear is Easy Title Slot
                           ;                         ; HomePageCategoriesTitleSlot        ; HomePage Categories Title Slot         
                           ;                         ; HomePageTheyBorrowFromUsTitleSlot  ; HomePage TheyBorrowFromUs Title Slot   
                           ;                         ; MobileHeaderLinkForShipOrPickupSlot      ; Mobile Header Link for ShipOrPickup Slot;
@@ -128,6 +129,7 @@ INSERT_UPDATE ContentSlot ; $contentCV[unique=true] ; uid[unique=true]          
                           ;                         ; MobileMiniCartSlot                 ; Mobile Mini Cart Slot                                                   
                           ;                         ; MobileHomePageBannerSearchBoxSlot  ; Mobile HomePage Banner Search Box Slot;
                           ;                         ; SocialMediaSectionSlot             ; Social Media Section Slot
+                          ;                         ; TopHeaderSlot             ; Top HeaderSlot for ASM
 
 ###  Define ContentSlot For Template  ###
 INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true]                          ; position[unique=true]         ; pageTemplate(uid,$contentCV)[unique=true][default='LandingPage2Template'] ; contentSlot(uid,$contentCV)[unique=true] ; allowOverwrite 
@@ -148,6 +150,7 @@ INSERT_UPDATE ContentSlotForTemplate ; $contentCV[unique=true] ; uid[unique=true
                                      ;                         ; MobileHeaderBottomInfo-LandingPage              ; MobileHeaderBottomInfo              ;                                                                           ; MobileHeaderBottomInfo                         ; true                                                
                                      ;                         ; MobileMiniCartSlot-LandingPage                  ; MobileMiniCartSlot                  ;                                                                           ; MobileMiniCartSlot                             ; true
                                      ;                         ; SocialMediaSectionSlot-LandingPage              ; SocialMediaSectionSlot        ;                                                                           ; SocialMediaSectionSlot                   ; true
+                                     ;                         ; TopHeaderSlot-LandingPage              ; TopHeaderSlot        ;                                                                           ; TopHeaderSlot                   ; true
 
 
 ########################### Define Content slots for page######################

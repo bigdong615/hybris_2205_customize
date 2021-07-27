@@ -1,6 +1,7 @@
 package com.bl.facades.cart.impl;
 
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.SerialStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.cart.BlCartService;
@@ -22,6 +23,7 @@ import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.store.services.BaseStoreService;
 import java.util.ArrayList;
@@ -29,9 +31,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -41,7 +43,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.assertj.core.util.Lists;
-import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * Default implementation of the {@link BlCartFacade}.Delivers functionality for cart.
@@ -106,9 +107,14 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 	  getBlCartService().setRentalDatesOnCart(rentalStartDate, rentalEndDate);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+	/**
+	 * It performs add to cart operation based on product type.
+	 * @param productCode the product code
+	 * @param quantity the quantity
+	 * @param serialCode the serial code
+	 * @return CartModificationData
+	 * @throws CommerceCartModificationException the exception
+	 */
   public CartModificationData addToCart(final String productCode, final long quantity,
       final String serialCode)
       throws CommerceCartModificationException {
@@ -122,25 +128,29 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 
     try {
       //For used gear product
-      if (StringUtils.isNotEmpty(serialCode) && !StringUtils
-          .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
-          .isNotEmpty(blProductModel.getSerialProducts())) {
-        for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
-          if (blSerialProduct.getProductId().equals(serialCode)) {
-            blSerialProductModel = blSerialProduct;
-            parameter.setProduct(blSerialProductModel);
-            parameter.setUnit(blSerialProductModel.getUnit());
-            parameter.setCreateNewEntry(false);
-            break;
-          }
-        }
-      } else {
+			if (StringUtils.isNotEmpty(serialCode) && !StringUtils
+					.equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
+					.isNotEmpty(blProductModel.getSerialProducts())) {
+				final Optional<BlSerialProductModel> blSerialProductModelOptional = blProductModel
+						.getSerialProducts().stream()
+						.filter(blSerialProduct -> blSerialProduct.getProductId().equals(serialCode))
+						.findFirst();
+				if (blSerialProductModelOptional.isPresent()) {
+					blSerialProductModel = blSerialProductModelOptional.get();
+					parameter.setProduct(blSerialProductModel);
+					parameter.setIsNoDamageWaiverSelected(Boolean.TRUE);
+					parameter.setIsDamageWaiverProSelected(Boolean.FALSE);
+					parameter.setIsDamageWaiverSelected(Boolean.FALSE);
+					parameter.setUnit(blSerialProductModel.getUnit());
+					parameter.setCreateNewEntry(false);
+				}
+			} else {
         //For rental product
         parameter.setProduct(blProductModel);
         parameter.setUnit(blProductModel.getUnit());
         parameter.setCreateNewEntry(false);
       }
-    } catch (Exception exception) {
+    } catch (final RuntimeException exception) {
       BlLogger.logMessage(LOGGER, Level.ERROR,
           "Unable to set product model, unit and new entry to CommerceCartParameter", exception);
     }
@@ -189,20 +199,9 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     CartModel cartModel = blCartService.getSessionCart();
     BlProductModel blProductModel = (BlProductModel) getProductService()
         .getProductForCode(productCode);
-    BlSerialProductModel blSerialProductModel = null;
+    BlSerialProductModel blSerialProductModel = getBlSerialProductModel(serialCode, blProductModel);
 
-    if (StringUtils.isNotEmpty(serialCode) && !StringUtils
-        .equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
-        .isNotEmpty(blProductModel.getSerialProducts())) {
-      for (final BlSerialProductModel blSerialProduct : blProductModel.getSerialProducts()) {
-        if (blSerialProduct.getProductId().equals(serialCode)) {
-          blSerialProductModel = blSerialProduct;
-          break;
-        }
-      }
-    }
-
-    if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
+		if (cartModel != null && CollectionUtils.isNotEmpty(cartModel.getEntries())) {
       //It prevents user to add product to cart, if current cart is rental cart and user tries to add used gear product.
       if (Boolean.TRUE.equals(cartModel.getIsRentalCart())
           && blSerialProductModel != null) {
@@ -217,8 +216,30 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
     }
     return isAddToCartNotAllowed;
   }
-  
-  /**
+
+	/**
+	 * It initialize blSerialProductModel is case of used gear product added to cart.
+	 *
+	 * @param serialCode     the serial code
+	 * @param blProductModel the BlProductModel
+	 * @return BlSerialProductModel
+	 */
+	private BlSerialProductModel getBlSerialProductModel(final String serialCode,
+			final BlProductModel blProductModel) {
+		if (StringUtils.isNotEmpty(serialCode) && !StringUtils
+				.equalsIgnoreCase(serialCode, BlFacadesConstants.SERIAL_CODE_MISSING) && CollectionUtils
+				.isNotEmpty(blProductModel.getSerialProducts())) {
+			final Optional<BlSerialProductModel> blSerialProductModelOptional = blProductModel
+					.getSerialProducts().stream()
+					.filter(blSerialProduct -> blSerialProduct.getProductId().equals(serialCode)).findFirst();
+			if (blSerialProductModelOptional.isPresent()) {
+				return blSerialProductModelOptional.get();
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -510,6 +531,32 @@ public void setBlCommerceStockService(BlCommerceStockService blCommerceStockServ
 			}
 		});
 		return entryList;
+	}
+
+	/**
+	 *{@inheritDoc}
+	 */
+	@Override
+	public void savePoPaymentDetails(final String poNumber, final String poNotes) {
+    blCartService.savePoPaymentDetails(poNumber,poNotes);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removePoNumber() {
+		CartModel cartModel = blCartService.getSessionCart();
+		if (cartModel != null) {
+			try {
+				cartModel.setPoNumber(null);
+				getModelService().save(cartModel);
+				getModelService().refresh(cartModel);
+			} catch (final ModelSavingException exception) {
+				BlLogger
+						.logMessage(LOGGER, Level.ERROR, "Error occurred while updating po number", exception);
+			}
+		}
 	}
 
 	@Override

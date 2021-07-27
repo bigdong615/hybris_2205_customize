@@ -659,6 +659,7 @@
             <n:navigation-node id="BLInventoryScan">
                 <n:navigation-node id="WebScanTool"/>
             </n:navigation-node>
+            <n:navigation-node id="TechEngScanTool"/>
         </n:explorer-tree>
     </context>
 
@@ -1169,6 +1170,26 @@
 					</editorArea:attribute>
 					<editorArea:attribute qualifier="orderType"/>
 				</editorArea:section>
+				<editorArea:section name="warehousingbackoffice.section.consignment.entries">
+					<editorArea:panel name="warehousingbackoffice.consignmentEntries.panel">
+						<editorArea:attribute editor="com.hybris.cockpitng.editor.extendedmultireferenceeditor"
+							qualifier="consignmentEntries" readonly="false"
+							label="warehousingbackoffice.section.entries">
+							<editorArea:editor-parameter>
+								<editorArea:name>listConfigContext</editorArea:name>
+								<editorArea:value>referenceListViewConsignmentEntries</editorArea:value>
+							</editorArea:editor-parameter>
+							<editorArea:editor-parameter>
+								<editorArea:name>disableDisplayingDetails</editorArea:name>
+								<editorArea:value>false</editorArea:value>
+							</editorArea:editor-parameter>
+							<editorArea:editor-parameter>
+								<editorArea:name>disableRemoveReference</editorArea:name>
+								<editorArea:value>true</editorArea:value>
+							</editorArea:editor-parameter>
+						</editorArea:attribute>
+					</editorArea:panel>
+				</editorArea:section>
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
@@ -1236,6 +1257,211 @@
             </editorArea:tab>
         </editorArea:editorArea>
     </context>
+    
+    <!-- Tech Eng. Section -->
+	<context type="TechEngScanTool" component="create-wizard">
+        <wz:flow id="TechEngScanTool" title="blbackoffice.tech.eng.scan.tool.title">
+            <wz:prepare id="userPasswordChangePrepare">
+                <wz:initialize property="webScanToolData" template-bean="webScanToolData"/>
+            </wz:prepare>
+            <wz:step id="step1" label="blbackoffice.web.scan.tool.label">
+                <wz:content>
+                    <wz:custom-view id="step1.content.customView" lang="zul">
+                        <wz:renderer spring-bean="defaultWebScanToolRenderer">
+                            <wz:parameter>
+                                <wz:name>webScanToolDataModelKey</wz:name>
+                                <wz:value>webScanToolData</wz:value>
+                            </wz:parameter>
+                        </wz:renderer>
+                    </wz:custom-view>
+                </wz:content>
+                <wz:navigation id="step1.navigation">
+                    <wz:cancel/>
+                    <wz:custom label="blbackoffice.web.scan.tool.btn.scan" handler="defaultTechEngScanToolHandler">
+                        <wz:parameter>
+                            <wz:name>webScanToolDataModelKey</wz:name>
+                            <wz:value>webScanToolData</wz:value>
+                        </wz:parameter>
+                    </wz:custom>
+                </wz:navigation>
+            </wz:step>
+        </wz:flow>
+    </context>
+    
+    <context component="notification-area" source="techEngSanToolNotification" merge-by="source">
+        <na:notification-area>
+            <na:notifications eventType="webSanToolNotificationFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.something.wrong.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="mustTwoBarcodeErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.must2.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="maxBarcodeLimitErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.max.barcode.limit.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="scanBatchErrorFailure" level="WARNING" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.batch.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanInvalidErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.invalid.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="lastScanErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.last.scan.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="manyLocationErrorFailure" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.many.location.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="somethingWentWrong" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.something.went.wrong.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="cleanCartScanError" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.clean.cart.error.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+            <na:notifications eventType="cleanPriorityCartScanError" level="FAILURE" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.clean.priority.cart.error.failure</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+
+            <na:notifications eventType="scanBarcodeSuccess" level="SUCCESS" destination="TOPMOST">
+                <na:message>blbackoffice.web.scan.tool.wizard.notification.barcode.scan.success</na:message>
+                <na:references linksEnabled="true">
+                    <na:reference placeholder="0" link="true"/>
+                </na:references>
+            </na:notifications>
+        </na:notification-area>
+    </context>
+
+	<context merge-by="type" parent="GenericItem" type="AbstractOrder" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="blbackoffice.order.notes.tab.name" position="1">
+				<editorArea:section name="blbackoffice.order.notes.section.general">
+					<editorArea:attribute qualifier="orderNotes"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context merge-by="type" parent="GenericItem" type="Consignment" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="blbackoffice.order.notes.tab.name" position="1">
+				<editorArea:section name="blbackoffice.order.notes.section.general">
+					<editorArea:attribute qualifier="orderNotes"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context merge-by="principal" parent="User" type="Customer" component="cs-editor-area" principal="customersupportmanagerrole,customersupportagentrole">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch"
+			xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea"
+			xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:lv="http://www.hybris.com/cockpitng/component/listView"
+			xmlns:n="http://www.hybris.com/cockpitng/config/explorertree"
+			xmlns:na="http://www.hybris.com/cockpitng/config/notifications"
+			xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch"
+			xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config"
+			xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<editorArea:tab name="blbackoffice.customer.notes.tab.name" position="10">
+				<editorArea:section name="blbackoffice.order.notes.section.customer.notes">
+					<editorArea:attribute qualifier="customerNotes" readonly="false">
+						<editorArea:editor-parameter>
+							<editorArea:name>disableRemoveReference</editorArea:name>
+							<editorArea:value>true</editorArea:value>
+						</editorArea:editor-parameter>
+					</editorArea:attribute>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context type="CustomerNotes" component="base">
+		<y:base xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+			<y:labels>
+				<y:label>customerNoteType+ ' - ' +userID</y:label>
+			</y:labels>
+		</y:base>
+	</context>
+	
+	<!-- BL-793 : Moving all the attributes at one place which will be used to update by OMS team -->
+	<context merge-by="type" parent="BlProduct" type="BlSerialProduct" component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+			<editorArea:tab name="hmc.tab.blSerial.tech.eng.member" position="1">
+				<editorArea:section name="hmc.section.blSerial.attributes">
+					<editorArea:attribute qualifier="serialStatus"/>
+					<editorArea:attribute qualifier="repairReasons"/>
+					<editorArea:attribute qualifier="otherRepairReasons"/>
+					<editorArea:attribute qualifier="firmwareVersion"/>
+					<editorArea:attribute qualifier="skuFirmwareVersion"/>
+					<editorArea:attribute qualifier="gearRated"/>
+					<editorArea:attribute qualifier="cosmeticRating"/>
+					<editorArea:attribute qualifier="functionalRating"/>
+					<editorArea:attribute qualifier="conditionRatingOverallScore"/>
+					<editorArea:attribute qualifier="associatedConsignment"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
+
+	<context type="CustomerNotes" component="editorAreaDynamicForms" merge-by="module" principal="customersupportagentrole">
+		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
+			<df:attribute id="disbaleNoteType" qualifier="customerNoteType" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableNote" qualifier="note" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disablefraud" qualifier="fraud" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableuserId" qualifier="userID" disabledIf="true" triggeredOn="*"/>
+		</df:dynamicForms>
+	</context>
+
+	<context type="Notes" component="editorAreaDynamicForms" merge-by="module" principal="customersupportagentrole,warehouseagentrole,blinventoryuserrole">
+		<df:dynamicForms xmlns:df="http://www.hybris.com/cockpitng/component/dynamicForms">
+			<df:attribute id="disbaleType" qualifier="type" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableNote" qualifier="note" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableuserId" qualifier="userID" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableOrder" qualifier="order" disabledIf="true" triggeredOn="*"/>
+			<df:attribute id="disableConsignment" qualifier="consignment" disabledIf="true" triggeredOn="*"/>
+		</df:dynamicForms>
+	</context>
+
+	<context merge-by="type" parent="GenericItem" type="ConsignmentEntry"	component="editor-area">
+		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:as="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:ea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:lv="http://www.hybris.com/cockpitng/component/listView" xmlns:n="http://www.hybris.com/cockpitng/config/explorertree" xmlns:na="http://www.hybris.com/cockpitng/config/notifications" xmlns:ss="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<editorArea:tab name="blbackoffice.consignmententry.tab.serialproducts.name" position="2">
+				<editorArea:section columns="1" name="blbackoffice.consignmententry.section.general.name">
+					<editorArea:attribute qualifier="items" readonly="false"/>
+					<editorArea:attribute qualifier="serialProducts" readonly="false"/>
+				</editorArea:section>
+			</editorArea:tab>
+		</editorArea:editorArea>
+	</context>
 
 </config>
 

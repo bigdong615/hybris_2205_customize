@@ -226,7 +226,24 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		}
     }
 
-	/**
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public void savePoPaymentDetails(final String poNumber, final String poNotes) {
+        final CartModel cartModel = getSessionCart();
+        if(cartModel != null){
+            cartModel.setPoNumber(poNumber.trim());
+            cartModel.setPoNotes(poNotes);
+            if(cartModel.getPaymentInfo() != null){
+                cartModel.setPaymentInfo(null);
+            }
+            getModelService().save(cartModel);
+            getModelService().refresh(cartModel);
+        }
+    }
+
+    /**
 	 * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
 	 * 
 	 * @param entry

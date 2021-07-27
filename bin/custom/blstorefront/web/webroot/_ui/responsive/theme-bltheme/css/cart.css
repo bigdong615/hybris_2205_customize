@@ -21,7 +21,7 @@ Designed by Veneer Studio
 .step1, .step2, .step3, .step4 { margin: 0 15px; font-weight: 700; color: #c4c4c4; }
 .step1 { margin-left: 0; }
 .step1.active, .step2.active, .step3.active, .step4.active { color: #52bfc0; }
-.cart input[type=text], .cart select.form-control { padding: 10px; margin-top: 6px; margin-bottom: 6px;text-transform: capitalize; }
+.cart input[type=text], .cart select.form-control { padding: 10px; margin-top: 6px; margin-bottom: 6px; }
 #orderSummary input{width: 100%;}
 .cart .select-wrapper { position: relative; display: block; }
 .cart .select-wrapper:after { content:''; display: block; position: absolute; right: 20px; top: 50%; border: none; width: 6px; height: 4px; background: url(../assets/nav-arrow.svg) center no-repeat; margin-top: -2px; margin-left: .5em; }
@@ -509,3 +509,17 @@ input[type=radio] + label:before { height: 20px; width: 20px; }
 #sameDayZipCheckText{text-transform: inherit !important;}
 #ship-it-ups-zip-code{text-transform: inherit !important;}
 #same-day-save-address-div{float: left;margin-right: 12px;}
+#cardDetails .btn {
+  text-decoration: none;
+  padding: 10px 16px !important; 
+}
+#credit-card-saved .dropdown-item {
+  padding: 2px 5px 2px 11px !important;
+}
+#billing-address-saved .dropdown-item {
+  padding: 2px 5px 2px 11px !important;
+}
+#billingDetails .btn {
+  text-decoration: none;
+  padding: 10px 16px !important; 
+}
