@@ -10,6 +10,7 @@ public class BraintreePlaceOrderForm extends PlaceOrderForm {
 
     private Map<String, String> customFields = new HashMap<>();
     private String shipsFromPostalCode;
+    private boolean newsLetterSubscriptionOpted;
 
     public Map<String, String> getCustomFields() {
         return customFields;
@@ -26,4 +27,13 @@ public class BraintreePlaceOrderForm extends PlaceOrderForm {
     public void setShipsFromPostalCode(String shipsFromPostalCode) {
         this.shipsFromPostalCode = shipsFromPostalCode;
     }
+
+    public boolean isNewsLetterSubscriptionOpted() {
+        return newsLetterSubscriptionOpted;
+    }
+
+    public void setNewsLetterSubscriptionOpted(final boolean newsLetterSubscriptionOpted) {
+        this.newsLetterSubscriptionOpted = newsLetterSubscriptionOpted;
+    }
+
 }

@@ -15,10 +15,11 @@
     	var body = document.getElementsByTagName("body")[0];
     	body.insertBefore(document.getElementById('_asm'), body.childNodes[0]);
     </script>
-	<div class="ASM_header navigation navigation--top">
-        <div class="first-top-row row">
+	<div class="container-fluid">
+        <div class="row first-top-row">
+          <div class="col-md-12">
             <asm:redirect />
-                <button class="ASM_close ASM_close_all closeBtn" type="button">&times;</button>
+
             <c:if test="${not empty asm_message}">
                 <div class="ASM_alert ${asm_alert_class}"><spring:theme code="${asm_message}" arguments="${asm_message_args}"/></div>
             </c:if>
@@ -27,6 +28,7 @@
 
             <%-- logo text --%>
             <asm:logo />
+            <button class="ASM_close ASM_close_all closeBtn" type="button">&times;</button>
             <c:choose>
                 <c:when test="${not empty agent.uid}">
                     <div id="_asmLogged" class="ASM_loggedin">
@@ -60,6 +62,7 @@
                     </div>
                 </c:when>
             </c:choose>
+          </div>
         </div>
         <div class="row">
             <c:if test="${empty agent.uid}">

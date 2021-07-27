@@ -395,13 +395,7 @@
                    </c:if>
                    </c:forEach>
                </c:if>
-                <div class="notification notification-tip check"><spring:theme code="text.shipping.change.or.cancellation.message"/></div>
-							<div class="order-actions my-4">
-								<a href="#" alt="Print Order"><i class="icon-print"></i></a> 
-								<a href="#"><i class="icon-save" alt="Save Order"></i></a>
-								<%--<a href="${emptyCart}" alt="Trash Order" class="clear-cart-page" disabled="disabled"><i class="icon-trash"></i></a>--%>
-							</div>
-						</div>
+            </div>
 					</div>
 				</div>	
 			</div>

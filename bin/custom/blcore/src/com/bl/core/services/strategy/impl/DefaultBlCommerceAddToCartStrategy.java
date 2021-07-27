@@ -1,5 +1,6 @@
 package com.bl.core.services.strategy.impl;
 
+import com.bl.core.model.BlSerialProductModel;
 import de.hybris.platform.commerceservices.order.CommerceCartModification;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationException;
 import de.hybris.platform.commerceservices.order.CommerceCartModificationStatus;
@@ -9,6 +10,8 @@ import de.hybris.platform.core.model.order.CartEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.product.ProductModel;
 import de.hybris.platform.storelocator.model.PointOfServiceModel;
+import java.util.Objects;
+import org.apache.commons.lang.BooleanUtils;
 
 /**
  * This class overrides the OOB add to cart implementation to override the OOB availability logic
@@ -46,6 +49,13 @@ public class DefaultBlCommerceAddToCartStrategy extends
       if (actualAllowedQuantityChange > 0) {
         // We are allowed to add items to the cart
         final CartEntryModel entryModel = addCartEntry(parameter, actualAllowedQuantityChange);
+        // To update the Damage waiver same as existing order for extend rental
+        // For used gear damage waiver don't need to set.
+        if (Objects.nonNull(entryModel) && (entryModel.getProduct() instanceof BlSerialProductModel
+            || BooleanUtils.isTrue(parameter.getIsFromRentAgainPage()))) {
+          setDamageWaiverOptions(entryModel, parameter.getIsDamageWaiverProSelected(),
+              parameter.getIsDamageWaiverSelected(), parameter.getIsNoDamageWaiverSelected());
+        }
         getModelService().save(entryModel);
 
         final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange,
@@ -70,6 +80,22 @@ public class DefaultBlCommerceAddToCartStrategy extends
     }
 
     return modification;
+  }
+
+  /**
+   * Setting damage waiver options in entry model.
+   *
+   * @param entryModel the CartEntryModel
+   * @param isGearGuardProFullWaiverSelected the isGearGuardProFullWaiverSelected
+   * @param isGearGuardWaiverSelected the isGearGuardWaiverSelected
+   * @param isNoDamageWaiverSelected the isNoDamageWaiverSelected
+   */
+  private void setDamageWaiverOptions(final CartEntryModel entryModel,
+      final boolean isGearGuardProFullWaiverSelected,
+      final boolean isGearGuardWaiverSelected, final boolean isNoDamageWaiverSelected) {
+    entryModel.setGearGuardProFullWaiverSelected(isGearGuardProFullWaiverSelected);
+    entryModel.setGearGuardWaiverSelected(isGearGuardWaiverSelected);
+    entryModel.setNoDamageWaiverSelected(isNoDamageWaiverSelected);
   }
 
   /**
