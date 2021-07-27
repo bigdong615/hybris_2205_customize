@@ -31,7 +31,8 @@
                     <n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
                 </n:navigation-node>
             </n:navigation-node>
-            
+					<n:type-node id="BlOptions" code="BlOptions"/>
+					<n:type-node id="BlDamageWaiverPricing" code="BlDamageWaiverPricing"/>
              <n:navigation-node id="BLShipping">
                 <n:type-node id="ShippingGroup" code="ShippingGroup"/>
                 <n:type-node id="ShippingCost" code="ShippingCost"/>
@@ -48,6 +49,24 @@
 					</n:navigation-node>
 			</n:explorer-tree>
 		</context>
+
+	<context parent="GenericItem" type="BlOptions" component="listview">
+		<list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
+			<list:column qualifier="code" />
+			<list:column qualifier="optionId" />
+			<list:column qualifier="name" />
+			<list:column qualifier="unitPrice"/>
+			<list:column qualifier="active" />
+		</list:list-view>
+	</context>
+
+	<context type="BlOptions" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>code</y:label>
+			</y:labels>
+		</y:base>
+	</context>
 
 	<context type="GiftCard" component="editorareaactions" parent="GenericItem">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
@@ -1104,6 +1123,32 @@
         </y:actions>
     </context>
 
+	<!--BL-753 : OMS&WH - Different Teams - Order Notes and Customer Notes - Create Wizard for CS Role for Notes type -->
+	<context component="create-wizard" type="Notes" principal="customersupportagentrole">
+		<wz:flow id="cs-Notes-create-wizard" title="create.title(ctx.TYPE_CODE)">
+			<wz:prepare id="csNotesPrepare">
+				<wz:initialize property="newCSNotes" type="ctx.TYPE_CODE"/>
+				<wz:assign property="newCSNotes.order" value="ctx.parentObject"/>
+			</wz:prepare>
+			<wz:step id="step1" label="create.notes.essential.label">
+				<wz:content id="step1.content">
+					<wz:property-list root="newCSNotes">
+						<wz:property qualifier="type"/>
+						<wz:property qualifier="userID"/>
+						<wz:property qualifier="fraud"/>
+						<wz:property qualifier="note"/>
+					</wz:property-list>
+				</wz:content>
+				<wz:navigation id="step1.navigation">
+					<wz:cancel/>
+					<wz:done>
+						<wz:save property="newCSNotes"/>
+					</wz:done>
+				</wz:navigation>
+			</wz:step>
+		</wz:flow>
+	</context>
+
 
 
 <!--To calculate the total without tax -->
@@ -1379,6 +1424,26 @@
 			</editorArea:tab>
 		</editorArea:editorArea>
 	</context>
+
+	<!--BL-769 : OMS&WH - Front Desk Queue - Front Desk User Role perspective starts here -->
+	<context component="explorer-tree" principal="frontdeskuserrole">
+		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
+			<n:type-node code="Consignment" id="Consignment"/>
+			<n:type-node code="FrontDeskQueue" id="FrontDeskQueue"/>
+		</n:explorer-tree>
+	</context>
+
+	<context merge-by="type" type="FrontDeskQueue" component="advanced-search" parent="GenericItem"
+		principal="frontdeskuserrole">
+		<advanced-search:advanced-search>
+			<advanced-search:field-list>
+				<as:field editor="hybris.bin.custom.blbackoffice.blcustom.customdateeditor"
+					name="actualRentalStartDate" selected="true" operator="greaterOrEquals"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<!--FronDeskUser Role perspective Ends here -->
 
 	<context merge-by="principal" parent="User" type="Customer" component="cs-editor-area" principal="customersupportmanagerrole,customersupportagentrole">
 		<editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"

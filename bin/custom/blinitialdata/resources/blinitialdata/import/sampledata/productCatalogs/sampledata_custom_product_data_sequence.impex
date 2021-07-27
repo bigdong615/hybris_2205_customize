@@ -27,6 +27,8 @@ $productShippingLocationPath = /blinitialdata/import/sampledata/productCatalogs/
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/serial-products.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/product-relations.impex"), "utf-8", 0, 0);
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/gift-card.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/options.impex"), "utf-8", 0, 0);
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsProductPath/newgear.impex"), "utf-8", 0, 0);
 
 #Mention here catlog permission on user related custom impex in sequence
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$productCatalogsCatalogPermissionPath/user-permission.impex"), "utf-8", 0, 0);
