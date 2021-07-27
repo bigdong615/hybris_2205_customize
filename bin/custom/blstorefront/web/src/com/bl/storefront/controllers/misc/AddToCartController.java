@@ -193,11 +193,11 @@ public class AddToCartController extends AbstractController {
  	{
  		if (blCartFacade.isGiftCardProduct(code))
  		{
- 			return blCartFacade.addToCart(code, qty, code, giftCardForm);
+ 			return blCartFacade.addToCart(code, qty, serialCode, giftCardForm);
  		}
  		else
  		{
- 			return blCartFacade.addToCart(code, qty, code);
+ 			return blCartFacade.addToCart(code, qty, serialCode);
  		}
  	}
 
