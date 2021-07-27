@@ -31,7 +31,8 @@
                     <n:type-node id="BlInventoryScanConfiguration" code="BlInventoryScanConfiguration"/>
                 </n:navigation-node>
             </n:navigation-node>
-            
+					<n:type-node id="BlOptions" code="BlOptions"/>
+					<n:type-node id="BlDamageWaiverPricing" code="BlDamageWaiverPricing"/>
              <n:navigation-node id="BLShipping">
                 <n:type-node id="ShippingGroup" code="ShippingGroup"/>
                 <n:type-node id="ShippingCost" code="ShippingCost"/>
@@ -48,6 +49,24 @@
 					</n:navigation-node>
 			</n:explorer-tree>
 		</context>
+
+	<context parent="GenericItem" type="BlOptions" component="listview">
+		<list:list-view xmlns:list="http://www.hybris.com/cockpitng/component/listView">
+			<list:column qualifier="code" />
+			<list:column qualifier="optionId" />
+			<list:column qualifier="name" />
+			<list:column qualifier="unitPrice"/>
+			<list:column qualifier="active" />
+		</list:list-view>
+	</context>
+
+	<context type="BlOptions" component="base">
+		<y:base>
+			<y:labels>
+				<y:label>code</y:label>
+			</y:labels>
+		</y:base>
+	</context>
 
 	<context type="GiftCard" component="editorareaactions" parent="GenericItem">
 		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
