@@ -28,12 +28,15 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String RENTAL_CART = "isRentalCart";
   public static final String RENTAL_OR_USED_GEAR_PRODUCT_ALLOWED = "allowAddToCart";
 
+  public static final String ON_SALE = "onSale";
+  public static final String ON_SALE_TAG_VALUE = "ON SALE";
+
   public static final String RENTAL_DATE_FORMAT = "EEEE, MMM d";
   public static final String FORMATTED_RENTAL_DATE= "MMM d";
 
-
   public static final String COMMA_SEPERATER =",";
   public static final String REMOVE_ENTRIES = "removedEntries";
+
   public static final String ROUND_TRIP = "Round Trip";
   public static final String START_DATE_PATTERN = "MM/dd/yyyy";
   public static final String END_DATE_PATTERN = "EE MMM dd yyyy";

@@ -2,6 +2,8 @@
 
 
 $lang=en
+INSERT_UPDATE RuleConditionDefinitionCategory;id[unique=true];name[lang=$lang];priority;
+                                             ;product;Product;1000;
 INSERT_UPDATE RuleConditionDefinition;id[unique=true]  ;name[lang=$lang];breadcrumb[lang=$lang]                      ;priority;allowsChildren;translatorId                ;translatorParameters;categories(id)
                                      ;y_rental_duration_condition;Rental Duration ;Rental Duration {rentalDurationOperator} {rentalDuration}  days;         ;false         ;ruleRentalDurationConditionTranslator   ;            ;cart
                                      ;y_rental_cart_condition;Rental Cart Condition;Is Rental Product Promotion {value}      ;         ;false         ;ruleRentalCartConditionTranslator   ;            ;cart
@@ -35,15 +37,17 @@ $lang=en
 INSERT_UPDATE RuleActionDefinition;id[unique=true];name[lang=$lang];priority;breadcrumb[lang=$lang];translatorId;translatorParameters;categories(id)
                                   ;y_free_rental_dates;Free Rental dates;1000;Give {freeRentalDates} Free Rental dates ;ruleExecutableActionTranslator;actionId->ruleFreeRentalDatesAction;cart_discounts
                                   ;y_free_delivery_modes;Free Delivery Modes;1000;Make one of the selected {freeDeliveryModes} delivery mode as Free Shipping ;ruleExecutableActionTranslator;actionId->ruleFreeDeliveryModesAction;shipping
-
+                                  ;y_ug_order_entry_percentage_discount;Percentage discount on used gear products;1400;Apply {value,number,percent*1} discount on the qualifying used gear products;ruleExecutableActionTranslator;actionId->ruleUsedGearPercentageDiscountAction;product_discounts
 
 INSERT_UPDATE RuleActionDefinitionParameter;definition(id)[unique=true];id[unique=true];priority;name[lang=$lang];description[lang=$lang];type;value;required[default=true];validators
                                            ;y_free_rental_dates;freeRentalDates;1000;Free Rental Dates;The free rental dates price to be discounted to the order as a result of the action;List(java.util.Date) ;;;
                                            ;y_free_delivery_modes;freeDeliveryModes;1000;Free Delivery Modes;The shipping modes will be cost as free result of the action;List(ItemType(DeliveryMode)) ;;;
+                                           ;y_ug_order_entry_percentage_discount;value;1000;Used Gear Percentage discount value;Percentage discount that will be applied on the used gear products;java.math.BigDecimal;;;rulePercentageParameterValidator
 
 INSERT_UPDATE RuleActionDefinitionRuleTypeMapping;definition(id)[unique=true];ruleType(code)[default=PromotionSourceRule][unique=true]
                                                  ;y_free_rental_dates;
                                                  ;y_free_delivery_modes;
+                                                 ;y_ug_order_entry_percentage_discount;
 
 
 

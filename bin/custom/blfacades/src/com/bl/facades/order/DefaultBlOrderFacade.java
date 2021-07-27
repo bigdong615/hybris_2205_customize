@@ -254,7 +254,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         .cloneOrderModelForExtendRental(orderModel , defaultAddedTimeForExtendRental);
 
     // Start Date will same as existing rental startDate
-    extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental); // To set total number of days extended
+    extendOrderModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental); // To set total number of days extended
     Calendar extendStartDate = Calendar.getInstance();
     extendStartDate.setTime(startDate);
     extendStartDate.add(Calendar.DAY_OF_MONTH ,1);
