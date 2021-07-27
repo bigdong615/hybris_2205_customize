@@ -24,7 +24,7 @@ public class BlCustomDateEditor<T> extends DefaultReferenceEditor<T> {
     this.setEditorParameters(context);
     this.setEditorLayout(this.createReferenceLayout(context));
     this.setParentEditor(this.findAncestorEditor(parent));
-    Object parentObject = parent.getAttribute("parentObject");
+    final Object parentObject = parent.getAttribute(PARENT_OBJECT);
     this.setParentObject(parentObject);
     this.setEditorListener(listener);
     this.setEditorContext(context);
@@ -32,7 +32,7 @@ public class BlCustomDateEditor<T> extends DefaultReferenceEditor<T> {
     this.getEditorLayout().addListeners();
     this.setInitialValue(context);
     this.getEditorLayout().setEditableState(context.isEditable());
-    this.addSocketInputEventListener("referenceEditorInput", this.createInputSocketEventListener());
+    this.addSocketInputEventListener(SOCKET_IN_REFERENCE_EDITOR, this.createInputSocketEventListener());
     this.setSuccessNotificationId(context.getSuccessNotificationId());
     addSelectedObject((T) Calendar.getInstance().getTime());
   }

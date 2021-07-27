@@ -1104,7 +1104,7 @@
         </y:actions>
     </context>
 
-	<!--Create Wizard for CS Role for Notes type -->
+	<!--BL-753 : OMS&WH - Different Teams - Order Notes and Customer Notes - Create Wizard for CS Role for Notes type -->
 	<context component="create-wizard" type="Notes" principal="customersupportagentrole">
 		<wz:flow id="cs-Notes-create-wizard" title="create.title(ctx.TYPE_CODE)">
 			<wz:prepare id="csNotesPrepare">
@@ -1406,7 +1406,7 @@
 		</editorArea:editorArea>
 	</context>
 
-	<!--Front Desk User Role perspective starts here -->
+	<!--BL-769 : OMS&WH - Front Desk Queue - Front Desk User Role perspective starts here -->
 	<context component="explorer-tree" principal="frontdeskuserrole">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
 			<n:type-node code="Consignment" id="Consignment"/>
