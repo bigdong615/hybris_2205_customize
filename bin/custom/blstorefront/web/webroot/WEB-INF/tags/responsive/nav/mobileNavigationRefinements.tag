@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
 <div id="mobileFilter" class="col-12 d-block d-lg-none mb-4">
@@ -37,10 +38,12 @@
 	 <li>
 	 <span>
       <c:forEach items="${pageData.facets}" var="facet">
+         	<c:if test="${fn:containsIgnoreCase(blPageType, 'rentalgear') && ! fn:containsIgnoreCase(facet.name, 'On Sale') || fn:containsIgnoreCase(blPageType, 'usedGear')}">
                  <nav:mobileFacetNavigationRefinements  facetData="${facet}"/>
+          </c:if>
         </c:forEach>
-                </span>
-                </li>
+   </span>
+   </li>
 	 </ul>
       </nav>
 

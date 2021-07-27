@@ -970,6 +970,12 @@
                      <modifiers read="true" write="true" optional="false" initial="true"/>
                      <defaultvalue>Integer.valueOf(0)</defaultvalue>
                    </attribute>
+                   <attribute qualifier="onSale" type="java.lang.Boolean">
+                     <persistence type="property"/>
+                     <modifiers read="true" write="true" search="true" optional="true"/>
+                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
+                     <description>To identify whether product is OnSale or not</description>
+                   </attribute>
                  </attributes>
              </itemtype>
              <itemtype code="BlSerialProduct" extends="BlProduct" autocreate="true" generate="true"
@@ -1545,6 +1551,69 @@
           </itemtype>
           <!--Gift Card End-->
 
+          <itemtype code="BlStoredEmailSubscription" autocreate="true" generate="true"
+            jaloclass="com.bl.core.jalo.BlStoredEmailSubscription">
+            <description>Contact details for EmailSubscription</description>
+            <deployment table="blEmailSubscription" typecode="12224"/>
+            <attributes>
+              <attribute qualifier="contactKey" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>This attribute is used to store the contact Key value received from
+                  Email subscription API response.
+                </description>
+              </attribute>
+              <attribute qualifier="contactId" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>This attribute is used to store the contact ID value received from
+                  Email subscription API response.
+                </description>
+              </attribute>
+              <attribute qualifier="statusCode" type="java.lang.String">
+                <persistence type="property"/>
+                <modifiers read="true" write="true" optional="true"/>
+                <description>This attribute is used to store the response code received from Email
+                  subscription API response.
+                </description>
+              </attribute>
+              <attribute qualifier="requestString" type="java.lang.String">
+                <description>This attribute is used to store the request json string for create
+                  contact API.
+                </description>
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+              </attribute>
+              <attribute qualifier="responseString" type="java.lang.String">
+                <description>This attribute is used to store the response json string for create
+                  contact API.
+                </description>
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+                <persistence type="property">
+                  <columntype database="oracle">
+                    <value>CLOB</value>
+                  </columntype>
+                  <columntype database="sap">
+                    <value>NCLOB</value>
+                  </columntype>
+                  <columntype>
+                    <value>HYBRIS.LONG_STRING</value>
+                  </columntype>
+                </persistence>
+              </attribute>
+            </attributes>
+          </itemtype>
+            
          </typegroup>
          
         <typegroup name="Pricing">
@@ -2302,6 +2371,22 @@
 						<modifiers optional="true" read="true" write="true" />
 						<description>used gear session timer value </description>
 					</attribute>
+           <attribute qualifier="usedGearPromotionCode" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear category promotion code </description>
+					</attribute>
+           <attribute qualifier="usedGearPromotionMessage" type="java.lang.String">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear Site Wide promotion Message </description>
+					</attribute>
+                  <attribute qualifier="usedGearPromotionDiscount" type="java.lang.Integer">
+						<persistence type="property" />
+						<modifiers optional="true" read="true" write="true" />
+						<description>Used gear Site Wide promotion Discount in absolute percentage</description>
+					</attribute>
+
                 </attributes>                
             </itemtype>
         </typegroup>

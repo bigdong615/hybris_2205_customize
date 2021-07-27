@@ -36,6 +36,7 @@ public class DefaultBlOrderNoteService implements BlOrderNoteService {
         concatNotes(notesModel, consolidatedOrderNotes);
       });
     }
+
     return consolidatedOrderNotes.toString();
   }
 
