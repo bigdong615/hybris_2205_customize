@@ -313,6 +313,17 @@ $('#applyGcCode').click(function (e) {
 	});
 });
 
+//BL-927 Gift Card Purchase Amount
+$('#add-to-gc').click(function(e) {
+    $('.page-loader-new-layout').hide();
+    var form = $('#giftCardPurchaseForm');
+    var amount = form.find('input[name=amount]').val();
+    if (amount < 25 || amount > 500) {
+        $('.notification').show();
+        return false;
+    }
+});
+
 //BL-563 Remove Gift Card
 $('.remove-gift-card').on("click", function(e) {
      e.preventDefault();
@@ -642,6 +653,21 @@ $('.emptyCart-modalClose').click(function(e){
 });
 }
 
+$('.emailSubscr_btn').click(function (e){
+
+		var email = document.getElementById("emailSubscr_txt").value;
+		//validate email
+			$.ajax({
+				 url: ACC.config.encodedContextPath + "/subscribe-email/?emailId="+email,
+				 type: "GET",
+				success: function (data) {
+					if (data == "success") {
+
+					}
+				}
+			});
+});
+
 //Added code for used gear addToCart 
 $('.bl-serial-add').click(function (e)
 	{
@@ -877,3 +903,4 @@ $('#printOrderConfirmation').on("click",function(e) {
 		var submitForm = $("#printOrderConfirmationForm");
 		submitForm.submit();
 });
+

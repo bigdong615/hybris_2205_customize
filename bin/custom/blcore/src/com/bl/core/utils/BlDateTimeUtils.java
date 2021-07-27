@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import de.hybris.platform.acceleratorservices.payment.strategies.CreateSubscriptionRequestStrategy;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Level;
@@ -511,7 +512,7 @@ public final class BlDateTimeUtils
 					BlDeliveryModeLoggingConstants.ZONE_PST)).before(sdf.parse(time)) : Boolean.FALSE;
 		} catch (ParseException e) {
 			BlLogger.logFormatMessageInfo(LOG, Level.ERROR, UNABLE_TO_PARSE_DATE, time);
-			return false;
+			return true;
 		}
 	}
 	
@@ -661,4 +662,44 @@ public final class BlDateTimeUtils
 		return localDate.getDayOfWeek() == DayOfWeek.SATURDAY || localDate.getDayOfWeek() == DayOfWeek.SUNDAY
 				|| blackOutDates.stream().anyMatch(date -> DateUtils.isSameDay(date, dateToCheck));
 	}
+
+	/**
+	 * This method will return business days difference considering cutOff time for current day
+	 *
+	 * @param rentalStart date
+	 * @return int difference of days
+	 */
+	public static int getBusinessDaysDifferenceWithCutOffTime(final Date optimizedDate, final Date rentalStart, final String time) {
+		int result = BlDateTimeUtils.getDaysBetweenBusinessDays(BlDateTimeUtils.convertDateToStringDate(
+				optimizedDate, BlDeliveryModeLoggingConstants.RENTAL_DATE_PATTERN), BlDateTimeUtils.convertDateToStringDate(
+				rentalStart, BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN));
+		if(!BlDateTimeUtils.compareTimeWithCutOff(time)) {
+			result = result - BlInventoryScanLoggingConstants.ONE;
+		}
+		return result;
+	}
+
+	/**
+	 * this method will return pass date
+	 *
+	 * @return
+	 */
+	public static String getYesterdayDate() {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(TimeZone.getTimeZone(BlDeliveryModeLoggingConstants.ZONE_PST));
+		calendar.add(Calendar.DATE, -BlInventoryScanLoggingConstants.ONE);
+		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN).format(calendar.getTime());
+	}
+
+	/**
+	 * javadoc
+	 * this method will convert E MMM dd HH:mm:ss Z yyyy to dd-MM-yyyy
+	 *
+	 * @param date date
+	 * @return string date
+	 */
+	public static String getDateInStringFormat(final Date date) {
+		return new SimpleDateFormat(BlDeliveryModeLoggingConstants.RENTAL_FE_DATE_PATTERN).format(date);
+	}
+
 }
