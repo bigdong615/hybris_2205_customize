@@ -178,16 +178,27 @@ jQuery(document).ready(function ($) {
         configureAccountPaymentInfoPage();
     }
 
-    if ((typeof addPaymentMethodsPage != 'undefined')) {
+    //This code is not required 
+    
+    /*if ((typeof addPaymentMethodsPage != 'undefined')) {
+
         enableShippingAddress = "false";
+
         checkVenmoPaymentMethods();
+
         createClientInstance(CONST.GLOBAL_MESSAGES, function(){
+
             if (googlePayEnabled) {
+
                 initialiseGooglePay();
+
             }
+
             configurePayPalAlongWithHostedFields();
+
         })
-    }
+
+    }*/
 
     // PayPal Shopping Cart Shortcut checkout configuration
     if (typeof shoppingCart != 'undefined' && shoppingCart != '') {
@@ -216,6 +227,11 @@ $(CONST.PAYMENT_METHOD_BT_ID).change(function () {
 			initializeBTclientSDK();
 		}
 	}
+});
+
+
+jQuery(document).ready(function () {
+	initializeBTclientSDK();
 });
 
 $(CONST.PAYMENT_METHOD_PAYPAL).change(function () {
@@ -434,7 +450,7 @@ function initializeBTclientSDK() {
             }
 
 
-            if (isBrainTreeMethodSelected()) {
+            if (isBrainTreeMethodSelected() || (typeof addPaymentMethodsPage != 'undefined')) {
             	createHostedFields(clientInstance);                
             }
 
@@ -532,13 +548,13 @@ function isBrainTreeMethodSelected() {
 
 function creditCardValidation(errorMessage){
 	
-	 var validationDiv = $('<div class="notification notification-warning mb-4" />').text(errorMessage);
+	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
 	  $('#validationMessage').append(validationDiv);
 }
 
 function allFieldValidation(errorMessage){
 	
-	 var validationDiv = $('<div class="notification notification-warning mb-4" />').text(errorMessage);
+	 var validationDiv = $('<div class="notification notification-error mb-4" />').text(errorMessage);
 	  $('#allFieldvalidationMessage').append(validationDiv);
 }
 
@@ -860,7 +876,7 @@ function createHostedFields(clientInstance) {
 				if(billingFormErrorCounts > 0)
 				{
 					hasNoError = false;
-					var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
+					var validationDiv = $('<div class="notification notification-error mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 							'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
 					$('#validationMessage').append(validationDiv);
 					$('.page-loader-new-layout').hide();
@@ -904,7 +920,7 @@ function createHostedFields(clientInstance) {
 							var isLiabilityShifted = '';
 							var paymentNonce = createHiddenParameter(CONST.PAYMENT_METHOD_NONCE, payload.nonce);
 							var comapanyName = createHiddenParameter("company_name",  $('#billingAddressForm').find('input[id="address.companyName"]').val());
-							
+							var defaultCard = createHiddenParameter("default_Card",  $('#braintree-payment-form').find('input[id="default-card"]').prop("checked"));
 							$(submitForm).find('select[name="billTo_state"]').prop('disabled', false);
 							submitForm.find("input[name='billTo_country']").val("US");
 							submitForm.append($(paymentNonce));
@@ -929,6 +945,7 @@ function createHostedFields(clientInstance) {
 							submitForm.append($(cardType));
 							submitForm.append($(cardDetails));
 							submitForm.append($(cardholder));
+							submitForm.append($(defaultCard));
 							submitForm.submit();
 						}
 					});
@@ -1106,11 +1123,13 @@ $('#submit_silentOrderPostForm').click(function () {
 	
 	if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == false)
 	{
+		
 		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("Whoops, looks like you forgot to enter your address details.");
 		$('#validationMessage').append(validationDiv);
 	}
 	else if(ccEnable == true && $("#savedBillingAddressId").val() == '' && $('#billing-address-form-expand').hasClass("show") == true)
 	{
+		
 		var billingFormErrorCounts = validateBillingAddressFields();
 		var validationDiv = $('<div class="notification notification-warning mb-4" />').html("There are " + billingFormErrorCounts + " errors in the billing address." +
 								'<a href="javascript:void(0)"  onClick="return scrollUpForError()"> Scroll up.</a>');
@@ -1237,4 +1256,60 @@ $(function() {
         }
         inputQuantity[$thisIndex]=val;
     });
+});
+
+
+$(".edit-cc-form").on("click",function(e){
+	e.preventDefault();
+	
+	var id = $(this).data("id");
+	$("#paymentInfoId").val(id);
+	$("#braintree-payment-edit-form").submit();
+});
+
+
+/*$(".edit-save-click").on("click",function(e){
+	e.preventDefault();
+	var savedCardForm = $("#braintree-payment-form");
+	//var expMonth = savedCardForm.find('input[id="expirationMonth"]').val());
+	var expMonth = document.getElementById('expirationMonth').val();
+	alert(expMonth);
+    var expYear = savedCardForm.find('input[id="expirationYear"]').val());
+    var expirationDate = createHiddenParameter("expirationDate", expMonth / expYear);
+	alert(expirationDate);
+    savedCardForm.submit();
+});*/
+
+
+$(".delete-link").on("click",function(e){
+	e.preventDefault();
+	
+	var id = $(this).data("payment-id");
+	var tokan = $(this).data("tokan");
+	$("#paymentInfoIdRemove").val(id);
+	$("#paymentMethodTokenRomove").val(tokan);
+	
+	
+});
+
+$(".js-set-default-card").on("click",function(e){
+	e.preventDefault();
+	var paymentInfoIdDefault = $(this).attr('data-payment-default-id');
+    var paymentMethodTokenDefault = $(this).attr('data-payment-default-token');
+    var defaultCard = $(this).attr('data-card-default');
+    $.ajax({
+        url: ACC.config.encodedContextPath + "/my-account/set-default-cc-payment-details",
+        type: 'POST',
+        data: {paymentInfoId: paymentInfoIdDefault},
+        
+        success: function (response) {
+        	location.reload();
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+              $('.modal-backdrop').addClass('remove-popup-background');
+              // log the error to the console
+              console.log("The following error occurred: " +jqXHR, textStatus, errorThrown);
+        }
+});
+    
 });

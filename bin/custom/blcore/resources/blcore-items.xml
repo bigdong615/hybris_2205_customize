@@ -986,10 +986,10 @@
                      <modifiers read="true" write="true" optional="true"/>
                      <description>Additional Discount for used gear</description>
                    </attribute>
-                   <attribute qualifier="brandName" type="java.lang.String">
+                   <attribute qualifier="manufacturerName" type="java.lang.String" redeclare="true">
                      <persistence type="property" />
-                     <modifiers read="true" write="true" optional="false" initial="true"/>
-                     <description>Brand name for the BL Product</description>
+                     <modifiers read="true" write="true" optional="false" />
+                     <description>Manufacturer name for the BL Product</description>
                      </attribute>
                    <attribute qualifier="subpartQuantity" type="java.lang.Integer">
                      <description>It tells shipper how much quantity we need to add for this sub-part</description>
