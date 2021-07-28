@@ -255,7 +255,7 @@ window.mediator.subscribe('applyPromo', function(data) {
 
  function trackPromoCLick(voucherError){
    gtag('event', 'Add Promo - Error', {
-     'event_label': 'voucherError',
+     'event_label': voucherError,
      'event_category': 'Cart',
      'non_interaction': true
    });
@@ -270,7 +270,7 @@ window.mediator.subscribe('applyCreditCart', function(data) {
 
  function trackCreditCart(paymentError){
     gtag('event', 'cardPayment', {
-    'event_label': 'paymentError',
+    'event_label': paymentError,
     'event_category': 'Checkout',
     'non_interaction': true
   });
@@ -285,7 +285,7 @@ window.mediator.subscribe('applyPayPal', function(data) {
 
 function trackPayPalClick(paymentError) {
   gtag('event', 'PayPalPayment', {
-   'event_label': 'paymentError',
+   'event_label': paymentError,
    'event_category': 'Checkout',
    'non_interaction': true
   });
@@ -300,7 +300,7 @@ window.mediator.subscribe('applyPO', function(data) {
 
 function trackPOClick(paymentError) {
    gtag('event', 'POPayment', {
-   'event_label': 'paymentError',
+   'event_label': paymentError,
    'event_category': 'Checkout',
    'non_interaction': true
  });
