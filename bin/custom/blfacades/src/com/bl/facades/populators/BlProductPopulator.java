@@ -1,6 +1,5 @@
 package com.bl.facades.populators;
 
-import com.bl.core.constants.GeneratedBlCoreConstants.Enumerations.ProductTypeEnum;
 import com.bl.core.model.BlProductModel;
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
