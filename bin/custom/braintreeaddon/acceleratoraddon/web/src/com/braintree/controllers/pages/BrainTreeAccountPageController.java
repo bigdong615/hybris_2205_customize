@@ -1,7 +1,6 @@
 package com.braintree.controllers.pages;
 
 import com.bl.facades.customer.BlCustomerFacade;
-import com.bl.storefront.controllers.pages.BlControllerConstants;
 import com.braintree.exceptions.ResourceErrorMessage;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
@@ -18,7 +17,6 @@ import de.hybris.platform.acceleratorstorefrontcommons.forms.AddressForm;
 import de.hybris.platform.acceleratorstorefrontcommons.forms.SopPaymentDetailsForm;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
-import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.CountryData;
 import de.hybris.platform.commercefacades.user.data.RegionData;
@@ -41,14 +39,14 @@ import java.util.List;
 
 import static com.braintree.controllers.BraintreeaddonControllerConstants.CLIENT_TOKEN;
 import static de.hybris.platform.util.localization.Localization.getLocalizedString;
-import com.bl.storefront.controllers.pages.BlControllerConstants;
+
 
 
 @Controller
 @RequestMapping("/my-account")
 public class BrainTreeAccountPageController extends AbstractPageController
 {
-	protected static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
+	private static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String REDIRECT_TO_ADD_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/add-payment-method";
 	private static final String REDIRECT_TO_EDIT_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/edit-payment-method";
@@ -164,7 +162,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
                                       RedirectAttributes redirectAttributes, final String localizedErrorMessage)
 	{
         redirectAttributes.addAttribute("paymentInfoId", paymentMethodId);
-//        redirectAttributes.addAttribute("cardholder", cardholder);
+
+//        redirectAttributes.addAttribute("cardholder", cardholder); // NOSONAR
         redirectAttributes.addAttribute("expirationDate", expirationDate);
         redirectAttributes.addAttribute("errorMessage", localizedErrorMessage);
 		return REDIRECT_TO_EDIT_PAYMENT_INFO_PAGE;
@@ -202,7 +201,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		setupAdditionalFields(model);
 		final List<AddressData> addressBook = userFacade.getAddressBook();
 		model.addAttribute("deliveryAddresses", addressBook);
-	//	model.addAttribute("selectedAddressCode", selectedAddressCode);
+
+	//	model.addAttribute("selectedAddressCode", selectedAddressCode); // NOSONAR
 		model.addAttribute("billingAddresses", blCustomerFacade.getAllVisibleBillingAddressesOnUser());
 		model.addAttribute("defaultBillingAddress", blCustomerFacade.getDefaultBillingAddress());
 		model.addAttribute("addressForm", new AddressForm());
@@ -229,7 +229,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 
 	@RequestMapping(value = "/add-payment-method", method = RequestMethod.POST)
 	@RequireHardLogIn
-	public String addPaymentMethod(@RequestParam(value = "bt_payment_method_nonce") final String nonce,
+
+	public String addPaymentMethod(@RequestParam(value = "bt_payment_method_nonce") final String nonce,   // NOSONAR
 			@RequestParam(value = "payment_type") final String paymentProvider,
 			@RequestParam(value = "paypal_email") final String payPalEmail,
 			@RequestParam(value = "card_type") final String cardType,
@@ -312,7 +313,8 @@ public class BrainTreeAccountPageController extends AbstractPageController
 		return REDIRECT_TO_PAYMENT_INFO_PAGE;
 	}
 
-	private BrainTreeSubscriptionInfoData buildSubscriptionInfo(final String nonce, final String paymentProvider,
+
+	private BrainTreeSubscriptionInfoData buildSubscriptionInfo(final String nonce, final String paymentProvider,                         // NOSONAR
                                                                 final String cardDetails, final String cardType, final String email, final String deviceData,
                                                                 final String liabilityShifted, final AddressData addressData, final String cardholder, final String defaultCard  )
 	{
