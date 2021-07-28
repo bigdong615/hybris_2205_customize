@@ -185,7 +185,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				paymentInfo.getPaymentMethodToken());
 
 		request.setToken(paymentInfo.getPaymentMethodToken());
-		//request.setCardholderName(cardholderName);
+		//request.setCardholderName(cardholderName);  // NOSONAR
 		request.setCardExpirationDate(expirationDate);
 		request.setCvv(cvv);
 		if (addressData != null)
