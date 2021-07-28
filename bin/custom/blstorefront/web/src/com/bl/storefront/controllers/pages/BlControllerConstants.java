@@ -143,6 +143,8 @@ public class BlControllerConstants
 	public static final String EXTEND_ORDER_DATA = "extendOrderData";
 	public static final String MY_ACCOUNT_EXTEND_RENTAL = "/my-account/extendRent/";
   public static final String CLIENT_TOKEN = "client_token";
+	public static final String SHIPPING_PAGE ="shippingPage";
+	public static final String BILLING_PAGE ="paymentPage";
 
 
 	private BlControllerConstants()

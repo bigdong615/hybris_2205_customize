@@ -28,6 +28,7 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
 
     @Override
     public void populate(final BlProductModel source, final ProductData target) {
+        target.setProductId(source.getProductId());
         target.setDisplayName(source.getDisplayName());
         target.setRentalIncludes(source.getRentalIncludes());
         target.setForRent(BooleanUtils.toBoolean(source.getForRent()));

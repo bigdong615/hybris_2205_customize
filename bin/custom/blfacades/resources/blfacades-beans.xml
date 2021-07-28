@@ -41,6 +41,7 @@
 		<property name="onSale" type="java.lang.boolean"/>
 	<property name="upc" type="java.lang.String"/>
 	<property name="brandName" type="java.lang.String"/>
+		<property name="productId" type="java.lang.String"/>
   </bean>
 
 

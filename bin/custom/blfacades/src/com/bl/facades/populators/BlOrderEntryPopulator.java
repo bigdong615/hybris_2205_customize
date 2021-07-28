@@ -1,5 +1,6 @@
 package com.bl.facades.populators;
 
+import com.bl.core.model.BlProductModel;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderEntryPopulator;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -65,5 +66,6 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		final ProductModel product = orderEntry.getProduct();
 		entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
 				? ((BlSerialProductModel) product).getBlProduct() : product));
+		entry.getProduct().setProductId(((BlProductModel)product).getProductId());
 	}
 }

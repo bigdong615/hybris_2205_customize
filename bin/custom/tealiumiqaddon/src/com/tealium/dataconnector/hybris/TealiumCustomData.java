@@ -2,11 +2,8 @@ package com.tealium.dataconnector.hybris;
 
 import static com.tealium.dataconnector.hybris.HybrisDataController.HybrisCustomDataConverter;
 import static com.tealium.dataconnector.hybris.HybrisDataController.HybrisCustomPageTypeCustomData;
-
 import de.hybris.platform.jalo.JaloSession;
-
 import java.util.*;
-
 import com.tealium.context.TealiumContext;
 import com.tealium.util.udohelpers.UDO;
 import com.tealium.util.udohelpers.exceptions.UDOUpdateException;
@@ -17,42 +14,36 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 
 	private static Map<String, HybrisCustomPageTypeCustomData> customPagesMap;
 
-	private final static ArrayList<String> searchPageFields = new ArrayList<>(Arrays.asList("search_results", "search_keyword"));
-	private final static ArrayList<String> categoryPageFields = new ArrayList<>(Arrays.asList("page_category_name"));
 	private final static ArrayList<String> productPageFields = new ArrayList<>(
-			Arrays.asList("search_results", "search_keyword", "product_id", "product_sku", "product_name", "product_brand",
-					"product_category", "product_subcategory", "product_unit_price", "breadcrumb_value", "cart_addition_pdp",
-					"product_subcategory", "product_price", "product_quantity"));
+			Arrays.asList("isBuy", "productCategory", "ProductName", "productSKU",
+					 "prodid", "rentalDays"));
 
 	private final static ArrayList<String> cartPageFields = new ArrayList<>(
-			Arrays.asList("product_id", "product_sku", "product_name", "product_brand", "product_category", "product_subcategory",
-					"product_unit_price", "product_quantity", "continue_to_checkout"));
+			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy",
+					"productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
 
-/*	private final static ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
-    Arrays.asList("order_id  ", "order_subtotal", "order_payment_type", "order_total", "order_discount", "order_shipping",
-        "order_tax", "order_currency", "order_coupon_code", "order_type", "product_id", "product_sku", "product_name",
-        "product_brand", "product_category", "product_subcategory", "product_unit_price", "product_quantity",
-        "customer_email", "state", "postal_code", "guest_order", "customer_account_number"));*/
 
   private final static ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
-      Arrays.asList("orderID  ","AccountID","cartSize","couponCode","damage waiver cost","isBuy","productList","ProductName",
-          "productSKU","searchTerm","shipping cost","subtotal","rentalDays","isVideo","pagetype","totalvalue","userEmail",
-          "userFirstName","userLastName","marketingOptin","quantity","unit_price"));
+      Arrays.asList("userEmail", "userFirstName", "userLastName",
+					"cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","orderID","productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
 
 
-	private final static ArrayList<String> customerDetailPageFields = new ArrayList<>(
-			Arrays.asList("customer_name", "customer_email"));
+	private final static ArrayList<String> checkoutShippingPage = new ArrayList<>(
+			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
+
+	private final static ArrayList<String> checkoutBillingPage = new ArrayList<>(
+			Arrays.asList( "cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
 
 	private final static ArrayList<String> allPageFields = new ArrayList<>(
-			Arrays.asList("page_type", "global_url", "navigation_type", "page_name", "cart_open", "cart_addition",
-					"cart_addition_pdp", "cart_addition_quick_view", "cart_addition_quick_add", "cart_addition_cart_quick_add",
-					"cart_addition_order_history", "cart_removed", "checkout", "cart_view", "empty_cart_view", "searched_keyword",
-					"type_ahead", "no_search_result_keyword", "keyword_no_search_result_page", "guest_checkout", "existing_user",
-					"new_user", "guest_checkout_click_value", "existing_user_checkout", "new_user_checkout", "checkout_step"));
+			Arrays.asList("pagetype", "AccountID", "global_url", "navigation_type", "page_name"
+			));
 
-	private final static ArrayList<String> arrayValues = new ArrayList<>(Arrays.asList("breadcrumb_value", "product_subcategory",
-			"product_price", "product_quantity", "page_category_name", "product_brand", "product_id", "product_sku",
-			"product_name"));
+	private final static ArrayList<String> arrayValues = new ArrayList<>(Arrays.asList(
+			"product_price", "product_quantity", "page_category_name", "product_brand"));
 
 	private TealiumContext context;
 
@@ -69,7 +60,7 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 	public UDO homePage(UDO udo)
 	{
 		defaultDataSources(udo);
-	//	context.clean();
+	  context.clean();
 		return udo;
 	}
 
@@ -84,20 +75,13 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 	@Override
 	public UDO searchPage(UDO udo)
 	{
-		defaultDataSources(udo);
-		fillUdo(udo, context, searchPageFields);
-		context.clean();
 		return udo;
 	}
 
 	@Override
 	public UDO categoryPage(UDO udo)
 	{
-		defaultDataSources(udo);
-		fillUdo(udo, context, categoryPageFields);
-		context.clean();
 		return udo;
-
 	}
 
 	@Override
@@ -130,9 +114,6 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 	@Override
 	public UDO customerDetailPage(UDO udo)
 	{
-		defaultDataSources(udo);
-		fillUdo(udo, context, customerDetailPageFields);
-		context.clean();
 		return udo;
 	}
 
@@ -201,11 +182,11 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 				}
 				else
 				{
-					/*if (context.value(key) != null)
+					if (context.value(key) != null)
 					{
 						udo.setValue(key, context.value(key));
 						context.remove(key);
-					}*/
+					}
 				}
 			}
 			catch (UDOUpdateException e)

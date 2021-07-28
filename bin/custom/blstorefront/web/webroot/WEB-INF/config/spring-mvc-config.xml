@@ -124,6 +124,9 @@
 			<property name="cookieNotificationCookieGenerator" ref="cookieNotificationCookieGenerator" />
 		</bean>
 
+		<bean class="com.bl.storefront.interceptors.beforeview.TealiumContextBeforeViewHandler">
+
+		</bean>
 	</util:list>
 	
 	<!-- Interceptor that runs once per request and before the controller handler method is called -->
@@ -370,11 +373,6 @@
 	<alias name="blAddressDataUtil" alias="addressDataUtil"/>
 	<bean id="blAddressDataUtil" class="com.bl.storefront.util.BlAddressDataUtil" parent="defaultAddressDataUtil"/>
 
-	<bean id="tealiumContextBeforeViewHandler" class="com.bl.storefront.interceptors.beforeview.TealiumContextBeforeViewHandler">
-		<property name="cartService" ref="cartService"/>
-		<property name="productService" ref="productService"/>
-		<property name="userService" ref="userService"/>
-		<property name="cartConverter" ref="cartConverter"/>
-	</bean>
+
 
 </beans>
