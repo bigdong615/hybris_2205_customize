@@ -6,9 +6,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <template:page pageTitle="${pageTitle}">
+
 <!-- BL-927: Added condition for Gift Card as per requirement --> 
 <c:choose>
-      <c:when test="${product.code eq 'bl_giftcard'}">
+      <c:when test="${product.productType eq 'GIFTCARD'}">
        <product:giftCardProductDetailsPanel />
       </c:when>
 <c:otherwise>
