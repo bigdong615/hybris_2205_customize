@@ -443,6 +443,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 			brainTreeSubscriptionInfoData.setImageSource(createPaymentMethodResult.getImageSource());
 			brainTreeSubscriptionInfoData.setCardNumber(createPaymentMethodResult.getCardNumber());
 			brainTreeSubscriptionInfoData.setCardType(createPaymentMethodResult.getCardType());
+			brainTreeSubscriptionInfoData.setIsDefault(createPaymentMethodResult.getIsDefault());
 
 			if (StringUtils.isNotBlank(createPaymentMethodResult.getEmail()))
 			{

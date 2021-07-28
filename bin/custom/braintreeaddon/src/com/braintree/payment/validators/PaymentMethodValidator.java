@@ -10,5 +10,5 @@ public interface PaymentMethodValidator
 	 * 
 	 * @return validation message
 	 */
-    ResourceErrorMessage validate(String expirationDate, String cvv);
+    ResourceErrorMessage validate(final String expirationDate, final String cvv);
 }
