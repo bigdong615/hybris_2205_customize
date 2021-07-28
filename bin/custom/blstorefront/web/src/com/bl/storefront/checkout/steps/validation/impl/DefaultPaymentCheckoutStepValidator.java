@@ -8,6 +8,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.validation
 import de.hybris.platform.acceleratorstorefrontcommons.checkout.steps.validation.ValidationResults;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,6 +29,10 @@ public class DefaultPaymentCheckoutStepValidator extends AbstractCheckoutStepVal
 		{
 			LOGGER.info("Missing, empty or unsupported cart");
 			return ValidationResults.REDIRECT_TO_CART;
+		}
+		if (BooleanUtils.isTrue(getCheckoutFlowFacade().getCheckoutCart().getHasGiftCart()))
+		{
+			return ValidationResults.SUCCESS;
 		}
 
 		if (getCheckoutFacade().hasNoDeliveryAddress())
