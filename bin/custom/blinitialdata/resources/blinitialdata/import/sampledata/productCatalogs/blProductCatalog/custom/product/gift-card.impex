@@ -36,7 +36,7 @@ INSERT_UPDATE Keyword ; $catalogVersion ; keyword[unique=true] ; language(isocod
                       ;                 ; Gift Certificate     ;                                  ; $productCatalog 
                       
                              
-INSERT_UPDATE BLProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories ; name[lang=en]                 ; procurementCost ; displayName                   ; procurementSource ; mpn ; upc ; productType(code) ; forRent ; forSale ; level1Required ; level2Required ; numberSystem(code) ; scheduled ; isVideo ; manufacturerAID ; manufacturerName ; retailPrice ; $galleryImages  ; $keywords                               
+INSERT_UPDATE BLProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories ; name[lang=en]                 ; procurementCost ; displayName                   ; procurementSource ; mpn ; upc ; productType(code) ; forRent ; forSale ; level1Required ; level2Required ; numberSystem(code) ; scheduled ; isVideo ; manufacturerAID ; manufacturerName ; retailPrice ; $galleryImages  ; $keywords      ;unit(code)[default='pieces']                         
                         ;                 ;           ; bl_giftcard       ;                  ; BorrowLenses Gift Certificate ; 0               ; BorrowLenses Gift Certificate ; NA                ; NA  ; NA  ; GIFTCARD           ; true    ; true    ; false          ; false          ; NONE               ; false     ; false   ; 0               ; NA               ; 0           ; BL-GC_Container ; Gift,Card,GC,Gift Card,Gift Certificate 
                         
                      
