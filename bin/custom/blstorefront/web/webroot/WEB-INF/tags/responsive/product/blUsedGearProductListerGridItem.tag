@@ -21,10 +21,7 @@
 <c:if test ="${product.productTagValues ne null && product.productTagValues ne 'Great Value' && product.productTagValues ne 'Staff Pick'}">
 <span class="badge badge-new">${product.productTagValues}</span>
 </c:if>
-<!-- BL-926: Added condition for Gift Card as per requirement --> 
-<c:if test="${product.productType ne 'GIFTCARD'}">
- <span class="bookmark"></span>
- </c:if>
+
 <!-- BL-926: Added new file for Gift Card --> 
 <product:productListImagePanel productType="UsedGearProduct" product="${product}"/>
 		
