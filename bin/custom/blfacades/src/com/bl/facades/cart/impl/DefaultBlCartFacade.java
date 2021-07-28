@@ -26,6 +26,7 @@ import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.store.services.BaseStoreService;
@@ -216,6 +217,10 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			parameter.setCart(cartModel);
 			parameter.setQuantity(quantity);
 			}
+		}
+		catch (ModelNotFoundException e) 
+		{
+         BlLogger.logMessage(LOGGER, Level.ERROR,"Add to cart entry with product not found.",e);
 		}
 		catch (final RuntimeException exception)
 		{
