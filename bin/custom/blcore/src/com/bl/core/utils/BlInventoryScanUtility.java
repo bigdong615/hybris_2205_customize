@@ -114,4 +114,40 @@ public final class BlInventoryScanUtility
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_SHELF);
 		return repairLocations;
 	}
+
+	public static List<String> getShippingWorkstationInitial()
+	{
+		final List<String> defaultLocations = new ArrayList<>();
+
+		defaultLocations.add(BlInventoryScanLoggingConstants.MAW);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CAW);
+
+		return defaultLocations;
+	}
+
+	/**
+	 * javadoc
+	 *
+	 * @return List<String> for default locations
+	 */
+	public static List<String> getDefaultBinLocation()
+	{
+		final List<String> defaultBinLocation = new ArrayList<>();
+		defaultBinLocation.add(BlInventoryScanLoggingConstants.BIN);
+		return defaultBinLocation;
+	}
+
+	/**
+	 * Gets the tech eng repair locations.
+	 *
+	 * @return the tech eng repair locations
+	 */
+	public static List<String> getShippingAllowedLocations()
+	{
+		final List<String> shippingAllowedLocation = new ArrayList<>();
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.SHIPPER_WORKSTATION);
+		shippingAllowedLocation.add(BlInventoryScanLoggingConstants.BIN);
+		return shippingAllowedLocation;
+	}
+
 }

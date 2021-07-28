@@ -110,6 +110,30 @@ public interface BlInventoryScanToolService {
 	 * @param barcodes
 	 * @return the int
 	 */
-	public int checkValidTrackingId(final List<String> barcodes);
+	public int checkValidTrackingId(final String barcodes);
+	
+	/**
+	 * javadoc
+	 *
+	 * @param barcodes
+	 *           for BlSerialProduct
+	 * @return List<String> method will verify the list of bin barcodes and result into list of failed barcodes that has
+	 *         been failed to update its location in db
+	 */
+	public List<String> getFailedPackageBarcodeList(final List<String> barcodes);
+
+	/**
+	 * @param lastScannedItem
+	 */
+	public void updateToUpsBound();
+
+	/**
+	 * @param barcodes
+	 * @param defaultLocations
+	 * @param memberAllowedLocationList
+	 * @return int
+	 */
+	public int checkLocationWithType(final List<String> barcodes, final List<String> defaultLocations,
+			final List<String> memberAllowedLocationList);
     
 }

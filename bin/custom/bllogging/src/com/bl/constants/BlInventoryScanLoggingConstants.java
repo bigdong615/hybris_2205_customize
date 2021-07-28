@@ -61,6 +61,7 @@ public class BlInventoryScanLoggingConstants {
 
     public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: ";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
+    public static final String MUST_TWO_BARCODE_ERROR_MSG = "Must have two barcode to scans";
     public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: ";
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
@@ -104,6 +105,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String CLEAN_MOBILE_LAUNDRY_BIN = "CLEAN_MOBILE_LAUNDRY_BIN";
     public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
     public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
+    public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
+    public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
+    public static final String LAST_LOCATION_ERROR_KEY = "blbackoffice.order.scan.last.location.error";
 
     private BlInventoryScanLoggingConstants() { }
 
@@ -126,17 +130,4 @@ public class BlInventoryScanLoggingConstants {
      		defaultLocations.add(CAW);
         return defaultLocations;
     }
-    
- 	/**
- 	 * javadoc
- 	 *
- 	 * @return List<String> for default locations
- 	 */
- 	public static List<String> getDefaultBinLocation()
- 	{
- 		final List<String> defaultBinLocation = new ArrayList<>();
- 		defaultBinLocation.add(BIN);
- 		return defaultBinLocation;
- 	}
-    
 }

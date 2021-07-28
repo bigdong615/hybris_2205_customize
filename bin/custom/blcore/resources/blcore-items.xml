@@ -1479,11 +1479,6 @@
                         <modifiers read="true" write="true" optional="true"/>
                         <description>BL Inventory location category</description>
                     </attribute>
-                     <attribute qualifier="ocLocation" type="java.lang.String">
-                     <persistence type="property"/>
-                     <modifiers read="true" write="true" optional="true"/>
-                     <description>Inventory Location for serial product</description>
-                   </attribute>
                 </attributes>
             </itemtype>
 

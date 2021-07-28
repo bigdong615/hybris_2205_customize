@@ -335,7 +335,8 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				}
 				else
 				{
-					Messagebox.show("Selected shipping method service is not applicable for added zip code" + "----"
+					Messagebox.show("Selected shipping method service is not applicable for added zip code");
+					BlLogger.logMessage(LOG, Level.ERROR, "Selected shipping method service is not applicable for added zip code" + "----"
 							+ this.deliveryModeCombobox.getValue() + "-" + this.postalCode.getValue());
 
 					throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
