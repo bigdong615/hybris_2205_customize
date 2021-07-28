@@ -129,7 +129,6 @@ ACC.order = {
    	    					 var optionSelected = $("option:selected", this);
     					 var paymentId = optionSelected.data("id");
     						var paymentnonce = optionSelected.data("nonce");
-    						alert(paymentId)
     						if($('#js-isAllProductExtendabe').val() === '' && paymentId !== '' && paymentId !== 'undefined' && paymentnonce !== '' && paymentnonce !=='undefined' ) {
                           $('.js-enable-extend-order').attr('disabled',false);
                 }

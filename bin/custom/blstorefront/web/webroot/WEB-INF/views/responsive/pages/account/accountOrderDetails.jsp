@@ -331,7 +331,7 @@
                 <div class="row mb-4">
                     <div class="text-center col-md-3 col-lg-2">
                         <img src="${themeResourcePath}/assets/gear-guard.png">
-                    </div>gray100
+                    </div>
                     <div class="col-md-9 col-lg-10">
                         <p><b><spring:theme code="text.damage.Waiver.model.option.gear"/></b></p>
                         <p class="body14"><spring:theme code="text.damage.Waiver.model.option.gear.description"/></p>
