@@ -192,13 +192,15 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 			final GiftCardPurchaseForm giftCardForm) throws CommerceCartModificationException
 	{
 		final BlSerialProductModel blSerialProductModel = null;
-		final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(productCode);
-
+		
 		final CartModel cartModel = blCartService.getSessionCart();
 		final CommerceCartParameter parameter = new CommerceCartParameter();
 		try
 		{
+			final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(productCode);
 			//For Gift card product
+			if(Objects.nonNull(blProductModel) && Objects.nonNull(cartModel))
+			{	
 			parameter.setProduct(blProductModel);
 			parameter.setIsNoDamageWaiverSelected(Boolean.TRUE);
 			parameter.setIsDamageWaiverProSelected(Boolean.FALSE);
@@ -210,17 +212,16 @@ public class DefaultBlCartFacade extends DefaultCartFacade implements BlCartFaca
 		   parameter.setRecipientName(giftCardForm.getName());
 		   parameter.setRecipientMessage(giftCardForm.getMessage());
 			parameter.setCreateNewEntry(false);
-
+			parameter.setEnableHooks(true);
+			parameter.setCart(cartModel);
+			parameter.setQuantity(quantity);
+			}
 		}
 		catch (final RuntimeException exception)
 		{
 			BlLogger.logMessage(LOGGER, Level.ERROR, "Unable to set product model, unit and new entry to CommerceCartParameter",
 					exception);
 		}
-
-		parameter.setEnableHooks(true);
-		parameter.setCart(cartModel);
-		parameter.setQuantity(quantity);
 
 		final CommerceCartModification commerceCartModification = getCommerceCartService().addToCart(parameter);
 		setCartType(blSerialProductModel, cartModel, commerceCartModification);
