@@ -9,6 +9,8 @@ import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_SALE;
 import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
+import com.bl.core.enums.ExtendOrderStatusEnum;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.braintree.command.result.BrainTreeCreatePaymentMethodResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
@@ -190,7 +192,7 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		}
 		final BraintreeInfo braintreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
 		boolean isDuplicate = false;
-		if (isDuplicateCheckPossible(brainTreeSubscriptionInfoData)) {
+		if (isDuplicateCheckPossible(brainTreeSubscriptionInfoData) && BooleanUtils.isFalse(cart.getIsExtendedOrder())) {
 			isDuplicate = isPaymentMethodDuplicate(brainTreeSubscriptionInfoData, cart, billingAddress);
 		}
 		paymentInfo = getBrainTreeTransactionService().createSubscription(billingAddress, customer, braintreeInfo, cart);
@@ -198,6 +200,23 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 
 		if ((cart instanceof OrderModel) && (null != cart.getPaymentInfo())) {
 			String value = ((BrainTreePaymentInfoModel) cart.getPaymentInfo()).getShipsFromPostalCode();
+			paymentInfo.setShipsFromPostalCode(value);
+		}
+		else if(BooleanUtils.isTrue(cart.getIsExtendedOrder())){
+			String value = BraintreeConstants.EMPTY_STRING;
+			if(null != cart.getPaymentInfo()) {
+				value = ((BrainTreePaymentInfoModel) cart
+						.getPaymentInfo()).getShipsFromPostalCode();
+				paymentInfo.setShipsFromPostalCode(value);
+			}
+			else if(null == cart.getPaymentInfo() && StringUtils.isNotBlank(cart.getPoNumber())) {
+				if(null != cart.getDeliveryAddress()) {
+					value = cart.getDeliveryAddress().getPostalcode();
+				}
+				else if(null == cart.getDeliveryAddress() && null != cart.getDeliveryMode()){
+					value =  ((BlPickUpZoneDeliveryModeModel) cart.getDeliveryMode()).getInternalStoreAddress().getPostalcode();
+				}
+			}
 			paymentInfo.setShipsFromPostalCode(value);
 		}
 		paymentInfo.setPayer(brainTreeSubscriptionInfoData.getEmail());
@@ -327,10 +346,15 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		else
 		{
 			// double convert instead of cloning
-			final AddressData deliveryAddress = getAddressConverter().convert(cart.getDeliveryAddress());
+			AddressModel orderDeliveryAddress = cart.getDeliveryAddress();
+			if(isDeliveryModeOrDeliveryAddressNotNull(cart , orderDeliveryAddress)){
+				orderDeliveryAddress = ((BlPickUpZoneDeliveryModeModel) cart.getDeliveryMode()).getInternalStoreAddress();
+			}
+			final AddressData deliveryAddress = getAddressConverter().convert(orderDeliveryAddress);
 			getAddressReverseConverter().convert(deliveryAddress, billingAddress);
 
-			billingAddress.setBrainTreeAddressId(cart.getDeliveryAddress().getBrainTreeAddressId());
+			billingAddress.setBrainTreeAddressId(StringUtils.isNotBlank(orderDeliveryAddress.getBrainTreeAddressId())
+					? orderDeliveryAddress.getBrainTreeAddressId() : "");
 			if ( billingAddress.getEmail() == null && brainTreeSubscriptionInfoData.getEmail() != null){
 				billingAddress.setEmail(brainTreeSubscriptionInfoData.getEmail());
 			}
@@ -491,6 +515,12 @@ public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 		extendOrder.setDeliveryMode(selectedDeliveryMode);
 		modelService.save(extendOrder);
 		modelService.refresh(extendOrder);
+	}
+
+	private boolean isDeliveryModeOrDeliveryAddressNotNull(AbstractOrderModel cart , AddressModel orderDeliveryAddress){
+		return null == orderDeliveryAddress && null != cart.getDeliveryMode() && BooleanUtils.isTrue(cart.getIsExtendedOrder())
+				&& null == cart.getExtendedOrderCopy() && cart.getExtendedOrderCopy().getExtendOrderStatus().getCode().
+				equalsIgnoreCase(ExtendOrderStatusEnum.PROCESSING.getCode()) ;
 	}
 
 	/**

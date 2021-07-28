@@ -19,6 +19,10 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
         payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/express");
     }
 
+    if($('#js-extend-order-page').val() == 'true'){
+           payPalForm = createForm(CONST.PAYPAL_EXPRESS_FORM_NAME, ACC.config.encodedContextPath + "/braintree/paypal/checkout/extendOrder-payment");
+    }
+
     if ($(CONST.SAVE_PAYMENT_INFO_ID + ':' + CONST.PROP_CHECKED).val() === CONST.TRUE || forceVault === true) {
         isSavePaymentInfo = createHiddenParameter("isSaved", CONST.TRUE);
     } else {
@@ -31,6 +35,13 @@ function processExpressCheckoutForm(paypalResponse, forceVault) {
 
     // collect device data for advanced fraud tools
     var collectDeviceData = createHiddenParameter("device_data", this.paypalDeviceData);
+
+    var extendOrderCode = createHiddenParameter("extend_Order_Code", $("#js-extend-order-code").val());
+    payPalForm.append($(extendOrderCode));
+    var extendOrderPage = createHiddenParameter("extend_order_page", $("#js-extend-order-page").val());
+    payPalForm.append($(extendOrderPage));
+
+
     payPalForm.append($(isSavePaymentInfo));
     payPalForm.append($(collectDeviceData));
     payPalForm.append($(paymentType));

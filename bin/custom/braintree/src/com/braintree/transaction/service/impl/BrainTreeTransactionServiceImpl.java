@@ -72,6 +72,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -1009,6 +1010,10 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			cardPaymentInfoModel
 					.setMerchantAccountIdForCurrentSite(getBrainTreeConfigService().getMerchantAccountIdForCurrentSiteAndCurrency());
 		}
+		else if(BooleanUtils.isTrue(abstractOrderModel.getIsExtendedOrder())
+				&& null == abstractOrderModel.getExtendedOrderCopy()){
+			cardPaymentInfoModel.setMerchantAccountIdForCurrentSite(getMerchantIdFromOrder(abstractOrderModel));
+		}
 		else
 		{
 			BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) abstractOrderModel.getPaymentInfo();
@@ -1065,6 +1070,19 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	protected BrainTreeCardType getBrainTreeCardTypeByName(final String brainTreeCardType)
 	{
 		return BrainTreeCardType.valueOf(brainTreeCardType);
+	}
+
+	private String getMerchantIdFromOrder(final AbstractOrderModel abstractOrderModel) {
+
+		if(null != abstractOrderModel.getPaymentInfo()) {
+			BrainTreePaymentInfoModel brainTreePaymentInfoModel = (BrainTreePaymentInfoModel) abstractOrderModel
+					.getPaymentInfo();
+			return brainTreePaymentInfoModel.getMerchantAccountIdForCurrentSite();
+		}
+		else if(StringUtils.isNotBlank(abstractOrderModel.getPoNumber())) {
+			return BraintreeConstants.EMPTY_STRING;
+		}
+		return BraintreeConstants.EMPTY_STRING;
 	}
 
 	private Map<String, String> getCustomFields()
