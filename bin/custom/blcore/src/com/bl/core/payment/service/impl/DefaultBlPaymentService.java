@@ -5,6 +5,8 @@ import com.bl.core.payment.service.BlPaymentService;
 import com.bl.logging.BlLogger;
 import com.braintree.exceptions.BraintreeErrorException;
 import com.braintree.transaction.service.BrainTreeTransactionService;
+
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.dto.TransactionStatus;
@@ -70,10 +72,14 @@ public class DefaultBlPaymentService implements BlPaymentService
 					getModelService().save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
 				} else {
+					order.setStatus(OrderStatus.PAYMENT_DECLINED);
+					modelService.save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is not successful for the order {}", order.getCode());
 				}
 			}
 		} catch(final BraintreeErrorException ex) {
+			order.setStatus(OrderStatus.PAYMENT_DECLINED);
+			modelService.save(order);
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, "BraintreeErrorException occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
 		} catch(final Exception ex) {
