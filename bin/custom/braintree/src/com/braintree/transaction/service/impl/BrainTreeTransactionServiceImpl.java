@@ -75,6 +75,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -877,7 +878,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			}
 		}
 
-		if (cardPaymentInfoModel != null)
+		if (cardPaymentInfoModel != null && BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
 		{
 			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
 		}

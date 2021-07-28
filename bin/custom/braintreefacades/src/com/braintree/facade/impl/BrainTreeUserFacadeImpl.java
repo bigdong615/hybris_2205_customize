@@ -443,7 +443,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 			brainTreeSubscriptionInfoData.setImageSource(createPaymentMethodResult.getImageSource());
 			brainTreeSubscriptionInfoData.setCardNumber(createPaymentMethodResult.getCardNumber());
 			brainTreeSubscriptionInfoData.setCardType(createPaymentMethodResult.getCardType());
-			brainTreeSubscriptionInfoData.setIsDefault(createPaymentMethodResult.getIsDefault());
+
 			if (StringUtils.isNotBlank(createPaymentMethodResult.getEmail()))
 			{
 				brainTreeSubscriptionInfoData.setEmail(createPaymentMethodResult.getEmail());
@@ -501,7 +501,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				final CCPaymentInfoData paymentInfoData = getBrainTreePaymentInfoConverter().convert(ccPaymentInfoModel);
 				if (ccPaymentInfoModel.equals(defaultPaymentInfoModel))
 				{
-					paymentInfoData.setIsDefault(true);
+					paymentInfoData.setDefaultPaymentInfo(true);
 				}
 				return paymentInfoData;
 			}

@@ -136,44 +136,8 @@
                </div>
          </div>
       </div> --%>
-      <section id="myAccount">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div id="accountMenu" class="col-lg-3 sticky-lg-top">
-                    <h6 class="mb-4">Hello, John!</h6>
-                    <div id="accountMobileNav" class="d-block d-lg-none dropdown my-4">
-                        <button class="btn btn-block btn-outline dropdown-toggle text-start" role="button" id="accountMobile" data-bs-toggle="dropdown" aria-expanded="false">
-                            Credit Card
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="accountMobile">
-                            <li><a href="#" class="dropdown-item">Orders</a></li>
-                            <li><a href="#" class="dropdown-item">Addresses</a></li>
-                            <li><a href="#" class="dropdown-item">Change Email</a></li>
-                            <li><a href="#" class="dropdown-item">Change Password</a></li>
-                            <li><a href="#" class="dropdown-item">Saved Carts</a></li>
-                            <li><a href="#" class="dropdown-item">Bookmarks</a></li>
-                            <li><a href="#" class="dropdown-item">Verification Documents</a></li>
-                            <li><a href="#" class="dropdown-item cc-click"><b>Credit Cards</b></a></li>
-                        </ul>
-                    </div>
-                    <div class="d-none d-lg-block">
-                        <p><a href="#">Orders</a></p>
-                        <hr>
-                        <p><a href="#">Addresses</a></p>
-                        <hr>
-                        <p><a href="#">Change Email</a></p>
-                        <hr>
-                        <p><a href="#">Change Password</a></p>
-                        <hr>
-                        <p><a href="#">Saved Carts</a></p>
-                        <hr>
-                        <p><a href="#">Bookmarks</a></p>
-                        <hr>
-                        <p><a href="#">Verification Documents</a></p>
-                        <hr>
-                        <p><a href="#" class="active">Credit Cards</a></p>
-                    </div>
-                </div>
+      
+                
                 <div id="accountContent" class="col-lg-8 offset-lg-1">
                     <h1>Credit Card</h1>
                     <hr>
@@ -383,7 +347,7 @@
                 </div>
             </div>
         </div>    
-    </section> 
+ 
       
    </c:if>
 </div>
