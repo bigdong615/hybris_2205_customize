@@ -1,13 +1,20 @@
 package com.bl.core.inventory.scan.dao.impl;
 
+import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
 import com.bl.core.inventory.scan.dao.BlInventoryScanToolDao;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.logging.BlLogger;
+
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -67,6 +74,57 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + key);
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
+    
+    /**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public Collection<PackagingInfoModel> getPackageForSerials(final Collection<String> barcodes)
+ 	{
+ 		final String barcodeList = "select distinct({pkg.pk}) from {PackagingInfo as pkg}, {BlSerialProduct as serial},{Consignment as c}, "
+ 				+ "{ConsignmentStatus as cs} where {pkg.serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) and {pkg.consignment} = {c.pk} "
+ 				+ "and {c.status} = {cs.pk} and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED') and {serial.barcode} in (?barcodeList)";
+ 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+ 		query.addQueryParameter("barcodeList", barcodes);
+ 		final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel> search(query).getResult();
+ 		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_PACKAGE_DETAILS);
+ 		return CollectionUtils.isNotEmpty(results) ? results : Collections.emptyList();
+ 	}
+
+ 	/**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public Collection<AbstractOrderModel> getAllOutTodayOrders()
+ 	{
+ 		final String barcodeList = "select {ao.pk} from {AbstractOrder as ao} where to_char({ao.actualRentalStartDate},'MM-dd-yyyy') = "
+ 				+ "?currentDate";
+ 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+ 		query.addQueryParameter("currentDate",
+ 				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
+ 		final List<AbstractOrderModel> results = getFlexibleSearchService().<AbstractOrderModel> search(query).getResult();
+ 		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_DETAILS);
+ 		return CollectionUtils.isNotEmpty(results) ? results : null;
+ 	}
+
+ 	/**
+ 	 * {@inheritDoc}
+ 	 */
+ 	@Override
+ 	public Collection<ConsignmentModel> getAllConsignmentForSerial(final String serial)
+ 	{
+ 		final String barcodeList = "select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, "
+ 				+ "{ConsignmentStatus as cs} where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "
+ 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and to_char({c:optimizedShippingStartDate},'MM-dd-yyyy') = "
+ 				+ "?currentDate";
+ 		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
+ 		query.addQueryParameter("serial", serial);
+ 		query.addQueryParameter("currentDate",
+ 				BlDateTimeUtils.getCurrentDateUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST, new Date()));
+ 		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
+ 		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_OUT_ORDER_SERIAL + serial);
+ 		return CollectionUtils.isNotEmpty(results) ? results : null;
+ 	}
 
     public FlexibleSearchService getFlexibleSearchService() {
         return flexibleSearchService;

@@ -59,9 +59,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String WEB_SAN_TOOL_NOTIFICATION_FAILURE = "webSanToolNotificationFailure";
     public static final String WEB_SCAN_TOOL_DATA_MODEL_KEY = "webScanToolDataModelKey";
 
-    public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: ";
+    public static final String MAX_BARCODE_LIMIT_ERROR_FAILURE_MSG = "Invalid number of barcodes in sequence, max: {}";
     public static final String MUST_TWO_BARCODE_ERROR_FAILURE_MSG = "Must have two barcode scans or more.";
-    public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: ";
+    public static final String SCAN_BATCH_ERROR_FAILURE_MSG = "Failed to update inventory location for: {}";
     public static final String SCAN_BARCODE_SUCCESS_MSG = "Successfully records scanned!!";
     public static final String LAST_SCAN_INVALID_ERROR_FAILURE_MSG = "Last scan must be valid Inventory Location";
     public static final String LAST_SCAN_ERROR_FAILURE_MSG = "Last scan must be a location";
@@ -71,9 +71,9 @@ public class BlInventoryScanLoggingConstants {
     public static final String MAX_SEQUENCE_LIMIT_KEY = "maxSequenceScan";
     public static final String SCAN_STRING = "Scan data: ";
 
-    public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: ";
-    public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: ";
-    public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: ";
+    public static final String FETCH_INVENTORY_LOC = "Fetching InventoryLocation for input locationId: {}";
+    public static final String FETCH_SERIAL_PROD = "Fetching SerialProducts for input barcode list: {}";
+    public static final String FETCH_CONFIG_VALUE = "Fetching ConfigurationValue for key: {}";
     
     public static final String TECH_ENG_NOTIFICATION_HANDLER = "techEngSanToolNotification";
     public static final String TECH_ENGINEERING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
@@ -104,6 +104,25 @@ public class BlInventoryScanLoggingConstants {
     public static final String CLEAN_MOBILE_LAUNDRY_BIN = "CLEAN_MOBILE_LAUNDRY_BIN";
     public static final String CLEAN_PRIORITY_MOBILE_CART = "CLEAN_PRIORITY_MOBILE_CART";
     public static final String VIP_CLEAN_PRIORITY_GEAR = "VIP_CLEAN_PRIORITY_GEAR";
+    
+    public static final String UNBOX_NOTIFICATION_HANDLER = "UnboxingScanToolNotification";
+    public static final String UNBOX_SAN_TOOL_PACKAGE_FAILURE = "unboxPkgMissingErrorFailure";
+    public static final String UNBOX_SAN_TOOL_DPC_FAILURE = "unboxInvalidDPLocationErrorFailure";
+    public static final String UNBOX_SAN_TOOL_DPC_WARNING = "unboxInvalidDPLocationErrorWarning";
+    public static final String UNBOX_SAN_TOOL_DC_FAILURE = "unboxInvalidDCLocationErrorFailure";
+    public static final String UNBOX_SAN_TOOL_PACKAGE_FAILURE_MSG = "Scanned serials not exist on any of the package: ";
+    public static final String UNBOX_SAN_TOOL_DPC_FAILURE_MSG = "Please, place this item to the dirty priority shelf: ";
+    public static final String UNBOX_SAN_TOOL_DC_FAILURE_MSG = "Please, place this item to the dirty cart shelf: ";
+    public static final String FETCH_PACKAGE_DETAILS = "Fetching PackagingDetails for serial barcodes";
+    public static final String FETCH_OUT_ORDER_DETAILS = "Fetching OUT orders for today";
+    public static final String FETCH_OUT_ORDER_SERIAL = "Fetching OUT orders for serial: ";
+    
+    public static final String UNBOXING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
+    public static final String UNBOXING_WORKSTATION_LOCATION = "VIP_WORKSTATION_TECH_ENG";
+    public static final String DIRTY_PRIORITY_GEAR = "DIRTY_PRIORITY_GEAR";
+    public static final String DIRTY_PRIORITY_MOBILE_CART = "DIRTY_PRIORITY_MOBILE_CART";
+    public static final String DIRTY_GEAR_MOBILE_CART = "DIRTY_GEAR_MOBILE_CART";
+    public static final String DIRTY_MOBILE_LAUNDRY_BIN = "DIRTY_MOBILE_LAUNDRY_BIN";
 
     private BlInventoryScanLoggingConstants() { }
 

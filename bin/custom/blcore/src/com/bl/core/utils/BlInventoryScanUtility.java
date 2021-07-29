@@ -114,4 +114,69 @@ public final class BlInventoryScanUtility
 		repairLocations.add(BlInventoryScanLoggingConstants.REPAIR_SHELF);
 		return repairLocations;
 	}
+
+	/**
+	 * This method will return list of location that will be applicable for DirtyCart and DirtyPriorityCart location
+	 *
+	 * @return List<String> for default locations for DC and DPC
+	 */
+	public static List<String> getDefaultInventoryLocationForDPCAndDC()
+	{
+		final List<String> defaultLocations = new ArrayList<>();
+		defaultLocations.add(BlInventoryScanLoggingConstants.BIN);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CAM);
+		defaultLocations.add(BlInventoryScanLoggingConstants.MAW);
+		defaultLocations.add(BlInventoryScanLoggingConstants.CAM);
+		return defaultLocations;
+	}
+
+	public static List<String> getUnboxingAllowedLocations()
+	{
+		final List<String> defaultLocations = new ArrayList<>();
+		defaultLocations.addAll(getUnBoxingWorkStationLocations());
+		defaultLocations.addAll(getDirtyCartLocations());
+		defaultLocations.addAll(getDirtyPriorityCartLocations());
+
+		return defaultLocations;
+	}
+
+	/**
+	 * Gets the un boxing work station locations.
+	 *
+	 * @return the un boxing work station locations
+	 */
+	public static List<String> getUnBoxingWorkStationLocations()
+	{
+		final List<String> workStationLocations = new ArrayList<>();
+		workStationLocations.add(BlInventoryScanLoggingConstants.UNBOXING_WORKSTATION);
+		workStationLocations.add(BlInventoryScanLoggingConstants.UNBOXING_WORKSTATION_LOCATION);
+		return workStationLocations;
+	}
+
+	/**
+	 * Gets the dirty cart locations.
+	 *
+	 * @return the dirty cart locations
+	 */
+	public static List<String> getDirtyCartLocations()
+	{
+		final List<String> dirtyCartLocations = new ArrayList<>();
+		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_GEAR_MOBILE_CART);
+		dirtyCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_MOBILE_LAUNDRY_BIN);
+		return dirtyCartLocations;
+	}
+
+
+	/**
+	 * Gets the dirty priority cart locations.
+	 *
+	 * @return the dirty priority cart locations
+	 */
+	public static List<String> getDirtyPriorityCartLocations()
+	{
+		final List<String> dirtyPriorityCartLocations = new ArrayList<>();
+		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY_GEAR);
+		dirtyPriorityCartLocations.add(BlInventoryScanLoggingConstants.DIRTY_PRIORITY_MOBILE_CART);
+		return dirtyPriorityCartLocations;
+	}
 }

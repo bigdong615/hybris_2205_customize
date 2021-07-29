@@ -4,6 +4,10 @@ import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlInventoryScanConfigurationModel;
 import com.bl.core.model.BlSerialProductModel;
 
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
+
 import java.util.Collection;
 
 /**
@@ -29,11 +33,33 @@ public interface BlInventoryScanToolDao {
     Collection<BlSerialProductModel> getSerialProductsByBarcode(final Collection<String> barcode);
 
     /**
-     * javadoc
      * @param key for config
      * @return BlInventoryScanConfigurationModel
      * method will fetch ConfigurationKey by its key
      */
     BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key);
 
+    /**
+ 	 * @param barcodes
+ 	 *           list of scanned barcode serials
+ 	 * @return PackagingInfoModel
+ 	 */
+ 	Collection<PackagingInfoModel> getPackageForSerials(final Collection<String> barcodes);
+
+ 	/**
+ 	 * This method will return all orders that needs to be shipped out today and will return today to mark Serials with
+ 	 * DirtyPriorityStatus
+ 	 *
+ 	 * @return Abstract Order list
+ 	 */
+ 	Collection<AbstractOrderModel> getAllOutTodayOrders();
+
+ 	/**
+ 	 * This method will give list orders that has particular serial associated
+ 	 *
+ 	 * @param serial
+ 	 *           product
+ 	 * @return list Consignments
+ 	 */
+ 	Collection<ConsignmentModel> getAllConsignmentForSerial(final String serial);
 }
