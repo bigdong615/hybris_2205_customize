@@ -10,6 +10,8 @@ import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.user.data.CustomerData;
 import de.hybris.platform.jalo.JaloSession;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -24,120 +26,126 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TealiumContextBeforeViewHandler.class);
-	private final String FLAG_VALUE = "true";
+	private static final  int SCALE = 2;
+	private static final String SUB_TOTAL = "subtotal";
+	private static final String TOTAL_VALUE = "total_value";
+	private static final String CART_SIZE = "cartSize";
+	private static final String SHIPPING_COST = "shipping_cost";
+	private static final String PAGE_TYPE ="pageType";
+	private static final String QUANTITY = "quantity";
+	private static final String UNIT_PRICE = "unit_price";
+	private static final String DAMAGE_WAIVER_COST = "damage_waiver_cost";
+	private static final String COUPON_CODE = "couponCode";
+	private static final String RENTAL_DAYS = "rentalDays";
+	private static final String IS_BUY = "isBuy";
+	private static final String IS_VIDEO = "isVideo";
 
 	@Override
 	public void beforeView(
       HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) throws Exception
 	{
-		TealiumContext prevContext = (TealiumContext) JaloSession.getCurrentSession().getAttribute("tealiumContext");
-		TealiumContext context;
-		context = prevContext == null ? new TealiumContext() : prevContext;
+		TealiumContext context = (TealiumContext) JaloSession.getCurrentSession().getAttribute("tealiumContext");
+		if (context == null){
+			context = new TealiumContext() ;
+		}
+
 		try
 		{
-			context.set("pagetype", modelAndView.getModel().get("pageType"));
+			context.set("pagetype", modelAndView.getModel().get(PAGE_TYPE));
 			CustomerData customerData =(CustomerData) 	modelAndView.getModel().get("user");
 			context.set("AccountID",customerData.getCustomerId());
 			RentalDateDto rentalDate = (RentalDateDto) modelAndView.getModel().get("rentalDate");
 
 			List<String> productId = new ArrayList<>();
-			List<Float>  unitPrice = new ArrayList<>();
+			List<String>  unitPrice = new ArrayList<>();
 			String productName ="";
 			String productSKU ="";
-			if("PRODUCT".equals(modelAndView.getModel().get("pageType"))){
-				Boolean isRental = (Boolean)modelAndView.getModel().get("IsRentalPage");
-				if(isRental){
-					context.set("isBuy", 0);
-					if(rentalDate!= null) {
-						context.set("rentalDays", rentalDate.getNumberOfDays());
-					}
+			if("PRODUCT".equals(modelAndView.getModel().get(PAGE_TYPE))){
+				boolean isRental = (Boolean)modelAndView.getModel().get("IsRentalPage");
+				if(isRental && rentalDate!= null){
+					context.set(IS_BUY, 0);
+					context.set(RENTAL_DAYS, rentalDate.getNumberOfDays());
 				}else{
-					context.set("isBuy", 1);
+					context.set(IS_BUY, 1);
 				}
 				ProductData productData = (ProductData) modelAndView.getModel().get("product");
 
-				productName = new  String(productData.getDisplayName());
-        productSKU = new String(productData.getCode());
+				productName = productData.getDisplayName();
+        productSKU = productData.getCode();
 				productId.add(productData.getProductId());
 			}
 
-			List <Long> quantity = new ArrayList<>();
-			if("CART".equals(modelAndView.getModel().get("pageType"))){
+			List <String> quantity = new ArrayList<>();
+			if("CART".equals(modelAndView.getModel().get(PAGE_TYPE))){
 				CartData cartData = (CartData) modelAndView.getModel().get("cartData");
-				context.set("cartSize",cartData.getTotalUnitCount());
+				context.set(CART_SIZE,cartData.getTotalUnitCount());
 
-				Boolean isRental = (Boolean)cartData.getIsRentalCart();
-				if(isRental){
-					context.set("isBuy", 0);
-					if(rentalDate!= null) {
-						context.set("rentalDays", rentalDate.getNumberOfDays());
-					}
+				boolean isRental = cartData.getIsRentalCart();
+				if(isRental && rentalDate!= null){
+					context.set(IS_BUY, 0);
+					context.set(RENTAL_DAYS, rentalDate.getNumberOfDays());
 				}else{
-					context.set("isBuy", 1);
+					context.set(IS_BUY, 1);
 				}
 
-				if(cartData.getDeliveryCost() != null) {
-					if (cartData.getDeliveryCost().getValue().floatValue() >= 0) {
-						context.set("shipping_cost", cartData.getDeliveryCost().getValue());
-					}
+				if(cartData.getDeliveryCost() != null && cartData.getDeliveryCost().getValue().floatValue() >= 0) {
+						context.set(SHIPPING_COST, cartData.getDeliveryCost().getValue().toPlainString());
+				}else {
+					context.set(SHIPPING_COST, "");
 				}
-				List<String> coupanCode= new ArrayList<>();
-				coupanCode.add("test");
-				cartData.setAppliedVouchers(coupanCode);
+
 				List<String> voucherCode = new ArrayList<>();
 				if(CollectionUtils.isNotEmpty(cartData.getAppliedVouchers())){
 					cartData.getAppliedVouchers().forEach( voucher -> {
 						voucherCode.add(voucher);
 					});
-					context.set("couponCode",voucherCode.toString());
+					context.setArrayValue(COUPON_CODE,voucherCode.toArray(new String[voucherCode.size()]));
 				}
         PriceData damageWaiverCost = cartData.getTotalDamageWaiverCost();
-				if(damageWaiverCost!= null){
-				context.set("damage_waiver_cost",damageWaiverCost.getValue());
-        context.set("subtotal",cartData.getSubTotal().getValue().doubleValue()+damageWaiverCost.getValue().doubleValue());
+				if(damageWaiverCost!= null && damageWaiverCost.getValue() != null){
+				context.set(DAMAGE_WAIVER_COST,damageWaiverCost.getValue().setScale(SCALE, RoundingMode.HALF_DOWN).toPlainString());
+					double subtotal =cartData.getSubTotal().getValue().doubleValue()+damageWaiverCost.getValue().doubleValue();
+					BigDecimal subTotal = new BigDecimal(subtotal); // NOSONAR
+					subTotal=subTotal.setScale(SCALE, RoundingMode.HALF_DOWN);
+					context.set(SUB_TOTAL, subTotal.toPlainString());
         }else{
-					context.set("subtotal",cartData.getSubTotal().getValue().doubleValue());
+					context.set(SUB_TOTAL,cartData.getSubTotal().getValue().toPlainString());
 				}
         List<OrderEntryData> entryDataList = cartData.getEntries();
 				StringBuilder pName = new StringBuilder();
 				StringBuilder pSKU = new StringBuilder();
         if (CollectionUtils.isNotEmpty(entryDataList)){
             entryDataList.forEach( orderEntryData -> {
-            quantity.add(orderEntryData.getQuantity());
+            quantity.add(orderEntryData.getQuantity().toString());
             ProductData productData = orderEntryData.getProduct();
             pName.append("|").append(productData.getName());
             pSKU.append(",").append(productData.getCode());
             productId.add(productData.getProductId());
-						unitPrice.add(orderEntryData.getTotalPrice().getValue().floatValue());
+						unitPrice.add(orderEntryData.getBasePrice().getValue().toPlainString());
           });
-					productName = new String(pName.toString());
-					productSKU  = new String(pSKU.toString());
-					context.set("quantity", quantity.toString());
-					context.set("unit_price",unitPrice.toString());
-					context.set("total_value",cartData.getTotalPrice().getValue());
+					productName = pName.toString();
+					productSKU  = pSKU.toString();
+					context.setArrayValue(QUANTITY, quantity.toArray(new String[quantity.size()]));
+					context.setArrayValue(UNIT_PRICE,unitPrice.toArray(new String[unitPrice.size()]));
+					context.set(TOTAL_VALUE,cartData.getTotalPrice().getValue());
         }
 			}
 
-			if("shippingPage".equals((modelAndView.getModel().get("pageType"))) || "paymentPage".equals(modelAndView.getModel().get("pageType"))) {
+			if("shippingPage".equals((modelAndView.getModel().get(PAGE_TYPE))) || "paymentPage".equals(modelAndView.getModel().get(PAGE_TYPE))) {
 				AbstractOrderData orderData = (AbstractOrderData) modelAndView.getModel().get("cartData");
 				orderData.getEntries();
 				orderData.getDeliveryCost();
-				if(orderData.getDeliveryCost() != null) {
-					if (orderData.getDeliveryCost().getValue().floatValue() >= 0) {
-						context.set("shipping_cost", orderData.getDeliveryCost().getValue());
-					}
+				if(orderData.getDeliveryCost() != null && orderData.getDeliveryCost().getValue().floatValue() >= 0) {
+						context.set(SHIPPING_COST, orderData.getDeliveryCost().getValue().toPlainString());
 				}
+				context.set(CART_SIZE,orderData.getTotalUnitCount());
 
-				context.set("cartSize",orderData.getTotalUnitCount());
-
-				Boolean isRental = (Boolean)orderData.getIsRentalCart();
-				if(isRental){
-					context.set("isBuy", 0);
-					if(rentalDate!= null) {
-						context.set("rentalDays", rentalDate.getNumberOfDays());
-					}
+				boolean isRental = orderData.getIsRentalCart();
+				if(isRental && rentalDate!= null){
+					 context.set(IS_BUY, 0);
+					 context.set(RENTAL_DAYS, rentalDate.getNumberOfDays());
 				}else{
-					context.set("isBuy", 1);
+					context.set(IS_BUY, 1);
 				}
 
 				List<String> voucherCode = new ArrayList<>();
@@ -145,93 +153,100 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 					orderData.getAppliedVouchers().forEach( voucher -> {
 						voucherCode.add(voucher);
 					});
-					context.set("couponCode",voucherCode.toString());
+					context.set(COUPON_CODE,voucherCode.toString());
 				}
-
-				context.set("damage_waiver_cost",orderData.getTotalDamageWaiverCost().getValue());
-				context.set("subtotal",orderData.getSubTotal().getValue().doubleValue()+orderData.getTotalDamageWaiverCost().getValue().doubleValue());
+			 PriceData damageWaiverCost =	orderData.getTotalDamageWaiverCost();
+				if(damageWaiverCost!= null && damageWaiverCost.getValue() != null) {
+					context.set(DAMAGE_WAIVER_COST,
+							damageWaiverCost.getValue().setScale(SCALE, RoundingMode.HALF_DOWN));
+					double subtotal =orderData.getSubTotal().getValue().doubleValue()+damageWaiverCost.getValue().doubleValue();
+					BigDecimal subTotal = new BigDecimal(subtotal); //// NOSONAR
+					subTotal=subTotal.setScale(SCALE, RoundingMode.HALF_DOWN);
+					context.set(SUB_TOTAL, subTotal.toPlainString());
+				}else{
+					context.set(SUB_TOTAL, orderData.getSubTotal().getValue().toPlainString());
+				}
 				List<OrderEntryData> entryDataList = orderData.getEntries();
 				StringBuilder pName = new StringBuilder();
 				StringBuilder pSKU = new StringBuilder();
 				if (CollectionUtils.isNotEmpty(entryDataList)){
 					entryDataList.forEach( orderEntryData -> {
-						quantity.add(orderEntryData.getQuantity());
+						quantity.add(orderEntryData.getQuantity().toString());
 						ProductData productData = orderEntryData.getProduct();
 						pName.append("|").append(productData.getName());
 						pSKU.append(",").append(productData.getCode());
 						productId.add(productData.getProductId());
-						unitPrice.add(orderEntryData.getTotalPrice().getValue().floatValue());
+						unitPrice.add(orderEntryData.getBasePrice().getValue().toPlainString());
 					});
-					productName = new String(pName.toString());
-					productSKU  = new String(pSKU.toString());
+					productName = pName.toString();
+					productSKU  = pSKU.toString();
 
-					context.set("quantity", quantity.toString());
-					context.set("unit_price",unitPrice.toString());
-					context.set("total_value",orderData.getTotalPrice().getValue());
+					context.setArrayValue(QUANTITY, quantity.toArray(new String[quantity.size()]));
+					context.setArrayValue(UNIT_PRICE,unitPrice.toArray(new String[unitPrice.size()]));
+					context.set(TOTAL_VALUE,orderData.getTotalPrice().getValue());
 				}
 
 			}
 
-			if("ORDERCONFIRMATION".equals(modelAndView.getModel().get("pageType")) ) {
+			if("ORDERCONFIRMATION".equals(modelAndView.getModel().get(PAGE_TYPE)) ) {
 				AbstractOrderData orderData = (AbstractOrderData) modelAndView.getModel().get("orderData");
 				context.set("orderID",orderData.getCode());
-
-
-				orderData.getDeliveryCost();
-				if(orderData.getDeliveryCost() != null) {
-					if (orderData.getDeliveryCost().getValue().floatValue() >= 0) {
-						context.set("shipping_cost", orderData.getDeliveryCost().getValue());
-					}
+				if(orderData.getDeliveryCost() != null && orderData.getDeliveryCost().getValue().floatValue() >= 0) {
+						context.set(SHIPPING_COST, orderData.getDeliveryCost().getValue().toPlainString());
 				}
 
-				context.set("cartSize",orderData.getTotalUnitCount());
+				context.set(CART_SIZE,orderData.getTotalUnitCount());
 
-				Boolean isRental = (Boolean)orderData.getIsRentalCart();
-				if(isRental){
-					context.set("isBuy", 0);
-					if(orderData.getRentalDates()!= null) {
-						context.set("rentalDays",orderData.getRentalDates().getNumberOfDays());
-					}
+				boolean isRental = orderData.getIsRentalCart();
+				if(isRental && orderData.getRentalDates()!= null){
+					context.set(IS_BUY, 0);
+					context.set(RENTAL_DAYS,orderData.getRentalDates().getNumberOfDays());
 				}else{
-					context.set("isBuy", 1);
+					context.set(IS_BUY, 1);
 				}
-				List<String> coupanCode= new ArrayList<>();
-				coupanCode.add("test");
-				orderData.setAppliedVouchers(coupanCode);
 				List<String> voucherCode = new ArrayList<>();
 				if(CollectionUtils.isNotEmpty(orderData.getAppliedVouchers())){
 					orderData.getAppliedVouchers().forEach( voucher -> {
 						voucherCode.add(voucher);
 					});
-					context.set("couponCode",voucherCode.toString());
+					context.set(COUPON_CODE,voucherCode.toString());
 				}
-
-				context.set("damage_waiver_cost",orderData.getTotalDamageWaiverCost().getValue());
-				context.set("subtotal",orderData.getSubTotal().getValue().doubleValue()+orderData.getTotalDamageWaiverCost().getValue().doubleValue());
+				PriceData damageWaiverCost =	orderData.getTotalDamageWaiverCost();
+				if(damageWaiverCost!= null && damageWaiverCost.getValue() != null) {
+					context.set(DAMAGE_WAIVER_COST,
+							damageWaiverCost.getValue().setScale(SCALE, RoundingMode.HALF_DOWN).toPlainString());
+					double subtotal =orderData.getSubTotal().getValue().doubleValue()+damageWaiverCost.getValue().doubleValue();
+					BigDecimal subTotal = new BigDecimal(subtotal); // NOSONAR
+					subTotal=subTotal.setScale(SCALE, RoundingMode.HALF_DOWN);
+					context.set(SUB_TOTAL, subTotal.toPlainString());
+				}else{
+					context.set(SUB_TOTAL, orderData.getSubTotal().getValue().toPlainString());
+				}
 				List<OrderEntryData> entryDataList = orderData.getEntries();
 				StringBuilder pName = new StringBuilder();
 				StringBuilder pSKU = new StringBuilder();
+				List<String> videoList = new ArrayList<>();
 				if (CollectionUtils.isNotEmpty(entryDataList)){
 					entryDataList.forEach( orderEntryData -> {
-						quantity.add(orderEntryData.getQuantity());
+						quantity.add(orderEntryData.getQuantity().toString());
 						ProductData productData = orderEntryData.getProduct();
 						pName.append("|").append(productData.getName());
 						pSKU.append(",").append(productData.getCode());
 						productId.add(productData.getProductId());
-						unitPrice.add(orderEntryData.getTotalPrice().getValue().floatValue());
+						unitPrice.add(orderEntryData.getBasePrice().getValue().toPlainString());
+						videoList.add(productData.isIsVideo() ? "1" :"0");
 					});
-					productName = new String(pName.toString());
-					productSKU  = new String(pSKU.toString());
+					productName = pName.toString();
+					productSKU  = pSKU.toString();
 
-					context.set("quantity", quantity.toString());
-					context.set("unit_price",unitPrice.toString());
-					context.set("total_value",orderData.getTotalPrice().getValue());
-
+					context.setArrayValue(QUANTITY, quantity.toArray(new String[quantity.size()]));
+					context.setArrayValue(UNIT_PRICE,unitPrice.toArray(new String[unitPrice.size()]));
+					context.set(TOTAL_VALUE,orderData.getTotalPrice().getValue().toPlainString());
+					context.set("order_tax",orderData.getTotalTax().getValue().toPlainString());
 					context.set("userEmail",customerData.getUid());
 					context.set("userFirstName",customerData.getFirstName());
 					context.set("userLastName",customerData.getLastName());
-					context.set("isVideo",orderData.getCode());
-
+					context.setArrayValue(IS_VIDEO,videoList.toArray(new String[videoList.size()]));
 				}
 
 			}
@@ -239,21 +254,16 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			if(productSKU != null && productSKU.contains(",")){
 			productSKU = productSKU.substring(1);
 		   }
-			if(productName.toString().contains("|")){
+			if(productName.contains("|")){
 			productName = productName.substring(1);
 	   	}
 			context.set("ProductName",productName);
 			context.set("productSKU",productSKU);
-			if (productId.size() == 1) {
-				context.set("prodid", productId.get(0));
-			}
-    else{
-				context.set("prodid", productId.toString());
-			}
+			context.setArrayValue("prodid",productId.toArray(new String[productId.size()]));
 		}
-		catch (Throwable e)
+		catch (Exception e)
 		{
-			LOG.error("TealiumContextBeforeViewHandler failed with message:" + e.getMessage());
+			LOG.error("TealiumContextBeforeViewHandler failed with message:" + e.getMessage()); // NOSONAR
 		}
 		finally
 		{

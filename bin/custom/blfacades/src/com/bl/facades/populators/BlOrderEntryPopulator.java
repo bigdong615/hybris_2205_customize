@@ -84,5 +84,6 @@ public class BlOrderEntryPopulator extends OrderEntryPopulator
 		entry.setProduct(getProductConverter().convert(Objects.nonNull(product) && product instanceof BlSerialProductModel
 				? ((BlSerialProductModel) product).getBlProduct() : product));
 		entry.getProduct().setProductId(((BlProductModel)product).getProductId());
+		entry.getProduct().setIsVideo(((BlProductModel)product).getIsVideo());
 	}
 }

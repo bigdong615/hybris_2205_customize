@@ -1,5 +1,5 @@
 <%@ tag body-content="empty" trimDirectiveWhitespaces="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core "%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ tag import="com.tealium.dataconnector.hybris.HybrisDataController" %>
 <%@ tag import="com.tealium.dataconnector.hybris.HybrisDataConverter" %>
@@ -22,7 +22,6 @@
 </c:choose>
 
 <%--                    ---------------------                            --%>
-
 <!-- UDO for page type "${currentPageType}" -->
 <c:choose>
 	<c:when test="${currentPageType == 'homepage'}">
