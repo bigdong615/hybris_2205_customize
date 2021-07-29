@@ -128,9 +128,12 @@ public class DefaultBlCouponFacade implements BlCouponFacade {
     }
   }
 
+  /**
+   * This method created to get order code from referer
+   */
   private String getOrderCodeFromRequest(final String referer) {
     final String[] split = referer.split(BlFacadesConstants.URL_SEPERATOR);
-    int size = split.length -1;
+    final int size = split.length -1;
     return split[size];
   }
 

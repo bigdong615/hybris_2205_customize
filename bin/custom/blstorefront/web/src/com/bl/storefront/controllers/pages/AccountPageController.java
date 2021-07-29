@@ -1349,7 +1349,7 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			if (LOG.isDebugEnabled())
 			{
-				LOG.debug(e.getMessage(), e);
+				BlLogger.logMessage(LOG , Level.DEBUG , e.getMessage() , e);
 			}
 
 		}
