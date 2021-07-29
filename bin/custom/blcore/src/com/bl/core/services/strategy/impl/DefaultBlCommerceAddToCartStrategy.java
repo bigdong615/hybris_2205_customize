@@ -56,6 +56,12 @@ public class DefaultBlCommerceAddToCartStrategy extends
           setDamageWaiverOptions(entryModel, parameter.getIsDamageWaiverProSelected(),
               parameter.getIsDamageWaiverSelected(), parameter.getIsNoDamageWaiverSelected());
         }
+        // Set gift card purchase values to entry model
+        if(Objects.nonNull(entryModel) && Objects.nonNull(parameter.getGiftCardAmount())){
+      	  entryModel.setRecipientEmail(parameter.getRecipientEmail());
+      	  entryModel.setRecipientName(parameter.getRecipientName());
+      	  entryModel.setRecipientMessage(parameter.getRecipientMessage());
+        }
         getModelService().save(entryModel);
 
         final String statusCode = getStatusCodeAllowedQuantityChange(actualAllowedQuantityChange,

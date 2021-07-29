@@ -33,7 +33,8 @@ public class CreateCreditCardPaymentMethodCommandImpl extends
 	{
 		PaymentMethodRequest braintreeRequest = request.getRequest();
 		braintreeRequest.options().verifyCard(getBrainTreeConfigService().getVerifyCard());
-
+		braintreeRequest.options().makeDefault(request.getIsDefault());
+		
 		LOG.info("braintreeRequest: " + braintreeRequest);
 		LOG.info("braintreeRequest.xml: " + braintreeRequest.toXML()); // toQueryString
 
@@ -88,6 +89,7 @@ public class CreateCreditCardPaymentMethodCommandImpl extends
 					result.setCardNumber(card.getMaskedNumber());
 					result.setImageSource(card.getImageUrl());
 					result.setCardholderName(card.getCardholderName());
+					result.setIsDefault(card.isDefault());
 					getLoggingHandler().handleResult("[PAYMENT METHOD]", card);
 				}
 			}

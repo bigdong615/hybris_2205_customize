@@ -64,6 +64,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GREAT_VALUE = "greatValue";
 	public static final String GREAT_VALUE_STRING = "Great Value";
 	public static final String STAFF_PICK_STRING = "Staff Pick";
+	public static final String ON_SALE = "ON SALE";
 	public static final String CLEAR_ALL_QUERY = "clearAllQuery";
 	public static final String PARENT_CATEGORY = "{parentcategory}";
 	public static final String RENTAL_CLEAR_ALL = "/rent/category/rentalgear";
@@ -186,6 +187,7 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String OPERATOR = "operator";
 	public static final String IS_RENTAL_CART = "rentalCart";
 	public static final String RENTAL_VALUE = "value";
+	public static final String UG_PERCENTAGE_DISCOUNT_VALUE = "value";
 	public static final String RENTAL_DURATION = "rentalDuration";
 	public static final String RENTAL_DURATION_OPERATOR = "rentalDurationOperator";
 	public static final String RENTAL_DURATION_DAYS = "rentalDurationDays";
@@ -199,6 +201,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String GIFT_CARD_CODE = "giftCardCode";
 
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
+
+	public static final String IS_USED_GEAR_PODUCT = "usedGearProduct";
+
+  public static final String ITEMS_ON_SALE = "Items On Sale";
+
 	public static final String IS_DISCONTINUED = "isDiscontinued";
 
 	public static final String COMPLETED = "Completed";
@@ -206,7 +213,8 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	
 	public static final String ZERO_RATING = "0";
 	public static final String REVIEW_PAGE_DATE_FORMAT = "EEEE, MMM d";
-	
+	public static final String BL_PRODUCTCATALOG = "blProductCatalog";
+
 	public static final int STATUS_LIST_SIZE_ONE = 1;
 	public static final int STATUS_LIST_SIZE_TWO = 2;
 	public static final int STATUS_LIST_SIZE_THREE = 3;
@@ -215,6 +223,14 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 
 	public static final String DAMAGE_WAIVER_ERROR =  "Total Damage Waiver Cost : {}";
 	public static final String NEW_LINE_CHARACTER =  "\n";
+  public static final String CATALOG_VERSION_NAME = "Online";
+
+	public static final String SUBSCRIPTION_API_OPERATION_STATUS = "OK";
+	public static final String SUBSCRIPTION_CONTACT_KEY = "contactKey";
+	public static final String EMAIL_ADDRESS = "Email Address";
+	public static final String EMAIL_ADDRESSES = "Email Addresses";
+	public static final String HTML_ENABLED = "HTML Enabled";
+
 
 	private BlCoreConstants()
 	{

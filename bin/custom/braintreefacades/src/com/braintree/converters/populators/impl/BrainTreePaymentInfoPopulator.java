@@ -31,6 +31,7 @@ public class BrainTreePaymentInfoPopulator implements Populator<BrainTreePayment
 		target.setCardholderName(source.getCardholderName());
 		target.setPayer(source.getPayer());
 		target.setPaymentMethodNonce(source.getNonce());
+		target.setIsDefault(source.isIsDefault());
 		if (source.getCardType() != null)
 		{
 			target.setCardType(source.getCardType().toString());

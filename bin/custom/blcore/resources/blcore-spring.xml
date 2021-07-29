@@ -456,6 +456,7 @@
 		<property name="keyGenerator" ref="productIdGenerator"/>
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -588,7 +589,7 @@
 		<property name="interceptor" ref="blSerialProductPrepareInterceptor"/>
 		<property name="typeCode" value="BlSerialProduct"/>
 	</bean>
-	
+
 	<!--Bl-57 new stock related service and dao classes added-->
 	<alias alias="blStockLevelDao" name="defaultBlStockLevelDao"/>
 	<bean id="defaultBlStockLevelDao" class="com.bl.core.stock.impl.DefaultBlStockLevelDao" parent="stockLevelDao">
@@ -808,6 +809,7 @@
 		class="com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy"
 		parent="defaultCommerceCartCalculationStrategy">
 		<property name="giftCardService" ref="giftCardService" />
+		<property name="modelService" ref="modelService" />
 	</bean>
 	<!--Gift card End-->
 	
@@ -848,6 +850,20 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
     </bean>
 
+	<!-- BL-626 Email Subscription changes-->
+	<alias name="defaultBlEmailSubscriptionService" alias="blEmailSubscriptionService"/>
+	<bean id="defaultBlEmailSubscriptionService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionService">
+		<property name="modelService" ref="modelService"/>
+		<property name="blEmailSubscriptionRestService" ref="blEmailSubscriptionRestService"/>
+	</bean>
+
+	<alias name="defaultBlEmailSubscriptionRestService" alias="blEmailSubscriptionRestService"/>
+	<bean id="defaultBlEmailSubscriptionRestService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionRestService">
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--  BL-626  Email Subscription changes end-->
+	
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
 	</bean>
@@ -888,6 +904,21 @@
 	<bean id="blFreeRentalDatesStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
 		<property name="key" value="defaultBlRuleFreeRentalDatesRAOAction"/>
 		<property name="value" ref="orderTotalAdjustActionStrategy"/>
+	</bean>
+
+	<!-- [BL-663]: Custom Actions for used gear products promotion-->
+	<alias alias="ruleUsedGearPercentageDiscountAction" name="defaultRuleUsedGearPercentageDiscountAction" />
+	<bean id="defaultRuleUsedGearPercentageDiscountAction" class="de.hybris.platform.ruledefinitions.actions.DefaultRuleExecutableAction">
+		<property name="raoAction" ref="ruleUGOrderEntryPercentageDiscountRAOAction"/>
+	</bean>
+	<alias alias="ruleUGOrderEntryPercentageDiscountRAOAction" name="defaultBlUGOrderEntryPercentageDiscountRAOAction" />
+	<bean id="defaultBlUGOrderEntryPercentageDiscountRAOAction" parent="abstractRuleExecutableSupport" class="com.bl.core.promotions.ruledefinitions.actions.BlUGOrderEntryPercentageDiscountRAOAction">
+		<property name="productService" ref="productService"/>
+	</bean>
+
+	<bean id="blUsedGearPercentDiscountStrategiesMapping" depends-on="promotionActionStrategiesMapping" parent="mapMergeDirective">
+		<property name="key" value="defaultBlUGOrderEntryPercentageDiscountRAOAction"/>
+		<property name="value" ref="orderEntryAdjustActionStrategy"/>
 	</bean>
 
 	<!--Added for promo code case sensitivity check-->
@@ -937,6 +968,23 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
+	<!-- [BL-663]  SOLR Field value Resolver for OnSale solr attribute  and min promotion price-->
+	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
+	<bean id="blUsedGearPromotionPriceValueResolver" class="com.bl.core.resolvers.BlUsedGearPromotionPriceValueResolver" parent="abstractValueResolver">
+			<property name="baseStoreService" ref="baseStoreService"/>
+			<property name="blPromotionService" ref="blPromotionService"/>
+			<property name="blPricingService" ref="blPricingService"/>
+	</bean>
+
+	<!--[BL-663] Added promotion Service for promotion active or not-->
+	<alias name="defaultBlPromotionService" alias="blPromotionService"/>
+	<bean id="defaultBlPromotionService" class="com.bl.core.promotions.promotionengineservices.service.impl.DefaultBlPromotionService">
+		<property name="promotionDao" ref="promotionDao"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+	</bean>
+	<!--[BL-663] Added facet on sale on PLP/SLP -->
+	<bean id="blOnSaleFacetNameProvider"
+		class="com.bl.core.search.solrfacetsearch.provider.impl.BlOnSaleFacetNameProvider"/>
 	<!-- BL-753:This interceptor is added to update consignment in order notes -->
 	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
 	<bean id="blOrderPrepareInterceptor"
@@ -966,6 +1014,7 @@
 	<alias name="blProductValidateInterceptor" alias="blProductValidateInterceptor"/>
 	<bean id="blProductValidateInterceptor"	class="com.bl.core.model.interceptor.BlProductValidateInterceptor">
 	</bean>
+
 	<bean id="blProductValidateInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
 		<property name="interceptor" ref="blProductValidateInterceptor"/>
 		<property name="typeCode" value="BlProduct"/>
@@ -983,6 +1032,7 @@
 		<property name="userService" ref="userService"/>
 		<property name="pagedFlexibleSearchService" ref="pagedFlexibleSearchService"/>
 	</bean>
+
 	<alias alias="boxDimensionService" name="defaultBoxDimensionService" />
 	 <bean name="defaultBoxDimensionService" class="com.bl.core.services.box.impl.BoxDimensionServiceImpl">
         <property name="blStateWarehouseMappingDao" ref="blStateWarehouseMappingDao"/>
@@ -1039,6 +1089,7 @@
 		<property name="interceptor" ref="blNotesPrepareInterceptor"/>
 		<property name="typeCode" value="Notes"/>
 	</bean>
+
 
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
 	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">

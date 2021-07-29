@@ -16,7 +16,7 @@ $approved=approvalstatus(code)[default='approved']
 
 
 
-INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code);unit(code)[default='pieces']
+INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code);manufacturerName[default='Other'];unit(code)[default='pieces']
                              ;;52708;5122708 ;5122708 ;Nikon_80-400mm_f4.5-5.6D_ED_VR;;ACTIVE;40002011;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
                              ;;59663;6051076 ;6051076 ;Canon_24-105mm_f4_IS;;SOLD;40003843;true;;1090;Norman's;418.25;335999;;2;BARCODE;0344B002;4960000000000;LENSES
                              ;;59667;6128205 ;6128205 ;Canon_24-105mm_f4_IS;;ACTIVE;50003850;true;;1090;Norman's;418.25;335812;;2;BARCODE;0344B002;4960000000000;LENSES
