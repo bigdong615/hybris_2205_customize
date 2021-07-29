@@ -78,61 +78,61 @@ public class DefaultBlInventoryScanToolServiceTest {
 
     @Test(expected = NullPointerException.class)
     public void testCheckValidLocationInBarcodeListForBarcodesNull() {
-        blDefaultInventoryScanToolService.checkValidLocationInBarcodeList(null);
+        blDefaultInventoryScanToolService.checkValidLocationInBarcodeList(null, Collections.emptyList());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void testCheckValidLocationInBarcodeListForBarcodesEmpty() {
-        blDefaultInventoryScanToolService.checkValidLocationInBarcodeList(Collections.emptyList());
+        blDefaultInventoryScanToolService.checkValidLocationInBarcodeList(Collections.emptyList(), Collections.emptyList());
     }
 
     @Test
     public void testCheckValidLocationInBarcodeListForBarcodesExists() {
         Assert.assertEquals(BlInventoryScanLoggingConstants.THREE,
-                blDefaultInventoryScanToolService.checkValidLocationInBarcodeList((List<String>) sampleBarcodes));
+                blDefaultInventoryScanToolService.checkValidLocationInBarcodeList((List<String>) sampleBarcodes, Collections.emptyList()));
     }
 
     @Test
     public void testCheckValidInventoryLocationForEmptyFilteredList() {
         Assert.assertEquals(BlInventoryScanLoggingConstants.THREE,
                 blDefaultInventoryScanToolService.checkValidInventoryLocation(StringUtils.EMPTY,
-                        Collections.emptyList()));
+                        Collections.emptyList(), Collections.emptyList()));
     }
 
     @Test
     public void testCheckValidInventoryLocationForNotEmptyFilteredListWithNonMatchingLocation() {
         Assert.assertEquals(BlInventoryScanLoggingConstants.FOUR,
                 blDefaultInventoryScanToolService.checkValidInventoryLocation(StringUtils.EMPTY,
-                        (List<String>) sampleBarcodes));
+                        (List<String>) sampleBarcodes, Collections.emptyList()));
     }
 
     @Test(expected = NullPointerException.class)
     public void testValidateLocationForFilteredListIsNull() {
-        blDefaultInventoryScanToolService.validateLocation(StringUtils.EMPTY, null);
+        blDefaultInventoryScanToolService.validateLocation(StringUtils.EMPTY, null, Collections.emptyList());
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void testValidateLocationForFilteredListIfEmpty() {
-        blDefaultInventoryScanToolService.validateLocation(StringUtils.EMPTY, Collections.emptyList());
+        blDefaultInventoryScanToolService.validateLocation(StringUtils.EMPTY, Collections.emptyList(), Collections.emptyList());
     }
 
     @Test
     public void testValidateLocationForInventoryLocationIsNull() {
         Assert.assertEquals(BlInventoryScanLoggingConstants.THREE,
-                blDefaultInventoryScanToolService.validateLocation(null, (List<String>) sampleBarcodes));
+                blDefaultInventoryScanToolService.validateLocation(null, (List<String>) sampleBarcodes, Collections.emptyList()));
     }
 
     @Test
     public void testValidateLocationForInventoryLocationIfEmpty() {
         Assert.assertEquals(BlInventoryScanLoggingConstants.THREE,
-                blDefaultInventoryScanToolService.validateLocation(StringUtils.EMPTY, (List<String>) sampleBarcodes));
+                blDefaultInventoryScanToolService.validateLocation(StringUtils.EMPTY, (List<String>) sampleBarcodes, Collections.emptyList()));
     }
 
     @Test
     public void testValidateLocationForInventoryLocationIfMatchButNoRecord() {
         Assert.assertEquals(BlInventoryScanLoggingConstants.TWO,
                 blDefaultInventoryScanToolService.validateLocation(BlInventoryScanLoggingConstants.SAMPLE1,
-                        (List<String>) sampleBarcodes));
+                        (List<String>) sampleBarcodes, Collections.emptyList()));
     }
 
     @Test(expected = NullPointerException.class)

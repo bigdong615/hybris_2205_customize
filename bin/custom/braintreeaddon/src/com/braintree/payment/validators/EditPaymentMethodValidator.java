@@ -16,12 +16,12 @@ public class EditPaymentMethodValidator implements PaymentMethodValidator
 	public static final int CVV_LENGTH_AMERICAN_EXPRESS = 4;
 
 	@Override
-	public ResourceErrorMessage validate(final String cardholder, final String expirationDate, final String cvv)
+	public ResourceErrorMessage validate(final String expirationDate, final String cvv)
 	{
-		if (StringUtils.isNotBlank(cardholder) && cardholder.length() > BRAINTREE_CARDHOLDER_MAX_LENGTHS)
+		/*if (StringUtils.isNotBlank(cardholder) && cardholder.length() > BRAINTREE_CARDHOLDER_MAX_LENGTHS)
 		{
 			return new ResourceErrorMessage("text.account.profile.paymentCart.editPaymentMethod.invalid.cardholderTooLong");
-		}
+		}*/
 
 		if (StringUtils.isNotBlank(cvv))
 		{

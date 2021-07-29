@@ -3,44 +3,64 @@
  */
 package com.braintree.facade.order.converters.populator;
 
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.enums.NotesEnum;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.NotesModel;
+import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.giftcard.data.BLGiftCardData;
+import com.bl.facades.product.data.RentalDateDto;
+import com.bl.logging.BlLogger;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import de.hybris.platform.commercefacades.order.converters.populator.OrderPopulator;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.OrderData;
+import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.payment.CreditCardPaymentInfoModel;
 import de.hybris.platform.core.model.order.payment.PaymentInfoModel;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import com.bl.core.constants.BlCoreConstants;
-import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.facades.product.data.RentalDateDto;
-import com.braintree.model.BrainTreePaymentInfoModel;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 
 public class BrainTreeOrderPopulator extends OrderPopulator
 {
+	private static final Logger LOGGER = Logger.getLogger(BrainTreeOrderPopulator.class);
+
 	private Converter<BrainTreePaymentInfoModel, CCPaymentInfoData> brainTreePaymentInfoConverter;
-	
+	private static final int ROUND_OFF_SCALE = 2;
 	@Override
-  public void populate(final OrderModel source, final OrderData target)
-  {
-	  super.populate(source, target);
-	  target.setRentalDates(getOrderRentalDates(source));
+	public void populate(final OrderModel source, final OrderData target) {
+		super.populate(source, target);
+		target.setRentalDates(getOrderRentalDates(source));
 		setGiftCardDetails(source, target);
 		target.setIsRentalCart(BooleanUtils.toBoolean(source.getIsRentalCart()));
+		target.setTotalDamageWaiverCost(createPrice(source, source.getTotalDamageWaiverCost()));
+		target.setPoNotes(source.getPoNotes());
+		target.setRentalDatesOnPrint(
+				setFormattedRentalDates(source.getRentalStartDate(), source.getRentalEndDate()));
+		if (CollectionUtils.isNotEmpty(source.getOrderNotes())) {
+			final Optional<NotesModel> notesModel = source.getOrderNotes().stream()
+					.filter(orderNote -> orderNote.getType().equals(NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES))
+					.findFirst();
+			notesModel.ifPresent(model -> target.setOrderNotes(model.getNote()));
+		}
+		final double promoDiscount = source.getTotalDiscounts();
+		final double gifCardDiscount = source.getGiftCardAmount();
+		target.setTotalDiscounts(createPrice(source, promoDiscount + gifCardDiscount));
 	}
 
 	/**
@@ -58,7 +78,9 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 				blGiftCardData.setCode(giftCardModel.getCode());
 				final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
 				//rounding off double value to 2 decimal places
-				BigDecimal gcRedeemedAmount = BigDecimal.valueOf(giftCardMovementModelList.get(giftCardMovementModelList.size()-1).getAmount()).setScale(2, RoundingMode.HALF_DOWN);
+				BigDecimal gcRedeemedAmount = BigDecimal.valueOf(
+						giftCardMovementModelList.get(giftCardMovementModelList.size() - 1).getAmount())
+						.setScale(ROUND_OFF_SCALE, RoundingMode.HALF_DOWN);
 				blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
 				blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
 				blGiftCardDataList.add(blGiftCardData);
@@ -124,5 +146,62 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 		this.brainTreePaymentInfoConverter = brainTreePaymentInfoConverter;
 	}
 
+	/**
+	 * Sets the formatted rental dates on print order confirmation page.
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	private RentalDateDto setFormattedRentalDates(final Date startDate, final Date endDate)
+	{
+		final RentalDateDto rentalDateDto = new RentalDateDto();
+		if(Objects.nonNull(startDate) && Objects.nonNull(endDate))
+		{
+			final String formattedRentalStartDate = getFormattedDate(startDate);
+			rentalDateDto.setSelectedFromDate(formattedRentalStartDate);
+			final String formattedRentalEndDate = getFormattedDate(endDate);
+			rentalDateDto.setSelectedToDate(formattedRentalEndDate);
+		}
+		return  rentalDateDto;
+	}
 
+	/**
+	 * Gets the formatted date in EEEE, MMM d format.
+	 * Example - Wednesday, Jan 31
+	 *
+	 * @param date the date
+	 * @return the formatted date
+	 */
+	private String getFormattedDate(final Date date)
+	{
+		return BlDateTimeUtils.convertDateToStringDate(date, BlCoreConstants.REVIEW_PAGE_DATE_FORMAT);
+	}
+
+	/**
+	 * Overriding to remove discounts from subtotal
+	 *
+	 * @param source abstractOrderModel
+	 * @param target target object
+	 */
+	@Override
+	protected void addTotals(final AbstractOrderModel source, final AbstractOrderData target) {
+		super.addTotals(source, target);
+		final double subTotal = source.getSubtotal();
+		final PriceData subTotalPriceData = createPrice(source, subTotal);
+		target.setSubTotal(subTotalPriceData);
+	}
+
+	/**
+	 * This method overridden to calculate the totalPrice with tax
+	 */
+	@Override
+	protected Double calcTotalWithTax(final AbstractOrderModel source) {
+		if (Objects.isNull(source)) {
+			BlLogger.logMessage(LOGGER, Level.ERROR, "source order must not be null",
+					new IllegalArgumentException());
+		}
+		// Since we have already calculated the total with Tax , so returning cart total as total price with tax
+		return Objects.nonNull(source) && Objects.nonNull(source.getTotalPrice()) ? source
+				.getTotalPrice() : 0.0d;
+	}
 }

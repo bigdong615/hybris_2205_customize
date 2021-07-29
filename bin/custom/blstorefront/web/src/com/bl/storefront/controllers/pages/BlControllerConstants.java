@@ -131,6 +131,23 @@ public class BlControllerConstants
 	public static final String FROM_PAGE = "fromPage";
 	public static final String USER_SELECTED_PO_NUMBER = "selectedPoNumber";
 	public static final String USER_SELECTED_PO_NOTES = "selectedPoNotes";
+
+
+	public static final String ORDER_DATA = "orderData";
+	public static final String PAGE_TYPE = "pageType";
+	public static final String ORDER_DETAILS = "orderDetails";
+	public static final String IS_USED_GEAR_CART_ACTIVE = "isUsedGearCartActive";
+	public static final String MY_ACCOUNT_ORDER = "/my-account/order/";
+	public static final String PAYMENT_ID = "paymentId";
+	public static final String PAYMENT_NONCE= "paymentNonce";
+	public static final String EXTEND_ORDER_DATA = "extendOrderData";
+	public static final String MY_ACCOUNT_EXTEND_RENTAL = "/my-account/extendRent/";
+  public static final String CLIENT_TOKEN = "client_token";
+  
+   public static final String MULTIPLEGIFTCARD = "Only one gift card can be ordered at a time";
+   public static final String GIFTCARDNOTALLOWE = "Gift card can not be ordered with active rental or used gear products";
+   public static final String ADDTOCARTWARNING = "Rental and Used gear products are not allowed together";
+
 	private BlControllerConstants()
 	{
 		//empty

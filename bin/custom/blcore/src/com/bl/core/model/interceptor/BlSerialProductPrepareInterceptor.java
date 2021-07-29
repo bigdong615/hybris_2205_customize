@@ -1,15 +1,22 @@
 package com.bl.core.model.interceptor;
 
 import com.bl.core.model.BlProductModel;
+
+import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.exceptions.ModelSavingException;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
 import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -20,6 +27,8 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.services.calculation.BlPricingService;
 import com.bl.core.stock.BlStockService;
 import com.bl.logging.BlLogger;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -48,8 +57,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	@Override
 	public void onPrepare(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx) throws InterceptorException
 	{
-		//updating conditional Overall rating.
-		updateConditionalOverallRating(blSerialProduct);
+		//Intercepting the change in serialStatus and changing the consignment status accordingly if available
+		doStatusChangeOnConsignment(blSerialProduct, ctx);
 		//Intercepting forSaleBasePrice and conditionRatingOverallScore attribute to create finalSalePrice for serial
 		calculateFinalSalePriceForSerial(blSerialProduct, ctx);
 		//Intercepting finalSalePrice and forSaleDiscount attribute to create incentivizedPrice for serial
@@ -214,7 +223,8 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 	private boolean isForSalePriceCalculationRequired(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
 	{
 		return ctx.isNew(blSerialProduct) || Objects.isNull(blSerialProduct.getFinalSalePrice())
-				|| ctx.isModified(blSerialProduct, BlSerialProductModel.CONDITIONRATINGOVERALLSCORE);
+				|| ctx.isModified(blSerialProduct, BlSerialProductModel.FUNCTIONALRATING)
+				|| ctx.isModified(blSerialProduct, BlSerialProductModel.COSMETICRATING);
 	}
 
 	/**
@@ -262,15 +272,122 @@ public class BlSerialProductPrepareInterceptor implements PrepareInterceptor<BlS
 				|| blSerialProduct.getIncentivizedPrice().compareTo(BigDecimal.ZERO) == 0
 				|| ctx.isModified(blSerialProduct, BlSerialProductModel.FINALSALEPRICE) ;
 	}
+	
+	/**
+	 * Do status change on consignment once the status of serial is updated.
+	 *
+	 * @param blSerialProduct
+	 *           the bl serial product
+	 * @param ctx
+	 *           the ctx
+	 */
+	private void doStatusChangeOnConsignment(final BlSerialProductModel blSerialProduct, final InterceptorContext ctx)
+	{
+		if (Objects.nonNull(blSerialProduct) && Objects.nonNull(blSerialProduct.getAssociatedConsignment())
+				&& Objects.nonNull(blSerialProduct.getSerialStatus())
+				&& ctx.isModified(blSerialProduct, BlSerialProductModel.SERIALSTATUS))
+		{
+			final HashSet<SerialStatusEnum> itemStatuses = Sets.newHashSet(blSerialProduct.getSerialStatus());
+			final ConsignmentModel associatedConsignment = blSerialProduct.getAssociatedConsignment();
+
+			associatedConsignment.getConsignmentEntries()
+					.forEach(consignmentEntry -> consignmentEntry.getSerialProducts().forEach(entryProduct -> {
+						if (entryProduct instanceof BlSerialProductModel 
+								&& !entryProduct.getPk().toString().equals(blSerialProduct.getPk().toString()))
+						{
+							itemStatuses.add(((BlSerialProductModel) entryProduct).getSerialStatus());
+						}
+					}));
+			if (CollectionUtils.isNotEmpty(itemStatuses))
+			{
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Statuses found for consignment : {} are {}", 
+						associatedConsignment.getCode(), itemStatuses.toString());
+				if(itemStatuses.size() == BlCoreConstants.STATUS_LIST_SIZE_ONE)
+				{
+					doStatusChangeForSingleStatus(itemStatuses.iterator().next(), associatedConsignment, ctx);
+				}
+				else
+				{
+					doStatusChangeForMultipleStatuses(itemStatuses, associatedConsignment, ctx);
+				}
+			}
+		}
+	}
 
 	/**
-	 * Updating conditional rating on the basis of cosmetic and functional rating.
-	 * @param blSerialProduct
+	 * Do status change on consignment if single status found for items in consignment.
+	 *
+	 * @param serialStatus
+	 *           the serial status
+	 * @param associatedConsignment
+	 *           the associated consignment
 	 */
-	private void updateConditionalOverallRating(final BlSerialProductModel blSerialProduct){
-      blSerialProduct.setConditionRatingOverallScore(
-      		getBlPricingService().getCalculatedConditionalRating(blSerialProduct.getCosmeticRating(),blSerialProduct.getFunctionalRating()));
+	private void doStatusChangeForSingleStatus(final SerialStatusEnum serialStatus, final ConsignmentModel associatedConsignment,
+			final InterceptorContext ctx)
+	{
+		if (serialStatus.equals(SerialStatusEnum.RECEIVED_OR_RETURNED))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.COMPLETED, ctx);
+		}
+		else if (serialStatus.equals(SerialStatusEnum.REPAIR_NEEDED))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR, ctx);
+		}
+		else if (serialStatus.equals(SerialStatusEnum.PARTS_NEEDED))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.INCOMPLETE_MISSING_ITEMS, ctx);
+		}
 	}
+
+	/**
+	 * Do status change on consignment if two statuses found for items in consignment.
+	 *
+	 * @param itemStatuses
+	 *           the item statuses
+	 * @param associatedConsignment
+	 *           the associated consignment
+	 */
+	private void doStatusChangeForMultipleStatuses(final HashSet<SerialStatusEnum> itemStatuses,
+			final ConsignmentModel associatedConsignment, final InterceptorContext ctx)
+	{
+		if (itemStatuses.containsAll(Lists.newArrayList(SerialStatusEnum.REPAIR_NEEDED, SerialStatusEnum.PARTS_NEEDED)))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.INCOMPLETE_MISSING_AND_BROKEN_ITEMS, ctx);
+		}
+		else if (itemStatuses.contains(SerialStatusEnum.PARTS_NEEDED))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.INCOMPLETE_MISSING_ITEMS, ctx);
+		}
+		else if (itemStatuses.contains(SerialStatusEnum.REPAIR_NEEDED))
+		{
+			changeStatusOnConsignment(associatedConsignment, ConsignmentStatus.INCOMPLETE_ITEMS_IN_REPAIR, ctx);
+		}
+	}
+
+	/**
+	 * Change status on consignment.
+	 *
+	 * @param associatedConsignment
+	 *           the associated consignment
+	 * @param consignmentStatus
+	 *           the consignment status
+	 */
+	private void changeStatusOnConsignment(final ConsignmentModel associatedConsignment, final ConsignmentStatus consignmentStatus,
+			final InterceptorContext ctx)
+	{
+		try
+		{
+			associatedConsignment.setStatus(consignmentStatus);
+			ctx.getModelService().save(associatedConsignment);
+			ctx.getModelService().refresh(associatedConsignment);
+		}
+		catch (final ModelSavingException exception)
+		{
+			BlLogger.logFormattedMessage(LOG, Level.ERROR, StringUtils.EMPTY, exception,
+					"Error while changing the status on consignment : {}", associatedConsignment.getCode());
+		}
+	}
+
 	/**
 	 *
 	 * Gets the bl pricing service.

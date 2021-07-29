@@ -221,3 +221,102 @@ INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true
 ;24;	12;	24;	2.25;
 ;24;	16;	12;	1.9 ;
 ;12;	12;	18;	1.27;
+
+# BL-794 Declaring Enums for Conditional Ratings
+INSERT_UPDATE ConditionRatingValueEnum ; code[unique=true] ; name[lang=en] 
+                                       ; 1                 ; 1             
+                                       ; 2                 ; 2             
+                                       ; 3                 ; 3             
+                                       ; 4                 ; 4             
+                                       ; 5                 ; 5             
+                                       ; 6                 ; 6             
+                                       ; 7                 ; 7             
+                                       ; 8                 ; 8             
+                                       ; 9                 ; 9             
+                                       ; 10                ; 10    
+                                       
+# BL-794 Adding tooltip data for FunctionalRating and CosmeticRating attributes
+UPDATE AttributeDescriptor ; qualifier[unique=true] ; attributeType(code)      ; enclosingType(code)[unique=true] ; description[lang=en]                                                                                           
+                           ; functionalRating       ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[10 - Near flawless] [9 – [Sensors/Lenses] No visible debris, images are clean. [Monitors/Other] No visible scuffing or other damage] [8 - [Sensors/Lenses] Very light internal dust, but images are clean. [Monitors/Other] Showing some light scuffing and wear from use, reference image clean (Monitors/Other Items).] [7 - [Sensors/Lenses] Light scuffs and debris behind glass, images may be affected at f/16 or above. [Monitors/Other] Scuffing and some obvious wear may be starting to show on reference image.] [6 - [Sensors/Lenses] Faint scratches and internal dust, images will be affected at f/11 and above. [Monitors/Other] Scratches and scuffs are noticeable on reference image, but still useable.] [5-1 - Scratches and scuffs are noticeable on reference image, but still useable.]" 
+                           ; cosmeticRating         ; ConditionRatingValueEnum ; BlSerialProduct                  ; "[10 - No signs of wear and tear: almost like new!]	[9 - Light wear and tear: Hard to find any scuffs, dings, or dulling paint.] [8 - Mild wear and tear: Faint impacts and scuffs are starting to show and item has lost a little of its shine.] [7 - Heavy wear and tear: Noticeable wear from light impacts, scuffs, and the paint job is dulling, but fully functional.] [6 - Severe wear and tear: Noticeable wear from heavy impacts, scuffs, and the paint job is diminishing, but fully functional.] [5-1: Very worn and torn but fully functional.]" 
+
+INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]                     ; name[lang=en]                                    
+                                              ; BABY_CAGE_WORKSTATION                 ; Baby Cage Workstation                            
+                                              ; BIN                                   ; Bin                                              
+                                              ; BOXING_WORKSTATION                    ; Boxing Workstation                               
+                                              ; CAP_SPECIFIC_PERSON                   ; CAP = SPECIFIC PERSON, used for employee rentals 
+                                              ; CLEAN_FRONT_DESK_CART                 ; Clean Front Desk Cart                            
+                                              ; CLEAN_GEAR_AISLE_IN_CAGE              ; Clean Gear Aisle in Cage                         
+                                              ; CLEAN_GEAR_CAGE                       ; Clean Gear Cage                                  
+                                              ; CLEAN_GEAR_MOBILE_CART                ; Clean Gear Mobile Cart                           
+                                              ; CLEAN_GEAR_REQUEST_PICKUP_MOBILE_CART ; Clean Gear Request Pickup Mobile Cart            
+                                              ; CLEAN_GEAR_SHIPPING_MOBILE_CART       ; Clean Gear Shipping Mobile Cart                  
+                                              ; CLEAN_MOBILE_LAUNDRY_BIN              ; Clean Mobile Laundry Bin                         
+                                              ; CLEAN_PRIORITY_GEAR_CART              ; Clean Priority Gear Cart                         
+                                              ; CLEAN_PRIORITY_MOBILE_CART            ; Clean Priority Mobile Cart                       
+                                              ; CS_WORKSTATION                        ; CS Workstation                                   
+                                              ; DIRTY_FRONT_DESK_CART                 ; Dirty Front Desk Cart                            
+                                              ; DIRTY_GEAR_MOBILE_CART                ; Dirty Gear Mobile Cart                           
+                                              ; DIRTY_MOBILE_LAUNDRY_BIN              ; Dirty Mobile Laundry Bin                         
+                                              ; DIRTY_PRIORITY_GEAR                   ; Dirty Priority Gear                              
+                                              ; DIRTY_PRIORITY_MOBILE_CART            ; Dirty Priority Mobile Cart                       
+                                              ; FD_OUT_OF_WH                          ; For front desk orders, out of warehouse location 
+                                              ; FRONT_DESK_MOBILE_CART                ; Front Desk Mobile Cart                           
+                                              ; FRONT_DESK_SHIPPED_MOBILE_CART        ; Front Desk Shipped Mobile Cart                   
+                                              ; FRONT_DESK_SHIPPING_BIN               ; Front Desk Shipping Bin                          
+                                              ; FRONT_DESK_SHIPPING_WORKSTATION       ; Front Desk Shipping Workstation                  
+                                              ; MAP_SPECIFIC_PERSON                   ; MAP = SPECIFIC PERSON, used for employee rentals 
+                                              ; MARKETING_WORKSTATION                 ; Marketing Workstation                            
+                                              ; MOBILE_CART                           ; Mobile Cart                                      
+                                              ; NEW_GEAR_PERMANENT_SHELF              ; New Gear Permanent Shelf                         
+                                              ; OC_UNKNOWN_LOCATION                   ; OC location for items with unknown locations     
+                                              ; OC_TO_BE_SCRAPPED                     ; OC location of items that need to be scrapped    
+                                              ; PARTS_NEEDED_MOBILE_CART              ; Parts Needed Mobile Cart                         
+                                              ; PARTS_WAITING_MOBILE_CART             ; Parts Waiting Mobile Cart                        
+                                              ; PICKER_WORKSTATION                    ; Picker Workstation                               
+                                              ; REPAIR_CABINET                        ; Repair Cabinet                                   
+                                              ; REPAIR_CLEAN_MOBILE_CART              ; Repair Clean Mobile Cart                         
+                                              ; REPAIR_MOBILE_LAUNDRY_BIN             ; Repair Mobile Laundry Bin                        
+                                              ; REPAIR_MOBILE_SHELF                   ; Repair Mobile Shelf                              
+                                              ; REPAIR_SHELF                          ; Repair Shelf                                     
+                                              ; SCRAPPED_GEAR_PERMANENT_LOCATION      ; Scrapped Gear Permanent Location                 
+                                              ; SHIPPER_WORKSTATION                   ; Shipper Workstation                              
+                                              ; TAN_MOBILE_CART                       ; Tan Mobile Cart                                  
+                                              ; TECH_ENGINEERING_WORKSTATION          ; Tech Engineering Workstation                     
+                                              ; VIP_CHECKED_GEAR_WORKSTATION          ; VIP Checked Gear Workstation                     
+                                              ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
+                                              ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
+                                              
+
+INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
+                            ;COMPACT;COMPACT
+                            ;COMPACTINPUT;COMPACTINPUT
+                            ;EXPANDED;EXPANDED
+                            ;EXPANDEDINPUT;EXPANDEDINPUT
+
+# BL-798 Enum values for RepairReasonsEnum
+INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en]                
+                                ; NO_POWER                        ; No Power                     
+                                ; ERROR_CODE                      ; Error Code                   
+                                ; SENSOR_MALFUNCTION              ; Sensor malfunction           
+                                ; SENSOR_SCRATCH                  ; Sensor scratch               
+                                ; MIRROR_DAMAGE_OR_MALFUNCTION    ; Mirror Damage/Malfunction    
+                                ; WATER_DAMAGE                    ; Water Damage                 
+                                ; LCD_DAMAGE_OR_MALFUNCTION       ; LCD Damage/Malfunction       
+                                ; MODE_DIAL_CAP_FELL_OFF          ; Mode dial cap fell off       
+                                ; BUTTONS_OR_DIALS_NOT_RESPONDING ; Buttons/Dials not responding 
+                                ; HOT_SHOE_DAMAGE_OR_MALFUNCTION  ; Hot shoe damage/Malfunction  
+                                ; FOCUS_SCREEN_DAMAGE             ; Focus screen damage          
+                                ; VIEWFINDER_DEBRIS               ; Viewfinder debris            
+                                ; CF_OR_SD_SLOT_DAMAGE            ; CF/SD slot damage            
+                                ; CARDS_NOT_READING_OR_RECORDING  ; Cards not reading/recording  
+                                ; HOUSING_DAMAGE                  ; Housing Damage               
+                                ; NO_AF_FUNCTION                  ; No AF Function               
+                                ; NO_AUDIO                        ; No Audio                     
+                                ; FLASH_NOT_FIRING_OR_POPPING_UP  ; Flash not firing/popping up  
+                                ; PORT_OR_JACK_MALFUNCTION        ; Port/jack malfunction        
+                                ; STREAMING_ISSUES                ; Streaming issues             
+                                ; WIFI_ISSUES                     ; Wifi issues      
+                                
+INSERT_UPDATE ProductTypeEnum ; code[unique=true]               ; name[lang=en]                
+                                ; GIFTCARD                        ; Gift Card                     

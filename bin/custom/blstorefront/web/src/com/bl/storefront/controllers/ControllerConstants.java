@@ -85,6 +85,7 @@ public interface ControllerConstants
 				String AccountPaymentInfoPage = "pages/account/accountPaymentInfoPage"; // NOSONAR
 				String AccountRegisterPage = "pages/account/accountRegisterPage"; // NOSONAR
 				String AccountBookMarkPage = "pages/account/accountBookmarksPage"; //NOSONAR
+				String AccountOrderExtendSummaryPage = "pages/account/accountRentalExtendOrderSummary"; //NOSONAR
 			}
 
 			interface Checkout // NOSONAR
@@ -168,6 +169,9 @@ public interface ControllerConstants
 			interface Cart // NOSONAR
 			{
 				String AddToCartPopup = "fragments/cart/addToCartPopup"; // NOSONAR
+				String AddToCartGiftCardPopup = "fragments/cart/addToCartGiftCardPopup"; // NOSONAR
+				String MultipleGiftCardWarningPopup = "fragments/cart/multipleGiftCardWarningPopup"; // NOSONAR
+				String GiftCardNotAllowedWarningPopup = "fragments/cart/giftCardNotAllowedWarningPopup"; // NOSONAR
 				String AddToCartWarningPopup = "fragments/cart/addToCartWarningPopup"; // NOSONAR
 				String MiniCartPanel = "fragments/cart/miniCartPanel"; // NOSONAR
 				String MiniCartErrorPanel = "fragments/cart/miniCartErrorPanel"; // NOSONAR
@@ -186,6 +190,8 @@ public interface ControllerConstants
 				String TermsAndConditionsPopup = "fragments/checkout/termsAndConditionsPopup"; // NOSONAR
 				String BillingAddressForm = "fragments/checkout/billingAddressForm"; // NOSONAR
 				String ReadOnlyExpandedOrderForm = "fragments/checkout/readOnlyExpandedOrderForm"; // NOSONAR
+				String PrintOrderConfirmation = "pages/checkout/multi/printOrderConfirmation"; // NOSONAR
+				String PrintUsedGearOrderConfirmation = "pages/checkout/multi/printUsedGearOrderConfirmation"; // NOSONAR
 			}
 
 			interface Password // NOSONAR

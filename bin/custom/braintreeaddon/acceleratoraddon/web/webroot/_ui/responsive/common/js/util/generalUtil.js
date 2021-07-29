@@ -167,12 +167,12 @@ function selectPaymentMethod() {
     } else {
         $(CONST.PAYMENT_METHOD_PAYPAL).prop(CONST.PROP_CHECKED, true);
         $(CONST.SUBMIT_CILENT_ORDER_POST_FORM_ID).attr('type', 'button');
-        if(isAvailableVenmo()){
+       /* if(isAvailableVenmo()){
             $(CONST.PAYMENT_METHOD_VENMO).prop(CONST.PROP_CHECKED, true);
             $(CONST.VENMO_SELECTOR).removeClass(CONST.HIDE);
         } else {
             $(CONST.VENMO_SELECTOR).remove();
-        }
+        }*/
 
         disableRadioButton();
     }

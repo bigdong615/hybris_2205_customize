@@ -5,6 +5,7 @@ import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.shipping.BlCheckoutFacade;
+import com.bl.facades.subscription.BlEmailSubscriptionFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.security.cookie.BlRentalDateCookieGenerator;
 import com.braintree.configuration.service.BrainTreeConfigService;
@@ -13,6 +14,7 @@ import com.braintree.controllers.BraintreeaddonControllerConstants;
 import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.PreValidateCheckoutStep;
@@ -47,6 +49,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -79,7 +82,10 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@Resource(name = "blRentalDateCookieGenerator")
 	private BlRentalDateCookieGenerator blRentalDateCookieGenerator;
-	
+
+	@Resource(name = "blEmailSubscriptionFacade")
+	private BlEmailSubscriptionFacade blEmailSubscriptionFacade;
+
 	@ModelAttribute(name = BraintreeaddonControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration()
 	{
@@ -181,11 +187,13 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 
 	@PostMapping(value = "/placeOrder")
 	@RequireHardLogIn
-	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, final Model model,
+	public String placeOrder(@ModelAttribute("placeOrderForm") final BraintreePlaceOrderForm placeOrderForm, @RequestParam(value ="orderNotes")
+	final String orderNotes, final Model model,
 			final HttpServletRequest request, final HttpServletResponse response, final RedirectAttributes redirectModel)
 					throws CMSItemNotFoundException, InvalidCartException, CommerceCartModificationException
 	{
 		final List<String> removedGiftCardCodeList = blCheckoutFacade.recalculateCartForGiftCard();
+		blCheckoutFacade.saveOrderNotes(orderNotes);
 		if (CollectionUtils.isNotEmpty(removedGiftCardCodeList)) {
 			return redirectToPaymentPageOnGiftCardRemove(redirectModel, removedGiftCardCodeList);
 		}
@@ -204,7 +212,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     LOG.info("placeOrderForm.getShippingPostalCode: " + placeOrderForm.getShipsFromPostalCode());
     CCPaymentInfoData paymentInfo = getCheckoutFacade().getCheckoutCart().getPaymentInfo();
     boolean isPaymentAuthorized = false;
-    if (CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
+    if (paymentInfo != null && CREDIT_CARD_CHECKOUT.equalsIgnoreCase(paymentInfo.getSubscriptionId()))
     {
       try
       {
@@ -228,13 +236,18 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 		try
 		{
 			LOG.error("getCheckoutFacade: " + getCheckoutFacade());
-
-			brainTreeCheckoutFacade.storeIntentToCart();
-			brainTreeCheckoutFacade.storeCustomFieldsToCart(getMergedCustomFields(placeOrderForm.getCustomFields()));
-			brainTreeCheckoutFacade.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
-
+			if(paymentInfo != null) {
+				brainTreeCheckoutFacade.storeIntentToCart();
+				brainTreeCheckoutFacade
+						.storeCustomFieldsToCart(getMergedCustomFields(placeOrderForm.getCustomFields()));
+				brainTreeCheckoutFacade
+						.storeShipsFromPostalCodeToCart(placeOrderForm.getShipsFromPostalCode());
+			}
 			orderData = getCheckoutFacade().placeOrder();
 			LOG.error("Order has been placed, number/code: " + orderData.getCode());
+			if(paymentInfo != null && placeOrderForm.isNewsLetterSubscriptionOpted()) {
+				blEmailSubscriptionFacade.subscribe(paymentInfo.getBillingAddress().getEmail());
+			}
 			blRentalDateCookieGenerator.removeCookie(response);
 			blDatePickerService.removeRentalDatesFromSession();
 		}
@@ -273,7 +286,7 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 			invalid = true;
 		}
 
-		if (getCheckoutFlowFacade().hasNoPaymentInfo())
+		if (StringUtils.isEmpty(getCheckoutFlowFacade().getCheckoutCart().getPoNumber()) && getCheckoutFlowFacade().hasNoPaymentInfo())
 		{
 			GlobalMessages.addErrorMessage(model, "checkout.paymentMethod.notSelected");
 			invalid = true;

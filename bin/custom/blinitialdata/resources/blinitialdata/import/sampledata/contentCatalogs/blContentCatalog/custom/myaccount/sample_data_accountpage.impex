@@ -16,7 +16,9 @@ INSERT_UPDATE JspIncludeComponent;$contentCV[unique=true];uid[unique=true];name;
                                  ;;VerificationImagesComponent ; Verification Images Component ; accountVerificationImagesPage.jsp ;; VerificationImagesComponent
                                  ;;CreditCartsComponent    ; Credit Carts Component   ; accountCreditCartsPage.jsp ;;CreditCartsComponent
                                  ;;UpdateEmailComponent;Update Email Component;accountProfileEmailEditPage.jsp;;UpdateEmailComponent
-
+                                 ;;BlAccountOrderDetailsComponent; Account Order Details;accountOrderDetails.jsp;;BlAccountOrderDetailsComponent
+                                 ;;BlAccountRentalOrderExtendDetailsComponent; Account Rental Order Extend Details;accountRentalExtendOrderDetails.jsp;;BlAccountRentalOrderExtendDetailsComponent
+                                 ;;BlAccountRentalOrderExtendConfirmationComponent; Account Rental Order Extend Confirmation;extendOrderConfirmation.jsp;;BlAccountRentalOrderExtendConfirmationComponent
 
 # CMS View Order Action
 INSERT_UPDATE ViewOrderAction;$contentCV[unique=true];uid[unique=true];url;name;&actionRef
@@ -34,7 +36,9 @@ INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];name;active;c
                          ;;BodyContentSlot-verificationImages;Body Content Slot for Verification Images;true;VerificationImagesComponent;;;
                          ;;BodyContentSlot-creditCarts;Body Content Slot for Credit Carts;true;CreditCartsComponent;;;
                          ;;BodyContent-update-email;Body Content Slot for Update Email;true;UpdateEmailComponent;;;
-
+                         ;;BodyContent-orderdetail;Body Content Slot for Order Details;true;BlAccountOrderDetailsComponent;;;
+                         ;;BodyContent-rentalOrderExtendDetails;Body Content Slot for extend Order Details;true;BlAccountRentalOrderExtendDetailsComponent;
+                         ;;BodyContent-rentalOrderExtendConfirmation;Body Content Slot for extend Order confirmation;true;BlAccountRentalOrderExtendConfirmationComponent;
 
 # ContentSlotForPage
 INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true];contentSlot(uid,$contentCV)[unique=true];;;
@@ -47,3 +51,16 @@ INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];positi
                                 ;;BodyContent-verificationImages  ;BodyContent; verificationImages ;BodyContentSlot-verificationImages;;;
                                 ;;BodyContent-creditCarts  ;BodyContent; creditCarts ;BodyContentSlot-creditCarts;;;
                                 ;;BodyContent-update-email;BodyContent;update-email;BodyContent-update-email;;;
+
+
+# ContentSlotForPage for order details page
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='order'];contentSlot(uid,$contentCV)[unique=true];;;
+                                ;;BodyContent-orderdetail;BodyContent;;BodyContent-orderdetail;;;
+
+# ContentSlotForPage for extend order details page
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='extendRentalOrderDetails'];contentSlot(uid,$contentCV)[unique=true];;;
+                                ;;BodyContent-rentalOrderExtendDetails;BodyContent;;BodyContent-rentalOrderExtendDetails;;;
+
+# ContentSlotForPage for extend order confirmation page
+INSERT_UPDATE ContentSlotForPage;$contentCV[unique=true];uid[unique=true];position[unique=true];page(uid,$contentCV)[unique=true][default='extendRentalOrderConfirmation'];contentSlot(uid,$contentCV)[unique=true];;;
+                                ;;BodyContent-rentalOrderExtendConfirmation;BodyContent;;BodyContent-rentalOrderExtendConfirmation;;;

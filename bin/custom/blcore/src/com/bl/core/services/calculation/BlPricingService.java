@@ -48,4 +48,12 @@ public interface BlPricingService {
    * @return
    */
   Double getCalculatedConditionalRating(final float cosmeticRating,final float functionalRating);
+
+  /**
+   * Get the  promotion price for serial
+   * @param serialProductPrice
+   * @param ugPromotionDiscount
+   * @return
+   */
+  BigDecimal getSerialPromotionPrice(final BigDecimal serialProductPrice,final Integer ugPromotionDiscount);
 }
