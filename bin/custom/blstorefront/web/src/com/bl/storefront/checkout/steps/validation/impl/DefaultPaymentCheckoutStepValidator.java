@@ -30,7 +30,7 @@ public class DefaultPaymentCheckoutStepValidator extends AbstractCheckoutStepVal
 			LOGGER.info("Missing, empty or unsupported cart");
 			return ValidationResults.REDIRECT_TO_CART;
 		}
-		//for gift card moved to payment step
+		//For gift card moved to payment step
 		if (BooleanUtils.isTrue(getCheckoutFlowFacade().getCheckoutCart().getHasGiftCart()))
 		{
 			return ValidationResults.SUCCESS;
