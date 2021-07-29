@@ -321,6 +321,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return failedBarcodeList;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */	
 	@Override
 	public List<String> getFailedPackageBarcodeList(final List<String> barcodes)
 	{
@@ -344,6 +347,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return barcodes;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment)
 	{
@@ -357,12 +363,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 		getScannedSerial(blScannedProduct, scannedSerialProduct, scannedSubpartProduct);
 
-		return validateConsignmentEntry(barcodes, selectedConsignment, blScannedProduct, filteredSerialProduct,
-				filteredSubPartProduct, scannedSerialProduct, scannedSubpartProduct);
+		return validateConsignmentEntry(barcodes, selectedConsignment, filteredSerialProduct, filteredSubPartProduct,
+				scannedSerialProduct, scannedSubpartProduct);
 
 	}
 
 	/**
+	 * This method is used to validate serial on consignment against scanned serial 
 	 * @param barcodes
 	 * @param selectedConsignment
 	 * @param failedBarcodeList
@@ -373,7 +380,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param scannedSubpartProduct
 	 */
 	private List<String> validateConsignmentEntry(final List<String> barcodes, final ConsignmentModel selectedConsignment,
-		 final Collection<BlSerialProductModel> blScannedProduct,
 			final List<BlProductModel> filteredSerialProduct, final List<BlProductModel> filteredSubPartProduct,
 			final List<BlSerialProductModel> scannedSerialProduct, final List<BlSerialProductModel> scannedSubpartProduct)
 	{
@@ -381,12 +387,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		
 		for (final ConsignmentEntryModel consignmentEntry : selectedConsignment.getConsignmentEntries())
 		{
-			final Map<String, ItemStatusEnum> updatedItemMap = new HashMap<>();
-
-			if (CollectionUtils.isEqualCollection(blScannedProduct, consignmentEntry.getSerialProducts()))
+			if (barcodes.size() == consignmentEntry.getSerialProducts().size())
 			{
 				verifyScan(failedBarcodeList, filteredSerialProduct, filteredSubPartProduct, scannedSerialProduct,
-						scannedSubpartProduct, consignmentEntry, updatedItemMap);
+						scannedSubpartProduct, consignmentEntry);
 			}
 			else
 			{
@@ -410,6 +414,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 	
 	/**
+	 * This methos is used to verify scan
 	 * @param filteredSerialProduct
 	 * @param filteredSubPartProduct
 	 * @param scannedSerialProduct
@@ -419,26 +424,28 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 */
 	private void verifyScan(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
 			final List<BlProductModel> filteredSubPartProduct, final List<BlSerialProductModel> scannedSerialProduct,
-			final List<BlSerialProductModel> scannedSubpartProduct, final ConsignmentEntryModel consignmentEntry,
-			final Map<String, ItemStatusEnum> updatedItemMap)
+			final List<BlSerialProductModel> scannedSubpartProduct, final ConsignmentEntryModel consignmentEntry)
 	{
-		consignmentEntry.getSerialProducts().forEach(serialItem -> {
-			getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem);
-		});
+		final Map<String, ItemStatusEnum> itemsMap = new HashMap<>(consignmentEntry.getItems());
+		
+		consignmentEntry.getSerialProducts().forEach(serialItem -> 
+			getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem)
+		);
 
-		validateScannedSerial(failedBarcodeList, filteredSerialProduct, scannedSerialProduct, consignmentEntry, updatedItemMap);
+		validateScannedSerial(failedBarcodeList, filteredSerialProduct, scannedSerialProduct, consignmentEntry, itemsMap);
 
 		final List<BlProductModel> serialProductsList = new ArrayList<>(consignmentEntry.getSerialProducts());
-		validateScannedSubpart(failedBarcodeList, filteredSubPartProduct, scannedSubpartProduct, consignmentEntry, updatedItemMap,
-				serialProductsList);
+		validateScannedSubpart(failedBarcodeList, filteredSubPartProduct, scannedSubpartProduct,
+				serialProductsList, itemsMap);
 
-		consignmentEntry.setItems(updatedItemMap);
+		consignmentEntry.setItems(itemsMap);
 		consignmentEntry.setSerialProducts(serialProductsList);
 		modelService.save(consignmentEntry);
 		modelService.refresh(consignmentEntry);
 	}
 
 	/**
+	 * This method is used to validate scanned sub part product
 	 * @param failedBarcodeList
 	 * @param filteredSubPartProduct
 	 * @param scannedSubpartProduct
@@ -447,8 +454,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param serialProductsList
 	 */
 	private void validateScannedSubpart(final List<String> failedBarcodeList, final List<BlProductModel> filteredSubPartProduct,
-			final List<BlSerialProductModel> scannedSubpartProduct, final ConsignmentEntryModel consignmentEntry,
-			final Map<String, ItemStatusEnum> updatedItemMap, final List<BlProductModel> serialProductsList)
+			final List<BlSerialProductModel> scannedSubpartProduct,
+			final List<BlProductModel> serialProductsList, final Map<String, ItemStatusEnum> itemsMap)
 	{
 		scannedSubpartProduct.forEach(subpartProduct -> {
 			if (!filteredSubPartProduct.contains(subpartProduct))
@@ -457,12 +464,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 			else
 			{
-				updateSubpartMap(consignmentEntry, updatedItemMap, serialProductsList, subpartProduct,scannedSubpartProduct.size());
+				updateSubpartMap(serialProductsList, subpartProduct, itemsMap);
 			}
 		});
 	}
 
 	/**
+	 * This method is used to validate scanned serial product
 	 * @param failedBarcodeList
 	 * @param filteredSerialProduct
 	 * @param scannedSerialProduct
@@ -480,76 +488,78 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			}
 			else
 			{
-				updateSerialProductMap(consignmentEntry, updatedItemMap, serialProduct);
+				updateSerialProductMap(updatedItemMap, serialProduct);
 			}
 		});
 	}
 	
 	/**
+	 * This method is used to update Item Map based on sub part scanned
 	 * @param validSerialList
 	 * @param consignmentEntry
 	 * @param updatedItemMap
 	 * @param serialProductsList
 	 * @param subpartProduct
+	 * @param itemsMap
 	 */
-	private void updateSubpartMap(final ConsignmentEntryModel consignmentEntry, final Map<String, ItemStatusEnum> updatedItemMap,
-			final List<BlProductModel> serialProductsList, final BlSerialProductModel subpartProduct, final int size)
+	private void updateSubpartMap(final List<BlProductModel> serialProductsList, final BlSerialProductModel subpartProduct,
+			final Map<String, ItemStatusEnum> itemsMap)
 	{
-		final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
-		final String productName = getProductName(subpartProduct.getBlProduct().getName(), size, itemsMap);
+		String subPartName = subpartProduct.getBlProduct().getName();
+		BlProductModel blProduct = subpartProduct.getBlProduct();
+		final String updatedName = subPartName.concat(BlInventoryScanLoggingConstants.HYPHEN);
 
-		if (itemsMap.containsKey(productName) && itemsMap.get(productName).equals(ItemStatusEnum.NOT_INCLUDED))
+		if (itemsMap.containsKey(subPartName)
+				&& itemsMap.get(subPartName).equals(ItemStatusEnum.NOT_INCLUDED))
 		{
-			updatedItemMap.put(subpartProduct.getBlProduct().getCode(), ItemStatusEnum.INCLUDED);
-			subpartProduct.setHardAssigned(true);
-			modelService.save(subpartProduct);
+			itemsMap.remove(subPartName);
+			itemsMap.put(blProduct.getCode(), ItemStatusEnum.INCLUDED);
 		}
-		if (serialProductsList.contains(subpartProduct.getBlProduct()))
+		else
 		{
-			serialProductsList.remove(subpartProduct.getBlProduct());
+			getUpdatedName(itemsMap, updatedName, subpartProduct);
+		}
+		if (serialProductsList.contains(blProduct))
+		{
+			serialProductsList.remove(blProduct);
 			serialProductsList.add(subpartProduct);
 		}
 	}
 
-	/**
-	 * @param name
-	 * @param size
-	 * @param itemsMap
-	 * @return
-	 */
-	private String getProductName(final String name, final int size, final Map<String, ItemStatusEnum> itemsMap)
+	private void getUpdatedName(final Map<String, ItemStatusEnum> itemsMap, final String updatedName,
+			final BlSerialProductModel subpartProduct)
 	{
-		for (int i = 1; i <= size; i++)
+		final List<String> keyList = itemsMap.keySet().stream()
+				.filter(key -> key.contains(updatedName) && itemsMap.get(key).equals(ItemStatusEnum.NOT_INCLUDED))
+				.collect(Collectors.toList());
+		if (CollectionUtils.isNotEmpty(keyList))
 		{
-			final String updatedName = name.concat("-").concat(String.valueOf(i));
-			if (itemsMap.containsKey(updatedName))
-			{
-				return updatedName;
-			}
+			itemsMap.remove(keyList.get(0));
+			itemsMap.put(subpartProduct.getBlProduct().getCode(), ItemStatusEnum.INCLUDED);
 		}
-		return name;
 	}
 
 	/**
+	 * This method is used to update Item Map based on the serial scanned
 	 * @param validSerialList
 	 * @param consignmentEntry
 	 * @param updatedItemMap
 	 * @param serialProduct
 	 */
-	private void updateSerialProductMap(final ConsignmentEntryModel consignmentEntry,
-			final Map<String, ItemStatusEnum> updatedItemMap, final BlSerialProductModel serialProduct)
+	private void updateSerialProductMap(final Map<String, ItemStatusEnum> itemsMap,
+			final BlSerialProductModel serialProduct)
 	{
-		final Map<String, ItemStatusEnum> itemsMap = consignmentEntry.getItems();
 		if (itemsMap.containsKey(serialProduct.getCode())
 				&& itemsMap.get(serialProduct.getCode()).equals(ItemStatusEnum.NOT_INCLUDED))
 		{
-			updatedItemMap.put(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
+			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
 			modelService.save(serialProduct);
 		}
 	}
 
 	/**
+	 * This method is used to get the serial/subpart from consignment
 	 * @param filteredSerialProduct
 	 * @param filteredSubPartProduct
 	 * @param serialItem
@@ -571,6 +581,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 	
 	/**
+	 * This method is used to get scanned serial product
 	 * @param blScannedProduct
 	 * @param scannedSerialProduct
 	 * @param scannedSubpartProduct

@@ -6,7 +6,6 @@ package com.bl.backoffice.widget.controller;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
@@ -42,6 +42,9 @@ public class BlPackageScanController extends DefaultWidgetController
 
 	WebScanToolData shippingScanToolData;
 
+	@Value("${blbackoffice.max.product.scan}")
+	private int maxProductScan;
+
 	@Resource(name = "blInventoryScanToolService")
 	private BlInventoryScanToolService blInventoryScanToolService;
 
@@ -68,12 +71,16 @@ public class BlPackageScanController extends DefaultWidgetController
 		this.sendOutput(OUT_CONFIRM, COMPLETE);
 	}
 
+	/**
+	 * This method is used to scan bin to working location.
+	 */
 	@ViewEvent(componentID = "scanToBin", eventName = "onClick")
 	public void scanToBinLocation()
 	{
 		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			notifyErrorForEmptyScan();
+			notifyInvalidScan(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY, StringUtils.EMPTY);
 		}
 		else
 		{
@@ -81,54 +88,68 @@ public class BlPackageScanController extends DefaultWidgetController
 			createResponseForPackageScan(barcodes);
 		}
 	}
-	
-		
+
+
+	/**
+	 * This method is used to verify scanned item and update there location to tracking number
+	 */
 	@ViewEvent(componentID = "scanToTrackingLabel", eventName = "onClick")
 	public void scanToTrackingLabel()
 	{
 		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			notifyErrorForEmptyScan();
+			notifyInvalidScan(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY, StringUtils.EMPTY);
 		}
 		else
 		{
 			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
-			if (CollectionUtils.isNotEmpty(barcodes))
+			final int barcodeSize = barcodes.size();
+			if (barcodeSize >= BlInventoryScanLoggingConstants.TWO && barcodeSize <= maxProductScan)
 			{
 				final String lastScannedItem = (barcodes.get(barcodes.size() - BlInventoryScanLoggingConstants.ONE));
 				createReponseMsgForPackageScan(getBlInventoryScanToolService().checkValidTrackingId(lastScannedItem), barcodes);
 			}
 			else
 			{
-				invalidNumberBarCode();
+				notifyInvalidScan(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						"blbackoffice.shipping.scan.invalid.scan.error", StringUtils.EMPTY);
 			}
 		}
 
 	}
-	
+
+	/**
+	 * This method is used to scan tracking label to UPS Outbound cart location
+	 */
 	@ViewEvent(componentID = "scanToOutBoundCart", eventName = "onClick")
 	public void scanToOutBoundCart()
-	{	if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 	{
-		notifyErrorForEmptyScan();
-	}
-	else
-	{
-		final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
-		if (CollectionUtils.isNotEmpty(barcodes))
+		if (CollectionUtils.isEmpty(shippingScanToolData.getBarcodeInputField()))
 		{
-			createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
-					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
-					barcodes);
+			notifyInvalidScan(BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
+					BlInventoryScanLoggingConstants.NO_ITEM_SCAN_KEY, StringUtils.EMPTY);
 		}
 		else
 		{
-			invalidNumberBarCode();
+			final List<String> barcodes = shippingScanToolData.getBarcodeInputField();
+			if (CollectionUtils.isNotEmpty(barcodes))
+			{
+				createResponseMegForScan(getBlInventoryScanToolService().checkLocationWithType(barcodes,
+						BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
+						barcodes);
+			}
+			else
+			{
+				notifyInvalidScan(BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
+						"blbackoffice.shipping.scan.invalid.scan.error", StringUtils.EMPTY);
+			}
 		}
 	}
-	}
-	
+
 	/**
+	 * This method is used to create response for package scan
+	 *
 	 * @param barcodes
 	 */
 	private void createResponseForPackageScan(final List<String> barcodes)
@@ -140,99 +161,86 @@ public class BlPackageScanController extends DefaultWidgetController
 					BlInventoryScanUtility.getShippingWorkstationInitial(), BlInventoryScanUtility.getShippingAllowedLocations()),
 					barcodes);
 		}
-		}
-		
-		/**
-		 * @param result
-		 * @param barcodes
-		 */
-		private void createResponseMsgForPackageScan(final int result, final List<String> barcodes)
-		{
-			switch (result)
-			{
-				case BlInventoryScanLoggingConstants.ONE:
-					final List<String> failedBinBarcodeList = getBlInventoryScanToolService().getFailedBinBarcodeList(barcodes);
-					createSuccessResponse(barcodes, failedBinBarcodeList);
-					break;
-
-				case BlInventoryScanLoggingConstants.TWO:
-					notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-							BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
-					break;
-
-				case BlInventoryScanLoggingConstants.THREE:
-					notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
-							"blbackoffice.order.scan.last.invalid.location.error", StringUtils.EMPTY);
-					break;
-
-				default:
-					notifyInvalidScan(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
-							BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
-			}
-		}
-		
-		/**
-		 * @param checkValidTrackingId
-		 * @param barcodes
-		 */
-		private void createReponseMsgForPackageScan(final int result, final List<String> barcodes)
-		{
-			switch (result)
-			{
-				case BlInventoryScanLoggingConstants.ONE:
-					final List<String> failedPackageBarcodeList = getBlInventoryScanToolService().getFailedPackageBarcodeList(barcodes);
-					createSuccessResponse(barcodes, failedPackageBarcodeList);
-					break;
-
-				case BlInventoryScanLoggingConstants.TWO:
-					notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
-							"blbackoffice.order.scan.last.location.error", StringUtils.EMPTY);
-					break;
-
-				default:
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
-							StringUtils.EMPTY);
-					throw new WrongValueException(this.scanningArea, this.getLabel("blbackoffice.order.scan.many.location.error"));
-			}
-
-		}
-		
-		/**
-		 *
-		 */
-		private void notifyInvalidScan(final String logMsg, final String exceptionLabel, final Object... logParam)
-				throws WrongValueException
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, logMsg, logParam);
-			throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel));
-		}
-		
-		/**
-		 * @param barcodes
-		 * @param failedBinBarcodeList
-		 */
-		private void createSuccessResponse(final List<String> barcodes, final List<String> failedBinBarcodeList)
-		{
-			if (CollectionUtils.isNotEmpty(failedBinBarcodeList))
-			{
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
-						failedBinBarcodeList);
-				throw new WrongValueException(this.scanningArea,
-						this.getLabel("blbackoffice.order.scan.invalid.location.error" + failedBinBarcodeList));
-			}
-			else
-			{
-				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-						barcodes.size());
-				Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
-				this.scanningArea.setValue("");
-			}
-		}
-		
+	}
 
 	/**
-	 * javadoc
-	 *
+	 * This methos is used to create response message for scanning bin to working location
+	 * @param result
+	 * @param barcodes
+	 */
+	private void createResponseMsgForPackageScan(final int result, final List<String> barcodes)
+	{
+		switch (result)
+		{
+			case BlInventoryScanLoggingConstants.ONE:
+				final List<String> failedBinBarcodeList = getBlInventoryScanToolService().getFailedBinBarcodeList(barcodes);
+				createSuccessResponse(barcodes, failedBinBarcodeList);
+				break;
+
+			case BlInventoryScanLoggingConstants.TWO:
+				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
+				break;
+
+			case BlInventoryScanLoggingConstants.THREE:
+				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_ERROR_FAILURE_MSG,
+						"blbackoffice.order.scan.last.invalid.location.error", StringUtils.EMPTY);
+				break;
+
+			default:
+				notifyInvalidScan(BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+						BlInventoryScanLoggingConstants.LAST_LOCATION_ERROR_KEY, StringUtils.EMPTY);
+		}
+	}
+
+	/**
+	 * This method is used to create response message for package scan while scanning items to tracking Id
+	 * @param checkValidTrackingId
+	 * @param barcodes
+	 */
+	private void createReponseMsgForPackageScan(final int result, final List<String> barcodes)
+	{
+		switch (result)
+		{
+			case BlInventoryScanLoggingConstants.ONE:
+				final List<String> failedPackageBarcodeList = getBlInventoryScanToolService().getFailedPackageBarcodeList(barcodes);
+				createSuccessResponse(barcodes, failedPackageBarcodeList);
+				break;
+
+			case BlInventoryScanLoggingConstants.TWO:
+				notifyInvalidScan(BlInventoryScanLoggingConstants.LAST_SCAN_INVALID_ERROR_FAILURE_MSG,
+						"blbackoffice.order.scan.last.location.error", StringUtils.EMPTY);
+				break;
+
+			default:
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MANY_LOCATION_ERROR_FAILURE_MSG,
+						StringUtils.EMPTY);
+				throw new WrongValueException(this.scanningArea, this.getLabel("blbackoffice.order.scan.many.location.error"));
+		}
+
+	}
+
+	/**
+	 * This method is used to create success response
+	 * @param barcodes
+	 * @param failedBinBarcodeList
+	 */
+	private void createSuccessResponse(final List<String> barcodes, final List<String> failedBinBarcodeList)
+	{
+		if (CollectionUtils.isNotEmpty(failedBinBarcodeList))
+		{
+			notifyInvalidScan(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
+					"blbackoffice.order.scan.invalid.location.error", failedBinBarcodeList);
+		}
+		else
+		{
+			BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
+					barcodes.size());
+			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			this.scanningArea.setValue("");
+		}
+	}
+	/**
 	 * @param result
 	 * @param barcodes
 	 *           method will notify user according to result number calculated in previous method
@@ -271,23 +279,17 @@ public class BlPackageScanController extends DefaultWidgetController
 	}
 
 	/**
-	 *
+	 * This method is used to notify user for invalid scan
+	 * @param logMsg
+	 * @param exceptionLabel
+	 * @param logParam
+	 * @throws WrongValueException
 	 */
-	private void notifyErrorForEmptyScan()
+	private void notifyInvalidScan(final String logMsg, final String exceptionLabel, final Object... logParam)
+			throws WrongValueException
 	{
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.WEB_SAN_TOOL_NOTIFICATION_FAILURE_MSG,
-				StringUtils.EMPTY);
-		throw new WrongValueException(this.scanningArea, this.getLabel("blbackoffice.shipping.scan.tool.noitem.scan.error"));
-	}
-
-	/**
-	 *
-	 */
-	private void invalidNumberBarCode()
-	{
-		BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.MUST_TWO_BARCODE_ERROR_FAILURE_MSG,
-				StringUtils.EMPTY);
-		throw new WrongValueException(this.scanningArea, this.getLabel("blbackoffice.shipping.scan.invalid.scan.error"));
+		BlLogger.logFormatMessageInfo(LOG, Level.INFO, logMsg, logParam);
+		throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel));
 	}
 
 	/**

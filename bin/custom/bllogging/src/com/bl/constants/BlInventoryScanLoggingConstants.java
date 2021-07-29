@@ -108,6 +108,8 @@ public class BlInventoryScanLoggingConstants {
     public static final String SHIPPER_WORKSTATION = "SHIPPER_WORKSTATION";
     public static final String SCANNING_SUCCESS_MSG = "Scanning completed successfully";
     public static final String LAST_LOCATION_ERROR_KEY = "blbackoffice.order.scan.last.location.error";
+    public static final String NO_ITEM_SCAN_KEY = "blbackoffice.shipping.scan.tool.noitem.scan.error";
+    public static final String HYPHEN = "--";
 
     private BlInventoryScanLoggingConstants() { }
 
