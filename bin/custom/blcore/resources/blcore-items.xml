@@ -1862,6 +1862,16 @@
               <modifiers read="true" write="true" optional="true"/>
               <description>Flag to set if No Damage Waiver is selected for Rental Gear</description>
             </attribute>
+            <attribute qualifier="rentalStartDate" type="java.util.Date">
+              <persistence type="property"/>
+              <description>BL Rental Strat Date</description>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
+            <attribute qualifier="rentalReturnDate" type="java.util.Date">
+              <persistence type="property"/>
+              <description>BL Rental Return Date</description>
+              <modifiers read="true" write="true" search="true"/>
+            </attribute>
             <attribute qualifier="serialProducts" type="serialProducts">
               <persistence type="property"/>
               <modifiers read="true" write="true" optional="true"/>
