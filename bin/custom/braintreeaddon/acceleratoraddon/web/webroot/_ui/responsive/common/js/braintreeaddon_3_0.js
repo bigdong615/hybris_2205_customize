@@ -804,6 +804,14 @@ function createHostedFields(clientInstance) {
 				var state =  hostedFieldsInstance.getState();
 				var fields = Object.keys(state.fields);
            
+				var saveBillingAddressVal = $("#savedBillingAddressId").val();
+				
+				if((typeof addPaymentMethodsPage != 'undefined') && (saveBillingAddressVal =='') && state.fields.number.isEmpty && state.fields.expirationMonth.isEmpty && state.fields.expirationYear.isEmpty && state.fields.cvv.isEmpty )
+				{
+					allFieldValidation(ACC.ccError.allFieldsNotSelected);
+				}
+				
+				else{
 				if(state.fields.number.isEmpty && state.fields.expirationMonth.isEmpty && state.fields.expirationYear.isEmpty && state.fields.cvv.isEmpty)
 				{
 					hasNoError = false;
@@ -950,6 +958,7 @@ function createHostedFields(clientInstance) {
 						}
 					});
 				}
+			  }
             });
 			$('.page-loader-new-layout').hide();
         }
