@@ -504,6 +504,7 @@
 		<property name="keyGenerator" ref="productIdGenerator"/>
 		<property name="enumerationService" ref="enumerationService"/>
 		<property name="blPricingService" ref="blPricingService"/>
+		<property name="catalogVersionService" ref="catalogVersionService"/>
 	</bean>
 
 	<bean id="blProductPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
@@ -856,6 +857,7 @@
 		class="com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy"
 		parent="defaultCommerceCartCalculationStrategy">
 		<property name="giftCardService" ref="giftCardService" />
+		<property name="modelService" ref="modelService" />
 	</bean>
 	<!--Gift card End-->
 	
@@ -896,6 +898,20 @@
 		<property name="blCommerceStockService" ref="blCommerceStockService"/>
     </bean>
 
+	<!-- BL-626 Email Subscription changes-->
+	<alias name="defaultBlEmailSubscriptionService" alias="blEmailSubscriptionService"/>
+	<bean id="defaultBlEmailSubscriptionService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionService">
+		<property name="modelService" ref="modelService"/>
+		<property name="blEmailSubscriptionRestService" ref="blEmailSubscriptionRestService"/>
+	</bean>
+
+	<alias name="defaultBlEmailSubscriptionRestService" alias="blEmailSubscriptionRestService"/>
+	<bean id="defaultBlEmailSubscriptionRestService" class="com.bl.core.subscription.service.impl.DefaultBlEmailSubscriptionRestService">
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<!--  BL-626  Email Subscription changes end-->
+	
 	<alias alias="orderDao" name="defaultBlOrderDao"/>
 	<bean id="defaultBlOrderDao" class="com.bl.core.order.dao.impl.DefaultBlOrderDao" parent="defaultOrderDao">
 	</bean>
