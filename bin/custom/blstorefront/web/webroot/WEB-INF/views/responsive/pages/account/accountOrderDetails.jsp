@@ -25,7 +25,7 @@
                                         <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg">
                                     </div>
                                     <div class="col-4">
-                                        <p class="overline"><spring:theme code="text.myaccount.order.rental.ends"/></p>
+                                        <p class="overline"><spring:theme code="text.myaccount.order.rental.end"/></p>
                                         <p class="lightteal mb-0"><b>${orderData.rentalEndDate}</b></p>
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
                                     </div>
@@ -270,11 +270,11 @@
                                         </tr>
                                         </c:if>
                                         <tr>
-                                            <td class="gray80"><spring:theme code="text.myaccount.order.shipping"/></td>
+                                            <td class="gray80"><spring:theme code="text.myaccount.order.shipping.text"/></td>
                                             <td class="text-end"><format:price priceData="${orderData.deliveryCost}"/></td>
                                         </tr>
                                         <tr>
-                                            <td class="gray80"><spring:theme code="text.myaccount.order.tax"/></td>
+                                            <td class="gray80"><spring:theme code="text.myaccount.order.tax.text"/></td>
                                             <td class="text-end"><format:blPrice priceData="${orderData.taxAvalaraCalculated}" /></td>
                                         </tr>
                                          <c:if test="${orderData.totalDiscounts.value > 0}">

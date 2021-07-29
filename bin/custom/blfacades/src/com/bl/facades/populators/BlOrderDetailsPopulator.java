@@ -6,6 +6,7 @@ import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ExtendOrderData;
+import com.google.common.collect.Ordering;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.xml.transform.Source;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -70,6 +72,10 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
           convertDateToString(updateRentalDatesIfOrderIsExtended(source), BlFacadesConstants.FORMATTED_RENTAL_DATE));
       target.setTotalRentalDays(String.valueOf(BlDateTimeUtils
           .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source)) + 1));
+
+      target.setIsRentalStartDateActive(new Date().before(source.getRentalStartDate()));
+      target.setIsRentalEndDateActive(new Date().before(source.getRentalEndDate()));
+      target.setIsRentalActive(isRentalCartAcive(source));
     }
     target.setOrderedDate(convertDateToString(source.getDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE));
     target.setOrderedFormatDate(convertDateToString(source.getDate() , BlFacadesConstants.ORDER_FORMAT_PATTERN));
@@ -238,6 +244,14 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
     return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
+  }
+
+  /**
+   * This method created to check whether rental order is active or not
+   */
+  private boolean isRentalCartAcive(final OrderModel orderModel){
+    final Date date = new Date();
+    return date.before(orderModel.getRentalStartDate()) && date.before(orderModel.getRentalEndDate());
   }
 
 

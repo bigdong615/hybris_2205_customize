@@ -67,6 +67,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    if(CollectionUtils.isNotEmpty(source.getExtendedOrderCopyList())) {
      updateRentalDetailsIfExtendOrderExist(source, target);
    }
+
+   if(null != source.getRentalStartDate() && null != source.getRentalEndDate()){
+     target.setIsRentalActive(isRentalCartAcive(source));
+   }
   }
 
   /**
@@ -109,6 +113,14 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
         orderData.setRentalEndDate(convertDateToString(extendOrder.getRentalEndDate()));
       }
     }
+  }
+
+  /**
+   * This method created to check whether rental order is active or not
+   */
+  private boolean isRentalCartAcive(final OrderModel orderModel){
+    final Date date = new Date();
+    return date.before(orderModel.getRentalStartDate()) && date.before(orderModel.getRentalEndDate());
   }
 
 }
