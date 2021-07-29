@@ -52,7 +52,7 @@
                                          </c:if>
                                       </c:otherwise>
                                     </c:choose>
-                                    <product:productPageReviewsTab product="${product}" />
+                                    
                                 <div class="stars"><span class="stars-filled" style="width: 80%;"></span><%-- <img src="${themeResourcePath}/assets/stars-empty.svg"> --%></div><div id="pr-reviewsnippet"></div> 
                                  <ul class="checklist mt-4">
                                  ${product.shortDescription}
@@ -232,5 +232,6 @@
                             </div>
                         </div>
                     </div>
+                    
                </section>
-
+				<product:productPageReviewsTab product="${product}" />
