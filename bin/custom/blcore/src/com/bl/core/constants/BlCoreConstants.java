@@ -203,22 +203,11 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String SHIP_DATE = "shipDate";
 	public static final String STATUS = "status";
 
-	public static final String ORDER_NUMBER = "Order number";
-	public static final String ORDER_TYPE = "Order type";
-	public static final String ORDER_NOTES = "Order notes";
-	public static final String PRODUCT_ID = "Product ID";
-	public static final String PRODUCT_NAME = "Product name";
-	public static final String PRODUCT_COUNT = "Product count";
-	public static final String SERIAL_NUMBER = "Serial number";
-	public static final String LOCATION_CODE = "Location code/name";
-	public static final String SHIPPING_METHOD = "Shipping method";
-	public static final String MEMBER_NAME = "Member Name";
-	public static final String NEED = "Need ";
-	public static final String FOUND = "Found";
-	public static final String SFO = "warehouse_ca";
-	public static final String BOS = "warehouse_ma";
+	public static final String WAREHOUSE = "warehouse";
 	public static final String PULL_JOB_ERROR_OCCURRED = "Error occurred while performing PullReadyToShipOrdersJob";
-
+	public static final String EMPLOYEE = "Employee ";
+	public static final int DEFAULT_MEMBERS_COUNT = 1;
+	public static final String DEFAULT_PRODUCT_QUANTITY = "1";
 
 
 	public static final String PHONE_REGEX_PATTERN = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";

@@ -187,15 +187,16 @@ INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
                      ;stockLevelStatusCronJob; 0 0 0 * * ?
 
 
-INSERT_UPDATE ServicelayerJob;code[unique=true];springId
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
                              ;pullReadyToShipOrdersJob;pullReadyToShipOrdersJob
 
-INSERT_UPDATE PullReadyToShipOrdersCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active
-                                          ;pullReadyToShipOrdersCronJob ;pullReadyToShipOrdersJob ; ;true
+INSERT_UPDATE PullReadyToShipOrdersCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;warehouse(code)
+                                          ;WalthamMorningPullCronJob;pullReadyToShipOrdersJob;;true;warehouse_ma
+                                          ;SanCarlosMorningPullCronJob;pullReadyToShipOrdersJob;;true;warehouse_ca
 
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
-                     ;pullReadyToShipOrdersCronJob; 0 0 0 * * ?
-
+                     ;WalthamMorningPullCronJob; 0 6 0 * * ?
+                     ;SanCarlosMorningPullCronJob; 0 6 0 * * ?
 
 ##Package Box Sizes
 INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true];weight[unique=true];weightUnit[default=lb];dimensionUnit[default=in]

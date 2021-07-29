@@ -971,8 +971,7 @@
 	<!-- BL-766 start-->
 	<bean id="pullReadyToShipOrdersJob" class="com.bl.blbackoffice.job.PullReadyToShipOrdersJob" parent="abstractJobPerformable">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
-		<property name="configurationService" ref="configurationService" />
-		<property name="enumerationService" ref="enumerationService"/>
+		<property name="blReadyToShipOrderItemDao" ref="blReadyToShipOrderItemDao"/>
 	</bean>
 
 	<alias name="defaultBlConsignmentDao" alias="blConsignmentDao"/>
@@ -980,13 +979,12 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-	<alias name="blOrderPrepareInterceptor" alias="blOrderPrepareInterceptor"/>
-	<bean id="blOrderPrepareInterceptor"	class="com.bl.core.model.interceptor.BlOrderPrepareInterceptor"/>
-
-	<bean id="blOrderPrepareInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping" >
-		<property name="interceptor" ref="blOrderPrepareInterceptor"/>
-		<property name="typeCode" value="AbstractOrder"/>
+	<alias name="defaultBlReadyToShipOrderItemDao" alias="blReadyToShipOrderItemDao"/>
+	<bean id="defaultBlReadyToShipOrderItemDao" class="com.bl.core.dao.warehouse.impl.DefaultBlReadyToShipOrderItemDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		<property name="modelService" ref="modelService"/>
 	</bean>
+
 	<!-- BL-766 end -->
 
 	<!-- [BL-663]  SOLR Field value Resolver for OnSale solr attribute  and min promotion price-->

@@ -49,7 +49,7 @@ public class DefaultBlConsignmentDao implements BlConsignmentDao {
 
     addQueryParameter(shipDate, statusList, fQuery);
 
-    final SearchResult result = getFlexibleSearchService().search(fQuery);
+    final SearchResult<ConsignmentModel> result = getFlexibleSearchService().search(fQuery);
     final List<ConsignmentModel> consignmentModels = result.getResult();
     if (CollectionUtils.isEmpty(consignmentModels))
     {
