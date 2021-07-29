@@ -58,9 +58,10 @@ public class DefaultBlPaymentService implements BlPaymentService
 
 	/**
 	 * {@inheritDoc}
+	 * @return
 	 */
 	@Override
-	public void capturePaymentForOrder(final OrderModel order) {
+	public boolean capturePaymentForOrder(final OrderModel order) {
 		try {
 			final PaymentTransactionEntryModel authEntry = getAUthEntry(order);
 			if(authEntry != null) {
@@ -71,6 +72,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 					order.setIsCaptured(Boolean.TRUE);
 					getModelService().save(order);
 					BlLogger.logFormatMessageInfo(LOG, Level.INFO, "Capture is successful for the order {}", order.getCode());
+					return true;
 				} else {
 					order.setStatus(OrderStatus.PAYMENT_DECLINED);
 					modelService.save(order);
@@ -86,6 +88,7 @@ public class DefaultBlPaymentService implements BlPaymentService
 			BlLogger.logFormattedMessage(LOG, Level.ERROR, "Exception occurred while capturing "
 					+ "the payment for order {} ", order.getCode(), ex);
 		}
+		return false;
 	}
 
 	/**
