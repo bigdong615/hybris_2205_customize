@@ -107,6 +107,7 @@ public interface BlInventoryScanToolService {
  	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
 	/**
+	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
 	 * @param barcodes
 	 * @return the int
 	 */
@@ -123,11 +124,13 @@ public interface BlInventoryScanToolService {
 	public List<String> getFailedPackageBarcodeList(final List<String> barcodes);
 
 	/**
+	 * This method will verify loctiona and update items to new working desk location
 	 * @param lastScannedItem
 	 */
 	public void updateToUpsBound();
 
 	/**
+	 * This method will verify valid location and return int with appropriate notification 
 	 * @param barcodes
 	 * @param defaultLocations
 	 * @param memberAllowedLocationList
