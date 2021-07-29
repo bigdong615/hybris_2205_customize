@@ -134,7 +134,10 @@
                 </p>
                 <hr>
                 <p>
-                   <a href="${baseUrl}/creditCarts">
+                   <a href="${baseUrl}/payment-details"
+                   <c:if test="${cmsPage.uid eq 'payment-details'}">
+                                         <c:out value="class=active"/>
+                   </c:if>>
                       <spring:theme code= "text.credit.cards" />
                    </a>
                 </p>

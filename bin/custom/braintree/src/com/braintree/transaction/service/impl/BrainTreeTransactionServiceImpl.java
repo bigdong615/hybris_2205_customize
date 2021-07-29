@@ -36,6 +36,8 @@ import com.braintree.transaction.service.BrainTreePaymentTransactionService;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.braintreegateway.PayPalAccount;
 import com.google.common.collect.Lists;
+
+import de.hybris.platform.commerceservices.customer.CustomerAccountService;
 import de.hybris.platform.commerceservices.enums.CustomerType;
 import de.hybris.platform.commerceservices.strategies.CheckoutCustomerStrategy;
 import de.hybris.platform.core.enums.OrderStatus;
@@ -71,8 +73,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
 
 
 public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionService
@@ -96,7 +100,8 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 	private BrainTreeConfigService brainTreeConfigService;
 	private CustomFieldsService customFieldsService;
 	private BraintreeSubmitForSettlementService braintreeSubmitForSettlementService;
-
+	private CustomerAccountService customerAccountService;
+	
 	@Override
 	public boolean createAuthorizationTransaction()
 	{
@@ -885,6 +890,11 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			}
 		}
 
+		if (cardPaymentInfoModel != null && BooleanUtils.isTrue(cardPaymentInfoModel.isIsDefault()))
+		{
+			getCustomerAccountService().setDefaultPaymentInfo(customer, cardPaymentInfoModel);
+		}
+
 		return cardPaymentInfoModel;
 	}
 
@@ -898,6 +908,7 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 
 		final BrainTreePaymentInfoModel cardPaymentInfoModel = createCreditCardPaymentInfo(billingAddress, customer, braintreeInfo,
 				abstractOrderModel);
+
 		if(StringUtils.isNotBlank(braintreeInfo.getBraintreeAddressId()))
 		{
 		  billingAddress.setBrainTreeAddressId(braintreeInfo.getBraintreeAddressId());
@@ -970,6 +981,14 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 		cardPaymentInfoModel.setImageSource(braintreeInfo.getImageSource());
 		cardPaymentInfoModel.setExpirationMonth(braintreeInfo.getExpirationMonth());
 		cardPaymentInfoModel.setExpirationYear(braintreeInfo.getExpirationYear());
+		
+		//Added check to handle add New CC from payment page
+		if(braintreeInfo.getIsDefault() == null) {
+			cardPaymentInfoModel.setIsDefault(false);
+		}else{
+			cardPaymentInfoModel.setIsDefault(braintreeInfo.getIsDefault());
+		}
+
 		if (StringUtils.isNotEmpty(customerModel.getBraintreeCustomerId()))
 		{
 			cardPaymentInfoModel.setCustomerId(customerModel.getBraintreeCustomerId());
@@ -1015,7 +1034,9 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			final CustomerModel customerModel, final BraintreeInfo braintreeInfo, final AbstractOrderModel abstractOrderModel)
 	{
 
+
 		BrainTreePaymentInfoModel cardPaymentInfoModel = createCreditCardPaymentInfo(billingAddress, customerModel, braintreeInfo);
+
 		if (!(abstractOrderModel instanceof OrderModel))
 		{
 			cardPaymentInfoModel
@@ -1251,4 +1272,16 @@ public class BrainTreeTransactionServiceImpl implements BrainTreeTransactionServ
 			BraintreeSubmitForSettlementService braintreeSubmitForSettlementService) {
 		this.braintreeSubmitForSettlementService = braintreeSubmitForSettlementService;
 	}
+
+	public CustomerAccountService getCustomerAccountService() {
+		return customerAccountService;
+	}
+
+	public void setCustomerAccountService(CustomerAccountService customerAccountService) {
+		this.customerAccountService = customerAccountService;
+	}
+
+	
+	
+	
 }
