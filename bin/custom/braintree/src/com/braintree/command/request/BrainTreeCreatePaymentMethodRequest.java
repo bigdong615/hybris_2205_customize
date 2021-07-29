@@ -14,6 +14,34 @@ public class BrainTreeCreatePaymentMethodRequest extends BrainTreeAbstractReques
 	private String cardholderName;
 	private BillingInfo billingInfo;
 	private String amount;
+	private Boolean defaultCard; 
+	
+	public BrainTreeCreatePaymentMethodRequest(String merchantTransactionCode, String methodNonce, String customerId,
+			String billingAddressId, String cardholderName, BillingInfo billingInfo, String amount,
+			Boolean defaultCard) {
+		super(merchantTransactionCode);
+		this.methodNonce = methodNonce;
+		this.customerId = customerId;
+		this.billingAddressId = billingAddressId;
+		this.cardholderName = cardholderName;
+		this.billingInfo = billingInfo;
+		this.amount = amount;
+		this.defaultCard = defaultCard;
+	}
+
+	/**
+	 * @return the defaultCard
+	 */
+	public Boolean getDefaultCard() {
+		return defaultCard;
+	}
+
+	/**
+	 * @param defaultCard the defaultCard to set
+	 */
+	public void setDefaultCard(Boolean defaultCard) {
+		this.defaultCard = defaultCard;
+	}
 
 	protected BrainTreeCreatePaymentMethodRequest(final String merchantTransactionCode)
 	{

@@ -2,6 +2,7 @@ package com.bl.core.order.impl;
 
 import com.bl.core.services.tax.DefaultBlExternalTaxesService;
 import com.bl.core.constants.BlCoreConstants;
+
 import com.bl.core.model.BlDamageWaiverPricingModel;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
@@ -33,7 +34,7 @@ import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
+import com.bl.core.enums.ProductTypeEnum;
 
 /**
  * {@inheritDoc}
@@ -228,7 +229,16 @@ public class DefaultBlCalculationService extends DefaultCalculationService imple
 		}
 		else if (PredicateUtils.instanceofPredicate(BlProductModel.class).evaluate(product))
 		{
-			return findBasePrice(entry);
+			// Create new price value for gift card purchase
+			if (ProductTypeEnum.GIFTCARD.equals(((BlProductModel) product).getProductType()))
+			{
+				return createNewPriceValue(order.getCurrency().getIsocode(), order.getGiftCardCost().doubleValue(),
+						BooleanUtils.toBoolean(order.getNet()));
+			}
+			else{
+				return findBasePrice(entry);
+			}
+			
 		}
 		
 		throw new CalculationException("Product Type is not a type of SKU or Serial Product");

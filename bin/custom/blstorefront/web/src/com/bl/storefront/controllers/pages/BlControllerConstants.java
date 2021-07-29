@@ -143,7 +143,10 @@ public class BlControllerConstants
 	public static final String EXTEND_ORDER_DATA = "extendOrderData";
 	public static final String MY_ACCOUNT_EXTEND_RENTAL = "/my-account/extendRent/";
   public static final String CLIENT_TOKEN = "client_token";
-
+  
+   public static final String MULTIPLEGIFTCARD = "Only one gift card can be ordered at a time";
+   public static final String GIFTCARDNOTALLOWE = "Gift card can not be ordered with active rental or used gear products";
+   public static final String ADDTOCARTWARNING = "Rental and Used gear products are not allowed together";
 
 	private BlControllerConstants()
 	{

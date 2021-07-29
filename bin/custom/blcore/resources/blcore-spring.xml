@@ -809,6 +809,7 @@
 		class="com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy"
 		parent="defaultCommerceCartCalculationStrategy">
 		<property name="giftCardService" ref="giftCardService" />
+		<property name="modelService" ref="modelService" />
 	</bean>
 	<!--Gift card End-->
 	
