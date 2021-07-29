@@ -36,13 +36,13 @@
                                  <div class="col-12 col-md-7">
                                       <p class="mb-0"><b>${order.orderDate}</b></p>
                                        <p class="body14">
-                                       <c:forEach items="${order.productNameAndQuantity}" var="cartEntry" >
+                                       <c:forEach items="${order.productNameAndQuantity}" var="cartEntry">
                                              ${cartEntry}<br>
                                        </c:forEach>
                                       </p>
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                                   <p class="my-2"><i class="icon-check-teal"></i><spring:theme code="text.myaccount.order.completed"/></p>
+                                   <p class="my-2"><spring:theme code="text.myaccount.order.completed"/></p>
                                  </div>
                         </c:if>
                 					<c:if test="${order.rentalCart}">
@@ -72,11 +72,16 @@
                                            </p>
                                 </c:if>
                 						</div>
-                						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+                						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+                							<c:if test="${order.isRentalActive eq true && order.isRentalStartDateActive eq true}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
-                						</div>
+                					  </c:if>
+                					  <c:if test="${order.isRentalActive eq false}">
+                                <p class="my-2"><spring:theme code="text.myaccount.order.completed"/></p>
+                             </c:if>
+                            </div>
                 					</c:if>
                 					<div class="col-6 col-md-1">
                 						<div class="btn-group"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>

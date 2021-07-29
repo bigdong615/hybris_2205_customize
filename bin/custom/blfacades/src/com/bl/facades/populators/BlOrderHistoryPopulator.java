@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -70,6 +71,7 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
 
    if(null != source.getRentalStartDate() && null != source.getRentalEndDate()){
      target.setIsRentalActive(isRentalCartAcive(source));
+     target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
    }
   }
 
@@ -120,7 +122,12 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
    */
   private boolean isRentalCartAcive(final OrderModel orderModel){
     final Date date = new Date();
-    return date.before(orderModel.getRentalStartDate()) || date.before(orderModel.getRentalEndDate());
+    return (date.before(orderModel.getRentalStartDate()) || DateUtils.isSameDay(orderModel.getRentalStartDate(), date)) || (date.before(orderModel.getRentalEndDate())
+        || DateUtils.isSameDay(orderModel.getRentalEndDate(), date));
+  }
+
+  private boolean isExtendOrderButtonEnable(final OrderModel orderModel){
+    return DateUtils.isSameDay(orderModel.getRentalStartDate() , new Date()) || new Date().after(orderModel.getRentalStartDate());
   }
 
 }
