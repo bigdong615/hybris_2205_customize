@@ -111,7 +111,7 @@
                 							</div>
                 							<div class="col-8 col-md-10">
                 								<p class="body14 gray60">${fn:escapeXml(order.total.formattedValue)}
-                									<br> #${fn:escapeXml(order.code)}</p>
+                									<br> ${fn:escapeXml(order.code)}</p>
                 							</div>
                 						</div>
                 					</div>
