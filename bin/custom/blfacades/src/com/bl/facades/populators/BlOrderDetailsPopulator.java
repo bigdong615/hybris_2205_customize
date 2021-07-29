@@ -251,7 +251,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   private boolean isRentalCartAcive(final OrderModel orderModel){
     final Date date = new Date();
-    return date.before(orderModel.getRentalStartDate()) && date.before(orderModel.getRentalEndDate());
+    return date.before(orderModel.getRentalStartDate()) || date.before(orderModel.getRentalEndDate());
   }
 
 

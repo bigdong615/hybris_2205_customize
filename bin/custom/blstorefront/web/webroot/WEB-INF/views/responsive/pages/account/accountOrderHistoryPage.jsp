@@ -47,15 +47,30 @@
                         </c:if>
                 					<c:if test="${order.rentalCart}">
                 						<div class="col-5 col-md-3">
+                						<c:if test="${order.isRentalActive eq true}">
                 							<p class="lightteal mb-0"><b>${order.rentalStartDate}</b></p>
                 							<p class="body14">
                 								<spring:theme code="text.myaccount.order.rental.Starts" /> </p>
+                						</c:if>
+                						<c:if test="${order.isRentalActive eq false}">
+                                            							<p class="mb-0"><b>${order.rentalStartDate}</b></p>
+                                            							<p class="body14">
+                                            								<spring:theme code="text.myaccount.order.rental.history.Started"/> </p>
+                            </c:if>
                 						</div>
                 						<div class="col-2 col-md-1 text-center"> <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg"> </div>
                 						<div class="col-5 col-md-3">
+                						<c:if test="${order.isRentalActive eq true}">
                 							<p class="lightteal mb-0"><b>${order.rentalEndDate}</b></p>
                 							<p class="body14">
                 								<spring:theme code="text.myaccount.order.rental.ends" /> </p>
+                						</c:if>
+                						   <c:if test="${order.isRentalActive eq false}">
+                                        <p class="mb-0"><b>${order.rentalEndDate}</b></p>
+                                           <p class="body14">
+                                            	<spring:theme code="text.myaccount.order.rental.history.ended" />
+                                           </p>
+                                </c:if>
                 						</div>
                 						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
