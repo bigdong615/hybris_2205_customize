@@ -1965,6 +1965,15 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="preReservedDays" type="java.lang.Integer" autocreate="true">
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+                    </attribute>
+                    <attribute qualifier="postReservedDays" type="java.lang.Integer"
+                      autocreate="true">
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+                    </attribute>
                 </attributes>
             </itemtype>
 
