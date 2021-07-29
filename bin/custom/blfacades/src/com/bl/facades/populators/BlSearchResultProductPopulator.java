@@ -108,6 +108,8 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
       populateSerialProductPrices(source, target);
       populateSerialPromotionMessage(target);
     }
+    // Populate product type
+    populateProductType(target);
     // Populate product's classification features
     getProductFeatureListPopulator().populate(getFeaturesList(source), target);
 
@@ -136,6 +138,18 @@ public class BlSearchResultProductPopulator implements Populator<SearchResultVal
     if (blProductModel != null)
     {
       getBlWishlistOptionsPopulator().populate(blProductModel,target);
+    }
+
+  }
+  /**
+   * To Populate the Product data for product type
+   * @param target
+   */
+  private void populateProductType(ProductData target) {
+    final BlProductModel blProductModel = (BlProductModel) getProductService().getProductForCode(target.getCode());
+    if (blProductModel != null)
+    {
+      target.setProductType(blProductModel.getProductType().getCode());
     }
 
   }

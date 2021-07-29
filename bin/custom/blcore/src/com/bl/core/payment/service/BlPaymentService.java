@@ -16,6 +16,7 @@ public interface BlPaymentService
 	/**
 	 * This is to capture the authorized transaction
 	 * @param order model
+	 * @return
 	 */
-	public void capturePaymentForOrder(final OrderModel order);
+	boolean capturePaymentForOrder(final OrderModel order);
 }
