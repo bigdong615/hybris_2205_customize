@@ -407,7 +407,7 @@ function removeClass(){
      if(stores != null && stores.length != 0) {
          for (let i = 0; i < stores.length; i++) {
              if(stores[i].locationId == upsSelectedStoreId) {
-                 return createAddressFormObject(stores[i].consigneeName, "UPS", stores[i].addressLine, null, stores[i].politicalDivision2,
+                 return createAddressFormObject(stores[i].consigneeName, "UPS", "", stores[i].addressLine, null, stores[i].politicalDivision2,
                          stores[i].politicalDivision1, stores[i].countryCode, stores[i].postcodePrimaryLow, false, stores[i].contactNumber, null, true,
                          stores[i].latestGroundDropOffTime, 'BUSINESS')
              }
