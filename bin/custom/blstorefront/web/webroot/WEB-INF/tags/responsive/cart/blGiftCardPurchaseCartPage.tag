@@ -10,10 +10,8 @@
 
 <%-- ToDo -  need to update used gear html, as of now added the same rental cart html --%>
 <c:set value="cart/emptyCart" var="emptyCart" />
-<c:url value="/cart/updateDamageWaiver"
-	var="cartUpdateDamageWaiverFormAction" />
-<c:url value="/checkout/multi/delivery-method/chooseShipping"
-	var="cartDeliveryOrPickupAction" />
+<c:url value="/checkout/multi/payment-method/add" var="paymentPageUrl" />
+
 <c:set value="buy/category/usedgear" var="usedGearPlpUrl" />
 <c:set value="${cartData.isRentalCart}" var="usedGearflag" />
 <c:url value="/" var="homePageUrl" />
@@ -44,11 +42,10 @@
 							<cart:blGiftCardPurchaseCartItem entry="${entry}"
 								cartData="${cartData}" />
 						</c:forEach>
-						<div class="cart-actions">
-							<a href="${cartDeliveryOrPickupAction}"
-								class="btn btn-sm btn-primary float-end"> <spring:theme
-									code="general.continue.button" /></a>
-						</div>
+						  <div class="cart-actions">
+                                  <a href="${paymentPageUrl}" class="btn btn-sm btn-primary float-end" id="">
+                                 <spring:theme code="general.continue.button" /></a>
+                              </div>
 
 					</div>
 					<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">

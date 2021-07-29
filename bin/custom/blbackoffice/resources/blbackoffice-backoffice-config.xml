@@ -1430,6 +1430,17 @@
 		</editorArea:editorArea>
 	</context>
 
+	<context type="Consignment" merge-by="type" component="editorareaactions"
+		principal="frontdeskuserrole">
+		<y:actions xmlns:y="http://www.hybris.com/cockpit/config/hybris">
+			<y:group qualifier="common">
+				<y:label>actiongroup.common</y:label>
+				<y:action action-id="hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction"
+					property="currentObject"/>
+			</y:group>
+		</y:actions>
+	</context>
+
 	<!--BL-769 : OMS&WH - Front Desk Queue - Front Desk User Role perspective starts here -->
 	<context component="explorer-tree" principal="frontdeskuserrole">
 		<n:explorer-tree xmlns:n="http://www.hybris.com/cockpitng/config/explorertree">
