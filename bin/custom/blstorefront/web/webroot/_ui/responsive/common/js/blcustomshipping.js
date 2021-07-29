@@ -1182,22 +1182,26 @@ function removeClass(){
                  $('#whatWeSuggest').html(whatWeSuggest);
                  $('#avsCheck').modal('show');
             } else {
-                 //suggested state not supported error from response
-                 addNewAddress(addressForm, deliveryMode)
-                     .then((data) => {
-                         sessionStorage.removeItem("enteredAddressForm");
-                         saveDeliveryMode(deliveryMode, false)
-                             .then((data) => {
-                                 $('.page-loader-new-layout').hide();
-                                 window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
-                             })
-                             .catch((error) => {
-                               console.log(error)
-                             })
-                     })
-                     .catch((error) => {
-                       console.log(error)
-                     })
+                 if(section == 'SHIP' && businessType && data.result != null && data.addressType != 'BUSINESS') {
+                    showAMDeliveryErrorMessage(section);
+                 } else {
+                    //suggested state not supported error from response
+                     addNewAddress(addressForm, deliveryMode)
+                         .then((data) => {
+                             sessionStorage.removeItem("enteredAddressForm");
+                             saveDeliveryMode(deliveryMode, false)
+                                 .then((data) => {
+                                     $('.page-loader-new-layout').hide();
+                                     window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
+                                 })
+                                 .catch((error) => {
+                                   console.log(error)
+                                 })
+                         })
+                         .catch((error) => {
+                           console.log(error)
+                         })
+                 }
             }
         },
         complete: function() {
