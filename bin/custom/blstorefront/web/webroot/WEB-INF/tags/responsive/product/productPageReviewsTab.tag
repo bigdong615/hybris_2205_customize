@@ -43,7 +43,7 @@
 					name : '${product.name}',
 					url : '${baseUrl}${product.url}',
 					image_url : '${primaryImageUrl}',
-					description : '${(product.description)}',
+					description : '${product.name}',
 					category_name : '${(product.categories[0].name)}',
 					manufacturer_id : '${product.manufacturer}',
 					upc : '${product.upc}',
@@ -54,7 +54,7 @@
 				components : {
 					ReviewSnippet : 'pr-reviewsnippet',
 					ReviewImageSnippet : 'pr-imagesnippet',
-					ReviewDisplay : 'pr-reviewdisplay',
+					ReviewDisplay : 'pr-reviewdisplay'
 
 				}
 			});
