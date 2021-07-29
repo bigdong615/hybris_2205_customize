@@ -60,7 +60,8 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
        final ProductModel product = abstractOrderEntryModel.getProduct();
        if(product instanceof BlSerialProductModel) {
          final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
-         productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.PRODUCT_SEPERATOR + productModel.getName());
+         productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.BLANK + BlFacadesConstants.PRODUCT_SEPERATOR +
+             BlFacadesConstants.BLANK + productModel.getName());
        }
      }
      target.setProductNameAndQuantity(productQtyAndName);

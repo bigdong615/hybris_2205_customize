@@ -17,8 +17,18 @@
                                 <h5 class="mb-4"><spring:theme code="text.myaccount.order.rental.dates"/></h5>
                                 <div class="row">
                                     <div class="col-4">
+
                                         <p class="overline"><spring:theme code="text.myaccount.order.rental.starts"/></p>
-                                        <p class="lightteal mb-0"><b>${orderData.rentalStartDate}</b></p>
+                                          <c:if test="${orderData.isRentalActive eq true}">
+                                               <p class="lightteal mb-0">
+                                                        <b>${orderData.rentalStartDate}</b>
+                                               </p>
+                                           </c:if>
+                                           <c:if test="${orderData.isRentalActive eq false}">
+                                                  <p class="mb-0">
+                                                    <b>${orderData.rentalStartDate}</b>
+                                                  </p>
+                                           </c:if>
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.start.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
                                     </div>
                                     <div class="col-2 text-center">
@@ -26,7 +36,12 @@
                                     </div>
                                     <div class="col-4">
                                         <p class="overline"><spring:theme code="text.myaccount.order.rental.end"/></p>
+                                         <c:if test="${orderData.isRentalActive eq true}">
                                         <p class="lightteal mb-0"><b>${orderData.rentalEndDate}</b></p>
+                                        </c:if>
+                                        <c:if test="${orderData.isRentalActive eq false}">
+                                          <p class="mb-0"><b>${orderData.rentalEndDate}</b></p>
+                                        </c:if>
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
                                     </div>
                                 </div>
@@ -94,12 +109,18 @@
                                 </h5>
                                <c:forEach items="${orderData.entries}" var="cartEntry" >
                                		 <div class="row mb-4">
+                               		 <c:url var="productUrl" value="/rent/product/${cartEntry.product.code}"/>
+                                              <c:if test="${!orderData.isRentalCart}">
+                                                <c:url var="productUrl" value="/buy/product/${cartEntry.product.code}"/>
+                                              </c:if>
+
                                				<div class="col-md-3 text-center">
-                               								<product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/>
+                               									<a href="${productUrl}"> <product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/> </a>
                                				</div>
                                					<div class="col-md-9 mt-3">
                                							<p class="gray80 body14">
-                               							 <b class="gray100">${cartEntry.product.name}</b>
+                               							 <b class="gray100">
+                               							<a href="${productUrl}" style="text-decoration: none"> ${cartEntry.product.name}</b></a>
                                							 <spring:theme code="text.myaccount.order.your.rental.qty"/> ${cartEntry.quantity}<br>
                                							  <c:if test="${orderData.isRentalCart}">
                                		        <c:choose>
@@ -274,7 +295,14 @@
                                             <td class="text-end"><format:price priceData="${orderData.deliveryCost}"/></td>
                                         </tr>
                                         <tr>
-                                            <td class="gray80"><spring:theme code="text.myaccount.order.tax.text"/></td>
+                                            <td class="gray80">
+                                            <c:if test="${orderData.isRentalCart}">
+                                            <spring:theme code="text.myaccount.order.tax.text"/>
+                                            </c:if>
+                                            <c:if test="${orderData.isRentalCart eq false}">
+                                            <spring:theme code="text.myaccount.order.tax.used"/>
+                                            </c:if>
+                                            </td>
                                             <td class="text-end"><format:blPrice priceData="${orderData.taxAvalaraCalculated}" /></td>
                                         </tr>
                                          <c:if test="${orderData.totalDiscounts.value > 0}">

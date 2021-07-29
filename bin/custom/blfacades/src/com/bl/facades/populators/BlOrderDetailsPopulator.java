@@ -2,9 +2,12 @@ package com.bl.facades.populators;
 
 import com.bl.core.enums.ExtendOrderStatusEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.GiftCardModel;
+import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
+import com.bl.facades.giftcard.data.BLGiftCardData;
 import com.bl.facades.product.data.ExtendOrderData;
 import com.google.common.collect.Ordering;
 import de.hybris.platform.commercefacades.order.data.OrderData;
@@ -18,12 +21,14 @@ import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.xml.transform.Source;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * This Populator created to populate order details
@@ -74,7 +79,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
           .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source)) + 1));
 
       target.setIsRentalStartDateActive(new Date().before(source.getRentalStartDate()));
-      target.setIsRentalEndDateActive(new Date().before(source.getRentalEndDate()));
+      target.setIsRentalEndDateActive(new Date().before(updateRentalDatesIfOrderIsExtended(source)));
       target.setIsRentalActive(isRentalCartAcive(source));
     }
     target.setOrderedDate(convertDateToString(source.getDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE));
@@ -130,7 +135,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
        final ExtendOrderData extendOrderData = new ExtendOrderData();
        extendOrderData.setExtendOrderCost(convertDoubleToPriceData(extendOrderModel.getTotalPrice() , orderModel));
        extendOrderData.setExtendOrderDamageWaiverCost(convertDoubleToPriceData(extendOrderModel.getTotalDamageWaiverCost(), orderModel));
-       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.DAYS);
+       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + BlFacadesConstants.DAYS);
        extendOrderData.setExtendOrderEndDate(convertDateToString(extendOrderModel.getRentalEndDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
        extendOrderDataList.add(extendOrderData);
       }
@@ -251,7 +256,8 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   private boolean isRentalCartAcive(final OrderModel orderModel){
     final Date date = new Date();
-    return date.before(orderModel.getRentalStartDate()) || date.before(orderModel.getRentalEndDate());
+    return date.before(orderModel.getRentalStartDate()) || date.before(updateRentalDatesIfOrderIsExtended(orderModel))
+    || DateUtils.isSameDay(updateRentalDatesIfOrderIsExtended(orderModel), date);
   }
 
 
