@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.lang.StringUtils;
 
 
 public class TealiumContext
@@ -14,7 +15,6 @@ public class TealiumContext
 	private Map<String, String[]> arrayAttributes = new ConcurrentHashMap<>();
 	private CartData productData;
 	private String checkoutType;
-/*	private Boolean isNewUser = false;*/
 	private String viewCartProductCode = "no_product";
 	private String productPageProductCode = "no_product";
 	private Boolean cartOpen = false;
@@ -26,15 +26,15 @@ public class TealiumContext
 
 	public void set(String key, String value)
 	{
-		if (value != null && !value.equals(""))
-		{
+		if (StringUtils.isNotEmpty(value))
+		 {
 			attributes.put(key, value);
-		}
+		 }
 	}
 
 	public void set(String key, Object value)
 	{
-		if (value != null)
+		if (value != null){
 			if (value instanceof String)
 			{
 				attributes.put(key, (String) value);
@@ -43,20 +43,18 @@ public class TealiumContext
 			{
 				attributes.put(key, String.valueOf(value));
 			}
+		}
 	}
 
 	public void setArrayValue(String key, String[] value)
 	{
-		if (value != null)
-			if (value instanceof String[])
-			{
+		if (value != null && value instanceof String[]){
 				arrayAttributes.put(key, value);
-			}
+		 }
 	}
 
 	public void clean()
 	{
-	//	isNewUser = false;
 		arrayAttributes = new HashMap<>();
 	}
 
@@ -114,16 +112,6 @@ public class TealiumContext
 	{
 		this.productData = productData;
 	}
-
-/*	public Boolean getNewUser()
-	{
-		return isNewUser;
-	}
-
-	public void setNewUser(Boolean newUser)
-	{
-		isNewUser = newUser;
-	}*/
 
 	public String getViewCartProductCode()
 	{
