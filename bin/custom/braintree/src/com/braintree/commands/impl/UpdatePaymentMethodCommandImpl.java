@@ -29,6 +29,7 @@ public class UpdatePaymentMethodCommandImpl extends AbstractCommand implements B
 		try
 		{
 			final PaymentMethodRequest paymentMethodRequest = translateRequest(request);
+			paymentMethodRequest.options().makeDefault(request.isDefault());
 			final Result<? extends PaymentMethod> result = getBraintreeGateway().paymentMethod().update(request.getToken(),
 					paymentMethodRequest);
 			if (result.isSuccess())

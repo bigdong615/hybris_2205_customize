@@ -19,7 +19,7 @@
 
 </c:choose>
 <c:choose>
-	<c:when test="${product.code eq 'bl_giftcard'}">
+	<c:when test="${product.productType eq 'GIFTCARD'}">
 		<div class="gift-card-plp">
 			<c:choose>
 				<c:when test="${not empty product.images}">

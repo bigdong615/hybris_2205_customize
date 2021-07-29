@@ -42,6 +42,7 @@
 	<property name="upc" type="java.lang.String"/>
 	<property name="brandName" type="java.lang.String"/>
 		<property name="productId" type="java.lang.String"/>
+	<property name="productType" type="java.lang.String"/>
   </bean>
 
 
@@ -105,6 +106,10 @@
 	<property name="gearGuardProFullWaiverSelected" type="java.lang.Boolean"/>
 	<property name="noDamageWaiverSelected" type="java.lang.Boolean"/>
 	<property name="availabilityMessage" type="com.bl.facades.product.data.AvailabilityMessage"/>
+	<property name="recipientEmail" type="java.lang.String"/>
+    <property name="recipientName" type="java.lang.String" />
+    <property name="recipientMessage" type="java.lang.String"/>
+	
   </bean>
   
   <!-- Adding custom attributes in existing DTO of AbstractOrderData -->
@@ -156,7 +161,8 @@
 		  <property name="rentalDatesOnPrint" type="com.bl.facades.product.data.RentalDateDto"/>
 
 		<property name="extendOrderEntrie" type="java.util.List&lt;com.bl.facades.product.data.ExtendOrderData&gt;"/>
-
+        <property name="giftCardCost" type="java.lang.Double"/>
+        <property name="hasGiftCart" type="java.lang.Boolean"/>
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -293,6 +299,11 @@
 			<property name="isDamageWaiverSelected" type="java.lang.Boolean"/>
 			<property name="isDamageWaiverProSelected" type="java.lang.Boolean"/>
 			<property name="isNoDamageWaiverSelected" type="java.lang.Boolean"/>
+            <property name="giftCardAmount" type="java.lang.Double"/>
+            <property name="recipientEmail" type="java.lang.String"/>
+            <property name="recipientName" type="java.lang.String" />
+            <property name="recipientMessage" type="java.lang.String"/>
+            
 	</bean>
 
   <!--BL-563 Gift Card-->

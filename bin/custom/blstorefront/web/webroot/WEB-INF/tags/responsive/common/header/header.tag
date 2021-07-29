@@ -119,7 +119,6 @@
   </div>			
 					
 </div>
-<livechat:livechat/>
 </nav>
 
 <!-- modal for sign in -->

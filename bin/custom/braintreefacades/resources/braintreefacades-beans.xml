@@ -44,6 +44,7 @@
         <property name="intent" type="java.lang.String"/>
         <property name="amount" type="java.lang.String"/>
         <property name="braintreeAddressId" type="java.lang.String"/>
+        <property name="isDefault" type="java.lang.Boolean"/>
 	</bean>
 
 	<bean class="com.braintree.hybris.data.PayPalAddressData">
@@ -107,6 +108,7 @@
 		<property name="paymentType" type="java.lang.String" />
 		<property name="cardType" type="java.lang.String" />
 		<property name="cardNumber" type="java.lang.String" />
+		<property name="isDefault" type="java.lang.Boolean"/>
 	</bean>
 
 	<bean class="com.braintree.hybris.data.PayPalMiniCartResponse">
@@ -206,5 +208,6 @@
         <property name="cardholderName" type="String"/>
         <property name="payer" type="String"/>
         <property name="paymentMethodNonce" type="String"/>
+        <property name="isDefault" type="java.lang.Boolean"/>
     </bean>
 </beans>
