@@ -34,8 +34,10 @@ public class CapturePaymentController extends DefaultWidgetController {
   protected static final String OUT_CONFIRM = "confirmOutput";
   private static final String TITLE_MESSG = "Capture payment for order";
   protected static final String COMPLETE = "completed";
+  private static final String CONNECTOR = " : ";
   private static final String ERR_MESG_FOR_ALREADY_CAPTURED_ORDER = "error.message.already.captured.order";
   private static final String SUCC_MSG_FOR_PAYMENT_CAPTURED = "success.message.payment.captured";
+  private static final String ERR_MSG_FOR_PAYMENT_CAPTURED = "error.message.payment.captured";
 
   @Resource
   private BlPaymentService blPaymentService;
@@ -48,7 +50,8 @@ public class CapturePaymentController extends DefaultWidgetController {
   @SocketEvent(socketId = "inputObject")
   public void init(final ConsignmentModel inputObject) {
     this.getWidgetInstanceManager()
-        .setTitle(TITLE_MESSG + " : " + inputObject.getOrder().getCode());
+        .setTitle(new StringBuilder(TITLE_MESSG).append(CONNECTOR).append(inputObject.getOrder()
+            .getCode()).toString());
     if (inputObject.getOrder() instanceof OrderModel) {
       this.setOrderModel((OrderModel) inputObject.getOrder());
     }
@@ -68,8 +71,12 @@ public class CapturePaymentController extends DefaultWidgetController {
       showMessageBox(Localization.getLocalizedString(ERR_MESG_FOR_ALREADY_CAPTURED_ORDER));
       return;
     }
-    blPaymentService.capturePaymentForOrder(getOrderModel());
-    showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
+    if (blPaymentService.capturePaymentForOrder(getOrderModel())) {
+      showMessageBox(Localization.getLocalizedString(SUCC_MSG_FOR_PAYMENT_CAPTURED));
+    } else {
+      BlLogger.logMessage(LOG, Level.ERROR, "Error occurred while capturing the payment");
+      showMessageBox(Localization.getLocalizedString(ERR_MSG_FOR_PAYMENT_CAPTURED));
+    }
   }
 
   @ViewEvent(componentID = "cancelChanges", eventName = "onClick")

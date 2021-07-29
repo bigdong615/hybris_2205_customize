@@ -10,8 +10,11 @@ import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 /**
- * @author Krishan Vashishth
+ * ###################### BL-749 ################
+ * The type Capture payment action. This class is being used to enable/disable the action
+ * button on the editor area to capture the payment for the selected consignment.
  *
+ * @author Krishan Vashishth
  */
 public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
     implements CockpitAction<ConsignmentModel, ConsignmentModel>
@@ -20,19 +23,32 @@ public class CapturePaymentAction extends AbstractComponentWidgetAdapterAware
   private static final String LOCATION_PATH = "actions/blFrontCapturePayment";
   private static final String FRONT_SOCKET_OUT_CTX = "blFrontCapturePaymentContext";
 
+  /**
+   * Can perform boolean.
+   *
+   * @param actionContext the action context
+   * @return the boolean
+   */
   @Override
   public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
   {
-    final ConsignmentModel contextData = actionContext.getData();
-    return contextData != null && contextData.getOrder() != null;
+    final ConsignmentModel consignmentModel = actionContext.getData();
+    return consignmentModel != null && consignmentModel.getOrder() != null;
   }
 
+  /**
+   * Perform action result.
+   *
+   * @param actionContext the action context
+   * @return the action result
+   */
+  @Override
   public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
   {
     final String socketOuptut = actionContext.getDefinition().getLocationPath()
         .contains(LOCATION_PATH) ? FRONT_SOCKET_OUT_CTX : SOCKET_OUT_CONTEXT;
     this.sendOutput(socketOuptut, actionContext.getData());
-    return new ActionResult("success");
+    return new ActionResult(ActionResult.SUCCESS);
   }
 
 
