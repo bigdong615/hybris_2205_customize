@@ -10,7 +10,10 @@
 # license agreement you entered into with SAP.
 # -----------------------------------------------------------------------
 # OMS velocity template for printing label
- 
+
+#% impex.info("=============================== Importing content from BLInitialData coredata/common oms-labels-content_en.impex =========================");
+
+
 $contentCatalog=blContentCatalog
 $contentCV=catalogVersion(CatalogVersion.catalog(Catalog.id[default=$contentCatalog]),CatalogVersion.version[default=Staged])[default=$contentCatalog:Staged]
 $lang=en
