@@ -685,7 +685,7 @@
             </n:navigation-node>
             <n:navigation-node id="UnboxingInventoryScan">
 				<n:navigation-node id="UnboxingScanTool"/>
-				<n:type-node id="ExportAllDirtySerials" code="ExportAllDirtySerials"/>
+				<n:type-node id="ExportAllDirtyPrioritySerials" code="ExportAllDirtyPrioritySerials"/>
 			</n:navigation-node>
             <n:navigation-node id="TechEngScanTool"/>
         </n:explorer-tree>
@@ -1656,6 +1656,29 @@
 			</na:notifications>
 		</na:notification-area>
 	</context>
+	
+	<!--BL-820 ExportAllDirtySerials-->
+	<context type="ExportAllDirtyPrioritySerials" component="advanced-search" merge-by="replace">
+		<advanced-search:advanced-search disable-simple-search="true" disable-auto-search="true">
+			<advanced-search:field-list>
+				<advanced-search:field name="currentDate" selected="true" mandatory="true"/>
+				<advanced-search:field name="warehouse" selected="true" mandatory="true"/>
+			</advanced-search:field-list>
+		</advanced-search:advanced-search>
+	</context>
+
+	<context type="ExportAllDirtyPrioritySerials" component="listview" merge-by="replace">
+		<list-view:list-view>
+			<list-view:column qualifier="orderNumber"/>
+			<list-view:column qualifier="orderTypeFlag"/>
+			<list-view:column qualifier="orderNotes"/>
+			<list-view:column qualifier="productName"/>
+			<list-view:column qualifier="serialNumber"/>
+			<list-view:column qualifier="ocLocationCode"/>
+			<list-view:column qualifier="serialDirtyPriorityFlag"/>
+		</list-view:list-view>
+	</context>
+	<!--BL-820 ExportAllDirtySerials End-->
 
 </config>
 
