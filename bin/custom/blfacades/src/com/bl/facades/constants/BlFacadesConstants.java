@@ -54,6 +54,7 @@ public class BlFacadesConstants extends GeneratedBlFacadesConstants {
   public static final String SUB_TOTAL_FIELD = "subTotal";
   public static final String PRODUCT_SEPERATOR = "x";
   public static final String BLANK = " ";
+  public static final String URL_SEPERATOR = "/";
 
 
   private BlFacadesConstants() {

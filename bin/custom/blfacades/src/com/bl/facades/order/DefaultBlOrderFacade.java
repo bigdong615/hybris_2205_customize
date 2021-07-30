@@ -17,6 +17,7 @@ import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator;
+import com.bl.facades.populators.BlOrderAppliedVouchersPopulator;
 import com.bl.logging.BlLogger;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
@@ -86,6 +87,7 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
   private BlCommerceStockService blCommerceStockService;
   private BlExtendRentalOrderDetailsPopulator blExtendRentalOrderDetailsPopulator;
   private BlDatePickerService blDatePickerService;
+  private BlOrderAppliedVouchersPopulator blOrderAppliedVouchersPopulator;
 
   /**
    * This method created to add all the products from existing order
@@ -282,12 +284,15 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
         getPriceDataFactory()
             .create(priceType, BigDecimal.valueOf(extendOrderModel.getTotalTax()),
                 extendOrderModel.getCurrency().getIsocode()));
-    final BigDecimal orderTotalWithTax = BigDecimal.valueOf(extendOrderModel.getSubtotal())
-        .add(BigDecimal.valueOf(extendOrderModel.getTotalDamageWaiverCost())).
-            add(BigDecimal.valueOf(extendOrderModel.getTotalTax()));
+
+    orderData.setExtendOrderDiscount( getPriceDataFactory()
+        .create(priceType, BigDecimal.valueOf(extendOrderModel.getTotalDiscounts()),
+            extendOrderModel.getCurrency().getIsocode()));
 
     orderData.setOrderTotalWithTaxForExtendRental(getPriceDataFactory()
-        .create(priceType, orderTotalWithTax, extendOrderModel.getCurrency().getIsocode()));
+        .create(priceType, BigDecimal.valueOf(extendOrderModel.getTotalPrice()), extendOrderModel.getCurrency().getIsocode()));
+
+    getBlOrderAppliedVouchersPopulator().populate(extendOrderModel , orderData);
 
     // To set current extendOrderModel to session
     BlExtendOrderUtils.setCurrentExtendOrderToSession(extendOrderModel);
@@ -575,6 +580,16 @@ public class DefaultBlOrderFacade extends DefaultOrderFacade implements BlOrderF
 
   public void setBlDatePickerService(BlDatePickerService blDatePickerService) {
     this.blDatePickerService = blDatePickerService;
+  }
+
+
+  public BlOrderAppliedVouchersPopulator getBlOrderAppliedVouchersPopulator() {
+    return blOrderAppliedVouchersPopulator;
+  }
+
+  public void setBlOrderAppliedVouchersPopulator(
+      BlOrderAppliedVouchersPopulator blOrderAppliedVouchersPopulator) {
+    this.blOrderAppliedVouchersPopulator = blOrderAppliedVouchersPopulator;
   }
 
 
