@@ -9,14 +9,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                   <a href="#"><img class="promoImg" src="https://cdn.static-bl.com/images/homepage/safety-cleanliness-rentals-borrowlenses.jpg">
-                <span>See our checklist of top 10 rental accessories. <b> View list ></b> </span>
+                   <a href="${media.redirectUrl}"><img class="promoImg" src="${media.url}">
+                <span>${headline} <b> ${urlLink} </b> </span>
                 </a>
                    
                 </div>
             </div>
         </div>    
-    </section>
+</section>
 
 	<c:if test="${positionAttribute == 'SocialMediaSectionSlot'}">
 	  <div class="social">
