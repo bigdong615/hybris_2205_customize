@@ -2,6 +2,7 @@ package com.bl.core.coupon.impl;
 
 import com.bl.core.coupon.BlCouponService;
 import com.bl.core.utils.BlExtendOrderUtils;
+import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.couponservices.CouponServiceException;
 import de.hybris.platform.couponservices.service.data.CouponResponse;
@@ -17,6 +18,8 @@ import org.apache.commons.lang.BooleanUtils;
  * @author Manikandan
  */
 public class DefaultBlCouponService extends DefaultCouponService implements BlCouponService {
+
+  private DefaultBlCouponManagementService defaultBlCouponManagementService;
 
     /**
     * This method created for customize coupon code for extend order
@@ -37,7 +40,7 @@ public class DefaultBlCouponService extends DefaultCouponService implements BlCo
    */
   public void redeemCouponCodeForExtendOrder(final OrderModel orderModel, final String clearedCouponCode, final CouponResponse response) {
     try {
-      if (BooleanUtils.isTrue(getCouponManagementService().redeem(clearedCouponCode, orderModel).getSuccess())) {
+      if (BooleanUtils.isTrue(getDefaultBlCouponManagementService().redeemForExtendOrder(clearedCouponCode, orderModel).getSuccess())) {
         final Set<String> codes = new HashSet<>();
         if (CollectionUtils.isNotEmpty(orderModel.getAppliedCouponCodes())) {
           codes.addAll(orderModel.getAppliedCouponCodes());
@@ -54,6 +57,31 @@ public class DefaultBlCouponService extends DefaultCouponService implements BlCo
       response.setSuccess(Boolean.FALSE);
       response.setMessage(var5.getMessage());
     }
+  }
+
+  /**
+   * This method created to remove the applies coupon from extend order page
+   */
+  @Override
+  public void releaseCouponCodeForExtendOrder(final String couponCode, final AbstractOrderModel order) {
+    ServicesUtil.validateParameterNotNullStandardMessage("couponCode", couponCode);
+    ServicesUtil.validateParameterNotNullStandardMessage("order", order);
+    this.getCouponManagementService().releaseCouponCode(couponCode);
+    this.removeCouponAndTriggerCalculation(couponCode, order);
+
+    if(BooleanUtils.isTrue(order.getIsExtendedOrder())) {
+      BlExtendOrderUtils.setCurrentExtendOrderToSession(order);
+    }
+  }
+
+
+  public DefaultBlCouponManagementService getDefaultBlCouponManagementService() {
+    return defaultBlCouponManagementService;
+  }
+
+  public void setDefaultBlCouponManagementService(
+      DefaultBlCouponManagementService defaultBlCouponManagementService) {
+    this.defaultBlCouponManagementService = defaultBlCouponManagementService;
   }
 
 }
