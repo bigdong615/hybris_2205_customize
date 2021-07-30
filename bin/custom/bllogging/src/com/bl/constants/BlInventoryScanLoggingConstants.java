@@ -113,9 +113,10 @@ public class BlInventoryScanLoggingConstants {
     public static final String UNBOX_SAN_TOOL_PACKAGE_FAILURE_MSG = "Scanned serials not exist on any of the package: ";
     public static final String UNBOX_SAN_TOOL_DPC_FAILURE_MSG = "Please, place this item to the dirty priority shelf: ";
     public static final String UNBOX_SAN_TOOL_DC_FAILURE_MSG = "Please, place this item to the dirty cart shelf: ";
-    public static final String FETCH_PACKAGE_DETAILS = "Fetching PackagingDetails for serial barcodes";
-    public static final String FETCH_OUT_ORDER_DETAILS = "Fetching OUT orders for today";
-    public static final String FETCH_OUT_ORDER_SERIAL = "Fetching OUT orders for serial: ";
+    public static final String FETCH_PACKAGE_DETAILS = "Fetching PackagingDetails for serial barcodes {} and found {} packages.";
+    public static final String FETCH_OUT_ORDER_DETAILS = "Fetching OUT orders for today. Found {} orders";
+    public static final String FETCH_OUT_ORDER_SERIAL = "Fetching OUT orders for serial: {} and found {} orders";
+    public static final String FETCH_OUT_TODAYS_ORDER_SERIAL = "Fetching OUT todays orders for serial: {} and found {} orders";
     
     public static final String UNBOXING_WORKSTATION = "TECH_ENGINEERING_WORKSTATION";
     public static final String UNBOXING_WORKSTATION_LOCATION = "VIP_WORKSTATION_TECH_ENG";

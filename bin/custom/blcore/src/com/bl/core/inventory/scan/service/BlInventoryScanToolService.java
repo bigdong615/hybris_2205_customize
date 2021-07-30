@@ -3,7 +3,6 @@ package com.bl.core.inventory.scan.service;
 import com.bl.core.model.BlInventoryLocationModel;
 import com.bl.core.model.BlSerialProductModel;
 
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
@@ -79,7 +78,7 @@ public interface BlInventoryScanToolService {
     Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
     
  	/**
-	  * int method will check the valid Location provided in barcode list and return int with appropriate
+	  * This method will check the valid Location provided in barcode list and return int with appropriate
 	  * notification number to notify employee for DirtyCart and DirtyPriorityCart
 	  *
 	  * @param barcodes the barcodes
@@ -88,15 +87,15 @@ public interface BlInventoryScanToolService {
 	 int checkValidLocationInBarcodeListOfDPC(final List<String> barcodes);
 
  	/**
-	  * PackagingInfoModel Method will return package for serial
+	  * This Method will return list of packages for serial barcodes
 	  *
-	  * @param barcodes the barcodes
-	  * @return the package for serials
+	  * @param barcodes the barcodes list
+	  * @return the list of packages for serial barcodes
 	  */
 	 Collection<PackagingInfoModel> getPackageForSerials(final Collection<String> barcodes);
 
  	/**
-	  * map of failed barcodes Method will perform job for unboxing
+	  * This Method will perform job for unboxing scanning process
 	  *
 	  * @param barcodes the barcodes
 	  * @return the map
@@ -114,7 +113,7 @@ public interface BlInventoryScanToolService {
  	boolean doCheckDirtyPriorityStatus(final BlSerialProductModel serialProductModel);
 
  	/**
- 	 * javadoc This method will return location is of what type DC or DPC
+ 	 * This method will return location is of what type DC or DPC
  	 *
  	 * @return true if location is of dirtyPriority
  	 */
@@ -126,10 +125,10 @@ public interface BlInventoryScanToolService {
  	 *
  	 * @return Abstract Order list
  	 */
- 	Collection<AbstractOrderModel> getAllOutTodayOrders();
+ 	Collection<ConsignmentModel> getTodaysShippingOrders();
 
  	/**
- 	 * This method will give list orders that has particular serial associated
+ 	 * This method will give list of consignments that has particular serial associated
  	 *
  	 * @param serial
  	 *           product
@@ -138,9 +137,9 @@ public interface BlInventoryScanToolService {
  	Collection<ConsignmentModel> getAllConsignmentForSerial(final String serial);
 
  	/**
- 	 * javadoc this method will mark serial's dirtyPriorityFlag true according to order IN/OUT status
+ 	 * This method will mark serial's dirtyPriorityFlag true according to order IN/OUT status
  	 */
- 	void flagAllDirtyPrioritySerialsOfOrder();
+ 	void flagAllDirtyPrioritySerialsOfConsignment();
 
  	/**
  	 * This method will mark serial's dirtyPriorityFlag true according to order IN/OUT status on new order
@@ -148,5 +147,5 @@ public interface BlInventoryScanToolService {
  	 * @param order
  	 *           newly placed order
  	 */
- 	void flagAllDirtyPrioritySerialsOfNewOrder(final AbstractOrderModel order);
+ 	void flagAllDirtyPrioritySerialsOfNewOrder(final ConsignmentModel order);
 }

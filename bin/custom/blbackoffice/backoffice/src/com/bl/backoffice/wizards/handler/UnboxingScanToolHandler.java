@@ -40,14 +40,13 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_SUCCESS = NotificationEvent.Level.SUCCESS;
 
 	/**
-	 * javadoc
+	 * values OOB method which will perform actions on input barcodes form backoffice wizard
 	 *
 	 * @param customType
 	 *           type
 	 * @param flowActionHandlerAdapter
 	 *           handler
 	 * @param map
-	 *           values OOB method which will perform actions on input barcodes form backoffice wizard
 	 */
 	@Override
 	public void perform(final CustomType customType, final FlowActionHandlerAdapter flowActionHandlerAdapter,
@@ -77,10 +76,10 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	}
 
 	/**
-	 * javadoc
+	 * method will check the input size and notify user accordingly with conditions
 	 *
 	 * @param barcodes
-	 *           of list method will check the input size and notify user accordingly with conditions
+	 *           of list
 	 */
 	private void createResponseForScanResult(final List<String> barcodes)
 	{
@@ -97,12 +96,12 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	}
 
 	/**
-	 * javadoc
+	 * method will notify user according to result number calculated in previous method
 	 *
 	 * @param result
 	 *           result
 	 * @param barcodes
-	 *           list method will notify user according to result number calculated in previous method
+	 *           list
 	 */
 	private void createResponseMegForScan(final int result, final List<String> barcodes)
 	{
@@ -136,7 +135,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	}
 
 	/**
-	 * javadoc This method will log success and partial success scenario
+	 * This method will log success and partial success scenario
 	 *
 	 * @param barcodes
 	 *           list

@@ -17,10 +17,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
-import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
@@ -37,7 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * {javadoc}
+ * This service class is used perform Inventory Scanning Tool services 
  *
  * @author Namrata Lohar
  **/
@@ -169,13 +168,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
     }
 
     /**
-     * javadoc
+     * This method will update location on serial and save it. Also, it will create a history for scan and will associate with
+     * the InventoryLocation if barcode is valid serial product and if not then will fill it into failedBarcodeList to
+     * check status of scan that success or failure
+     * 
      * @param failedBarcodeList from scanned barcode list
      * @param blSerialProducts  from barcodes
      * @param iteratorBarcode   current iterator
-     * method will update location on serial and save it. Also, it will create a history for scan and will associate with
-     * the InventoryLocation if barcode is valid serial product and if not then will fill it into failedBarcodeList to
-     * check status of scan that success or failure
+     * 
      */
     public void setInventoryLocationOnSerial(final List<String> failedBarcodeList, final Collection<BlSerialProductModel> blSerialProducts,
                                               final String iteratorBarcode) {
@@ -184,6 +184,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         doUpdateLocation(failedBarcodeList, iteratorBarcode, blSerialProduct);
     }
 
+	/**
+	 * Do update location.
+	 *
+	 * @param failedBarcodeList the failed barcode list
+	 * @param iteratorBarcode the iterator barcode
+	 * @param blSerialProduct the bl serial product
+	 */
 	private void doUpdateLocation(final List<String> failedBarcodeList, final String iteratorBarcode,
 			final BlSerialProductModel blSerialProduct)
 	{
@@ -195,6 +202,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         }
 	}
     
+	/**
+	 * Sets the inventory location on serial.
+	 *
+	 * @param failedBarcodeList the failed barcode list
+	 * @param blSerialProducts the bl serial products
+	 * @param iteratorBarcode the iterator barcode
+	 * @param dirtyProductSerialModels the dirty product serial models
+	 */
 	private void setInventoryLocationOnSerial(final List<String> failedBarcodeList,
 			final Collection<BlSerialProductModel> blSerialProducts, final String iteratorBarcode,
 			final Collection<String> dirtyProductSerialModels)
@@ -204,7 +219,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		if (Objects.nonNull(blSerialProduct))
 		{
 			blSerialProduct.setSerialStatus(SerialStatusEnum.PARTIALLY_UNBOXED);
-			checkSerialForDirtyPriority(blSerialProduct);
+			checkItemIsDirty(blSerialProduct);
 			if (blSerialProduct.isDirtyPriorityStatus())
 			{
 				dirtyProductSerialModels.add(blSerialProduct.getBarcode());
@@ -507,9 +522,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param result the result
 	 * @param errorSerialList the error serial list
 	 */
-	private void handleUnboxingErrorMessage(final Map<Integer, Collection<String>> result, Collection<String> errorSerialList)
+	private void handleUnboxingErrorMessage(final Map<Integer, Collection<String>> result, final Collection<String> errorSerialList)
 	{
-		if (Objects.isNull(errorSerialList))
+		if (Objects.isNull(errorSerialList)) 
 		{
 			result.put(BlInventoryScanLoggingConstants.TWO, null);
 			BlLogger.logMessage(LOG, Level.DEBUG, "Failed to find package for scanned serials");
@@ -564,11 +579,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private void getResultMapForUnboxAtWorkstation(final Map<Integer, Collection<String>> result,
 			final List<String> failedBarcodeList, final Collection<String> dirtyProductSerialModels,
 			final Collection<String> barcodes)
-	{
-		Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(barcodes);
+	{ 
+		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(barcodes);
 		if (CollectionUtils.isEmpty(blSerialProducts))
 		{
 			result.put(BlInventoryScanLoggingConstants.ZERO, barcodes);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Failed barcode list: {}", failedBarcodeList);	
 		}
 		else 
 		{
@@ -644,7 +660,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 					serialProductModel.setAssociatedConsignment(consignmentModel);
 					serialProductModel.setAssociatedOrder(
 							consignmentModel.getOrder() instanceof OrderModel ? ((OrderModel) consignmentModel.getOrder()) : null);
-					performLocationUpdateOnItem(blInventoryLocationModel, serialList, serialProductModel);					
+					performLocationUpdateOnSerial(blInventoryLocationModel, serialList, serialProductModel);					
 				}
 			}
 		}
@@ -652,18 +668,19 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * Perform location update on item.
+	 * Perform location update on serial.
 	 *
 	 * @param blInventoryLocationModel the bl inventory location model
 	 * @param serialList the serial list
 	 * @param serialProductModel the serial product model
 	 */
-	private void performLocationUpdateOnItem(final BlInventoryLocationModel blInventoryLocationModel, final Collection<String> serialList,
+	private void performLocationUpdateOnSerial(final BlInventoryLocationModel blInventoryLocationModel, final Collection<String> serialList,
 			final BlSerialProductModel serialProductModel)
 	{
 		if(Objects.nonNull(serialProductModel.getProductType()) && serialProductModel.getProductType().equals(ProductTypeEnum.SUBPARTS))
 		{
 			serialProductModel.setSerialStatus(SerialStatusEnum.IN_HOUSE);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Serial status to In-House for sub part with code : {}", serialProductModel.getCode());
 			modelService.save(serialProductModel);
 			modelService.refresh(serialProductModel);
 		}
@@ -718,7 +735,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	@Override
 	public boolean doCheckDirtyPriorityStatus(final BlSerialProductModel serialProductModel)
 	{
-		this.checkSerialForDirtyPriority(serialProductModel);
+		this.checkItemIsDirty(serialProductModel);
 		return serialProductModel.isDirtyPriorityStatus();
 	}
 
@@ -735,9 +752,9 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<AbstractOrderModel> getAllOutTodayOrders()
+	public Collection<ConsignmentModel> getTodaysShippingOrders()
 	{
-		return getBlInventoryScanToolDao().getAllOutTodayOrders();
+		return getBlInventoryScanToolDao().getTodaysShippingOrders();
 	}
 
 	/**
@@ -753,14 +770,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void flagAllDirtyPrioritySerialsOfOrder()
+	public void flagAllDirtyPrioritySerialsOfConsignment()
 	{
-		final Collection<AbstractOrderModel> allOrders = this.getAllOutTodayOrders();
-		if (CollectionUtils.isNotEmpty(allOrders))
+		final Collection<ConsignmentModel> todaysShippingOrders = this.getTodaysShippingOrders();
+		if (CollectionUtils.isNotEmpty(todaysShippingOrders))
 		{
-			for (final AbstractOrderModel orderModel : allOrders)
+			for (final ConsignmentModel consignment : todaysShippingOrders)
 			{
-				this.flagAllDirtyPrioritySerialsOfNewOrder(orderModel);
+				this.flagAllDirtyPrioritySerialsOfNewOrder(consignment);
 			}
 		}
 	}
@@ -769,15 +786,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void flagAllDirtyPrioritySerialsOfNewOrder(final AbstractOrderModel orderModel)
+	public void flagAllDirtyPrioritySerialsOfNewOrder(final ConsignmentModel consignment)
 	{
-		final Collection<AbstractOrderEntryModel> orderEntryModels = orderModel.getEntries();
-		if (CollectionUtils.isNotEmpty(orderEntryModels))
+		final Collection<ConsignmentEntryModel> consignmentEntryModels = consignment.getConsignmentEntries();
+		if (CollectionUtils.isNotEmpty(consignmentEntryModels))
 		{
-			for (final AbstractOrderEntryModel entry : orderEntryModels)
+			for (final ConsignmentEntryModel consignmentEntry : consignmentEntryModels)
 			{
-				final ProductModel serial = entry.getProduct();
-				checkSerialsForDP(serial);
+				consignmentEntry.getSerialProducts().forEach(serial -> checkSerialsForDP(serial));
 			}
 		}
 	}
@@ -788,11 +804,11 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param serial
 	 *           product
 	 */
-	private void checkSerialsForDP(final ProductModel serial)
+	private void checkSerialsForDP(final BlProductModel serial)
 	{
 		if (serial instanceof BlSerialProductModel)
 		{
-			final BlSerialProductModel serialProductModel = (BlSerialProductModel) serial;
+			final BlSerialProductModel serialProductModel = ((BlSerialProductModel) serial);
 			if (BooleanUtils.isFalse(serialProductModel.isDirtyPriorityStatus()))
 			{
 				this.checkSerialForDirtyPriority(serialProductModel);
@@ -801,7 +817,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * javadoc Method will check serial for dirty Priority and will set status on serial and save it.
+	 * This method will check serial for dirty Priority and will set status on serial and save it.
 	 *
 	 * @param serialProductModel
 	 *           product
@@ -809,23 +825,44 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private void checkSerialForDirtyPriority(final BlSerialProductModel serialProductModel)
 	{
 		final Collection<ConsignmentModel> allConsignmentForSerial = this.getAllConsignmentForSerial(serialProductModel.getCode());
-		if (CollectionUtils.isNotEmpty(allConsignmentForSerial))
+		markDirtyToSerial(serialProductModel, allConsignmentForSerial);
+	}
+	
+	/**
+	 * Check item is dirty.
+	 *
+	 * @param serialProductModel the serial product model
+	 */
+	private void checkItemIsDirty(final BlSerialProductModel serialProductModel)
+	{
+		final Collection<ConsignmentModel> allConsignmentForSerial = getBlInventoryScanToolDao().getAllConsignmentOutToday(serialProductModel.getCode());
+		markDirtyToSerial(serialProductModel, allConsignmentForSerial);
+	}
+	
+	/**
+	 * Mark dirty to serial.
+	 *
+	 * @param serialProductModel the serial product model
+	 * @param allConsignmentForSerial the all consignment for serial
+	 */
+	private void markDirtyToSerial(final BlSerialProductModel serialProductModel,
+			final Collection<ConsignmentModel> allConsignmentForSerial)
+	{
+		if (CollectionUtils.isEmpty(allConsignmentForSerial))
 		{
-			serialProductModel.setDirtyPriorityStatus(Boolean.TRUE);
-			BlLogger.logMessage(LOG, Level.DEBUG, "Marking serial as Dirty Priority: TRUE");
+			serialProductModel.setDirtyPriorityStatus(Boolean.FALSE);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Marking serial : {} as Dirty Priority: FALSE", serialProductModel.getCode());
 		}
 		else
 		{
-			serialProductModel.setDirtyPriorityStatus(Boolean.FALSE);
-			BlLogger.logMessage(LOG, Level.DEBUG, "Marking serial as Dirty Priority: FALSE");
+			serialProductModel.setDirtyPriorityStatus(Boolean.TRUE);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Marking serial : {} as Dirty Priority: TRUE", serialProductModel.getCode());
 		}
 		modelService.save(serialProductModel);
 		modelService.refresh(serialProductModel);
 	}
 
 	/**
-	 * javadoc
-	 *
 	 * This method will change status of consignment
 	 *
 	 * @param consignmentModel
@@ -836,13 +873,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	public void changeConsignmentStatus(final ConsignmentModel consignmentModel, final ConsignmentStatus consignmentStatus)
 	{
 		consignmentModel.setStatus(consignmentStatus);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing status of Consignment : {} to {}", 
+				consignmentModel.getCode(), consignmentStatus.getCode());
 		modelService.save(consignmentModel);
 		modelService.refresh(consignmentModel);
 	}
 
 	/**
-	 * javadoc
-	 *
 	 * This method will change status of packagingInfo
 	 *
 	 * @param packagingInfoModel
@@ -854,6 +891,8 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final PackagingInfoStatus packagingInfoStatus)
 	{
 		packagingInfoModel.setPackagingInfoStatus(packagingInfoStatus);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing status of Packaging with PK : {} to {}", 
+				packagingInfoModel.getPk().toString(), packagingInfoStatus.getCode());
 		modelService.save(packagingInfoModel);
 		modelService.refresh(packagingInfoModel);
 	}
