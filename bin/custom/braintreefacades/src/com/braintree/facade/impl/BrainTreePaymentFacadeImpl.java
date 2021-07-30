@@ -1,5 +1,14 @@
 package com.braintree.facade.impl;
 
+import static com.braintree.constants.BraintreeConstants.ANDROID_PAY_CARD;
+import static com.braintree.constants.BraintreeConstants.APPLE_PAY_CARD;
+import static com.braintree.constants.BraintreeConstants.BRAINTREE_CREDITCARD_PAYMENT;
+import static com.braintree.constants.BraintreeConstants.CARD_NUMBER_MASK;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
+import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_SALE;
+import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import com.braintree.command.result.BrainTreeCreatePaymentMethodResult;
 import com.braintree.configuration.service.BrainTreeConfigService;
 import com.braintree.constants.BraintreeConstants;
@@ -36,23 +45,13 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.store.BaseStoreModel;
 import de.hybris.platform.store.services.BaseStoreService;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.log4j.Logger;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static com.braintree.constants.BraintreeConstants.ANDROID_PAY_CARD;
-import static com.braintree.constants.BraintreeConstants.APPLE_PAY_CARD;
-import static com.braintree.constants.BraintreeConstants.BRAINTREE_CREDITCARD_PAYMENT;
-import static com.braintree.constants.BraintreeConstants.CARD_NUMBER_MASK;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_ORDER;
-import static com.braintree.constants.BraintreeConstants.PAYPAL_INTENT_SALE;
-import static de.hybris.platform.servicelayer.util.ServicesUtil.validateParameterNotNullStandardMessage;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.log4j.Logger;
 
 public class BrainTreePaymentFacadeImpl extends DefaultPaymentFacade
 {
