@@ -2,6 +2,7 @@ package com.bl.facades.shipping.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.ShippingTypeEnum;
@@ -246,7 +247,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     
     /**
     *
-    * @param rentalStart date
     * @param payByCustomer flag
     * @return collection of RushDeliveryData
     */
@@ -644,7 +644,43 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public AVSResposeData getAVSResponse(final AddressData addressData) {
-        return getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
+        final AVSResposeData avsResposeData = getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
+        if(avsResposeData != null && CollectionUtils.isNotEmpty(avsResposeData.getResult()) &&
+                validateAVSResponse(addressData, avsResposeData.getResult().iterator().next())) {
+            avsResposeData.setAddressType(avsResposeData.getResult().iterator().next().getAddressType());
+            avsResposeData.setResult(Collections.emptyList());
+        }
+        return avsResposeData;
+    }
+
+    /**
+     * javadoc
+     * This method will do validation for AVS response with request
+     *
+     * @param addressRequestData entered address
+     * @param addressResponseData suggested address
+     * @return true if same
+     */
+    private boolean validateAVSResponse(final AddressData addressRequestData, final AddressData addressResponseData) {
+        if(addressRequestData.getLine1().equalsIgnoreCase(addressResponseData.getLine1()) &&
+            addressRequestData.getTown().equalsIgnoreCase(addressResponseData.getTown()) &&
+            addressRequestData.getRegion().getIsocodeShort().equalsIgnoreCase(addressResponseData.getRegion().getIsocodeShort()) &&
+            checkNumberEquality(addressRequestData.getPostalCode(), addressResponseData.getPostalCode())) {
+                        return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    /**
+     * javadoc
+     * This method will check zip equality
+     *
+     * @param request zipCode
+     * @param response zipCode
+     * @return true if same
+     */
+    private boolean checkNumberEquality(final String request, final String response) {
+        return request.split(BlCoreConstants.HYPHEN)[0].equals(response.split(BlCoreConstants.HYPHEN)[0]);
     }
 
     /**

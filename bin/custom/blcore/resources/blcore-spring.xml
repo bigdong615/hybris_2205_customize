@@ -1067,10 +1067,16 @@
 
 	<!--Coupon for rental extend order -->
 	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService" parent="defaultCouponService">
+		<property name="defaultBlCouponManagementService" ref="defaultBlCouponManagementService"/>
 	</bean>
 
 	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
 	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
+
+	<!--Added for extend order coupon promotion-->
+
+	<bean id="defaultBlCouponManagementService" class="com.bl.core.coupon.impl.DefaultBlCouponManagementService" parent="defaultCouponManagementService">
+	</bean>
 	
 	<!-- Interceptor for NotesModel to perform custom logic before saving the model -->
 	<alias name="blNotesPrepareInterceptor" alias="blNotesPrepareInterceptor"/>
