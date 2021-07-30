@@ -488,7 +488,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * javadoc this method will return resultant map for Unboxing at DirtyCart or DirtyPriorityCart
+	 * This method will return resultant map for Unboxing at DirtyCart or DirtyPriorityCart
 	 *
 	 * @param barcodes
 	 *           list
@@ -565,7 +565,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * javadoc this method will return resultant map for Unboxing at workstation location
+	 * This method will return resultant map for Unboxing at workstation location
 	 *
 	 * @param result
 	 *           map
@@ -598,8 +598,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 
 
 	/**
-	 * javadoc
-	 *
 	 * This method will change status of package and consignment also it will check failed barcodes also with correct
 	 * barcode and will execute scan records for the same
 	 *
@@ -691,7 +689,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * javadoc This method will check Inventory location for DC or DPC
+	 * This method will check Inventory location for DC or DPC
 	 *
 	 * @param blSerialProductModel
 	 *           serial
@@ -799,7 +797,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
-	 * javadoc This method will check products from Order and will check for DP/DC
+	 * This method will check products from Order and will check for DP/DC
 	 *
 	 * @param serial
 	 *           product
