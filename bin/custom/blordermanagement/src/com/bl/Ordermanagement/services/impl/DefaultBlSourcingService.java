@@ -136,11 +136,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private boolean checkIfDifferentWarehouseAllocated(final SourcingResult sourcingResult,
       final ZoneDeliveryModeModel deliveryModeModel) {
 
-    if (sourcingResult.getWarehouse().getCode().equalsIgnoreCase(deliveryModeModel.getCode())) {
-      return false;
-    }
-
-    return true;
+    return !sourcingResult.getWarehouse().getCode().equalsIgnoreCase(deliveryModeModel.getCode());
   }
 
   /**
@@ -152,14 +148,10 @@ public class DefaultBlSourcingService implements BlSourcingService {
    */
   private boolean isDeliveryModeForInternalTransfer(final ZoneDeliveryModeModel deliveryModeModel) {
 
-    if (deliveryModeModel instanceof BlRushDeliveryModeModel || (
+    return deliveryModeModel instanceof BlRushDeliveryModeModel || (
         deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
             .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
-            .contains(deliveryModeModel.getCode()))) {
-      return true;
-    }
-
-    return false;
+            .contains(deliveryModeModel.getCode()));
   }
 
   public BlSourcingLocationService getBlSourcingLocationService() {
