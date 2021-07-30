@@ -407,7 +407,7 @@ function removeClass(){
      if(stores != null && stores.length != 0) {
          for (let i = 0; i < stores.length; i++) {
              if(stores[i].locationId == upsSelectedStoreId) {
-                 return createAddressFormObject(stores[i].consigneeName, "UPS", stores[i].addressLine, null, stores[i].politicalDivision2,
+                 return createAddressFormObject(stores[i].consigneeName, "UPS", "", stores[i].addressLine, null, stores[i].politicalDivision2,
                          stores[i].politicalDivision1, stores[i].countryCode, stores[i].postcodePrimaryLow, false, stores[i].contactNumber, null, true,
                          stores[i].latestGroundDropOffTime, 'BUSINESS')
              }
@@ -1182,22 +1182,26 @@ function removeClass(){
                  $('#whatWeSuggest').html(whatWeSuggest);
                  $('#avsCheck').modal('show');
             } else {
-                 //suggested state not supported error from response
-                 addNewAddress(addressForm, deliveryMode)
-                     .then((data) => {
-                         sessionStorage.removeItem("enteredAddressForm");
-                         saveDeliveryMode(deliveryMode, false)
-                             .then((data) => {
-                                 $('.page-loader-new-layout').hide();
-                                 window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
-                             })
-                             .catch((error) => {
-                               console.log(error)
-                             })
-                     })
-                     .catch((error) => {
-                       console.log(error)
-                     })
+                 if(section == 'SHIP' && businessType && data.result != null && data.addressType != 'BUSINESS') {
+                    showAMDeliveryErrorMessage(section);
+                 } else {
+                    //suggested state not supported error from response
+                     addNewAddress(addressForm, deliveryMode)
+                         .then((data) => {
+                             sessionStorage.removeItem("enteredAddressForm");
+                             saveDeliveryMode(deliveryMode, false)
+                                 .then((data) => {
+                                     $('.page-loader-new-layout').hide();
+                                     window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
+                                 })
+                                 .catch((error) => {
+                                   console.log(error)
+                                 })
+                         })
+                         .catch((error) => {
+                           console.log(error)
+                         })
+                 }
             }
         },
         complete: function() {
