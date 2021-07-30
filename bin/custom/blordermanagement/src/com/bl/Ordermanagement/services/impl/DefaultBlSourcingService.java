@@ -5,6 +5,7 @@ import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.Ordermanagement.strategy.BlSourcingStrategyService;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.logging.BlLogger;
@@ -12,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
@@ -36,6 +38,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private static final Logger LOG = Logger.getLogger(DefaultBlSourcingService.class);
   private BlSourcingStrategyService blSourcingStrategyService;
   private BlSourcingLocationService blSourcingLocationService;
+  private ModelService modelService;
 
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
@@ -92,6 +95,12 @@ public class DefaultBlSourcingService implements BlSourcingService {
 
   }
 
+  /**
+   * This method updates the actual rental start date for internal transfer cases.
+   *
+   * @param order the order
+   * @param result the result
+   */
   private void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
       final SourcingResults result) {
 
@@ -99,22 +108,31 @@ public class DefaultBlSourcingService implements BlSourcingService {
 
       result.getResults().forEach(sourcingResult -> {
 
-        ZoneDeliveryModeModel deliveryModeModel = (ZoneDeliveryModeModel) order.getDeliveryMode();
+        final ZoneDeliveryModeModel deliveryModeModel = (ZoneDeliveryModeModel) order.getDeliveryMode();
 
         if (isDeliveryModeForInternalTransfer(deliveryModeModel) && checkIfDifferentWarehouseAllocated(
             sourcingResult, deliveryModeModel)) {
 
           sourcingResult.setInternalTransferConsignment(true);
-          Calendar calendar = Calendar.getInstance();
+          final Calendar calendar = Calendar.getInstance();
           calendar.setTime(order.getActualRentalStartDate());
-          calendar.add(Calendar.DATE, 1);
+          calendar.add(Calendar.DATE, -1);
 
           order.setActualRentalStartDate(calendar.getTime());
+          modelService.save(order);
         }
       });
     }
   }
 
+  /**
+   * This method returns true if different warehouse is allocated other than that of the delivery
+   * method.
+   *
+   * @param sourcingResult    the sourcingResult
+   * @param deliveryModeModel the deliveryModeModel
+   * @return true if both are different
+   */
   private boolean checkIfDifferentWarehouseAllocated(final SourcingResult sourcingResult,
       final ZoneDeliveryModeModel deliveryModeModel) {
 
@@ -125,11 +143,19 @@ public class DefaultBlSourcingService implements BlSourcingService {
     return true;
   }
 
+  /**
+   * This method returns true if the delivery method is eligible for internal transfer pre/post date
+   * calculation.
+   *
+   * @param deliveryModeModel the order
+   * @return true if matches
+   */
   private boolean isDeliveryModeForInternalTransfer(final ZoneDeliveryModeModel deliveryModeModel) {
 
     if (deliveryModeModel instanceof BlRushDeliveryModeModel || (
         deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
-            .asList("BL_SAN_CARLOS", "BL_WALTHAM").contains(deliveryModeModel.getCode()))) {
+            .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
+            .contains(deliveryModeModel.getCode()))) {
       return true;
     }
 
@@ -162,4 +188,14 @@ public class DefaultBlSourcingService implements BlSourcingService {
       final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
     this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
   }
+
+
+  public ModelService getModelService() {
+    return modelService;
+  }
+
+  public void setModelService(final ModelService modelService) {
+    this.modelService = modelService;
+  }
+
 }
