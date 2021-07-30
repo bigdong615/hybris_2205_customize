@@ -9,7 +9,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
+<c:url value="/" var="homePageUrl" />
  <input type="hidden" id="js-extend-order-page" name="jsExtendOrderPage" value="true"/>
  <input type="hidden" id="js-extend-order-code" name="extendOrderCode" value="${fn:escapeXml(orderData.code)}"/>
 <div id="accountContent" class="col-lg-5 offset-lg-1">
@@ -127,7 +127,10 @@
 					</div>
              <div class="productNotifications row d-none" id="add-error-message">
                     <div class="col-12">
-                       <div class="notification notification-error" id="js-isAllProductExtendabe-update">
+                       <div class="notification notification-error">
+                        <spring:theme code="text.order.extend.stock.validation"/>
+                         <a href="${homePageUrl}" class="gray80"><spring:theme code="text.order.extend.stock.contact.us"/></a>
+                          <spring:theme code="text.order.extend.stock.validation"/>
                        </div>
                     </div>
              </div>
@@ -182,11 +185,11 @@
 						<spring:theme code="text.myaccount.extend.order.extension.taxes" /> </td>
 					<td class="text-end"  id="js-totalExtendTax"><format:blPrice priceData="${orderData.totalTaxForExtendRental}"/></td>
 				</tr>
-				<c:if test="${orderData.totalDiscounts.value > 0}">
+				<c:if test="${orderData.extendOrderDiscount.value > 0}">
         				<tr>
                 	<td class="discount">
-                	<spring:theme code="Discount" /> </td>
-                <td class="text-end"  id="js-extendDiscount"><format:blPrice priceData="${orderData.totalDiscounts}"/></td>
+                						<spring:theme code="Discount" /> </td>
+                					<td class="text-end" id="js-extendDiscount"> - <format:blPrice priceData="${orderData.extendOrderDiscount}"/></td>
                 	</tr>
         </c:if>
 				<tr class="total">

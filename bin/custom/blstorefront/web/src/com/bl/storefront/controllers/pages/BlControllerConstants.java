@@ -155,6 +155,11 @@ public class BlControllerConstants
 	public static final String PO_NUMBER = "extendPoNumber";
 	public static final String PO_NOTES = "extendPoNotes";
 
+	public static final String PAYMENT_METHOD = "extendOrderPaymentMethod";
+	public static final String PO = "poNumber";
+	public static final String CREDIT_CARD = "creditCard";
+	public static final String PAY_PAL = "payPal";
+
 
 	private BlControllerConstants()
 	{

@@ -1312,6 +1312,9 @@ public class AccountPageController extends AbstractSearchPageController
 
 				if(StringUtils.isNotBlank(poNumber)) {
 						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);
+						if(BooleanUtils.isTrue(isSuccess)){
+							model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PO);
+						}
 					}
 				else {
 
@@ -1325,6 +1328,8 @@ public class AccountPageController extends AbstractSearchPageController
 							.createAuthorizationTransactionOfOrder(orderModel,
 									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
 				}
+				if(BooleanUtils.isTrue(isSuccess)){
+					model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.CREDIT_CARD);}
 				}
 			}
 
