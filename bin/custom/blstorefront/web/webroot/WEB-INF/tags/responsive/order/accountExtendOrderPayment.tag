@@ -141,6 +141,7 @@
                 </c:if>
 
 <script>
+   var enableShippingAddress = "false";
    var addPaymentMethodsPage = "addPaymentMethodsPage";
    var deliveryAddressId = "${selectedAddressCode}";
    var paypalIntent = "${payPalConfigurationData.intent}";

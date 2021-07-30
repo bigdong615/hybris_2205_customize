@@ -456,6 +456,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 			blOrderFacade.updateOrderExtendDetails(order); //to update extend order details to DB
 			final OrderData extendOrderData = blOrderFacade.getExtendedOrderDetailsFromOrderCode(orderCode);
 			model.addAttribute(BlControllerConstants.EXTEND_ORDER_DATA, extendOrderData);
+			model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PAY_PAL);
 			final ContentPageModel extendOrderConfirmation = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_CONFIRMATION);
 			storeCmsPageInModel(model, extendOrderConfirmation);
 			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
