@@ -146,6 +146,7 @@ Usergroup ; frondeskusergroup ;                ;                            ;   
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
 $END_USERRIGHTS; ; ; ;
 
 #Access rights for frontdeskuserrole
@@ -158,6 +159,7 @@ Usergroup ; frontdeskuserrole ;                ;                            ;   
           ;                   ;                ; Order                      ; +    ; +      ; -      ; -
           ;                   ;                ; User                       ; +    ; -      ; -      ; -
           ;                   ;                ; Address                    ; +    ; -      ; -      ; -
+          ;                   ;                ; Warehouse                  ; +    ; -      ; -      ; -
           ;                   ;                ; DeliveryMode               ; +    ; -      ; -      ; -
           ;                   ;                ; ShippingCompleteOrderQueue ; +    ; +      ; -      ; -
           ;                   ;                ; IncompleteOrdersQueue      ; +    ; +      ; -      ; -

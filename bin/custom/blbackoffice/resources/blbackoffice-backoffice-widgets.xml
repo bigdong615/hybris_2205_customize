@@ -69,6 +69,30 @@
 			<setting key="_height" type="String">650px</setting>
 			<virtual-sockets/>
 		</widget>
+		<widget id="customRefundOrderPopup"
+			widgetDefinitionId="com.bl.backoffice.widgets.order.customRefundOrder"
+			slotId="cockpitWidgetChildrenInvisible"
+			title="Refund an Order" template="true">
+
+			<instance-settings socketEventRoutingMode="LAST_USED">
+				<create onInit="false" reuseExisting="true">
+					<all-incoming-events/>
+				</create>
+				<close>
+					<all-outgoing-events/>
+				</close>
+				<select onInit="false">
+					<all-incoming-events/>
+				</select>
+			</instance-settings>
+
+			<setting key="widgetStyleClass" type="String"></setting>
+			<setting key="__externalLocationPath" type="String">extension://blbackoffice</setting>
+			<setting key="widgetStyleAttribute" type="String"></setting>
+			<setting key="_width" type="String">1140px</setting>
+			<setting key="_height" type="String">650px</setting>
+			<virtual-sockets/>
+		</widget>
 	</widget-extension>
 	
 	<!-- Tech Eng. Section -->
@@ -95,4 +119,5 @@
 	<widget-connection sourceWidgetId="TechEngScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
 	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction" outputId="blFrontCapturePaymentContext" targetWidgetId="frontCapturePaymentPopup" inputId="inputObject" />
 	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customCancelOrderAction" outputId="customCancelOrderContext" targetWidgetId="customCancelOrderPopup" inputId="inputObject"/>
+	<widget-connection sourceWidgetId="STUB_com.bl.blbackoffice.actions.order.customOrderRefundAction" outputId="orderRefundContext" targetWidgetId="customRefundOrderPopup" inputId="inputObject"/>
 </widgets>

@@ -421,7 +421,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
             } else if (CollectionUtils.isEmpty(order.getGiftCard()) && order.getIsCaptured()) {
               this.showMessageBox(Localization.getLocalizedString(REFUND_MESSAGE));
             }
-            Thread.sleep(2000);
             this.getNotificationService()
                 .notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST, Level.SUCCESS, new Object[]{
                     this.getLabel("customersupportbackoffice.cancelorder.confirm.success")});
@@ -436,8 +435,6 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
         BlLogger.logMessage(LOGGER, org.apache.log4j.Level.ERROR, e.getMessage(), e);
         this.getNotificationService().notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST, Level.FAILURE,
             new Object[]{this.getLabel("customersupportbackoffice.cancelorder.confirm.error")});
-      } catch (final InterruptedException e) {
-        BlLogger.logMessage(LOGGER, org.apache.log4j.Level.ERROR, e.getMessage(), e);
       }
 
       final OrderModel orderModel = this.getModelService().get(this.getOrderModel().getPk());
