@@ -28,7 +28,7 @@
          <div class="col-11">
             <b>Credit Card <img src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-cc.png" style="height: 44px; width: auto;"></b>
             <div class="collapse" id="credit-card-expand" data-bs-parent="#paymentOptions">
-               <select class="btn btn-block btn-outline dropdown-toggle text-start" id="saved-payment-action-ExtendBill">
+               <select class="btn btn-block btn-outline dropdown-toggle text-start js-enable-extend-button" id="saved-payment-action-ExtendBill">
                   <ul class="dropdown-menu savedPaymentList" aria-labelledby="savedCards" >
                      <c:choose>
                         <c:when test="false">
@@ -77,7 +77,7 @@
                   data-bs-toggle="collapse"
                   data-bs-target="#paypal-expand"
                   aria-controls="paypal-expand" aria-expanded="false">
-               <input type="radio" class="paypalselection" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt">
+               <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPayPal" name="paymentMethodSelection" value="bt">
                <label for="paymentMethodPayPal"></label>
                </button>
             </c:otherwise>
@@ -101,6 +101,45 @@
       </div>
    </div>
 </div>
+
+                <c:if test="${order.isPOEnabled}">
+                	<div class="accordion-item payProduct">
+                	  <c:if test="${not empty selectedPoNumber}">
+                    		<input type="hidden" id="isPOPresent" name="isPOPresent" value="true"/>
+                    </c:if>
+                	  <div class="row">
+                			<div class="col-1 text-center">
+                			  <c:choose>
+                        	<c:when test="${disablePayment}">
+                        			<button class="btn-checkbox paymentDisabled" type="button" disabled></button>
+                        	</c:when>
+                        	<c:otherwise>
+                				    <button class="btn-checkbox" type="button" data-bs-toggle="collapse"
+                					    data-bs-target="#po-expand" aria-controls="po-expand"
+                					    aria-expanded="false">
+                					    <input type="radio" class="paypalselection js-enable-extend-button" id="paymentMethodPo" name="paymentMethodSelection" value="bt"><label
+                						  for="paymentMethodPo"></label>
+                				    </button>
+                				  </c:otherwise>
+                        </c:choose>
+                			</div>
+                			<div class="col-11">
+                				<b><spring:theme code="text.payment.page.po" /></b>
+                				<div class="collapse" id="po-expand"
+                					data-bs-parent="#paymentOptions">
+                				<form:form name="submitSavedPoForm" method="POST" id="submitSavedPoForm" action="${reviewSavePoPaymentAction}">
+                					<input type="text" class="form-control po-number" name="extendPoNumberInput" id="extendPoNumberInput" min="1" max="30" maxlength="30" value="${selectedPoNumber}"
+                						placeholder="<spring:theme code="text.payment.page.po.number.placeholder"/>">
+                					<input type="text" class="form-control po-number" name="extendPoNotesInput" id="extendPoNotesInput" min="1" max="1000" maxlength="1000" value="${selectedPoNotes}"
+                						placeholder="<spring:theme code="text.payment.page.po.notes.placeholder"/>">
+                          <input type="hidden" id="poSelected" name="poSelected" value=""/>
+                				</form:form>
+                				</div>
+                			</div>
+                		</div>
+                	</div>
+                </c:if>
+
 <script>
    var addPaymentMethodsPage = "addPaymentMethodsPage";
    var deliveryAddressId = "${selectedAddressCode}";
@@ -127,6 +166,8 @@
    var googleMerchantId = "${googleMerchantId}";
    var googlePayCountryCode = "${googlePayCountryCode}";
    var googlePayEnabled = ${googlePayEnable};
+
+
 </script>
 <script type="text/javascript"
    src="https://js.braintreegateway.com/web/3.69.0/js/client.min.js"></script>
