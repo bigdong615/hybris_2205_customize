@@ -101,7 +101,10 @@
                                             <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
                                             <input type="hidden" id="paymentId" name="paymentId" value=""/>
                                             <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
-                                            <button class="btn btn-block btn-primary mt-4" type="submit">  <spring:theme code="text.myaccount.order.extend.rent"/></button>
+                                            <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
+                                            <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/>
+                                            <button class="btn btn-block btn-primary mt-4 js-enable-extend-order js-po-extend-order" type="submit" disabled>
+                                            <spring:theme code="text.myaccount.order.extend.rent"/></button>
                                        </form>
 
 
@@ -173,5 +176,17 @@ $(".js-cart-release-voucher-remove-btn").on("click", function(e) {
     						$("#paymentId").val(paymentId);
     						$("#paymentNonce").val(paymentnonce);
     				 });
+
+
+    	$('.js-po-extend-order').on('click',function(e){
+                    e.preventDefault();
+        						var extendPoNumber1 = $("#extendPoNumberInput").val();
+                    var extendPoNotes1 = $("#extendPoNotesInput").val();
+                    if(extendPoNumber1 !== '' && extendPoNotes1 !== '') {
+        						$("#extendPoNumber").val(extendPoNumber1);
+        						$("#extendPoNotes").val(extendPoNotes1);
+        						}
+        						$("#payExtendOrderForm").submit();
+        				 });
 
 </script>
