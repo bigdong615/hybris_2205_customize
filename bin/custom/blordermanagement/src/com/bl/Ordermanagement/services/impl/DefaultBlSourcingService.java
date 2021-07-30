@@ -5,22 +5,24 @@ import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.Ordermanagement.strategy.BlSourcingStrategyService;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.logging.BlLogger;
-import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
-import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
+import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
-import de.hybris.platform.warehousing.sourcing.filter.SourcingFilterProcessor;
 import de.hybris.platform.warehousing.sourcing.strategy.SourcingStrategy;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -81,11 +83,57 @@ public class DefaultBlSourcingService implements BlSourcingService {
         }
       }
 
+      updateShippingDatesForInternalTransfers(order, context.getResult());
+
       return context.getResult();
     } catch (final Exception e) {
       throw new BlSourcingException("Error while doing the order sourcing.", e);
     }
 
+  }
+
+  private void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
+      final SourcingResults result) {
+
+    if (CollectionUtils.isNotEmpty(result.getResults())) {
+
+      result.getResults().forEach(sourcingResult -> {
+
+        ZoneDeliveryModeModel deliveryModeModel = (ZoneDeliveryModeModel) order.getDeliveryMode();
+
+        if (isDeliveryModeForInternalTransfer(deliveryModeModel) && checkIfDifferentWarehouseAllocated(
+            sourcingResult, deliveryModeModel)) {
+
+          sourcingResult.setInternalTransferConsignment(true);
+          Calendar calendar = Calendar.getInstance();
+          calendar.setTime(order.getActualRentalStartDate());
+          calendar.add(Calendar.DATE, 1);
+
+          order.setActualRentalStartDate(calendar.getTime());
+        }
+      });
+    }
+  }
+
+  private boolean checkIfDifferentWarehouseAllocated(final SourcingResult sourcingResult,
+      final ZoneDeliveryModeModel deliveryModeModel) {
+
+    if (sourcingResult.getWarehouse().getCode().equalsIgnoreCase(deliveryModeModel.getCode())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private boolean isDeliveryModeForInternalTransfer(final ZoneDeliveryModeModel deliveryModeModel) {
+
+    if (deliveryModeModel instanceof BlRushDeliveryModeModel || (
+        deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
+            .asList("BL_SAN_CARLOS", "BL_WALTHAM").contains(deliveryModeModel.getCode()))) {
+      return true;
+    }
+
+    return false;
   }
 
   public BlSourcingLocationService getBlSourcingLocationService() {

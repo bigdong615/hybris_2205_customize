@@ -90,6 +90,12 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
       consignment
           .setShippingDate(this.getShippingDateStrategy().getExpectedShippingDate(consignment));
 
+      //adding optimized shipping dates, this will be updated in optimized shipping strategy methods
+      consignment.setOptimizedShippingStartDate(order.getActualRentalStartDate());
+      consignment.setOptimizedShippingEndDate(order.getActualRentalEndDate());
+
+      consignment.setInternalTransferConsignment(result.isInternalTransferConsignment());
+
       consignment.setFulfillmentSystemConfig(
           this.getWarehousingFulfillmentConfigDao().getConfiguration(result.getWarehouse()));
       final Set<Entry<AbstractOrderEntryModel, Long>> resultEntries = result.getAllocation()
