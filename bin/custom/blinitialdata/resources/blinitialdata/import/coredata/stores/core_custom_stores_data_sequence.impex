@@ -26,3 +26,6 @@ $storesCustomStorePath = /blinitialdata/import/coredata/stores/bl/custom/store
 
 # Site Localization Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomSitePath/site_en.impex"), "utf-8", 0, 0);
+
+# Adaptive search Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$storesCustomPath/adaptiveSearchProfile.impex"), "utf-8", 0, 0);

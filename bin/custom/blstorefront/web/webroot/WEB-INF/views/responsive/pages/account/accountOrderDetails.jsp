@@ -94,12 +94,18 @@
                                 </h5>
                                <c:forEach items="${orderData.entries}" var="cartEntry" >
                                		 <div class="row mb-4">
+                               		 <c:url var="productUrl" value="/rent/product/${cartEntry.product.code}"/>
+                                              <c:if test="${!orderData.isRentalCart}">
+                                                <c:url var="productUrl" value="/buy/product/${cartEntry.product.code}"/>
+                                              </c:if>
+
                                				<div class="col-md-3 text-center">
-                               								<product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/>
+                               									<a href="${productUrl}"> <product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/> </a>
                                				</div>
                                					<div class="col-md-9 mt-3">
                                							<p class="gray80 body14">
-                               							 <b class="gray100">${cartEntry.product.name}</b>
+                               							 <b class="gray100">
+                               							<a href="${productUrl}" style="text-decoration: none"> ${cartEntry.product.name}</b></a>
                                							 <spring:theme code="text.myaccount.order.your.rental.qty"/> ${cartEntry.quantity}<br>
                                							  <c:if test="${orderData.isRentalCart}">
                                		        <c:choose>
