@@ -175,7 +175,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             sortCollectionOnShippingOrderSequence(getPartnerZoneDeliveryModesForUsedGear(partnerZone, payByCustomer), modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR);
-            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+            sortCollectionOnShippingOrderSequence(getAllUSPStoreDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
             sortCollectionOnShippingOrderSequence(getBlRushDeliveryModeDataForUsedGear(payByCustomer), modifiableZoneList);
         } else {
