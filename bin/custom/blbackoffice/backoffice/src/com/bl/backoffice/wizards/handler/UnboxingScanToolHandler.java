@@ -40,7 +40,7 @@ public class UnboxingScanToolHandler implements FlowActionHandler
 	private static final NotificationEvent.Level NOTIFICATION_LEVEL_SUCCESS = NotificationEvent.Level.SUCCESS;
 
 	/**
-	 * values OOB method which will perform actions on input barcodes form backoffice wizard
+	 * This OOB method which will perform actions on input barcodes form backoffice wizard
 	 *
 	 * @param customType
 	 *           type

@@ -74,5 +74,5 @@ public interface BlInventoryScanToolDao {
 	  * @param serial the serial
 	  * @return the all consignment out today
 	  */
-	 Collection<ConsignmentModel> getAllConsignmentOutToday(final String serial);
+	 Collection<ConsignmentModel> getTodaysShippingConsignments(final String serial);
 }

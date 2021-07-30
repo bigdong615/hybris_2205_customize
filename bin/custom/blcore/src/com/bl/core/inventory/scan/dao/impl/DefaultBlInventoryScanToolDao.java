@@ -124,7 +124,7 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	 * {@inheritDoc}
  	 */
  	@Override
- 	public Collection<ConsignmentModel> getAllConsignmentOutToday(final String serial)
+ 	public Collection<ConsignmentModel> getTodaysShippingConsignments(final String serial)
  	{
  		final String barcodeList = "select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, "
  				+ "{ConsignmentStatus as cs} where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "

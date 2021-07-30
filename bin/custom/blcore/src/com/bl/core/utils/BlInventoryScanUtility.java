@@ -130,6 +130,11 @@ public final class BlInventoryScanUtility
 		return defaultLocations;
 	}
 
+	/**
+	 * Gets the unboxing allowed locations.
+	 *
+	 * @return the unboxing allowed locations
+	 */
 	public static List<String> getUnboxingAllowedLocations()
 	{
 		final List<String> defaultLocations = new ArrayList<>();

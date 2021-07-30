@@ -833,7 +833,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 */
 	private void checkItemIsDirty(final BlSerialProductModel serialProductModel)
 	{
-		final Collection<ConsignmentModel> allConsignmentForSerial = getBlInventoryScanToolDao().getAllConsignmentOutToday(serialProductModel.getCode());
+		final Collection<ConsignmentModel> allConsignmentForSerial = getBlInventoryScanToolDao().getTodaysShippingConsignments(serialProductModel.getCode());
 		markDirtyToSerial(serialProductModel, allConsignmentForSerial);
 	}
 	
