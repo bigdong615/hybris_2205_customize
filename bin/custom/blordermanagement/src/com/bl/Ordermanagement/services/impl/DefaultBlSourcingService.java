@@ -5,22 +5,26 @@ import com.bl.Ordermanagement.filters.BlDeliveryStateSourcingLocationFilter;
 import com.bl.Ordermanagement.services.BlSourcingLocationService;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.Ordermanagement.strategy.BlSourcingStrategyService;
+import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
+import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.logging.BlLogger;
-import com.bl.logging.impl.LogErrorCodeEnum;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
-import de.hybris.platform.ordersplitting.model.WarehouseModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.warehousing.data.sourcing.SourcingContext;
-import de.hybris.platform.warehousing.data.sourcing.SourcingLocation;
+import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
-import de.hybris.platform.warehousing.sourcing.filter.SourcingFilterProcessor;
 import de.hybris.platform.warehousing.sourcing.strategy.SourcingStrategy;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -34,6 +38,7 @@ public class DefaultBlSourcingService implements BlSourcingService {
   private static final Logger LOG = Logger.getLogger(DefaultBlSourcingService.class);
   private BlSourcingStrategyService blSourcingStrategyService;
   private BlSourcingLocationService blSourcingLocationService;
+  private ModelService modelService;
 
   private BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter;
 
@@ -81,11 +86,80 @@ public class DefaultBlSourcingService implements BlSourcingService {
         }
       }
 
+      updateShippingDatesForInternalTransfers(order, context.getResult());
+
       return context.getResult();
     } catch (final Exception e) {
       throw new BlSourcingException("Error while doing the order sourcing.", e);
     }
 
+  }
+
+  /**
+   * This method updates the actual rental start date for internal transfer cases.
+   *
+   * @param order the order
+   * @param result the result
+   */
+  private void updateShippingDatesForInternalTransfers(final AbstractOrderModel order,
+      final SourcingResults result) {
+
+    if (CollectionUtils.isNotEmpty(result.getResults())) {
+
+      result.getResults().forEach(sourcingResult -> {
+
+        final ZoneDeliveryModeModel deliveryModeModel = (ZoneDeliveryModeModel) order.getDeliveryMode();
+
+        if (isDeliveryModeForInternalTransfer(deliveryModeModel) && checkIfDifferentWarehouseAllocated(
+            sourcingResult, deliveryModeModel)) {
+
+          sourcingResult.setInternalTransferConsignment(true);
+          final Calendar calendar = Calendar.getInstance();
+          calendar.setTime(order.getActualRentalStartDate());
+          calendar.add(Calendar.DATE, -1);
+
+          order.setActualRentalStartDate(calendar.getTime());
+          modelService.save(order);
+        }
+      });
+    }
+  }
+
+  /**
+   * This method returns true if different warehouse is allocated other than that of the delivery
+   * method.
+   *
+   * @param sourcingResult    the sourcingResult
+   * @param deliveryModeModel the deliveryModeModel
+   * @return true if both are different
+   */
+  private boolean checkIfDifferentWarehouseAllocated(final SourcingResult sourcingResult,
+      final ZoneDeliveryModeModel deliveryModeModel) {
+
+    if (sourcingResult.getWarehouse().getCode().equalsIgnoreCase(deliveryModeModel.getCode())) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * This method returns true if the delivery method is eligible for internal transfer pre/post date
+   * calculation.
+   *
+   * @param deliveryModeModel the order
+   * @return true if matches
+   */
+  private boolean isDeliveryModeForInternalTransfer(final ZoneDeliveryModeModel deliveryModeModel) {
+
+    if (deliveryModeModel instanceof BlRushDeliveryModeModel || (
+        deliveryModeModel instanceof BlPickUpZoneDeliveryModeModel && Arrays
+            .asList(BlCoreConstants.BL_SAN_CARLOS, BlCoreConstants.BL_WALTHAM)
+            .contains(deliveryModeModel.getCode()))) {
+      return true;
+    }
+
+    return false;
   }
 
   public BlSourcingLocationService getBlSourcingLocationService() {
@@ -114,4 +188,14 @@ public class DefaultBlSourcingService implements BlSourcingService {
       final BlDeliveryStateSourcingLocationFilter blDeliveryStateSourcingLocationFilter) {
     this.blDeliveryStateSourcingLocationFilter = blDeliveryStateSourcingLocationFilter;
   }
+
+
+  public ModelService getModelService() {
+    return modelService;
+  }
+
+  public void setModelService(final ModelService modelService) {
+    this.modelService = modelService;
+  }
+
 }

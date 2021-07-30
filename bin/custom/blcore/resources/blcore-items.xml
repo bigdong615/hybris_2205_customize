@@ -1984,6 +1984,16 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+
+                    <attribute qualifier="preReservedDays" type="java.lang.Integer" autocreate="true">
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+                    </attribute>
+                    <attribute qualifier="postReservedDays" type="java.lang.Integer"
+                      autocreate="true">
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+					</attribute>
                     <attribute qualifier="shippingOrderSequence" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
@@ -2494,6 +2504,12 @@
               <persistence type="property"/>
               <defaultvalue>Boolean.FALSE</defaultvalue>
               <description>It tells whether the consignment is threeDayGround marked or not.</description>
+          </attribute>
+          <attribute qualifier="internalTransferConsignment" type="boolean">
+            <description>Flag to identify whether current consignment is internal transfer or not </description>
+            <modifiers read="true" write="true" search="false" optional="true" />
+            <persistence type="property" />
+            <defaultvalue>false</defaultvalue>
           </attribute>
         </attributes>
       </itemtype>
