@@ -187,6 +187,7 @@
         <property name="warehouse" type="String"/>
         <property name="businessTypeDelivery" type="Boolean"/>
         <property name="shippingGroup" type="String"/>
+		<property name="shippingOrderSequence" type="java.lang.Integer"/>
     </bean>
 
     <bean class="com.bl.facades.shipping.data.BlShippingGroupData">
