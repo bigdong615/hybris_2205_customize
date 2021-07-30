@@ -1965,6 +1965,10 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+                    <attribute qualifier="shippingOrderSequence" type="java.lang.Number" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
                 </attributes>
             </itemtype>
 
