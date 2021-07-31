@@ -6,16 +6,21 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import de.hybris.platform.commerceservices.order.hook.CommercePlaceOrderMethodHook;
 import de.hybris.platform.commerceservices.service.data.CommerceCheckoutParameter;
 import de.hybris.platform.commerceservices.service.data.CommerceOrderResult;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.event.EventService;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.util.ServicesUtil;
 import de.hybris.platform.util.DiscountValue;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
-
+import org.apache.commons.lang.StringUtils;
+import de.hybris.platform.core.enums.OrderStatus;
 
 /**
  * It is a custom implementation of OOTB class {@link CommercePlaceOrderMethodHook} to do the adjustments in case of gift card is applied on the order.
@@ -39,6 +44,7 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
     getModelService().refresh(order);
     ServicesUtil.validateParameterNotNullStandardMessage("order", order);
 
+    createGiftCardForGCOrder(order);
     double discountValue = 0.00D;
     if (CollectionUtils.isNotEmpty(order.getGlobalDiscountValues())) {
       for (final DiscountValue orderDiscounts : order.getGlobalDiscountValues()) {
@@ -107,6 +113,30 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
       }
     }
   }
+// Create gift card for gift card purchase order
+  private void createGiftCardForGCOrder(final OrderModel order) {
+    final Optional<AbstractOrderEntryModel> optionalEntry = order.getEntries().stream().findFirst();
+    if(order.isIsGiftCardOrder() && optionalEntry.isPresent()){
+      AbstractOrderEntryModel entry = optionalEntry.get();
+      final GiftCardModel giftCardPurchase = modelService.create(GiftCardModel.class);
+      giftCardPurchase.setActive(Boolean.TRUE);
+      giftCardPurchase.setEmail(Boolean.TRUE);
+      giftCardPurchase.setIsPurchased(Boolean.TRUE);
+      giftCardPurchase.setAmount(order.getGiftCardCost());
+      giftCardPurchase.setCustomerEmail(StringUtils.isNotBlank(entry.getRecipientEmail())? entry.getRecipientEmail() : ((CustomerModel)order.getUser()).getUid());
+      giftCardPurchase.setName(StringUtils.isNotBlank(entry.getRecipientName())? entry.getRecipientName(): order.getUser().getName());
+      giftCardPurchase.setMessage(entry.getRecipientMessage());
+      giftCardPurchase.setCustomer((CustomerModel) order.getUser());
+      giftCardPurchase.setCode(giftCardService.getUniqueGiftCodeGenertaor());
+      giftCardPurchase.setOrder(Collections.singletonList(order));
+      modelService.save(giftCardPurchase);
+      getModelService().refresh(giftCardPurchase);
+    }
+    order.setStatus(OrderStatus.INVERIFICATION);
+    modelService.save(order);
+    getModelService().refresh(order);
+  }
+
 
   /**
    * {@inheritDoc}

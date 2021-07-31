@@ -41,7 +41,14 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
     target.setIsRentalCart(source.getIsRentalCart());
     populateDatesForOrderDetails(source , target);
     populatePriceDetails(source , target);
-    populateOrderDetailsForRentalOrder(source , target);
+    if(!source.isIsGiftCardOrder()){	 
+        populateOrderDetailsForRentalOrder(source , target);
+    }
+    //Check gift card purchase order
+    if(source.isIsGiftCardOrder()){
+   	 
+   	 target.setHasGiftCart(Boolean.TRUE);
+    }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
       final AddressData addressData = new AddressData();

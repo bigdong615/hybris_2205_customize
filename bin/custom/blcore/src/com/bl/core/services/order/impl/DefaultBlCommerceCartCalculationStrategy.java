@@ -48,6 +48,7 @@ public class DefaultBlCommerceCartCalculationStrategy extends
    */
   private void setGiftCardAmount(final CartModel order, final CommerceCartParameter parameter) 
   {
+	  order.setIsGiftCardOrder(true);
 	  order.setGiftCardCost(parameter.getGiftCardAmount());
 	  getModelService().save(order);
 	  getModelService().refresh(order);
