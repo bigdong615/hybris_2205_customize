@@ -14,6 +14,7 @@ import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.utils.BlInventoryScanUtility;
 import com.bl.logging.BlLogger;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
@@ -218,13 +219,24 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				.findFirst().orElse(null);
 		if (Objects.nonNull(blSerialProduct))
 		{
-			blSerialProduct.setSerialStatus(SerialStatusEnum.PARTIALLY_UNBOXED);
-			checkItemIsDirty(blSerialProduct);
-			if (blSerialProduct.isDirtyPriorityStatus())
+			if(Objects.nonNull(blSerialProduct.getProductType()) 
+					&& blSerialProduct.getProductType().equals(ProductTypeEnum.SUBPARTS))
 			{
-				dirtyProductSerialModels.add(blSerialProduct.getBarcode());
+				blSerialProduct.setSerialStatus(SerialStatusEnum.IN_HOUSE);
+				BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Changing Serial status to In-House for sub part with code : {}", blSerialProduct.getCode());
+				modelService.save(blSerialProduct);
+				modelService.refresh(blSerialProduct);
 			}
-			doUpdateLocation(failedBarcodeList, iteratorBarcode, blSerialProduct);
+			else
+			{
+				blSerialProduct.setSerialStatus(SerialStatusEnum.PARTIALLY_UNBOXED);
+				checkItemIsDirty(blSerialProduct);
+				if (blSerialProduct.isDirtyPriorityStatus())
+				{
+					dirtyProductSerialModels.add(blSerialProduct.getBarcode());
+				}
+				doUpdateLocation(failedBarcodeList, iteratorBarcode, blSerialProduct);
+			}			
 		}
 		else
 		{
@@ -257,7 +269,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
  		modelService.save(blSerialProduct);
  		modelService.refresh(blSerialProduct);
  		/* Scan History Entry */
- 		setBlLocationScanHistory(blSerialProduct);
+ 		setBlLocationScanHistory(blSerialProduct, unboxStatus);
  	}
 
  	/**
@@ -266,7 +278,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
  	 * @param blSerialProduct
  	 *           the new bl location scan history
  	 */
- 	private void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct)
+ 	private void setBlLocationScanHistory(final BlSerialProductModel blSerialProduct, final boolean unboxStatus)
  	{
  		final BlInventoryLocationScanHistoryModel blInventoryLocationScanHistory = modelService
  				.create(BlInventoryLocationScanHistoryModel.class);
@@ -274,6 +286,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
  		blInventoryLocationScanHistory.setScanUser(userService.getCurrentUser());
  		blInventoryLocationScanHistory.setBlInventoryLocation(blInventoryLocation);
  		blInventoryLocationScanHistory.setScanTime(new Date());
+ 		blInventoryLocationScanHistory.setUnboxedHistory(unboxStatus);
  		modelService.save(blInventoryLocationScanHistory);
  		modelService.refresh(blInventoryLocationScanHistory);
  	}
@@ -356,14 +369,53 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final BlInventoryLocationModel blCleanCartLocation, final boolean isPriorityCartLocation)
 	{
 		final List<String> failedBarcodeList = new ArrayList<>();
+		final List<String> missingBarcodeSerialList = new ArrayList<>();
+		Map<String, List<String>> processStatus = Maps.newHashMap();
 		final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
 		final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
-		if (blSerialProducts.size() == subList.size())
+		getMissingBarcodeItems(blSerialProducts, missingBarcodeSerialList, Lists.newArrayList(subList));
+		if(CollectionUtils.isNotEmpty(missingBarcodeSerialList)) 
 		{
-			return isPriorityCartLocation ? updateCleanPriorityCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation)
-					: updateCleanCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation);
+			processStatus.put(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS,missingBarcodeSerialList);
 		}
-		return Maps.newHashMap(ImmutableMap.of(BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS, barcodes));
+		processStatus.putAll(performCartLocationUpdate(blSerialProducts, failedBarcodeList, blCleanCartLocation, isPriorityCartLocation));
+		return processStatus;
+	}
+	
+	/**
+	 * Gets the missing barcode items.
+	 *
+	 * @param blSerialProducts the bl serial products
+	 * @param missingBarcodeSerialList the missing barcode serial list
+	 * @param barcodes the barcodes
+	 * @return the missing barcode items
+	 */
+	private void getMissingBarcodeItems(final Collection<BlSerialProductModel> blSerialProducts, 
+			final List<String> missingBarcodeSerialList, final List<String> barcodes)
+	{
+		final List<String> availableBarcodes = blSerialProducts.stream().map(BlSerialProductModel::getBarcode)
+				.collect(Collectors.toList());
+		barcodes.removeIf(availableBarcodes::contains);
+		missingBarcodeSerialList.addAll(barcodes);
+	}
+	
+	/**
+	 * Perform cart location update.
+	 *
+	 * @param blSerialProducts the bl serial products
+	 * @param failedBarcodeList the failed barcode list
+	 * @param blCleanCartLocation the bl clean cart location
+	 * @param isPriorityCartLocation the is priority cart location
+	 * @return the map
+	 */
+	private Map<String, List<String>> performCartLocationUpdate(final Collection<BlSerialProductModel> blSerialProducts,
+			final List<String> failedBarcodeList, final BlInventoryLocationModel blCleanCartLocation, final boolean isPriorityCartLocation)
+	{
+		if(isPriorityCartLocation)
+		{
+			return updateCleanPriorityCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation);
+		}
+		return updateCleanCartLocation(blSerialProducts, failedBarcodeList, blCleanCartLocation);
 	}
 
 	/**
@@ -791,7 +843,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			for (final ConsignmentEntryModel consignmentEntry : consignmentEntryModels)
 			{
-				consignmentEntry.getSerialProducts().forEach(serial -> checkSerialsForDP(serial));
+				consignmentEntry.getSerialProducts().forEach(this::checkSerialsForDP);
 			}
 		}
 	}

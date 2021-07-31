@@ -232,6 +232,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String HTML_ENABLED = "HTML Enabled";
 	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
 	public static final String BL_WALTHAM = "BL_WALTHAM";
+	
+	public static final String IN_HOUSE_REPAIR = "IN_HOUSE_REPAIR";
+	public static final String VENDOR_REPAIR = "VENDOR_REPAIR";
+	public static final String CUSTOMER_BLAME_REPAIR = "CUSTOMER_BLAME_REPAIR";
+	public static final String PARTS_NEEDED_REPAIR = "PARTS_NEEDED_REPAIR";
+	public static final String CREATING_REPAIR_LOG_MESSAGE = "Creating Repair Log for Type : {}";
 
 
 	private BlCoreConstants()
