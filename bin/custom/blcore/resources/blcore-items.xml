@@ -49,6 +49,7 @@
             <value code="RECEIVED_OR_RETURNED" />
             <value code="REPAIR_NEEDED" />
             <value code="PARTS_NEEDED" />
+            <value code="IN_HOUSE" />
         </enumtype>
         <enumtype generate="true" code="PricingTierEnum" autocreate="true" dynamic="true">
             <value code="ONE"/>
@@ -183,6 +184,8 @@
       <enumtype generate="true" code="ItemStatusEnum" autocreate="true" dynamic="true">
         <value code="INCLUDED"/>
         <value code="NOT_INCLUDED"/>
+        <value code="IN_HOUSE" />
+        <value code="RECEIVED_OR_RETURNED" />
       </enumtype>
 
 
@@ -223,6 +226,21 @@
       	<value code="INCOMPLETE_MISSING_AND_BROKEN_ITEMS" />
       	<value code="INCOMPLETE_RECOVERED" />
       	<value code="MANUAL_REVIEW" />
+      	<value code="PARTIALLY_UNBOXED" />
+      	<value code="UNBOXED" />
+      </enumtype>
+      
+      <enumtype code="PackagingInfoStatus" autocreate="true" generate="true" dynamic="true">
+            <!-- PackagingInfoStatus for PackagingInfo details -->
+            <value code="PARTIALLY_UNBOXED" />
+            <value code="UNBOXED" />
+        </enumtype>
+      
+      <enumtype code="ItemTestingStatusEnum" autocreate="true" generate="true" dynamic="true">
+      		<value code="NONE"/>
+            <value code="TESTING_NEEDED" />
+            <value code="TESTING_COMPLETE_ISSUE_CONFIRMED" />
+            <value code="TESTING_COMPLETE_ISSUE_NOT_CONFIRMED" />
       </enumtype>
 
 	  </enumtypes>
@@ -1190,27 +1208,17 @@
                      <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
                      <description>If the item is available for sale in used gear</description>
                    </attribute>
-                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
+                     <attribute qualifier="cosmeticRating" type="ConditionRatingValueEnum">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
+                         <modifiers read="true" write="true" optional="false"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "0")</defaultvalue>
                          <description>To store cosmetic rating data</description>
-                         <custom-properties>
-                           <property name="description">
-                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
-                           </property>
-                         </custom-properties>
                      </attribute>
-                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum" metatype="AttributeDescriptor">
+                     <attribute qualifier="functionalRating" type="ConditionRatingValueEnum">
                          <persistence type="property"/>
-                         <modifiers read="true" write="true" optional="true"/>
-                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "10")</defaultvalue>
+                         <modifiers read="true" write="true" optional="false"/>
+                         <defaultvalue>em().getEnumerationValue("ConditionRatingValueEnum", "0")</defaultvalue>
                          <description>To store functional rating data</description>
-                         <custom-properties>
-                           <property name="description">
-                             <value>"[Rating 1 -> Very Poor]	[Rating 2 -> Poor] [Rating 3 -> Moderate] [Rating 4 -> Good] [Rating 5 -> Very Good]"</value>
-                           </property>
-                         </custom-properties>
                      </attribute>
                      <attribute qualifier="skuFirmwareVersion" type="java.lang.String">
                          <persistence type="dynamic" attributeHandler="bLRequiredFirmwareVersionHandler" />
@@ -1250,6 +1258,17 @@
                          <persistence type="property"/>
                          <modifiers read="true" write="true" optional="true"/>
                          <description>To store associated consignment on serial</description>
+                     </attribute>
+                     <attribute qualifier="associatedOrder" type="Order">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <description>To store associated order on serial</description>
+                     </attribute>
+                     <attribute qualifier="testingStatus" type="ItemTestingStatusEnum">
+                         <persistence type="property"/>
+                         <modifiers read="true" write="true" optional="true"/>
+                         <defaultvalue>em().getEnumerationValue("ItemTestingStatusEnum", "NONE")</defaultvalue>
+                         <description>Determines what type of repair is required</description>
                      </attribute>
                  </attributes>
              </itemtype>
@@ -1970,6 +1989,20 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" initial="true" />
                     </attribute>
+
+                    <attribute qualifier="preReservedDays" type="java.lang.Integer" autocreate="true">
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+                    </attribute>
+                    <attribute qualifier="postReservedDays" type="java.lang.Integer"
+                      autocreate="true">
+                      <persistence type="property"/>
+                      <modifiers read="true" write="true" search="true" initial="true"/>
+					</attribute>
+                    <attribute qualifier="shippingOrderSequence" type="java.lang.Number" autocreate="true">
+                        <persistence type="property" />
+                        <modifiers read="true" write="true" search="true" initial="true" />
+                    </attribute>
                 </attributes>
             </itemtype>
 
@@ -2483,6 +2516,12 @@
               <defaultvalue>Boolean.FALSE</defaultvalue>
               <description>It tells whether the consignment is threeDayGround marked or not.</description>
           </attribute>
+          <attribute qualifier="internalTransferConsignment" type="boolean">
+            <description>Flag to identify whether current consignment is internal transfer or not </description>
+            <modifiers read="true" write="true" search="false" optional="true" />
+            <persistence type="property" />
+            <defaultvalue>false</defaultvalue>
+          </attribute>
         </attributes>
       </itemtype>
 
@@ -2625,7 +2664,12 @@
 				 <attribute type="serialProducts" qualifier="serialProducts">
 				<modifiers read="true" write="true"/>
 				<persistence type="property"/>
-			  </attribute>												  
+			  </attribute>		
+			  <attribute type="PackagingInfoStatus" qualifier="packagingInfoStatus">
+                        <modifiers read="true" write="true" unique="false" optional="true" />
+                        <persistence type="property" />
+                        <description>It holds information about Package status to track package journey</description>
+                    </attribute>										  
 				</attributes>
 			</itemtype>
 		</typegroup>

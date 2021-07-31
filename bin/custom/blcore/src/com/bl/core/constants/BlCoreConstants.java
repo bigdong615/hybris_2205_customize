@@ -230,7 +230,12 @@ public final class BlCoreConstants extends GeneratedBlCoreConstants
 	public static final String EMAIL_ADDRESS = "Email Address";
 	public static final String EMAIL_ADDRESSES = "Email Addresses";
 	public static final String HTML_ENABLED = "HTML Enabled";
+
 	public static final String ALPHANUMERIC_VALUES = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
+	public static final String BL_SAN_CARLOS = "BL_SAN_CARLOS";
+	public static final String BL_WALTHAM = "BL_WALTHAM";
+
+
 
 	private BlCoreConstants()
 	{
