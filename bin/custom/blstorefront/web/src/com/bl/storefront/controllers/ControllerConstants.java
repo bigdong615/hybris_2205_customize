@@ -95,6 +95,11 @@ public interface ControllerConstants
 				String CheckoutLoginPage = "pages/checkout/checkoutLoginPage"; // NOSONAR
 			}
 
+			interface HomePage //NOSONAR
+			{
+				String HomePageView = "pages/layout/landingLayout2Page"; // NOSONAR
+			}
+
 			interface MultiStepCheckout // NOSONAR
 			{
 				String AddEditDeliveryAddressPage = "pages/checkout/multi/addEditDeliveryAddressPage"; // NOSONAR
