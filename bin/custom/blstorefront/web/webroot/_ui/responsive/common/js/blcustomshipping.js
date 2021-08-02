@@ -145,7 +145,10 @@ function removeClass(){
              $('.page-loader-new-layout').hide();
          },
          error: function (data) {
-             $('.page-loader-new-layout').hide();
+            if(data != null && data.statusText == 'parsererror') {
+                window.location.reload();
+            }
+            $('.page-loader-new-layout').hide();
          }
      });
   }
@@ -155,6 +158,10 @@ function removeClass(){
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
       var businessType = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype');
+      if(typeof businessType == "string") {
+        businessType = JSON.parse(businessType);
+      }
+
       if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
@@ -237,6 +244,9 @@ function removeClass(){
             $('.page-loader-new-layout').hide();
         },
         error: function (data) {
+            if(data != null && data.statusText == 'parsererror') {
+                window.location.reload();
+            }
             $('.page-loader-new-layout').hide();
         }
     });
@@ -336,6 +346,9 @@ function removeClass(){
                  $('.page-loader-new-layout').hide();
              },
              error: function (data) {
+                if(data != null && data.statusText == 'parsererror') {
+                    window.location.reload();
+                }
                  $('.page-loader-new-layout').hide();
              }
          });
@@ -532,7 +545,7 @@ function removeClass(){
             $('.page-loader-new-layout').show();
         },
         success: function (data) {
-            if(data != null && data.length != 0) {
+            if(data != null && data.length != 0 && (typeof data == "object")) {
                 let partnerDelivery = '';
                 for (let i = 0; i < data.length; i++) {
                     if(i == 0 && data.length == 1) {
@@ -590,7 +603,13 @@ function removeClass(){
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
             }
         },
-        complete: function() {
+        complete: function(data) {
+            if((typeof data == "string")) {
+                window.location.reload();
+            }
+            if(data != null && (typeof data != "string") && data.statusText == 'parsererror') {
+                window.location.reload();
+            }
             $('.page-loader-new-layout').hide();
         },
         error: function (error) {
@@ -743,7 +762,7 @@ function removeClass(){
                             $('.page-loader-new-layout').show();
                        },
                        success: function (data) {
-                           if(data != null && data.length != 0) {
+                           if(data != null && data.length != 0 && (typeof data == "object")) {
                                let sameDayShippingModes = '<b>Delivery Window</b>';
                                sameDayShippingModes += '<select id="same-day-shipping-methods-select-box" class="selectpicker mt-2"' +
                                                         ' onChange="onChangeOfSameDayShippingMethodForCost()">';
@@ -785,9 +804,15 @@ function removeClass(){
                            }
                        },
                        complete: function() {
+                            if((typeof data == "string")) {
+                                window.location.reload();
+                            }
                            $('.page-loader-new-layout').hide();
                        },
                        error: function (data) {
+                            if(data != null && data.statusText == 'parsererror') {
+                                window.location.reload();
+                            }
                            $('.page-loader-new-layout').hide();
                        }
                    });
@@ -795,11 +820,17 @@ function removeClass(){
                     showErrorNotificationSameDay('Whoops! We were unable to get shipping information back from FedEx, please change your shipping method or try again in a few minutes', false);
                 }
             },
-            complete: function() {
+            complete: function(data) {
+                if(data != null && data.statusText == 'parsererror') {
+                    window.location.reload();
+                }
                 $('.page-loader-new-layout').hide();
             },
             error: function (data) {
-                   $('.page-loader-new-layout').hide();
+                if(data != null && data.statusText == 'parsererror') {
+                    window.location.reload();
+                }
+                $('.page-loader-new-layout').hide();
             }
         });
     } else {
@@ -1098,6 +1129,11 @@ function removeClass(){
     } else {
        regionIso = countryIso+ '-' +regionIso;
     }
+
+    if(addressType == null) {
+        addressType = 'UNKNOWN';
+    }
+
     let addressForm = {
         firstName : firstName,
         lastName : lastName,
@@ -1182,9 +1218,12 @@ function removeClass(){
                  $('#whatWeSuggest').html(whatWeSuggest);
                  $('#avsCheck').modal('show');
             } else {
-                 if(section == 'SHIP' && businessType && data.result != null && data.addressType != 'BUSINESS') {
+                 if(section == 'SHIP' && businessType && data.addressType != 'BUSINESS') {
                     showAMDeliveryErrorMessage(section);
                  } else {
+                    if(data.addressType != null) {
+                        addressForm.addressType = data.addressType;
+                    }
                     //suggested state not supported error from response
                      addNewAddress(addressForm, deliveryMode)
                          .then((data) => {

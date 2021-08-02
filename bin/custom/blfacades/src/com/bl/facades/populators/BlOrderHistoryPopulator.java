@@ -45,6 +45,10 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
     {
       target.setTotal(getPriceDataFactory().create(PriceDataType.BUY, updateTotalIfOrderExtended(source), source.getCurrency()));
     }
+   if(source.isGiftCardOrder())
+    {
+   	target.setIsGiftCard(Boolean.TRUE);
+    }
 
    if(null != source.getRentalStartDate()){
     target.setRentalStartDate(convertDateToString(source.getRentalStartDate()));

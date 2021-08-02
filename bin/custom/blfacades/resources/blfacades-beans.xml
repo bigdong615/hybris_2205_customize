@@ -167,6 +167,8 @@
 
         <property name="giftCardCost" type="java.lang.Double"/>
         <property name="hasGiftCart" type="java.lang.Boolean"/>
+        <property name="recipientEmail" type="java.lang.String"/>
+        <property name="recipientName" type="java.lang.String" />
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -592,6 +594,7 @@
 		<property name="rentalEndDate" type="String"/>
 		<property name="orderDate" type="String"/>
 		<property name="rentalCart" type="Boolean"/>
+		<property name="isGiftCard" type="java.lang.Boolean"/>
 		<property name="productDetails" type="java.util.List&lt;String>"/>
 		<property name="productNameAndQuantity" type="java.util.List&lt;String>"/>
 		<property name="isRentalStartDateActive" type="java.lang.Boolean"/>
