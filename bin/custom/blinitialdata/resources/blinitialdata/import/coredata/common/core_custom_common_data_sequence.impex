@@ -19,3 +19,6 @@ $commonCustomPath = /blinitialdata/import/coredata/common/custom
 
 # Promotion Rule Definition Impex
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/promotions/rule-definitions.impex"), "utf-8", 0, 0);
+
+# BL-819 Impex data for cron job
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/mark-dirty-priority-job.impex"), "utf-8", 0, 0);
