@@ -158,6 +158,10 @@ function removeClass(){
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
       var businessType = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype');
+      if(typeof businessType == "string") {
+        businessType = JSON.parse(businessType);
+      }
+
       if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
@@ -1122,6 +1126,11 @@ function removeClass(){
     } else {
        regionIso = countryIso+ '-' +regionIso;
     }
+
+    if(addressType == null) {
+        addressType = 'UNKNOWN';
+    }
+
     let addressForm = {
         firstName : firstName,
         lastName : lastName,
@@ -1209,6 +1218,9 @@ function removeClass(){
                  if(section == 'SHIP' && businessType && data.addressType != 'BUSINESS') {
                     showAMDeliveryErrorMessage(section);
                  } else {
+                    if(data.addressType != null) {
+                        addressForm.addressType = data.addressType;
+                    }
                     //suggested state not supported error from response
                      addNewAddress(addressForm, deliveryMode)
                          .then((data) => {
