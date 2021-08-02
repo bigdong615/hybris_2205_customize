@@ -8,6 +8,8 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="format" tagdir="/WEB-INF/tags/shared/format"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 
 <spring:url value="/cart/voucher/remove" var="removeVoucherAction"
 	htmlEscape="false" />
@@ -18,72 +20,53 @@
 	htmlEscape="false" />
 
 <div id="orderSummary" class="card">
-	<h5>
-		<spring:theme code="checkout.multi.order.summary" />
-	</h5>
-	<hr>
-	<c:choose>
-		<c:when test="${cartData.isRentalCart}">
-			<p>
-				<b><spring:theme code="text.rental.cart.date" /></b>&emsp; <input
-					type="text" class="form-control cart-picker"
-					id="summary-litepicker"
-					placeholder="<spring:theme code="text.rental.cart.select.date"/>">
-			</p>
-		</c:when>
-		<c:otherwise>
-			<b><spring:theme code="text.used.Gear.cart.timer" /> <span
-				id="usedTimer"></span></b>
-		</c:otherwise>
-	</c:choose>
-	<hr>
-	<table id="costSummary">
-		<tbody>
-			<tr>
-				<td class="gray80"><c:choose>
-						<c:when test="${cartData.isRentalCart}">
-							<spring:theme code="text.checkout.multi.order.summary.cost" />
-						</c:when>
-						<c:otherwise>
-							<spring:theme
-								code="text.checkout.multi.order.summary.cost.usedGear" />
-						</c:otherwise>
-					</c:choose></td>
-				<td class="text-end" id="cart-shipping-subTotal"><format:blPrice
-						priceData="${cartData.subTotal}" /></td>
-			</tr>
-			<c:if test="${cartData.isRentalCart}">
-				<tr>
-					<td class="gray80"><spring:theme
-							code="text.cart.damage.waiver" /> <a href="#"
-						data-bs-toggle="modal" data-bs-target="#damageWaivers"> <i
-							class="icon-support"></i>
-					</a></td>
-					<td class="text-end" id="cart-shipping-waiver"><format:blPrice
-							priceData="${cartData.totalDamageWaiverCost}" /></td>
-				</tr>
-			</c:if>
-			<tr>
-				<td class="gray80"><spring:theme
-						code="text.checkout.multi.order.summary.shipping" /></td>
-				<td class="text-end" id="cart-shipping-cost"><format:blPrice
-						priceData="${cartData.deliveryCost}" /></td>
-				<input type="hidden" class="cart-cost"
-					id="${cartData.deliveryCost.formattedValue}">
-			</tr>
-			<tr>
-				<td class="gray80"><spring:theme
-						code="text.checkout.multi.order.summary.tax" /></td>
-				<td class="text-end" id="cart-shipping-tax"><c:choose>
-						<c:when
-							test="${pageType =='CART' || cartData.avalaraCalculated ne 'true'}">
-							<format:blPrice priceData="${cartData.taxAvalaraCalculated}" />
-						</c:when>
-						<c:otherwise>
-							<format:price priceData="${cartData.taxAvalaraCalculated}" />
-						</c:otherwise>
-					</c:choose></td>
-			</tr>
+
+      <h5>
+        <spring:theme code="checkout.multi.order.summary"/>
+      </h5>
+      <hr>
+      <c:if test="${cartData.isRentalCart}">
+      <p>
+        <b><spring:theme code="text.rental.cart.date"/></b>&emsp;
+        <input type="text" class="form-control cart-picker" id="summary-litepicker"
+            placeholder="<spring:theme code="text.rental.cart.select.date"/>">
+        </p>
+      </c:if>
+      <c:forEach items="${cartData.appliedOrderPromotions}" var="promotion">
+         <div class="promotion" style="color:green">${ycommerce:sanitizeHTML(promotion.description)}
+         <fmt:formatDate value="${cartData.promotionalToDate}" pattern="dd/MM/YYYY" /></div>
+      </c:forEach>
+      <hr>
+      <table id="costSummary">
+          <tbody>
+              <tr>
+                  <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.cost"/></td>
+                  <td class="text-end" id="cart-shipping-subTotal"><format:blPrice priceData="${cartData.subTotal}"/></td>
+              </tr>
+              <tr>
+                  <td class="gray80"><spring:theme code="text.cart.damage.waiver"/>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#damageWaivers">
+                        <i class="icon-support"></i>
+                    </a>
+                  </td>
+                  <td class="text-end" id="cart-shipping-waiver"><format:blPrice priceData="${cartData.totalDamageWaiverCost}"/></td>
+              </tr>
+              <tr>
+                  <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.shipping"/></td>
+                  <td class="text-end" id="cart-shipping-cost"><format:blPrice priceData="${cartData.deliveryCost}"/></td>
+                  <input type="hidden" class="cart-cost" id="${cartData.deliveryCost.formattedValue}">
+              </tr>
+              <tr>
+                  <td class="gray80"><spring:theme code="text.checkout.multi.order.summary.tax"/></td>
+                   <td class="text-end" id="cart-shipping-tax">
+                  <c:choose>
+                    <c:when test="${pageType =='CART' || cartData.avalaraCalculated ne 'true'}">
+                           <format:blPrice priceData="${cartData.taxAvalaraCalculated}"/>
+                     </c:when>
+                     <c:otherwise><format:price priceData="${cartData.taxAvalaraCalculated}"/></c:otherwise>
+                  </c:choose>
+                </td>
+              </tr>
 
 			<tr class="discount">
 				<c:if test="${cartData.totalDiscounts.value > 0}">

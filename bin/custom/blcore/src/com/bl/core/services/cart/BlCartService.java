@@ -75,4 +75,17 @@ public interface BlCartService extends CartService {
      * @param poNotes
      */
     void savePoPaymentDetails(final String poNumber, final String poNotes);
+
+    /**
+     * Update promotional End date for the promotion with extended
+     * rental days
+     * @param updatedRentalToDate
+     */
+    void updatePromotionalEndDate(Date updatedRentalToDate);
+
+    /**
+     * Check if the Promotion with extended days is applied to cart
+     * @return
+     */
+    boolean isFreeRentalDayPromoApplied();
 }

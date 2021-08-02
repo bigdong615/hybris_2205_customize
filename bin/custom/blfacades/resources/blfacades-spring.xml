@@ -306,6 +306,7 @@
 		<property name="blDatePickerService" ref="blDatePickerService" />
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="cmsComponentService" ref="cmsComponentService" />
 	</bean>
 
 	<!--BL-80 entry for Used Gear Category Model Resolver-->

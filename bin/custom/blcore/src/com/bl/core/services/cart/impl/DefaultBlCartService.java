@@ -245,7 +245,7 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 
     /**
 	 * Changes Serial Product Status from ADDED_TO_CART to ACTIVE status
-	 * 
+	 *
 	 * @param entry
 	 */
 	private void doChangeSerialProductStatus(final AbstractOrderEntryModel entry) {
@@ -255,8 +255,53 @@ public class DefaultBlCartService extends DefaultCartService implements BlCartSe
 		      getModelService().save(blSerialProductModel);
 		  }
 	}
-    
-    
+
+  /**
+   * Update promotional End date for the promotion with extended rental days
+   *
+   * @param updatedRentalToDate
+   */
+  @Override
+  public void updatePromotionalEndDate(Date updatedRentalToDate) {
+    final CartModel cartModel = getSessionCart();
+    if (updatedRentalToDate != null  && cartModel != null) {
+      String cartCode = cartModel.getCode();
+      if(!isFreeRentalDayPromoApplied()){
+        cartModel.setPromotionalRentalEndDate(null);
+      }
+      else{
+        cartModel.setPromotionalRentalEndDate(updatedRentalToDate);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.INFO,
+            "Setting Rental Promotional End Date: {} on Cart: {}", cartModel.getPromotionalRentalEndDate(),cartCode);
+      }
+      try {
+        getModelService().save(cartModel);
+        BlLogger.logFormatMessageInfo(LOGGER, Level.DEBUG,
+            "Setting Rental Promotional End Date: {} on Cart: {}", updatedRentalToDate,cartCode);
+      } catch (final Exception exception) {
+        BlLogger.logFormattedMessage(LOGGER, Level.ERROR, StringUtils.EMPTY, exception,
+            "Error while saving Rental Promotional End Date: {}  on cart - {}",updatedRentalToDate,
+            cartCode);
+      }
+    }
+  }
+
+  /**
+   * Check if the Promotion with extended days is applied to cart
+   *
+   * @return
+   */
+  @Override
+  public boolean isFreeRentalDayPromoApplied() {
+    CartModel cartModel = getSessionCart();
+    if(cartModel != null && CollectionUtils.isNotEmpty(cartModel.getAllPromotionResults())){
+      return  cartModel.getAllPromotionResults().stream().filter(promoResult -> promoResult.getPromotion().getCode().contains("EXTENDED_RENTAL_DAYS")).findAny().isPresent();
+    }
+    return  false;
+  }
+
+
+
 
 
     public CommerceCartService getCommerceCartService() {

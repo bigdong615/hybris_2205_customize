@@ -167,6 +167,7 @@
 
         <property name="giftCardCost" type="java.lang.Double"/>
         <property name="hasGiftCart" type="java.lang.Boolean"/>
+      <property name="promotionalToDate" type="java.util.Date"/>
   </bean>
 
 	<!-- ExtendOrderData -->
@@ -328,12 +329,14 @@
   </bean>
 
   <!--[Bl-643]: Custom Promotions-->
-  <bean class="de.hybris.platform.ruleengineservices.rao.CartRAO" extends="de.hybris.platform.ruleengineservices.rao.AbstractOrderRAO">
+  <bean class="de.hybris.platform.ruleengineservices.rao.AbstractOrderRAO">
     <property name="rentalDurationDays" type="java.lang.Integer" />
     <property name="rentalCart" type="java.lang.Boolean" />
     <property name="rentalArrivalDate" type="java.util.Date" />
     <property name="rentalToDate" type="java.util.Date" />
     <property name="freeRentalDates" type="java.util.List&lt;java.util.Date>" />
+		<property name="extendedFreeRentalDays" type="java.lang.Integer" />
+		<property name="extendedDurationDays" type="java.lang.Integer" />
     <property name="totalIncludingDamageWaiver" type="java.math.BigDecimal" />
     <property name="usedGearDiscount" type="java.lang.Integer" />
   </bean>
