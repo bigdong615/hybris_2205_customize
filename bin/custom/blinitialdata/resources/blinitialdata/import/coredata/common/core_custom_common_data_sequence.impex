@@ -22,3 +22,12 @@ $commonCustomPath = /blinitialdata/import/coredata/common/custom
 
 # BL-819 Impex data for cron job
 #% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/mark-dirty-priority-job.impex"), "utf-8", 0, 0);
+
+# Point of Service Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/points-of-service.impex"), "utf-8", 0, 0);
+
+# OMS Labels Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/oms-labels-content.impex"), "utf-8", 0, 0);
+
+# OMS Labels Localization Impex
+#% impex.includeExternalData(InitialDataSystemSetup.class.getResourceAsStream("$commonCustomPath/oms-labels-content_en.impex"), "utf-8", 0, 0);
