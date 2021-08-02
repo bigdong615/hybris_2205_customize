@@ -4,28 +4,45 @@ ACC.silentorderpost = {
 
 	bindUseDeliveryAddress: function ()
 	{
-		$('#useDeliveryAddress').on('change', function ()
+		$('#ccUseDeliveryAddress').on('change', function ()
 		{
-			if ($('#useDeliveryAddress').is(":checked"))
+			if ($('#ccUseDeliveryAddress').is(":checked"))
 			{
 				var options = {'countryIsoCode': $('#useDeliveryAddressData').data('countryisocode'), 'useDeliveryAddress': true};
 				ACC.silentorderpost.enableAddressForm();
 				ACC.silentorderpost.displayCreditCardAddressForm(options, ACC.silentorderpost.useDeliveryAddressSelected);
-				ACC.silentorderpost.disableAddressForm();
+				$("#save-address").prop('checked', true);
+				$('.hideUseShipping').hide();
+				ACC.silentorderpost.enableReadOnlyAddressForm();
 			}
 			else
 			{
 				ACC.silentorderpost.clearAddressForm();
 				ACC.silentorderpost.enableAddressForm();
+				$("#save-address").prop('checked', true);
+				$('.hideUseShipping').hide();
+				ACC.silentorderpost.disableReadOnlyAddressForm();
 			}
 		});
 
-		if ($('#useDeliveryAddress').is(":checked"))
+		if ($('#ccUseDeliveryAddress').is(":checked"))
 		{
 			var options = {'countryIsoCode': $('#useDeliveryAddressData').data('countryisocode'), 'useDeliveryAddress': true};
 			ACC.silentorderpost.enableAddressForm();
 			ACC.silentorderpost.displayCreditCardAddressForm(options, ACC.silentorderpost.useDeliveryAddressSelected);
+			$("#save-address").prop('checked', true);
+			$('.hideUseShipping').hide();
 			ACC.silentorderpost.disableAddressForm();
+			
+		}
+		else
+		{
+			var options = {'countryIsoCode': $('#useDeliveryAddressData').data('countryisocode'), 'useDeliveryAddress': false};
+			ACC.silentorderpost.displayCreditCardAddressForm(options, ACC.silentorderpost.useDeliveryAddressSelected);
+			ACC.silentorderpost.enableAddressForm();
+			$("#save-address").prop('checked', true);
+			$('.hideUseShipping').hide();
+			ACC.silentorderpost.disableReadOnlyAddressForm();
 		}
 	},
 
@@ -59,6 +76,18 @@ ACC.silentorderpost = {
 		$('input[id^="address\\."]').prop('disabled', true);
 		$('select[id^="address\\."]').prop('disabled', true);
 	},
+	
+	enableReadOnlyAddressForm: function ()
+	{
+		$('input[id^="address\\."]').prop('readOnly', true);
+		$('select[id^="address\\."]').prop('disabled', true);
+	},
+	
+	disableReadOnlyAddressForm: function ()
+	{
+		$('input[id^="address\\."]').prop('readOnly', false);
+		$('select[id^="address\\."]').prop('disabled', false);
+	},
 
 	enableAddressForm: function ()
 	{
@@ -74,23 +103,28 @@ ACC.silentorderpost = {
 
 	useDeliveryAddressSelected: function ()
 	{
-		if ($('#useDeliveryAddress').is(":checked"))
+		if ($('#ccUseDeliveryAddress').is(":checked"))
 		{
 			var countryIsoCode = $('#address\\.country').val($('#useDeliveryAddressData').data('countryisocode')).val();
 			if(ACC.silentorderpost.isEmpty(countryIsoCode))
 			{
-				$('#useDeliveryAddress').click();
-				$('#useDeliveryAddress').parent().hide();
+				$('#ccUseDeliveryAddress').click();
+				$('#ccUuseDeliveryAddress').parent().hide();
 			}
 			else
 			{
-				ACC.silentorderpost.disableAddressForm();
+				$("#save-address").prop('checked', true);
+				$('.hideUseShipping').hide();
+				ACC.silentorderpost.enableReadOnlyAddressForm();
 			}
 		}
 		else
 		{
 			ACC.silentorderpost.clearAddressForm();
 			ACC.silentorderpost.enableAddressForm();
+			$("#save-address").prop('checked', true);
+			$('.hideUseShipping').hide();
+			ACC.silentorderpost.disableReadOnlyAddressForm();
 		}
 	},
 	
@@ -136,7 +170,7 @@ $(document).ready(function ()
 	ACC.silentorderpost.bindUseDeliveryAddress();
 	ACC.silentorderpost.bindSubmitSilentOrderPostForm();
 	ACC.silentorderpost.bindCreditCardAddressForm();
-
+	$('.hideUseShipping').hide();
 	// check the checkbox
 	$("#useDeliveryAddress").click();
 });

@@ -87,3 +87,5 @@ beans.xsd
 items.xsd
 classes/
 eclipsebin/
+bin/custom/blstorefront/web/webroot/_ui/responsive/common/js/blCustom.js
+bin/custom/bltaxapi/resources/rebel.xml

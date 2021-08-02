@@ -1131,4 +1131,8 @@
 		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
 
+	<bean id="VerificationDocumentMedia_URLAttributeHandler" class="com.bl.core.media.BlDynamicAttributesMediaUrl" >
+		<property name="mediaService" ref="mediaService"/>
+	</bean>
+	
 </beans>

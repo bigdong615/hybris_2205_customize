@@ -1732,6 +1732,14 @@
               <attribute type="DocumentType" qualifier="documentType">
                 <persistence type="property" />
               </attribute>
+              <attribute qualifier="URL" type="java.lang.String" redeclare="true">
+                    <modifiers read="true" write="true" search="false" optional="true" encrypted="true" />
+                    <persistence type="dynamic"/>
+                    <model>
+                        <getter name="url" deprecated="true" deprecatedSince="ages"/>
+                        <setter name="url" deprecated="true" deprecatedSince="ages"/>
+                    </model>
+                </attribute>
             </attributes>
           </itemtype>
 
@@ -1959,7 +1967,7 @@
         <!-- BL-542 -->
         <typegroup name="Shipping">
             <itemtype code="ShippingGroup" extends="GenericItem" autocreate="true" generate="true">
-                        <deployment table="shippingGroup" typecode="12209" />
+                        <deployment table="shippingGroup" typecode="12299" />
                 <attributes>
                     <attribute qualifier="code" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
