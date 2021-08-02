@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.backoffice.widget.controller;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -17,7 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
 import com.bl.backoffice.wizards.util.WebScanToolData;
@@ -30,11 +26,14 @@ import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 
 
+/**
+ * This class is responsible to scan the items to working location and then verify the scanned items
+ *
+ * @author Aditi Sharma
+ */
+
 public class BlShippingScanController extends DefaultWidgetController
 {
-	/**
-	 * @author Aditi Sharma
-	 */
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
 
@@ -53,6 +52,11 @@ public class BlShippingScanController extends DefaultWidgetController
 
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
+	/**
+	 * This method is used to load the default values at the time of opening the popup
+	 *
+	 * @param inputObject
+	 */
 	@SocketEvent(socketId = BlInventoryScanLoggingConstants.SOCKET_ID)
 	public void initCustomerAddressForm(final ConsignmentModel inputObject)
 	{
@@ -62,6 +66,9 @@ public class BlShippingScanController extends DefaultWidgetController
 		shippingScanToolData = new WebScanToolData();
 	}
 
+	/**
+	 * This method is used to update the barcode values on change event
+	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SCANNING_AREA, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void changeScan()
 	{
@@ -69,6 +76,9 @@ public class BlShippingScanController extends DefaultWidgetController
 				.setBarcodeInputField(Arrays.asList(scanningArea.getValue().split(BlInventoryScanLoggingConstants.NEW_LINE)));
 	}
 
+	/**
+	 * This method is used to close the Package Shipping Popup
+	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.CANCEL_EVENT, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void cancel()
 	{
@@ -145,6 +155,8 @@ public class BlShippingScanController extends DefaultWidgetController
 	}
 
 	/**
+	 * This method is used to create response message for shipping scan
+	 *
 	 * @param result
 	 * @param barcodes
 	 */
@@ -205,9 +217,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		}
 		else
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-					barcodes.size());
-			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
+			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		}
 	}

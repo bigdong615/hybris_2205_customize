@@ -156,7 +156,6 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
         final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
         subList.forEach(barcode -> setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode));
-        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST, failedBarcodeList);
         return failedBarcodeList;
     }
 
@@ -377,15 +376,16 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			final BlInventoryLocationModel blBinLocationModel = getBlInventoryLocation();
 			blBinLocationModel.setParentInventoryLocation(blWorkingDeskInventory);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Inventory location updated for {} with parent location {} ",blWorkingDeskInventory.getCode(),blWorkingDeskInventory.getParentInventoryLocation() );
 			modelService.save(blBinLocationModel);
 			modelService.refresh(blBinLocationModel);
+			BlLogger.logMessage(LOG, Level.DEBUG, "Inventory Location has been updated");
 			return Collections.emptyList();
 		}
 		else
 		{
 			failedBarcodeList.addAll(barcodes);
 		}
-		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST, failedBarcodeList);
 		return failedBarcodeList;
 	}
 	
@@ -408,7 +408,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 				{
 					((BlSerialProductModel) serial).setOcLocation(getPackagingInfoModel().getTrackingNumber());
 					modelService.save(serial);
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Oc location updated to Tracking number", getPackagingInfoModel().getTrackingNumber());
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "OC location updated to Tracking number {} for serial {}", getPackagingInfoModel().getTrackingNumber(),serial.getCode());
 				}
 			});
 			return Collections.emptyList();
@@ -459,7 +459,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			if (barcodes.size() == consignmentEntry.getSerialProducts().size())
 			{
-				verifyScan(failedBarcodeList, filteredSerialProduct, filteredSubPartProduct, scannedSerialProduct,
+				doScan(failedBarcodeList, filteredSerialProduct, filteredSubPartProduct, scannedSerialProduct,
 						scannedSubpartProduct, consignmentEntry);
 			}
 			else
@@ -471,6 +471,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return failedBarcodeList;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 */
 	@Override
 	public int checkValidTrackingId(final String lastScannedItem)
 	{
@@ -484,7 +488,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 	
 	/**
-	 * This methos is used to verify scan
+	 * This method is used to verify scan
 	 * @param filteredSerialProduct
 	 * @param filteredSubPartProduct
 	 * @param scannedSerialProduct
@@ -492,7 +496,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param consignmentEntry
 	 * @param updatedItemMap
 	 */
-	private void verifyScan(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
+	private void doScan(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
 			final List<BlProductModel> filteredSubPartProduct, final List<BlSerialProductModel> scannedSerialProduct,
 			final List<BlSerialProductModel> scannedSubpartProduct, final ConsignmentEntryModel consignmentEntry)
 	{
@@ -512,6 +516,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		consignmentEntry.setSerialProducts(serialProductsList);
 		modelService.save(consignmentEntry);
 		modelService.refresh(consignmentEntry);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Scan verified for consignment {}", consignmentEntry.getConsignment().getCode());
 	}
 
 	/**
@@ -576,7 +581,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			final Map<String, ItemStatusEnum> itemsMap)
 	{
 		final String subPartName = subpartProduct.getBlProduct().getName();
-		BlProductModel blProduct = subpartProduct.getBlProduct();
+		final BlProductModel blProduct = subpartProduct.getBlProduct();
 		final String updatedName = subPartName.concat(BlInventoryScanLoggingConstants.HYPHEN);
 
 		if (itemsMap.containsKey(subPartName)
@@ -584,10 +589,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.remove(subPartName);
 			itemsMap.put(blProduct.getCode(), ItemStatusEnum.INCLUDED);
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Map Updated for product {} ", blProduct.getCode());
 		}
 		else
 		{
-			BlLogger.logMessage(LOG, Level.DEBUG, "validate serial name against Map key ");
 			getUpdatedName(itemsMap, updatedName, subpartProduct);
 		}
 		if (serialProductsList.contains(blProduct))
@@ -598,6 +603,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	}
 
 	/**
+	 * This method is used to update the subpart map  
 	 * @param itemsMap
 	 * @param updatedName
 	 * @param subpartProduct
@@ -614,7 +620,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.remove(keyList.get(0));
 			itemsMap.put(subpartProduct.getBlProduct().getCode(), ItemStatusEnum.INCLUDED);
-			BlLogger.logMessage(LOG, Level.DEBUG, "Map updated successfully for sub part products");
+			BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Map updated successfully for sub part products {}", subpartProduct.getCode());
 		}
 	}
 
@@ -634,7 +640,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
 			modelService.save(serialProduct);
-			BlLogger.logMessage(LOG, Level.DEBUG, "Map updated successfully for serial products");
+			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Map updated successfully for serial product {}", serialProduct.getCode());
 		}
 	}
 
@@ -652,10 +658,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (!ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType()))
 			{
 				filteredSerialProduct.add(serialItem);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Serial Product added to list {}", serialItem.getCode());
 			}
 			else if (((BlSerialProductModel) serialItem).getBarcode() !=null && ProductTypeEnum.SUBPARTS.equals(serialItem.getProductType()))
 			{
 				filteredSubPartProduct.add(serialItem);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Subt Product added to list {}", serialItem.getCode());
 			}
 		}
 	}
@@ -673,10 +681,12 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (!ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
 			{
 				scannedSerialProduct.add(scannedProduct);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Scanned serial product added {}", scannedProduct.getCode());
 			}
 			else if (ProductTypeEnum.SUBPARTS.equals(scannedProduct.getProductType()))
 			{
 				scannedSubpartProduct.add(scannedProduct);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Scanned subpart product added {}", scannedProduct.getCode());
 			}
 		});
 	}

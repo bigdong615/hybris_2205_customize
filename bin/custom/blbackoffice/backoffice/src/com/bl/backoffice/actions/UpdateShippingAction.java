@@ -1,7 +1,3 @@
-//
-// Decompiled by Procyon v0.5.36
-//
-
 package com.bl.backoffice.actions;
 
 import de.hybris.platform.core.model.order.OrderModel;
@@ -12,12 +8,19 @@ import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
 
+/**
+ * This action class is responsible to fetch the order for update shipping information
+ *
+ * @author Aditi Sharma
+ *
+ */
+
 public class UpdateShippingAction extends AbstractComponentWidgetAdapterAware implements CockpitAction<OrderModel, OrderModel>
 {
 	protected static final String SOCKET_OUT_CONTEXT = "blCustomShippingContext";
 
 	/**
-	 * Can perform boolean.
+	 * This method is responsible for fetch the order to update its shipping information
 	 *
 	 * @param actionContext
 	 *           the action context

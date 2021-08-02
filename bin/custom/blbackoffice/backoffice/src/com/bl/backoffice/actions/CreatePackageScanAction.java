@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.bl.backoffice.actions;
 
@@ -18,6 +18,8 @@ import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
 
 /**
+ * This action class is responsible to find the consignment for scanning
+ *
  * @author Aditi Sharma
  *
  */
@@ -30,7 +32,8 @@ public class CreatePackageScanAction extends AbstractComponentWidgetAdapterAware
 	private DefaultBLShipmentCreationService blShipmentCreationService;
 
 	/**
-	 * Can perform boolean.
+	 * This method is responsible for fetch the consignment which are not in CANCELLED, CHECKED_INVALID,
+	 * PAYMENT_NOT_AUTHORIZED and PAYMENT_DECLINED status
 	 *
 	 * @param actionContext
 	 *           the action context

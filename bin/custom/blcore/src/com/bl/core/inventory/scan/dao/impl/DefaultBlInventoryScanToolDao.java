@@ -73,15 +73,18 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
         return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
 	public PackagingInfoModel getPackageInfoByCode(final String lastScannedItem) {
    	 final String barcodeList = "SELECT {pk} FROM {PackagingInfo!} WHERE {trackingNumber} = ?lastScannedItem";
        final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
-       query.addQueryParameter("lastScannedItem", lastScannedItem);
+       query.addQueryParameter(BlInventoryScanLoggingConstants.LAST_SCANNED_ITEM, lastScannedItem);
        final List<PackagingInfoModel> results = getFlexibleSearchService().<PackagingInfoModel>search(query).getResult();
-       BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE + lastScannedItem);
-       return CollectionUtils.isNotEmpty(results) ? results.get(0) : null;
-
+       BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FETCH_CONFIG_VALUE, lastScannedItem);
+       return CollectionUtils.isEmpty(results) ? null : results.get(0);
     }
     /**
  	 * {@inheritDoc}

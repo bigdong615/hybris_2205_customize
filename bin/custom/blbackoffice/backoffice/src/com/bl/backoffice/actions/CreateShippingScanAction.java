@@ -13,8 +13,12 @@ import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
+
 /**
- * @author Aditi
+ * This action class is responsible to find the consignment for scanning
+ *
+ * @author Aditi Sharma
+ *
  */
 public class CreateShippingScanAction extends AbstractComponentWidgetAdapterAware
 		implements CockpitAction<ConsignmentModel, ConsignmentModel>
@@ -25,7 +29,8 @@ public class CreateShippingScanAction extends AbstractComponentWidgetAdapterAwar
 	private DefaultBLShipmentCreationService blShipmentCreationService;
 
 	/**
-	 * Can perform boolean.
+	 * This method is responsible for fetch the consignment which are not in CANCELLED, CHECKED_INVALID,
+	 * PAYMENT_NOT_AUTHORIZED and PAYMENT_DECLINED status
 	 *
 	 * @param actionContext
 	 *           the action context

@@ -43,7 +43,7 @@ public interface BlInventoryScanToolDao {
     BlInventoryScanConfigurationModel getConfigKeyFromScanConfiguration(final String key);
     
     /**
-     * javadoc
+     * This method will get the packageInfo by it tracking id
      * @param scannedItem
      * @return PackagingInfoModel
      * method will fetch PackagInfo by tracking id

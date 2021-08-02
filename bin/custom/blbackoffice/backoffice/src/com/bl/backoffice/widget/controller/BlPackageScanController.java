@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.bl.backoffice.widget.controller;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -30,12 +27,15 @@ import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.util.DefaultWidgetController;
 
 
+/**
+ * This class is responsible to scan the package and update there location to BIN,Tracking Id and to UPS OUTBOUND cart
+ * on different step of scanning
+ *
+ * @author Aditi Sharma
+ */
+
 public class BlPackageScanController extends DefaultWidgetController
 {
-	/**
-	 * @author Aditi Sharma
-	 */
-
 	protected static final String OUT_CONFIRM = "confirmOutput";
 	protected static final String COMPLETE = "completed";
 
@@ -54,6 +54,11 @@ public class BlPackageScanController extends DefaultWidgetController
 
 	ConsignmentModel selectedConsignment = new ConsignmentModel();
 
+	/**
+	 * This method is used to load the default values at the time of opening the popup
+	 *
+	 * @param inputObject
+	 */
 	@SocketEvent(socketId = BlInventoryScanLoggingConstants.SOCKET_ID)
 	public void initCustomerAddressForm(final ConsignmentModel inputObject)
 	{
@@ -63,6 +68,9 @@ public class BlPackageScanController extends DefaultWidgetController
 		shippingScanToolData = new WebScanToolData();
 	}
 
+	/**
+	 * This method is used to update the barcode values on change event
+	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.SCANNING_AREA, eventName = BlInventoryScanLoggingConstants.ON_CHANGE_EVENT)
 	public void changeScan()
 	{
@@ -70,6 +78,9 @@ public class BlPackageScanController extends DefaultWidgetController
 				.setBarcodeInputField(Arrays.asList(scanningArea.getValue().split(BlInventoryScanLoggingConstants.NEW_LINE)));
 	}
 
+	/**
+	 * This method is used to close the Package Shipping Popup
+	 */
 	@ViewEvent(componentID = BlInventoryScanLoggingConstants.CANCEL_EVENT, eventName = BlInventoryScanLoggingConstants.ON_CLICK_EVENT)
 	public void cancel()
 	{
@@ -180,7 +191,7 @@ public class BlPackageScanController extends DefaultWidgetController
 		{
 			case BlInventoryScanLoggingConstants.ONE:
 				final List<String> failedBinBarcodeList = getBlInventoryScanToolService().getFailedBinBarcodeList(barcodes);
-				createSuccessResponse(barcodes, failedBinBarcodeList);
+				createSuccessResponse(failedBinBarcodeList);
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
@@ -211,7 +222,7 @@ public class BlPackageScanController extends DefaultWidgetController
 		{
 			case BlInventoryScanLoggingConstants.ONE:
 				final List<String> failedPackageBarcodeList = getBlInventoryScanToolService().getFailedPackageBarcodeList(barcodes);
-				createSuccessResponse(barcodes, failedPackageBarcodeList);
+				createSuccessResponse(failedPackageBarcodeList);
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
@@ -230,15 +241,13 @@ public class BlPackageScanController extends DefaultWidgetController
 	/**
 	 * This method is used to create success response
 	 *
-	 * @param barcodes
 	 * @param failedBinBarcodeList
 	 */
-	private void createSuccessResponse(final List<String> barcodes, final List<String> failedBinBarcodeList)
+	private void createSuccessResponse(final List<String> failedBinBarcodeList)
 	{
 		if (CollectionUtils.isEmpty(failedBinBarcodeList))
 		{
-			BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-					barcodes.size());
+			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		}
@@ -265,8 +274,7 @@ public class BlPackageScanController extends DefaultWidgetController
 				{
 					getBlInventoryScanToolService().updateToUpsBound();
 
-					BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-							barcodes.size());
+					BlLogger.logMessage(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
 					Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 					this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 				}

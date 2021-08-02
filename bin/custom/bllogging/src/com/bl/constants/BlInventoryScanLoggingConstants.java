@@ -133,6 +133,7 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SCAN_TO_TRACKING_ID = "scanToTrackingLabel";
  	public static final String SCAN_TO_UPS_OUTBOUND = "scanToOutBoundCart";
  	public static final String EMPTY_STRING = "";
+ 	public static final String LAST_SCANNED_ITEM = "lastScannedItem";
     public static final String UNBOX_NOTIFICATION_HANDLER = "UnboxingScanToolNotification";
     public static final String UNBOX_SAN_TOOL_PACKAGE_FAILURE = "unboxPkgMissingErrorFailure";
     public static final String UNBOX_SAN_TOOL_DPC_FAILURE = "unboxInvalidDPLocationErrorFailure";

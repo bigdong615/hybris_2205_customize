@@ -1,6 +1,3 @@
-/**
- * @author Keyur
- */
 package com.bl.backoffice.actions;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -17,6 +14,12 @@ import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
 
+/**
+ * This class is resp
+ *
+ * @author Keyur
+ */
+
 public class CreatePackageAction extends AbstractComponentWidgetAdapterAware
 		implements CockpitAction<ConsignmentModel, ConsignmentModel>
 {
@@ -27,7 +30,8 @@ public class CreatePackageAction extends AbstractComponentWidgetAdapterAware
 
 
 	/**
-	 * Can perform boolean.
+	 * This method is responsible for fetch the consignment which are not in CANCELLED, CHECKED_INVALID,
+	 * PAYMENT_NOT_AUTHORIZED and PAYMENT_DECLINED status
 	 *
 	 * @param actionContext
 	 *           the action context
