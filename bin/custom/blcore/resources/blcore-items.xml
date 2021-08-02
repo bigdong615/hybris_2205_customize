@@ -206,6 +206,11 @@
         <value code="PROCESSING"/>
         <value code="COMPLETED"/>
       </enumtype>
+     
+      <enumtype code="OrderStatus" autocreate="false" generate="false">
+            <value code="INVERIFICATION"/>
+        </enumtype>
+      
       
       <!-- BL-798 : Adding repair reason enum to set by Tech. Eng. Team Member -->
       <enumtype generate="true" code="RepairReasonsEnum" autocreate="true" dynamic="true">
@@ -2147,6 +2152,12 @@
                         <persistence type="property" />
                         <modifiers read="true" write="true" search="true" optional="false" />
                         <defaultvalue>Boolean.TRUE</defaultvalue>
+                    </attribute>
+                     <attribute qualifier="giftCardOrder" type="boolean">
+                        <persistence type="property" />
+                        <description>Flag to identify cart type is Gift Card</description>
+                        <modifiers read="true" write="true" search="true" optional="true" />
+                        <defaultvalue>Boolean.FALSE</defaultvalue>
                     </attribute>
                     <attribute qualifier="pickUpPersonFirstName" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
