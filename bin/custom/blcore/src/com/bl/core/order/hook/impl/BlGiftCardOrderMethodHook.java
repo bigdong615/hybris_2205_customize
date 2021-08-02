@@ -113,10 +113,13 @@ public class BlGiftCardOrderMethodHook implements CommercePlaceOrderMethodHook {
       }
     }
   }
-// Create gift card for gift card purchase order
+  /**
+   * Create gift card for gift card purchase order
+   * @param OrderModel
+   */
   private void createGiftCardForGCOrder(final OrderModel order) {
     final Optional<AbstractOrderEntryModel> optionalEntry = order.getEntries().stream().findFirst();
-    if(order.isIsGiftCardOrder() && optionalEntry.isPresent()){
+    if(order.isGiftCardOrder() && optionalEntry.isPresent()){
       AbstractOrderEntryModel entry = optionalEntry.get();
       final GiftCardModel giftCardPurchase = modelService.create(GiftCardModel.class);
       giftCardPurchase.setActive(Boolean.TRUE);

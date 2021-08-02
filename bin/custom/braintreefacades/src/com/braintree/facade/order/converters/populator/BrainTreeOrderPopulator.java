@@ -76,7 +76,7 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 			{
 				final BLGiftCardData blGiftCardData = new BLGiftCardData();
 				blGiftCardData.setCode(giftCardModel.getCode());
-				if(!source.isIsGiftCardOrder()){
+				if(!source.isGiftCardOrder()){
 					final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
 					//rounding off double value to 2 decimal places
 					BigDecimal gcRedeemedAmount = BigDecimal.valueOf(
