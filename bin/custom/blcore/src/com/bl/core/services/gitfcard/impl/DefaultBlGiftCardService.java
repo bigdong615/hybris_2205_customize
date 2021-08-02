@@ -182,15 +182,15 @@ public class DefaultBlGiftCardService implements BlGiftCardService {
 
   }
   /**
-   *{@inheritDoc}
+  * Generate code for gift card purchase.
+   * @return String value.
    */
   @Override
   public String getUniqueGiftCodeGenertaor() {
     Random secureRandom = new SecureRandom();
-    String randomGCCode = secureRandom.ints(16, 0, BlCoreConstants.ALPHANUMERIC_VALUES.length())
+    return secureRandom.ints(16, 0, BlCoreConstants.ALPHANUMERIC_VALUES.length())
         .mapToObj(i -> BlCoreConstants.ALPHANUMERIC_VALUES.charAt(i))
         .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
-   return randomGCCode;
   }
     /**
      * It checks whether gift card already applied to cart.

@@ -1,6 +1,5 @@
 package com.braintree.order.strategy;
 
-import org.apache.commons.lang.BooleanUtils;
 
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.strategies.SubmitOrderStrategy;

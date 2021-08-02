@@ -4,7 +4,6 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
-import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.apache.commons.collections4.CollectionUtils;
