@@ -1,4 +1,7 @@
 
+#% impex.info("=============================== Importing content from BLInitialData coredata/common statewarehousemapping.impex =========================");
+
+
 INSERT_UPDATE BlStateWarehouseMapping ;stateID[unique=true] ; name                  ; code(isocodeShort)     ; isActive ; region     ; warehouse(name[lang=en])
                                       ;2	               ;Alabama	                ;AL  	                 ;1         ; Southeast	; MA
                                       ;3                   ;Alaska                  ;AK	                     ;1	        ;West	    ;CA

@@ -10,7 +10,10 @@
 # license agreement you entered into with SAP.
 # -----------------------------------------------------------------------
 # ImpEx for Electronics Store
- 
+
+#% impex.info("=============================== Importing content from BLInitialData coredata/common points-of-service.impex =========================");
+
+
 $defaultPassword=1234
  
 INSERT_UPDATE StoreEmployeeGroup ; UID[unique=true]      ; locname[lang=en]             ; store(name)       
