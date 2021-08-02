@@ -1206,7 +1206,7 @@ function removeClass(){
                  $('#whatWeSuggest').html(whatWeSuggest);
                  $('#avsCheck').modal('show');
             } else {
-                 if(section == 'SHIP' && businessType && data.result != null && data.addressType != 'BUSINESS') {
+                 if(section == 'SHIP' && businessType && data.addressType != 'BUSINESS') {
                     showAMDeliveryErrorMessage(section);
                  } else {
                     //suggested state not supported error from response
