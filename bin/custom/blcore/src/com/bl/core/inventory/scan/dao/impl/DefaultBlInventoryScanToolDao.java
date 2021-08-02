@@ -111,8 +111,8 @@ public class DefaultBlInventoryScanToolDao implements BlInventoryScanToolDao {
  	public Collection<ConsignmentModel> getAllConsignmentForSerial(final String serial)
  	{
  		final String barcodeList = "select distinct({c:pk}) from {Consignment as c}, {ConsignmentEntry as ce}, {BlSerialProduct as serial}, "
- 				+ "{ConsignmentStatus as cs} where {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "
- 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED', UNBOXED)";
+ 				+ "{ConsignmentStatus as cs} where {c:status} = {cs:pk} and {ce:consignment} = {c:pk} and {ce:serialProducts} LIKE CONCAT('%',CONCAT({serial.pk},'%')) "
+ 				+ "and {serial.code} = ?serial and {serial.dirtyPriorityStatus} = 0 and {cs.code} in ('SHIPPED', 'PARTIALLY_UNBOXED', 'UNBOXED')";
  		final FlexibleSearchQuery query = new FlexibleSearchQuery(barcodeList);
  		query.addQueryParameter("serial", serial);
  		final List<ConsignmentModel> results = getFlexibleSearchService().<ConsignmentModel> search(query).getResult();
