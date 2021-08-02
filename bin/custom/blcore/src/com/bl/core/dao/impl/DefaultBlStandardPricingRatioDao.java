@@ -31,16 +31,15 @@ public class DefaultBlStandardPricingRatioDao implements BlStandardPricingRatioD
   @Override
   public List<BlStandardPricingRatioModel> getStandardPricingRatio()
   {
-    String query ="SELECT {PK} FROM {"+BlStandardPricingRatioModel._TYPECODE+"}";
-    FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(query);
-    SearchResult<BlStandardPricingRatioModel> result = getFlexibleSearchService().search(flexibleSearchQuery);
-    if(CollectionUtils.isNotEmpty(result.getResult()))
-    {
-      return result.getResult();
+    final String query = new StringBuilder("SELECT {PK} FROM {")
+        .append(BlStandardPricingRatioModel._TYPECODE).append("}").toString();
+    final FlexibleSearchQuery flexibleSearchQuery = new FlexibleSearchQuery(query);
+    final SearchResult<BlStandardPricingRatioModel> result = getFlexibleSearchService().search(flexibleSearchQuery);
+    if(CollectionUtils.isEmpty(result.getResult())) {
+      BlLogger.logMessage(LOG, Level.DEBUG, "! No results found for BL standard pricing ratios");
+      return Collections.emptyList();
     }
-    BlLogger.logMessage(LOG, Level.WARN, "! No results found for BL standard pricing ratios");
-    return Collections.emptyList();
-
+    return result.getResult();
   }
 
   public FlexibleSearchService getFlexibleSearchService() {

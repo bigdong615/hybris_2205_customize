@@ -172,7 +172,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		if (CollectionUtils.isNotEmpty(stockLevels))
 		{
 			final Map<Object, List<StockLevelModel>> stockLevelsDatewise = stockLevels.stream()
-					.collect(Collectors.groupingBy(stockLevel -> stockLevel.getDate()));
+					.collect(Collectors.groupingBy(StockLevelModel::getDate));
 			final LocalDateTime rentalStartDate = BlDateTimeUtils.getFormattedDateTime(startDate);
 			final LocalDateTime rentalEndDate = BlDateTimeUtils.getFormattedDateTime(endDate);
 			final long stayDuration = ChronoUnit.DAYS.between(rentalStartDate, rentalEndDate.plusDays(1));
@@ -182,7 +182,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 			{
 				stockLevelsDatewise.forEach((date, stockLevelModels) -> {
 					final Long reservedQty = stockLevelModels.stream().filter((StockLevelModel::getReservedStatus)).count();
-					final Long totalQty = Long.valueOf(stockLevelModels.size());
+					final Long totalQty = (long) stockLevelModels.size();
 					final Long availableQty = totalQty - reservedQty;
 					availability.add(availableQty);
 					totalUnits.add(totalQty);
@@ -250,7 +250,10 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Group by sku product with availability map.
+	 *
+	 * @param stockLevels the stock levels
+	 * @return the map
 	 */
 	public Map<String, List<StockLevelModel>> groupBySkuProductWithAvailability(
 			final Collection<StockLevelModel> stockLevels) {
@@ -258,7 +261,7 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 		Map<String, List<StockLevelModel>> stockLevelsProductWise = new HashMap<>();
 		if (CollectionUtils.isNotEmpty(stockLevels)) {
 			stockLevelsProductWise = stockLevels.stream()
-					.collect(Collectors.groupingBy(stockLevel -> stockLevel.getProductCode()));
+					.collect(Collectors.groupingBy(StockLevelModel::getProductCode));
 		}
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "No Stock Levels found for grouping");
 		return stockLevelsProductWise;
@@ -266,6 +269,12 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @param startDate     the start date
+	 * @param endDate       the end date
+	 * @param lProductCodes the l product codes
+	 * @param warehouses    the warehouses
+	 * @return the map
 	 */
 	@Override
 	public Map<String, Long> groupByProductsAvailability(final Date startDate, final Date endDate,
@@ -311,8 +320,8 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 	{
 		final Map<String, List<StockLevelModel>> newProductWiseStocks = new HashMap<>();
 		final Map<String, List<StockLevelModel>> productWiseStocks = stockLevelsforProducts.stream()
-				.collect(Collectors.groupingBy(stockLevel -> stockLevel.getProductCode()));
-		lProductCodes.removeIf(productCode -> productWiseStocks.containsKey(productCode));
+				.collect(Collectors.groupingBy(StockLevelModel::getProductCode));
+		lProductCodes.removeIf(productWiseStocks::containsKey);
 		if (CollectionUtils.isNotEmpty(lProductCodes))
 		{
 			BlLogger.logFormatMessageInfo(LOG, Level.WARN, "No Stock Levels found for product : {} and date between : {} and {}",
@@ -635,6 +644,12 @@ public class DefaultBlCommerceStockService implements BlCommerceStockService
 
 	/**
 	 * This method created to get stock for extend rental products
+	 *
+	 * @param productCode the product code
+	 * @param warehouses  the warehouses
+	 * @param startDate   the start date
+	 * @param endDate     the end date
+	 * @return the stock for extend date
 	 */
 	public Collection<StockLevelModel> getStockForExtendDate(final String productCode, final Collection<WarehouseModel> warehouses,
 			final Date startDate, final Date endDate)

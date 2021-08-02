@@ -32,34 +32,36 @@ public class BlPriceRatioUtil {
 
 
   /**
-   * getPriceRatios method is used to prepare Map which contains no of days as key
-   * and calculated price based ratio as value
+   * getPriceRatios method is used to prepare Map which contains no of days as key and calculated
+   * price based ratio as value
    *
    * @param productModel used to get product
    * @return Map<Integer, BigDecimal> , contains calculated prices based on price ratios
-   *
    */
-  public Map<Integer, BigDecimal> getPriceRatios(ProductModel productModel)
-  {
-
-    Map<Integer, BigDecimal> priceList = new HashMap<>();
+  public Map<Integer, BigDecimal> getPriceRatios(final ProductModel productModel) {
+    final Map<Integer, BigDecimal> priceList = new HashMap<>();
     // get BL Price Ratio
-    Optional<PriceRowModel> basePriceRow= Optional.empty();
-    if(productModel!=null && CollectionUtils.isNotEmpty(productModel.getEurope1Prices()))
-    {
-      basePriceRow = productModel.getEurope1Prices().stream().filter(pr->pr.getDuration()!=null && pr.getDuration().equals(getEnumerationService().getEnumerationValue(DurationEnum.class,"7"))).findAny();
+    Optional<PriceRowModel> basePriceRow = Optional.empty();
+    if (productModel != null && CollectionUtils.isNotEmpty(productModel.getEurope1Prices())) {
+      basePriceRow = productModel.getEurope1Prices().stream().filter(
+          pr -> pr.getDuration() != null && pr.getDuration()
+              .equals(getEnumerationService().getEnumerationValue(DurationEnum.class, "7")))
+          .findAny();
     }
-    List<BlStandardPricingRatioModel> priceRatio = getBlStandardPricingRatioDao().getStandardPricingRatio();
-    if(basePriceRow.isPresent() && CollectionUtils.isNotEmpty(priceRatio))
-    {
+    final List<BlStandardPricingRatioModel> priceRatio = getBlStandardPricingRatioDao()
+        .getStandardPricingRatio();
+    if (basePriceRow.isPresent() && CollectionUtils.isNotEmpty(priceRatio)) {
       // calculate Rental price rows based on number of days and save it on product price rows
-      for (BlStandardPricingRatioModel pr : priceRatio)
-      {
-        priceList.put(Integer.parseInt(pr.getDuration().toString()),  new BigDecimal(basePriceRow.get().getPrice()).multiply(new BigDecimal(pr.getPricingRatio())).setScale(BlCoreConstants.PRECISION, RoundingMode.DOWN));
+      for (final BlStandardPricingRatioModel pr : priceRatio) {
+        priceList.put(Integer.parseInt(pr.getDuration().toString()),
+            BigDecimal.valueOf(basePriceRow.get().getPrice())
+                .multiply(new BigDecimal(pr.getPricingRatio()))
+                .setScale(BlCoreConstants.PRECISION, RoundingMode.DOWN));
       }
       return priceList;
     }
-    BlLogger.logFormatMessageInfo(LOG,Level.WARN,"! priceList is not created, check product {} price rows :",productModel);
+    BlLogger.logFormatMessageInfo(LOG, Level.WARN,
+        "! priceList is not created, check product {} price rows :", productModel);
     return null;
   }
 
