@@ -15,13 +15,17 @@ import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.payment.AdapterException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.util.Locales;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Doublebox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
@@ -50,7 +54,17 @@ public class BlOrderRefundController extends DefaultWidgetController {
   @Wire
   private Textbox transactionId;
   @Wire
-  private Textbox amount;
+  private Textbox totalTax;
+  @Wire
+  private Textbox totalAmount;
+  @Wire
+  private Textbox totalDamageWaiverCost;
+  @Wire
+  private Textbox totalShippingCost;
+  @Wire
+  private Textbox totalLineItemPrice;
+  @Wire
+  private Doublebox amount;
 
   @SocketEvent(socketId = IN_SOCKET)
   public void initPartialRefundForm(final OrderModel inputOrder) {
@@ -59,16 +73,41 @@ public class BlOrderRefundController extends DefaultWidgetController {
         .getLabel("customersupportbackoffice.refundorder.confirm.title")).append(
         this.getOrderModel().getCode()).toString());
     this.transactionId.setValue(getPaymentTxnId());
+    this.setAmountInTextBox();
+  }
+
+  /**
+   * Sets amount in text box.
+   */
+  private void setAmountInTextBox() {
+    final OrderModel order = this.getOrderModel();
+    this.totalLineItemPrice.setValue(formatAmount(order.getSubtotal()));
+    this.totalTax.setValue(formatAmount(order.getTotalTax()));
+    this.totalDamageWaiverCost.setValue(formatAmount(order.getTotalDamageWaiverCost()));
+    this.totalShippingCost.setValue(formatAmount(order.getDeliveryCost()));
+    this.totalAmount.setValue(formatAmount(order.getTotalPrice()));
+  }
+
+  /**
+   * Format amount string.
+   *
+   * @param amount the amount
+   * @return the string
+   */
+  private String formatAmount(final Double amount) {
+    final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getNumberInstance(Locales.getCurrent());
+    decimalFormat.applyPattern("#0.00");
+    return decimalFormat.format(amount);
   }
 
   @ViewEvent(componentID = "refundrequest", eventName = "onClick")
   public void refundOrderAmount() {
     final String errorMessage = this.getValidateOrderMessage();
     if (StringUtils.isNotEmpty(errorMessage)) {
-      showMessageBox(errorMessage);
+      showMessageBox(errorMessage, this.getLabel("customersupportbackoffice.refundorder.input.error"));
       return;
     }
-    final double refundAmount = Double.parseDouble(this.amount.getValue());
+    final double refundAmount = this.amount.getValue();
     try {
       final BrainTreeRefundTransactionRequest request = new BrainTreeRefundTransactionRequest(
           transactionId.getValue());
@@ -85,9 +124,9 @@ public class BlOrderRefundController extends DefaultWidgetController {
       final String refundErrorMessage = new StringBuilder(result.getErrorCode()).append(
           BlCoreConstants.HYPHEN).append(result.getErrorMessage()).toString();
       BlLogger.logMessage(LOG, Level.ERROR, refundErrorMessage);
-      this.showMessageBox(errorMessage);
+      this.showMessageBox(refundErrorMessage);
       notificationService.notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST,
-          NotificationEvent.Level.FAILURE, errorMessage);
+          NotificationEvent.Level.FAILURE, refundErrorMessage);
     } catch (final AdapterException e) {
       BlLogger.logMessage(LOG, Level.ERROR,
           this.getLabel("customersupportbackoffice.refundorder.error.mesg"));
@@ -105,23 +144,19 @@ public class BlOrderRefundController extends DefaultWidgetController {
   private String getValidateOrderMessage() {
     final OrderModel order = this.getOrderModel();
     String message = StringUtils.EMPTY;
-    try {
-      if (OrderStatus.COMPLETED.equals(order.getStatus())) {
-        message = this.getLabel("customersupportbackoffice.refundorder.invalid.order.type");
-      } else if (CollectionUtils.isEmpty(order.getGiftCard())
-          && BooleanUtils.isFalse(order.getIsCaptured())) {
-        message = this.getLabel("customersupportbackoffice.refundorder.payment.not.captured");
-      } else if (StringUtils.isEmpty(this.amount.getValue())) {
-        message = this.getLabel("customersupportbackoffice.refundorder.empty.amount");
-      } else if (StringUtils.isEmpty(this.transactionId.getValue())) {
-        message = this.getLabel("customersupportbackoffice.refundorder.empty.transactionId");
-      } else if (Double.parseDouble(this.amount.getValue()) <= 0) {
-        message = this.getLabel("customersupportbackoffice.refundorder.lessthanzero.amount");
-      } else if (Double.parseDouble(this.amount.getValue()) > order.getTotalPrice()) {
-        message = this.getLabel("customersupportbackoffice.refundorder.higheramount");
-      }
-    } catch (final NumberFormatException e) {
-      message = this.getLabel("customersupportbackoffice.refundorder.nonparsable.amount");
+    if (OrderStatus.COMPLETED.equals(order.getStatus())) {
+      message = this.getLabel("customersupportbackoffice.refundorder.invalid.order.type");
+    } else if (CollectionUtils.isEmpty(order.getGiftCard())
+        && BooleanUtils.isFalse(order.getIsCaptured())) {
+      message = this.getLabel("customersupportbackoffice.refundorder.payment.not.captured");
+    } else if (this.amount.getValue() == null) {
+      message = this.getLabel("customersupportbackoffice.refundorder.empty.amount");
+    } else if (StringUtils.isEmpty(this.transactionId.getValue())) {
+      message = this.getLabel("customersupportbackoffice.refundorder.empty.transactionId");
+    } else if (this.amount.getValue() <= 0) {
+      message = this.getLabel("customersupportbackoffice.refundorder.lessthanzero.amount");
+    } else if (this.amount.getValue() > order.getTotalPrice()) {
+      message = this.getLabel("customersupportbackoffice.refundorder.higheramount");
     }
     return message;
   }
@@ -144,7 +179,23 @@ public class BlOrderRefundController extends DefaultWidgetController {
    * @param message the message
    */
   protected void showMessageBox(final String message) {
-    Messagebox.show(message);
+    this.showMessageBox(message, StringUtils.EMPTY);
+  }
+
+  /**
+   * Show message box.
+   *
+   * @param message the message
+   * @param errorMessage the input Error message
+   */
+  protected void showMessageBox(final String message, final String errorMessage) {
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      Messagebox.show(message,
+          this.getLabel("customersupportbackoffice.refundorder.input.error"),
+          Messagebox.OK, Messagebox.ERROR);
+    } else {
+      Messagebox.show(message);
+    }
     this.sendOutput(OUT_CONFIRM, COMPLETE);
   }
 

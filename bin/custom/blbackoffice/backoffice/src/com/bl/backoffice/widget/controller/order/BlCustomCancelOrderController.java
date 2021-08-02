@@ -190,7 +190,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
   }
 
   private void addListeners() {
-    List<Component> rows = this.getOrderEntries().getRows().getChildren();
+    final List<Component> rows = this.getOrderEntries().getRows().getChildren();
     final Iterator rowIterator = rows.iterator();
 
     while (rowIterator.hasNext()) {
@@ -412,13 +412,12 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
           case FULL:
           case PARTIAL:
             final OrderModel order = this.getOrderModel();
-            if (CollectionUtils.isNotEmpty(order.getGiftCard())
-                && BooleanUtils.isFalse(order.getIsCaptured())) {
+            if (CollectionUtils.isNotEmpty(order.getGiftCard())) { //Add amount of giftccard
               this.showMessageBox(Localization.getLocalizedString(CREATE_GIFT_CARD_MESSAGE));
             } else if (CollectionUtils.isEmpty(order.getGiftCard())
                 && CollectionUtils.isNotEmpty(braintreeBackofficeOrderFacade.getVoidableTransactions(order))) {
               this.showMessageBox(Localization.getLocalizedString(PAYMENT_VOID_MESSAGE));
-            } else if (CollectionUtils.isEmpty(order.getGiftCard()) && order.getIsCaptured()) {
+            } else if (order.getIsCaptured()) {
               this.showMessageBox(Localization.getLocalizedString(REFUND_MESSAGE));
             }
             this.getNotificationService()
@@ -431,7 +430,7 @@ public class BlCustomCancelOrderController extends DefaultWidgetController {
                     new Object[]{
                         this.getLabel("customersupportbackoffice.cancelorder.confirm.error")});
         }
-      } catch (OrderCancelException | CancellationException | IllegalArgumentException e) {
+      } catch (final OrderCancelException | CancellationException | IllegalArgumentException e) {
         BlLogger.logMessage(LOGGER, org.apache.log4j.Level.ERROR, e.getMessage(), e);
         this.getNotificationService().notifyUser(StringUtils.EMPTY, BlloggingConstants.MSG_CONST, Level.FAILURE,
             new Object[]{this.getLabel("customersupportbackoffice.cancelorder.confirm.error")});
