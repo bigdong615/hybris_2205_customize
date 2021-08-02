@@ -541,7 +541,7 @@ function removeClass(){
             $('.page-loader-new-layout').show();
         },
         success: function (data) {
-            if(data != null && data.length != 0 && !data.startsWith('<!DOCTYPE html>')) {
+            if(data != null && data.length != 0 && (typeof data == "object")) {
                 let partnerDelivery = '';
                 for (let i = 0; i < data.length; i++) {
                     if(i == 0 && data.length == 1) {
@@ -600,7 +600,7 @@ function removeClass(){
             }
         },
         complete: function(data) {
-            if(data.startsWith('<!DOCTYPE html>')) {
+            if((typeof data == "string")) {
                 window.location.reload();
             }
             $('.page-loader-new-layout').hide();
@@ -755,7 +755,7 @@ function removeClass(){
                             $('.page-loader-new-layout').show();
                        },
                        success: function (data) {
-                           if(data != null && data.length != 0 && !data.startsWith('<!DOCTYPE html>')) {
+                           if(data != null && data.length != 0 && (typeof data == "object")) {
                                let sameDayShippingModes = '<b>Delivery Window</b>';
                                sameDayShippingModes += '<select id="same-day-shipping-methods-select-box" class="selectpicker mt-2"' +
                                                         ' onChange="onChangeOfSameDayShippingMethodForCost()">';
@@ -797,7 +797,7 @@ function removeClass(){
                            }
                        },
                        complete: function() {
-                            if(data.startsWith('<!DOCTYPE html>')) {
+                            if((typeof data == "string")) {
                                 window.location.reload();
                             }
                            $('.page-loader-new-layout').hide();
@@ -813,7 +813,7 @@ function removeClass(){
                     showErrorNotificationSameDay('Whoops! We were unable to get shipping information back from FedEx, please change your shipping method or try again in a few minutes', false);
                 }
             },
-            complete: function() {
+            complete: function(data) {
                 if(data != null && data.statusText == 'parsererror') {
                     window.location.reload();
                 }
