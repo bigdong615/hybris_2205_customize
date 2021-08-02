@@ -15,7 +15,17 @@
                     <h1> <spring:theme code="text.extend.order" /></h1>
                     <hr>
                     <h5 class="mb-5"><spring:theme code="text.extend.order.new.returndate" />${extendOrderData.extendOrderConfirmationDate}</h5>
-             <p><spring:theme code="text.extend.order.text"/> <format:blPrice priceData="${extendOrderData.orderTotalWithTaxForExtendRental}"/>&nbsp;<spring:theme code="text.extend.order.additional"/>${extendOrderData.addedTimeForExtendRental}
+              <p>
+             <c:if test="${fn:containsIgnoreCase(extendOrderPaymentMethod, 'creditCard')}">
+                     <spring:theme code="text.extend.order.text"/>
+             </c:if>
+             <c:if test="${fn:containsIgnoreCase(extendOrderPaymentMethod, 'poNumber')}">
+                     <spring:theme code="text.extend.order.po"/>
+             </c:if>
+             <c:if test="${fn:containsIgnoreCase(extendOrderPaymentMethod, 'payPal')}">
+                 <spring:theme code="text.extend.order.paypal"/>
+             </c:if>
+             <format:blPrice priceData="${extendOrderData.orderTotalWithTaxForExtendRental}"/>&nbsp;<spring:theme code="text.extend.order.additional"/>${extendOrderData.addedTimeForExtendRental}
                     <spring:theme code="text.extend.order.confirmation"/><b>${extendOrderData.customerMail}</b></p>
                     <div class="confirmation-actions my-5">
                         <a href="${viewOrderAction}" class="btn btn-primary mx-3 mb-4 mb-sm-0"><spring:theme code="text.extend.order.view.order"/></a>

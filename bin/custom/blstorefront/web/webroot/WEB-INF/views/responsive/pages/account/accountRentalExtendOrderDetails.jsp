@@ -9,7 +9,9 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
+<c:url value="/" var="homePageUrl" />
+ <input type="hidden" id="js-extend-order-page" name="jsExtendOrderPage" value="true"/>
+ <input type="hidden" id="js-extend-order-code" name="extendOrderCode" value="${fn:escapeXml(orderData.code)}"/>
 <div id="accountContent" class="col-lg-5 offset-lg-1">
 	<h1><spring:theme code="text.myaccount.extend.order"/></h1>
 	<div class="extend-order">
@@ -85,8 +87,9 @@
 			</div>
 			<div class="rental-images row mt-3">
 				<c:forEach items="${orderData.entries}" var="cartEntry">
+				  <c:url var="productUrl" value="/rent/product/${cartEntry.product.code}"/>
 					<div class="col-4 col-md-3 text-center">
-						<product:productPrimaryImage product="${cartEntry.product}" format="product" /> </div>
+						<a href="${productUrl}" style="text-decoration: none"><product:productPrimaryImage product="${cartEntry.product}" format="product" /></a> </div>
 				</c:forEach>
 			</div>
 		</div>
@@ -116,7 +119,7 @@
 						</div>
 						<div class="col-7 col-md-8">
 							<p class="body14 gray60">
-							<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental} Day </div> <br>
+							<div id="js-totaldays-update"> ${orderData.addedTimeForExtendRental}</div>Days <br>
 							<div id="js-totalCost-update"> <format:blPrice priceData="${orderData.subTotalTaxForExtendRental}"/> </div> <br>
 							<div id="js-totalDamegeWaiverCost-update"><format:blPrice priceData="${orderData.totalDamageWaiverCostForExtendRental}"/> </div>
 							</p>
@@ -124,7 +127,10 @@
 					</div>
              <div class="productNotifications row d-none" id="add-error-message">
                     <div class="col-12">
-                       <div class="notification notification-error" id="js-isAllProductExtendabe-update">
+                       <div class="notification notification-error">
+                        <spring:theme code="text.order.extend.stock.validation"/>
+                         <a href="${homePageUrl}" class="gray80"><spring:theme code="text.order.extend.stock.contact.us"/></a>
+                          <spring:theme code="text.order.extend.stock.validation"/>
                        </div>
                     </div>
              </div>
@@ -138,19 +144,17 @@
 
 
      <div class="cart-actions">
-      <c:choose>
-        <c:when test="${orderData.totalDamageWaiverCostForExtendRental eq null}">
-                <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end">
-                           <spring:theme code="text.myaccount.order.extend.rent"/>
-                  </a>
-         </c:when>
-          <c:otherwise>
-                   <c:url value="my-account/extendOrder/" var="placeOrder" />
-                     <a href="${placeOrder}" class="btn btn-sm btn-primary float-end">
-                           <spring:theme code="text.myaccount.order.extend.rent"/>
-                  </a>
-          </c:otherwise>
-       </c:choose>
+      <c:url value="/my-account/extendOrder/${fn:escapeXml(orderData.code)}" var="payExtendOrderUrl"/>
+                                            <form action="${payExtendOrderUrl}" method="post" id="payExtendOrderForm">
+                                                 <input type="hidden"  name="${CSRFToken.parameterName}"  value="${CSRFToken.token}"/>
+                                                 <input type="hidden" id="paymentId" name="paymentId" value=""/>
+                                                 <input type="hidden" id="paymentNonce" name="paymentNonce" value=""/>
+                                                 <input type="hidden" id="extendPoNumber" name="extendPoNumber" value=""/>
+                                                 <input type="hidden" id="extendPoNotes" name="extendPoNotes" value=""/>
+                                                 <button class="btn btn-sm btn-primary float-end js-enable-extend-order js-po-extend-order" type="submit" disabled>
+                                                 <spring:theme code="text.myaccount.order.extend.rent"/></button>
+                                            </form>
+
 	   </div>
 			</div>
 		</div>
@@ -181,11 +185,11 @@
 						<spring:theme code="text.myaccount.extend.order.extension.taxes" /> </td>
 					<td class="text-end"  id="js-totalExtendTax"><format:blPrice priceData="${orderData.totalTaxForExtendRental}"/></td>
 				</tr>
-				<c:if test="${orderData.totalDiscounts.value > 0}">
+				<c:if test="${orderData.extendOrderDiscount.value > 0}">
         				<tr>
                 	<td class="discount">
-                	<spring:theme code="Discount" /> </td>
-                <td class="text-end"  id="js-extendDiscount"><format:blPrice priceData="${orderData.totalDiscounts}"/></td>
+                						<spring:theme code="Discount" /> </td>
+                					<td class="text-end" id="js-extendDiscount"> - <format:blPrice priceData="${orderData.extendOrderDiscount}"/></td>
                 	</tr>
         </c:if>
 				<tr class="total">
@@ -207,16 +211,18 @@
     					name="voucherCode" />
     				<div class="input-group-append">
 
-                                  	<button type="submit" class="btn btn-secondary js-voucher-apply-account-btn">
+                                  	<button type="submit" class="btn btn-secondary js-voucher-apply-account-btn" disabled="disabled">
                                        <spring:theme code="text.voucher.apply.button.label" />
                                     </button>
 
     				</div>
     			</div>
     		</form:form>
-            <button class="btn btn-block btn-primary mt-4">Extend Rental</button>
+            <button class="btn btn-block btn-primary mt-4" disabled>Extend Rental</button>
 	</div>
 
+
+	<div class="notification notification-error d-none"id="js-extendOrderError-update"></div>
 
  <div class="col-12">
 <div class="notification notification-error d-none"id="errorMessages_account_voucher"></div>

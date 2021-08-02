@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -59,13 +60,19 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
        final ProductModel product = abstractOrderEntryModel.getProduct();
        if(product instanceof BlSerialProductModel) {
          final BlProductModel productModel = ((BlSerialProductModel) product).getBlProduct();
-         productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.PRODUCT_SEPERATOR + productModel.getName());
+         productQtyAndName.add(abstractOrderEntryModel.getQuantity() + BlFacadesConstants.BLANK + BlFacadesConstants.PRODUCT_SEPERATOR +
+             BlFacadesConstants.BLANK + productModel.getName());
        }
      }
      target.setProductNameAndQuantity(productQtyAndName);
    }
    if(CollectionUtils.isNotEmpty(source.getExtendedOrderCopyList())) {
      updateRentalDetailsIfExtendOrderExist(source, target);
+   }
+
+   if(null != source.getRentalStartDate() && null != source.getRentalEndDate()){
+     target.setIsRentalActive(isRentalCartAcive(source));
+     target.setIsRentalStartDateActive(isExtendOrderButtonEnable(source));
    }
   }
 
@@ -109,6 +116,19 @@ public class BlOrderHistoryPopulator extends OrderHistoryPopulator {
         orderData.setRentalEndDate(convertDateToString(extendOrder.getRentalEndDate()));
       }
     }
+  }
+
+  /**
+   * This method created to check whether rental order is active or not
+   */
+  private boolean isRentalCartAcive(final OrderModel orderModel){
+    final Date date = new Date();
+    return (date.before(orderModel.getRentalStartDate()) || DateUtils.isSameDay(orderModel.getRentalStartDate(), date)) || (date.before(orderModel.getRentalEndDate())
+        || DateUtils.isSameDay(orderModel.getRentalEndDate(), date));
+  }
+
+  private boolean isExtendOrderButtonEnable(final OrderModel orderModel){
+    return DateUtils.isSameDay(orderModel.getRentalStartDate() , new Date()) || new Date().after(orderModel.getRentalStartDate());
   }
 
 }
