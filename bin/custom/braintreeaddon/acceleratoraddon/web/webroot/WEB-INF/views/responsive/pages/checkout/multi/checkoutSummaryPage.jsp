@@ -7,12 +7,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <template:page pageTitle="${pageTitle}" hideHeaderLinks="true">
-  <c:choose>
-  		<c:when test="${cartData.isRentalCart}">
-        <checkout:blRentalCheckoutSummaryPage/>
-  		</c:when>
-  		<c:otherwise>
-        <checkout:blUsedGearCheckoutSummary/>
-  		</c:otherwise>
-  </c:choose>
+        <c:choose>
+		<c:when test="${cartData.hasGiftCart}">
+			<checkout:blGiftCardPurchaseCheckoutSummary />
+		</c:when>
+		<c:when test="${cartData.isRentalCart}">
+			<checkout:blRentalCheckoutSummaryPage />
+		</c:when>
+		<c:otherwise>
+			<checkout:blUsedGearCheckoutSummary />
+		</c:otherwise>
+	</c:choose>
 </template:page>

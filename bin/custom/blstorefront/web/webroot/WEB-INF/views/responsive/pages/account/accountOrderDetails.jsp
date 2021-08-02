@@ -6,7 +6,11 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart"%>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="order" tagdir="/WEB-INF/tags/responsive/order" %>
+<%@ taglib prefix="account" tagdir="/WEB-INF/tags/addons/blassistedservicestorefront/order" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
+
+<c:choose>
+<c:when test="${!orderData.hasGiftCart}">
  <div class="col-xl-10">
                     <div class="row">
                         <div id="accountContent" class="col-lg-7">
@@ -405,3 +409,8 @@
       </div>
 </div>
 
+</c:when>
+<c:otherwise>
+ <order:accountGiftCardPurchaseOrderHistoryPage />
+</c:otherwise>
+</c:choose>
