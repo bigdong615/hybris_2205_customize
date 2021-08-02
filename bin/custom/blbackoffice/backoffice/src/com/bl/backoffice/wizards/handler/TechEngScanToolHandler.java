@@ -2,13 +2,11 @@ package com.bl.backoffice.wizards.handler;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -149,31 +147,10 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	private void executeLocationUpdate(final List<String> barcodes)
 	{
 		final Map<String, List<String>> failedBarcodeList = getBlInventoryScanToolService().doTechEngSerialLocationUpdate(barcodes);
-		if (MapUtils.isNotEmpty(failedBarcodeList) && hasErrorScan(failedBarcodeList))
+		if (MapUtils.isNotEmpty(failedBarcodeList))
 		{
-			doHandleErrorMessage(failedBarcodeList.entrySet().iterator().next());
+			failedBarcodeList.forEach(this::doHandleErrorMessage);
 		}
-		else
-		{
-			BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
-					barcodes.size());
-			addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NotificationEvent.Level.SUCCESS,
-					barcodes.size());
-		}
-	}
-
-	/**
-	 * Checks for scan has errors.
-	 *
-	 * @param failedBarcodeList
-	 *           the failed barcode list
-	 * @return true, if successful
-	 */
-	private boolean hasErrorScan(final Map<String, List<String>> failedBarcodeList)
-	{
-		final Entry<String, List<String>> errorBarcode = failedBarcodeList.entrySet().iterator().next();
-		return CollectionUtils.isNotEmpty(errorBarcode.getValue())
-				&& BooleanUtils.negate(errorBarcode.getKey().equals(BlInventoryScanLoggingConstants.SUCCESS));
 	}
 
 	/**
@@ -182,28 +159,32 @@ public class TechEngScanToolHandler implements FlowActionHandler
 	 * @param errorBarcode
 	 *           the error barcode
 	 */
-	private void doHandleErrorMessage(final Entry<String, List<String>> errorBarcode)
+	private void doHandleErrorMessage(final String key, final List<String> errorBarcode)
 	{
-		switch (errorBarcode.getKey())
+		switch (key)
 		{
 			case BlInventoryScanLoggingConstants.MISSING_BARCODE_ITEMS:
 				doNotifyUser(BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE_MSG,
-						BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						errorBarcode.getValue());
+						BlInventoryScanLoggingConstants.SCAN_BATCH_ERROR_FAILURE, NotificationEvent.Level.WARNING, errorBarcode);
 				break;
 			case BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_CART:
 				doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_CART_LOCATION,
-						BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						errorBarcode.getValue());
+						BlInventoryScanLoggingConstants.CLEAN_CART_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE, errorBarcode);
 				break;
 			case BlInventoryScanLoggingConstants.WRONG_ITEM_CLEAN_PRIORITY_CART:
 				doNotifyUser(BlInventoryScanLoggingConstants.WRONG_CLEAN_PRIORITY_CART_LOCATION,
 						BlInventoryScanLoggingConstants.CLEAN_PRIORITY_CART_SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE,
-						errorBarcode.getValue());
+						errorBarcode);
+				break;
+			case BlInventoryScanLoggingConstants.SUCCESS:
+				BlLogger.logFormatMessageInfo(LOG, Level.INFO, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG,
+						StringUtils.EMPTY);
+				addMessageToNotifyUser(BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS, NotificationEvent.Level.SUCCESS,
+						StringUtils.EMPTY);
 				break;
 			default:
 				doNotifyUser(BlInventoryScanLoggingConstants.LOG_SOMETHING_WENT_WRONG,
-						BlInventoryScanLoggingConstants.SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE, errorBarcode.getValue());
+						BlInventoryScanLoggingConstants.SCAN_ERROR_FAILURE, NotificationEvent.Level.FAILURE, errorBarcode);
 				break;
 		}
 	}

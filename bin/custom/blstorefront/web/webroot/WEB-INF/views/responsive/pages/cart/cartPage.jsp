@@ -15,8 +15,12 @@
 
 <%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
-
-  <c:choose>
+<c:choose>
+<c:when test="${cartData.hasGiftCart}">
+ <cart:blGiftCardPurchaseCartPage/>
+</c:when>
+<c:otherwise>
+<c:choose>
       <c:when test="${cartData.isRentalCart}">
             <cart:blRentalCartPage/>
       </c:when>
@@ -24,6 +28,9 @@
             <cart:blUsedGearCartPage/>
       </c:otherwise>
   </c:choose>
+</c:otherwise>
+</c:choose>
+  
 
 </template:page>
 

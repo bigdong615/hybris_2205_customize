@@ -809,6 +809,7 @@
 		class="com.bl.core.services.order.impl.DefaultBlCommerceCartCalculationStrategy"
 		parent="defaultCommerceCartCalculationStrategy">
 		<property name="giftCardService" ref="giftCardService" />
+		<property name="modelService" ref="modelService" />
 	</bean>
 	<!--Gift card End-->
 	
@@ -1066,10 +1067,16 @@
 
 	<!--Coupon for rental extend order -->
 	<bean id="defaultBlCouponService" class="com.bl.core.coupon.impl.DefaultBlCouponService" parent="defaultCouponService">
+		<property name="defaultBlCouponManagementService" ref="defaultBlCouponManagementService"/>
 	</bean>
 
 	<alias name="defaultBlExtendedOrderDao" alias="extendedOrderDao"/>
 	<bean id="defaultBlExtendedOrderDao" class=" com.bl.core.dao.promotion.DefaultBlExtendedOrderDao" parent="defaultExtendedOrderDao"/>
+
+	<!--Added for extend order coupon promotion-->
+
+	<bean id="defaultBlCouponManagementService" class="com.bl.core.coupon.impl.DefaultBlCouponManagementService" parent="defaultCouponManagementService">
+	</bean>
 	
 	<!-- Interceptor for NotesModel to perform custom logic before saving the model -->
 	<alias name="blNotesPrepareInterceptor" alias="blNotesPrepareInterceptor"/>
@@ -1087,6 +1094,11 @@
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
 	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">
 		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<!--BL-819 MarkDirtyPriority -->
+	<bean id="blMarkDirtyPriorityJob" class="com.bl.core.job.BlMarkDirtyPrioritySerialsJob" parent="abstractJobPerformable">
+		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
 
 </beans>

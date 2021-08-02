@@ -95,6 +95,11 @@ public interface ControllerConstants
 				String CheckoutLoginPage = "pages/checkout/checkoutLoginPage"; // NOSONAR
 			}
 
+			interface HomePage //NOSONAR
+			{
+				String HomePageView = "pages/layout/landingLayout2Page"; // NOSONAR
+			}
+
 			interface MultiStepCheckout // NOSONAR
 			{
 				String AddEditDeliveryAddressPage = "pages/checkout/multi/addEditDeliveryAddressPage"; // NOSONAR
@@ -169,6 +174,9 @@ public interface ControllerConstants
 			interface Cart // NOSONAR
 			{
 				String AddToCartPopup = "fragments/cart/addToCartPopup"; // NOSONAR
+				String AddToCartGiftCardPopup = "fragments/cart/addToCartGiftCardPopup"; // NOSONAR
+				String MultipleGiftCardWarningPopup = "fragments/cart/multipleGiftCardWarningPopup"; // NOSONAR
+				String GiftCardNotAllowedWarningPopup = "fragments/cart/giftCardNotAllowedWarningPopup"; // NOSONAR
 				String AddToCartWarningPopup = "fragments/cart/addToCartWarningPopup"; // NOSONAR
 				String MiniCartPanel = "fragments/cart/miniCartPanel"; // NOSONAR
 				String MiniCartErrorPanel = "fragments/cart/miniCartErrorPanel"; // NOSONAR
