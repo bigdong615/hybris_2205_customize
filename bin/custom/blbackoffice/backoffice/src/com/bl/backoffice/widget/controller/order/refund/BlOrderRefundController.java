@@ -200,7 +200,7 @@ public class BlOrderRefundController extends DefaultWidgetController {
    */
   protected void showMessageBox(final String message, final String errorMessage) {
     if (StringUtils.isNotEmpty(errorMessage)) {
-      Messagebox.show(message, this.getLabel(REFUND_INPUT_ERROR), Messagebox.OK, Messagebox.ERROR);
+      Messagebox.show(message, this.getLabel(REFUND_STATUS_TITLE), Messagebox.OK, Messagebox.ERROR);
     } else {
       Messagebox.show(message, this.getLabel(REFUND_STATUS_TITLE), Messagebox.OK,
           Messagebox.INFORMATION);
