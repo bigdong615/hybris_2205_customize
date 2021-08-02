@@ -19,6 +19,7 @@
 			<setting key="expression" type="String" value="#root?.id EQ 'WebScanTool'"/>
 			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
 		</widget>
+		<!-- BL:863 : Widget definition for Front team payment capture -->
 		<widget id="frontCapturePaymentPopup"
 			widgetDefinitionId="custom.bl.widgets.blFrontCapturePayment"
 			slotId="cockpitWidgetChildrenInvisible"
@@ -83,6 +84,7 @@
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="TechEngScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="TechEngScanTool_conditionevaluator" outputId="true" targetWidgetId="TechEngScanTool_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="TechEngScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
+	<!--BL-863 : Widgets Definition for Front Team Payment Captured Widget -->
 	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction" outputId="blFrontCapturePaymentContext" targetWidgetId="frontCapturePaymentPopup" inputId="inputObject" />
 	
 	<!-- Unboxing Tool Section -->
