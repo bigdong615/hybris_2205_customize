@@ -12,5 +12,5 @@
 #
 #
 
-INSERT_UPDATE RestockConfig;isUpdateStockAfterReturn;returnedBinCode
-;true;RETURNED_BIN
+#INSERT_UPDATE RestockConfig;isUpdateStockAfterReturn;returnedBinCode
+#;true;RETURNED_BIN
