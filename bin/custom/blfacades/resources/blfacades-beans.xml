@@ -162,6 +162,11 @@
 		  <property name="rentalDatesOnPrint" type="com.bl.facades.product.data.RentalDateDto"/>
 
 		<property name="extendOrderEntrie" type="java.util.List&lt;com.bl.facades.product.data.ExtendOrderData&gt;"/>
+		<property name="isRentalStartDateActive" type="java.lang.Boolean"/>
+		<property name="isRentalEndDateActive" type="java.lang.Boolean"/>
+		<property name="isUsedGearCompleted" type="java.lang.Boolean"/>
+		<property name="isRentalActive" type="java.lang.Boolean"/>
+
         <property name="giftCardCost" type="java.lang.Double"/>
         <property name="hasGiftCart" type="java.lang.Boolean"/>
   </bean>
@@ -591,6 +596,10 @@
 		<property name="rentalCart" type="Boolean"/>
 		<property name="productDetails" type="java.util.List&lt;String>"/>
 		<property name="productNameAndQuantity" type="java.util.List&lt;String>"/>
+		<property name="isRentalStartDateActive" type="java.lang.Boolean"/>
+		<property name="isRentalEndDateActive" type="java.lang.Boolean"/>
+		<property name="isUsedGearCompleted" type="java.lang.Boolean"/>
+		<property name="isRentalActive" type="java.lang.Boolean"/>
 	</bean>
 	
   <!--BL-781 For Wishlist2data -->

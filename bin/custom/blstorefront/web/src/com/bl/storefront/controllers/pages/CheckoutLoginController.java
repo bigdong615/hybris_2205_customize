@@ -51,7 +51,7 @@ public class CheckoutLoginController extends AbstractLoginPageController
 	@Override
 	protected AbstractPageModel getCmsPage() throws CMSItemNotFoundException
 	{
-		return getContentPageForLabelOrId("checkout-login");
+		return getContentPageForLabelOrId("");
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -59,7 +59,8 @@ public class CheckoutLoginController extends AbstractLoginPageController
 			final HttpSession session, final Model model, final HttpServletRequest request) throws CMSItemNotFoundException //NOSONAR
 	{
 		model.addAttribute("expressCheckoutAllowed", Boolean.valueOf(checkoutFlowFacade.isExpressCheckoutEnabledForStore()));
-		return getDefaultLoginPage(loginError, session, model);
+		//return getDefaultLoginPage(loginError, session, model);
+		return REDIRECT_PREFIX + "/";
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -97,7 +98,8 @@ public class CheckoutLoginController extends AbstractLoginPageController
 	@Override
 	protected String getView()
 	{
-		return ControllerConstants.Views.Pages.Checkout.CheckoutLoginPage;
+		//return ControllerConstants.Views.Pages.Checkout.CheckoutLoginPage;
+		return ControllerConstants.Views.Pages.HomePage.HomePageView;
 	}
 
 	@Override

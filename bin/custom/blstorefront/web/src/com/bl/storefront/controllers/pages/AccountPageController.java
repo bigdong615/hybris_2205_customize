@@ -20,6 +20,7 @@ import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
@@ -70,11 +71,13 @@ import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1296,15 +1299,27 @@ public class AccountPageController extends AbstractSearchPageController
 		String paymentInfoId = request.getParameter(BlControllerConstants.PAYMENT_ID);
 		String paymentMethodNonce = request.getParameter(BlControllerConstants.PAYMENT_NONCE);
 
+		String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
+		String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
+
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce)) {
+				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
 
 			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 
 			if(null != orderModel) {
-				// Needs to uncomment below code once Payment related PR merged
-				/*final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+
+				if(StringUtils.isNotBlank(poNumber)) {
+						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);
+						if(BooleanUtils.isTrue(isSuccess)){
+							model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PO);
+						}
+					}
+				else {
+
+					// Needs to uncomment below code once Payment related PR merged
+				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
 						.getBrainTreePaymentInfoForCode(
 								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
 				if(null != paymentInfo) {
@@ -1312,7 +1327,10 @@ public class AccountPageController extends AbstractSearchPageController
 					isSuccess = brainTreeTransactionService
 							.createAuthorizationTransactionOfOrder(orderModel,
 									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
-				}*/
+				}
+				if(BooleanUtils.isTrue(isSuccess)){
+					model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.CREDIT_CARD);}
+				}
 			}
 
 			if(isSuccess) {
