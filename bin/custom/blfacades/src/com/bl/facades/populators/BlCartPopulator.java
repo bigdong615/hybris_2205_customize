@@ -69,6 +69,7 @@ public class BlCartPopulator extends CartPopulator<CartData>
 					&& ProductTypeEnum.GIFTCARD.equals(((BlProductModel)giftCardEntry.get().getProduct()).getProductType())){
 				target.setGiftCardCost(source.getGiftCardCost());
 				target.setHasGiftCart(Boolean.valueOf(true));
+				target.setIsRentalCart(Boolean.valueOf(false));
 			}
 			
 		}

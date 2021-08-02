@@ -4,7 +4,6 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import de.hybris.platform.commerceservices.order.impl.DefaultCommerceCartCalculationStrategy;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.core.model.order.CartModel;
-import de.hybris.platform.order.CalculationService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -48,6 +47,7 @@ public class DefaultBlCommerceCartCalculationStrategy extends
    */
   private void setGiftCardAmount(final CartModel order, final CommerceCartParameter parameter) 
   {
+	  order.setGiftCardOrder(true);
 	  order.setGiftCardCost(parameter.getGiftCardAmount());
 	  getModelService().save(order);
 	  getModelService().refresh(order);
