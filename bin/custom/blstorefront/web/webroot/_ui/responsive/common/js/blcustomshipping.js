@@ -607,6 +607,9 @@ function removeClass(){
             if((typeof data == "string")) {
                 window.location.reload();
             }
+            if(data != null && (typeof data != "string") && data.statusText == 'parsererror') {
+                window.location.reload();
+            }
             $('.page-loader-new-layout').hide();
         },
         error: function (error) {
