@@ -968,10 +968,10 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
-	<!-- BL-766 start-->
+	<!-- BL-766 Morning pull orders job start-->
 	<bean id="pullReadyToShipOrdersJob" class="com.bl.blbackoffice.job.PullReadyToShipOrdersJob" parent="abstractJobPerformable">
 		<property name="blConsignmentDao" ref="blConsignmentDao"/>
-		<property name="blReadyToShipOrderItemDao" ref="blReadyToShipOrderItemDao"/>
+		<property name="blReadyToShipOrderItemService" ref="blReadyToShipOrderItemService"/>
 	</bean>
 
 	<alias name="defaultBlConsignmentDao" alias="blConsignmentDao"/>
@@ -985,7 +985,14 @@
 		<property name="modelService" ref="modelService"/>
 	</bean>
 
-	<!-- BL-766 end -->
+
+	<alias name="defaultBlReadyToShipOrderItemService" alias="blReadyToShipOrderItemService"/>
+	<bean id="defaultBlReadyToShipOrderItemService" class="com.bl.core.inventory.order.service.impl.DefaultBlReadyToShipOrderItemService">
+		<property name="blReadyToShipOrderItemDao" ref="blReadyToShipOrderItemDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<!-- BL-766 Morning pull orders job end -->
 
 	<!-- [BL-663]  SOLR Field value Resolver for OnSale solr attribute  and min promotion price-->
 	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>

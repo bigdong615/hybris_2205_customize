@@ -44,8 +44,6 @@ public class DefaultBlReadyToShipOrderItemDao implements BlReadyToShipOrderItemD
 
     addQueryParameter(shipDate, warehouse, fQuery);
 
-    fQuery.addQueryParameter(BlCoreConstants.SHIP_DATE, shipDate);
-
     final SearchResult<ReadyToShipOrderItemModel> result = getFlexibleSearchService().search(fQuery);
     final List<ReadyToShipOrderItemModel> orderItemModels = result.getResult();
 

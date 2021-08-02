@@ -2330,7 +2330,7 @@
                       </property>
                     </custom-properties>
                   </attribute>
-                  <attribute qualifier="vipFlag" type="java.lang.Boolean">
+                  <attribute qualifier="isVipOrder" type="java.lang.Boolean">
                     <modifiers read="true" write="true" search="true" optional="true" />
                     <persistence type="property" />
                     <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
@@ -2581,11 +2581,12 @@
           <attribute qualifier="warehouse" type="Warehouse">
             <persistence type="property"/>
             <modifiers read="true" write="true" optional="true"/>
-            <description>Morning pull for this warehouse.</description>
+            <description>The orders will be pulled for this warehouse.</description>
           </attribute>
           <attribute qualifier="membersCount" type="java.lang.Integer">
             <defaultvalue>Integer.valueOf(1)</defaultvalue>
             <persistence type="property"/>
+            <description>The number of employees will be working on the pulled orders.</description>
           </attribute>
         </attributes>
       </itemtype>
@@ -2607,67 +2608,69 @@
           <attribute qualifier="warehouse" type="Warehouse">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The associated warehouse for this line item.</description>
+            <description>The associated warehouse for this order.</description>
           </attribute>
-          <attribute qualifier="orderNo" type="java.lang.String">
+          <attribute qualifier="orderNumber" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The order number for the line item.</description>
+            <description>The order number for the order.</description>
           </attribute>
           <attribute qualifier="orderType" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The order type for the line item.</description>
+            <description>The order type FD or SHIPPING for the order.</description>
           </attribute>
-          <attribute qualifier="vipFlag" type="java.lang.String">
+          <attribute qualifier="isVipOrder" type="java.lang.Boolean">
+            <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The VIP flag for the line item.</description>
+            <description>This flag specifies whether the order is a VIP order or not.</description>
           </attribute>
-          <attribute qualifier="usedGearFlag" type="java.lang.String">
+          <attribute qualifier="isUsedGearOrder" type="java.lang.Boolean">
+            <defaultvalue>java.lang.Boolean.FALSE</defaultvalue>
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The used gear flag for the line item.</description>
+            <description>This flag specifies whether the order is used gear or rental gear.</description>
           </attribute>
           <attribute qualifier="orderNotes" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The order notes of the line item.</description>
+            <description>The order notes of the order.</description>
           </attribute>
           <attribute qualifier="productId" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The product id the line item.</description>
+            <description>The product id in the order.</description>
           </attribute>
           <attribute qualifier="productName" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The product/SKU name of the line item.</description>
+            <description>The product/SKU name in the order.</description>
           </attribute>
           <attribute qualifier="productCount" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The quantity for the line item.</description>
+            <description>The quantity of the product in that order.</description>
           </attribute>
           <attribute qualifier="serialNumber" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" unique="true" optional="true"/>
-            <description>The serial number for the line item.</description>
+            <description>The serial number of the serial product in the order.</description>
           </attribute>
           <attribute qualifier="parentLocation" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The parent location for the line item.</description>
+            <description>The parent location  of the serial product in the order.</description>
           </attribute>
           <attribute qualifier="childLocation" type="java.lang.String">
             <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The child location for the line item.</description>
+            <description>The child location of the serial product in the order.</description>
           </attribute>
           <attribute qualifier="shippingMethod" type="java.lang.String">
           <persistence type="property"/>
             <modifiers read="true" write="true" search="true" optional="true"/>
-            <description>The shipping method for the line item.</description>
+            <description>The shipping method present in the order.</description>
         </attribute>
         </attributes>
       </itemtype>
@@ -3413,7 +3416,7 @@
     <custom-properties>
       <property name="query">
         <value>
-          "SELECT {orderItem:orderNo} as orderNo, {orderItem:orderType} as orderType, {orderItem:vipFlag} as vipFlag, {orderItem:usedGearFlag} as usedGearFlag, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:productCount} as productCount, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
+          "SELECT {orderItem:orderNumber} as orderNumber, {orderItem:orderType} as orderType, {orderItem:isVIPOrder} as isVIPOrder, {orderItem:isUsedGearOrder} as isUsedGearOrder, {orderItem:orderNotes} as orderNotes, {orderItem:productId} as productId, {orderItem:productName} as productName, {orderItem:productCount} as productCount, {orderItem:serialNumber} as serialNumber, {orderItem:parentLocation} as parentLocation, {orderItem:childLocation} as childLocation, {orderItem:shippingMethod} as shippingMethod, {orderItem:employeeName} as employeeName, {orderItem:shipDate} as shipDate FROM {ReadyToShipOrderItem as orderItem} WHERE {orderItem:warehouse} = ?warehouse"
         </value>
       </property>
     </custom-properties>
@@ -3450,7 +3453,7 @@
           </property>
         </custom-properties>
       </attribute>
-      <attribute generate="false" autocreate="true" qualifier="orderNo" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <attribute generate="false" autocreate="true" qualifier="orderNumber" type="java.lang.String" metatype="ViewAttributeDescriptor">
         <persistence type="jalo" qualifier=""/>
         <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
         <custom-properties>
@@ -3610,7 +3613,7 @@
           </property>
         </custom-properties>
       </attribute>
-      <attribute generate="false" autocreate="true" qualifier="usedGearFlag" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <attribute generate="false" autocreate="true" qualifier="isUsedGearOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
         <persistence type="jalo" qualifier=""/>
         <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
         <custom-properties>
@@ -3626,7 +3629,7 @@
           </property>
         </custom-properties>
       </attribute>
-      <attribute generate="false" autocreate="true" qualifier="vipFlag" type="java.lang.String" metatype="ViewAttributeDescriptor">
+      <attribute generate="false" autocreate="true" qualifier="isVIPOrder" type="java.lang.String" metatype="ViewAttributeDescriptor">
         <persistence type="jalo" qualifier=""/>
         <modifiers read="true" write="false" search="false" encrypted="false" optional="true" removable="true" initial="false" unique="false" private="false" partof="false"/>
         <custom-properties>
