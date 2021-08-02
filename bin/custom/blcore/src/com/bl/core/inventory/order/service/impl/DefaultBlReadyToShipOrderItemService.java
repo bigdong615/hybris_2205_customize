@@ -6,6 +6,7 @@ import com.bl.core.inventory.order.service.BlReadyToShipOrderItemService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ReadyToShipOrderItemModel;
+import com.bl.logging.BlLogger;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -14,6 +15,8 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -22,6 +25,8 @@ import org.apache.log4j.Logger;
  * @author Sunil Sahu
  */
 public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderItemService {
+
+  private static final Logger LOG = Logger.getLogger(DefaultBlReadyToShipOrderItemService.class);
 
   private BlReadyToShipOrderItemDao blReadyToShipOrderItemDao;
   private ModelService modelService;
@@ -78,8 +83,16 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
   public void removeReadyToShipOrderItemsForDateAndWareshouse(final Date shipDate,
       final WarehouseModel warehouse) {
 
-    modelService
-        .removeAll(blReadyToShipOrderItemDao.getReadyToShipOrderItemsForDate(shipDate, warehouse));
+    final List<ReadyToShipOrderItemModel> orderItemModels = blReadyToShipOrderItemDao
+        .getReadyToShipOrderItemsForDate(shipDate, warehouse);
+
+    if (CollectionUtils.isEmpty(orderItemModels)) {
+      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
+          "No order items available to remove for ship date {} and with warehouse code {}.",
+          shipDate, warehouse.getCode());
+    } else {
+      modelService.removeAll(orderItemModels);
+    }
   }
 
   /**

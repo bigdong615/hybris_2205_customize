@@ -4,7 +4,6 @@ import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.dao.warehouse.BlReadyToShipOrderItemDao;
 import com.bl.core.model.ReadyToShipOrderItemModel;
 import com.bl.core.utils.BlDateTimeUtils;
-import com.bl.logging.BlLogger;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.servicelayer.model.ModelService;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
@@ -13,9 +12,6 @@ import de.hybris.platform.servicelayer.search.SearchResult;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * It is used to get ReadyToShipOrderItem for morning pull orders view.
@@ -24,7 +20,6 @@ import org.apache.log4j.Logger;
  */
 public class DefaultBlReadyToShipOrderItemDao implements BlReadyToShipOrderItemDao {
 
-  private static final Logger LOG = Logger.getLogger(DefaultBlReadyToShipOrderItemDao.class);
   private FlexibleSearchService flexibleSearchService;
   private ModelService modelService;
 
@@ -45,16 +40,8 @@ public class DefaultBlReadyToShipOrderItemDao implements BlReadyToShipOrderItemD
     addQueryParameter(shipDate, warehouse, fQuery);
 
     final SearchResult<ReadyToShipOrderItemModel> result = getFlexibleSearchService().search(fQuery);
-    final List<ReadyToShipOrderItemModel> orderItemModels = result.getResult();
 
-    if (CollectionUtils.isEmpty(orderItemModels)) {
-
-      BlLogger.logFormatMessageInfo(LOG, Level.DEBUG,
-          "No order items available to remove for ship date {} and with warehouse code {}.",
-          shipDate, warehouse.getCode());
-    }
-
-   return orderItemModels;
+   return result.getResult();
 
   }
 
