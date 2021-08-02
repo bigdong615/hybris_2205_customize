@@ -70,7 +70,7 @@
 												var="serialProduct" varStatus="loop">
 												<c:set value="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}" var="hasPromotion"/>
 												<c:if test="${serialProduct.serialStatus ne 'SOLD' or (product.forRent eq true and serialProduct.isSerialNotAssignedToRentalOrder eq true) }">
-													<tr class="${(loop.index >= 3 ? 'hide-product-row' : '')}  <c:if test="${hasPromotion}">noborder </c:if>">
+													<tr class="${(loop.index >= 3 ? 'hide-product-row ' : '')} <c:if test="${hasPromotion}"> noborder</c:if>">
 														<td><a href="#" data-bs-toggle="modal"
 															data-bs-target="#sku52678"
 															data-cosmetic="${serialProduct.cosmeticRating}"
@@ -116,7 +116,7 @@
 															</c:choose>
 														</td>
 						                <c:if test="${serialProduct.ugPromotionMessage ne null && serialProduct.serialPromotionPrice.value > 0 && serialProduct.onSale eq true}">
-						                   <tr>
+						                   <tr class=" ${loop.index >= 3 ? 'hide-product-row ' : ''}">
                                   <td colspan="2">
                                      <span class="badge badge-new"><spring:theme code="text.serial.product.on.Sale"/></span>
                                   </td>

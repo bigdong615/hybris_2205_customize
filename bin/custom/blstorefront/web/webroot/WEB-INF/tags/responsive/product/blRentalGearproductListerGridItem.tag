@@ -20,7 +20,7 @@
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
- <c:if test="${product.code ne 'bl_giftcard'}">
+ <c:if test="${product.productType ne 'GIFTCARD'}">
 		<c:choose>
 			<c:when test="${product.stock.stockLevelStatus.code eq 'lowStock'}">
 				<span class="badge badge-limited-stock"><spring:theme
@@ -47,7 +47,7 @@
 		</c:choose>
 		</c:if>
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
-   <c:if test="${product.code ne 'bl_giftcard'}">
+   <c:if test="${product.productType ne 'GIFTCARD'}">
     <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">
 		<form class="add_to_wishList_form" action="${addWishList}" method="post" id="js-wishlist-form">
                 <input type="hidden" name="productCodePost" id="productCodePost" value="${product.code}">
@@ -68,7 +68,7 @@
     <product:productListImagePanel productType="RentalGearProduct" product="${product}"/>
 
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
-		<c:if test="${product.code ne 'bl_giftcard'}">
+		<c:if test="${product.productType ne 'GIFTCARD'}">
 			<p class="overline">${product.manufacturer}</p>
 		</c:if>
 		<h6 class="product">
@@ -89,7 +89,7 @@
 			<h6 class="price">
 			<!-- BL-926: Added condition for Gift Card as per requirement --> 
 				<c:choose>
-					<c:when test="${product.code eq 'bl_giftcard'}">
+					<c:when test="${product.productType eq 'GIFTCARD'}">
                           <spring:theme code="slp.giftcard.price" />
 					</c:when>
 					<c:otherwise>
@@ -132,7 +132,7 @@
 		<c:url var="rentUrl" value="/rent/product/${product.code}"/>
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
 			<c:choose>
-				<c:when test="${product.code eq 'bl_giftcard'}">
+				<c:when test="${product.productType eq 'GIFTCARD'}">
 					<a href="${rentUrl}" class="btn btn-primary js-pdplinkUrl" data-productCode="${product.code}" data-brand="GiftCart"
                    data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="rental">
 					<spring:theme

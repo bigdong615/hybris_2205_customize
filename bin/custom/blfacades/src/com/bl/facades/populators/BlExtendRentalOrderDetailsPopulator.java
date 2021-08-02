@@ -77,7 +77,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
      target.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalTax()),
          orderModel.getCurrency().getIsocode()));
 
-     target.setTotalDiscounts(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalDiscounts()),
+     target.setExtendOrderDiscount(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalDiscounts()),
          orderModel.getCurrency().getIsocode()));
 
      target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalPrice()) ,
