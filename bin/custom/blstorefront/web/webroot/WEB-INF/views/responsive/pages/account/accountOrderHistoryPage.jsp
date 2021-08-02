@@ -36,32 +36,52 @@
                                  <div class="col-12 col-md-7">
                                       <p class="mb-0"><b>${order.orderDate}</b></p>
                                        <p class="body14">
-                                       <c:forEach items="${order.productNameAndQuantity}" var="cartEntry" >
+                                       <c:forEach items="${order.productNameAndQuantity}" var="cartEntry">
                                              ${cartEntry}<br>
                                        </c:forEach>
                                       </p>
                      						</div>
                                  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
-                                   <p class="my-2"><i class="icon-check-teal"></i><spring:theme code="text.myaccount.order.completed"/></p>
+                                   <p class="my-2"><spring:theme code="text.myaccount.order.completed"/></p>
                                  </div>
                         </c:if>
                 					<c:if test="${order.rentalCart}">
                 						<div class="col-5 col-md-3">
+                						<c:if test="${order.isRentalActive eq true}">
                 							<p class="lightteal mb-0"><b>${order.rentalStartDate}</b></p>
                 							<p class="body14">
                 								<spring:theme code="text.myaccount.order.rental.Starts" /> </p>
+                						</c:if>
+                						<c:if test="${order.isRentalActive eq false}">
+                                            							<p class="mb-0"><b>${order.rentalStartDate}</b></p>
+                                            							<p class="body14">
+                                            								<spring:theme code="text.myaccount.order.rental.history.Started"/> </p>
+                            </c:if>
                 						</div>
                 						<div class="col-2 col-md-1 text-center"> <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg"> </div>
                 						<div class="col-5 col-md-3">
+                						<c:if test="${order.isRentalActive eq true}">
                 							<p class="lightteal mb-0"><b>${order.rentalEndDate}</b></p>
                 							<p class="body14">
                 								<spring:theme code="text.myaccount.order.rental.ends" /> </p>
+                						</c:if>
+                						   <c:if test="${order.isRentalActive eq false}">
+                                        <p class="mb-0"><b>${order.rentalEndDate}</b></p>
+                                           <p class="body14">
+                                            	<spring:theme code="text.myaccount.order.rental.history.ended" />
+                                           </p>
+                                </c:if>
                 						</div>
-                						<div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+                						  <div class="col-6 col-md-3 offset-md-1 text-start text-md-end">
+                							<c:if test="${order.isRentalActive eq true && order.isRentalStartDateActive eq true}">
                 							<c:url value="/my-account/extendRent/${order.code}" var="extendRentAction" />
                 							<a href="${extendRentAction}" class="btn btn-primary">
                 								<spring:theme code="text.myaccount.order.extend.rent" /> </a>
-                						</div>
+                					  </c:if>
+                					  <c:if test="${order.isRentalActive eq false}">
+                                <p class="my-2"><spring:theme code="text.myaccount.order.completed"/></p>
+                             </c:if>
+                            </div>
                 					</c:if>
                 					<div class="col-6 col-md-1">
                 						<div class="btn-group"> <a id="btn-rental-001" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" href="#"><i class="icon-dots"></i></a>
@@ -91,7 +111,7 @@
                 							</div>
                 							<div class="col-8 col-md-10">
                 								<p class="body14 gray60">${fn:escapeXml(order.total.formattedValue)}
-                									<br> #${fn:escapeXml(order.code)}</p>
+                									<br> ${fn:escapeXml(order.code)}</p>
                 							</div>
                 						</div>
                 					</div>

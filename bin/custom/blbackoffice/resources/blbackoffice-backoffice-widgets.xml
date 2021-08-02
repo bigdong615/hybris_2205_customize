@@ -60,6 +60,20 @@
 			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
 		</widget>
 	</widget-extension>
+	
+	<!-- Unboxing Tool Section -->
+	<widget-extension widgetId="mainSlot">
+		<widget id="UnboxingScanTool_conditionevaluator" widgetDefinitionId="com.hybris.cockpitng.conditionevaluator"
+				slotId="cockpitWidgetChildrenInvisible" template="false">
+			<widget id="UnboxingScanTool_propertyextractor" widgetDefinitionId="com.hybris.cockpitng.widgets.common.propextractor"
+					slotId="cockpitWidgetChildrenInvisible" template="false">
+				<setting key="expression" type="String" value="id"/>
+				<setting key="socketDataType_$T" type="String" value="java.lang.String"/>
+			</widget>
+			<setting key="expression" type="String" value="#root?.id EQ 'UnboxingScanTool'"/>
+			<setting key="socketDataType_$T" type="String" value="com.hybris.backoffice.navigation.NavigationNode"/>
+		</widget>
+	</widget-extension>	
 
 	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="WebScanTool_conditionevaluator" inputId="input"/>
 	<widget-connection sourceWidgetId="WebScanTool_conditionevaluator" outputId="true" targetWidgetId="WebScanTool_propertyextractor" inputId="genericInput"/>
@@ -70,4 +84,10 @@
 	<widget-connection sourceWidgetId="TechEngScanTool_conditionevaluator" outputId="true" targetWidgetId="TechEngScanTool_propertyextractor" inputId="genericInput"/>
 	<widget-connection sourceWidgetId="TechEngScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
 	<widget-connection sourceWidgetId="STUB_hybris.bin.custom.blbackoffice.blcustom.front.capturepaymentaction" outputId="blFrontCapturePaymentContext" targetWidgetId="frontCapturePaymentPopup" inputId="inputObject" />
+	
+	<!-- Unboxing Tool Section -->
+	<widget-connection sourceWidgetId="explorerTree" outputId="nodeSelected" targetWidgetId="UnboxingScanTool_conditionevaluator" inputId="input"/>
+	<widget-connection sourceWidgetId="UnboxingScanTool_conditionevaluator" outputId="true" targetWidgetId="UnboxingScanTool_propertyextractor" inputId="genericInput"/>
+	<widget-connection sourceWidgetId="UnboxingScanTool_propertyextractor" outputId="genericOutput" targetWidgetId="configurableFlow" inputId="contextType"/>
+	
 </widgets>

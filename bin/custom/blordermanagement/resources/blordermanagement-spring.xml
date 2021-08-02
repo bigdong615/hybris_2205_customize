@@ -99,6 +99,7 @@
         <property name="blDeliveryStateSourcingLocationFilter" ref="blDeliveryStateSourcingLocationFilter"/>
         <property name="blSourcingStrategyService" ref="blSourcingStrategyService"/>
         <property name="blSourcingLocationService" ref="blSourcingLocationService"/>
+        <property name="modelService" ref="modelService"/>
     </bean>
 
     <alias name="defaultBlAllocationService" alias="allocationService" />

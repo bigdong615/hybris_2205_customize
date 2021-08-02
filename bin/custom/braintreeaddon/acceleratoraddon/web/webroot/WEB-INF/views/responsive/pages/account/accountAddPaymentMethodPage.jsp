@@ -116,9 +116,6 @@
 													<c:when test="${not empty paymentInfoBillingAddress.formattedAddress }">
 															${paymentInfoBillingAddress.formattedAddress }
 												    </c:when>
-													<c:when test="${not empty defaultBillingAddress.formattedAddress }">
-														${defaultBillingAddress.formattedAddress }
-													</c:when>
 													<c:otherwise>
 															Select Saved Billing Address
 													</c:otherwise>
