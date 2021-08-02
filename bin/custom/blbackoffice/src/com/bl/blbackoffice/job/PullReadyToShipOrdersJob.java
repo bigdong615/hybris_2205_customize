@@ -72,7 +72,7 @@ public class PullReadyToShipOrdersJob extends
       // create fresh order items and store in DB
         blReadyToShipOrderItemService.createReadyToShipOrderItems(filteredConsignmentModels,
           pullReadyToShipOrdersCronJob.getMembersCount());
-      } catch (Exception ex) {
+      } catch (final Exception ex) {
 
         BlLogger.logFormattedMessage(LOG, Level.ERROR, LogErrorCodeEnum.CRONJOB_ERROR.getCode(), ex,
             "Error occurred while performing PullReadyToShipOrdersJob");

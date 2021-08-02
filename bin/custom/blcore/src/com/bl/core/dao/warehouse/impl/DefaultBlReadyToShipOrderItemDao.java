@@ -37,7 +37,7 @@ public class DefaultBlReadyToShipOrderItemDao implements BlReadyToShipOrderItemD
    * {@inheritDoc}
    */
   @Override
-  public void removeReadyToShipOrderItemsForDate(final Date shipDate, final
+  public List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForDate(final Date shipDate, final
   WarehouseModel warehouse) {
 
     final FlexibleSearchQuery fQuery = new FlexibleSearchQuery(FIND_READY_TO_SHIP_ORDER_ITEMS_FOR_DATE);
@@ -54,7 +54,7 @@ public class DefaultBlReadyToShipOrderItemDao implements BlReadyToShipOrderItemD
           shipDate, warehouse.getCode());
     }
 
-    modelService.removeAll(orderItemModels);
+   return orderItemModels;
 
   }
 

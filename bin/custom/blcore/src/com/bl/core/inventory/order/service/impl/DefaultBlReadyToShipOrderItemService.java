@@ -6,6 +6,7 @@ import com.bl.core.inventory.order.service.BlReadyToShipOrderItemService;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.model.ReadyToShipOrderItemModel;
+import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
@@ -77,8 +78,8 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
   public void removeReadyToShipOrderItemsForDateAndWareshouse(final Date shipDate,
       final WarehouseModel warehouse) {
 
-    blReadyToShipOrderItemDao
-        .removeReadyToShipOrderItemsForDate(shipDate, warehouse);
+    modelService
+        .removeAll(blReadyToShipOrderItemDao.getReadyToShipOrderItemsForDate(shipDate, warehouse));
   }
 
   /**
@@ -125,6 +126,11 @@ public class DefaultBlReadyToShipOrderItemService implements BlReadyToShipOrderI
     orderItem.setParentLocation(
         null != (serialProduct).getLastLocationScanParent() ? (serialProduct)
             .getLastLocationScanParent() : BlCoreConstants.EMPTY_STRING);
+
+    orderItem.setShippingMethod(
+        null != (ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()
+            ? ((ZoneDeliveryModeModel) consignmentModel.getDeliveryMode()).getName()
+            : BlCoreConstants.EMPTY_STRING);
 
     return orderItem;
   }

@@ -1,7 +1,9 @@
 package com.bl.core.dao.warehouse;
 
+import com.bl.core.model.ReadyToShipOrderItemModel;
 import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import java.util.Date;
+import java.util.List;
 
 /**
  * It is used to get ReadyToShipOrderItem.
@@ -11,13 +13,13 @@ import java.util.Date;
 public interface BlReadyToShipOrderItemDao {
 
   /**
-   * Remove ReadyToShipOrderItem
+   * Get ReadyToShipOrderItem
    *
    * @param shipDate
    * @param warehouse
    * @return ReadyToShipOrderItemModels
    */
-  void removeReadyToShipOrderItemsForDate(final Date shipDate, final
+  List<ReadyToShipOrderItemModel> getReadyToShipOrderItemsForDate(final Date shipDate, final
   WarehouseModel warehouse);
 
 }
