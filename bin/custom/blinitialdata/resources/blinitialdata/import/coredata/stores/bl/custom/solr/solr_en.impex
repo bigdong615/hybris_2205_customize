@@ -17,7 +17,6 @@ $lang=en
 # Solr Indexed Property
 INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[unique=true];displayName[lang=$lang]
                           ;$solrIndexedType;allPromotions;"Promotion"
-                          ;$solrIndexedType;availableInStores;"Stores"
                           ;$solrIndexedType;brand;"Brand"
                           ;$solrIndexedType;category;"Category"
                           ;$solrIndexedType;code;"Code"
@@ -31,6 +30,7 @@ INSERT_UPDATE SolrIndexedProperty;solrIndexedType(identifier)[unique=true];name[
                           ;$solrIndexedType;displayName;"displayName"
                           ;$solrIndexedType;titleTag;"titleTag"
                           ;$solrIndexedType;shortDescription;"shortDescription"
+                          ;$solrIndexedType;onSale;"On Sale"
 
 
 # Define the available sorts

@@ -16,10 +16,10 @@ $approved=approvalstatus(code)[default='approved']
 
 
 
-INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code);unit(code)[default='pieces']
+INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code);manufacturerName[default='Other'];unit(code)[default='pieces']
                              ;;52708;5122708 ;5122708 ;Nikon_80-400mm_f4.5-5.6D_ED_VR;;ACTIVE;40002011;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
-                             ;;59663;6051076 ;6051076 ;Canon_24-105mm_f4_IS;;SOLD;40003843;true;;1090;Norman's;418.25;335999;;2;BARCODE;0344B002;4960000000000;LENSES
-                             ;;59667;6128205 ;6128205 ;Canon_24-105mm_f4_IS;;ACTIVE;50003850;true;;1090;Norman's;418.25;335812;;2;BARCODE;0344B002;4960000000000;LENSES
+                             #;;59663;6051076 ;6051076 ;Canon_24-105mm_f4_IS;;SOLD;40003843;true;;1090;Norman's;418.25;335999;;2;BARCODE;0344B002;4960000000000;LENSES
+                             #;;59667;6128205 ;6128205 ;Canon_24-105mm_f4_IS;;ACTIVE;50003850;true;;1090;Norman's;418.25;335812;;2;BARCODE;0344B002;4960000000000;LENSES
                              ;;57196;CPL58.016;CPL58.016;58mm_CP_Filter;;ACTIVE;30116313;false;;19.95;NA;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS
                              ;;115852;CPL58.022;CPL58.022;58mm_CP_Filter;;ACTIVE;50005772;false;;13.24;B&H;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS
                              ;;115853;CPL58.023;CPL58.023;58mm_CP_Filter;;ACTIVE;50005771;false;;13.24;B&H;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS
@@ -38,6 +38,29 @@ INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique
                              ;;25674;198534 ;198534 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40006206;true;;1014;Canon;733.15;333811;;2;BARCODE;1257B002;13803064551;LENSES
                              ;;26134;207730 ;207730 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003824;true;;982.3;Canon;756.55;333813;;2;BARCODE;1257B002;13803064551;LENSES
                              ;;37374;220232 ;220232 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003736;true;;955;Norman's;756.55;333793;;2;BARCODE;1257B002;13803064551;LENSES
+#### added dummy data for testing allocation
+                            ;;52304;5122541 ;5122541 ;Canon_24-105mm_f4_IS;;ACTIVE;40002011;true;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;52305;5122542 ;5122542 ;Canon_24-105mm_f4_IS;;ACTIVE;40002012;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;52306;5122543 ;5122543 ;Canon_24-105mm_f4_IS;;ACTIVE;40002013;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59663;6051076 ;6051076 ;Canon_24-105mm_f4_IS;;ACTIVE;40003843;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59664;6051077 ;6051077 ;Canon_24-105mm_f4_IS;;ACTIVE;40003844;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59665;6051078 ;6051078 ;Canon_24-105mm_f4_IS;;ACTIVE;40003845;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59666;6051079 ;6051079 ;Canon_24-105mm_f4_IS;;ACTIVE;40003846;false;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59667;6128205 ;6128205 ;Canon_24-105mm_f4_IS;;ACTIVE;50003850;true;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59668;6128206 ;6128206 ;Canon_24-105mm_f4_IS;;ACTIVE;50003851;true;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59669;6128207 ;6128207 ;Canon_24-105mm_f4_IS;;ACTIVE;50003852;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;59670;6128208 ;6128208 ;Canon_24-105mm_f4_IS;;ACTIVE;50003853;false;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
+                            ;;52307;5122544 ;5122544 ;Canon_50mm_f1.2_L;;ACTIVE;40002014;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;52308;5122545 ;5122545 ;Canon_50mm_f1.2_L;;ACTIVE;40002015;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;52309;5122546 ;5122546 ;Canon_50mm_f1.2_L;;ACTIVE;40002016;true;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;59671;6051080 ;6051080 ;Canon_50mm_f1.2_L;;ACTIVE;40003847;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;59672;6051081 ;6051081 ;Canon_50mm_f1.2_L;;ACTIVE;40003848;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;59673;6051082 ;6051082 ;Canon_50mm_f1.2_L;;ACTIVE;40003849;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;59674;6051083 ;6051083 ;Canon_50mm_f1.2_L;;ACTIVE;40003850;false;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;59675;6128211 ;6128211 ;Canon_50mm_f1.2_L;;ACTIVE;50003854;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;59676;6128212 ;6128212 ;Canon_50mm_f1.2_L;;ACTIVE;50003855;true;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+                            ;;59677;6128213 ;6128213 ;Canon_50mm_f1.2_L;;ACTIVE;50003856;false;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
+
 
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFirstActive[dateformat=dd.MM.yyyy HH:mm];totalRepairSpend;purchaseOrder;orderNumberRecord;invoiceNumberRecord;trackingNumber;invoiceNumber;invoiceDate;firmwareVersion
                       ;;5122541 ;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;
@@ -62,11 +85,10 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFi
                       ;;207730 ;;;;;;;;2570540792;;;
                       ;;220232 ;;;;;;;;800000000000;;;
 
-
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;withOrderID;finalSalePrice;dateOfSale
-                      ;;5122541 ;2586;1Z87099FNW99827320;warehouse_ca;;;;;;;
-                      ;;6051076 ;2586;1Z87099FNY95392357;warehouse_ca;;;;;9109749;;
-                      ;;6128205 ;2430;CAR016 S04;warehouse_ma;;;;;;;
+                      ;;5122541 ;2586;1Z87099FNW99827320;warehouse_ca;3;;;;;;
+                      ;;6051076 ;2586;1Z87099FNY95392357;warehouse_ca;7;;;;9109749;;
+                      ;;6128205 ;2430;CAR016 S04;warehouse_ma;7;;;;;;
                       ;;CPL58.016;6432;BIN SML 1253;warehouse_ca;;;;MAM CLEAN028 S02;;;
                       ;;CPL58.022;4413;BIN CAGE 5375;warehouse_ca;;;;CAR032 S04;;;
                       ;;CPL58.023;763;BIN SML 325;warehouse_ca;;;;MAM DIRTY030 S04;;;
@@ -86,8 +108,28 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocL
                       ;;207730 ;2586;1Z19E596NY92262106;warehouse_ca;;;;;9536469;;
                       ;;220232 ;1926;BIN SML C679;warehouse_ca;;;;CAM FD01 S02;9605590;;
 
+#### added dummy data for testing allocation
+                    ;;5122542 ;2586;;warehouse_ma;5;;;;;;
+                    ;;5122543 ;2586;;warehouse_ma;6;;;;;;
+                    ;;6051077 ;8608;;warehouse_ca;2;;;;;;
+                    ;;6051078 ;8608;;warehouse_ca;3;;;;;;
+                    ;;6051079 ;8608;;warehouse_ca;4;;;;;;
+                    ;;6128206 ;5532;;warehouse_ca;11;;;;;;
+                    ;;6128207 ;5532;;warehouse_ca;4;;;;;;
+                    ;;6128208 ;5532;;warehouse_ca;7;;;;;;
+                    ;;5122544 ;5532;;warehouse_ma;3;;;;;;
+                    ;;5122545 ;2430;;warehouse_ma;5;;;;;;
+                    ;;5122546 ;2430;;warehouse_ma;6;;;;;;
+                    ;;6051080 ;2430;;warehouse_ca;7;;;;;;
+                    ;;6051081 ;2430;;warehouse_ca;2;;;;;;
+                    ;;6051082 ;2430;;warehouse_ca;3;;;;;;
+                    ;;6051083 ;2430;;warehouse_ca;4;;;;;;
+                    ;;6128211 ;2430;;warehouse_ca;7;;;;;;
+                    ;;6128212 ;2586;;warehouse_ca;11;;;;;;
+                    ;;6128213 ;2586;;warehouse_ca;4;;;;;;
+
 UPDATE BlSerialProduct ; $catalogVersion ; productId[unique=true] ; cosmeticRating(code) ; functionalRating(code) 
-                       ;                 ; 59663                  ; 1                    ; 5                      
+                      # ;                 ; 59663                  ; 1                    ; 5
                        ;                 ; 59667                  ; 2                    ; 6                      
                        ;                 ; 57196                  ; 3                    ; 8                      
                        ;                 ; 115852                 ; 4                    ; 3                      
@@ -107,7 +149,30 @@ UPDATE BlSerialProduct ; $catalogVersion ; productId[unique=true] ; cosmeticRati
                        ;                 ; 25674                  ; 4                    ; 6                      
                        ;                 ; 26134                  ; 7                    ; 3                      
                        ;                 ; 37374                  ; 8                    ; 1                      
-                       ;                 ; 52304                  ; 9                    ; 3                      
+                       ;                 ; 52304                  ; 9                    ; 3
+#### added dummy data for testing allocation
+                        # ;                 ; 52304                  ; 7                    ; 3
+                        ;                 ; 52305                  ; 8                    ; 1
+                        ;                 ; 52306                  ; 9                    ; 3
+                        ;                 ; 59663                  ; 7                    ; 3
+                        ;                 ; 59664                  ; 8                    ; 1
+                        ;                 ; 59665                  ; 9                    ; 3
+                        ;                 ; 59666                  ; 7                    ; 3
+                       # ;                 ; 59667                 ; 8                    ; 1
+                        ;                 ; 59668                  ; 9                    ; 3
+                        ;                 ; 59669                  ; 7                    ; 3
+                        ;                 ; 59670                  ; 8                    ; 1
+
+                        ;                 ; 52307                  ; 7                    ; 3
+                        ;                 ; 52308                  ; 8                    ; 1
+                        ;                 ; 52309                  ; 9                    ; 3
+                        ;                 ; 59671                  ; 7                    ; 3
+                        ;                 ; 59672                  ; 8                    ; 1
+                        ;                 ; 59673                  ; 9                    ; 3
+                        ;                 ; 59674                  ; 7                    ; 3
+                        ;                 ; 59675                  ; 8                    ; 1
+                        ;                 ; 59676                  ; 9                    ; 3
+                        ;                 ; 59677                  ; 7                    ; 3
 
 # Data for setting price on serials assigned on SKU 
 UPDATE BlProduct ; $catalogVersion ; code[unique=true]                                                ; forSaleBasePrice ; forSaleDiscount 

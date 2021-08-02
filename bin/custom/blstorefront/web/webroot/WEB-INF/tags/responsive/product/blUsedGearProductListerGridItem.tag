@@ -19,18 +19,15 @@
 <div class="col-md-6 col-lg-4">
 <div class="card">
 <c:if test ="${product.productTagValues ne null && product.productTagValues ne 'Great Value' && product.productTagValues ne 'Staff Pick'}">
-<span class="badge badge-limited-stock">${product.productTagValues}</span>
+<span class="badge badge-new">${product.productTagValues}</span>
 </c:if>
-<!-- BL-926: Added condition for Gift Card as per requirement --> 
-<c:if test="${product.code ne 'bl_giftcard'}">
- <span class="bookmark"></span>
- </c:if>
+
 <!-- BL-926: Added new file for Gift Card --> 
 <product:productListImagePanel productType="UsedGearProduct" product="${product}"/>
 		
 
 <!-- BL-926: Added condition for Gift Card as per requirement --> 
-      <c:if test="${product.code ne 'bl_giftcard'}">
+      <c:if test="${product.productType ne 'GIFTCARD'}">
 		<p class="overline">${product.manufacturer}</p>
 	  </c:if>
  <h6 class="product">
@@ -51,7 +48,7 @@
 	<h6 class="price">
 	<!-- BL-926: Added condition for Gift Card as per requirement --> 
 	<c:choose>
-	    <c:when test="${product.code eq 'bl_giftcard'}">
+	    <c:when test="${product.productType eq 'GIFTCARD'}">
 	     <spring:theme code="slp.giftcard.price" /> 
 	    </c:when>
 	   <c:otherwise>
@@ -66,7 +63,11 @@
 					<format:price priceData="${product.serialfinalSalePrice}" />
 				</c:otherwise>
 			</c:choose>
-	</h6>		
+	</h6>
+	<c:if test="${product.ugPromotionMessage ne null && product.serialPromotionPrice.value > 0 && product.onSale eq true}">
+  	<p class="sale"><span class="saleprice"><format:price	priceData="${product.serialPromotionPrice}" />&nbsp;&nbsp;${fn:escapeXml(product.ugPromotionMessage)} </p>
+	</c:if>
+
 			<c:forEach var="variantOption" items="${product.variantOptions}">
 				<c:forEach items="${variantOption.variantOptionQualifiers}" var="variantOptionQualifier">
 					<c:if test="${variantOptionQualifier.qualifier eq 'rollupProperty'}">
@@ -91,7 +92,7 @@
 		<!-- BL-926: Added condition for Gift Card as per requirement --> 
 		<c:url var="usedUrl" value="/buy/product/${product.code}"/>
 			<c:choose>
-				<c:when test="${product.code eq 'bl_giftcard'}">
+				<c:when test="${product.productType eq 'GIFTCARD'}">
 					<a href="${usedUrl}" class="btn btn-primary js-pdplinkUrl" data-productCode="${product.code}" data-brand="gift cart"
               data-productName="${ycommerce:sanitizeHTML(product.displayName)}" data-productType="used gear">
 					<spring:theme code="text.product.list.by.now" /></a>

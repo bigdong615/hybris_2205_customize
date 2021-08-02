@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This method created for cloning and updating extend order
@@ -92,7 +93,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
     extendOrderModel.setVersionID(String.valueOf(getOrderIDGenerator().generate()));
     extendOrderModel.setIsExtendedOrder(true);
     extendOrderModel.setExtendOrderStatus(ExtendOrderStatusEnum.PROCESSING);
-    extendOrderModel.setTotaExtendDays((int) defaultAddedTimeForExtendRental);
+    extendOrderModel.setTotalExtendDays((int) defaultAddedTimeForExtendRental);
     extendOrderModel.setExtendedOrderCopyList(Collections.emptyList());
   }
 
@@ -121,7 +122,7 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   public void updateExtendOrder(final AbstractOrderModel extendOrderModel) {
 
     if(BooleanUtils.isTrue(extendOrderModel.getIsExtendedOrder()) &&
-        extendOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED)) {
+        extendOrderModel.getStatus().getCode().equalsIgnoreCase(OrderStatus.PAYMENT_CAPTURED) || StringUtils.isNotBlank(extendOrderModel.getPoNumber())) {
 
       final BaseStoreModel baseStoreModel = getBaseStoreService().getCurrentBaseStore();
       final OrderModel originalOrder = getCustomerAccountService()
@@ -216,6 +217,24 @@ public class DefaultBlExtendOrderService implements BlExtendOrderService {
   private void saveAndRefreshModel(final AbstractOrderModel orderModel) {
     getModelService().save(orderModel);
     getModelService().refresh(orderModel);
+  }
+
+
+  /**
+   * This method created to store the PO number to order
+   */
+  @Override
+  public boolean savePoPayment(final String poNumber , final String poNotes , final OrderModel orderModel){
+    if(null != orderModel){
+      orderModel.setPoNumber(poNumber.trim());
+      orderModel.setPoNotes(poNotes);
+      if(orderModel.getPaymentInfo() != null){
+        orderModel.setPaymentInfo(null);
+      }
+      saveAndRefreshModel(orderModel);
+      return true;
+    }
+    return false;
   }
 
 

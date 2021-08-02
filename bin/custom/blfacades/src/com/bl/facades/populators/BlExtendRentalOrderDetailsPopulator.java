@@ -59,7 +59,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
      PriceDataType priceType = PriceDataType.BUY;
 
        try {
-         getDefaultBlCalculationService().recalculateForExtendOrder(orderModel , orderModel.getTotaExtendDays());
+         getDefaultBlCalculationService().recalculateForExtendOrder(orderModel , orderModel.getTotalExtendDays());
          if(null != orderModel.getAllPromotionResults()) {
            getPromotionsService().updatePromotions(getPromotionGroups(), orderModel, true,
                AutoApplyMode.APPLY_ALL, AutoApplyMode.APPLY_ALL, getTimeService().getCurrentTime());
@@ -69,7 +69,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
        }
 
        target.setCode(orderModel.getCode());
-       target.setAddedTimeForExtendRental(orderModel.getTotaExtendDays());
+       target.setAddedTimeForExtendRental(orderModel.getTotalExtendDays());
      target.setSubTotalTaxForExtendRental(getPriceDataFactory().create(priceType, BigDecimal.valueOf(orderModel.getSubtotal()) ,
          orderModel.getCurrency().getIsocode()));
      target.setTotalDamageWaiverCostForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalDamageWaiverCost()) ,
@@ -77,7 +77,7 @@ public class BlExtendRentalOrderDetailsPopulator <SOURCE extends AbstractOrderMo
      target.setTotalTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalTax()),
          orderModel.getCurrency().getIsocode()));
 
-     target.setTotalDiscounts(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalDiscounts()),
+     target.setExtendOrderDiscount(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalDiscounts()),
          orderModel.getCurrency().getIsocode()));
 
      target.setOrderTotalWithTaxForExtendRental(getPriceDataFactory().create(priceType ,BigDecimal.valueOf(orderModel.getTotalPrice()) ,

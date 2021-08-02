@@ -10,7 +10,8 @@ public class BrainTreeCreatePaymentMethodResult extends BrainTreeAbstractResult
 	private String expirationMonth;
 	private String expirationYear;
 	private String email;
-  private String braintreeAddressId;
+	private Boolean isDefault;
+	private String braintreeAddressId;
 
 	public String getPaymentMethodToken()
 	{
@@ -116,5 +117,20 @@ public class BrainTreeCreatePaymentMethodResult extends BrainTreeAbstractResult
   {
     this.braintreeAddressId = braintreeAddressId;
   }
+  
+  /**
+	 * @return the isDefault
+	 */
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	/**
+	 * @param isDefault the isDefault to set
+	 */
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
+	}
+
 
 }

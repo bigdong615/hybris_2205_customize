@@ -41,6 +41,8 @@ public class BlZoneDeliveryModePopulator extends ZoneDeliveryModePopulator {
         target.setBusinessTypeDelivery(source.isBusinessTypeDelivery());
         target.setShippingGroup(Objects.nonNull(source.getShippingGroup()) 
       		  ? source.getShippingGroup().getCode() : StringUtils.EMPTY);
+        target.setShippingOrderSequence(source.getShippingOrderSequence() != null ? source.getShippingOrderSequence().intValue() :
+                new Integer(1000));
     }
 
 }

@@ -6,6 +6,7 @@ import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ExtendOrderData;
+
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -14,6 +15,7 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * This Populator created to populate order details
@@ -37,11 +40,18 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
-
     target.setIsRentalCart(source.getIsRentalCart());
     populateDatesForOrderDetails(source , target);
     populatePriceDetails(source , target);
-    populateOrderDetailsForRentalOrder(source , target);
+    if(!source.isGiftCardOrder()){	 
+        populateOrderDetailsForRentalOrder(source , target);
+    }
+    //Check gift card purchase order
+    if(source.isGiftCardOrder()){
+   	 target.setIsRentalCart(Boolean.FALSE);
+   	 target.setHasGiftCart(Boolean.TRUE);
+   	
+    }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
       final AddressData addressData = new AddressData();
@@ -49,7 +59,9 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
       getBlAddressPopulator().populate(blPickUpZoneDeliveryModeModel.getInternalStoreAddress() , addressData);
       target.setDeliveryAddress(addressData);
     }
-
+    if(source.getUser() instanceof CustomerModel){
+      target.setIsPOEnabled(((CustomerModel) source.getUser()).isPoEnabled());
+    }
   }
 
   /**
@@ -67,6 +79,10 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
           convertDateToString(updateRentalDatesIfOrderIsExtended(source), BlFacadesConstants.FORMATTED_RENTAL_DATE));
       target.setTotalRentalDays(String.valueOf(BlDateTimeUtils
           .getDaysBetweenDates(source.getRentalStartDate(), updateRentalDatesIfOrderIsExtended(source)) + 1));
+
+      target.setIsRentalStartDateActive(new Date().before(source.getRentalStartDate()));
+      target.setIsRentalEndDateActive(new Date().before(updateRentalDatesIfOrderIsExtended(source)));
+      target.setIsRentalActive(isRentalCartAcive(source));
     }
     target.setOrderedDate(convertDateToString(source.getDate(), BlFacadesConstants.FORMATTED_RENTAL_DATE));
     target.setOrderedFormatDate(convertDateToString(source.getDate() , BlFacadesConstants.ORDER_FORMAT_PATTERN));
@@ -121,7 +137,7 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
        final ExtendOrderData extendOrderData = new ExtendOrderData();
        extendOrderData.setExtendOrderCost(convertDoubleToPriceData(extendOrderModel.getTotalPrice() , orderModel));
        extendOrderData.setExtendOrderDamageWaiverCost(convertDoubleToPriceData(extendOrderModel.getTotalDamageWaiverCost(), orderModel));
-       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotaExtendDays() + BlFacadesConstants.DAYS);
+       extendOrderData.setExtendOrderDaysWithoutPrevOrder(extendOrderModel.getTotalExtendDays() + BlFacadesConstants.BLANK + BlFacadesConstants.DAYS);
        extendOrderData.setExtendOrderEndDate(convertDateToString(extendOrderModel.getRentalEndDate() , BlFacadesConstants.EXTEND_ORDER_FORMAT_PATTERN));
        extendOrderDataList.add(extendOrderData);
       }
@@ -235,6 +251,15 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   private PriceData convertDoubleToPriceData(final Double price , OrderModel orderModel) {
     return getPriceDataFactory().create(PriceDataType.BUY ,BigDecimal.valueOf(price),orderModel.getCurrency());
+  }
+
+  /**
+   * This method created to check whether rental order is active or not
+   */
+  private boolean isRentalCartAcive(final OrderModel orderModel){
+    final Date date = new Date();
+    return date.before(orderModel.getRentalStartDate()) || date.before(updateRentalDatesIfOrderIsExtended(orderModel))
+    || DateUtils.isSameDay(updateRentalDatesIfOrderIsExtended(orderModel), date);
   }
 
 

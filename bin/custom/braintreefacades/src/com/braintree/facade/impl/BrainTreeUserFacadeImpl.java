@@ -177,7 +177,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	}
 
 	@Override
-	public boolean editPaymentMethod(CCPaymentInfoData paymentInfo, final String cardholderName, final String expirationDate,
+	public boolean editPaymentMethod(CCPaymentInfoData paymentInfo, final String expirationDate,
 									 final String cvv, final AddressData addressData)
 	{
 		validateParameterNotNullStandardMessage("paymentInfo", paymentInfo);
@@ -185,7 +185,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 				paymentInfo.getPaymentMethodToken());
 
 		request.setToken(paymentInfo.getPaymentMethodToken());
-		request.setCardholderName(cardholderName);
+		//request.setCardholderName(cardholderName);  // NOSONAR
 		request.setCardExpirationDate(expirationDate);
 		request.setCvv(cvv);
 		if (addressData != null)
@@ -207,12 +207,12 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		throw new AdapterException(result.getErrorMessage());
 	}
 
-    @Override
+	@Override
     public List<CCPaymentInfoData> getBrainTreeCCPaymentInfos(final boolean saved) {
         final CustomerModel currentCustomer = (CustomerModel) getUserService().getCurrentUser();
         final Collection<BrainTreePaymentInfoModel> paymentInfos = brainTreeCustomerAccountService.getBrainTreePaymentInfos(
                 currentCustomer, saved);
-
+        	
         final List<BrainTreePaymentInfoModel> creditCards = Lists.newArrayList();
 
         boolean isPayPalEnabled = getBrainTreeConfigService().getPayPalStandardEnabled();
@@ -249,6 +249,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
             if (ccPaymentInfoModel.equals(defaultPaymentInfoModel)) {
                 defaultPaymentInfoData.setDefaultPaymentInfo(true);
             }
+       
             ccPaymentInfos.add(defaultPaymentInfoData);
         }
         return ccPaymentInfos;
@@ -308,6 +309,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 						.customerId(customer.getBraintreeCustomerId()).cardholderName(brainTreeSubscriptionInfoData.getCardholder())
 						.options().verifyCard(getBrainTreeConfigService().getVerifyCard())
 						.verificationMerchantAccountId(getBrainTreeConfigService().getMerchantAccountIdForCurrentSiteAndCurrency());
+				
 			}
 			else
 			{
@@ -316,15 +318,16 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 			}
 
 			paymentMethodRequest.billingAddressId(billingAddress.getBrainTreeAddressId());
+			request.setIsDefault(brainTreeSubscriptionInfoData.getIsDefault());
 			request.setRequest(paymentMethodRequest);
 			final BrainTreePaymentMethodResult creditCardPaymentMethod = getBrainTreePaymentService().createCreditCardPaymentMethod(
 					request);
 
+			
 			if (creditCardPaymentMethod.isSuccess())
 			{
 				addAdditionalPaymentMethodFields(brainTreeSubscriptionInfoData, creditCardPaymentMethod);
 				final BraintreeInfo braintreeInfo = getBrainTreeSubscriptionInfoConverter().convert(brainTreeSubscriptionInfoData);
-
 				return getBrainTreeTransactionService().createSubscription(billingAddress, customer, braintreeInfo);
 			}
 			else
@@ -440,6 +443,8 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 			brainTreeSubscriptionInfoData.setImageSource(createPaymentMethodResult.getImageSource());
 			brainTreeSubscriptionInfoData.setCardNumber(createPaymentMethodResult.getCardNumber());
 			brainTreeSubscriptionInfoData.setCardType(createPaymentMethodResult.getCardType());
+			brainTreeSubscriptionInfoData.setIsDefault(createPaymentMethodResult.getIsDefault());
+
 			if (StringUtils.isNotBlank(createPaymentMethodResult.getEmail()))
 			{
 				brainTreeSubscriptionInfoData.setEmail(createPaymentMethodResult.getEmail());
@@ -510,15 +515,32 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 	public void setDefaultPaymentInfo(final CCPaymentInfoData paymentInfoData)
 	{
 		validateParameterNotNullStandardMessage("paymentInfoData", paymentInfoData);
+		final BrainTreeUpdatePaymentMethodRequest request = new BrainTreeUpdatePaymentMethodRequest(
+				paymentInfoData.getPaymentMethodToken());
+
+		request.setToken(paymentInfoData.getPaymentMethodToken());
+		request.setDefault(true);
+		BrainTreeUpdatePaymentMethodResult result = getBrainTreePaymentService().updatePaymentMethod(request);
+
 		final CustomerModel currentCustomer = getCurrentUserForCheckout();
 		final BrainTreePaymentInfoModel ccPaymentInfoModel = brainTreeCustomerAccountService.getBrainTreePaymentInfoForCode(
 				currentCustomer, paymentInfoData.getId());
+
+		if (result.isSuccess())
+		{
+			final BrainTreePaymentInfoModel braintreePaymentInfo = getPaymentMethodConverter().convert(result.getPaymentMethod());
+			if (braintreePaymentInfo != null)
+			{
+				getPaymentInfoService().update(braintreePaymentInfo.getPaymentMethodToken(), braintreePaymentInfo);
+			}
+
+		}
 		if (ccPaymentInfoModel != null)
 		{
 			getCustomerAccountService().setDefaultPaymentInfo(currentCustomer, ccPaymentInfoModel);
 		}
 	}
-
+	
 	/**
 	 * @return the checkoutCustomerStrategy
 	 */

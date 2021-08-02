@@ -6,15 +6,27 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <template:page pageTitle="${pageTitle}">
-   <c:choose>
+
+<!-- BL-927: Added condition for Gift Card as per requirement --> 
+<c:choose>
+      <c:when test="${product.productType eq 'GIFTCARD'}">
+       <product:giftCardProductDetailsPanel />
+      </c:when>
+<c:otherwise>
+  <c:choose>
        <c:when test="${IsRentalPage eq 'true' && product.forRent eq 'true'}">
               <product:blRentalProductDetailsPanel />
       </c:when>
       <c:when test="${IsRentalPage eq 'false' && product.forSale eq 'true'}">
          <product:blUsedProductDetailsPanel/>
       </c:when>
+
    </c:choose>
 
+</c:otherwise>
+</c:choose>
+
+ 
     <!-- Modals -->
        <div class="modal fade" id="sku52678" tabindex="-1" aria-hidden="true">
          <div class="modal-dialog modal-dialog-centered modal-lg">

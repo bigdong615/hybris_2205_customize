@@ -186,6 +186,18 @@ INSERT_UPDATE CronJob;code[unique=true];job(code);singleExecutable;sessionLangua
 INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
                      ;stockLevelStatusCronJob; 0 0 0 * * ?
 
+
+INSERT_UPDATE ServicelayerJob;code[unique=true];springId[unique=true]
+                             ;pullReadyToShipOrdersJob;pullReadyToShipOrdersJob
+
+INSERT_UPDATE PullReadyToShipOrdersCronJob; code[unique = true]; job(code); sessionLanguage(isoCode)[default = en];active;warehouse(code)
+                                          ;WalthamMorningPullCronJob;pullReadyToShipOrdersJob;;true;warehouse_ma
+                                          ;SanCarlosMorningPullCronJob;pullReadyToShipOrdersJob;;true;warehouse_ca
+
+INSERT_UPDATE Trigger;cronjob(code)[unique=true];cronExpression
+                     ;WalthamMorningPullCronJob; 0 0 6 * * ?
+                     ;SanCarlosMorningPullCronJob; 0 0 6 * * ?
+
 ##Package Box Sizes
 INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true];weight[unique=true];weightUnit[default=lb];dimensionUnit[default=in]
 ;12;	8;	6;	0.48;
@@ -221,6 +233,7 @@ INSERT_UPDATE BoxSizes;length[unique=true];width[unique=true];height[unique=true
 ;24;	12;	24;	2.25;
 ;24;	16;	12;	1.9 ;
 ;12;	12;	18;	1.27;
+
 
 # BL-794 Declaring Enums for Conditional Ratings
 INSERT_UPDATE ConditionRatingValueEnum ; code[unique=true] ; name[lang=en] 
@@ -287,7 +300,14 @@ INSERT_UPDATE BlInventoryLocationCategoryEnum ; code[unique=true]               
                                               ; VIP_CLEAN_PRIORITY_GEAR               ; VIP Clean Priority Gear                          
                                               ; VIP_WORKSTATION_TECH_ENG              ; VIP Workstation (Tech Eng.)                      
                                               
-# BL-798 Enum values for RepairReasonsEnum                                              
+
+INSERT_UPDATE OptionTypeEnum;code[unique=true];name[lang=en]
+                            ;COMPACT;COMPACT
+                            ;COMPACTINPUT;COMPACTINPUT
+                            ;EXPANDED;EXPANDED
+                            ;EXPANDEDINPUT;EXPANDEDINPUT
+
+# BL-798 Enum values for RepairReasonsEnum
 INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en]                
                                 ; NO_POWER                        ; No Power                     
                                 ; ERROR_CODE                      ; Error Code                   
@@ -309,5 +329,7 @@ INSERT_UPDATE RepairReasonsEnum ; code[unique=true]               ; name[lang=en
                                 ; FLASH_NOT_FIRING_OR_POPPING_UP  ; Flash not firing/popping up  
                                 ; PORT_OR_JACK_MALFUNCTION        ; Port/jack malfunction        
                                 ; STREAMING_ISSUES                ; Streaming issues             
-                                ; WIFI_ISSUES                     ; Wifi issues                  
-                                              
+                                ; WIFI_ISSUES                     ; Wifi issues      
+                                
+INSERT_UPDATE ProductTypeEnum ; code[unique=true]               ; name[lang=en]                
+                                ; GIFTCARD                        ; Gift Card                     

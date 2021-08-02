@@ -6,7 +6,11 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart"%>
 <%@ taglib prefix="product" tagdir="/WEB-INF/tags/responsive/product" %>
 <%@ taglib prefix="order" tagdir="/WEB-INF/tags/responsive/order" %>
+<%@ taglib prefix="account" tagdir="/WEB-INF/tags/addons/blassistedservicestorefront/order" %>
 <spring:htmlEscape defaultHtmlEscape="true" />
+
+<c:choose>
+<c:when test="${!orderData.hasGiftCart}">
  <div class="col-xl-10">
                     <div class="row">
                         <div id="accountContent" class="col-lg-7">
@@ -17,16 +21,31 @@
                                 <h5 class="mb-4"><spring:theme code="text.myaccount.order.rental.dates"/></h5>
                                 <div class="row">
                                     <div class="col-4">
+
                                         <p class="overline"><spring:theme code="text.myaccount.order.rental.starts"/></p>
-                                        <p class="lightteal mb-0"><b>${orderData.rentalStartDate}</b></p>
+                                          <c:if test="${orderData.isRentalActive eq true}">
+                                               <p class="lightteal mb-0">
+                                                        <b>${orderData.rentalStartDate}</b>
+                                               </p>
+                                           </c:if>
+                                           <c:if test="${orderData.isRentalActive eq false}">
+                                                  <p class="mb-0">
+                                                    <b>${orderData.rentalStartDate}</b>
+                                                  </p>
+                                           </c:if>
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.start.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
                                     </div>
                                     <div class="col-2 text-center">
                                         <img class="rental-arrow" src="${themeResourcePath}/assets/icon-arrow.svg">
                                     </div>
                                     <div class="col-4">
-                                        <p class="overline"><spring:theme code="text.myaccount.order.rental.ends"/></p>
+                                        <p class="overline"><spring:theme code="text.myaccount.order.rental.end"/></p>
+                                         <c:if test="${orderData.isRentalActive eq true}">
                                         <p class="lightteal mb-0"><b>${orderData.rentalEndDate}</b></p>
+                                        </c:if>
+                                        <c:if test="${orderData.isRentalActive eq false}">
+                                          <p class="mb-0"><b>${orderData.rentalEndDate}</b></p>
+                                        </c:if>
                                         <p class="body14"><spring:theme code="text.myaccount.order.date.end.delivery" arguments="${orderData.deliveryMode.carrier}"/></p>
                                     </div>
                                 </div>
@@ -94,12 +113,18 @@
                                 </h5>
                                <c:forEach items="${orderData.entries}" var="cartEntry" >
                                		 <div class="row mb-4">
+                               		 <c:url var="productUrl" value="/rent/product/${cartEntry.product.code}"/>
+                                              <c:if test="${!orderData.isRentalCart}">
+                                                <c:url var="productUrl" value="/buy/product/${cartEntry.product.code}"/>
+                                              </c:if>
+
                                				<div class="col-md-3 text-center">
-                               								<product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/>
+                               									<a href="${productUrl}"> <product:productPrimaryImage product="${cartEntry.product}" format="thumbnail"/> </a>
                                				</div>
                                					<div class="col-md-9 mt-3">
                                							<p class="gray80 body14">
-                               							 <b class="gray100">${cartEntry.product.name}</b>
+                               							 <b class="gray100">
+                               							<a href="${productUrl}" style="text-decoration: none"> ${cartEntry.product.name}</b></a>
                                							 <spring:theme code="text.myaccount.order.your.rental.qty"/> ${cartEntry.quantity}<br>
                                							  <c:if test="${orderData.isRentalCart}">
                                		        <c:choose>
@@ -172,12 +197,53 @@
                             						</div>
 
                             <div class="reviewCart">
-                             <c:if test="${not empty orderData.paymentInfo}">
+                            <c:choose>
+                             <c:when test="${not empty orderData.paymentInfo}">
                                 <h5 class="mb-4"><spring:theme code="text.myaccount.order.payment.title"/></h5>
                                 <div class="row mb-4">
-                          <order:accountPaymentDetails orderData="${orderData}" paymentInfo="${orderData.paymentInfo}"/>
+                               <order:accountPaymentDetails orderData="${orderData}" paymentInfo="${orderData.paymentInfo}"/>
                                 </div>
-                               </c:if>
+                               </c:when>
+                               <c:otherwise>
+                               <div class="row">
+                                   	<div class="col-2 text-center">
+                                   		<img
+                                   			src="${request.contextPath}/_ui/responsive/theme-bltheme/assets/payment-po.png"
+                                   			style="width: 50px;">
+                                   	</div>
+                                   	<div class="col-10 col-md-5">
+                                   		<b class="body14 gray100"><spring:theme code="text.review.page.payment.po" /></b>
+                                   		<div class="row">
+                                   			<div class="col-6">
+                                   				<p class="body14">
+                                   					<spring:theme code="text.review.page.payment.amount" />
+                                   				</p>
+                                   			</div>
+                                   			<div class="col-6">
+                                   				<p class="body14 gray80">
+                                   					<format:price priceData="${orderData.totalPriceWithTax}" />
+                                   				</p>
+                                   			</div>
+                                   		</div>
+                                   	</div>
+                                   	<div class="col-12 col-md-5">
+                                   	  <div class="po-order-notes">
+                                   		  <p class="gray80 body14">
+                                   			  <b class="gray100"><spring:theme code="text.order.confirmation.print.page.po.notes"/></b>
+                                   			  <c:choose>
+                                   				  <c:when test="${orderData.poNotes == ''}">
+                                                <spring:theme code="text.review.page.payment.notes.na"/>
+                                   				  </c:when>
+                                   				  <c:otherwise>
+                                               ${orderData.poNotes}
+                                   				  </c:otherwise>
+                                   			  </c:choose>
+                                   		  </p>
+                                   	  </div>
+                                   	</div>
+                                   </div>
+                                  </c:otherwise>
+                                </c:choose>
                             </div>
                              <c:if test="${not empty orderData.giftCardData}">
                               <order:accountGiftCardDetails orderData="${orderData}"/>
@@ -229,11 +295,18 @@
                                         </tr>
                                         </c:if>
                                         <tr>
-                                            <td class="gray80"><spring:theme code="text.myaccount.order.shipping"/></td>
+                                            <td class="gray80"><spring:theme code="text.myaccount.order.shipping.text"/></td>
                                             <td class="text-end"><format:price priceData="${orderData.deliveryCost}"/></td>
                                         </tr>
                                         <tr>
-                                            <td class="gray80"><spring:theme code="text.myaccount.order.tax"/></td>
+                                            <td class="gray80">
+                                            <c:if test="${orderData.isRentalCart}">
+                                            <spring:theme code="text.myaccount.order.tax.text"/>
+                                            </c:if>
+                                            <c:if test="${orderData.isRentalCart eq false}">
+                                            <spring:theme code="text.myaccount.order.tax.used"/>
+                                            </c:if>
+                                            </td>
                                             <td class="text-end"><format:blPrice priceData="${orderData.taxAvalaraCalculated}" /></td>
                                         </tr>
                                          <c:if test="${orderData.totalDiscounts.value > 0}">
@@ -290,7 +363,7 @@
                 <div class="row mb-4">
                     <div class="text-center col-md-3 col-lg-2">
                         <img src="${themeResourcePath}/assets/gear-guard.png">
-                    </div>gray100
+                    </div>
                     <div class="col-md-9 col-lg-10">
                         <p><b><spring:theme code="text.damage.Waiver.model.option.gear"/></b></p>
                         <p class="body14"><spring:theme code="text.damage.Waiver.model.option.gear.description"/></p>
@@ -336,3 +409,8 @@
       </div>
 </div>
 
+</c:when>
+<c:otherwise>
+ <order:accountGiftCardPurchaseOrderHistoryPage />
+</c:otherwise>
+</c:choose>

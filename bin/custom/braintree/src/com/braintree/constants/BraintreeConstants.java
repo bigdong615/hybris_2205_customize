@@ -106,6 +106,8 @@ public final class BraintreeConstants extends GeneratedBraintreeConstants
 	public static final String AUTH_AMOUNT_TO_VERIFY_CARD = "braintree.authAmount.verify.card";
 	public static final String IS_ENABLED = "isEnabled";
 
+	public static final String EMPTY_STRING = "";
+
 	private BraintreeConstants()
 	{
 		//empty to avoid instantiating this constant class
