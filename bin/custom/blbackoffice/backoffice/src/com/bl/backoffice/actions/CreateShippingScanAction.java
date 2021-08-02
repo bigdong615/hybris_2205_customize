@@ -1,46 +1,71 @@
-/**
- * @author Keyur
- */
 package com.bl.backoffice.actions;
 
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.bl.integration.constants.BlintegrationConstants;
+import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
-
+/**
+ * @author Aditi
+ */
 public class CreateShippingScanAction extends AbstractComponentWidgetAdapterAware
 		implements CockpitAction<ConsignmentModel, ConsignmentModel>
 {
 	protected static final String SOCKET_OUT_CONTEXT = "blShippingScanContext";
 
+	@Resource(name = "blShipmentCreationService")
+	private DefaultBLShipmentCreationService blShipmentCreationService;
+
+	/**
+	 * Can perform boolean.
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the boolean
+	 */
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consigment = actionContext.getData();
 
 		return (consigment != null && CollectionUtils.isNotEmpty(consigment.getConsignmentEntries())
-				&& checkOrderStatus(consigment));
+				&& getBlShipmentCreationService().checkOrderStatus(consigment));
 	}
 
+	/**
+	 * Perform action result.
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the action result
+	 */
 	public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
-		return new ActionResult("success");
+		return new ActionResult(BlintegrationConstants.SUCCESS);
 	}
 
-	public boolean checkOrderStatus(final ConsignmentModel consignment)
+	/**
+	 * @return the blShipmentCreationService
+	 */
+	public DefaultBLShipmentCreationService getBlShipmentCreationService()
 	{
-		final OrderStatus status = consignment.getOrder().getStatus();
-		if (status.equals(OrderStatus.CANCELLED) || status.equals(OrderStatus.CHECKED_INVALID)
-				|| status.equals(OrderStatus.PAYMENT_NOT_AUTHORIZED))
-		{
-			return false;
-		}
-		return true;
+		return blShipmentCreationService;
+	}
+
+	/**
+	 * @param blShipmentCreationService
+	 *           the blShipmentCreationService to set
+	 */
+	public void setBlShipmentCreationService(final DefaultBLShipmentCreationService blShipmentCreationService)
+	{
+		this.blShipmentCreationService = blShipmentCreationService;
 	}
 }

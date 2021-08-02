@@ -1,5 +1,7 @@
 package com.bl.integration.services.impl;
 
+import de.hybris.platform.core.enums.OrderStatus;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.util.Config;
 
 import java.io.IOException;
@@ -153,6 +155,25 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			BlLogger.logMessage(LOG, Level.INFO, createFedExShipmentResponse.toString());
 		}
 		return null;
+	}
+
+	/**
+	 * @param consignment
+	 * @return
+	 */
+	@Override
+	public boolean checkOrderStatus(final ConsignmentModel consignment)
+	{
+		if (consignment.getOrder() != null)
+		{
+			final OrderStatus status = consignment.getOrder().getStatus();
+			if (status.equals(OrderStatus.CANCELLED) || status.equals(OrderStatus.CHECKED_INVALID)
+					|| status.equals(OrderStatus.PAYMENT_NOT_AUTHORIZED) || status.equals(OrderStatus.PAYMENT_DECLINED))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

@@ -14,6 +14,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.bl.integration.facades.BlCreateShipmentFacade;
+import com.bl.integration.services.impl.DefaultBLShipmentCreationService;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
@@ -29,16 +30,34 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 
 	@Resource(name = "blCreateShipmentFacade")
 	private BlCreateShipmentFacade blCreateShipmentFacade;
+	
+	@Resource(name = "blShipmentCreationService")
+	private DefaultBLShipmentCreationService blShipmentCreationService;
 
 	protected static final String SOCKET_OUT_CONTEXT = "blCreatePackageShipmentContext";
 
+	/**
+	 * Can perform boolean.
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the boolean
+	 */
+	
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consignment = actionContext.getData();
 
-		return (consignment != null && checkOrderStatus(consignment));
+		return (consignment != null && getBlShipmentCreationService().checkOrderStatus(consignment));
 	}
 
+	/**
+	 * Perform action result.
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the action result
+	 */
 	public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consignment = actionContext.getData();
@@ -54,15 +73,20 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 		return new ActionResult("success");
 	}
 
-	public boolean checkOrderStatus(final ConsignmentModel consignment)
+	/**
+	 * @return the blShipmentCreationService
+	 */
+	public DefaultBLShipmentCreationService getBlShipmentCreationService()
 	{
-		final OrderStatus status = consignment.getOrder().getStatus();
-		if (status.equals(OrderStatus.CANCELLED) || status.equals(OrderStatus.CHECKED_INVALID)
-				|| status.equals(OrderStatus.PAYMENT_NOT_AUTHORIZED) || status.equals(OrderStatus.PAYMENT_DECLINED))
-		{
-			return false;
-		}
-		return true;
+		return blShipmentCreationService;
+	}
+
+	/**
+	 * @param blShipmentCreationService the blShipmentCreationService to set
+	 */
+	public void setBlShipmentCreationService(DefaultBLShipmentCreationService blShipmentCreationService)
+	{
+		this.blShipmentCreationService = blShipmentCreationService;
 	}
 
 }

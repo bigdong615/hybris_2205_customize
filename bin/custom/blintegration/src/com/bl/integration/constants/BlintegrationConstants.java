@@ -62,6 +62,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String SIGNATURE_SERVICE_CODE = "SERVICE_DEFAULT";
 	public static final String CATEGORY_CODE = "CONSUMER_GOODS";
 	public static final String RECIPIENT_TYPE = "RECIPIENT";
+	public static final String SUCCESS = "success";
 
 	private BlintegrationConstants()
 	{

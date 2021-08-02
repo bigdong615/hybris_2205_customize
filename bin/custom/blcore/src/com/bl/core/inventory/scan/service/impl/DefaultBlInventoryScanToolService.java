@@ -156,7 +156,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
         final List<String> subList = barcodes.subList(0, barcodes.size() - 1);
         final Collection<BlSerialProductModel> blSerialProducts = getBlInventoryScanToolDao().getSerialProductsByBarcode(subList);
         subList.forEach(barcode -> setInventoryLocationOnSerial(failedBarcodeList, blSerialProducts, barcode));
-        BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST + failedBarcodeList);
+        BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST, failedBarcodeList);
         return failedBarcodeList;
     }
 
@@ -385,7 +385,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			failedBarcodeList.addAll(barcodes);
 		}
-		BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST + failedBarcodeList);
+		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.FAILED_BARCODE_LIST, failedBarcodeList);
 		return failedBarcodeList;
 	}
 	
@@ -402,11 +402,13 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<BlProductModel> serialProductsOnPackage = getPackagingInfoModel().getSerialProducts();
 		if (CollectionUtils.isEqualCollection(scannedSerialProduct, serialProductsOnPackage))
 		{
+			BlLogger.logMessage(LOG, Level.DEBUG, "Iterate over serial produt on package");
 			serialProductsOnPackage.forEach(serial -> {
 				if (serial instanceof BlSerialProductModel)
 				{
 					((BlSerialProductModel) serial).setOcLocation(getPackagingInfoModel().getTrackingNumber());
 					modelService.save(serial);
+					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Oc location updated to Tracking number", getPackagingInfoModel().getTrackingNumber());
 				}
 			});
 			return Collections.emptyList();
@@ -573,7 +575,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	private void updateSubpartMap(final List<BlProductModel> serialProductsList, final BlSerialProductModel subpartProduct,
 			final Map<String, ItemStatusEnum> itemsMap)
 	{
-		String subPartName = subpartProduct.getBlProduct().getName();
+		final String subPartName = subpartProduct.getBlProduct().getName();
 		BlProductModel blProduct = subpartProduct.getBlProduct();
 		final String updatedName = subPartName.concat(BlInventoryScanLoggingConstants.HYPHEN);
 
@@ -585,6 +587,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 		else
 		{
+			BlLogger.logMessage(LOG, Level.DEBUG, "validate serial name against Map key ");
 			getUpdatedName(itemsMap, updatedName, subpartProduct);
 		}
 		if (serialProductsList.contains(blProduct))
@@ -594,9 +597,16 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		}
 	}
 
+	/**
+	 * @param itemsMap
+	 * @param updatedName
+	 * @param subpartProduct
+	 */
 	private void getUpdatedName(final Map<String, ItemStatusEnum> itemsMap, final String updatedName,
 			final BlSerialProductModel subpartProduct)
 	{
+		BlLogger.logMessage(LOG, Level.DEBUG, updatedName);
+		
 		final List<String> keyList = itemsMap.keySet().stream()
 				.filter(key -> key.contains(updatedName) && itemsMap.get(key).equals(ItemStatusEnum.NOT_INCLUDED))
 				.collect(Collectors.toList());
@@ -604,6 +614,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		{
 			itemsMap.remove(keyList.get(0));
 			itemsMap.put(subpartProduct.getBlProduct().getCode(), ItemStatusEnum.INCLUDED);
+			BlLogger.logMessage(LOG, Level.DEBUG, "Map updated successfully for sub part products");
 		}
 	}
 
@@ -623,6 +634,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			itemsMap.replace(serialProduct.getCode(), ItemStatusEnum.INCLUDED);
 			serialProduct.setHardAssigned(true);
 			modelService.save(serialProduct);
+			BlLogger.logMessage(LOG, Level.DEBUG, "Map updated successfully for serial products");
 		}
 	}
 

@@ -16,6 +16,13 @@ public class UpdateShippingAction extends AbstractComponentWidgetAdapterAware im
 {
 	protected static final String SOCKET_OUT_CONTEXT = "blCustomShippingContext";
 
+	/**
+	 * Can perform boolean.
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the boolean
+	 */
 	public boolean canPerform(final ActionContext<OrderModel> actionContext)
 	{
 		final OrderModel order = actionContext.getData();
@@ -23,6 +30,13 @@ public class UpdateShippingAction extends AbstractComponentWidgetAdapterAware im
 		return (order != null);
 	}
 
+	/**
+	 * Perform action result.
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the action result
+	 */
 	public ActionResult<OrderModel> perform(final ActionContext<OrderModel> actionContext)
 	{
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
