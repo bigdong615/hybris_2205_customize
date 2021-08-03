@@ -15,7 +15,6 @@ import com.braintree.controllers.form.BraintreePlaceOrderForm;
 import com.braintree.customfield.service.CustomFieldsService;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.model.BrainTreePaymentInfoModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.core.model.order.CartModel;
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import de.hybris.platform.acceleratorservices.enums.CheckoutPciOptionEnum;
@@ -38,7 +37,7 @@ import de.hybris.platform.payment.AdapterException;
 import com.bl.core.services.cart.BlCartService;
 import java.math.BigDecimal;
 import java.util.*;
-import de.hybris.platform.core.model.user.CustomerModel;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -249,9 +248,9 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
     }
     else{
 		final BrainTreePaymentInfoModel brainTreePaymentInfo =null;
-		/*createAuthorizationTransactionOfOrderForGiftCardPurchase1(cartModel);*/
-		boolean b1= blCheckoutFacade.createAuthorizationTransactionOfOrderForGiftCardPurchase(cartModel, BigDecimal.valueOf(cartModel.getTotalPrice()), true, brainTreePaymentInfo);
-	}
+    boolean isSuccess= blCheckoutFacade.createAuthorizationTransactionOfOrderForGiftCardPurchase(cartModel, BigDecimal.valueOf(cartModel.getTotalPrice()), submitForSettlement, brainTreePaymentInfo);
+    BlLogger.logMessage(LOG, Level.DEBUG,String.valueOf(isSuccess));
+    }
 		final OrderData orderData;
 		try
 		{

@@ -19,8 +19,10 @@
            
              <div class="modal-body">
                 <div class="row">
-                  <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b></div>
+                <c:set value="/blstorefront/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg" var="altTextHtml1" />
+                <div class="col-md-2 text-center">
+			   <img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}" title="${altText}" title="${altText}" /></div>
+               <div class="col-md-7 mt-4"><b>${product.name}</b></div>
                   
                   <div class="col-md-3 mt-4 text-md-end">
                       <b>${entry.basePrice.formattedValue}</b>
