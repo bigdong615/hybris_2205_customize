@@ -16,6 +16,10 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TealiumCustomData.class);
+	private static final String SHIPPINGPAGE = "shippingpage";
+	private static final String PAYMENTPAGE = "paymentpage";
+	private static final String SHIPPING_PAGE = "shippingPage";
+	private static final String PAYMENT_PAGE = "paymentPage";
 	private static Map<String, HybrisCustomPageTypeCustomData> customPagesMap;
 
 	private static final ArrayList<String> productPageFields = new ArrayList<>(
@@ -25,13 +29,13 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 	private static final  ArrayList<String> cartPageFields = new ArrayList<>(
 			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy",
 					"productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays")); // NOSONAR
 
 
   private static final  ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
       Arrays.asList("userEmail", "userFirstName", "userLastName",
 					"cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","orderID","productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays","order_tax","isVideo"));
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays","order_tax","isVideo")); // NOSONAR
 
 
 	private static final ArrayList<String> checkoutShippingPage = new ArrayList<>(
@@ -43,7 +47,7 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
 
 	private static final ArrayList<String> allPageFields = new ArrayList<>(
-			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name"
+			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name","tealium_account","utag_main_mycookie"
 			));
 
 	private static final ArrayList<String> arrayValues = new ArrayList<>(Arrays.asList(
@@ -128,7 +132,7 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 		{
 			customPagesMap = new HashMap<>();
 		}
-		customPagesMap.put("shippingpage", new HybrisCustomPageTypeCustomData(){
+		customPagesMap.put(SHIPPINGPAGE, new HybrisCustomPageTypeCustomData(){
 
 			@Override
 			public UDO getCustomDataUdo(UDO udo) {
@@ -139,7 +143,7 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 			}
 		});
 
-		customPagesMap.put("paymentpage", new HybrisCustomPageTypeCustomData(){
+		customPagesMap.put(PAYMENTPAGE, new HybrisCustomPageTypeCustomData(){
 			@Override
 			public UDO getCustomDataUdo(UDO udo) {
 					defaultDataSources(udo);
@@ -157,10 +161,10 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 		this.context = tealiumContext;
 		String pageType = context.getAttributes().get("pagetype");
 		fillUdo(udo, context, allPageFields);
-		if("shippingPage".equals(pageType)){
+		if(SHIPPING_PAGE.equals(pageType)){
 			fillUdo(udo, context, checkoutShippingPage);
 		}
-		if("paymentPage".equals(pageType)){
+		if(PAYMENT_PAGE.equals(pageType)){
 			fillUdo(udo, context, checkoutBillingPage);
 		}
 		return udo;
