@@ -6,27 +6,6 @@
 <%@ taglib prefix="cart" tagdir="/WEB-INF/tags/responsive/cart" %>
 <c:url value="/cart" var="viewCartUrl"/>
 {
-"addToCartLayer":"<spring:escapeBody javaScriptEscape="true" htmlEscape="false">
-	<spring:htmlEscape defaultHtmlEscape="true">
-	<spring:theme code="text.addToCart" var="addToCartText"/>
-	<c:url value="/cart" var="cartUrl"/>
-	<ycommerce:testId code="addToCartPopup">
-           <div class="modal-content">
-           <div class="modal-header">
-              <h5 class="modal-title"><spring:theme code="text.addtocart.popup"/> <i class="cart-check"></i></h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-           
-             <div class="modal-body">
-                <div class="row">
-                  <div class="col-md-2 text-center"><img src="https://clients.veneerstudio.com/borrowlenses/lp/cameras/Sony-a7R-IV.jpg"></div>
-                  <div class="col-md-7 mt-4"><b>${product.name}</b></div>
-                  </div>
-           </div>
-           </div>
-  </ycommerce:testId>
-	</spring:htmlEscape>
-</spring:escapeBody>",
 "addToCartGiftCardLayer":"<spring:escapeBody javaScriptEscape="true" htmlEscape="false">
 	<spring:htmlEscape defaultHtmlEscape="true">
 	<spring:theme code="text.addToCart" var="addToCartText"/>

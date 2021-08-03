@@ -8,6 +8,7 @@ import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
 import de.hybris.platform.commerceservices.event.AbstractCommerceUserEvent;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.jalo.JaloSession;
 import de.hybris.platform.servicelayer.event.EventService;
 import de.hybris.platform.servicelayer.i18n.CommonI18NService;
@@ -20,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.zul.Messagebox;
-
+import de.hybris.platform.core.enums.OrderStatus;
 /**
  * This class creates gift card movement and triggers email event.
  * @author Neeraj Singh
@@ -55,6 +56,15 @@ public class BlGiftCardEmailAndMovementAction implements CockpitAction<GiftCardM
       ActionResult<String> actionResultForEmail = getStringActionResultForEmail(actionContext,
           giftCardModel);
       if (actionResultForEmail != null) {
+      	final OrderModel order =(OrderModel) giftCardModel.getOrder().get(0);
+      	// After send gift card purchase email to customer change order status
+      	if(order.isGiftCardOrder()){
+      	 order.setStatus(OrderStatus.COMPLETED);
+          modelService.save(order);
+          modelService.refresh(order);
+
+      	}
+      	
         return actionResultForEmail;
       }
     }
