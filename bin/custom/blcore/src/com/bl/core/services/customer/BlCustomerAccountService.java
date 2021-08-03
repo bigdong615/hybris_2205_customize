@@ -1,8 +1,6 @@
 package com.bl.core.services.customer;
 
 import de.hybris.platform.commerceservices.customer.CustomerAccountService;
-import de.hybris.platform.commerceservices.customer.DuplicateUidException;
-import de.hybris.platform.commerceservices.customer.PasswordMismatchException;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 
@@ -15,5 +13,4 @@ public interface BlCustomerAccountService extends CustomerAccountService {
      * This method is responsible for setting default billing addresses with current customers.
      */
     public void setDefaultBillingAddress(final CustomerModel customerModel, final AddressModel addressModel);
-
 }

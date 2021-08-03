@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import de.hybris.platform.commercefacades.customer.impl.DefaultCustomerFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.user.data.RegisterData;
-import de.hybris.platform.commercefacades.user.exceptions.PasswordMismatchException;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
@@ -130,5 +129,4 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
  		}
  		return null;
  	}
-
 }

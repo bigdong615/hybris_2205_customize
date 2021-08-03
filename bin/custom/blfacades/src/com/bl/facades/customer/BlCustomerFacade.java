@@ -2,9 +2,6 @@ package com.bl.facades.customer;
 
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
-
-import de.hybris.platform.commercefacades.user.exceptions.PasswordMismatchException;
-import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import java.util.List;
 
 /**
