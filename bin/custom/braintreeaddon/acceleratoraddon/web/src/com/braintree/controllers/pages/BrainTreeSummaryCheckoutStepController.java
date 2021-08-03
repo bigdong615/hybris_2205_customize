@@ -40,6 +40,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -273,7 +274,11 @@ public class BrainTreeSummaryCheckoutStepController extends AbstractCheckoutStep
 	{
 		final String securityCode = placeOrderForm.getSecurityCode();
 		boolean invalid = false;
-
+		if (BooleanUtils.isTrue(getCheckoutFlowFacade().getCheckoutCart().getHasGiftCart()))
+		{
+			return invalid;
+		}
+		
 		if (getCheckoutFlowFacade().hasNoDeliveryAddress())
 		{
 			GlobalMessages.addErrorMessage(model, "checkout.deliveryAddress.notSelected");

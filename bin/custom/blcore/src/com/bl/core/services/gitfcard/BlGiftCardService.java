@@ -66,4 +66,9 @@ public interface BlGiftCardService {
      * @return if gift card model found then returns GiftCardModel else null.
      */
     GiftCardModel getGiftCard(final String giftCardCode);
+    /**
+     * Generate code for gift card purchase.
+     * @return String value.
+     */
+    String getUniqueGiftCodeGenertaor();
 }

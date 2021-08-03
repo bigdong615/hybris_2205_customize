@@ -968,6 +968,32 @@
 	<bean id="defaultBlRuleEngineCalculationService" class="com.bl.core.services.calculation.impl.DefaultBlRuleEngineCalculationService" parent="defaultRuleEngineCalculationService">
 	</bean>
 
+	<!-- BL-766 Morning pull orders job start-->
+	<bean id="pullReadyToShipOrdersJob" class="com.bl.blbackoffice.job.PullReadyToShipOrdersJob" parent="abstractJobPerformable">
+		<property name="blConsignmentDao" ref="blConsignmentDao"/>
+		<property name="blReadyToShipOrderItemService" ref="blReadyToShipOrderItemService"/>
+	</bean>
+
+	<alias name="defaultBlConsignmentDao" alias="blConsignmentDao"/>
+	<bean id="defaultBlConsignmentDao" class="com.bl.core.dao.warehouse.impl.DefaultBlConsignmentDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
+	<alias name="defaultBlReadyToShipOrderItemDao" alias="blReadyToShipOrderItemDao"/>
+	<bean id="defaultBlReadyToShipOrderItemDao" class="com.bl.core.dao.warehouse.impl.DefaultBlReadyToShipOrderItemDao">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+
+	<alias name="defaultBlReadyToShipOrderItemService" alias="blReadyToShipOrderItemService"/>
+	<bean id="defaultBlReadyToShipOrderItemService" class="com.bl.core.inventory.order.service.impl.DefaultBlReadyToShipOrderItemService">
+		<property name="blReadyToShipOrderItemDao" ref="blReadyToShipOrderItemDao"/>
+		<property name="modelService" ref="modelService"/>
+	</bean>
+
+	<!-- BL-766 Morning pull orders job end -->
+
 	<!-- [BL-663]  SOLR Field value Resolver for OnSale solr attribute  and min promotion price-->
 	<bean id="blOnSaleProductTagValueResolver" class="com.bl.core.resolvers.BlOnSaleProductTagValueResolver" parent="abstractValueResolver"/>
 	<bean id="blUsedGearPromotionPriceValueResolver" class="com.bl.core.resolvers.BlUsedGearPromotionPriceValueResolver" parent="abstractValueResolver">
@@ -1094,6 +1120,11 @@
 	<alias name="defaultBlOrderNoteService" alias="blOrderNoteService"/>
 	<bean id="defaultBlOrderNoteService" class="com.bl.core.services.order.note.impl.DefaultBlOrderNoteService">
 		<property name="modelService" ref="modelService"/>
+	</bean>
+	
+	<!--BL-819 MarkDirtyPriority -->
+	<bean id="blMarkDirtyPriorityJob" class="com.bl.core.job.BlMarkDirtyPrioritySerialsJob" parent="abstractJobPerformable">
+		<property name="blInventoryScanToolService" ref="blInventoryScanToolService"/>
 	</bean>
 
 </beans>

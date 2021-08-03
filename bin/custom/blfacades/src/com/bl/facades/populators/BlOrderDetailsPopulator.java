@@ -6,6 +6,7 @@ import com.bl.core.model.NotesModel;
 import com.bl.core.utils.BlDateTimeUtils;
 import com.bl.facades.constants.BlFacadesConstants;
 import com.bl.facades.product.data.ExtendOrderData;
+
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.product.PriceDataFactory;
 import de.hybris.platform.commercefacades.product.data.PriceData;
@@ -39,11 +40,18 @@ public class BlOrderDetailsPopulator <SOURCE extends OrderModel, TARGET extends 
    */
   @Override
   public void populate(final OrderModel source, final OrderData target) throws ConversionException {
-
     target.setIsRentalCart(source.getIsRentalCart());
     populateDatesForOrderDetails(source , target);
     populatePriceDetails(source , target);
-    populateOrderDetailsForRentalOrder(source , target);
+    if(!source.isGiftCardOrder()){	 
+        populateOrderDetailsForRentalOrder(source , target);
+    }
+    //Check gift card purchase order
+    if(source.isGiftCardOrder()){
+   	 target.setIsRentalCart(Boolean.FALSE);
+   	 target.setHasGiftCart(Boolean.TRUE);
+   	
+    }
     populateOrderNotes(source , target);
     if(null == target.getDeliveryAddress() && source.getDeliveryMode() instanceof BlPickUpZoneDeliveryModeModel) {
       final AddressData addressData = new AddressData();

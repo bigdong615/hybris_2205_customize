@@ -14,6 +14,17 @@
 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
                     <h1><spring:theme code="text.account.bookmarkpage"/></h1>
+                    <c:choose>
+                      	<c:when test="${empty searchPageData.results}">
+                          <div id="accountContent" class="col-lg-8 offset-lg-1">
+                                              <hr>
+                                              <div class="notification no-orders">
+                                                  <p><strong><spring:theme code="text.account.bookmarkpage.messageone"/></strong></p>
+                                                  <p><spring:theme code="text.account.bookmarkpage.messagetwo"/></p>
+                                              </div>
+                           </div>
+                        </c:when>
+           	  <c:otherwise>
                  <c:forEach items="${searchPageData.results}" var="wishlistDatas" varStatus="loopindex">
                     <div class="order-block">
                         <div class="row">
@@ -59,5 +70,7 @@
                     </div>
                  </c:forEach>
                      <nav:pagination searchPageData="${searchPageData}" searchUrl="${searchUrl}"/>
+     </c:otherwise>
+    </c:choose>
  </div>
 

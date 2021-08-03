@@ -9,6 +9,8 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.interceptor.InterceptorContext;
 import de.hybris.platform.servicelayer.interceptor.InterceptorException;
 import de.hybris.platform.servicelayer.interceptor.PrepareInterceptor;
+import de.hybris.platform.servicelayer.model.ItemModelContextImpl;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,17 +32,19 @@ public class BlOrderPrepareInterceptor implements PrepareInterceptor<AbstractOrd
   public void onPrepare(final AbstractOrderModel abstractOrderModel,
       final InterceptorContext interceptorContext) throws InterceptorException {
 
-    final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
+     final Set<ConsignmentModel> consignmentModels = abstractOrderModel.getConsignments();
     if (interceptorContext.isModified(abstractOrderModel, AbstractOrderModel.ORDERNOTES)) {
-      if (CollectionUtils.isNotEmpty(consignmentModels)) {
+		if (CollectionUtils.isNotEmpty(consignmentModels)) {
         //set order notes
         setConsignmentsInNotes(abstractOrderModel, consignmentModels, interceptorContext);
       }
       //Setting consolidated Notes on order which can be used to display order notes in backoffice view
       getBlOrderNoteService().setConsolidatedNoteOnOrder(abstractOrderModel);
     }
+       
   }
 
+  
   /**
    * Update consignment in order notes.
    *

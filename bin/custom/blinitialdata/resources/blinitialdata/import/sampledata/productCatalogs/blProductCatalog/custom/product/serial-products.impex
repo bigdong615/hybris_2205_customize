@@ -16,28 +16,49 @@ $approved=approvalstatus(code)[default='approved']
 
 
 
-INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code);manufacturerName[default='Other'];unit(code)[default='pieces']
-                             ;;52708;5122708 ;5122708 ;Nikon_80-400mm_f4.5-5.6D_ED_VR;;ACTIVE;40002011;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES
-                             ;;59663;6051076 ;6051076 ;Canon_24-105mm_f4_IS;;SOLD;40003843;true;;1090;Norman's;418.25;335999;;2;BARCODE;0344B002;4960000000000;LENSES
-                             ;;59667;6128205 ;6128205 ;Canon_24-105mm_f4_IS;;ACTIVE;50003850;true;;1090;Norman's;418.25;335812;;2;BARCODE;0344B002;4960000000000;LENSES
-                             ;;57196;CPL58.016;CPL58.016;58mm_CP_Filter;;ACTIVE;30116313;false;;19.95;NA;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS
-                             ;;115852;CPL58.022;CPL58.022;58mm_CP_Filter;;ACTIVE;50005772;false;;13.24;B&H;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS
-                             ;;115853;CPL58.023;CPL58.023;58mm_CP_Filter;;ACTIVE;50005771;false;;13.24;B&H;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS
-                             ;;86338;Y7ADF1SFS00078;Y7ADF1SFS00078;sony-battery;;ACTIVE;30172014;false;;49.49;NA;0;;;14;BARCODE;NP-FM500H;4905524439373;BATTERIES
-                             ;;86339;Y7ADG1SFS00249;Y7ADG1SFS00249;sony-battery;;ACTIVE;30172170;false;;49.49;NA;0;;;14;BARCODE;NP-FM500H;4905524439373;BATTERIES
-                             ;;86340;Y7ADG1SFS00197;Y7ADG1SFS00197;sony-battery;;ACTIVE;30172002;false;;49.49;NA;0;;;14;BARCODE;NP-FM500H;4905524439373;BATTERIES
-                             ;;20856;3002962 ;3002962 ;Nikon_d800;;REPAIR;30171033;false;Josh Weaver;2999;NA;0;;;1;BARCODE;NA;NA;CAMERAS
-                             ;;20857;3003088 ;3003088 ;Nikon_d800;;ACTIVE;30167510;false;Josh Weaver;2999;NA;0;;;1;BARCODE;NA;NA;CAMERAS
-                             ;;20859;3003086 ;3003086 ;Nikon_d800;;ACTIVE;30117759;false;Josh Weaver;2999;NA;0;;;1;BARCODE;NA;NA;CAMERAS
-                             ;;39507;152000000000 ;152000000000 ;Canon_5DIII;;REPAIR;40002234;true;;2900;Norman's;0;337040;;2;BARCODE;CAE5D3;NA;CAMERAS
-                             ;;41124;132000000001 ;132000000001 ;Canon_5DIII;;SOLD;40001037;true;;2900;Norman's;986.95;337035;;2;BARCODE;CAE5D3;NA;CAMERAS
-                             ;;41775;132000000000 ;132000000000 ;Canon_5DIII;;ACTIVE;40001079;true;;2900;Norman's;986.95;337032;;2;BARCODE;CAE5D3;NA;CAMERAS
-                             ;;47633;5353841 ;5353841 ;Canon_50mm_f1.2_L;;ACTIVE;40004131;true;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES
-                             ;;52310;5579698 ;5579698 ;Canon_50mm_f1.2_L;;ACTIVE;30171018;true;;1619;B&H;97;336448;;2;BARCODE;1257B002;13803064551;LENSES
-                             ;;53230;5789775 ;5789775 ;Canon_50mm_f1.2_L;;ACTIVE;40004203;true;;1538;Norman's;97;336481;;2;BARCODE;1257B002;13803064551;LENSES
-                             ;;25674;198534 ;198534 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40006206;true;;1014;Canon;733.15;333811;;2;BARCODE;1257B002;13803064551;LENSES
-                             ;;26134;207730 ;207730 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003824;true;;982.3;Canon;756.55;333813;;2;BARCODE;1257B002;13803064551;LENSES
-                             ;;37374;220232 ;220232 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003736;true;;955;Norman's;756.55;333793;;2;BARCODE;1257B002;13803064551;LENSES
+INSERT_UPDATE BlSerialProduct;$catalogVersion;productId[unique=true];code[unique=true];displayName;$blProduct;$approved;serialStatus(code);barcode;forSale;ownedBy;procurementCost;procurementSource;forSaleBasePrice;assetNumber;assetStatus;manufacturerAID;numberSystem(code);mpn;upc;productType(code);cosmeticRating(code) ; functionalRating(code);manufacturerName[default='Other'];unit(code)[default='pieces']
+                             ;;52708;5122708 ;5122708 ;Nikon_80-400mm_f4.5-5.6D_ED_VR;;ACTIVE;40002011;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES        ; 1    ; 5
+                             ;;57196;CPL58.016;CPL58.016;58mm_CP_Filter;;ACTIVE;30116313;false;;19.95;NA;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS      ; 2    ; 6
+                             ;;115852;CPL58.022;CPL58.022;58mm_CP_Filter;;ACTIVE;50005772;false;;13.24;B&H;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS    ; 3    ; 8
+                             ;;115853;CPL58.023;CPL58.023;58mm_CP_Filter;;ACTIVE;50005771;false;;13.24;B&H;0;;;2;BARCODE;58CP;49383035193;ACCESSORIESLESS_MEDIA_FILTERS_MONITORS    ; 4    ; 3
+                             ;;86338;Y7ADF1SFS00078;Y7ADF1SFS00078;sony-battery;;ACTIVE;30172014;false;;49.49;NA;0;;;14;BARCODE;NP-FM500H;4905524439373;BATTERIES                   ; 5    ; 2
+                             ;;86339;Y7ADG1SFS00249;Y7ADG1SFS00249;sony-battery;;ACTIVE;30172170;false;;49.49;NA;0;;;14;BARCODE;NP-FM500H;4905524439373;BATTERIES                   ; 6    ; 4
+                             ;;86340;Y7ADG1SFS00197;Y7ADG1SFS00197;sony-battery;;ACTIVE;30172002;false;;49.49;NA;0;;;14;BARCODE;NP-FM500H;4905524439373;BATTERIES                   ; 2    ; 6
+                             ;;20856;3002962 ;3002962 ;Nikon_d800;;REPAIR;30171033;false;Josh Weaver;2999;NA;0;;;1;BARCODE;NA;NA;CAMERAS                                            ; 3    ; 1
+                             ;;20857;3003088 ;3003088 ;Nikon_d800;;ACTIVE;30167510;false;Josh Weaver;2999;NA;0;;;1;BARCODE;NA;NA;CAMERAS                                            ; 6    ; 2
+                             ;;20859;3003086 ;3003086 ;Nikon_d800;;ACTIVE;30117759;false;Josh Weaver;2999;NA;0;;;1;BARCODE;NA;NA;CAMERAS                                            ; 7    ; 9
+                             ;;39507;152000000000 ;152000000000 ;Canon_5DIII;;REPAIR;40002234;true;;2900;Norman's;0;337040;;2;BARCODE;CAE5D3;NA;CAMERAS                             ; 9    ; 10
+                             ;;41124;132000000001 ;132000000001 ;Canon_5DIII;;SOLD;40001037;true;;2900;Norman's;986.95;337035;;2;BARCODE;CAE5D3;NA;CAMERAS                          ; 10   ; 3
+                             ;;41775;132000000000 ;132000000000 ;Canon_5DIII;;ACTIVE;40001079;true;;2900;Norman's;986.95;337032;;2;BARCODE;CAE5D3;NA;CAMERAS                        ; 10   ; 4
+                             ;;47633;5353841 ;5353841 ;Canon_50mm_f1.2_L;;ACTIVE;40004131;true;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                            ; 3    ; 6
+                             ;;52310;5579698 ;5579698 ;Canon_50mm_f1.2_L;;ACTIVE;30171018;true;;1619;B&H;97;336448;;2;BARCODE;1257B002;13803064551;LENSES                           ; 5    ; 3
+                             ;;53230;5789775 ;5789775 ;Canon_50mm_f1.2_L;;ACTIVE;40004203;true;;1538;Norman's;97;336481;;2;BARCODE;1257B002;13803064551;LENSES                      ; 2    ; 2
+                             ;;25674;198534 ;198534 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40006206;true;;1014;Canon;733.15;333811;;2;BARCODE;1257B002;13803064551;LENSES                ; 8    ; 8
+                             ;;26134;207730 ;207730 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003824;true;;982.3;Canon;756.55;333813;;2;BARCODE;1257B002;13803064551;LENSES               ; 4    ; 6
+                             ;;37374;220232 ;220232 ;Canon_EF_135mm_f2.0L_USM;;ACTIVE;40003736;true;;955;Norman's;756.55;333793;;2;BARCODE;1257B002;13803064551;LENSES              ; 7    ; 3
+#added to test allocation
+                             ;;52304;5122541 ;5122541 ;Canon_24-105mm_f4_IS;;ACTIVE;40002011;true;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES                ; 8    ; 1
+                             ;;52305;5122542 ;5122542 ;Canon_24-105mm_f4_IS;;ACTIVE;40002012;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES               ; 9    ; 3
+                             ;;52306;5122543 ;5122543 ;Canon_24-105mm_f4_IS;;ACTIVE;40002013;true;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES                  ; 7    ; 3
+                             ;;59663;6051076 ;6051076 ;Canon_24-105mm_f4_IS;;ACTIVE;40003843;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES               ; 8    ; 1
+                             ;;59664;6051077 ;6051077 ;Canon_24-105mm_f4_IS;;ACTIVE;40003844;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES               ; 9    ; 3
+                             ;;59665;6051078 ;6051078 ;Canon_24-105mm_f4_IS;;ACTIVE;40003845;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES               ; 7    ; 3
+                             ;;59666;6051079 ;6051079 ;Canon_24-105mm_f4_IS;;ACTIVE;40003846;false;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES                 ; 8    ; 1
+                             ;;59667;6128205 ;6128205 ;Canon_24-105mm_f4_IS;;ACTIVE;50003850;true;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES                ; 9    ; 3
+                             ;;59668;6128206 ;6128206 ;Canon_24-105mm_f4_IS;;ACTIVE;50003851;true;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES                ; 7    ; 3
+                             ;;59669;6128207 ;6128207 ;Canon_24-105mm_f4_IS;;ACTIVE;50003852;false;BL;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES               ; 8    ; 1
+                             ;;59670;6128208 ;6128208 ;Canon_24-105mm_f4_IS;;ACTIVE;50003853;false;;1149;B&H;418.25;335777;;2;BARCODE;0344B002;4960000000000;LENSES                 ; 9    ; 3
+                             ;;52307;5122544 ;5122544 ;Canon_50mm_f1.2_L;;ACTIVE;40002014;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                         ; 7    ; 3
+                             ;;52308;5122545 ;5122545 ;Canon_50mm_f1.2_L;;ACTIVE;40002015;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                         ; 8    ; 1
+                             ;;52309;5122546 ;5122546 ;Canon_50mm_f1.2_L;;ACTIVE;40002016;true;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                            ; 7    ; 3
+                             ;;59671;6051080 ;6051080 ;Canon_50mm_f1.2_L;;ACTIVE;40003847;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                         ; 8    ; 1
+                             ;;59672;6051081 ;6051081 ;Canon_50mm_f1.2_L;;ACTIVE;40003848;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                         ; 9    ; 3
+                             ;;59673;6051082 ;6051082 ;Canon_50mm_f1.2_L;;ACTIVE;40003849;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                         ; 7    ; 3
+                             ;;59674;6051083 ;6051083 ;Canon_50mm_f1.2_L;;ACTIVE;40003850;false;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                           ; 8    ; 1
+                             ;;59675;6128211 ;6128211 ;Canon_50mm_f1.2_L;;ACTIVE;50003854;false;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                         ; 9    ; 3
+                             ;;59676;6128212 ;6128212 ;Canon_50mm_f1.2_L;;ACTIVE;50003855;true;BL;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                          ; 7    ; 3
+                             ;;59677;6128213 ;6128213 ;Canon_50mm_f1.2_L;;ACTIVE;50003856;false;;1200;NA;97;335964;;2;BARCODE;1257B002;13803064551;LENSES                           ; 8    ; 1
+
 
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFirstActive[dateformat=dd.MM.yyyy HH:mm];totalRepairSpend;purchaseOrder;orderNumberRecord;invoiceNumberRecord;trackingNumber;invoiceNumber;invoiceDate;firmwareVersion
                       ;;5122541 ;;"Nowpocalypse tool deactivating serials in homeBaseID 1";;;;;;;;;
@@ -62,11 +83,10 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];conditions;notes;dateFi
                       ;;207730 ;;;;;;;;2570540792;;;
                       ;;220232 ;;;;;;;;800000000000;;;
 
-
 UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocLocation;warehouseLocation(code);noDaysRented;noDaysInTransit;noDaysNotInService;lastLocationScanParent;withOrderID;finalSalePrice;dateOfSale
-                      ;;5122541 ;2586;1Z87099FNW99827320;warehouse_ca;;;;;;;
-                      ;;6051076 ;2586;1Z87099FNY95392357;warehouse_ca;;;;;9109749;;
-                      ;;6128205 ;2430;CAR016 S04;warehouse_ma;;;;;;;
+                      ;;5122541 ;2586;1Z87099FNW99827320;warehouse_ca;3;;;;;;
+                      ;;6051076 ;2586;1Z87099FNY95392357;warehouse_ca;7;;;;9109749;;
+                      ;;6128205 ;2430;CAR016 S04;warehouse_ma;7;;;;;;
                       ;;CPL58.016;6432;BIN SML 1253;warehouse_ca;;;;MAM CLEAN028 S02;;;
                       ;;CPL58.022;4413;BIN CAGE 5375;warehouse_ca;;;;CAR032 S04;;;
                       ;;CPL58.023;763;BIN SML 325;warehouse_ca;;;;MAM DIRTY030 S04;;;
@@ -86,28 +106,26 @@ UPDATE BlSerialProduct;$catalogVersion;code[unique=true];inventoryLocationID;ocL
                       ;;207730 ;2586;1Z19E596NY92262106;warehouse_ca;;;;;9536469;;
                       ;;220232 ;1926;BIN SML C679;warehouse_ca;;;;CAM FD01 S02;9605590;;
 
-UPDATE BlSerialProduct ; $catalogVersion ; productId[unique=true] ; cosmeticRating(code) ; functionalRating(code) 
-                       ;                 ; 59663                  ; 1                    ; 5                      
-                       ;                 ; 59667                  ; 2                    ; 6                      
-                       ;                 ; 57196                  ; 3                    ; 8                      
-                       ;                 ; 115852                 ; 4                    ; 3                      
-                       ;                 ; 115853                 ; 5                    ; 2                      
-                       ;                 ; 86338                  ; 6                    ; 4                      
-                       ;                 ; 86339                  ; 2                    ; 6                      
-                       ;                 ; 86340                  ; 3                    ; 1                      
-                       ;                 ; 20856                  ; 6                    ; 2                      
-                       ;                 ; 20857                  ; 7                    ; 9                      
-                       ;                 ; 20859                  ; 9                    ; 10                     
-                       ;                 ; 39507                  ; 10                   ; 3                      
-                       ;                 ; 41124                  ; 10                   ; 4                      
-                       ;                 ; 41775                  ; 3                    ; 6                      
-                       ;                 ; 47633                  ; 5                    ; 3                      
-                       ;                 ; 52310                  ; 2                    ; 2                      
-                       ;                 ; 53230                  ; 8                    ; 8                      
-                       ;                 ; 25674                  ; 4                    ; 6                      
-                       ;                 ; 26134                  ; 7                    ; 3                      
-                       ;                 ; 37374                  ; 8                    ; 1                      
-                       ;                 ; 52304                  ; 9                    ; 3                      
+#### added dummy data for testing allocation
+                    ;;5122542 ;2586;;warehouse_ma;5;;;;;;
+                    ;;5122543 ;2586;;warehouse_ma;6;;;;;;
+                    ;;6051077 ;8608;;warehouse_ca;2;;;;;;
+                    ;;6051078 ;8608;;warehouse_ca;3;;;;;;
+                    ;;6051079 ;8608;;warehouse_ca;4;;;;;;
+                    ;;6128206 ;5532;;warehouse_ca;11;;;;;;
+                    ;;6128207 ;5532;;warehouse_ca;4;;;;;;
+                    ;;6128208 ;5532;;warehouse_ca;7;;;;;;
+                    ;;5122544 ;5532;;warehouse_ma;3;;;;;;
+                    ;;5122545 ;2430;;warehouse_ma;5;;;;;;
+                    ;;5122546 ;2430;;warehouse_ma;6;;;;;;
+                    ;;6051080 ;2430;;warehouse_ca;7;;;;;;
+                    ;;6051081 ;2430;;warehouse_ca;2;;;;;;
+                    ;;6051082 ;2430;;warehouse_ca;3;;;;;;
+                    ;;6051083 ;2430;;warehouse_ca;4;;;;;;
+                    ;;6128211 ;2430;;warehouse_ca;7;;;;;;
+                    ;;6128212 ;2586;;warehouse_ca;11;;;;;;
+                    ;;6128213 ;2586;;warehouse_ca;4;;;;;;
+
 
 # Data for setting price on serials assigned on SKU 
 UPDATE BlProduct ; $catalogVersion ; code[unique=true]                                                ; forSaleBasePrice ; forSaleDiscount 
