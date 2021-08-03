@@ -555,7 +555,16 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
      */
     private BigDecimal getBigDecimal(final BigDecimal totalWeight, final AbstractOrderEntryModel entry) {
         final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
-        double weight = blSerialProduct.getWeight().doubleValue() * entry.getQuantity();
+        //Added condition to used gear products.
+        double weight = BlInventoryScanLoggingConstants.ZERO;
+        if(blSerialProduct instanceof BlSerialProductModel) {
+            weight = (((BlSerialProductModel) blSerialProduct).getBlProduct()).getWeight().doubleValue() * entry.getQuantity();
+            weight = totalWeight.doubleValue() + weight;
+        }else{
+            weight = blSerialProduct.getWeight().doubleValue() * entry.getQuantity();
+            weight = totalWeight.doubleValue() + weight;
+        }
+
         weight = totalWeight.doubleValue() + weight;
         if (weight >= 0.0) {
             return BigDecimal.valueOf(weight);
