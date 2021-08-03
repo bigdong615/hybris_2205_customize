@@ -31,6 +31,8 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 ;;;;SyncItemJob;+;;;
 ;;;;Type;+;;;
 ;;;;Product;+;+;+;+;+;
+;;;;BlProduct;+;+;+;+;+;
+;;;;BlSerialProduct;+;+;+;+;+;
 ;;;;Category;+;+;+;+;+;
 ;;;;VariantType;+;+;+;+;+;
 ;;;;Catalog;+;+;+;+;
@@ -74,6 +76,10 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 ;;;;User;+;;;;;
 ;;;;BlOptions;+;;;;;
 ;;;;ProductVideo;+;;;;;
+;;;;RepairTypeEnum;+;;;;;
+;;;;ItemTestingStatusEnum;+;;;;;
+;;;;RepairReasonsEnum;+;;;;;
+;;;;ConditionRatingValueEnum;+;;;;;
 
 $END_USERRIGHTS;;;;;
 

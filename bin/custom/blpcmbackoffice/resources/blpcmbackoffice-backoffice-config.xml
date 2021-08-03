@@ -373,7 +373,9 @@
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="manufacturerAID"/>
-						<wz:property qualifier="forSaleBasePrice"/>
+						<wz:property qualifier="manufacturerName"/>
+						<wz:property qualifier="cosmeticRating"/>
+						<wz:property qualifier="functionalRating"/>
 						<wz:property qualifier="forSale"/>
 						<wz:property qualifier="procurementSource"/>
 					</wz:property-list>
