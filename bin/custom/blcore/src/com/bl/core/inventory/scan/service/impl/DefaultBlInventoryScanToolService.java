@@ -356,6 +356,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (barcodes.startsWith(binLocation))
 			{
 				filteredLocationList.add(barcodes);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Barcodes added to list", barcodes);
 			}
 		}
 		return checkValidInventoryLocation(barcodes, filteredLocationList, memberAllowedLocationList);
@@ -402,13 +403,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		final List<BlProductModel> serialProductsOnPackage = getPackagingInfoModel().getSerialProducts();
 		if (CollectionUtils.isEqualCollection(scannedSerialProduct, serialProductsOnPackage))
 		{
-			BlLogger.logMessage(LOG, Level.DEBUG, "Iterate over serial produt on package");
+			BlLogger.logMessage(LOG, Level.DEBUG, "Iterate over serial product on package");
 			serialProductsOnPackage.forEach(serial -> {
 				if (serial instanceof BlSerialProductModel)
 				{
 					((BlSerialProductModel) serial).setOcLocation(getPackagingInfoModel().getTrackingNumber());
 					modelService.save(serial);
-					BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "OC location updated to Tracking number {} for serial {}", getPackagingInfoModel().getTrackingNumber(),serial.getCode());
+					BlLogger.logFormattedMessage(LOG, Level.DEBUG, "OC location updated to Tracking number {} for serial {}",
+							getPackagingInfoModel().getTrackingNumber(), serial.getCode());
 				}
 			});
 			return Collections.emptyList();
@@ -465,6 +467,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			else
 			{
 				failedBarcodeList.addAll(barcodes);
+				BlLogger.logMessage(LOG, Level.DEBUG, "Scanned barcode does not match to serial on consignment");
 			}
 
 		}
@@ -536,6 +539,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (!filteredSubPartProduct.contains(subpartProduct))
 			{
 				failedBarcodeList.add(subpartProduct.getCode());
+				BlLogger.logMessage(LOG, Level.DEBUG, "Scanned serial is not available on consignment");
 			}
 			else
 			{
@@ -560,6 +564,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			if (!filteredSerialProduct.contains(serialProduct))
 			{
 				failedBarcodeList.add(serialProduct.getCode());
+				BlLogger.logMessage(LOG, Level.DEBUG, "Scanned serial is not available on consignment");
 			}
 			else
 			{
