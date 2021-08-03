@@ -518,7 +518,7 @@ public class AccountPageController extends AbstractSearchPageController
 			try
 			{
 				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
-				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(BlControllerConstants.SUCCESS_MSG_TYPE, getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
@@ -530,11 +530,11 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final DuplicateUidException e)
 			{
-				redirectAttributes.addFlashAttribute("errorMsg", getMessageSource().getMessage("profile.email.unique", null,getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.email.unique", null,getI18nService().getCurrentLocale()));
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				redirectAttributes.addFlashAttribute("errorMsg", getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
 			}
 		}
 

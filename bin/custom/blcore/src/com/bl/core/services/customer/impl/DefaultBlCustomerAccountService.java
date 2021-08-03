@@ -75,7 +75,9 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
             getCommerceCommonI18NService().getAllCountries());
     }
 
-    
+    /*
+     * This method is used to change the UID for the current customer
+     */
     @Override
     public void changeUid(final String newUid, final String currentPassword)
         throws DuplicateUidException, PasswordMismatchException
