@@ -671,10 +671,8 @@ public class AccountPageController extends AbstractSearchPageController
 				}
 				catch (final PasswordMismatchException localException)
 				{
-					redirectAttributes.addFlashAttribute("errorMsg", getMessageSource().getMessage("profile.currentPassword.invalid", null, getI18nService().getCurrentLocale()));
-
-//					bindingResult.rejectValue("currentPassword", PROFILE_CURRENT_PASSWORD_INVALID, new Object[] {},
-//							PROFILE_CURRENT_PASSWORD_INVALID);
+					bindingResult.rejectValue("currentPassword", PROFILE_CURRENT_PASSWORD_INVALID, new Object[] {},
+							PROFILE_CURRENT_PASSWORD_INVALID);
 				}
 			}
 			else
