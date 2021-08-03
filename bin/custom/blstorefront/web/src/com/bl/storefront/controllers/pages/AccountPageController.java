@@ -10,6 +10,7 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
+import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
@@ -76,6 +77,7 @@ import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.user.UserService;
 import de.hybris.platform.util.Config;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -258,6 +260,12 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
+
+	@Resource(name = "userService")
+	private UserService userService;
+
+	@Resource(name = "customerFacade")
+	private BlCustomerFacade blCustomerFacade;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
@@ -517,11 +525,14 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			try
 			{
-				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
-				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null, getI18nService().getCurrentLocale()));
+				blCustomerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
+					redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource()
+							.getMessage("text.account.profile.confirmationUpdated", null,
+									getI18nService().getCurrentLocale()));
+
 				final Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
 				final UsernamePasswordAuthenticationToken newAuthentication = new UsernamePasswordAuthenticationToken(newUid, null,
 						oldAuthentication.getAuthorities());
