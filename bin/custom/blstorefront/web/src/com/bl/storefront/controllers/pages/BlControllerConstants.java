@@ -159,7 +159,8 @@ public class BlControllerConstants
 	public static final String PO = "poNumber";
 	public static final String CREDIT_CARD = "creditCard";
 	public static final String PAY_PAL = "payPal";
-
+	public static final String SUCCESS_MSG_TYPE = "successMsgEmail";
+	public static final String ERROR_MSG_TYPE = "errorMsg";
 
 	private BlControllerConstants()
 	{
