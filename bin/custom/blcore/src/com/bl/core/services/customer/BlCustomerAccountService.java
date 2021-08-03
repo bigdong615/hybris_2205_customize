@@ -16,17 +16,4 @@ public interface BlCustomerAccountService extends CustomerAccountService {
      */
     public void setDefaultBillingAddress(final CustomerModel customerModel, final AddressModel addressModel);
 
-    /**
-     * Changes uid for current user
-     *
-     * @param newUid
-     *           given new uid
-     * @param currentPassword
-     *           password checked for authorization change
-     * @throws DuplicateUidException
-     *            if the newUid already exists in the system
-     * @throws PasswordMismatchException
-     *            if given currentPassword does not match the store one for the current user
-     */
-    void changeUid(final String newUid, final String currentPassword) throws DuplicateUidException, PasswordMismatchException;
 }

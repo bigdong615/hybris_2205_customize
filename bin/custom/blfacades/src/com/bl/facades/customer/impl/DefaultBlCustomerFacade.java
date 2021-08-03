@@ -131,20 +131,4 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
  		return null;
  	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void changeUid(final String newUid, final String currentPassword) throws DuplicateUidException
-	{
-		try
-		{
-			getCustomerAccountService().changeUid(newUid, currentPassword);
-		}
-		catch (final de.hybris.platform.commerceservices.customer.PasswordMismatchException pse)
-		{
-			throw new PasswordMismatchException(pse);
-		}
-
-	}
 }

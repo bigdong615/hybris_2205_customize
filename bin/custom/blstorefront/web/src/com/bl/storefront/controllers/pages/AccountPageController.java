@@ -522,7 +522,7 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			try
 			{
-				blCustomerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
+				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
 				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
@@ -671,8 +671,10 @@ public class AccountPageController extends AbstractSearchPageController
 				}
 				catch (final PasswordMismatchException localException)
 				{
-					bindingResult.rejectValue("currentPassword", PROFILE_CURRENT_PASSWORD_INVALID, new Object[] {},
-							PROFILE_CURRENT_PASSWORD_INVALID);
+					redirectAttributes.addFlashAttribute("errorMsg", getMessageSource().getMessage("profile.currentPassword.invalid", null, getI18nService().getCurrentLocale()));
+
+//					bindingResult.rejectValue("currentPassword", PROFILE_CURRENT_PASSWORD_INVALID, new Object[] {},
+//							PROFILE_CURRENT_PASSWORD_INVALID);
 				}
 			}
 			else

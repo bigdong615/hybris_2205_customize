@@ -40,20 +40,4 @@ public interface BlCustomerFacade extends CustomerFacade
 	 */
 	AddressData getDefaultBillingAddress();
 
-	/**
-	 * Change the current customer's UID. The current password is required for 2 reasons, firstly to validate that the
-	 * current visitor is actually the customer, secondly the password hash may be salted with the UID and therefore if
-	 * the UID is changed then the password needs to be re-hashed.
-	 *
-	 * @param newUid
-	 * 		the new UID for the current customer
-	 * @param currentPassword
-	 * 		current user password to validate user
-	 * @throws PasswordMismatchException
-	 * 		thrown if the password is invalid
-	 * @throws DuplicateUidException
-	 * 		thrown if the newUid is already in use
-	 */
-	void changeUid(String newUid, String currentPassword) throws DuplicateUidException, PasswordMismatchException;
-
 }
