@@ -10,7 +10,6 @@ import com.bl.core.stock.BlCommerceStockService;
 import com.bl.core.utils.BlExtendOrderUtils;
 import com.bl.core.utils.BlRentalDateUtils;
 import com.bl.facades.coupon.impl.DefaultBlCouponFacade;
-import com.bl.facades.customer.BlCustomerFacade;
 import com.bl.facades.order.BlOrderFacade;
 import com.bl.facades.product.data.RentalDateDto;
 import com.bl.facades.wishlist.BlWishListFacade;
@@ -260,9 +259,6 @@ public class AccountPageController extends AbstractSearchPageController
 
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
-
-	@Resource(name = "customerFacade")
-	private BlCustomerFacade blCustomerFacade;
 
 	@ModelAttribute(name = BlControllerConstants.RENTAL_DATE)
 	private RentalDateDto getRentalsDuration() {
