@@ -347,31 +347,14 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int checkValidBinLocationInBarcodeList(final String barcodes, final List<String> memberAllowedLocationList)
-	{
-		final List<String> defaultLocations = BlInventoryScanUtility.getDefaultBinLocation();
-		final List<String> filteredLocationList = new ArrayList<>();
-		for (final String binLocation : defaultLocations)
-		{
-			if (barcodes.startsWith(binLocation))
-			{
-				filteredLocationList.add(barcodes);
-				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Barcodes added to list", barcodes);
-			}
-		}
-		return checkValidInventoryLocation(barcodes, filteredLocationList, memberAllowedLocationList);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<String> getFailedBinBarcodeList(final List<String> barcodes)
 	{
 		final List<String> failedBarcodeList = new ArrayList<>();
 		final String subList = barcodes.get(0);
 		final BlInventoryLocationModel blWorkingDeskInventory = getBlInventoryLocation();
-		final int result = checkValidBinLocationInBarcodeList(subList, failedBarcodeList);
+		final int result = checkBinLocationWithType(subList, BlInventoryScanUtility.getDefaultBinLocation(),
+				BlInventoryScanUtility.getShippingAllowedLocations());
+
 
 		if (result == BlInventoryScanLoggingConstants.ONE)
 		{
@@ -390,6 +373,29 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 		return failedBarcodeList;
 	}
 	
+	/**
+	 * This method is used to check bin location with type
+	 *
+	 * @param barcodes
+	 * @param defaultLocations
+	 * @param memberAllowedLocationList
+	 * @return
+	 */
+	public int checkBinLocationWithType(final String barcodes, final List<String> defaultLocations,
+			final List<String> memberAllowedLocationList)
+	{
+		final List<String> filteredLocationList = new ArrayList<>();
+		for (final String binLocation : defaultLocations)
+		{
+			if (barcodes.startsWith(binLocation))
+			{
+				filteredLocationList.add(barcodes);
+				BlLogger.logFormattedMessage(LOG, Level.DEBUG, "Barcodes added to list", barcodes);
+			}
+		}
+
+		return checkValidInventoryLocation(barcodes, filteredLocationList, memberAllowedLocationList);
+	}
 	/**
 	 * {@inheritDoc}
 	 */	
@@ -509,7 +515,7 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 			getSerialFromConsignment(filteredSerialProduct, filteredSubPartProduct, serialItem)
 		);
 
-		validateScannedSerial(failedBarcodeList, filteredSerialProduct, scannedSerialProduct, consignmentEntry, itemsMap);
+		validateScannedSerial(failedBarcodeList, filteredSerialProduct, scannedSerialProduct, itemsMap);
 
 		final List<BlProductModel> serialProductsList = new ArrayList<>(consignmentEntry.getSerialProducts());
 		validateScannedSubpart(failedBarcodeList, filteredSubPartProduct, scannedSubpartProduct,
@@ -553,11 +559,10 @@ public class DefaultBlInventoryScanToolService implements BlInventoryScanToolSer
 	 * @param failedBarcodeList
 	 * @param filteredSerialProduct
 	 * @param scannedSerialProduct
-	 * @param consignmentEntry
 	 * @param updatedItemMap
 	 */
 	private void validateScannedSerial(final List<String> failedBarcodeList, final List<BlProductModel> filteredSerialProduct,
-			final List<BlSerialProductModel> scannedSerialProduct, final ConsignmentEntryModel consignmentEntry,
+			final List<BlSerialProductModel> scannedSerialProduct,
 			final Map<String, ItemStatusEnum> updatedItemMap)
 	{
 		scannedSerialProduct.forEach(serialProduct -> {

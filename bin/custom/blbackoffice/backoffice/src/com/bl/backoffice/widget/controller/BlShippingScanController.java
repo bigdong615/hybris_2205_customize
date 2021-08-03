@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 
 import com.bl.backoffice.wizards.util.WebScanToolData;
@@ -218,6 +219,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		else
 		{
 			BlLogger.logMessage(LOG, Level.DEBUG, BlInventoryScanLoggingConstants.SCAN_BARCODE_SUCCESS_MSG);
+			Messagebox.show(BlInventoryScanLoggingConstants.SCANNING_SUCCESS_MSG);
 			this.scanningArea.setValue(BlInventoryScanLoggingConstants.EMPTY_STRING);
 		}
 	}
