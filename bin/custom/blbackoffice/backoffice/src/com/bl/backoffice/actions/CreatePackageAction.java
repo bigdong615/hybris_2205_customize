@@ -15,7 +15,7 @@ import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
 
 /**
- * This class is resp
+ * This class is responsible for creating package  
  *
  * @author Keyur
  */
