@@ -28,10 +28,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 {
 
+	private static final Logger LOG = LoggerFactory.getLogger(TealiumContextBeforeViewHandler.class);
 	public static final String PAGETYPE = "pagetype";
 	public static final String CART_DATA = "cartData";
 	public static final String PAYMENT_PAGE = "paymentPage";
-	private static final Logger LOG = LoggerFactory.getLogger(TealiumContextBeforeViewHandler.class);
 	private static final int SCALE = 2;
 	private static final String SUB_TOTAL = "subtotal";
 	private static final String TOTAL_VALUE = "total_value";
