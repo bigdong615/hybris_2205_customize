@@ -557,12 +557,18 @@ public class DefaultBlDeliveryModeService extends DefaultZoneDeliveryModeService
         final BlProductModel blSerialProduct = (BlProductModel) entry.getProduct();
         //Added condition to used gear products.
         double weight = BlInventoryScanLoggingConstants.ZERO;
+
         if(blSerialProduct instanceof BlSerialProductModel) {
-            weight = (((BlSerialProductModel) blSerialProduct).getBlProduct()).getWeight().doubleValue() * entry.getQuantity();
-            weight = totalWeight.doubleValue() + weight;
+            BlProductModel serialProduct =  (((BlSerialProductModel) blSerialProduct).getBlProduct());
+            if(null != serialProduct.getWeight()) {
+                weight = serialProduct.getWeight().doubleValue() * entry.getQuantity();
+                weight = totalWeight.doubleValue() + weight;
+            }
         }else{
-            weight = blSerialProduct.getWeight().doubleValue() * entry.getQuantity();
-            weight = totalWeight.doubleValue() + weight;
+            if(null != blSerialProduct.getWeight()) {
+                weight = blSerialProduct.getWeight().doubleValue() * entry.getQuantity();
+                weight = totalWeight.doubleValue() + weight;
+            }
         }
 
         weight = totalWeight.doubleValue() + weight;
