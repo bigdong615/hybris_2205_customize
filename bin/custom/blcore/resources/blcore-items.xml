@@ -2686,6 +2686,15 @@
         </attributes>
       </itemtype>
       <!--  BL-766 end -->
+
+      <!--  BL-827 Inventory team clean complete / in-complete orders queue start -->
+      <itemtype code="MarkReadyToShipConsignmentsCleanJob" extends="CronJob">
+        <description>This type represents a cron job that pulls the ready to ship consignments and
+          mark the flag cleanComplete
+        </description>
+      </itemtype>
+      <!--  BL-827 Inventory team clean complete / in-complete orders queue  end -->
+
 		</typegroup>
 	
         <typegroup name="BaseStore">
