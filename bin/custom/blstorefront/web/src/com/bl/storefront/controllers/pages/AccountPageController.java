@@ -261,9 +261,6 @@ public class AccountPageController extends AbstractSearchPageController
 	@Resource(name = "cartService")
 	private BlCartService blCartService;
 
-	@Resource(name = "userService")
-	private UserService userService;
-
 	@Resource(name = "customerFacade")
 	private BlCustomerFacade blCustomerFacade;
 
@@ -526,13 +523,10 @@ public class AccountPageController extends AbstractSearchPageController
 			try
 			{
 				blCustomerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
+				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
-					redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource()
-							.getMessage("text.account.profile.confirmationUpdated", null,
-									getI18nService().getCurrentLocale()));
-
 				final Authentication oldAuthentication = SecurityContextHolder.getContext().getAuthentication();
 				final UsernamePasswordAuthenticationToken newAuthentication = new UsernamePasswordAuthenticationToken(newUid, null,
 						oldAuthentication.getAuthorities());

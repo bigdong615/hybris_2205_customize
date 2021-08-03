@@ -131,9 +131,9 @@ public class DefaultBlCustomerFacade extends DefaultCustomerFacade implements Bl
  		return null;
  	}
 
- 	/*
- 	 * This method is used to change the uid of the current customer
- 	 */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void changeUid(final String newUid, final String currentPassword) throws DuplicateUidException
 	{

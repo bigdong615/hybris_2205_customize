@@ -75,6 +75,9 @@ public class DefaultBlCustomerAccountService extends DefaultCustomerAccountServi
             getCommerceCommonI18NService().getAllCountries());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void changeUid(final String newUid, final String currentPassword)
         throws DuplicateUidException, PasswordMismatchException
