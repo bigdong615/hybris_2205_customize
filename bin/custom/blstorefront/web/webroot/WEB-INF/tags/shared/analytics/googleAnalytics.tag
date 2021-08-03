@@ -124,20 +124,19 @@ gtag('config', googleAnalyticsTrackingId);
 	</c:otherwise>
 </c:choose>
 
-function trackAddToCart_google(productCode, quantityAdded,cartData,productBrand,productType,category) {
+function trackAddToCart_google(productCode, productName,quantity,productBrand,productType,productCategory) {
 	gtag('event', 'add_to_cart', {
 	   "event_category": "ecommerce",
      "event_label": "Cart",
 	   "currency" : "USD",
-	   "value": cartData.productPrice,
+	   "value": quantity,
 	  "items": [
         {
           "id": productCode,
-          "name":cartData.productName ,
+          "name":productName ,
           "brand": productBrand,
-          "category":category,
+          "category":productCategory,
           "variant": productType,
-          "quantity": quantityAdded
         }
       ]
 	});
@@ -161,7 +160,7 @@ function trackRemoveFromCart(productCode,productName,initialQuantity) {
 window.mediator.subscribe('trackAddToCart', function(data) {
 	if (data.productCode && data.quantity)
 	{
-		trackAddToCart_google(data.productCode, data.quantity,data.cartData,data.productBrand,data.productType,data.category);
+		trackAddToCart_google(data.productCode, data.productName,data.quantity,data.productBrand,data.productType,data.productCategory);
 	}
 });
 
