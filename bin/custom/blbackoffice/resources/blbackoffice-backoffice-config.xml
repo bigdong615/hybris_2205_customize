@@ -398,7 +398,7 @@
 						<wz:property qualifier="approvalStatus"/>
 						<wz:property qualifier="serialStatus"/>
 						<wz:property qualifier="catalogVersion"/>
-						<wz:property qualifier="blProduct" label=""/>
+						<wz:property qualifier="blProduct"/>
 						<wz:property qualifier="procurementCost"/>
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
