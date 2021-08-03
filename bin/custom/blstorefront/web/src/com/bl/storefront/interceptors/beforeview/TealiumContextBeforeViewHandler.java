@@ -65,6 +65,10 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	private static final String ORDERCONFIRMATION = "ORDERCONFIRMATION";
 	private static final String ORDER_DATA = "orderData";
 	private static final String ORDER_ID = "orderID";
+	public static final String FALSE_VALUE = "0";
+	public static final String TRUE_VALUE = "1";
+	public static final String OR_STR = "|";
+	public static final String CAMAS_STR = ",";
 
 
 	@Override
@@ -125,8 +129,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	 */
 	private void setProductTag(TealiumContext context, ModelAndView modelAndView,
 			RentalDateDto rentalDate,List<String> productId) {
-		boolean isRental = (Boolean) modelAndView.getModel().get(IS_RENTAL_PAGE);
-		setRentalTag(context, isRental, rentalDate);
+		setRentalTag(context, (Boolean) modelAndView.getModel().get(IS_RENTAL_PAGE), rentalDate);
 		ProductData productData = (ProductData) modelAndView.getModel().get("product");
 		productId.add(productData.getProductId());
 		context.set(PRODUCT_NAME, productData.getDisplayName());
@@ -148,8 +151,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			RentalDateDto rentalDate,List<String> productId, List<String> quantity,
 			List<String> unitPrice, List<String> videoList) {
 		CartData cartData = (CartData) modelAndView.getModel().get(CART_DATA);
-		boolean isRental = cartData.getIsRentalCart();
-		setRentalTag(context, isRental, rentalDate);
+		setRentalTag(context, cartData.getIsRentalCart(), rentalDate);
 		setVoucherCode(context, cartData.getAppliedVouchers());
 		setSubtotalTag(context, cartData.getTotalDamageWaiverCost(), cartData.getSubTotal());
 		setProductEntryData(context,cartData.getEntries(), quantity, productId, unitPrice,videoList);
@@ -171,8 +173,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			RentalDateDto rentalDate, List<String> productId,
 			List<String> quantity, List<String> unitPrice, List<String> videoList) {
 		AbstractOrderData orderData = (AbstractOrderData) modelAndView.getModel().get(CART_DATA);
-		boolean isRental = orderData.getIsRentalCart();
-		setRentalTag(context, isRental, rentalDate);
+		setRentalTag(context, orderData.getIsRentalCart(), rentalDate);
 		setVoucherCode(context, orderData.getAppliedVouchers());
 		setSubtotalTag(context, orderData.getTotalDamageWaiverCost(), orderData.getSubTotal());
 		setProductEntryData(context,orderData.getEntries(), quantity, productId, unitPrice,videoList);
@@ -198,8 +199,7 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			CustomerData customerData) { // NOSONAR
 		AbstractOrderData orderData = (AbstractOrderData) modelAndView.getModel().get(ORDER_DATA);
 		context.set(ORDER_ID, orderData.getCode());
-		boolean isRental = orderData.getIsRentalCart();
-		setRentalTag(context, isRental, orderData.getRentalDates());
+		setRentalTag(context, orderData.getIsRentalCart(), orderData.getRentalDates());
 		setVoucherCode(context, orderData.getAppliedVouchers());
 		setSubtotalTag(context, orderData.getTotalDamageWaiverCost(), orderData.getSubTotal());
 		setProductEntryData(context,orderData.getEntries(), quantity, productId, unitPrice, videoList);
@@ -230,18 +230,18 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 			entryDataList.forEach(orderEntryData -> {
 				quantity.add(orderEntryData.getQuantity().toString());
 				ProductData productData = orderEntryData.getProduct();
-				pName.append("|").append(productData.getName());
-				pSKU.append(",").append(productData.getCode());
+				pName.append(OR_STR).append(productData.getName());
+				pSKU.append(CAMAS_STR).append(productData.getCode());
 				productId.add(productData.getProductId());
 				unitPrice.add(orderEntryData.getBasePrice().getValue().toPlainString());
-				videoList.add(productData.isIsVideo() ? "1" : "0");
+				videoList.add(productData.isIsVideo() ? TRUE_VALUE : FALSE_VALUE);
 			});
 			String	productName = pName.toString();
 			String	productSKU = pSKU.toString();
-			if (productSKU != null && productSKU.contains(",")) {
+			if (productSKU != null && productSKU.contains(CAMAS_STR)) {
 				productSKU = productSKU.substring(1);
 			}
-			if (productName.contains("|")) {
+			if (productName.contains(OR_STR)) {
 				productName = productName.substring(1);
 			}
 			context.set(PRODUCT_NAME, productName);
@@ -258,10 +258,10 @@ public class TealiumContextBeforeViewHandler implements BeforeViewHandler
 	 */
 	private void setRentalTag(TealiumContext context, boolean isRental, RentalDateDto rentalDate) {
 		if (isRental && rentalDate != null) {
-			context.set(IS_BUY, 0);
+			context.set(IS_BUY, FALSE_VALUE);
 			context.set(RENTAL_DAYS, rentalDate.getNumberOfDays());
 		} else {
-			context.set(IS_BUY, 1);
+			context.set(IS_BUY, TRUE_VALUE);
 		}
 	}
 

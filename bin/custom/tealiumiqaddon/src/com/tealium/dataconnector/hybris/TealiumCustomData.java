@@ -11,7 +11,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * @author Vijay Vishwakarma
+ * This calss is created for customize udo data as per page specific requirement.
+ */
 public class TealiumCustomData implements HybrisCustomDataConverter
 {
 
