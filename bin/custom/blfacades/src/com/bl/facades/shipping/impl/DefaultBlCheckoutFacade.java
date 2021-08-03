@@ -852,6 +852,14 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             return null;
         }
     }
+    /**
+    	  * To create the auth transaction of the order
+    	  * @param cartModel the cart
+        * @param amountToAuthorize the amount
+        * @param submitForSettlement
+        * @param paymentInfo the payment info
+        * @return true if successful
+     */
     @Override
    public boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo){
    	 
