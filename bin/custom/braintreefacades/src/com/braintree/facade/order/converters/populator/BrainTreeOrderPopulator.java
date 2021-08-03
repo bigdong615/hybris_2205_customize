@@ -76,14 +76,17 @@ public class BrainTreeOrderPopulator extends OrderPopulator
 			{
 				final BLGiftCardData blGiftCardData = new BLGiftCardData();
 				blGiftCardData.setCode(giftCardModel.getCode());
-				final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
-				//rounding off double value to 2 decimal places
-				BigDecimal gcRedeemedAmount = BigDecimal.valueOf(
-						giftCardMovementModelList.get(giftCardMovementModelList.size() - 1).getAmount())
-						.setScale(ROUND_OFF_SCALE, RoundingMode.HALF_DOWN);
-				blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
-				blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
-				blGiftCardDataList.add(blGiftCardData);
+				if(!source.isGiftCardOrder()){
+					final List<GiftCardMovementModel> giftCardMovementModelList = giftCardModel.getMovements();
+					//rounding off double value to 2 decimal places
+					BigDecimal gcRedeemedAmount = BigDecimal.valueOf(
+							giftCardMovementModelList.get(giftCardMovementModelList.size() - 1).getAmount())
+							.setScale(ROUND_OFF_SCALE, RoundingMode.HALF_DOWN);
+					blGiftCardData.setRedeemamount(createPrice(source , gcRedeemedAmount.doubleValue()));
+					blGiftCardData.setBalanceamount(createPrice(source , giftCardModel.getBalance()));
+					blGiftCardDataList.add(blGiftCardData);
+				}
+				
 			}
 			target.setGiftCardData(blGiftCardDataList);
 		}
