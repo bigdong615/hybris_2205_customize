@@ -34,7 +34,7 @@ public class UpdateShippingAction extends AbstractComponentWidgetAdapterAware im
 	}
 
 	/**
-	 * Perform action result.
+	 * This method will fetch the action context data for blCustomShippingContext
 	 *
 	 * @param actionContext
 	 *           the action context

@@ -15,7 +15,7 @@ import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
 
 /**
- * This class is responsible for creating package  
+ * This class is responsible for creating package
  *
  * @author Keyur
  */
@@ -46,7 +46,7 @@ public class CreatePackageAction extends AbstractComponentWidgetAdapterAware
 	}
 
 	/**
-	 * Perform action result.
+	 * This method will fetch the action context data for blCreatePackageContext
 	 *
 	 * @param actionContext
 	 *           the action context

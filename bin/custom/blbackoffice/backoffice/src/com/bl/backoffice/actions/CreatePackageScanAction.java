@@ -48,7 +48,7 @@ public class CreatePackageScanAction extends AbstractComponentWidgetAdapterAware
 	}
 
 	/**
-	 * Perform action result.
+	 * This method will fetch the action context data for blPackageScanContext
 	 *
 	 * @param actionContext
 	 *           the action context

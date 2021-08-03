@@ -56,7 +56,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	}
 
 	/**
-	 * Perform action result.
+	 * This method will fetch the action context data blCreatePackageShipmentContext and start shipment creation call
 	 *
 	 * @param actionContext
 	 *           the action context

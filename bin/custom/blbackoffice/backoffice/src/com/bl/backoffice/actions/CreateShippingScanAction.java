@@ -45,7 +45,7 @@ public class CreateShippingScanAction extends AbstractComponentWidgetAdapterAwar
 	}
 
 	/**
-	 * Perform action result.
+	 * This method will fetch the action context data for blShippingScanContext
 	 *
 	 * @param actionContext
 	 *           the action context

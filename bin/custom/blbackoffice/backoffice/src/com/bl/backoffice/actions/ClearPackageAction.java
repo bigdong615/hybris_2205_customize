@@ -14,8 +14,10 @@ import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
+
 /**
- * This class is responsible to clear all packages 
+ * This class is responsible to clear all packages
+ *
  * @author Keyur
  */
 
@@ -45,7 +47,7 @@ public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 	}
 
 	/**
-	 * Perform action result.
+	 * This method will fetch the action context data for blCreatePackageContext
 	 *
 	 * @param actionContext
 	 *           the action context
