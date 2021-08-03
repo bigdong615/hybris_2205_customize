@@ -535,13 +535,11 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final DuplicateUidException e)
 			{
-				bindingResult.rejectValue("email", "profile.email.unique");
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute("errorMsg", getMessageSource().getMessage("profile.email.unique", null,getI18nService().getCurrentLocale()));
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);//NOSONAR
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute("errorMsg", getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
 			}
 		}
 
