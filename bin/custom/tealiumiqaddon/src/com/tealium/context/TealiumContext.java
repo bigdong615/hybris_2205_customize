@@ -98,7 +98,7 @@ public class TealiumContext
 		return attributes;
 	}
 
-	public void setAttributes(HashMap<String, String> attributes)
+	public void setAttributes(HashMap<String, String> attributes) // NOSONAR
 	{
 		this.attributes = attributes;
 	}
