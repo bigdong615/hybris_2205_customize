@@ -13,12 +13,9 @@ import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Level;
@@ -27,7 +24,7 @@ import org.apache.zookeeper.common.StringUtils;
 
 
 /**
- * This cron job will extract the excel for ready to ship consignments
+ * This cron job will fetch consignments and mark clean complete consignment flag.
  *
  * @author Sunil
  */
@@ -52,16 +49,8 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
     BlLogger.logFormatMessageInfo(LOG, Level.INFO,
         "Start performing MarkReadyToShipConsignmentsCleanJob...");
 
-    Date date1=null;
-    String sDate1="2021-07-22";
-    try {
-      date1=new SimpleDateFormat("yyyy-MM-dd").parse(sDate1);
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-
     final List<ConsignmentModel> consignmentModels = blConsignmentDao
-        .getReadyToShipConsignmentsForDate(date1);   // new Date()
+        .getReadyToShipConsignmentsForDate(new Date());
 
     if (CollectionUtils.isEmpty(consignmentModels)) {
 
@@ -111,17 +100,19 @@ public class MarkReadyToShipConsignmentsCleanJob extends AbstractJobPerformable<
     modelService.saveAll(consignmentModels);
   }
 
+  /**
+   * It returns true if the serial product is in clean location category.
+   *
+   * @param productModel
+   * @return true
+   */
   private boolean isSerialLocationClean(final BlProductModel productModel) {
 
-    if (null != ((BlSerialProductModel) productModel).getOcLocationDetails()
+    return null != ((BlSerialProductModel) productModel).getOcLocationDetails()
         && null != ((BlSerialProductModel) productModel).getOcLocationDetails()
         .getLocationCategory() && getCleanLocationCategoryList().contains(
-        ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory().getCode())) {
-
-      return true;
-    }
-
-    return false;
+        ((BlSerialProductModel) productModel).getOcLocationDetails().getLocationCategory()
+            .getCode());
   }
 
   /**
