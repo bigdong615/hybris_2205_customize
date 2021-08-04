@@ -83,6 +83,22 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        $('.page-loader-new-layout').show();
                                    },
                                    success: function (response) {
+                                	   var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                                	   if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                                    	{
+                                    		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                                 ACC.minicart.updateMiniCartDisplay();
+                                              }
+                                    		onGiftCardCloseModal();
+                                     		setTimeout(function(){
+                                          	   $("#signUp").modal('hide');
+                                          	   $("#addToCart").addClass("show");
+                                                 $("#addToCart").show();
+                                             },500);
+                                     		mixedProductInterception(productCode, serialCode);
+                                    	}
+                                	   else{
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
@@ -104,6 +120,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
+                                	 }
                                    },
                                    complete : function() {
                                       $('.page-loader-new-layout').hide();

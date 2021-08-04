@@ -55,8 +55,10 @@
 	<analytics:analytics/>
 	<generatedVariables:generatedVariables/>
 </head>
-
 <body class="${pageBodyCssClasses} ${cmsPageRequestContextData.liveEdit ? ' yCmsLiveEdit' : ''} language-${fn:escapeXml(currentLanguage.isocode)}">
+
+<!-- Talkable integration Script -->
+<analytics:talkableScript/>
 
 <%-- Tealium Data --%>
     <tealium:tealium/>
