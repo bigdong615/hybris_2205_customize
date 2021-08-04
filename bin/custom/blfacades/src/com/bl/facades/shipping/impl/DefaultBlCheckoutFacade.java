@@ -30,6 +30,7 @@ import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
 import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
@@ -65,6 +66,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import com.braintree.model.BrainTreePaymentInfoModel;
 
 /**
  * {javadoc}
@@ -83,8 +85,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     @Resource(name = "upsAddressValidatorService")
     BlUPSAddressValidatorService blUPSAddressValidatorService;
+    
+ 	 @Resource(name = "brainTreeTransactionService")
+ 	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
-    private BlGiftCardFacade blGiftCardFacade;
+	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
     private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
@@ -847,7 +852,19 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             return null;
         }
     }
-    
+    /**
+    	  * To create the auth transaction of the order
+    	  * @param cartModel the cart
+        * @param amountToAuthorize the amount
+        * @param submitForSettlement
+        * @param paymentInfo the payment info
+        * @return true if successful
+     */
+    @Override
+   public boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo){
+   	 
+   	 return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(cartModel,amountToAuthorize, submitForSettlement, paymentInfo);
+    }
     /**
      * {@inheritDoc}
      */
@@ -1033,4 +1050,21 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
         this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
     }
+ 	 
+    /**
+	 * @return the brainTreeTransactionService
+	 */
+	public BrainTreeTransactionServiceImpl getBrainTreeTransactionService()
+	{
+		return brainTreeTransactionService;
+	}
+
+	/**
+	 * @param brainTreeTransactionService the brainTreeTransactionService to set
+	 */
+	public void setBrainTreeTransactionService(BrainTreeTransactionServiceImpl brainTreeTransactionService)
+	{
+		this.brainTreeTransactionService = brainTreeTransactionService;
+	}
+
 }
