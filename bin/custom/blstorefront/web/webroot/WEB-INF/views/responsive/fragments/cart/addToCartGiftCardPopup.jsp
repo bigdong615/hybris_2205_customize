@@ -19,7 +19,7 @@
            
              <div class="modal-body">
                 <div class="row">
-                <c:set value="/blstorefront/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg" var="altTextHtml1" />
+                <c:set value="${request.contextPath}/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg" var="altTextHtml1" />
                 <div class="col-md-2 text-center">
 			   <img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}" title="${altText}" title="${altText}" /></div>
                <div class="col-md-7 mt-4"><b>${product.name}</b></div>
