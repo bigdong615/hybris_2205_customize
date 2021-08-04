@@ -150,7 +150,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 			model.addAttribute(BlControllerConstants.SAVE_CART_FORM, saveCartForm);
 
 			final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
-			breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_SAVED_CARTS_URL, getMessageSource().getMessage(BlControllerConstants.SAVED_CART_MESSAGE,
+			breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_SAVED_CARTS_URL, getMessageSource().getMessage("text.account.savedCarts",
 					null, getI18nService().getCurrentLocale()), null));
 			breadcrumbs.add(new Breadcrumb("#", getMessageSource().getMessage("text.account.savedCart.savedCartBreadcrumb",
 					new Object[]
@@ -248,7 +248,7 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 			try
 			{
 				saveCartFacade.saveCart(commerceSaveCartParameterData);
-				redirectModel.addFlashAttribute(BlControllerConstants.SAVED_CART_SUCCESS , getMessageSource().getMessage("text.saved.cart.success", null,
+				redirectModel.addFlashAttribute(BlControllerConstants.SAVED_CART_SUCCESS , getMessageSource().getMessage(BlControllerConstants.SAVED_CART_MESSAGE, null,
 						getI18nService().getCurrentLocale()));
 				redirectModel.addFlashAttribute(BlControllerConstants.RENAMED_CART_CODE , cartCode);
 			}
