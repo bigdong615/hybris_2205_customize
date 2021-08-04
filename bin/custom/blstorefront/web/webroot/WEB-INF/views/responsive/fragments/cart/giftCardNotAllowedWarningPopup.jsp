@@ -18,7 +18,9 @@
              </div>
              <div class="modal-body">
                  <p class="body14"><spring:theme code="giftcard.PurchaseForm.not.allow.addtocart.popup"/></p>
-                 <%-- <a href="#" class="btn btn-primary btn-block my-4" id="mixedProductInterception"><spring:theme code="shipping.interception.change.date.warning.continue"/></a>
+                 <%-- 
+                 //commented code , It can be used in future
+                 <a href="#" class="btn btn-primary btn-block my-4" id="mixedProductInterception"><spring:theme code="shipping.interception.change.date.warning.continue"/></a>
                  <p class="text-center mb-0"><a href="#" id="cancelUsedCartModal" class="lightteal" aria-label="Close" data-bs-dismiss="modal"><spring:theme code="shipping.interception.change.date.warning.cancel"/></a></p>
               --%></div>
            </div>
