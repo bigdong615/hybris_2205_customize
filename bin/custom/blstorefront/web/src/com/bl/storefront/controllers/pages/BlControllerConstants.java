@@ -163,6 +163,9 @@ public class BlControllerConstants
 
 	public static final String MY_ACCOUNT_SAVED_CARTS_URL = "/my-account/saved-carts";
 	public static final String REDIRECT_TO_SAVED_CARTS_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_SAVED_CARTS_URL;
+	public static final String SAVED_CART_SUCCESS = "saved_cart_success";
+	public static final String RENAMED_CART_CODE = "renamed_cart_code";
+	public static final String SAVED_CART_MESSAGE = "text.account.savedCarts";
 
 
 	private BlControllerConstants()
