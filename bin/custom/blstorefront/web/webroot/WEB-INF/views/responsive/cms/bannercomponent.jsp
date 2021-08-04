@@ -5,6 +5,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
+<%-- Changes for BL-66 --%>
 <c:if test="${positionAttribute != 'SocialMediaSectionSlot' && positionAttribute != 'buyingUsedGearEasySection'}">
 <section id="featuredPromo">
         <div class="container">
@@ -18,6 +19,7 @@
         </div>    
 </section>
 </c:if>
+<%-- Ends here --%>
 
 	<c:if test="${positionAttribute == 'SocialMediaSectionSlot'}">
 	  <div class="social">

@@ -9,6 +9,7 @@
 				<cms:component component="${component}"/>
 </cms:pageSlot>
 
+<%-- Changes for BL-66 --%>
 	<c:choose>
 		<c:when test="${blPageType eq 'rentalgear' and cmsPage.uid eq 'productGrid'}">
 			<cms:pageSlot position="BlRentalGearBanner" var="component">
@@ -21,6 +22,7 @@
 			</cms:pageSlot>
 		</c:when>
 	</c:choose>
+<%-- Ends here --%>
 
 	<cms:pageSlot position="Section1" var="feature" element="div" class="product-grid-section1-slot">
 		<cms:component component="${feature}" element="div" class="yComponentWrapper map product-grid-section1-component"/>
