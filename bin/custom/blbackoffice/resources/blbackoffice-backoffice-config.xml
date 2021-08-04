@@ -363,6 +363,7 @@
 						<wz:property qualifier="mpn"/>
 						<wz:property qualifier="upc"/>
 						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="manufacturerName"/>
 						<wz:property qualifier="numberSystem"/>
 					</wz:property-list>
 				</wz:content>
@@ -385,6 +386,7 @@
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.catalogVersion" value="ctx?.actionContext?.catalogVersion"/>
 				<wz:assign property="newBlSerialProduct.procurementCost" value="0.0"/>
+				<wz:assign property="newBlSerialProduct.manufacturerName" value="Other"/>
 			</wz:prepare>
 			<wz:step id="step1" label="create.product.essential.label" sublabel="create.product.essential.sublabel">
 				<wz:content id="step1.content">
@@ -403,6 +405,7 @@
 						<wz:property qualifier="productType"/>
 						<wz:property qualifier="numberSystem"/>
 						<wz:property qualifier="manufacturerAID"/>
+						<wz:property qualifier="manufacturerName"/>
 						<wz:property qualifier="conditionRatingOverallScore"/>
 						<wz:property qualifier="cosmeticRating"/>
 						<wz:property qualifier="functionalRating"/>

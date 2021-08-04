@@ -45,6 +45,12 @@
                     <span class="gray80">${rentalDate.selectedFromDate} - ${rentalDate.selectedToDate}</span>
                   </c:if>
                   </div>
+                     <input type="hidden" id="productCode" value="${product.code}" />
+                     <input type="hidden" id="productName" value="${product.name}" />
+                     <input type="hidden" id="productBrand" value="${product.manufacturer}" />
+                     <input type="hidden" id="productCategory" value="${product.categories[0].name}" />
+                     <input type="hidden" id="productType" value="rental gear" />
+                     <input type="hidden" id="quantity" value="${entry.quantity}" />
                   <div class="col-md-3 mt-4 text-md-end">
                       <b>${entry.basePrice.formattedValue}</b>
                       <form:form id="updateCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
