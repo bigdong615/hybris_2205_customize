@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -227,35 +228,37 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 	public String savedCartEdit(@PathVariable("cartCode") final String cartCode, final SaveCartForm form,
 			final BindingResult bindingResult, final RedirectAttributes redirectModel) throws CommerceSaveCartException
 	{
-		saveCartFormValidator.validate(form, bindingResult);
+		// Convert cart name to title case
+		final  SaveCartForm saveCartForm = new SaveCartForm();
+		convertSavedCartNameToTitleCase(saveCartForm , form);
 		if (bindingResult.hasErrors())
 		{
 			for (final ObjectError error : bindingResult.getAllErrors())
 			{
 				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, error.getCode());
 			}
-			redirectModel.addFlashAttribute(BlControllerConstants.SAVE_CART_FORM, form);
+			redirectModel.addFlashAttribute(BlControllerConstants.SAVE_CART_FORM, saveCartForm);
 		}
 		else
 		{
 			final CommerceSaveCartParameterData commerceSaveCartParameterData = new CommerceSaveCartParameterData();
 			commerceSaveCartParameterData.setCartId(cartCode);
-			commerceSaveCartParameterData.setName(form.getName());
-			commerceSaveCartParameterData.setDescription(form.getDescription());
+			commerceSaveCartParameterData.setName(saveCartForm.getName());
+			commerceSaveCartParameterData.setDescription(saveCartForm.getDescription());
 			commerceSaveCartParameterData.setEnableHooks(false);
 			try
 			{
-				final CommerceSaveCartResultData saveCartData = saveCartFacade.saveCart(commerceSaveCartParameterData);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER,
-						"text.account.saveCart.edit.success", new Object[]
-						{ saveCartData.getSavedCartData().getName() });
+				saveCartFacade.saveCart(commerceSaveCartParameterData);
+				redirectModel.addFlashAttribute("saved_cart_success" , getMessageSource().getMessage("text.saved.cart.success", null,
+						getI18nService().getCurrentLocale()));
+				redirectModel.addFlashAttribute("renamed_cart_code" , cartCode);
 			}
 			catch (final CommerceSaveCartException csce)
 			{
 				BlLogger.logMessage(LOG , Level.ERROR , csce.getMessage(), csce);
 				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER,
 						"text.account.saveCart.edit.error", new Object[]
-						{ form.getName() });
+						{ saveCartForm.getName() });
 			}
 		}
 		return REDIRECT_TO_SAVED_CARTS_PAGE;
@@ -337,5 +340,22 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
 			return getMessageSource().getMessage("text.delete.savedcart.error", null, getI18nService().getCurrentLocale());
 		}
 		return REDIRECT_TO_SAVED_CARTS_PAGE;
+	}
+
+	/**
+	 * This method created to convert saved cart name to title case
+	 */
+	private void convertSavedCartNameToTitleCase(final SaveCartForm newForm , final SaveCartForm actualForm) {
+      newForm.setName(WordUtils.capitalize(actualForm.getName().toLowerCase()));
+      newForm.setDescription(actualForm.getDescription());
+	}
+
+
+	/**
+	 * This method created to convert saved cart name to title case
+	 */
+	private void validateSavedCartForm(final SaveCartForm newForm , final SaveCartForm actualForm) {
+		newForm.setName(WordUtils.capitalize(actualForm.getName().toLowerCase()));
+		newForm.setDescription(actualForm.getDescription());
 	}
 }
