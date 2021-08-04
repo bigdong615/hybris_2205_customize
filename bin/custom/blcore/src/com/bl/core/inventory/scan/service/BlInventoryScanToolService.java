@@ -77,18 +77,6 @@ public interface BlInventoryScanToolService {
      */
     Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
     
-    /**
- 	 * method will check the valid Bin Location provided in barcode list and return int with appropriate notification
- 	 * number to notify employee
- 	 *
- 	 * @param barcodes
- 	 *           the barcodes
- 	 * @param memberAllowedLocationList
- 	 *           the member allowed location list
- 	 * @return the int
- 	 */
- 	public int checkValidBinLocationInBarcodeList(final String barcodes, final List<String> memberAllowedLocationList);
-
  	/**
  	 * javadoc
  	 *
