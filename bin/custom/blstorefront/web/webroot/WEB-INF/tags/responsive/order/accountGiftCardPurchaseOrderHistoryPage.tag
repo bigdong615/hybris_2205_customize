@@ -35,7 +35,7 @@
 					<div class="col-6">
 						<p class="gray80 body14">
 							${orderData.status}<br> ${orderData.orderedFormatDate}<br>
-							${fn:escapeXml(orderData.code)}<br> Sent via Email
+							${fn:escapeXml(orderData.code)}<br><spring:theme code="order.gift.card.myaccount.review.page.sent.email" />
 						</p>
 					</div>
 				</div>
@@ -57,8 +57,10 @@
 
 							<a href="${productUrl}" style="text-decoration: none"> <format:price
 									priceData="${cartEntry.totalPrice}" displayFreeForZero="true" />
-								Gift Certificate
-							</a> <br /> To: Test Tester (test@tester.com)
+								<spring:theme code="order.gift.card.myaccount.review.page.gift.certificate" />
+							</a> <br /> 
+							<spring:theme code="order.gift.card.myaccount.review.page.To" /> :
+						   ${cartEntry.recipientName} (${cartEntry.recipientEmail})
 
 						</div>
 					</div>
@@ -69,7 +71,7 @@
 					<spring:theme code="text.review.page.delivery.mode" />
 				</h5>
 				<div class="row">
-					<div class="col8">Delivered by email</div>
+					<div class="col8"><spring:theme code="order.gift.card.myaccount.review.page.delivered.email" /></div>
 				</div>
 			</div>
 
@@ -140,7 +142,7 @@
 				<table id="costSummary">
 					<tbody>
 						<tr>
-							<td class="gray80">Gift Certificate Cost</td>
+							<td class="gray80"><spring:theme code="order.gift.card.myaccount.review.page.gift.certificate.cost" /></td>
 							<td class="text-end"><format:price
 									priceData="${orderData.subTotal}" /></td>
 						</tr>
