@@ -29,9 +29,6 @@ ACC.savedcarts = {
              $(".js-validate-rename-cart").click(function (event) {
               event.preventDefault();
                var cartName = document.getElementById("renameSaveCartName").value;
-                var Url = document.getElementById("renameCartIdUrl").value;
-                var renameCartCode = document.getElementById("renameCartCode").value;
-               	var formValues = $('#renameCartForm').serialize();
                if(cartName !== 'undefined' && cartName !== ''){
                  $('#renameCartForm').submit();
                }

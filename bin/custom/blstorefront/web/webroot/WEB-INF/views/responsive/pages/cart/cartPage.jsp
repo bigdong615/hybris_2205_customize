@@ -64,7 +64,7 @@
 	            <div class="modal-actions">
                     <div class="row">
                         <div class="col-sm-12">
-                            <button type="button" class="btn btn-primary btn-block save-cart-button js-validate-saved-cart" id="saveCartButton js-validate-saved-cart">
+                            <button type="button" class="btn btn-primary btn-block save-cart-button js-validate-saved-cart" id="saveCartButton">
                                 <spring:theme code="basket.save.cart.action.continue"/>
                             </button>
                             <br>
