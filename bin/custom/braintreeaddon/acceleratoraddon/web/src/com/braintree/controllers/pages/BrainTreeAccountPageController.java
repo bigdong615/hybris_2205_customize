@@ -46,8 +46,9 @@ import static de.hybris.platform.util.localization.Localization.getLocalizedStri
 @RequestMapping("/my-account")
 public class BrainTreeAccountPageController extends AbstractPageController
 {
+	private static final String MY_ACCOUNT_PAYMENT_DETAILS = "/my-account/payment-details";
 	private static final Logger LOGGER = Logger.getLogger(BrainTreeAccountPageController.class);
-	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
+	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_PAYMENT_DETAILS;
 	private static final String REDIRECT_TO_ADD_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/add-payment-method";
 	private static final String REDIRECT_TO_EDIT_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/edit-payment-method";
 
@@ -93,7 +94,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
                                     @RequestParam(value = "expirationDate", required = false) final String expirationDate) throws CMSItemNotFoundException
 	{
 		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
-		breadcrumbs.add(new Breadcrumb("/my-account/payment-details",
+		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_PAYMENT_DETAILS,
 				getMessageSource().getMessage("text.account.paymentDetails", null, getI18nService().getCurrentLocale()), null));
 		breadcrumbs.add(new Breadcrumb("#",getLocalizedString("text.account.paymentMethod.editPaymentMethod"), null));
 
@@ -123,17 +124,19 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	public String editPaymentMethod(final Model model, @RequestParam(value = "paymentInfoId") final String paymentMethodId,
                                     @RequestParam(value = "billingAddressId") final String billingAddressId,
                                     @RequestParam(value = "expirationDate") final String expirationDate, @RequestParam(value = "cvv") final String cvv,
+                                    @RequestParam(value = "default_Card") final String defaultCard,
                                     final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		try
 		{
-			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(expirationDate, cvv);
+			String updatedexpirationDate = expirationDate.replace(",", "");
+			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(updatedexpirationDate, cvv);
 			if (validationMessage != null && StringUtils.isNotBlank(validationMessage.getMessageKey()))
 			{
 				String localizedErrorMessage = getLocalizedString(validationMessage.getMessageKey());
 				LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.");
 				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
-				return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
+				return redirectToEditPage(paymentMethodId, updatedexpirationDate, redirectAttributes, localizedErrorMessage);
 			}
 			else
 			{
@@ -142,7 +145,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				List<AddressData> addressBook = userFacade.getAddressBook();
 				AddressData addressData = getAddressForPaymentInfo(ccPaymentInfo, billingAddressId, addressBook);
 
-				userFacade.editPaymentMethod(ccPaymentInfo, expirationDate, cvv, addressData);
+				userFacade.editPaymentMethod(ccPaymentInfo, updatedexpirationDate, cvv, addressData, defaultCard);
 			}
 		}
 		catch (AdapterException e)
@@ -191,7 +194,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	{
 
 		final List<Breadcrumb> breadcrumbs = accountBreadcrumbBuilder.getBreadcrumbs(null);
-		breadcrumbs.add(new Breadcrumb("/my-account/payment-details",
+		breadcrumbs.add(new Breadcrumb(MY_ACCOUNT_PAYMENT_DETAILS,
 				getMessageSource().getMessage("text.account.paymentDetails", null, getI18nService().getCurrentLocale()), null));
 		breadcrumbs.add(new Breadcrumb("#",
 				getMessageSource().getMessage("text.account.profile.paymentMethod.add", null, getI18nService().getCurrentLocale()), null));
