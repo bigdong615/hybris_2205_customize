@@ -161,6 +161,10 @@ public class BlControllerConstants
 	public static final String SUCCESS_MSG_TYPE = "successMsgEmail";
 	public static final String ERROR_MSG_TYPE = "errorMsg";
 
+	public static final String MY_ACCOUNT_SAVED_CARTS_URL = "/my-account/saved-carts";
+	public static final String REDIRECT_TO_SAVED_CARTS_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_SAVED_CARTS_URL;
+
+
 	private BlControllerConstants()
 	{
 		//empty

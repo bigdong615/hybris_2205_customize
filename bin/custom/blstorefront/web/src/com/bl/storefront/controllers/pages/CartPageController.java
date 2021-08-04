@@ -647,20 +647,14 @@ public class CartPageController extends AbstractCartPageController
 			commerceSaveCartParameterData.setEnableHooks(true);
 			try
 			{
-				final CommerceSaveCartResultData saveCartData = saveCartFacade.saveCart(commerceSaveCartParameterData);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.CONF_MESSAGES_HOLDER, "basket.save.cart.on.success",
-						new Object[]
-						{ saveCartData.getSavedCartData().getName() });
+				saveCartFacade.saveCart(commerceSaveCartParameterData);
 			}
 			catch (final CommerceSaveCartException csce)
 			{
-				LOG.error(csce.getMessage(), csce);
-				GlobalMessages.addFlashMessage(redirectModel, GlobalMessages.ERROR_MESSAGES_HOLDER, "basket.save.cart.on.error",
-						new Object[]
-						{ form.getName() });
+				BlLogger.logMessage(LOG , Level.DEBUG , "Error while saveCart method ", csce);
 			}
 		}
-		return REDIRECT_CART_URL;
+		return BlControllerConstants.REDIRECT_TO_SAVED_CARTS_PAGE;
 	}
 
 	@GetMapping(value = "/export", produces = "text/csv")

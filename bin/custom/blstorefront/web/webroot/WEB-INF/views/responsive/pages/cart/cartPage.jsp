@@ -64,7 +64,7 @@
 	            <div class="modal-actions">
                     <div class="row">
                         <div class="col-sm-12">
-                            <button type="submit" class="btn btn-primary btn-block save-cart-button" id="saveCartButton">
+                            <button type="button" class="btn btn-primary btn-block save-cart-button js-validate-saved-cart" id="saveCartButton js-validate-saved-cart">
                                 <spring:theme code="basket.save.cart.action.continue"/>
                             </button>
                             <br>
@@ -74,10 +74,25 @@
 	                </div>
 	            </div>
 	        </div>
+	      							<div class ="notification notification-error d-none" id="errorMessages_savecart"> </div>
               </form:form>
           </div>
         </div>
       </div>
     </div>
+
+<script>
+$(".js-validate-saved-cart").on("click", function(e) {
+   			e.preventDefault();
+   			var cartName = document.getElementById("saveCartName").value;
+        if(cartName !== 'undefined' && cartName !== ''){
+                         $('#saveCartForm').submit();
+        }
+        else{
+          $("#errorMessages_savecart").removeClass("d-none");
+          $("#errorMessages_savecart").html("Whoops, you need to name your saved cart.");
+        }
+   	});
+</script>
 
 
