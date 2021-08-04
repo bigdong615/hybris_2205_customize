@@ -349,13 +349,5 @@ public class AccountSavedCartsPageController extends AbstractSearchPageControlle
       newForm.setName(WordUtils.capitalize(actualForm.getName().toLowerCase()));
       newForm.setDescription(actualForm.getDescription());
 	}
-
-
-	/**
-	 * This method created to convert saved cart name to title case
-	 */
-	private void validateSavedCartForm(final SaveCartForm newForm , final SaveCartForm actualForm) {
-		newForm.setName(WordUtils.capitalize(actualForm.getName().toLowerCase()));
-		newForm.setDescription(actualForm.getDescription());
-	}
+	
 }
