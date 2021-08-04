@@ -127,7 +127,7 @@
 						</c:if>
 						<form:form action="${placeOrderUrl}" id="placeOrderForm1"
 							modelAttribute="placeOrderForm">
-							<div style="display: none;">
+							
 						<b><spring:theme code="text.review.page.order.notes" /></b>
 							 <input type="text" class="form-control order-notes"
 								name="orderNotes" id="notes"
@@ -138,7 +138,7 @@
 								value="true" checked="checked" id="newsletter" />
 							<label for="newsletter"><span class="gray80"><spring:theme
 										code="text.review.page.newsletter.checkbox.label" /></span></label>
-							<hr class="mt-5"></div>
+							<hr class="mt-5">
 							<div class="reviewCart">
 								<h5 class="mb-4">
 									<spring:theme
