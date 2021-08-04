@@ -27,8 +27,12 @@ INSERT_UPDATE ProductRefinementComponent;$contentCV[unique=true];uid[unique=true
 
 INSERT_UPDATE ContentSlot;$contentCV[unique=true];uid[unique=true];cmsComponents(uid,$contentCV)
                          ;;SearchBoxBl;BlSearchBox
-
+                         ;;BlRentalGearBanner	;BlRentalGearBannerComponent
+                         ;;BlUsedGearBanner	;BlUsedGearBannerComponent
 
 INSERT_UPDATE SearchBoxComponent;$contentCV[unique=true];uid[unique=true];name;&componentRef
                                 ;;BlSearchBox;Search Box;BlSearchBox
 
+INSERT_UPDATE BannerComponent ; $contentCV[unique=true] ; uid[unique=true]            ; name                          ; &componentRef                ;  medias(code)
+							  ;                         ;BlRentalGearBannerComponent  ;Rental Gear Banner Component	  ;BlRentalGearBannerComponent
+							  ;                         ;BlUsedGearBannerComponent    ;Used Gear Banner Component	  ;BlUsedGearBanner
