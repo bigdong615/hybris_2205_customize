@@ -123,17 +123,19 @@ public class BrainTreeAccountPageController extends AbstractPageController
 	public String editPaymentMethod(final Model model, @RequestParam(value = "paymentInfoId") final String paymentMethodId,
                                     @RequestParam(value = "billingAddressId") final String billingAddressId,
                                     @RequestParam(value = "expirationDate") final String expirationDate, @RequestParam(value = "cvv") final String cvv,
+                                    @RequestParam(value = "default_Card") final String defaultCard,
                                     final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
 		try
 		{
-			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(expirationDate, cvv);
+			String updatedexpirationDate = expirationDate.replace(",", "");
+			ResourceErrorMessage validationMessage = paymentMethodValidator.validate(updatedexpirationDate, cvv);
 			if (validationMessage != null && StringUtils.isNotBlank(validationMessage.getMessageKey()))
 			{
 				String localizedErrorMessage = getLocalizedString(validationMessage.getMessageKey());
 				LOGGER.error("Failed to edit payment method. Error occurred while contacting external payment services.");
 				GlobalMessages.addFlashMessage(redirectAttributes, GlobalMessages.ERROR_MESSAGES_HOLDER, localizedErrorMessage);
-				return redirectToEditPage(paymentMethodId, expirationDate, redirectAttributes, localizedErrorMessage);
+				return redirectToEditPage(paymentMethodId, updatedexpirationDate, redirectAttributes, localizedErrorMessage);
 			}
 			else
 			{
@@ -142,7 +144,7 @@ public class BrainTreeAccountPageController extends AbstractPageController
 				List<AddressData> addressBook = userFacade.getAddressBook();
 				AddressData addressData = getAddressForPaymentInfo(ccPaymentInfo, billingAddressId, addressBook);
 
-				userFacade.editPaymentMethod(ccPaymentInfo, expirationDate, cvv, addressData);
+				userFacade.editPaymentMethod(ccPaymentInfo, updatedexpirationDate, cvv, addressData, defaultCard);
 			}
 		}
 		catch (AdapterException e)

@@ -178,7 +178,7 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 
 	@Override
 	public boolean editPaymentMethod(CCPaymentInfoData paymentInfo, final String expirationDate,
-									 final String cvv, final AddressData addressData)
+									 final String cvv, final AddressData addressData, final String defaultCard)
 	{
 		validateParameterNotNullStandardMessage("paymentInfo", paymentInfo);
 		final BrainTreeUpdatePaymentMethodRequest request = new BrainTreeUpdatePaymentMethodRequest(
@@ -188,13 +188,27 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		//request.setCardholderName(cardholderName);  // NOSONAR
 		request.setCardExpirationDate(expirationDate);
 		request.setCvv(cvv);
+		if(StringUtils.isNotBlank(defaultCard) && Boolean.TRUE.toString().equals(defaultCard))
+		{
+			request.setDefault(true);
+		}else {
+			request.setDefault(false);
+		}
+		
 		if (addressData != null)
 		{
 			request.setBillingAddressId(addressData.getBrainTreeAddressId());
 		}
 
 		BrainTreeUpdatePaymentMethodResult result = getBrainTreePaymentService().updatePaymentMethod(request);
+		final CustomerModel currentCustomer = getCurrentUserForCheckout();
+		final BrainTreePaymentInfoModel ccPaymentInfoModel = brainTreeCustomerAccountService.getBrainTreePaymentInfoForCode(
+				currentCustomer, paymentInfo.getId());
 
+		if (ccPaymentInfoModel != null)
+		{
+			getCustomerAccountService().setDefaultPaymentInfo(currentCustomer, ccPaymentInfoModel);
+		}
 		if (result.isSuccess())
 		{
 			final BrainTreePaymentInfoModel braintreePaymentInfo = getPaymentMethodConverter().convert(result.getPaymentMethod());
