@@ -454,9 +454,9 @@ margin: 0;
   margin-left:-10px;
 }
 #featuredPromo .col-12{position: relative;}
-#featuredPromo span{position: absolute;left: 97px;color: #000;bottom: 30%; font-size: 16px;}
-#featuredPromo span b{color: #fff;font-weight:100;}
-
+#featuredPromo span{position: absolute;left: 97px;;bottom: 30%;color: #000;font-size: 16px;}
+#featuredPromo span a b{color: #fff;font-weight:100;}
+#featuredPromo span a{color: #000;text-decoration: none;display: contents;}
 /* for Gift Card */
 .gift-card-plp{width: 100%;margin: 0 0 41px 0;height: 258px;}
 .gift-card-plp img{width: 100%;}

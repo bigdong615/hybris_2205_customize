@@ -5,18 +5,19 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
+<c:if test="${positionAttribute != 'SocialMediaSectionSlot' && positionAttribute != 'buyingUsedGearEasySection'}">
 <section id="featuredPromo">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                   <a href="${media.redirectUrl}"><img class="promoImg" src="${media.url}">
-                <span>${headline} <b> ${urlLink} </b> </span>
-                </a>
-                   
+                  <img class="promoImg" src="${media.url}">
+                <span> ${headline} <a href="${urlLink}"> <b> ${urlLink} </b> </a> </span>
+                               
                 </div>
             </div>
         </div>    
 </section>
+</c:if>
 
 	<c:if test="${positionAttribute == 'SocialMediaSectionSlot'}">
 	  <div class="social">
