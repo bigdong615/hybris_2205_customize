@@ -191,8 +191,6 @@ public class BrainTreeUserFacadeImpl extends DefaultUserFacade implements BrainT
 		if(StringUtils.isNotBlank(defaultCard) && Boolean.TRUE.toString().equals(defaultCard))
 		{
 			request.setDefault(true);
-		}else {
-			request.setDefault(false);
 		}
 		
 		if (addressData != null)
