@@ -61,7 +61,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.bl.facades.constants.BlFacadesConstants;
+
 import org.apache.log4j.Level;
 
 /**
@@ -179,10 +179,18 @@ public class AddToCartController extends AbstractController {
  				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
  			}
  		}
- 		else if (isGiftCart || blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
+ 		else{
+ 			 if (isGiftCart)
+ 	 		{
+ 				BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.GIFTCARDNOTALLOWE);
+ 				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
+ 	 		}
+ 		
+ 		else if (blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
  		{
  			BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.ADDTOCARTWARNING);
  			return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
+ 		}
  		}
  		return null;
  	}
