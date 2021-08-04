@@ -817,6 +817,10 @@ function startUsedGearCartTimer() {
     
          var productCode = $(this).attr('data-product-code');
          var serialCode = $(this).attr('data-serial');
+         // This data used for GA
+         var productName = $(this).attr('data-product-name');
+         var productBrand =$(this).attr('data-product-brand');
+         var productCategory = $(this).attr('data-product-category');
          var redirectToCart = false;
          if(serialCode == '' || serialCode == undefined){
          serialCode = "serialCodeNotPresent";
@@ -878,6 +882,9 @@ function startUsedGearCartTimer() {
                     	var addToCartLayer = response.addToUsedCartLayer;
                     	if(addToCartLayer == undefined || addToCartLayer == '')
                     	{
+                       var productType ='used gear';
+                       var quantity =1;
+                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                     		redirectToCart = true;
                     		startUsedGearCartTimer();
                     	}

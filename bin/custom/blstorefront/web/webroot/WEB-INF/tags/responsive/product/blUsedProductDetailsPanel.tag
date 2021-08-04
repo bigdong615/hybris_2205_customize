@@ -99,8 +99,8 @@
 																	</button>
 																	<button type="button"
 																		class="btn btn-primary js-add-to-used-cart  serial_entry_${loop.index }  ${hidebutton}"
-																		data-product-code="${product.code}"
-																		data-serial="${serialProduct.serialId}">
+																		data-product-code="${product.code}" data-product-name="${product.name}" data-product-brand="${product.manufacturer}"
+                                    data-product-category="${product.categories[0].name}" data-serial="${serialProduct.serialId}">
 																		<spring:theme code="basket.add.to.basket" />
 																	</button>
 																</c:when>
