@@ -2,6 +2,7 @@ package com.bl.facades.shipping.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.ShippingTypeEnum;
@@ -147,12 +148,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         if (cartModel != null && shippingGroup != null) {
             if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
                 return getDeliveryModeData(shippingGroup, partnerZone, getRentalStartDate(), getRentalEndDate(), payByCustomer);
-            }
-            else if(BooleanUtils.isFalse(cartModel.getIsRentalCart()))
-            {
-            	return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
-            }
-            else {
+            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+                return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
+            } else {
                 return Collections.emptyList();
             }
         }
@@ -165,24 +163,27 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	 * @param payByCustomer
 	 * @return
 	 */
-    private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(String shippingGroup,String partnerZone,boolean payByCustomer){
-   	 
-   	 if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
-          return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
-      } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
-          return getPartnerZoneDeliveryModesForUsedGear(partnerZone, payByCustomer);
-      } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR);
-          return getAllUSPStoreDeliveryModesForUsedGear(payByCustomer);
-      } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-          return getBlRushDeliveryModeDataForUsedGear(payByCustomer);
-      } else {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
-          return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
-      }
-	}
+    private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(final String shippingGroup,
+                                                                                  final String partnerZone,
+                                                                                  final boolean payByCustomer){
+        final List modifiableZoneList = new ArrayList<>();
+        if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getPartnerZoneDeliveryModesForUsedGear(partnerZone, payByCustomer), modifiableZoneList);
+        } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllUSPStoreDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
+            sortCollectionOnShippingOrderSequence(getBlRushDeliveryModeDataForUsedGear(payByCustomer), modifiableZoneList);
+        } else {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        }
+        return modifiableZoneList;
+    }
 
 	/**
      * This method will call appropriate method according to shipping group
@@ -196,27 +197,49 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private Collection<? extends DeliveryModeData> getDeliveryModeData(final String shippingGroup, final String partnerZone,
                                                                        final String rentalStart, final String rentalEnd,
                                                                        final boolean payByCustomer) {
+        final List modifiableZoneList = new ArrayList<>();
         if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG);
-            return getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer), modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG);
-            return getPartnerZoneDeliveryModes(partnerZone, rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getPartnerZoneDeliveryModes(partnerZone, rentalStart, rentalEnd, payByCustomer),
+                    modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG);
-            return getAllUSPStoreDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getAllUSPStoreDeliveryModes(rentalStart, rentalEnd, payByCustomer), modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY_MSG);
-            return getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), rentalStart) == BlInventoryScanLoggingConstants.ZERO
-                    ? getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF, BlDateTimeUtils.getCurrentTimeUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_PST), payByCustomer) : getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF,
-                    null, payByCustomer);
+            Collection<BlRushDeliveryModeData> modifiableRushZoneList;
+            if (getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
+                    BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), rentalStart) == BlInventoryScanLoggingConstants.ZERO) {
+                modifiableRushZoneList = getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF,
+                        BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST), payByCustomer);
+            } else {
+                modifiableRushZoneList = getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF, null, payByCustomer);
+            }
+            sortCollectionOnShippingOrderSequence(modifiableRushZoneList, modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-            return getBlRushDeliveryModeData(rentalStart, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getBlRushDeliveryModeData(rentalStart, payByCustomer), modifiableZoneList);
         } else {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG);
-            return getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer), modifiableZoneList);
+        }
+        return modifiableZoneList;
+    }
+
+    /**
+     * javadoc
+     * This method will sort shipping methods on ShippingOrderSequence attribute
+     *
+     * @param deliveryModeData collection
+     * @param modifiableZoneList finalList
+     */
+    private void sortCollectionOnShippingOrderSequence(final Collection<? extends DeliveryModeData> deliveryModeData,
+                                                       final List modifiableZoneList) {
+        modifiableZoneList.addAll(deliveryModeData);
+        if (CollectionUtils.isNotEmpty(modifiableZoneList)) {
+            modifiableZoneList.sort(Comparator.comparing(ZoneDeliveryModeData::getShippingOrderSequence));
         }
     }
 
@@ -246,7 +269,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     
     /**
     *
-    * @param rentalStart date
     * @param payByCustomer flag
     * @return collection of RushDeliveryData
     */
@@ -644,7 +666,43 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public AVSResposeData getAVSResponse(final AddressData addressData) {
-        return getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
+        final AVSResposeData avsResposeData = getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
+        if(avsResposeData != null && CollectionUtils.isNotEmpty(avsResposeData.getResult()) &&
+                validateAVSResponse(addressData, avsResposeData.getResult().iterator().next())) {
+            avsResposeData.setAddressType(avsResposeData.getResult().iterator().next().getAddressType());
+            avsResposeData.setResult(Collections.emptyList());
+        }
+        return avsResposeData;
+    }
+
+    /**
+     * javadoc
+     * This method will do validation for AVS response with request
+     *
+     * @param addressRequestData entered address
+     * @param addressResponseData suggested address
+     * @return true if same
+     */
+    private boolean validateAVSResponse(final AddressData addressRequestData, final AddressData addressResponseData) {
+        if(addressRequestData.getLine1().equalsIgnoreCase(addressResponseData.getLine1()) &&
+            addressRequestData.getTown().equalsIgnoreCase(addressResponseData.getTown()) &&
+            addressRequestData.getRegion().getIsocodeShort().equalsIgnoreCase(addressResponseData.getRegion().getIsocodeShort()) &&
+            checkNumberEquality(addressRequestData.getPostalCode(), addressResponseData.getPostalCode())) {
+                        return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    /**
+     * javadoc
+     * This method will check zip equality
+     *
+     * @param request zipCode
+     * @param response zipCode
+     * @return true if same
+     */
+    private boolean checkNumberEquality(final String request, final String response) {
+        return request.split(BlCoreConstants.HYPHEN)[0].equals(response.split(BlCoreConstants.HYPHEN)[0]);
     }
 
     /**

@@ -87,6 +87,13 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                       var productName = $('#productName').val();
+                                       var productCode = $('#productCode').val();
+                                       var productBrand =$('#productBrand').val();
+                                       var productType = $('#productType').val();
+                                       var productCategory = $('#productCategory').val()
+                                       var quantity = $('#quantity').val();
+                                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
                                       $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');

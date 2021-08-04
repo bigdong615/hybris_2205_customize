@@ -332,7 +332,7 @@ public class CheckoutController extends AbstractCheckoutController
 			{
 				final String productCode = entry.getProduct().getCode();
 				final ProductData product = productFacade.getProductForCodeAndOptions(productCode,
-						Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.CATEGORIES));
+						Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.CATEGORIES,ProductOption.REQUIRED_DATA));
 				entry.setProduct(product);
 			}
 		}

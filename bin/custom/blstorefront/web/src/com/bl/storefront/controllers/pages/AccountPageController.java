@@ -20,6 +20,7 @@ import com.bl.storefront.controllers.ControllerConstants.Views.Pages.Account;
 import com.bl.storefront.forms.BlAddressForm;
 import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.transaction.service.BrainTreeTransactionService;
 import de.hybris.platform.acceleratorfacades.ordergridform.OrderGridFormFacade;
 import de.hybris.platform.acceleratorfacades.product.data.ReadOnlyOrderGridData;
@@ -70,11 +71,14 @@ import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commerceservices.security.BruteForceAttackHandler;
 import de.hybris.platform.commerceservices.util.ResponsiveUtils;
 import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.servicelayer.exceptions.ModelNotFoundException;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.util.Config;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -514,7 +518,7 @@ public class AccountPageController extends AbstractSearchPageController
 			try
 			{
 				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
-				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null, getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(BlControllerConstants.SUCCESS_MSG_TYPE, getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
@@ -526,13 +530,11 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final DuplicateUidException e)
 			{
-				bindingResult.rejectValue("email", "profile.email.unique");
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.email.unique", null,getI18nService().getCurrentLocale()));
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);//NOSONAR
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
 			}
 		}
 
@@ -1211,6 +1213,9 @@ public class AccountPageController extends AbstractSearchPageController
 	}
 
 
+	/**
+	 * This method is created to apply the voucher from extend order page
+	 */
 	@PostMapping(value = "/voucher/apply")
 	public String applyVoucherAction(@Valid final VoucherForm form, final BindingResult bindingResult,
 			final HttpServletRequest request, final RedirectAttributes redirectAttributes , final Model model)
@@ -1219,42 +1224,45 @@ public class AccountPageController extends AbstractSearchPageController
 		{
 			if (bindingResult.hasErrors())
 			{
-				redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-						getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()));
+				model.addAttribute(BlControllerConstants.EXTEND_ORDER ,
+						getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null , getI18nService().getCurrentLocale()));
 			}
 			else
 			{
 				final String ipAddress = request.getRemoteAddr();
 				if (bruteForceAttackHandler.registerAttempt(ipAddress + "_voucher"))
 				{
-					redirectAttributes.addFlashAttribute("disableUpdate", Boolean.valueOf(true));
-					redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-							getMessageSource().getMessage("text.voucher.apply.bruteforce.error", null, getI18nService().getCurrentLocale()));
+					model.addAttribute(BlControllerConstants.EXTEND_ORDER  , BlControllerConstants.COUPON_INVALID );
 				}
 				else
 				{
-					defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode());
-					redirectAttributes.addFlashAttribute("successMsg",
-							getMessageSource().getMessage("text.voucher.apply.applied.success", new Object[]
-									{ form.getVoucherCode() }, getI18nService().getCurrentLocale()));
+					final String referer = request.getHeader(BlControllerConstants.REFERER);
+					final List<String> errorList = new ArrayList<>();
+					final OrderData orderData = defaultBlCouponFacade.applyVoucherForExtendOrder(form.getVoucherCode() , referer , errorList);
+					model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+
+					if(CollectionUtils.isNotEmpty(errorList)) {
+						model.addAttribute(BlControllerConstants.EXTEND_ORDER  ,
+								getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID  , null , getI18nService().getCurrentLocale()));
+					}
+					else
+					{
+						model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+					}
 				}
 			}
 		}
 		catch (final VoucherOperationException e)
 		{
-			redirectAttributes.addFlashAttribute(BlControllerConstants.VOUCHER_FORM, form);
-			redirectAttributes.addFlashAttribute(ERROR_MSG_TYPE,
-					getMessageSource().getMessage(e.getMessage(), null,
-							getMessageSource().getMessage("coupon.invalid.code.provided", null, getI18nService().getCurrentLocale()),
-							getI18nService().getCurrentLocale()));
+			model.addAttribute(BlControllerConstants.EXTEND_ORDER  ,
+					getMessageSource().getMessage(BlControllerConstants.COUPON_INVALID , null , getI18nService().getCurrentLocale()));
 			if (LOG.isDebugEnabled())
 			{
-				LOG.debug(e.getMessage(), e);
+				BlLogger.logMessage(LOG , Level.DEBUG , e.getMessage() , e);
 			}
-
 		}
 
-		return "";
+		return Account.AccountOrderExtendSummaryPage;
 	}
 
 
@@ -1289,15 +1297,27 @@ public class AccountPageController extends AbstractSearchPageController
 		String paymentInfoId = request.getParameter(BlControllerConstants.PAYMENT_ID);
 		String paymentMethodNonce = request.getParameter(BlControllerConstants.PAYMENT_NONCE);
 
+		String poNumber = request.getParameter(BlControllerConstants.PO_NUMBER);
+		String poNotes = request.getParameter(BlControllerConstants.PO_NOTES);
+
 		boolean isSuccess = false;
 		if(StringUtils.isNotBlank(orderCode) && StringUtils.isNotBlank(paymentInfoId) &&
-				StringUtils.isNotBlank(paymentMethodNonce)) {
+				StringUtils.isNotBlank(paymentMethodNonce) || StringUtils.isNotBlank(poNumber)) {
 
 			final OrderModel orderModel = blOrderFacade.getExtendedOrderModelFromCode(orderCode);
 
 			if(null != orderModel) {
-				// Needs to uncomment below code once Payment related PR merged
-				/*final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
+
+				if(StringUtils.isNotBlank(poNumber)) {
+						isSuccess = blOrderFacade.savePoPaymentForExtendOrder(poNumber , poNotes , orderCode);
+						if(BooleanUtils.isTrue(isSuccess)){
+							model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PO);
+						}
+					}
+				else {
+
+					// Needs to uncomment below code once Payment related PR merged
+				final BrainTreePaymentInfoModel paymentInfo = brainTreeCheckoutFacade
 						.getBrainTreePaymentInfoForCode(
 								(CustomerModel) orderModel.getUser(), paymentInfoId, paymentMethodNonce);
 				if(null != paymentInfo) {
@@ -1305,7 +1325,10 @@ public class AccountPageController extends AbstractSearchPageController
 					isSuccess = brainTreeTransactionService
 							.createAuthorizationTransactionOfOrder(orderModel,
 									BigDecimal.valueOf(orderModel.getTotalPrice()), true, paymentInfo);
-				}*/
+				}
+				if(BooleanUtils.isTrue(isSuccess)){
+					model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.CREDIT_CARD);}
+				}
 			}
 
 			if(isSuccess) {
@@ -1321,6 +1344,32 @@ public class AccountPageController extends AbstractSearchPageController
 
 		}
 			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
+	}
+
+
+	/**
+	 * This method created to remove the applied voucher from extend order page
+	 */
+	@PostMapping(value = "/voucher/remove")
+	public String removeVoucher(@Valid final VoucherForm form, final RedirectAttributes redirectModel ,
+			final HttpServletRequest request , final Model model)
+	{
+		try
+		{
+			final String referer = request.getHeader(BlControllerConstants.REFERER);
+			final OrderData orderData = defaultBlCouponFacade.releaseVoucherForExtendOrder(form.getVoucherCode() , referer);
+			model.addAttribute(BlControllerConstants.ORDER_DATA , orderData);
+			model.addAttribute(BlControllerConstants.VOUCHER_FORM, new VoucherForm());
+		}
+		catch (final VoucherOperationException e)
+		{
+			if (LOG.isDebugEnabled())
+			{
+				BlLogger.logMessage(LOG , Level.DEBUG , e.getMessage() , e);
+			}
+
+		}
+		return Account.AccountOrderExtendSummaryPage;
 	}
 
 	}

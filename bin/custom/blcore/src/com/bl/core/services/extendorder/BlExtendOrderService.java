@@ -18,4 +18,9 @@ public interface BlExtendOrderService {
    * this method created to update the extend order
    */
   void updateExtendOrder(final AbstractOrderModel orderModel);
+
+  /**
+   * This method created to save the po payment
+   */
+  boolean savePoPayment(final String poNumber , final String poNotes , final OrderModel orderModel);
 }
