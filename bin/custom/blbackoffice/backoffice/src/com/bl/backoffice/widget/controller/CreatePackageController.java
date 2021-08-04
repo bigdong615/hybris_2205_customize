@@ -3,35 +3,7 @@
  */
 package com.bl.backoffice.widget.controller;
 
-import de.hybris.platform.enumeration.EnumerationService;
-import de.hybris.platform.ordersplitting.WarehouseService;
-import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
-import de.hybris.platform.ordersplitting.model.ConsignmentModel;
-import de.hybris.platform.servicelayer.model.ModelService;
-import de.hybris.platform.warehousing.model.PackagingInfoModel;
-import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Grid;
-import org.zkoss.zul.ListModelList;
-import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Textbox;
-
 import com.bl.blbackoffice.dto.SerialProductDTO;
-import com.bl.core.enums.ItemStatusEnum;
 import com.bl.core.model.BlProductModel;
 import com.bl.core.model.BlSerialProductModel;
 import com.bl.core.product.dao.BlProductDao;
@@ -42,6 +14,28 @@ import com.hybris.cockpitng.annotations.SocketEvent;
 import com.hybris.cockpitng.annotations.ViewEvent;
 import com.hybris.cockpitng.core.events.CockpitEventQueue;
 import com.hybris.cockpitng.util.DefaultWidgetController;
+import de.hybris.platform.enumeration.EnumerationService;
+import de.hybris.platform.ordersplitting.WarehouseService;
+import de.hybris.platform.ordersplitting.model.ConsignmentEntryModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
+import de.hybris.platform.servicelayer.model.ModelService;
+import de.hybris.platform.warehousing.model.PackagingInfoModel;
+import de.hybris.platform.warehousingfacades.order.data.PackagingInfoData;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.Resource;
+import org.apache.commons.collections4.CollectionUtils;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Grid;
+import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Textbox;
 
 
 public class CreatePackageController extends DefaultWidgetController
@@ -132,10 +126,7 @@ public class CreatePackageController extends DefaultWidgetController
 					final BlSerialProductModel blSerialProductModel = (BlSerialProductModel) blProductModel;
 					final SerialProductDTO serialProduct = new SerialProductDTO();
 					serialProduct.setSerialProduct(blSerialProductModel);
-					if (blSerialProductModel.getBlProduct() != null && blSerialProductModel.getBlProduct().getWeight() != null)
-					{
-						this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
-					}
+					this.weight = blSerialProductModel.getBlProduct().getWeight().doubleValue() + this.weight;
 					serials.add(serialProduct);
 				}
 				this.serialEntries.setModel(new ListModelList<SerialProductDTO>(serials));
@@ -164,7 +155,6 @@ public class CreatePackageController extends DefaultWidgetController
 		getModelService().refresh(consignment);
 		for (final ConsignmentEntryModel consignmentEntryModel : consignment.getConsignmentEntries())
 		{
-			final Map<String, ItemStatusEnum> itemsMap = consignmentEntryModel.getItems();
 			allSerialProducts.addAll(consignmentEntryModel.getSerialProducts());
 		}
 		final List<PackagingInfoModel> packageInfo = consignment.getPackaginginfos();
