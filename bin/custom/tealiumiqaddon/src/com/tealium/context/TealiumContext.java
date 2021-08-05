@@ -1,12 +1,12 @@
 package com.tealium.context;
 
 import de.hybris.platform.commercefacades.order.data.CartData;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.lang.StringUtils;
 
 
 public class TealiumContext
@@ -15,28 +15,26 @@ public class TealiumContext
 	private Map<String, String[]> arrayAttributes = new ConcurrentHashMap<>();
 	private CartData productData;
 	private String checkoutType;
-	private Boolean isNewUser = false;
 	private String viewCartProductCode = "no_product";
 	private String productPageProductCode = "no_product";
 	private Boolean cartOpen = false;
 
-	private List<String> pageTypeValues = Arrays.asList("home", "search", "category", "sub_category", "product", "cart",
-			"create_account", "quick_order", "product_grid", "order_status", "order_detail", "order_confirmation", "login",
-			"lesson_plans", "custom_landing", "content", "checkout_login", "checkout", "catalog_request", "account_manage",
+	private List<String> pageTypeValues = Arrays.asList("home", "search", "category",  "product", "cart",
+			  "product_grid", "order_status", "order_detail", "order_confirmation",  "checkout",
 			"my_list", "no_search", "404_page", "error_page", "product_compare", "confirmation");
 
 
 	public void set(String key, String value)
 	{
-		if (value != null && !value.equals(""))
-		{
+		if (StringUtils.isNotEmpty(value))
+		 {
 			attributes.put(key, value);
-		}
+		 }
 	}
 
 	public void set(String key, Object value)
 	{
-		if (value != null)
+		if (value != null){
 			if (value instanceof String)
 			{
 				attributes.put(key, (String) value);
@@ -45,29 +43,27 @@ public class TealiumContext
 			{
 				attributes.put(key, String.valueOf(value));
 			}
+		}
 	}
 
 	public void setArrayValue(String key, String[] value)
 	{
-		if (value != null)
-			if (value instanceof String[])
-			{
+		if (value != null && value instanceof String[]){
 				arrayAttributes.put(key, value);
-			}
+		 }
 	}
 
 	public void clean()
 	{
-		isNewUser = false;
 		arrayAttributes = new HashMap<>();
 	}
 
 	public void correctPageType()
 	{
-		String pageType = attributes.get("page_type");
+		String pageType = attributes.get("pagetype");
 		if (!pageTypeValues.contains(pageType) && pageType != null)
 		{
-			attributes.put("page_type", "content");
+			attributes.put("pagetype", "content");
 		}
 	}
 
@@ -102,7 +98,7 @@ public class TealiumContext
 		return attributes;
 	}
 
-	public void setAttributes(HashMap<String, String> attributes)
+	public void setAttributes(HashMap<String, String> attributes) // NOSONAR
 	{
 		this.attributes = attributes;
 	}
@@ -115,16 +111,6 @@ public class TealiumContext
 	public void setProductData(CartData productData)
 	{
 		this.productData = productData;
-	}
-
-	public Boolean getNewUser()
-	{
-		return isNewUser;
-	}
-
-	public void setNewUser(Boolean newUser)
-	{
-		isNewUser = newUser;
 	}
 
 	public String getViewCartProductCode()

@@ -518,7 +518,7 @@ public class AccountPageController extends AbstractSearchPageController
 			try
 			{
 				customerFacade.changeUid(updateEmailForm.getEmail(), updateEmailForm.getPassword());
-				redirectAttributes.addFlashAttribute("successMsgEmail", getMessageSource().getMessage("text.account.profile.confirmationUpdated", null, getI18nService().getCurrentLocale()));
+				redirectAttributes.addFlashAttribute(BlControllerConstants.SUCCESS_MSG_TYPE, getMessageSource().getMessage("text.account.profile.confirmationUpdated", null,getI18nService().getCurrentLocale()));
 
 				// Replace the spring security authentication with the new UID
 				final String newUid = customerFacade.getCurrentCustomer().getUid().toLowerCase();  // NOSONAR
@@ -530,13 +530,11 @@ public class AccountPageController extends AbstractSearchPageController
 			}
 			catch (final DuplicateUidException e)
 			{
-				bindingResult.rejectValue("email", "profile.email.unique");
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.email.unique", null,getI18nService().getCurrentLocale()));
 			}
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
-				bindingResult.rejectValue("password", PROFILE_CURRENT_PASSWORD_INVALID);//NOSONAR
-				returnAction = setErrorMessagesOnAccountCMSPage(model, UPDATE_EMAIL_CMS_PAGE);
+				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
 			}
 		}
 
@@ -668,31 +666,29 @@ public class AccountPageController extends AbstractSearchPageController
 				}
 				catch (final PasswordMismatchException localException)
 				{
-					bindingResult.rejectValue("currentPassword", PROFILE_CURRENT_PASSWORD_INVALID, new Object[] {},
-							PROFILE_CURRENT_PASSWORD_INVALID);
+					model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
+					model.addAttribute(BlControllerConstants.PASSWORDMISMATCH_MSG_TYPE,true);
 				}
 			}
 			else
 			{
-				bindingResult.rejectValue("checkNewPassword", "validation.checkPwd.equals", new Object[] {},
-						"validation.checkPwd.equals");
+				model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
+				model.addAttribute(BlControllerConstants.CURRENTPASSWORD_MSG_TYPE,true);
 			}
 		}
 
 		if (bindingResult.hasErrors())
 		{
-			final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
-			storeCmsPageInModel(model, updatePasswordPage);
-			setUpMetaDataForContentPage(model, updatePasswordPage);
-
 			model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.profile.updatePasswordForm"));
-			return getViewForPage(model);
 		}
 		else
 		{
-			redirectAttributes.addFlashAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
-			return REDIRECT_TO_PASSWORD_UPDATE_PAGE;
+			model.addAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
 		}
+		final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
+		storeCmsPageInModel(model, updatePasswordPage);
+		setUpMetaDataForContentPage(model, updatePasswordPage);
+		return getViewForPage(model);
 	}
 
 	@RequestMapping(value = "/address-book", method = RequestMethod.GET)
@@ -968,7 +964,7 @@ public class AccountPageController extends AbstractSearchPageController
 		model.addAttribute("customerData", customerFacade.getCurrentCustomer());
 		model.addAttribute("paymentInfoData", userFacade.getCCPaymentInfos(true));
 		storeCmsPageInModel(model, getContentPageForLabelOrId(PAYMENT_DETAILS_CMS_PAGE));
-		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(ADD_EDIT_ADDRESS_CMS_PAGE));
+		setUpMetaDataForContentPage(model, getContentPageForLabelOrId(PAYMENT_DETAILS_CMS_PAGE));
 		model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.paymentDetails"));
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
 		return getViewForPage(model);
