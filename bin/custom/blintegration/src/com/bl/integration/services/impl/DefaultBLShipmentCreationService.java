@@ -42,6 +42,7 @@ import com.ups.wsdl.xoltws.ship.v1.ShipPortType;
 import com.ups.wsdl.xoltws.ship.v1.ShipService;
 import com.ups.wsdl.xoltws.ship.v1.ShipmentErrorMessage;
 import com.ups.xmlschema.xoltws.error.v1.ErrorDetailType;
+import com.ups.xmlschema.xoltws.error.v1.Errors;
 import com.ups.xmlschema.xoltws.ship.v1.ShipmentRequest;
 import com.ups.xmlschema.xoltws.ship.v1.ShipmentResponse;
 import com.ups.xmlschema.xoltws.upss.v1.UPSSecurity;
