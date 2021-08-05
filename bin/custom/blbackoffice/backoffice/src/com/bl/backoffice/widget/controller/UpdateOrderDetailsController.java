@@ -142,7 +142,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	@Autowired
 	CalculationService calculationService;
 
-	private Converter<RegionModel, RegionData> regionConverter;
+	private transient Converter<RegionModel, RegionData> regionConverter;
 
 	private ListModelList<RegionData> listModelList = new ListModelList<>();
 
@@ -151,7 +151,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 	private ListModelList isPickupStore = new ListModelList();
 	private ListModelList isUpsStore = new ListModelList();
 
-	final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
+	private final List<RegionData> blRegionCode = i18NFacade.getRegionsForCountryIso(COUNTRY_CODE);
 
 	boolean isDeliveryModeChange = false;
 
@@ -335,9 +335,7 @@ public class UpdateOrderDetailsController extends DefaultWidgetController
 				}
 				else
 				{
-					Messagebox.show("Selected shipping method service is not applicable for added zip code" + "----"
-							+ this.deliveryModeCombobox.getValue() + "-" + this.postalCode.getValue());
-
+					Messagebox.show("Selected shipping method service is not applicable for added zip code");
 					throw new WrongValueException(this.postalCode, this.getLabel("blbackoffice.updateshipping.inValid.zipCode"));
 				}
 			}
