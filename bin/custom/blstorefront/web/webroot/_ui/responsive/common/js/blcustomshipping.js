@@ -185,9 +185,12 @@ function removeClass(){
                   showErrorForInputValidation('Ship');
               }
           }
+
+        ACC.track.trackShippingSelection('Ship It','Ship to home','Item In Stock');
       }
       else
       {
+        ACC.track.trackShippingSelection('Ship It','Ship to home','Item Out of Stock');
       	window.location.reload();
       }
       
@@ -848,6 +851,7 @@ function removeClass(){
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
     if(checkAvailability(deliveryMode))
     {
+        ACC.track.trackShippingSelection('Same Day Delivery','','Item In Stock');
         if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
             savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
             $.ajax({
@@ -916,6 +920,7 @@ function removeClass(){
       }
       else
       {
+       ACC.track.trackShippingSelection('Same Day Delivery','','Item Out of Stock');
       	window.location.reload();
     }
   }
@@ -1457,6 +1462,7 @@ function removeClass(){
              success: function (data) {
                  if(data != null) {
                      if(upsStoreAddress != null) {
+                        ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {
                                 saveDeliveryMode(deliveryMethod, status)
@@ -1472,6 +1478,7 @@ function removeClass(){
                               console.log(error)
                             })
                      } else {
+                        ACC.track.trackShippingSelection('PickUP','','Item In Stock');
                         saveDeliveryMode(deliveryMethod, status)
                             .then((data) => {
                                 $('.page-loader-new-layout').hide();
@@ -1493,6 +1500,11 @@ function removeClass(){
      }
      else
      {
+     if(upsStoreAddress != null) {
+       ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item Out of Stock');
+       }else{
+        ACC.track.trackShippingSelection('PickUP','','Item Out of Stock');
+       }
      	window.location.reload();
      }
   }
