@@ -485,7 +485,6 @@ public class AccountPageController extends AbstractSearchPageController
 		final CustomerData customerData = customerFacade.getCurrentCustomer();
 		final UpdateEmailForm updateEmailForm = new UpdateEmailForm();
 
-		//updateEmailForm.setEmail(customerData.getDisplayUid());
 		model.addAttribute(BlCoreConstants.BL_PAGE_TYPE,BlControllerConstants.UPDATE_EMAIL_IDENTIFIER);
 		model.addAttribute("updateEmailForm", updateEmailForm);
 		final ContentPageModel updateEmailPage = getContentPageForLabelOrId(UPDATE_EMAIL_CMS_PAGE);
