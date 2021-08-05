@@ -27,6 +27,7 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
   private String code;
   private String amount;
   private String msg;
+  private String recipientMessage;
 
 @Override
   public void init(final GiftCardEmailProcessModel giftCardEmailProcessModel,
@@ -50,6 +51,7 @@ public class BlGiftCardEmailContext extends AbstractEmailContext<GiftCardEmailPr
                 + decimalFormat
                 .format(giftCardEmailProcessModel.getGiftcard().getAmount().doubleValue());
         setAmount(giftCardAmount);
+		setRecipientMessage(giftCardEmailProcessModel.getGiftcard().getMessage());
       }
     }
   }
@@ -123,4 +125,21 @@ public void setMsg(String msg)
 {
 	this.msg = msg;
 }
+
+  /**
+   * @return the recipientMessage
+   */
+  public String getRecipientMessage()
+  {
+	  return recipientMessage;
+  }
+
+  /**
+   * @param recipientMessage
+   *           the recipientMessage to set
+   */
+  public void setRecipientMessage(final String recipientMessage)
+  {
+	  this.recipientMessage = recipientMessage;
+  }
 }
