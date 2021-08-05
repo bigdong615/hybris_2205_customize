@@ -84,5 +84,5 @@ public interface BlCartService extends CartService {
      * @return
      */
     void changeSerialStatusInStagedVersion(final String productCode,
-        final SerialStatusEnum addedToCart);
+        final SerialStatusEnum serialStaus);
 }
