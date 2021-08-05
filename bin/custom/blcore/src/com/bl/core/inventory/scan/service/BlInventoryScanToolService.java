@@ -78,20 +78,19 @@ public interface BlInventoryScanToolService {
     Map<String,List<String>> doTechEngSerialLocationUpdate(final List<String> barcodes);
     
  	/**
- 	 * javadoc
- 	 *
+ 	 * method will verify the list of bin barcodes and result into list of failed barcodes that has
+ 	 *         been failed to update its location in db
  	 * @param barcodes
  	 *           for BlSerialProduct
- 	 * @return List<String> method will verify the list of bin barcodes and result into list of failed barcodes that has
- 	 *         been failed to update its location in db
+ 	 * @return List<String> 
  	 */
  	public List<String> getFailedBinBarcodeList(final List<String> barcodes);
 
  	/**
- 	 * @param barcodes
- 	 * @param selectedConsignment
- 	 * @return List<String> method will verify the list of barcodes and result into list of failed barcodes that are not
+ 	 * method will verify the list of barcodes and result into list of failed barcodes that are not
  	 *         valid as per the order
+ 	 * @param selectedConsignment
+ 	 * @return List<String> 
  	 */
  	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
@@ -103,14 +102,13 @@ public interface BlInventoryScanToolService {
 	public int checkValidTrackingId(final String barcodes);
 	
 	/**
-	 * javadoc
-	 *
+	 * method will verify the list of bin barcodes and result into list of failed barcodes that has
+	 *         been failed to update its location in db
 	 * @param barcodes
 	 *           for BlSerialProduct
-	 * @return List<String> method will verify the list of bin barcodes and result into list of failed barcodes that has
-	 *         been failed to update its location in db
+	 * @return List<String>
 	 */
-	public List<String> getFailedPackageBarcodeList(final List<String> barcodes);
+	public Map<Integer, List<String>> getFailedPackageBarcodeList(final List<String> barcodes);
 
 	/**
 	 * This method will verify loctiona and update items to new working desk location
