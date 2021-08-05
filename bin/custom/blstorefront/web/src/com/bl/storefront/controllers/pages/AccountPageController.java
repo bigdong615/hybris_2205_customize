@@ -534,7 +534,7 @@ public class AccountPageController extends AbstractSearchPageController
 			catch (final PasswordMismatchException passwordMismatchException)
 			{
 				redirectAttributes.addFlashAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalid", null,getI18nService().getCurrentLocale()));
-			  redirectAttributes.addFlashAttribute("passwordError",true);
+			  redirectAttributes.addFlashAttribute(BlControllerConstants.PASSWORDMISMATCH_MSG_TYPE,true);
 			}
 		}
 
