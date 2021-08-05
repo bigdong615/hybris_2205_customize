@@ -35,7 +35,7 @@
                        						  <c:if test="${not empty errorMsg}">
                                          <div class="notification notification-error mt-4">${errorMsg}</div>
                                     </c:if>
-                       						  <c:if test="${not empty successMsg}">
+                       						  <c:if test="${not empty successMsg && empty errorMsg}"> 
                                								<div class="notification notification-tip check mt-4">${successMsg}</div>
                                			</c:if>
                        				</form:form>
