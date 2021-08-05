@@ -19,11 +19,13 @@
 <div class="cartProduct">
 	<div class="row">
 		<div class="col-md-2 text-center mt-3">
-			<c:set
+		<a href="#"><product:productPrimaryImage
+					product="${entry.product}" format="thumbnail" /></a>
+			<%-- <c:set
 				value="${request.contextPath}/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg"
 				var="altTextHtml1" />
 			<img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}"
-				title="${altText}" title="${altText}" />
+				title="${altText}" title="${altText}" /> --%>
 		</div>
 		<div class="col-md-6 mt-3">
 			<b>${entry.product.name}</b>
@@ -68,13 +70,6 @@
 						name="message">${entry.recipientMessage}</textarea>
 				</div>
 			</form:form>
-		</div>
-	</div>
-	<div class="productNotifications row hide">
-		<div class="col-12">
-			<div class="notification notification-warning">
-				<spring:theme code="text.giftcard.PurchaseForm.product.warning" />
-			</div>
 		</div>
 	</div>
 </div>
