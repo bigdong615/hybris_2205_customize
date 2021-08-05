@@ -63,9 +63,11 @@
 									<p class="overline">
 										<spring:theme code="text.review.used.gear.page.arrives" />
 									</p>
-									<p class="lightteal mb-0">
-										<b>${formattedRentalStartDate}</b>
-									</p>
+									<c:if test="${fn:containsIgnoreCase(cartData.deliveryMode.shippingGroup, 'BL_PARTNER_PICKUP') == false}">
+									  <p class="lightteal mb-0">
+										  <b><spring:theme code="text.review.used.gear.page"/></b>
+									  </p>
+									</c:if>
 									<p class="body14">
 										<c:choose>
 											<c:when
@@ -124,7 +126,7 @@
 										</a>
 									</h5>
 									<div class="row mb-4">
-										<div class="col-6">
+										<%-- <div class="col-6">
 											<p class="gray80 body14">
 												<b class="gray100"><spring:theme
 														code="text.review.page.delivery.mode.pickup" /></b>
@@ -132,7 +134,7 @@
 												<br /> ${cartData.pickUpPersonEmail} <br />
 												${cartData.pickUpPersonPhone} <br />
 											</p>
-										</div>
+										</div> --%>
 										<c:if test="${not empty cartData.deliveryAddress}">
 											<div class="col-6">
 												<p class="gray80 body14">
@@ -194,34 +196,40 @@
 						<c:if test="${not empty cartData.giftCardData}">
 							<multi-checkout-paypal:paymentInfoGiftCard cartData="${cartData}" />
 						</c:if>
-						<div class="reviewCart">
-							<h5 class="mb-4">
-								<spring:theme
-									code="text.review.page.used.terms.agreement.title" />
-							</h5>
-							<div class="row mb-4">
-								<agreementInfo:usedGearTermsAgreementInfo />
-								<div class="notification notification-warning">
-									<spring:theme
-										code="text.review.page.your.rental.heads.up.message" />
-								</div>
-							</div>
-						</div>
-						<div class="rental-terms">
-							<b><spring:theme code="text.review..used.gear.page.terms.check" /></b>
-						</div>
-						<div class="cart-actions">
-							<form:form action="${placeOrderUrl}" id="placeOrderForm1"
-								modelAttribute="placeOrderForm">
-								<input type="hidden" id="shipsFromPostalCode"
-									name="shipsFromPostalCode" value="${shipsFromPostalCode}">
-								<button id="placeOrder" type="submit"
-									class="btn btn-sm btn-primary float-end">
-									<spring:theme code="checkout.summary.placeOrder"
-										text="Place Your Order" />
-								</button>
-							</form:form>
-						</div>
+						<form:form action="${placeOrderUrl}" id="placeOrderForm1"
+            	modelAttribute="placeOrderForm">
+            	<b><spring:theme code="text.review.page.order.notes" /></b>
+            	<input type="text" class="form-control order-notes" name="orderNotes"
+            		id="notes"
+            		placeholder="<spring:theme code="text.review.page.order.notes.placeholder"/>"
+            		min="1" max="1000" maxlength="1000" value="${cartData.orderNotes}" />
+            		<input type="checkbox" name="newsLetterSubscriptionOpted" value="true" checked="checked" id="newsletter"/>
+                <label for="newsletter"><span class="gray80"><spring:theme code="text.review.page.newsletter.checkbox.label" /></span></label>
+            	<hr class="mt-5">
+            	<div class="reviewCart">
+            		<h5 class="mb-4">
+            			<spring:theme code="text.review.page.used.terms.agreement.title" />
+            		</h5>
+            		<div class="row mb-4">
+            			<agreementInfo:usedGearTermsAgreementInfo />
+            			<div class="notification notification-warning">
+            				<spring:theme code="text.review.page.your.rental.heads.up.message" />
+            			</div>
+            		</div>
+            	</div>
+            	<div class="rental-terms">
+            		<b><spring:theme code="text.review..used.gear.page.terms.check" /></b>
+            	</div>
+            	<div class="cart-actions">
+            		<input type="hidden" id="shipsFromPostalCode"
+            			name="shipsFromPostalCode" value="${shipsFromPostalCode}">
+            		<button id="placeOrder" type="button"
+            			class="btn btn-sm btn-primary float-end">
+            			<spring:theme code="checkout.summary.placeOrder"
+            				text="Place Your Order" />
+            		</button>
+              </div>
+            </form:form>
 					</div>
 					<div class="col-lg-4 offset-lg-1 d-lg-block sticky-lg-top">
 						<cart:blUsedGearOrderSummaryForReviewPage cartData="${cartData}"

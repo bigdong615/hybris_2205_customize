@@ -1,27 +1,35 @@
 package com.bl.Ordermanagement.actions.order;
 
 import com.bl.Ordermanagement.constants.BlOrdermanagementConstants;
+import com.bl.Ordermanagement.exceptions.BlShippingOptimizationException;
 import com.bl.Ordermanagement.exceptions.BlSourcingException;
 import com.bl.Ordermanagement.services.BlSourcingService;
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.model.BlSerialProductModel;
 import com.bl.logging.BlLogger;
 import com.bl.logging.impl.LogErrorCodeEnum;
-import de.hybris.platform.basecommerce.enums.ConsignmentStatus;
 import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.platform.core.model.order.OrderEntryModel;
+import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentProcessModel;
+import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import de.hybris.platform.processengine.BusinessProcessService;
 import de.hybris.platform.processengine.action.AbstractProceduralAction;
 import de.hybris.platform.servicelayer.exceptions.AmbiguousIdentifierException;
 import de.hybris.platform.task.RetryLaterException;
 import de.hybris.platform.warehousing.allocation.AllocationService;
 import de.hybris.platform.warehousing.constants.WarehousingConstants;
+import de.hybris.platform.warehousing.data.sourcing.SourcingResult;
 import de.hybris.platform.warehousing.data.sourcing.SourcingResults;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -50,8 +58,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
     SourcingResults results = null;
 
     try {
-
-      results = blSourcingService.sourceOrder(order);
+      results = getSourcingResults(order);
       isSourcingSuccessful = true;
     } catch (final IllegalArgumentException e) {
 
@@ -67,7 +74,7 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
           ex.getMessage() + " Changing order status to SUSPENDED", ex);
     }
 
-    if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {
+    if (null != results && CollectionUtils.isNotEmpty(results.getResults()) && isSourcingSuccessful) {  //NOSONAR
       try {
         final Collection<ConsignmentModel> consignments = getAllocationService()
             .createConsignments(process.getOrder(),
@@ -90,9 +97,91 @@ public class BlSourceOrderAction extends AbstractProceduralAction<OrderProcessMo
         setOrderSuspendedStatus(order);
         BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_ALLOCATION_ERROR.getCode(),
             ex.getMessage() + " Changing order status to SUSPENDED", ex);
+      } catch (final BlShippingOptimizationException soe) {
+
+        setOrderSuspendedStatus(order);
+        BlLogger.logMessage(LOG, Level.ERROR, LogErrorCodeEnum.ORDER_OPTIMIZATION_ERROR.getCode(), soe.getMessage() +
+                " Changing order status to SUSPENDED due to shipping optimization", soe);
       }
     }
 
+  }
+
+  /**
+   * Create SourcingResults for different types of orders.
+   *
+   * @param order - the order.
+   * @return SourcingResults      - the results
+   */
+  private SourcingResults getSourcingResults(final OrderModel order) {
+
+    return BooleanUtils.isTrue(order.getIsRentalCart()) ? blSourcingService.sourceOrder(order)
+        : getResultsForUsedGearOrder(order);
+  }
+
+  /**
+   * Create SourcingResults for used gear orders.
+   *
+   * @param order - the order.
+   * @return SourcingResults      - the results
+   */
+  private SourcingResults getResultsForUsedGearOrder(final OrderModel order) {
+
+    final SourcingResults results = new SourcingResults();
+    final Set<SourcingResult> resultSet = new HashSet<>();
+    final Map<WarehouseModel, SourcingResult> warehouseSourcingResultMap = new HashMap<>();
+
+    for (AbstractOrderEntryModel entry : order.getEntries()) {
+
+      final WarehouseModel warehouseModel = ((BlSerialProductModel) entry.getProduct())
+          .getWarehouseLocation();
+
+      if (null == warehouseSourcingResultMap.get(warehouseModel)) {
+
+        final SourcingResult sourcingResult = new SourcingResult();
+        updateResultAndAssignSerials(resultSet, entry, warehouseModel, sourcingResult);
+        warehouseSourcingResultMap.put(warehouseModel, sourcingResult);
+      } else {
+
+        updateResultAndAssignSerials(resultSet, entry, warehouseModel,
+            warehouseSourcingResultMap.get(warehouseModel));
+      }
+    }
+
+    results.setResults(resultSet);
+
+    return results;
+  }
+
+  /**
+   * Update SourcingResults and assign serials.
+   *
+   * @param resultSet      - resultSet
+   * @param entry          - order entry
+   * @param warehouseModel - warehouseModel
+   * @param sourcingResult - sourcingResult
+   */
+  private void updateResultAndAssignSerials(final Set<SourcingResult> resultSet,
+      final AbstractOrderEntryModel entry, final WarehouseModel warehouseModel,
+      final SourcingResult sourcingResult) {
+
+    final Set<BlSerialProductModel> serialProductsToAssign = new HashSet<>();
+    serialProductsToAssign.add((BlSerialProductModel) entry.getProduct());
+
+    final Map<Integer, Set<BlSerialProductModel>> resultSerialProductMap =
+        (null != sourcingResult.getSerialProductMap()) ? new HashMap<>(
+            sourcingResult.getSerialProductMap()) : new HashMap<>();
+    resultSerialProductMap.put(entry.getEntryNumber(), serialProductsToAssign);
+
+    final Map<AbstractOrderEntryModel, Long> resultAllocationMap =
+        (null != sourcingResult.getAllocation()) ? new HashMap<>(sourcingResult.getAllocation())
+            : new HashMap<>();
+    resultAllocationMap.put(entry, (long) serialProductsToAssign.size());
+
+    sourcingResult.setSerialProductMap(resultSerialProductMap);
+    sourcingResult.setAllocation(resultAllocationMap);
+    sourcingResult.setWarehouse(warehouseModel);
+    resultSet.add(sourcingResult);
   }
 
   private void setOrderSuspendedStatus(final OrderModel order) {

@@ -1,6 +1,5 @@
 package com.bl.core.services.cart;
 
-import com.bl.core.enums.SerialStatusEnum;
 import com.bl.facades.product.data.RentalDateDto;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.core.model.order.AbstractOrderEntryModel;
@@ -69,13 +68,11 @@ public interface BlCartService extends CartService {
      */
     void setUsedGearSerialProductStatus(final CartModel cartModel, final AbstractOrderEntryModel cartEntry);
 
-    /**
-     * Change serial status of product of Staged version
-     *  @param productCode
-     * @param addedToCart
-     * @return
-     */
-    void changeSerialStatusInStagedVersion(final String productCode,
-        final SerialStatusEnum addedToCart);
 
+    /**
+     * This method saves PO payment details.
+     * @param poNumber
+     * @param poNotes
+     */
+    void savePoPaymentDetails(final String poNumber, final String poNotes);
 }

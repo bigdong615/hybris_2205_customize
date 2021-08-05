@@ -2,6 +2,7 @@ package com.bl.core.shipping.dao;
 
 import com.bl.core.model.*;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
+import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 
 import java.util.Collection;
 
@@ -82,7 +83,6 @@ public interface BlDeliveryModeDao {
      * This method will fetch all the delivery modes after selecting Partner pickup store shipping group for the UPS Store.
      *
      * @param mode i.e, standard or Overnight
-     * @param pstCutOffTime for time condition
      * @return Collection of BlPickUpZoneDeliveryModeModel
      */
     Collection<BlPickUpZoneDeliveryModeModel> getPartnerZoneUPSStoreDeliveryModesForUsedGear(final String mode, final boolean payByCustomer);
@@ -148,4 +148,36 @@ public interface BlDeliveryModeDao {
 	 * @return
 	 */
 	Collection<ZoneDeliveryModeModel> getAllBlDeliveryModes();
+
+    /**
+     * This method will return ShippingOptimizationModel with input elements
+     *
+     * @param carrierId UPS/FedEx or 2/1
+     * @param warehouseCode CA/MA or 1/2
+     * @param customerZip from delivery address
+     * @param serviceDays businessDays ground availability
+     * @param inbound going/coming
+     *
+     * @return ShippingOptimizationModel
+     */
+    ShippingOptimizationModel getOptimizedShippingRecord(final int carrierId, final int warehouseCode, final String customerZip,
+                                                         final int serviceDays, final int inbound);
+
+    /**
+     * This method will return Collection of Consignment models with input
+     *
+     * @param yDay date
+     * @param today date
+     * @return Collection<ConsignmentModel>
+     */
+    Collection<ConsignmentModel> getAllGroundedConsignments(final String yDay, final String today);
+
+    /**
+     * javadoc
+     * this method will return optimized shipping method model from item
+     *
+     * @param code value
+     * @return model
+     */
+    OptimizedShippingMethodModel getOptimizedShippingMethod(final String code);
 }

@@ -129,6 +129,48 @@ public class BlControllerConstants
 	public static final String BRAINTREE_GENERAL_ERROR_KEY = "braintree.billing.general.error";
 	public static final String CART_PAGE = "cartPage";
 	public static final String FROM_PAGE = "fromPage";
+	public static final String USER_SELECTED_PO_NUMBER = "selectedPoNumber";
+	public static final String USER_SELECTED_PO_NOTES = "selectedPoNotes";
+
+
+	public static final String ORDER_DATA = "orderData";
+	public static final String PAGE_TYPE = "pageType";
+	public static final String ORDER_DETAILS = "orderDetails";
+	public static final String IS_USED_GEAR_CART_ACTIVE = "isUsedGearCartActive";
+	public static final String MY_ACCOUNT_ORDER = "/my-account/order/";
+	public static final String PAYMENT_ID = "paymentId";
+	public static final String PAYMENT_NONCE= "paymentNonce";
+	public static final String EXTEND_ORDER_DATA = "extendOrderData";
+	public static final String MY_ACCOUNT_EXTEND_RENTAL = "/my-account/extendRent/";
+  public static final String CLIENT_TOKEN = "client_token";
+	public static final String SHIPPING_PAGE ="shippingPage";
+	public static final String BILLING_PAGE ="paymentPage";
+  public static final String EXTEND_ORDER = "extendOrderError";
+  public static final String COUPON_INVALID = "coupon.invalid.code.provided";
+   public static final String MULTIPLEGIFTCARD = "Only one gift card can be ordered at a time";
+   public static final String GIFTCARDNOTALLOWE = "Gift card can not be ordered with active rental or used gear products";
+   public static final String ADDTOCARTWARNING = "Rental and Used gear products are not allowed together";
+
+	public static final String PO_NUMBER = "extendPoNumber";
+	public static final String PO_NOTES = "extendPoNotes";
+
+	public static final String PAYMENT_METHOD = "extendOrderPaymentMethod";
+	public static final String PO = "poNumber";
+	public static final String CREDIT_CARD = "creditCard";
+	public static final String PAY_PAL = "payPal";
+	public static final String SUCCESS_MSG_TYPE = "successMsgEmail";
+	public static final String ERROR_MSG_TYPE = "errorMsg";
+
+	public static final String MY_ACCOUNT_SAVED_CARTS_URL = "/my-account/saved-carts";
+	public static final String REDIRECT_TO_SAVED_CARTS_PAGE = REDIRECT_PREFIX + MY_ACCOUNT_SAVED_CARTS_URL;
+	public static final String SAVED_CART_SUCCESS = "saved_cart_success";
+	public static final String RENAMED_CART_CODE = "renamed_cart_code";
+	public static final String SAVED_CART_MESSAGE = "text.saved.cart.success";
+
+	public static final String PASSWORDMISMATCH_MSG_TYPE = "passwordError";
+	public static final String CURRENTPASSWORD_MSG_TYPE = "currentPasswordError";
+
+
 	private BlControllerConstants()
 	{
 		//empty

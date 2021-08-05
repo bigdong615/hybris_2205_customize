@@ -3,12 +3,19 @@
  */
 package com.braintree.controllers.pages;
 
-import com.braintree.constants.BraintreeaddonWebConstants;
-import com.braintree.constants.BraintreeConstants;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.PAY_PAL_HAED_ERROR;
+import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
+import static de.hybris.platform.util.localization.Localization.getLocalizedString;
+
+import com.bl.facades.cart.BlCartFacade;
+import com.bl.facades.order.BlOrderFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.pages.BlControllerConstants;
+import com.braintree.constants.BraintreeConstants;
+import com.braintree.constants.BraintreeaddonWebConstants;
 import com.braintree.controllers.handler.PayPalResponseExpressCheckoutHandler;
 import com.braintree.controllers.handler.PayPalUserLoginHandler;
+import com.braintree.facade.BrainTreeUserFacade;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
 import com.braintree.facade.impl.BrainTreePaymentFacadeImpl;
 import com.braintree.hybris.data.BrainTreeSubscriptionInfoData;
@@ -16,39 +23,45 @@ import com.braintree.hybris.data.PayPalAddressData;
 import com.braintree.hybris.data.PayPalCheckoutData;
 import com.braintree.hybris.data.PayPalExpressResponse;
 import com.braintree.hybris.data.PayPalMiniCartResponse;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import com.braintree.security.PayPalGUIDCookieStrategy;
+import com.braintree.transaction.service.BrainTreeTransactionService;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
 import de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.ResourceBreadcrumbBuilder;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
+import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractCheckoutController;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.util.GlobalMessages;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
-import de.hybris.platform.commercefacades.user.UserFacade;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
+import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
+import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.core.model.order.delivery.DeliveryModeModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.CartService;
 import de.hybris.platform.payment.AdapterException;
 import de.hybris.platform.servicelayer.session.SessionService;
+import java.io.IOException;
+import java.math.BigDecimal;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-import static com.braintree.controllers.BraintreeaddonControllerConstants.*;
-import static com.braintree.controllers.BraintreeaddonControllerConstants.Views.Pages.MultiStepCheckout.CheckoutOrderPageErrorPage;
-import static de.hybris.platform.util.localization.Localization.getLocalizedString;
 
 
 @Controller
@@ -59,6 +72,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	private static final String REDIRECT_TO_PAYMENT_INFO_PAGE = REDIRECT_PREFIX + "/my-account/payment-details";
 	private static final String ANONYMOUS_USER = "anonymous";
 	private static final String DEVICE_DATA = "device_data";
+	private static final String EXTEND_RENTAL_ORDER_CONFIRMATION = "extendRentalOrderConfirmation";
+
 
 	private static final Logger LOG = Logger.getLogger(PayPalPaymentController.class);
 
@@ -74,8 +89,8 @@ public class PayPalPaymentController extends AbstractCheckoutController
 	@Resource(name = "brainTreePaymentFacadeImpl")
 	private BrainTreePaymentFacadeImpl brainTreePaymentFacade;
 
-	@Resource(name = "userFacade")
-	private UserFacade userFacade;
+	@Resource(name = "brainTreeUserFacade")
+	private BrainTreeUserFacade brainTreeUserFacade;
 
 	@Resource(name = "brainTreeCheckoutFacade")
 	private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
@@ -88,6 +103,16 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 	@Resource
 	private CartService cartService;
+
+	@Resource(name = "cartFacade")
+	private BlCartFacade blCartFacade;
+
+	@Resource(name = "blOrderFacade")
+	private BlOrderFacade blOrderFacade;
+
+	@Resource
+	private BrainTreeTransactionService brainTreeTransactionService;
+
 
 	@PostMapping(value = "/express")
 	public String doHandleHopResponse(final Model model, final RedirectAttributes redirectAttributes,
@@ -161,7 +186,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		{
 			hybrisShippingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(payPalExpressResponse.getDetails(),
 					payPalShippingAddress);
-			userFacade.addAddress(hybrisShippingAddress);
+			brainTreeUserFacade.addAddress(hybrisShippingAddress);
 			brainTreeCheckoutFacade.setDeliveryAddress(hybrisShippingAddress);
 		}
 		else
@@ -212,6 +237,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
 		  addPayPalErrorMessage(BlControllerConstants.PAYPAL_ERROR_MESSAGE_KEY, redirectAttributes);
 		  return REDIRECT_PREFIX + BlControllerConstants.PAYMENT_METHOD_CHECKOUT_URL;
 		}
+		blCartFacade.removePoNumber();
 		return REDIRECT_PREFIX + "/checkout/multi/summary/braintree/view";
 
 	}
@@ -241,7 +267,7 @@ public class PayPalPaymentController extends AbstractCheckoutController
         {
 			paymentProvider = BraintreeConstants.VENMO_CHECKOUT;
 			payPalEmail = payPalExpressResponse.getDetails().getUsername();
-			hybrisBillingAddress = userFacade.getAddressForCode(selectedAddressCode);
+			hybrisBillingAddress = brainTreeUserFacade.getAddressForCode(selectedAddressCode);
 		}
 		else if(payPalExpressResponse.getType().equals(BraintreeConstants.ANDROID_PAY_CARD))
 		{
@@ -348,7 +374,100 @@ public class PayPalPaymentController extends AbstractCheckoutController
 
 		GlobalMessages.addErrorMessage(model, getLocalizedString(PAY_PAL_HAED_ERROR));
 	}
-	
+
+
+	/**
+	 * This method created for extend order pay pal payment
+	 */
+	@PostMapping(value = "/extendOrder-payment")
+	public String extendOrderPayment(final Model model, final RedirectAttributes redirectAttributes,
+			@RequestParam(value = "selectedAddressCode", required = false) final String selectedAddressCode,
+			final HttpServletRequest request, final HttpServletResponse response) throws CMSItemNotFoundException {
+		PayPalExpressResponse payPalExpressResponse = null;
+		AddressData hybrisBillingAddress = null;
+		final String orderCode = request.getParameter("extend_Order_Code");
+		try {
+			payPalExpressResponse = payPalResponseExpressCheckoutHandler.handlePayPalResponse(request);
+		} catch (final IllegalArgumentException exeption) {
+			handleErrors(exeption.getMessage(), model);
+			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
+		}
+
+		String payPalEmail = payPalExpressResponse.getDetails().getEmail();
+
+		String paymentProvider = BraintreeConstants.PAY_PAL_EXPRESS_CHECKOUT;
+
+		if (payPalExpressResponse.getType().equals(BraintreeConstants.APPLE_PAY_CARD))
+		{
+			paymentProvider = BraintreeConstants.APPLE_PAY_CARD;
+		}
+		else if (payPalExpressResponse.getType().equals(BraintreeConstants.VENMO_CHECKOUT))
+		{
+			paymentProvider = BraintreeConstants.VENMO_CHECKOUT;
+			payPalEmail = payPalExpressResponse.getDetails().getUsername();
+			hybrisBillingAddress = brainTreeUserFacade.getAddressForCode(selectedAddressCode);
+		}
+		else if(payPalExpressResponse.getType().equals(BraintreeConstants.ANDROID_PAY_CARD))
+		{
+			paymentProvider = BraintreeConstants.ANDROID_PAY_CARD;
+		}
+
+		final BrainTreeSubscriptionInfoData subscriptionInfo = buildSubscriptionInfo(payPalExpressResponse.getNonce(),
+				paymentProvider, Boolean.FALSE, Boolean.TRUE, payPalEmail);
+
+		final PayPalAddressData payPalBillingAddress = payPalExpressResponse.getDetails().getBillingAddress();
+		if (payPalBillingAddress != null)
+		{
+			hybrisBillingAddress = payPalResponseExpressCheckoutHandler.getPayPalAddress(
+					payPalExpressResponse.getDetails(), payPalBillingAddress);
+			hybrisBillingAddress.setEmail(payPalExpressResponse.getDetails().getEmail());
+			subscriptionInfo.setAddressData(hybrisBillingAddress);
+		}
+		else if (paymentProvider.equals(BraintreeConstants.VENMO_CHECKOUT))
+		{
+			subscriptionInfo.setAddressData(hybrisBillingAddress);
+		}
+		else
+		{
+			LOG.warn("No billing address provide by Pay Pal. Use empty billing address...");
+			hybrisBillingAddress = new AddressData();
+			hybrisBillingAddress.setEmail(payPalEmail);
+			subscriptionInfo.setAddressData(hybrisBillingAddress);
+		}
+		boolean isSuccess = false;
+		 OrderModel order = null;
+		try {
+			order = brainTreePaymentFacade.gerExtendOrderFromOrderCode(orderCode);
+			if(null != order) {
+				final BrainTreePaymentInfoModel paymentInfo = brainTreePaymentFacade
+						.completeCreateSubscription(subscriptionInfo,
+								(CustomerModel) order.getUser(), order, false, false);
+				if(null != paymentInfo) {
+					isSuccess = brainTreeTransactionService.createAuthorizationTransactionOfOrder(order,
+							BigDecimal.valueOf(order.getTotalPrice()), true, paymentInfo);
+				}
+			}
+		} catch (final Exception exception) {
+			final String errorMessage = getLocalizedString("braintree.billing.general.error");
+			handleErrors(errorMessage, model);
+			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
+		}
+		if(isSuccess) {
+			blOrderFacade.updateOrderExtendDetails(order); //to update extend order details to DB
+			final OrderData extendOrderData = blOrderFacade.getExtendedOrderDetailsFromOrderCode(orderCode);
+			model.addAttribute(BlControllerConstants.EXTEND_ORDER_DATA, extendOrderData);
+			model.addAttribute(BlControllerConstants.PAYMENT_METHOD , BlControllerConstants.PAY_PAL);
+			final ContentPageModel extendOrderConfirmation = getContentPageForLabelOrId(EXTEND_RENTAL_ORDER_CONFIRMATION);
+			storeCmsPageInModel(model, extendOrderConfirmation);
+			model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_NOFOLLOW);
+			setUpMetaDataForContentPage(model, extendOrderConfirmation);
+			return getViewForPage(model);
+		} else {
+			return REDIRECT_PREFIX + BlControllerConstants.MY_ACCOUNT_EXTEND_RENTAL + orderCode;
+		}
+	}
+
+
 	/**
 	 * Adds the paypal global error message.
 	 *

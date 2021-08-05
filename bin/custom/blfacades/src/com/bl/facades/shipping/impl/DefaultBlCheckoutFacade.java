@@ -2,12 +2,15 @@ package com.bl.facades.shipping.impl;
 
 import com.bl.constants.BlDeliveryModeLoggingConstants;
 import com.bl.constants.BlInventoryScanLoggingConstants;
+import com.bl.core.constants.BlCoreConstants;
 import com.bl.core.datepicker.BlDatePickerService;
+import com.bl.core.enums.NotesEnum;
 import com.bl.core.enums.ShippingTypeEnum;
 import com.bl.core.model.BlPickUpZoneDeliveryModeModel;
 import com.bl.core.model.BlRushDeliveryModeModel;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
+import com.bl.core.model.NotesModel;
 import com.bl.core.model.PartnerPickUpStoreModel;
 import com.bl.core.model.ShippingGroupModel;
 import com.bl.core.shipping.service.BlDeliveryModeService;
@@ -27,7 +30,10 @@ import com.bl.integration.services.BlUPSLocatorService;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.forms.BlPickUpByForm;
 import com.braintree.facade.impl.BrainTreeCheckoutFacade;
+import com.braintree.transaction.service.impl.BrainTreeTransactionServiceImpl;
+import com.google.common.collect.Lists;
 import de.hybris.platform.acceleratorfacades.order.impl.DefaultAcceleratorCheckoutFacade;
+import de.hybris.platform.commercefacades.order.data.AbstractOrderData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.ZoneDeliveryModeData;
@@ -60,6 +66,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import com.braintree.model.BrainTreePaymentInfoModel;
 
 /**
  * {javadoc}
@@ -78,8 +85,11 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
     @Resource(name = "upsAddressValidatorService")
     BlUPSAddressValidatorService blUPSAddressValidatorService;
+    
+ 	 @Resource(name = "brainTreeTransactionService")
+ 	 private BrainTreeTransactionServiceImpl brainTreeTransactionService;
 
-    private BlGiftCardFacade blGiftCardFacade;
+	 private BlGiftCardFacade blGiftCardFacade;
     private BrainTreeCheckoutFacade brainTreeCheckoutFacade;
     private BlCheckoutFacade checkoutFacade;
     private CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy;
@@ -143,12 +153,9 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         if (cartModel != null && shippingGroup != null) {
             if (BooleanUtils.isTrue(cartModel.getIsRentalCart()) && getRentalStartDate() != null && getRentalEndDate() != null) {
                 return getDeliveryModeData(shippingGroup, partnerZone, getRentalStartDate(), getRentalEndDate(), payByCustomer);
-            }
-            else if(BooleanUtils.isFalse(cartModel.getIsRentalCart()))
-            {
-            	return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
-            }
-            else {
+            } else if (BooleanUtils.isFalse(cartModel.getIsRentalCart())) {
+                return getDeliveryModeDataForUsedGear(shippingGroup, partnerZone, payByCustomer);
+            } else {
                 return Collections.emptyList();
             }
         }
@@ -161,24 +168,27 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 	 * @param payByCustomer
 	 * @return
 	 */
-    private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(String shippingGroup,String partnerZone,boolean payByCustomer){
-   	 
-   	 if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
-          return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
-      } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
-          return getPartnerZoneDeliveryModesForUsedGear(partnerZone, payByCustomer);
-      } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR);
-          return getAllUSPStoreDeliveryModesForUsedGear(payByCustomer);
-      } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-          return getBlRushDeliveryModeDataForUsedGear(payByCustomer);
-      } else {
-          BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
-          return getAllShipToHomeDeliveryModesForUsedGear(payByCustomer);
-      }
-	}
+    private Collection<? extends DeliveryModeData> getDeliveryModeDataForUsedGear(final String shippingGroup,
+                                                                                  final String partnerZone,
+                                                                                  final boolean payByCustomer){
+        final List modifiableZoneList = new ArrayList<>();
+        if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getPartnerZoneDeliveryModesForUsedGear(partnerZone, payByCustomer), modifiableZoneList);
+        } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllUSPStoreDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
+            sortCollectionOnShippingOrderSequence(getBlRushDeliveryModeDataForUsedGear(payByCustomer), modifiableZoneList);
+        } else {
+            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG_FOR_USEDGEAR);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModesForUsedGear(payByCustomer), modifiableZoneList);
+        }
+        return modifiableZoneList;
+    }
 
 	/**
      * This method will call appropriate method according to shipping group
@@ -192,27 +202,49 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     private Collection<? extends DeliveryModeData> getDeliveryModeData(final String shippingGroup, final String partnerZone,
                                                                        final String rentalStart, final String rentalEnd,
                                                                        final boolean payByCustomer) {
+        final List modifiableZoneList = new ArrayList<>();
         if (BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOME_HOTEL_BUSINESS_MSG);
-            return getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer), modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP.equals(shippingGroup) && null != partnerZone) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.BL_PARTNER_PICKUP_MSG);
-            return getPartnerZoneDeliveryModes(partnerZone, rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getPartnerZoneDeliveryModes(partnerZone, rentalStart, rentalEnd, payByCustomer),
+                    modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SHIP_HOLD_UPS_OFFICE_MSG);
-            return getAllUSPStoreDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getAllUSPStoreDeliveryModes(rentalStart, rentalEnd, payByCustomer), modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY.equals(shippingGroup)) {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.SAME_DAY_DELIVERY_MSG);
-            return getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), rentalStart) == BlInventoryScanLoggingConstants.ZERO
-                    ? getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF, BlDateTimeUtils.getCurrentTimeUsingCalendar(
-                    BlDeliveryModeLoggingConstants.ZONE_PST), payByCustomer) : getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF,
-                    null, payByCustomer);
+            Collection<BlRushDeliveryModeData> modifiableRushZoneList;
+            if (getBlZoneDeliveryModeService().checkDateForRental(BlDateTimeUtils.getCurrentDateUsingCalendar(
+                    BlDeliveryModeLoggingConstants.ZONE_PST, new Date()), rentalStart) == BlInventoryScanLoggingConstants.ZERO) {
+                modifiableRushZoneList = getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF,
+                        BlDateTimeUtils.getCurrentTimeUsingCalendar(BlDeliveryModeLoggingConstants.ZONE_PST), payByCustomer);
+            } else {
+                modifiableRushZoneList = getBlRushDeliveryModes(BlDeliveryModeLoggingConstants.SF, null, payByCustomer);
+            }
+            sortCollectionOnShippingOrderSequence(modifiableRushZoneList, modifiableZoneList);
         } else if (BlDeliveryModeLoggingConstants.NEXT_DAY_RUSH_DELIVERY.equals(shippingGroup)) {
-            return getBlRushDeliveryModeData(rentalStart, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getBlRushDeliveryModeData(rentalStart, payByCustomer), modifiableZoneList);
         } else {
             BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, BlDeliveryModeLoggingConstants.DEFAULT_DELIVERY_MSG);
-            return getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer);
+            sortCollectionOnShippingOrderSequence(getAllShipToHomeDeliveryModes(rentalStart, rentalEnd, payByCustomer), modifiableZoneList);
+        }
+        return modifiableZoneList;
+    }
+
+    /**
+     * javadoc
+     * This method will sort shipping methods on ShippingOrderSequence attribute
+     *
+     * @param deliveryModeData collection
+     * @param modifiableZoneList finalList
+     */
+    private void sortCollectionOnShippingOrderSequence(final Collection<? extends DeliveryModeData> deliveryModeData,
+                                                       final List modifiableZoneList) {
+        modifiableZoneList.addAll(deliveryModeData);
+        if (CollectionUtils.isNotEmpty(modifiableZoneList)) {
+            modifiableZoneList.sort(Comparator.comparing(ZoneDeliveryModeData::getShippingOrderSequence));
         }
     }
 
@@ -242,7 +274,6 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
     
     /**
     *
-    * @param rentalStart date
     * @param payByCustomer flag
     * @return collection of RushDeliveryData
     */
@@ -497,12 +528,13 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             final AddressModel addressModel = blPickUpZoneDeliveryModeModel.getInternalStoreAddress();
             if (addressModel != null) {
                 addressModel.setPickStoreAddress(Boolean.TRUE);
-                if(cartModel.isPickUpByMe()) {
-                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
-                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
-                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
-                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
-                }
+//              For now removing I am or someone else option for pick up
+//                if(cartModel.isPickUpByMe()) {
+//                    cartModel.setPickUpPersonPhone(addressModel.getPhone1());
+//                    cartModel.setPickUpPersonEmail(addressModel.getEmail());
+//                    cartModel.setPickUpPersonFirstName(addressModel.getFirstname());
+//                    cartModel.setPickUpPersonLastName(addressModel.getLastname());
+//                }
                 getModelService().save(addressModel);
                 getModelService().refresh(addressModel);
                 setUPSAddressOnCart(addressModel);
@@ -549,22 +581,23 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public String savePickUpInfoOnCart(final BlPickUpByForm blPickUpByForm) {
-        final CartModel cartModel = getCart();
-        try {
-            if (cartModel != null && blPickUpByForm != null) {
-                cartModel.setPickUpPersonFirstName(blPickUpByForm.getFirstName());
-                cartModel.setPickUpPersonLastName(blPickUpByForm.getLastName());
-                cartModel.setPickUpPersonEmail(blPickUpByForm.getEmail());
-                cartModel.setPickUpPersonPhone(blPickUpByForm.getPhone());
-                cartModel.setPickUpByMe(blPickUpByForm.getFirstName() != null ? Boolean.FALSE : Boolean.TRUE);
-                getModelService().save(cartModel);
-                getModelService().refresh(cartModel);
-            }
+//        For now removing I am or someone else option for pick up
+//        final CartModel cartModel = getCart();
+//        try {
+//            if (cartModel != null && blPickUpByForm != null) {
+//                cartModel.setPickUpPersonFirstName(blPickUpByForm.getFirstName());
+//                cartModel.setPickUpPersonLastName(blPickUpByForm.getLastName());
+//                cartModel.setPickUpPersonEmail(blPickUpByForm.getEmail());
+//                cartModel.setPickUpPersonPhone(blPickUpByForm.getPhone());
+//                cartModel.setPickUpByMe(blPickUpByForm.getFirstName() != null ? Boolean.FALSE : Boolean.TRUE);
+//                getModelService().save(cartModel);
+//                getModelService().refresh(cartModel);
+//            }
             return BlFacadesConstants.RESULT_SUCCESS;
-        } catch (Exception e) {
-            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
-            return "FAILURE";
-        }
+//        } catch (Exception e) {
+//            BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, "Exception while saving pickUpBySomeone details", e);
+//            return "FAILURE";
+//        }
     }
 
     /**
@@ -616,11 +649,12 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             cartModel.setDeliveryAddress(null);
             cartModel.setDeliveryCost(null);
             cartModel.setDeliveryMode(null);
-            cartModel.setPickUpByMe(Boolean.TRUE);
-            cartModel.setPickUpPersonFirstName(null);
-            cartModel.setPickUpPersonLastName(null);
-            cartModel.setPickUpPersonEmail(null);
-            cartModel.setPickUpPersonPhone(null);
+//            For now removing I am or someone else option for pick up
+//            cartModel.setPickUpByMe(Boolean.TRUE);
+//            cartModel.setPickUpPersonFirstName(null);
+//            cartModel.setPickUpPersonLastName(null);
+//            cartModel.setPickUpPersonEmail(null);
+//            cartModel.setPickUpPersonPhone(null);
             cartModel.setDeliveryNotes(null);
             cartModel.setStatusUpdate(Boolean.FALSE);
             getModelService().save(cartModel);
@@ -637,7 +671,43 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
      */
     @Override
     public AVSResposeData getAVSResponse(final AddressData addressData) {
-        return getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
+        final AVSResposeData avsResposeData = getBlUPSAddressValidatorService().getVerifiedAddress(addressData);
+        if(avsResposeData != null && CollectionUtils.isNotEmpty(avsResposeData.getResult()) &&
+                validateAVSResponse(addressData, avsResposeData.getResult().iterator().next())) {
+            avsResposeData.setAddressType(avsResposeData.getResult().iterator().next().getAddressType());
+            avsResposeData.setResult(Collections.emptyList());
+        }
+        return avsResposeData;
+    }
+
+    /**
+     * javadoc
+     * This method will do validation for AVS response with request
+     *
+     * @param addressRequestData entered address
+     * @param addressResponseData suggested address
+     * @return true if same
+     */
+    private boolean validateAVSResponse(final AddressData addressRequestData, final AddressData addressResponseData) {
+        if(addressRequestData.getLine1().equalsIgnoreCase(addressResponseData.getLine1()) &&
+            addressRequestData.getTown().equalsIgnoreCase(addressResponseData.getTown()) &&
+            addressRequestData.getRegion().getIsocodeShort().equalsIgnoreCase(addressResponseData.getRegion().getIsocodeShort()) &&
+            checkNumberEquality(addressRequestData.getPostalCode(), addressResponseData.getPostalCode())) {
+                        return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    /**
+     * javadoc
+     * This method will check zip equality
+     *
+     * @param request zipCode
+     * @param response zipCode
+     * @return true if same
+     */
+    private boolean checkNumberEquality(final String request, final String response) {
+        return request.split(BlCoreConstants.HYPHEN)[0].equals(response.split(BlCoreConstants.HYPHEN)[0]);
     }
 
     /**
@@ -704,6 +774,7 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
 
 	/**
    * {@inheritDoc}
+   * @return the list of string
    */
 	 public List<String> recalculateCartForGiftCard() {
         if (getBrainTreeCheckoutFacade().getCartService() != null) {
@@ -781,29 +852,67 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
             return null;
         }
     }
-    
+    /**
+    	  * To create the auth transaction of the order
+    	  * @param cartModel the cart
+        * @param amountToAuthorize the amount
+        * @param submitForSettlement
+        * @param paymentInfo the payment info
+        * @return true if successful
+     */
+    @Override
+   public boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo){
+   	 
+   	 return getBrainTreeTransactionService().createAuthorizationTransactionOfOrder(cartModel,amountToAuthorize, submitForSettlement, paymentInfo);
+    }
     /**
      * {@inheritDoc}
      */
     @Override
-    public void getModifiedTotalForPrintQuote(final CartData cartData) {
-   	 if(Objects.nonNull(cartData)) {
-   		 try {
-   		     final BigDecimal totalPrice = getPriceValue(cartData.getSubTotal()).add(getPriceValue(cartData.getTotalDamageWaiverCost()));
-   		     final BigDecimal discountPrice = getPriceValue(cartData.getTotalDiscounts());
-   		     final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
-   		     final PriceData modifiedTotal = getPriceDataForPrice(totalWithDiscount.compareTo(BigDecimal.valueOf(0.0d)) == 1
-      	        ? totalWithDiscount : BigDecimal.valueOf(0.0d));
-   		     cartData.setTotalPrice(modifiedTotal);
-   		 }
-   		 catch(final Exception exception) {
-   			 BlLogger.logMessage(LOG, Level.ERROR, "Error while Modifing total price for Print Quoate Page.", exception);
-   			 throw exception;
-   		 }   	    
-   	  }  	 
+    public void getModifiedTotalForPrintQuote(final AbstractOrderData abstractOrderData) {
+      if (Objects.nonNull(abstractOrderData)) {
+        try {
+          final BigDecimal totalPrice = getPriceValue(abstractOrderData.getSubTotal())
+              .add(getPriceValue(abstractOrderData.getTotalDamageWaiverCost()));
+          final BigDecimal discountPrice = getPriceValue(abstractOrderData.getTotalDiscounts());
+          final BigDecimal totalWithDiscount = totalPrice.subtract(discountPrice);
+          final PriceData modifiedTotal = getPriceDataForPrice(
+              totalWithDiscount.compareTo(BigDecimal.ZERO) > 0
+                  ? totalWithDiscount : BigDecimal.ZERO);
+          abstractOrderData.setTotalPrice(modifiedTotal);
+        } catch (final Exception exception) {
+          BlLogger.logMessage(LOG, Level.ERROR,
+              "Error while Modifying total price for Print Quote Page.", exception);
+          throw exception;
+        }
+      }
     }
-    
-    /**
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void saveOrderNotes(final String orderNotes) {
+    final CartModel cartModel = getCartService().getSessionCart();
+    try {
+        if (StringUtils.isNotBlank(orderNotes) && Objects.nonNull(cartModel) && Objects
+            .nonNull(cartModel.getUser())) {
+          final NotesModel notesModel = getModelService().create(NotesModel.class);
+          notesModel.setType(NotesEnum.CUSTOMER_CHECKOUT_ORDER_NOTES);
+          notesModel.setNote(orderNotes);
+          notesModel.setUserID(cartModel.getUser().getUid());
+          getModelService().save(notesModel);
+          cartModel.setOrderNotes(Lists.newArrayList(notesModel));
+          getModelService().save(cartModel);
+          getModelService().refresh(cartModel);
+        }
+      } catch (final Exception exception) {
+        BlLogger.logMessage(LOG, Level.ERROR,
+          "Error occurred while saving order notes for cart {}", cartModel.getCode(), exception);
+    }
+  }
+
+  /**
      * Gets the price value.
      *
      * @param priceData the price data
@@ -941,4 +1050,21 @@ public class DefaultBlCheckoutFacade extends DefaultAcceleratorCheckoutFacade im
         CommerceCartCalculationStrategy blCheckoutCartCalculationStrategy) {
         this.blCheckoutCartCalculationStrategy = blCheckoutCartCalculationStrategy;
     }
+ 	 
+    /**
+	 * @return the brainTreeTransactionService
+	 */
+	public BrainTreeTransactionServiceImpl getBrainTreeTransactionService()
+	{
+		return brainTreeTransactionService;
+	}
+
+	/**
+	 * @param brainTreeTransactionService the brainTreeTransactionService to set
+	 */
+	public void setBrainTreeTransactionService(BrainTreeTransactionServiceImpl brainTreeTransactionService)
+	{
+		this.brainTreeTransactionService = brainTreeTransactionService;
+	}
+
 }

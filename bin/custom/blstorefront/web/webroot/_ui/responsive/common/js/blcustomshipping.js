@@ -145,7 +145,10 @@ function removeClass(){
              $('.page-loader-new-layout').hide();
          },
          error: function (data) {
-             $('.page-loader-new-layout').hide();
+            if(data != null && data.statusText == 'parsererror') {
+                window.location.reload();
+            }
+            $('.page-loader-new-layout').hide();
          }
      });
   }
@@ -155,6 +158,10 @@ function removeClass(){
       var savedAddress = null;
       var deliveryMode = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').val();
       var businessType = $('#shipToHomeShippingMethods').find('select[id="ship-it-shipping-methods-select-box"]').find(':selected').attr('businesstype');
+      if(typeof businessType == "string") {
+        businessType = JSON.parse(businessType);
+      }
+
       if(checkAvailability(deliveryMode))
       {
           if($('#delivery-shippingAddressFormDiv').css('display') == "none") {
@@ -162,6 +169,7 @@ function removeClass(){
           } else {
               var firstName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
               var lastName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
+              var companyName = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]');
               var line1 = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]');
               var line2 = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]');
               var townCity = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.townCity"]');
@@ -170,16 +178,19 @@ function removeClass(){
               var email = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.email"]');
               var phone = $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.phone"]');
               if(validateFormData(firstName, lastName, line1, townCity, postcode, regionIso, email, phone)) {
-                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
+                  addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(), townCity.val(),regionIso.val(),
                                                                      'US', postcode.val(), $('.ship-it-tab-content').find('input[id="ship-it-save-address"]').prop("checked"),
                                                                      phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'SHIP', businessType);
               } else {
                   showErrorForInputValidation('Ship');
               }
           }
+
+        ACC.track.trackShippingSelection('Ship It','Ship to home','Item In Stock');
       }
       else
       {
+        ACC.track.trackShippingSelection('Ship It','Ship to home','Item Out of Stock');
       	window.location.reload();
       }
       
@@ -200,7 +211,7 @@ function removeClass(){
         },
         success: function (data) {
             if(data != null && data.length != 0) {
-                let shippingModes = '<b class="mt-4">Shipping Methods</b>';
+                let shippingModes = '<b class="mt-4">Shipping Method</b>';
                 shippingModes += '<select id="ship-UPS-shipping-methods-select-box" class="selectpicker mt-2"' +
                                     'onchange="onChangeOfShipItShipToUPS()">';
                 let numberSelected = 0;
@@ -236,6 +247,9 @@ function removeClass(){
             $('.page-loader-new-layout').hide();
         },
         error: function (data) {
+            if(data != null && data.statusText == 'parsererror') {
+                window.location.reload();
+            }
             $('.page-loader-new-layout').hide();
         }
     });
@@ -253,7 +267,7 @@ function removeClass(){
                  savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                         $('#shipToUPSShippingMethods').find('#ship-UPS-shipping-methods-select-box').val(), false, createUPSStoreAddress());
              } else {
-                  showErrorForInputValidation('Rush');
+                  showErrorForInputValidationPick('Ship');
              }
          }
      } else {
@@ -263,6 +277,8 @@ function removeClass(){
  }
 
  function onClickOfFindStore() {
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
      $('#ship-it-SHIP_UPS_OFFICE').html('');
      $('#ship-it-notification').html('');
      $('#ship-it-notification').hide();
@@ -333,6 +349,9 @@ function removeClass(){
                  $('.page-loader-new-layout').hide();
              },
              error: function (data) {
+                if(data != null && data.statusText == 'parsererror') {
+                    window.location.reload();
+                }
                  $('.page-loader-new-layout').hide();
              }
          });
@@ -350,11 +369,11 @@ function removeClass(){
              if(stores[i].locationId == upsSelectedStoreId) {
                 $('#ship-it-SHIP_UPS_OFFICE').html('');
                 upsStores += '<div id="ups-location-1" class="row store-location mb-3">' +
-                                  '<div class="col-1">' +
+                                  '<div class="col-1 on-select-hide">' +
                                       '<input type="hidden" id="' + stores[i].locationId + '" name="ups-location"><label for="' +
                                          stores[i].locationId + '"></label>' +
                                   '</div>' +
-                                  '<div class="col-11 col-md-7">' +
+                                  '<div class="col-11 col-md-8 mt-5">' +
                                       '<p>' + stores[i].consigneeName + '<br>' +
                                       '<a href="https://maps.google.com/maps?q='+
                                           stores[i].addressLine + ',' + stores[i].politicalDivision1 + ' ' +
@@ -369,7 +388,7 @@ function removeClass(){
                                          if(stores[i].distance != null) {
                                              upsStores += stores[i].contactNumber;
                                          }
-                        upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0">';
+                        upsStores += '</p>' + '</div>' + '<div class="col-11 offset-1 col-md-4 offset-md-0 mt-5">';
                                   if(stores[i].latestGroundDropOffTime != null && stores[i].latestGroundDropOffTime.length != 0) {
                                                       if(stores[i].latestGroundDropOffTime[0] != null && stores[i].latestGroundDropOffTime[0].split(': ')[0] == 'Mon-Fri') {
                                        upsStores += '<p class="mb-0"><span class="gray80">M-F</span>&emsp;' + stores[i].latestGroundDropOffTime[0].split(': ')[1] + '</p>' ;
@@ -392,6 +411,7 @@ function removeClass(){
                 $('#ship-it-pickup-gear').show();
                 $('#ship-it-ups-zip-code').val('');
                 $('#checkZipForUPSPickup').hide();
+                $('.on-select-hide').hide();
              }
          }
      }
@@ -403,7 +423,7 @@ function removeClass(){
      if(stores != null && stores.length != 0) {
          for (let i = 0; i < stores.length; i++) {
              if(stores[i].locationId == upsSelectedStoreId) {
-                 return createAddressFormObject(stores[i].consigneeName, "UPS", stores[i].addressLine, null, stores[i].politicalDivision2,
+                 return createAddressFormObject(stores[i].consigneeName, "UPS", "", stores[i].addressLine, null, stores[i].politicalDivision2,
                          stores[i].politicalDivision1, stores[i].countryCode, stores[i].postcodePrimaryLow, false, stores[i].contactNumber, null, true,
                          stores[i].latestGroundDropOffTime, 'BUSINESS')
              }
@@ -412,6 +432,8 @@ function removeClass(){
   }
 
  function changeUPSStore() {
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
      $('#checkZipForUPSPickup').show();
      $('#ship-it-ups-zip-code').val('');
      $('#changeUPSStoreButton').hide();
@@ -466,7 +488,7 @@ function removeClass(){
                    savePickUpByFormOnCart(createPickUPFormObject(firstName.val(), lastName.val(), email.val(), phone.val()),
                              $('#partnerPickUpShippingMethods #pickup-nyc').find('input[name="pickup-locations"]:checked').attr('id'), true, null);
              } else {
-                  showErrorNotification("Please enter mandatory fields values!!", true);
+                  showErrorForInputValidationPick('Pick');
              }
          }
      } else {
@@ -486,10 +508,14 @@ function removeClass(){
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#pick-up-notification').hide();
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
  }
 
  function showPickUpBySomeoneForm() {
     $("#ship-it-pickup-person").show();
+    $('#showErrorForInputValidation').html('');
+    $('#showErrorForInputValidation').hide();
  }
 
  function showPickUpByMeClick() {
@@ -505,6 +531,8 @@ function removeClass(){
      $('#ship-it-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
      $('#ship-it-notification').val('');
      $('#ship-it-notification').hide();
+     $('#showErrorForInputValidation').html('');
+     $('#showErrorForInputValidation').hide();
  }
 
  function showPartnerPickUpDeliveryModes(partnerZone) {
@@ -520,7 +548,7 @@ function removeClass(){
             $('.page-loader-new-layout').show();
         },
         success: function (data) {
-            if(data != null && data.length != 0) {
+            if(data != null && data.length != 0 && (typeof data == "object")) {
                 let partnerDelivery = '';
                 for (let i = 0; i < data.length; i++) {
                     if(i == 0 && data.length == 1) {
@@ -571,14 +599,20 @@ function removeClass(){
                 if(data.length == 1) {
                     $('#partnerPickUpShippingMethods #pickup-nyc').first().find('input[name="pickup-locations"]').prop("checked", true);
                 }
-                showErrorNotificationForPickUpId('They must show ID at time of pickup');
+                /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
             } else {
             	$('#cart-shipping-cost').text('-');
             	 calculateCartTotal();
                 showErrorNotificationPickUp('Rental Dates not eligible for the selected shipping option!!');
             }
         },
-        complete: function() {
+        complete: function(data) {
+            if((typeof data == "string")) {
+                window.location.reload();
+            }
+            if(data != null && (typeof data != "string") && data.statusText == 'parsererror') {
+                window.location.reload();
+            }
             $('.page-loader-new-layout').hide();
         },
         error: function (error) {
@@ -642,10 +676,14 @@ function removeClass(){
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.email"]').removeClass('error');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').val('');
      $('#store-pickup-person #blPickUpByForm').find('.form-group').find('input[id="blPickUpBy.phone"]').removeClass('error');
-     showErrorNotificationForPickUpId('They must show ID at time of pickup');
+     /* showErrorNotificationForPickUpId('They must show ID at time of pickup'); */
  }
 
- function pickUpByMeClick() { $("#store-pickup-person").hide(); }
+ function pickUpByMeClick() {
+    $("#store-pickup-person").hide();
+    $('#showErrorForInputValidation').html('');
+    $('#showErrorForInputValidation').hide();
+ }
 
   function onSelectPartnerPickup(event) {
      resetPartnerPickUpSection();
@@ -727,7 +765,7 @@ function removeClass(){
                             $('.page-loader-new-layout').show();
                        },
                        success: function (data) {
-                           if(data != null && data.length != 0) {
+                           if(data != null && data.length != 0 && (typeof data == "object")) {
                                let sameDayShippingModes = '<b>Delivery Window</b>';
                                sameDayShippingModes += '<select id="same-day-shipping-methods-select-box" class="selectpicker mt-2"' +
                                                         ' onChange="onChangeOfSameDayShippingMethodForCost()">';
@@ -769,9 +807,15 @@ function removeClass(){
                            }
                        },
                        complete: function() {
+                            if((typeof data == "string")) {
+                                window.location.reload();
+                            }
                            $('.page-loader-new-layout').hide();
                        },
                        error: function (data) {
+                            if(data != null && data.statusText == 'parsererror') {
+                                window.location.reload();
+                            }
                            $('.page-loader-new-layout').hide();
                        }
                    });
@@ -779,11 +823,17 @@ function removeClass(){
                     showErrorNotificationSameDay('Whoops! We were unable to get shipping information back from FedEx, please change your shipping method or try again in a few minutes', false);
                 }
             },
-            complete: function() {
+            complete: function(data) {
+                if(data != null && data.statusText == 'parsererror') {
+                    window.location.reload();
+                }
                 $('.page-loader-new-layout').hide();
             },
             error: function (data) {
-                   $('.page-loader-new-layout').hide();
+                if(data != null && data.statusText == 'parsererror') {
+                    window.location.reload();
+                }
+                $('.page-loader-new-layout').hide();
             }
         });
     } else {
@@ -801,6 +851,7 @@ function removeClass(){
     var deliveryMode = $('#sameDayShippingMethods').find('select[id="same-day-shipping-methods-select-box"]').val();
     if(checkAvailability(deliveryMode))
     {
+        ACC.track.trackShippingSelection('Same Day Delivery','','Item In Stock');
         if($('#same-day-address-div #delivery-shippingAddressFormDiv').css('display') == "none") {
             savedAddress = $('#same-day-address-div #delivery-saved-addresses-dropdown').find('select[id="ship-it-savedAddresses"]').val();
             $.ajax({
@@ -826,6 +877,7 @@ function removeClass(){
         } else {
             var firstName = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]');
             var lastName = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]');
+            var companyName = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]');
             var line1 = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]');
             var line2 = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]');
             var townCity = $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.townCity"]');
@@ -847,7 +899,7 @@ function removeClass(){
                    },
                    success: function (data) {
                         if(data == 'SUCCESS') {
-                            addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), line1.val(), line2.val(),
+                            addressValidationService(createAddressFormObject(firstName.val(), lastName.val(), companyName.val(), line1.val(), line2.val(),
                                                         townCity.val(),regionIso.val(), 'US', postcode.val(),
                                                         $('#same-day-address-div').find('input[id="same-day-save-address"]').prop("checked"),
                                                         phone.val(), email.val(), false, null, 'UNKNOWN'), deliveryMode, 'RUSH', null);
@@ -868,6 +920,7 @@ function removeClass(){
       }
       else
       {
+       ACC.track.trackShippingSelection('Same Day Delivery','','Item Out of Stock');
       	window.location.reload();
     }
   }
@@ -877,6 +930,8 @@ function removeClass(){
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]').removeClass('error');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').val('');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').removeClass('error');
+        $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').val('');
+        $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').removeClass('error');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').val('');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').removeClass('error');
         $('#same-day-address-div #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]').val('');
@@ -909,16 +964,40 @@ function removeClass(){
                             ' required fields.' +
                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForError(this)"> Scroll up.</a>';
     }
-    notification += '</div>';
+    notification += '</div>' + '<br>';
     $('#showErrorForInputValidation').html(notification);
     $('#showErrorForInputValidation').show();
  }
 
  function scrollUpForError(event) {
+     if(event.getAttribute('class') == 'Ship') {
+         return $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+     } else {
+         return $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+     }
+  }
+
+  function showErrorForInputValidationPick(section) {
+     let notification = '';
+     if(section == 'Ship') {
+         notification += '<div class="notification notification-error"> You are missing ' +
+                             $("#ship-it-pickup-person #blPickUpByForm").find('.form-group .error').length + ' required fields.' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
+     } else {
+         notification += '<div class="notification notification-error"> You are missing ' +
+                             $("#store-pickup-person #blPickUpByForm").find('.form-group .error').length + ' required fields.' +
+                             '<a href="javascript:void(0)" class="'+ section +'" onClick="return scrollUpForErrorPick(this)"> Scroll up.</a>';
+     }
+     notification += '</div>';
+     $('#showErrorForInputValidation').html(notification);
+     $('#showErrorForInputValidation').show();
+  }
+
+ function scrollUpForErrorPick(event) {
     if(event.getAttribute('class') == 'Ship') {
-        return $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+        return $("#ship-it-pickup-person #blPickUpByForm").find('.form-group .error')[0].scrollIntoView(true);
     } else {
-        return $('#same-day-address-div #delivery-shippingAddressFormDiv #addressForm').find('.form-group .error')[0].scrollIntoView(true);
+        return $("#store-pickup-person #blPickUpByForm").find('.form-group .error')[0].scrollIntoView(true);
     }
  }
 
@@ -975,6 +1054,8 @@ function removeClass(){
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.firstName"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').val('');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.lastName"]').removeClass('error');
+     $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').val('');
+     $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.companyName"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').val('');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line1"]').removeClass('error');
      $('.ship-it-tab-content #delivery-shippingAddressForm #addressForm').find('.form-group').find('input[id="address.line2"]').val('');
@@ -1034,7 +1115,7 @@ function removeClass(){
     }
  }
 
- function createAddressFormObject(firstName, lastName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
+ function createAddressFormObject(firstName, lastName, companyName, line1, line2, townCity, regionIso, countryIso, postcode, status, phone, email,
     upsStoreAddress, openingDays, addressType) {
     let openingDaysDetails = '';
     if(openingDays != null) {
@@ -1053,9 +1134,15 @@ function removeClass(){
     } else {
        regionIso = countryIso+ '-' +regionIso;
     }
+
+    if(addressType == null) {
+        addressType = 'UNKNOWN';
+    }
+
     let addressForm = {
         firstName : firstName,
         lastName : lastName,
+        companyName : companyName,
         line1 : line1,
         line2 : line2,
         townCity : townCity,
@@ -1136,22 +1223,29 @@ function removeClass(){
                  $('#whatWeSuggest').html(whatWeSuggest);
                  $('#avsCheck').modal('show');
             } else {
-                 //suggested state not supported error from response
-                 addNewAddress(addressForm, deliveryMode)
-                     .then((data) => {
-                         sessionStorage.removeItem("enteredAddressForm");
-                         saveDeliveryMode(deliveryMode, false)
-                             .then((data) => {
-                                 $('.page-loader-new-layout').hide();
-                                 window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
-                             })
-                             .catch((error) => {
-                               console.log(error)
-                             })
-                     })
-                     .catch((error) => {
-                       console.log(error)
-                     })
+                 if(section == 'SHIP' && businessType && data.addressType != 'BUSINESS') {
+                    showAMDeliveryErrorMessage(section);
+                 } else {
+                    if(data.addressType != null) {
+                        addressForm.addressType = data.addressType;
+                    }
+                    //suggested state not supported error from response
+                     addNewAddress(addressForm, deliveryMode)
+                         .then((data) => {
+                             sessionStorage.removeItem("enteredAddressForm");
+                             saveDeliveryMode(deliveryMode, false)
+                                 .then((data) => {
+                                     $('.page-loader-new-layout').hide();
+                                     window.location = ACC.config.encodedContextPath + '/checkout/multi/delivery-method/next';
+                                 })
+                                 .catch((error) => {
+                                   console.log(error)
+                                 })
+                         })
+                         .catch((error) => {
+                           console.log(error)
+                         })
+                 }
             }
         },
         complete: function() {
@@ -1182,7 +1276,7 @@ function removeClass(){
  }
 
  function callAddNewAddress(enteredAddressForm, addressForm, deliveryMode) {
-    addNewAddress(createAddressFormObject(enteredAddressForm.firstName, enteredAddressForm.lastName, addressForm.line1, addressForm.line2,
+    addNewAddress(createAddressFormObject(enteredAddressForm.firstName, enteredAddressForm.lastName, enteredAddressForm.companyName, addressForm.line1, addressForm.line2,
          addressForm.town, addressForm.region.isocode, 'US', addressForm.postalCode, enteredAddressForm.saveInAddressBook,
          enteredAddressForm.phone, enteredAddressForm.email, false, null, addressForm.addressType),
          JSON.parse(sessionStorage.getItem("avsFlowDeliveryMode")))
@@ -1368,6 +1462,7 @@ function removeClass(){
              success: function (data) {
                  if(data != null) {
                      if(upsStoreAddress != null) {
+                        ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item In Stock');
                         addNewAddress(upsStoreAddress, deliveryMethod)
                             .then((data) => {
                                 saveDeliveryMode(deliveryMethod, status)
@@ -1383,6 +1478,7 @@ function removeClass(){
                               console.log(error)
                             })
                      } else {
+                        ACC.track.trackShippingSelection('PickUP','','Item In Stock');
                         saveDeliveryMode(deliveryMethod, status)
                             .then((data) => {
                                 $('.page-loader-new-layout').hide();
@@ -1404,6 +1500,11 @@ function removeClass(){
      }
      else
      {
+     if(upsStoreAddress != null) {
+       ACC.track.trackShippingSelection('Ship It','Ship to UPS','Item Out of Stock');
+       }else{
+        ACC.track.trackShippingSelection('PickUP','','Item Out of Stock');
+       }
      	window.location.reload();
      }
   }

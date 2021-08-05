@@ -15,8 +15,12 @@
 
 <%--if required then we can include this cart validation--%>
   <%-- <cart:cartValidation/> --%>
-
-  <c:choose>
+<c:choose>
+<c:when test="${cartData.hasGiftCart}">
+ <cart:blGiftCardPurchaseCartPage/>
+</c:when>
+<c:otherwise>
+<c:choose>
       <c:when test="${cartData.isRentalCart}">
             <cart:blRentalCartPage/>
       </c:when>
@@ -24,6 +28,9 @@
             <cart:blUsedGearCartPage/>
       </c:otherwise>
   </c:choose>
+</c:otherwise>
+</c:choose>
+  
 
 </template:page>
 
@@ -57,7 +64,7 @@
 	            <div class="modal-actions">
                     <div class="row">
                         <div class="col-sm-12">
-                            <button type="submit" class="btn btn-primary btn-block save-cart-button" id="saveCartButton">
+                            <button type="button" class="btn btn-primary btn-block save-cart-button js-validate-saved-cart" id="saveCartButton">
                                 <spring:theme code="basket.save.cart.action.continue"/>
                             </button>
                             <br>
@@ -67,10 +74,25 @@
 	                </div>
 	            </div>
 	        </div>
+	      							<div class ="notification notification-error d-none" id="errorMessages_savecart"> </div>
               </form:form>
           </div>
         </div>
       </div>
     </div>
+
+<script>
+$(".js-validate-saved-cart").on("click", function(e) {
+   			e.preventDefault();
+   			var cartName = document.getElementById("saveCartName").value;
+        if(cartName !== 'undefined' && cartName !== ''){
+                         $('#saveCartForm').submit();
+        }
+        else{
+          $("#errorMessages_savecart").removeClass("d-none");
+          $("#errorMessages_savecart").html("Whoops, you need to name your saved cart.");
+        }
+   	});
+</script>
 
 

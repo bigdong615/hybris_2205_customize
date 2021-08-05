@@ -40,7 +40,7 @@
                 </div>
                 <div id="tab-SHIP_HOME_HOTEL_BUSINESS" class="ship-it-tab-content">
                     <checkout:addressForm />
-                    <div id="ship-it-save-address-div">
+                    <div id="ship-it-save-address-div" class="mb-5">
                         <input type="checkbox" id="ship-it-save-address" checked>
                         <label for="ship-it-save-address">
                             <span class="gray80"><spring:theme code="text.add.new.shipping.save.address"/></span>
@@ -72,7 +72,7 @@
                             <spring:theme code="text.ship.it.ups.change.store"/>
                         </button>
                     </div>
-                    <div id="ship-it-pickup-gear">
+                    <%-- <div id="ship-it-pickup-gear">
                         <b class="mt-4"><spring:theme code="text.ship.it.pick.up.section"/></b>
                         <div id="pickup-person" class="row mt-2 mb-4">
                             <div class="col-3">
@@ -96,7 +96,7 @@
                             <b><spring:theme code="text.ship.it.pick.up.section.form.header"/></b>
                             <checkout:pickUpAddressForm />
                         </div>
-                    </div>
+                    </div> --%>
                 </div>
                 <div id="ship-it-notification"></div>
                 <div id="ship-it-am-notification"></div>

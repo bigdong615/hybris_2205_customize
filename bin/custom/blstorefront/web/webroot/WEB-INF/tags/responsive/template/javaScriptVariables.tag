@@ -42,6 +42,7 @@
 			ACC.ccError.cardCVVInValid = '<spring:theme code="payment.cc.error.card.cvv.invalid" htmlEscape="false" javaScriptEscape="true" />';
 			ACC.ccError.allFieldsNotSelected ='<spring:theme code="payment.all.field.not.selected" htmlEscape="false" javaScriptEscape="true" />';
 			ACC.ccError.onlyGCSelected = '<spring:theme code="payment.only.giftCard.selected" htmlEscape="false" javaScriptEscape="true" />'
+			ACC.ccError.poNumber = '<spring:theme code="payment.error.po.number" htmlEscape="false" javaScriptEscape="true" />'
 			
 			ACC.payPalError.paypalPaymentFail = '<spring:theme code="text.paypal.payment.error.message" htmlEscape="false" javaScriptEscape="true" />'
 			

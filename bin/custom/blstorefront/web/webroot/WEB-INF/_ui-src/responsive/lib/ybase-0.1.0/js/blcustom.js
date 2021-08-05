@@ -47,8 +47,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
             	var productCode = form.find('input[name=productCode]').val();
             	var initialCartQuantity = form.find('input[name=initialQuantity]');
             	var cartQuantity = form.find('input[name=quantity]');
-
-            	ACC.track.trackRemoveFromCart(productCode, initialCartQuantity.val());
+              var productName = form.find('input[name=productName]').val();
+            	ACC.track.trackRemoveFromCart(productCode, productName ,initialCartQuantity.val());
             	cartQuantity.val(0);
             	initialCartQuantity.val(0);
             	$(".shopping-cart__item-remove").attr("disabled", "disabled");
@@ -61,6 +61,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
  	var damageWaiverType = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+  ACC.track.trackChangeDamageWaiver(productCode, damageWaiverType);
  	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
  	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
@@ -83,10 +85,33 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        $('.page-loader-new-layout').show();
                                    },
                                    success: function (response) {
+                                	   var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                                	   if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                                    	{
+                                    		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                                 ACC.minicart.updateMiniCartDisplay();
+                                              }
+                                    		onGiftCardCloseModal();
+                                     		setTimeout(function(){
+                                          	   $("#signUp").modal('hide');
+                                          	   $("#addToCart").addClass("show");
+                                                 $("#addToCart").show();
+                                             },500);
+                                     		mixedProductInterception(productCode, serialCode);
+                                    	}
+                                	   else{
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                       var productName = $('#productName').val();
+                                       var productCode = $('#productCode').val();
+                                       var productBrand =$('#productBrand').val();
+                                       var productType = $('#productType').val();
+                                       var productCategory = $('#productCategory').val()
+                                       var quantity = $('#quantity').val();
+                                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
                                       $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
@@ -97,6 +122,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
+                                	 }
                                    },
                                    complete : function() {
                                       $('.page-loader-new-layout').hide();
@@ -313,6 +339,17 @@ $('#applyGcCode').click(function (e) {
 	});
 });
 
+//BL-927 Gift Card Purchase Amount
+$('#add-to-gc').click(function(e) {
+    $('.page-loader-new-layout').hide();
+    var form = $('#giftCardPurchaseForm');
+    var amount = form.find('input[name=amount]').val();
+    if (amount < 25 || amount > 500) {
+        $('.notification').show();
+        return false;
+    }
+});
+
 //BL-563 Remove Gift Card
 $('.remove-gift-card').on("click", function(e) {
      e.preventDefault();
@@ -372,12 +409,13 @@ if($(".arrival").hasClass("nextAvailDate") && !$("#addToCartButton").hasClass("j
    					arrows : true,
    					pagination :true,
    					keyboard: false,
+					drag:false
    				} ).mount();
    				 document.querySelectorAll('.card-sliders').forEach(carousel => new Splide( carousel, {
    					type   : 'loop',
    					perPage: 1,
    					pagination: true,
-   					drag   : false,
+   					drag   : true,
    					fixedHeight: 140,
    					breakpoints: {
    						'991': {
@@ -641,6 +679,21 @@ $('.emptyCart-modalClose').click(function(e){
 });
 }
 
+$('.emailSubscr_btn').click(function (e){
+
+		var email = document.getElementById("emailSubscr_txt").value;
+		//validate email
+			$.ajax({
+				 url: ACC.config.encodedContextPath + "/subscribe-email/?emailId="+email,
+				 type: "GET",
+				success: function (data) {
+					if (data == "success") {
+
+					}
+				}
+			});
+});
+
 //Added code for used gear addToCart 
 $('.bl-serial-add').click(function (e)
 	{
@@ -772,8 +825,21 @@ function startUsedGearCartTimer() {
 	
 	$('.js-add-to-used-cart').on("click",function(e) {
         e.preventDefault();
+        /*       $('.page-loader-new-layout').hide();
+        var form = $('#giftCardPurchaseForm');
+        var amount = form.find('input[name=amount]').val();
+        if (amount < 25 || amount > 500) {
+            $('.notification').show();
+            return false;
+        }*/
+         var form = $('#giftCardPurchaseForm');
+    
          var productCode = $(this).attr('data-product-code');
          var serialCode = $(this).attr('data-serial');
+         // This data used for GA
+         var productName = $(this).attr('data-product-name');
+         var productBrand =$(this).attr('data-product-brand');
+         var productCategory = $(this).attr('data-product-category');
          var redirectToCart = false;
          if(serialCode == '' || serialCode == undefined){
          serialCode = "serialCodeNotPresent";
@@ -781,15 +847,63 @@ function startUsedGearCartTimer() {
          $.ajax({
                     url: ACC.config.encodedContextPath + "/cart/usedgearadd",
                     type: 'GET',
-                    data: {productCodePost: productCode,serialProductCodePost:serialCode},
+                    data: form.serialize() + "&productCodePost="+productCode+"&serialProductCodePost="+serialCode,
                     beforeSend: function(){
                         $('.page-loader-new-layout').show();
                     },
                     success: function (response) {
+                    	var addToCartGiftCardLayer = response.addToCartGiftCardLayer;
+                    	var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                    	var multipleGiftCardWarningLayer = response.multipleGiftCardWarningLayer;
+                    	if(addToCartGiftCardLayer != undefined && addToCartGiftCardLayer != '')
+                    	{
+                    		$('#addToCartModalDialog').html(response.addToCartGiftCardLayer);
+                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                 ACC.minicart.updateMiniCartDisplay();
+                              }
+                    		onGiftCardCloseModal();
+                     		setTimeout(function(){
+                          	   $("#signUp").modal('hide');
+                          	   $("#addToCart").addClass("show");
+                                 $("#addToCart").show();
+                             },500);
+                     		mixedProductInterception(productCode, serialCode);
+                    	}
+                    	 else if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                     	{
+                     		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                     		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                  ACC.minicart.updateMiniCartDisplay();
+                               }
+                     		onGiftCardCloseModal();
+                      		setTimeout(function(){
+                           	   $("#signUp").modal('hide');
+                           	   $("#addToCart").addClass("show");
+                                  $("#addToCart").show();
+                              },500);
+                      		mixedProductInterception(productCode, serialCode);
+                     	}
+                     	else if(multipleGiftCardWarningLayer != undefined && multipleGiftCardWarningLayer != '')
+                     	{
+                     		$('#addToCartModalDialog').html(response.multipleGiftCardWarningLayer);
+                     		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                  ACC.minicart.updateMiniCartDisplay();
+                               }
+                     		onGiftCardCloseModal();
+                      		setTimeout(function(){
+                           	   $("#signUp").modal('hide');
+                           	   $("#addToCart").addClass("show");
+                                  $("#addToCart").show();
+                              },500);
+                      		mixedProductInterception(productCode, serialCode);
+                     	}
+                    	else{
                     	var addToCartLayer = response.addToUsedCartLayer;
-                    	
                     	if(addToCartLayer == undefined || addToCartLayer == '')
                     	{
+                       var productType ='used gear';
+                       var quantity =1;
+                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                     		redirectToCart = true;
                     		startUsedGearCartTimer();
                     	}
@@ -802,7 +916,9 @@ function startUsedGearCartTimer() {
                          	   $("#addToCart").addClass("show");
                                 $("#addToCart").show();
                             },500);
-                    		mixedProductInterception(productCode, serialCode);
+                    	  mixedProductInterception(productCode, serialCode);
+                    	}
+                    	
                     	}
                     },
                     complete : function() {
@@ -822,6 +938,23 @@ function startUsedGearCartTimer() {
 
 });
 
+	function onGiftCardCloseModal()
+	{
+		$("#closeGiftCardModal , #cancelGiftCardModal").on("click", function(event){
+			event.preventDefault();
+			var doReload = $("#doReload").val();
+			if(doReload === 'true')
+			{
+				location.reload();
+			}
+			else
+			{
+				$("#addToCart").removeClass("show");
+	            $("#addToCart").hide();
+			}
+		});
+	}
+	
 function onUsedCloseModal()
 {
 	$("#closeUsedCartModal , #cancelUsedCartModal").on("click", function(event){
@@ -838,3 +971,48 @@ function onUsedCloseModal()
 		}
 	});
 }
+
+//BL-625 place order with order notes.
+$('#placeOrderSummary').on("click", function(e) {
+	$('#placeOrder').click();
+});
+
+$('#placeOrder').on(
+		"click",
+		function(e) {
+			var submitForm = $("#placeOrderForm1");
+			var csrfTokan = createHiddenParameter("CSRFToken",
+					$(ACC.config.CSRFToken));
+			submitForm.append($(csrfTokan));
+			submitForm.submit();
+		});
+
+//Handled min and max character for order notes.
+var inputQuantity = [];
+$(function() {
+	$(".order-notes").on(
+			"keyup",
+			function(e) {
+				var $field = $(this), val = this.value;
+				$thisIndex=parseInt($field.data("idx"),10); 
+				if (val.length > Number($field.attr("maxlength"))) {
+					val = val.slice(0, 5);
+					$field.val(val);
+				}
+				inputQuantity[$thisIndex] = val;
+			});
+});
+
+//Print order confirmation page
+$('#printOrderConfirmation').on("click",function(e) {
+		e.preventDefault();
+		var submitForm = $("#printOrderConfirmationForm");
+		submitForm.submit();
+});
+
+function hideShorting(){ 
+    $('.container').on('click', function(){  
+	   $(".product-sort").find(".bootstrap-select").removeClass('open')
+   });
+  }; 
+  hideShorting();

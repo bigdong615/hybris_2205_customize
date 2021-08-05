@@ -197,6 +197,8 @@
 		<property name="commercePriceService" ref="commercePriceService"/>
 		<property name="stockNotificationFacade" ref="stockNotificationFacade"/>
 		<property name="blWishlistOptionsPopulator" ref="blWishlistOptionsPopulator"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blPromotionService" ref="blPromotionService"/>
 	</bean>
 
 
@@ -272,6 +274,10 @@
 		<property name="priceDataFactory" ref="priceDataFactory"/>
 		<property name="commonI18NService" ref="commonI18NService"/>
 		<property name="blCommerceStockService" ref="blCommerceStockService" />
+		<property name="blProductService" ref="productService"/>
+		<property name="baseStoreService" ref="baseStoreService"/>
+		<property name="blPromotionService" ref="blPromotionService"/>
+		<property name="blPricingService" ref="blPricingService"/>
 	</bean>
 	
 	<!-- BL-166:This bean is override to configure bl related populator-->
@@ -506,9 +512,22 @@
 	</bean>
 	<!-- Notify me end-->
 
+	<!-- BL-626 Email Subscription changes -->
+	<alias name="defaultBlEmailSubscriptionFacade" alias="blEmailSubscriptionFacade"/>
+    <bean id="defaultBlEmailSubscriptionFacade" class="com.bl.facades.subscription.impl.DefaultBlEmailSubscriptionFacade">
+        <property name="blEmailSubscriptionService" ref="blEmailSubscriptionService"/>
+        <property name="blEmailSubscriptionRequestPopulator" ref="blEmailSubscriptionRequestPopulator"/>
+    </bean>
+    
+    <alias name="defaultBlEmailSubscriptionRequestPopulator" alias="blEmailSubscriptionRequestPopulator"/>
+    <bean id="defaultBlEmailSubscriptionRequestPopulator" class="com.bl.facades.populators.BlEmailSubscriptionRequestPopulator" />
+
+	<!-- BL-626 Email Subscription changes end -->
+
 	<!--BL-657 added to override orderAppliedVouchersPopulator -->
 	<alias name="blOrderAppliedVouchersPopulator" alias="orderAppliedVouchersPopulator"/>
 	<bean id="blOrderAppliedVouchersPopulator" class="com.bl.facades.populators.BlOrderAppliedVouchersPopulator">
+		<property name="blPromotionService" ref="blPromotionService"/>
 	</bean>
 
 	<!--[BL-643]: Custom Promotions-->
@@ -535,6 +554,68 @@
 	<alias name="blCommerceProductReferenceService" alias="blCommerceProductReferenceService"/>
 	<bean id="blCommerceProductReferenceService" class="com.bl.facades.productreference.service.DefaultBlCommerceProductReferenceService" parent="commerceProductReferenceService">
 	</bean>
+
+	<!--BL-712:This class was created to customize bl specific address data.-->
+<!--
+	<alias name="defaultBlUserFacade" alias="blUserFacade"/>
+	<bean id="defaultBlUserFacade" class="com.bl.facades.customer.impl.DefaultBlUserFacade" parent="defaultUserFacade">
+    <property name="customerAccountService" ref="customerAccountService"/>
+	</bean>
+-->
+
+	<!--Added for MyAccount Order Page -->
+	<alias name="defaultBlOrderHistoryPopulator" alias="orderHistoryPopulator"/>
+	<bean id="defaultBlOrderHistoryPopulator" class="com.bl.facades.populators.BlOrderHistoryPopulator" parent="defaultOrderHistoryPopulator">
+	</bean>
+
+	<bean parent="modifyPopulatorList">
+		<property name="list" ref="orderConverter"/>
+		<property name="add" ref="blOrderDetailsPopulator"/>
+	</bean>
+
+	<bean id="blOrderDetailsPopulator"
+		class="com.bl.facades.populators.BlOrderDetailsPopulator">
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="blAddressPopulator" ref="addressPopulator"/>
+	</bean>
+
+  <!--Added for extend rental order-->
+	<bean id="blExtendRentalOrderDetailsPopulator"
+		class="com.bl.facades.populators.BlExtendRentalOrderDetailsPopulator">
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="commercePriceService" ref="commercePriceService"/>
+		<property name="sessionService" ref="sessionService" />
+		<property name="modelService" ref="modelService" />
+		<property name="defaultBlCalculationService" ref="calculationService"/>
+		<property name="productService" ref="productService"/>
+		<property name="defaultBlExtendOrderService" ref="defaultBlExtendOrderService"/>
+		<property name="promotionsService" ref="promotionsService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="timeService" ref="timeService" />
+	</bean>
+
+	<alias name="defaultBlOrderFacade" alias="blOrderFacade" />
+	<bean id="defaultBlOrderFacade" parent="orderFacade" class="com.bl.facades.order.DefaultBlOrderFacade">
+		<property name="blCartFacade" ref="cartFacade"/>
+		<property name="blCartService" ref="cartService" />
+		<property name="commerceCartService" ref="commerceCartService"/>
+		<property name="modelService" ref="modelService"/>
+		<property name="cartModificationConverter" ref="cartModificationConverter"/>
+		<property name="priceDataFactory" ref="priceDataFactory"/>
+		<property name="commercePriceService" ref="commercePriceService"/>
+		<property name="productService" ref="productService"/>
+		<property name="sessionService" ref="sessionService" />
+		<property name="defaultBlExtendOrderService" ref="defaultBlExtendOrderService" />
+		<property name="defaultBlCalculationService" ref="calculationService"/>
+		<property name="promotionsService" ref="promotionsService"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="timeService" ref="timeService" />
+		<property name="blCommerceStockService" ref="blCommerceStockService"/>
+		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
+		<property name="blDatePickerService" ref="blDatePickerService" />
+		<property name="blOrderAppliedVouchersPopulator" ref="blOrderAppliedVouchersPopulator" />
+	</bean>
+
 
   <!-- BL-632:This class was created for providing bl specific saved cart functionality.-->
 	<alias name="defaultBlSaveCartFacade" alias="saveCartFacade"/>
@@ -590,9 +671,36 @@
 		class="com.bl.facades.populators.BlWishlistEntryPopulator">
 		<property name="productFacade" ref="productFacade"/>
 	</bean>
+
 	<alias name="blWarehousingConsignmentFacade" alias="warehousingConsignmentFacade"/>
 	<bean id="blWarehousingConsignmentFacade" parent="defaultWarehousingConsignmentFacade"
 	      class="com.bl.facades.warehouse.impl.BLWarehousingConsignmentFacadeImpl">
 	        <property name="boxDimensionService" ref="boxDimensionService"/>
-	      </bean>																				  
+	      </bean>
+
+
+	<!--Added for extend order promotion -->
+
+	<bean id="defaultBlCouponFacade" class="com.bl.facades.coupon.impl.DefaultBlCouponFacade">
+		<property name="defaultBlCouponService" ref="defaultBlCouponService"/>
+		<property name="customerAccountService" ref="customerAccountService" />
+		<property name="baseStoreService" ref="baseStoreService" />
+		<property name="userService" ref="userService"/>
+		<property name="blExtendRentalOrderDetailsPopulator" ref="blExtendRentalOrderDetailsPopulator"/>
+		<property name="blDefaultExtendOrderConverter" ref="blDefaultExtendOrderConverter"/>
+	</bean>
+
+	<!--Added for extend order coupon promotion -->
+
+	<bean id="blDefaultExtendOrderConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.platform.commercefacades.order.data.AbstractOrderData"/>
+		<property name="populators">
+			<list>
+				<ref bean="blExtendRentalOrderDetailsPopulator"/>
+				<ref bean="blOrderAppliedVouchersPopulator"/>
+			</list>
+		</property>
+	</bean>
+
+
 </beans>

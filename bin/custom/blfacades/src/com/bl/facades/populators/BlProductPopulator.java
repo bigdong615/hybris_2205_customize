@@ -1,7 +1,6 @@
 package com.bl.facades.populators;
 
 import com.bl.core.model.BlProductModel;
-
 import de.hybris.platform.commercefacades.product.data.ImageData;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
@@ -12,7 +11,7 @@ import de.hybris.platform.servicelayer.model.ModelService;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -29,6 +28,8 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
 
     @Override
     public void populate(final BlProductModel source, final ProductData target) {
+        target.setProductId(source.getProductId());
+        target.setIsVideo(source.getIsVideo());
         target.setDisplayName(source.getDisplayName());
         target.setRentalIncludes(source.getRentalIncludes());
         target.setForRent(BooleanUtils.toBoolean(source.getForRent()));
@@ -42,10 +43,16 @@ public class BlProductPopulator extends AbstractBlProductPopulator implements Po
         if (CollectionUtils.isNotEmpty(dataSheets)) {
             populateResourceData(dataSheets, target);
         }
+     
+        target.setProductType(source.getProductType().getCode());
+      
         target.setIsDiscontinued(BooleanUtils.toBoolean(source.getDiscontinued()));
         target.setIsNew(BooleanUtils.toBoolean(source.getIsNew()));
         target.setIsUpcoming(CollectionUtils.isEmpty(source.getSerialProducts()));
         target.setAlternativeProduct(source.getAlternativeProduct());
+        target.setOnSale(source.getOnSale() != null && source.getOnSale());
+        target.setUpc(StringUtils.isNotEmpty(source.getUpc()) ? source.getUpc() : StringUtils.EMPTY );
+        target.setBrandName(StringUtils.isNotEmpty(source.getManufacturerName()) ? source.getManufacturerName() : StringUtils.EMPTY);
         getBlProductTagPopulator().populate(source, target);
     }
 

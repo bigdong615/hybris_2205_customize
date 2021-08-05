@@ -6,6 +6,7 @@ package com.bl.storefront.controllers.pages;
 import static de.hybris.platform.commercefacades.constants.CommerceFacadesConstants.CONSENT_GIVEN;
 
 import com.bl.core.constants.BlCoreConstants;
+import com.bl.core.datepicker.BlDatePickerService;
 import com.bl.core.model.GiftCardModel;
 import com.bl.core.model.GiftCardMovementModel;
 import com.bl.core.services.cart.BlCartService;
@@ -13,8 +14,10 @@ import com.bl.core.services.gitfcard.BlGiftCardService;
 import com.bl.facades.cart.BlCartFacade;
 import com.bl.facades.giftcard.BlGiftCardFacade;
 import com.bl.facades.giftcard.data.BLGiftCardData;
+import com.bl.facades.shipping.BlCheckoutFacade;
 import com.bl.logging.BlLogger;
 import com.bl.storefront.controllers.ControllerConstants;
+import com.bl.storefront.controllers.ControllerConstants.Views.Fragments.Checkout;
 import com.bl.storefront.forms.GiftCardForm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorfacades.flow.impl.SessionOverrideCheckoutFlowFacade;
@@ -73,10 +76,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
@@ -101,6 +106,7 @@ public class CheckoutController extends AbstractCheckoutController
 	private static final String CHECKOUT_ORDER_CONFIRMATION_CMS_PAGE_LABEL = "orderConfirmation";
 	private static final String CONTINUE_URL_KEY = "continueUrl";
 	private static final String CONSENT_FORM_GLOBAL_ERROR = "consent.form.global.error";
+	protected static final String REDIRECT_URL_ORDER_CONFIRMATION = REDIRECT_PREFIX + "/checkout/orderConfirmation/";
 
 	@Resource(name = "productFacade")
 	private ProductFacade productFacade;
@@ -110,6 +116,9 @@ public class CheckoutController extends AbstractCheckoutController
 
 	@Resource(name = "checkoutFacade")
 	private CheckoutFacade checkoutFacade;
+
+	@Resource(name = "checkoutFacade")
+	private BlCheckoutFacade blCheckoutFacade;
 
 	@Resource(name = "guestRegisterValidator")
 	private GuestRegisterValidator guestRegisterValidator;
@@ -143,6 +152,9 @@ public class CheckoutController extends AbstractCheckoutController
 
   @Resource(name = "blGiftCardFacade")
   private BlGiftCardFacade blGiftCardFacade;
+
+	@Resource(name = "blDatePickerService")
+	private BlDatePickerService blDatePickerService;
 
 	@ExceptionHandler(ModelNotFoundException.class)
 	public String handleModelNotFoundException(final ModelNotFoundException exception, final HttpServletRequest request)
@@ -182,6 +194,30 @@ public class CheckoutController extends AbstractCheckoutController
 		return processOrderCode(orderCode, model, request, redirectModel);
 	}
 
+	/**
+	 * When user clicks on print icon on order confirmation page, then it opens the print order confirmation page.
+	 * @param orderCode
+	 * @param model
+	 * @return
+	 */
+	@GetMapping(value = "/printOrderConfirmation")
+	public String print(@RequestParam(value = "orderCode") final String orderCode,
+			final Model model) {
+		try {
+			final OrderData orderData = orderFacade.getOrderDetailsForCode(orderCode);
+			model.addAttribute("orderData", orderData);
+			blCheckoutFacade.getModifiedTotalForPrintQuote(orderData);
+			if (Boolean.TRUE.equals(orderData.getIsRentalCart())) {
+				return Checkout.PrintOrderConfirmation;
+			} else {
+				return Checkout.PrintUsedGearOrderConfirmation;
+			}
+		} catch (final Exception exception) {
+			BlLogger.logMessage(LOG, Level.ERROR,
+					"Error while creating data for Print Page from order confirmation page", exception);
+		}
+		return REDIRECT_URL_ORDER_CONFIRMATION + orderCode;
+	}
 
 	@RequestMapping(value = "/orderConfirmation/" + ORDER_CODE_PATH_VARIABLE_PATTERN, method = RequestMethod.POST)
 	public String orderConfirmation(final GuestRegisterForm form, final BindingResult bindingResult, final Model model,
@@ -296,7 +332,7 @@ public class CheckoutController extends AbstractCheckoutController
 			{
 				final String productCode = entry.getProduct().getCode();
 				final ProductData product = productFacade.getProductForCodeAndOptions(productCode,
-						Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.CATEGORIES));
+						Arrays.asList(ProductOption.BASIC, ProductOption.PRICE, ProductOption.CATEGORIES,ProductOption.REQUIRED_DATA));
 				entry.setProduct(product);
 			}
 		}

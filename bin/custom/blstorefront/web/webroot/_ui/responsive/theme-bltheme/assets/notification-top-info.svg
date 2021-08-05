@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/check with circle</title>
+    <g id="Designs" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Account-ExtendRental" transform="translate(-414.000000, -761.000000)" fill="#52BFC0">
+            <g id="right-column" transform="translate(384.000000, 220.000000)">
+                <g id="Group-2" transform="translate(9.000000, 521.000000)">
+                    <g id="icon/check-with-circle" transform="translate(18.000000, 17.000000)">
+                        <path d="M15.73,3 L21,8.27 L21,15.73 L15.73,21 L8.27,21 L3,15.73 L3,8.27 L8.27,3 L15.73,3 Z M14.9,5 L9.1,5 L5,9.1 L5,14.9 L9.1,19 L14.9,19 L19,14.9 L19,9.1 L14.9,5 Z M13,15 L13,17 L11,17 L11,15 L13,15 Z M13,7 L13,13 L11,13 L11,7 L13,7 Z" id="-↳Color"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

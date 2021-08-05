@@ -24,6 +24,7 @@ INSERT_UPDATE ContentSlotName; name[unique = true]      ; template(uid, $content
                              ; MobileHeaderLinkForSupportSlot ;                                                                                       ;                           ; headerlink
                              ; MobileHeaderLinkForAccountSlot ;                                                                                       ;                           ; headerlink
                              ; MobileHeaderBottomInfo         ;                                                                                       ;                           ; wide
+                             ; TopHeaderSlot         ;                                                                                       ;                           ; wide
                              ; MobileMiniCartSlot             ;                                                                                       ;                           ; minicart
 
 ###  Define ContentSlot For Template  ###
@@ -40,6 +41,7 @@ INSERT_UPDATE ContentSlotForTemplate; $contentCV[unique = true]; uid[unique = tr
                                     ;                          ; MobileHeaderLinkForSupportSlot-multiStepCheckoutSummaryPage ; MobileHeaderLinkForSupportSlot ;                                                                                   ; MobileHeaderLinkForSupportSlot             ; true
                                     ;                          ; MobileHeaderLinkForAccountSlot-multiStepCheckoutSummaryPage ; MobileHeaderLinkForAccountSlot ;                                                                                   ; MobileHeaderLinkForAccountSlot             ; true
                                     ;                          ; MobileHeaderBottomInfo-multiStepCheckoutSummaryPage         ; MobileHeaderBottomInfo         ;                                                                                   ; MobileHeaderBottomInfo                     ; true
+                                    ;                          ; TopHeaderSlot-multiStepCheckoutSummaryPage         ; TopHeaderSlot         ;                                                                                                     ; TopHeaderSlot                     ; true
                                     ;                          ; MobileMiniCartSlot-multiStepCheckoutSummaryPage             ; MobileMiniCartSlot             ;                                                                                   ; MobileMiniCartSlot                         ; true
 
 

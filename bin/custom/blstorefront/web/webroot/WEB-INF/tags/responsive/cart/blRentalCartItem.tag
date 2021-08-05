@@ -16,14 +16,18 @@
 <div class="cartProduct">
      <div class="row">
          <div class="col-md-2 text-center">
-          <a href="${fn:escapeXml(productUrl)}"><product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
+          <a href="${fn:escapeXml(productUrl)}" class="js-pdplinkUrl" data-productCode="${entry.product.code}"
+            data-brand="${entry.product.manufacturer}" data-productName="${ycommerce:sanitizeHTML(entry.product.name)}" data-productType="rental">
+          <product:productPrimaryImage product="${entry.product}" format="thumbnail"/></a>
          </div>
          <div class="col-md-7 mt-3">
-           <a href="${fn:escapeXml(productUrl)}"><b>${entry.product.name}</b></a>
+           <a href="${fn:escapeXml(productUrl)}" class="js-pdplinkUrl" data-productCode="${entry.product.code}" data-brand="${entry.product.manufacturer}"
+             data-productName="${ycommerce:sanitizeHTML(entry.product.name)}" data-productType="rental"><b>${entry.product.name}</b></a>
            <form:form id="removeCartForm${entry.entryNumber}" action="${cartUpdateFormAction}" method="post"
                       modelAttribute="updateQuantityForm${entry.entryNumber}" class="js-qty-form${entry.entryNumber}">
                <input type="hidden" name="entryNumber" value="${entry.entryNumber}" />
                <input type="hidden" name="productCode" value="${entry.product.code}" />
+               <input type="hidden" name="productName" value="${entry.product.name}" />
                <input type="hidden" name="initialQuantity" value="${entry.quantity}" />
                <input type="hidden" name="quantity" value=0 />
                <input type="hidden" name="removeEntry" value="true" />
@@ -85,11 +89,11 @@
              </c:choose>
                
                <ul class="dropdown-menu damage-wavier damage-Waiver-update" aria-labelledby="coverageOptions1">
-                 <li><a class="dropdown-item gearguard-plus" href="#" data-entry="${entry.entryNumber}" data-id="gearguardpro">
+                 <li><a class="dropdown-item gearguard-plus" href="#" data-entry="${entry.entryNumber}" data-id="gearguardpro" data-product-code="${entry.product.code}">
                  <spring:theme code="text.damage.waiver.option.gear.plus"/> <span class="float-end"><format:price priceData="${entry.gearGuardProFullWaiverPrice}"/></span></a></li>
-                 <li><a class="dropdown-item gearguard" href="#" data-entry="${entry.entryNumber}" data-id="gearguard">
+                 <li><a class="dropdown-item gearguard" href="#" data-entry="${entry.entryNumber}" data-id="gearguard" data-product-code="${entry.product.code}">
                  <spring:theme code="text.damage.waiver.option.gear"/> <span class="float-end"><format:price priceData="${entry.gearGuardWaiverPrice}"/></span></a></li>
-                 <li><a class="dropdown-item no-gearguard" href="#" data-entry="${entry.entryNumber}" data-id="nogearguard"><spring:theme code="text.damage.waiver"/></a></li>
+                 <li><a class="dropdown-item no-gearguard" href="#" data-entry="${entry.entryNumber}" data-id="nogearguard" data-product-code="${entry.product.code}"><spring:theme code="text.damage.waiver"/></a></li>
                </ul>
              </div>
          </div>
