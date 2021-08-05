@@ -667,30 +667,28 @@ public class AccountPageController extends AbstractSearchPageController
 				catch (final PasswordMismatchException localException)
 				{
 					model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
-					model.addAttribute("passwordError",true);
+					model.addAttribute(BlControllerConstants.PASSWORDMISMATCH_MSG_TYPE,true);
 				}
 			}
 			else
 			{
 				model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
-				model.addAttribute("currentPasswordError",true);
+				model.addAttribute(BlControllerConstants.CURRENTPASSWORD_MSG_TYPE,true);
 			}
 		}
 
 		if (bindingResult.hasErrors())
 		{
-			final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
-			storeCmsPageInModel(model, updatePasswordPage);
-			setUpMetaDataForContentPage(model, updatePasswordPage);
-
 			model.addAttribute(BREADCRUMBS_ATTR, accountBreadcrumbBuilder.getBreadcrumbs("text.account.profile.updatePasswordForm"));
-			return getViewForPage(model);
 		}
 		else
 		{
-			redirectAttributes.addFlashAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
-			return REDIRECT_TO_PASSWORD_UPDATE_PAGE;
+			model.addAttribute("successMsg", getMessageSource().getMessage("text.account.confirmation.password.updated", null, getI18nService().getCurrentLocale()));
 		}
+		final ContentPageModel updatePasswordPage = getContentPageForLabelOrId(UPDATE_PASSWORD_CMS_PAGE);
+		storeCmsPageInModel(model, updatePasswordPage);
+		setUpMetaDataForContentPage(model, updatePasswordPage);
+		return getViewForPage(model);
 	}
 
 	@RequestMapping(value = "/address-book", method = RequestMethod.GET)
