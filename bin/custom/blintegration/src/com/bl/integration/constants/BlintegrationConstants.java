@@ -6,8 +6,6 @@ package com.bl.integration.constants;
 /**
  * Global class for all Blintegration constants. You can add global constants for your extension into this class.
  */
-@SuppressWarnings(
-{ "deprecation", "squid:CallToDeprecatedMethod" })
 public final class BlintegrationConstants extends GeneratedBlintegrationConstants
 {
 	public static final String EXTENSIONNAME = "blintegration";
@@ -20,7 +18,6 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String API_VERSION = "1.0.0";
 
 	public static final String AUTHORIZATION_URL = "/authorizationserver/oauth/token";
-	@SuppressWarnings("squid:S2068")
 	public static final String PASSWORD_AUTHORIZATION_NAME = "oauth2_password";
 	public static final String CLIENT_CREDENTIAL_AUTHORIZATION_NAME = "oauth2_client_credentials";
 
@@ -62,6 +59,7 @@ public final class BlintegrationConstants extends GeneratedBlintegrationConstant
 	public static final String SIGNATURE_SERVICE_CODE = "SERVICE_DEFAULT";
 	public static final String CATEGORY_CODE = "CONSUMER_GOODS";
 	public static final String RECIPIENT_TYPE = "RECIPIENT";
+	public static final String SUCCESS = "success";
 
 	private BlintegrationConstants()
 	{

@@ -1,7 +1,3 @@
-/**
- * @author Keyur
- */
-
 package com.bl.backoffice.actions;
 
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
@@ -12,11 +8,18 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.bl.integration.constants.BlintegrationConstants;
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
 import com.hybris.cockpitng.engine.impl.AbstractComponentWidgetAdapterAware;
 
+
+/**
+ * This class is responsible to clear all packages
+ *
+ * @author Keyur
+ */
 
 public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 		implements CockpitAction<ConsignmentModel, ConsignmentModel>
@@ -27,6 +30,16 @@ public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 
 	protected static final String SOCKET_OUT_CONTEXT = "blCreatePackageContext";
 
+	/**
+	 * This method is responsible for fetch the consignment which are not in CANCELLED, CHECKED_INVALID,
+	 * PAYMENT_NOT_AUTHORIZED and PAYMENT_DECLINED status
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the boolean
+	 */
+
+	@Override
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel order = actionContext.getData();
@@ -34,6 +47,13 @@ public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 		return (order != null);
 	}
 
+	/**
+	 * This method will fetch the action context data for blCreatePackageContext
+	 *
+	 * @param actionContext
+	 *           the action context
+	 * @return the action result
+	 */
 	public ActionResult<ConsignmentModel> perform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consignment = actionContext.getData();
@@ -41,7 +61,7 @@ public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 		modelService.removeAll(packages);
 		modelService.refresh(consignment);
 		this.sendOutput(SOCKET_OUT_CONTEXT, actionContext.getData());
-		return new ActionResult("success");
+		return new ActionResult(BlintegrationConstants.SUCCESS);
 	}
 
 }
