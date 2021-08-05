@@ -89,11 +89,11 @@
              </c:choose>
                
                <ul class="dropdown-menu damage-wavier damage-Waiver-update" aria-labelledby="coverageOptions1">
-                 <li><a class="dropdown-item gearguard-plus" href="#" data-entry="${entry.entryNumber}" data-id="gearguardpro">
+                 <li><a class="dropdown-item gearguard-plus" href="#" data-entry="${entry.entryNumber}" data-id="gearguardpro" data-product-code="${entry.product.code}">
                  <spring:theme code="text.damage.waiver.option.gear.plus"/> <span class="float-end"><format:price priceData="${entry.gearGuardProFullWaiverPrice}"/></span></a></li>
-                 <li><a class="dropdown-item gearguard" href="#" data-entry="${entry.entryNumber}" data-id="gearguard">
+                 <li><a class="dropdown-item gearguard" href="#" data-entry="${entry.entryNumber}" data-id="gearguard" data-product-code="${entry.product.code}">
                  <spring:theme code="text.damage.waiver.option.gear"/> <span class="float-end"><format:price priceData="${entry.gearGuardWaiverPrice}"/></span></a></li>
-                 <li><a class="dropdown-item no-gearguard" href="#" data-entry="${entry.entryNumber}" data-id="nogearguard"><spring:theme code="text.damage.waiver"/></a></li>
+                 <li><a class="dropdown-item no-gearguard" href="#" data-entry="${entry.entryNumber}" data-id="nogearguard" data-product-code="${entry.product.code}"><spring:theme code="text.damage.waiver"/></a></li>
                </ul>
              </div>
          </div>
