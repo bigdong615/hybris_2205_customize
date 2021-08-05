@@ -85,7 +85,7 @@
 		   </cms:pageSlot>
 		</li>
 		<!-- [BL-1043] Live Chat Mobile view-->
-     <li id="liveAgentChat_online" class="live-chat clickGA" style="display:block !important">
+     <li id="liveAgentChat_online" class="live-chat clickGA livechat">
        <a id="liveagent_button_online_${buttonId}" href="${liveChatURL}" onclick="liveagent.startChat('${buttonId}')" name="&amp;lid=GlobalHeader_live-chat clickGA"><!-- Online Chat Content -->
        <!----><span class="expertHelpIcon"></span><spring:theme code="text.live.chat.label" /></a>
      </li>
@@ -130,7 +130,7 @@
 	   </cms:pageSlot>      
 	   </li>
 	   <li id="liveAgentChat_online" class="live-chat clickGA" style="">
-     <a id="liveagent_button_online_${buttonId}" href="${liveChatURL}" onclick="liveagent.startChat('${buttonId}')" name="&amp;lid=GlobalHeader_live-chat clickGA"><!-- Online Chat Content -->
+     <a style=" text-decoration:none;" id="liveagent_button_online_${buttonId}" href="${liveChatURL}" onclick="liveagent.startChat('${buttonId}')" name="&amp;lid=GlobalHeader_live-chat clickGA"><!-- Online Chat Content -->
      <!----><span class="expertHelpIcon"></span><spring:theme code="text.live.chat.label" /></a>
      </li>
 

@@ -319,6 +319,7 @@ margin: 0;
     right:inherit !important;
   }
   #featuredPromo span{left:24px !important;bottom:9% !important;}  
+  .expertHelpIcon {margin-top: 4px !important;}
 }
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
@@ -498,4 +499,6 @@ input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:b
     margin-bottom: -5px;
     background-size: contain;
 }
-
+.livechat{
+  display: block !important;
+}
