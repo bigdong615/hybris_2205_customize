@@ -666,14 +666,14 @@ public class AccountPageController extends AbstractSearchPageController
 				}
 				catch (final PasswordMismatchException localException)
 				{
-					bindingResult.rejectValue("currentPassword", PROFILE_CURRENT_PASSWORD_INVALID, new Object[] {},
-							PROFILE_CURRENT_PASSWORD_INVALID);
+					model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
+					model.addAttribute("passwordError",true);
 				}
 			}
 			else
 			{
-				bindingResult.rejectValue("checkNewPassword", "validation.checkPwd.equals", new Object[] {},
-						"validation.checkPwd.equals");
+				model.addAttribute(BlControllerConstants.ERROR_MSG_TYPE, getMessageSource().getMessage("profile.currentPassword.invalidMessage", null, getI18nService().getCurrentLocale()));
+				model.addAttribute("currentPasswordError",true);
 			}
 		}
 
