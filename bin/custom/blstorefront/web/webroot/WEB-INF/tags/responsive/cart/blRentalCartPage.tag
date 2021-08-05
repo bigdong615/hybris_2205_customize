@@ -52,6 +52,7 @@
                                    <a class="btn btn-sm btn-primary float-end js-login-popup"  data-link="<c:url value='/login/loginpopup'/>" href="#"
                                    data-bs-toggle="modal" data-bs-target="#signIn">
                                     <spring:theme code="general.continue.button" />
+                                    <input type="hidden" value="${pageType}" class="js-page-type"/>
                                    </a>
                                   </sec:authorize>
                                   <sec:authorize access="!hasAnyRole('ROLE_ANONYMOUS')">

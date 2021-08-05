@@ -92,8 +92,13 @@ ACC.account = {
 							var serialId = $('#signUppopup-validation').find('input[name="serialClickSignUP"]').val();
 							if(serialId == "" || serialId  == undefined)
 							{
+							var pageType=$('.js-page-type').val();
+              if(pageType == null || pageType == undefined){
+               pageType = '';
+              	}
 							window.mediator.publish('registerClick',{
-                   userId: $('#register-form-id').val()
+                   userId: $('#register-form-id').val(),
+                   pageType:pageType
                  });
 								location.reload();
 							}else{
@@ -160,8 +165,13 @@ ACC.account = {
 							var serialId = $('#login-popup-validation').find('input[name="serialClick"]').val();
 							if(serialId == "" || serialId  == undefined)
 							{
+							var pageType=$('.js-page-type').val();
+               if(pageType == null || pageType == undefined){
+                 pageType = '';
+             	}
 							 window.mediator.publish('loginClick',{
-                    userId: $('#j_username').val()
+                    userId: $('#j_username').val(),
+                     pageType:pageType
                   });
 								location.reload();
 							}
