@@ -17,6 +17,7 @@ $mediaContainer=media(qualifier, $catalogVersion)[lang=$lang];
 $blProduct=blProduct(code,$catalogVersion)
 $medias=medias(code, $catalogVersion)
 $galleryImages=galleryImages(qualifier, $catalogVersion)
+$picture=picture(code, $catalogVersion)
 # Language
 $lang=en
  
@@ -24,9 +25,11 @@ $lang=en
 INSERT_UPDATE Media ; $catalogVersion[unique=true] ; code[unique=true]                    ; realfilename           ; @media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator] ; mime[default='image/svg+xml'] ; altText ; folder(qualifier)[default='images'] ; mediaFormat(qualifier) 
                     ;                              ; /images/theme/BL-GC-Image-small.jpg  ; BL-GC-Image-Large.jpg  ; $siteResource/images/theme/BL-GC-Image-small.jpg                           ; image/png+xml                 ;         ;                                     ; 96Wx96H                
                     ;                              ; /images/theme/BL-GC-Image-medium.jpg ; BL-GC-Image-medium.jpg ; $siteResource/images/theme/BL-GC-Image-medium.jpg                          ; image/png+xml                 ;         ;                                     ; 300Wx300H              
+                    ;                              ; /images/theme/BL-GC-Image-Large.jpg  ; BL-GC-Image-Large.jpg  ; $siteResource/images/theme/BL-GC-Image-Large.jpg                           ; image/png+xml                 ;         ;                                     ; 515Wx515H              
+
                     
-INSERT_UPDATE MediaContainer ; qualifier[unique=true] ; $medias                                                                  ; $catalogVersion 
-                             ; BL-GC_Container        ; /images/theme/BL-GC-Image-small.jpg,/images/theme/BL-GC-Image-medium.jpg ;                 
+INSERT_UPDATE MediaContainer ; qualifier[unique=true] ; $medias                                                                                                      ; $catalogVersion 
+                             ; BL-GC_Container        ; /images/theme/BL-GC-Image-small.jpg,/images/theme/BL-GC-Image-medium.jpg,/images/theme/BL-GC-Image-Large.jpg ;                 
 
 INSERT_UPDATE Keyword ; $catalogVersion ; keyword[unique=true] ; language(isocode)[default=$lang] ; catalog(id)     
                       ;                 ; Gift                 ;                                  ; $productCatalog 
@@ -36,8 +39,8 @@ INSERT_UPDATE Keyword ; $catalogVersion ; keyword[unique=true] ; language(isocod
                       ;                 ; Gift Certificate     ;                                  ; $productCatalog 
                       
                              
-INSERT_UPDATE BLProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories ; name[lang=en]                 ; procurementCost ; displayName                   ; procurementSource ; mpn ; upc ; productType(code) ; forRent ; forSale ; level1Required ; level2Required ; numberSystem(code) ; scheduled ; isVideo ; manufacturerAID ; manufacturerName ; retailPrice ; $galleryImages  ; $keywords      ;unit(code)[default='pieces']                         
-                        ;                 ;           ; bl_giftcard       ;                  ; BorrowLenses Gift Certificate ; 0               ; BorrowLenses Gift Certificate ; NA                ; NA  ; NA  ; GIFTCARD           ; true    ; true    ; false          ; false          ; NONE               ; false     ; false   ; 0               ; NA               ; 0           ; BL-GC_Container ; Gift,Card,GC,Gift Card,Gift Certificate 
+INSERT_UPDATE BLProduct ; $catalogVersion ; $approved ; code[unique=true] ; $superCategories ; name[lang=en]                 ; procurementCost ; displayName                   ; procurementSource ; mpn ; upc ; productType(code) ; forRent ; forSale ; level1Required ; level2Required ; numberSystem(code) ; scheduled ; isVideo ; manufacturerAID ; manufacturerName ; retailPrice ; $galleryImages  ; $keywords      ;unit(code)[default='pieces']   ;$picture                      
+                        ;                 ;           ; bl_giftcard       ;                  ; BorrowLenses Gift Certificate ; 0               ; BorrowLenses Gift Certificate ; NA                ; NA  ; NA  ; GIFTCARD           ; true    ; true    ; false          ; false          ; NONE               ; false     ; false   ; 0               ; NA               ; 0           ; BL-GC_Container ; Gift,Card,GC,Gift Card,Gift Certificate ;     ;/images/theme/BL-GC-Image-Large.jpg
                         
                      
 INSERT_UPDATE BlSerialProduct ; $catalogVersion ; productId ; code[unique=true] ; displayName         ; $blProduct  ; $approved ; serialStatus(code) ; barcode  ; forSale ; ownedBy ; procurementCost ; procurementSource ; forSaleBasePrice ; assetNumber ; assetStatus ; manufacturerAID ; numberSystem(code) ; mpn      ; upc           ; productType(code) ;cosmeticRating(code) ; functionalRating(code);manufacturerName[default='Other'];unit(code)[default='pieces'] ;
