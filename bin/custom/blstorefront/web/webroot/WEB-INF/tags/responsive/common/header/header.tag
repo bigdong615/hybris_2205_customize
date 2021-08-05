@@ -10,7 +10,6 @@
 <%@ taglib prefix="nav" tagdir="/WEB-INF/tags/responsive/nav"%>
 <%@ taglib prefix="livechat" tagdir="/WEB-INF/tags/shared/livechat" %>
 
-
 <spring:htmlEscape defaultHtmlEscape="true" />
 <spring:eval expression="@configurationService.configuration.getProperty('livechat.button.id.value')" var="buttonId"/>
 <spring:eval expression="@configurationService.configuration.getProperty('livechat.endpointURL.link')" var="liveChatURL"/>
