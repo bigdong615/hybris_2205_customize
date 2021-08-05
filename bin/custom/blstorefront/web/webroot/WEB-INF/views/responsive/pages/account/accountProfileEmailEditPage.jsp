@@ -10,7 +10,7 @@
 
 <c:if test="${not empty passwordError}">
    <c:set var="errormsgvalid" value="error"/>
-</c:if>
+</c:if> 
 <div id="accountContent" class="col-lg-8 offset-lg-1">
                     <h1><spring:theme code="text.account.update.email.address"/></h1>
                     <hr>
