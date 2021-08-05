@@ -61,6 +61,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
  	var damageWaiverType = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+  ACC.track.trackChangeDamageWaiver(productCode, damageWaiverType);
  	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
  	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);

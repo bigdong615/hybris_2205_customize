@@ -31,6 +31,28 @@ ACC.track = {
     trackShowReviewClick: function(productCode)
     {
         window.mediator.publish('trackShowReviewClick',{});
+    },
+
+    trackChangeDamageWaiver: function(productCode, damageWaiverType){
+    window.mediator.publish('changeDamageWaiver',{
+     productCode:productCode,
+     damageWaiverType: damageWaiverType
+    });
+    },
+
+    trackShippingSelection: function(shippingType,shippingOption,stockStatus){
+      window.mediator.publish('continueShippingClick',{
+          shippingType:shippingType,
+          shippingOption: shippingOption,
+          stockStatus:stockStatus
+         });
+    },
+    trackPaymentSelection: function(paymentType){
+          window.mediator.publish('continuePaymentClick',{
+          paymentType:paymentType
+         });
     }
+
+
 
 };
