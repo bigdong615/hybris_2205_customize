@@ -26,6 +26,7 @@ public class UpdateShippingAction extends AbstractComponentWidgetAdapterAware im
 	 *           the action context
 	 * @return the boolean
 	 */
+	@Override
 	public boolean canPerform(final ActionContext<OrderModel> actionContext)
 	{
 		final OrderModel order = actionContext.getData();

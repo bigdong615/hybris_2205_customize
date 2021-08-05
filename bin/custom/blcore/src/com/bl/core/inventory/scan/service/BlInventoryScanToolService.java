@@ -82,21 +82,23 @@ public interface BlInventoryScanToolService {
  	 *         been failed to update its location in db
  	 * @param barcodes
  	 *           for BlSerialProduct
- 	 * @return List<String> 
+ 	 * @return Map<Integer, List<String>>
  	 */
  	public List<String> getFailedBinBarcodeList(final List<String> barcodes);
 
  	/**
  	 * method will verify the list of barcodes and result into list of failed barcodes that are not
- 	 *         valid as per the order
- 	 * @param selectedConsignment
- 	 * @return List<String> 
+ 	 * valid as per the order
+ 	 * 
+ 	 * @param barcodes for SerialProducts
+ 	 * @param selectedConsignment for ConsignmentModel
+ 	 * @return List<String>
  	 */
  	public List<String> verifyShippingScan(final List<String> barcodes, final ConsignmentModel selectedConsignment);
  	
 	/**
 	 * This method will check valid tracking Id scanned or not and return int with appropriate notification
-	 * @param barcodes
+	 * @param barcodes for serial product
 	 * @return the int
 	 */
 	public int checkValidTrackingId(final String barcodes);
@@ -106,21 +108,21 @@ public interface BlInventoryScanToolService {
 	 *         been failed to update its location in db
 	 * @param barcodes
 	 *           for BlSerialProduct
-	 * @return List<String>
+	 * @return Map<Integer, List<String>>
 	 */
-	public Map<Integer, List<String>> getFailedPackageBarcodeList(final List<String> barcodes);
+	public List<String> getFailedPackageBarcodeList(final List<String> barcodes);
 
 	/**
-	 * This method will verify loctiona and update items to new working desk location
+	 * This method will verify loction and update items to new working desk location
 	 * @param lastScannedItem
 	 */
 	public void updateToUpsBound();
 
 	/**
 	 * This method will verify valid location and return int with appropriate notification 
-	 * @param barcodes
-	 * @param defaultLocations
-	 * @param memberAllowedLocationList
+	 * @param barcodes for serial products
+	 * @param defaultLocations for locations
+	 * @param memberAllowedLocationList for allowed members
 	 * @return int
 	 */
 	public int checkLocationWithType(final List<String> barcodes, final List<String> defaultLocations,

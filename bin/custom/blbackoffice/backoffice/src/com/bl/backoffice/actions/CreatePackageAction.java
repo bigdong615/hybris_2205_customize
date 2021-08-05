@@ -37,6 +37,7 @@ public class CreatePackageAction extends AbstractComponentWidgetAdapterAware
 	 *           the action context
 	 * @return the boolean
 	 */
+	@Override
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consigment = actionContext.getData();

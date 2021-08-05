@@ -1,13 +1,13 @@
 package com.bl.core.inventory.scan.dao;
 
-import com.bl.core.model.BlInventoryLocationModel;
-import com.bl.core.model.BlInventoryScanConfigurationModel;
-import com.bl.core.model.BlSerialProductModel;
-import de.hybris.platform.core.model.order.AbstractOrderModel;
 import de.hybris.platform.ordersplitting.model.ConsignmentModel;
 import de.hybris.platform.warehousing.model.PackagingInfoModel;
 
 import java.util.Collection;
+
+import com.bl.core.model.BlInventoryLocationModel;
+import com.bl.core.model.BlInventoryScanConfigurationModel;
+import com.bl.core.model.BlSerialProductModel;
 
 /**
  * 

@@ -39,6 +39,7 @@ public class ClearPackageAction extends AbstractComponentWidgetAdapterAware
 	 * @return the boolean
 	 */
 
+	@Override
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel order = actionContext.getData();

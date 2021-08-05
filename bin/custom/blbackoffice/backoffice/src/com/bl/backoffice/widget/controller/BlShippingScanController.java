@@ -46,7 +46,7 @@ public class BlShippingScanController extends DefaultWidgetController
 	@Wire
 	Textbox scanningArea;
 
-	WebScanToolData shippingScanToolData;
+	private transient WebScanToolData shippingScanToolData;
 
 	@Resource(name = "blInventoryScanToolService")
 	private BlInventoryScanToolService blInventoryScanToolService;
@@ -124,7 +124,7 @@ public class BlShippingScanController extends DefaultWidgetController
 			{
 				final List<String> scannedBarcodeList = getBlInventoryScanToolService().verifyShippingScan(barcodes,
 						selectedConsignment);
-				createResponseForScan(barcodes, scannedBarcodeList);
+				createResponseForScan(scannedBarcodeList);
 			}
 			else
 			{
@@ -167,7 +167,7 @@ public class BlShippingScanController extends DefaultWidgetController
 		{
 			case BlInventoryScanLoggingConstants.ONE:
 				final List<String> failedBinBarcodeList = getBlInventoryScanToolService().getFailedBinBarcodeList(barcodes);
-				createResponseForScan(barcodes, failedBinBarcodeList);
+				createResponseForScan(failedBinBarcodeList);
 				break;
 
 			case BlInventoryScanLoggingConstants.TWO:
@@ -196,7 +196,6 @@ public class BlShippingScanController extends DefaultWidgetController
 	 * @throws WrongValueException
 	 */
 	private void notifyInvalidScan(final String logMsg, final String exceptionLabel, final Object... logParam)
-			throws WrongValueException
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, logMsg, logParam);
 		throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel));
@@ -209,7 +208,7 @@ public class BlShippingScanController extends DefaultWidgetController
 	 * @param barcodes
 	 * @param scannedBarcodeList
 	 */
-	private void createResponseForScan(final List<String> barcodes, final List<String> scannedBarcodeList)
+	private void createResponseForScan(final List<String> scannedBarcodeList)
 	{
 		if (CollectionUtils.isNotEmpty(scannedBarcodeList))
 		{

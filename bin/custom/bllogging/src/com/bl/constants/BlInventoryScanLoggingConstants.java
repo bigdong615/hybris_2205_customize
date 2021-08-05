@@ -121,7 +121,7 @@ public class BlInventoryScanLoggingConstants {
  	public static final String SHIPPING_MANY_LOCATION_ERROR ="blbackoffice.shipping.scan.many.location.error";
  	public static final String SHIPPING_INVALID_LOCATION_ERROR = "blbackoffice.shipping.scan.invalid.location.error";
 
- 	public static final String HYPHEN = "--";
+ 	public static final String DOUBLE_HYPHEN = "--";
  	public static final String NEW_LINE = "\n";
  	public static final String ON_CHANGE_EVENT = "onChange";
  	public static final String ON_CLICK_EVENT = "onClick";

@@ -44,7 +44,7 @@ public class BlPackageScanController extends DefaultWidgetController
 	@Wire
 	Textbox scanningArea;
 
-	WebScanToolData shippingScanToolData;
+	private transient WebScanToolData shippingScanToolData;
 
 	@Value("${blbackoffice.max.product.scan}")
 	private int maxProductScan;
@@ -305,7 +305,6 @@ public class BlPackageScanController extends DefaultWidgetController
 	 * @throws WrongValueException
 	 */
 	private void notifyInvalidScan(final String logMsg, final String exceptionLabel, final Object... logParam)
-			throws WrongValueException
 	{
 		BlLogger.logFormatMessageInfo(LOG, Level.DEBUG, logMsg, logParam);
 		throw new WrongValueException(this.scanningArea, this.getLabel(exceptionLabel));

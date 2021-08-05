@@ -37,18 +37,19 @@ import com.bl.integration.shipping.ups.converters.populator.BLUPSShipmentCreateR
 import com.bl.logging.BlLogger;
 import com.bl.shipment.data.UPSShipmentCreateResponse;
 import com.google.gson.Gson;
-import com.sun.xml.ws.client.ClientTransportException;
+import com.sun.xml.ws.client.ClientTransportException;//NOSONAR
 import com.ups.wsdl.xoltws.ship.v1.ShipPortType;
 import com.ups.wsdl.xoltws.ship.v1.ShipService;
 import com.ups.wsdl.xoltws.ship.v1.ShipmentErrorMessage;
 import com.ups.xmlschema.xoltws.error.v1.ErrorDetailType;
-import com.ups.xmlschema.xoltws.error.v1.Errors;
 import com.ups.xmlschema.xoltws.ship.v1.ShipmentRequest;
 import com.ups.xmlschema.xoltws.ship.v1.ShipmentResponse;
 import com.ups.xmlschema.xoltws.upss.v1.UPSSecurity;
 
 
 /**
+ * This class is responsible for shipment creation
+ *
  * @author Aditi Sharma
  *
  */
@@ -79,10 +80,8 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	@Value("${blintegration.ship.wsdl.location}")
 	private String wsdlLocation;
 
-	private ShipService shipService;
-
 	/**
-	 * @param upsShipmentRequest
+	 * {@inheritDoc}
 	 */
 	@Override
 	public UPSShipmentCreateResponse createUPSShipment(final UpsShippingRequestData upsShipmentRequest)
@@ -107,6 +106,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 			return upsResponse;
 
 		}
+
 		catch (final ClientTransportException ct)
 		{
 			upsShipmentResponseData.setStatusCode(BlintegrationConstants.CLIENT_SIDE_ERROR);
@@ -115,7 +115,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		}
 		catch (final Exception ex)
 		{
-			if (ex instanceof ShipmentErrorMessage)
+			if (ex instanceof ShipmentErrorMessage) //NOSONAR
 			{
 				final ShipmentErrorMessage err = (ShipmentErrorMessage) ex;
 				final Errors faultMessage = err.getFaultInfo();
@@ -141,8 +141,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	}
 
 	/**
-	 * @param fedExShipmentReqData
-	 * @return
+	 * {@inheritDoc}
 	 */
 	@Override
 	public String createFedExShipment(final FedExShippingRequestData fedExShipmentReqData)
@@ -158,8 +157,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	}
 
 	/**
-	 * @param consignment
-	 * @return
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean checkOrderStatus(final ConsignmentModel consignment)
@@ -182,7 +180,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	 */
 	private HttpResponse createFedExShipmentResponse(final FedExShipmentRequest fedExShipemtnReq)
 	{
-		final HttpClient httpclient = HttpClients.createDefault();
+		final HttpClient httpclient = HttpClients.createDefault(); //NOSONAR
 
 		URIBuilder builder;
 		try
@@ -210,6 +208,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 		{
 			BlLogger.logMessage(LOG, Level.INFO, io.getMessage());
 		}
+
 		return null;
 
 	}
@@ -234,6 +233,7 @@ public class DefaultBLShipmentCreationService implements BLShipmentCreationServi
 	private ShipmentResponse createUPSShipmentResponse(final ShipmentRequest shipmentRequest, final UPSSecurity upsSecurity)
 			throws ShipmentErrorMessage
 	{
+		ShipService shipService = null;
 		final QName qname = new QName(qName, "ShipService");
 		shipService = new ShipService(getServiceURL(), qname);
 

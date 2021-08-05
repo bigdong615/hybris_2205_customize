@@ -47,7 +47,7 @@ public class CreateShipmentAction extends AbstractComponentWidgetAdapterAware
 	 *           the action context
 	 * @return the boolean
 	 */
-
+	@Override
 	public boolean canPerform(final ActionContext<ConsignmentModel> actionContext)
 	{
 		final ConsignmentModel consignment = actionContext.getData();

@@ -11,26 +11,30 @@ import com.bl.shipment.data.UPSShipmentCreateResponse;
 
 
 /**
+ * interface will use for shipment creation
  * @author Aditi Sharma
  *
  */
 public interface BLShipmentCreationService
 {
 	/**
-	 * @param upsShipmentRequest
-	 * @return
+	 * method will used to create shipment for UPS
+	 * @param upsShipmentRequest for ups shipment
+	 * @return UPSShipmentCreateResponse
 	 */
 	UPSShipmentCreateResponse createUPSShipment(final UpsShippingRequestData upsShipmentRequest);
 
 	/**
-	 * @param upsShipmentRequest
-	 * @return
+	 * method will used to create shipment for FedEx
+	 * @param upsShipmentRequest for fedEx shipment
+	 * @return String
 	 */
 	String createFedExShipment(final FedExShippingRequestData upsShipmentRequest);
 
 	/**
-	 * @param consignment
-	 * @return
+	 * method will used to check the order status for shipment
+	 * @param consignment for ConsignmentModel
+	 * @return boolean
 	 */
 	public boolean checkOrderStatus(final ConsignmentModel consignment);
 }
