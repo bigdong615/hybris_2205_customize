@@ -6,6 +6,7 @@ import com.bl.facades.shipping.data.BlPartnerPickUpStoreData;
 import com.bl.facades.shipping.data.BlPickUpZoneDeliveryModeData;
 import com.bl.facades.shipping.data.BlRushDeliveryModeData;
 import com.bl.facades.shipping.data.BlShippingGroupData;
+import com.braintree.model.BrainTreePaymentInfoModel;
 import com.bl.facades.ups.address.data.AVSResposeData;
 import com.bl.storefront.forms.BlPickUpByForm;
 import de.hybris.platform.acceleratorfacades.order.AcceleratorCheckoutFacade;
@@ -16,7 +17,9 @@ import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.deliveryzone.model.ZoneDeliveryModeModel;
-
+import de.hybris.platform.core.model.order.AbstractOrderModel;
+import com.braintree.model.BrainTreePaymentInfoModel;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -165,6 +168,17 @@ public interface BlCheckoutFacade extends AcceleratorCheckoutFacade {
      */
     boolean setDeliveryMode(final String deliveryModeCode, final boolean status);
 
+    /**
+	  * To create the auth transaction of the order
+	  * @param cartModel the cart
+	  * @param amountToAuthorize the amount
+	  * @param submitForSettlement 
+	  * @param paymentInfo the payment info
+     * @return true if successful
+     */
+    boolean createAuthorizationTransactionOfOrderForGiftCardPurchase(final AbstractOrderModel cartModel, final BigDecimal amountToAuthorize, final boolean submitForSettlement, final BrainTreePaymentInfoModel paymentInfo);
+
+    
     /**
      * This method will check validity of user entered pinCode for SF or NYC
      *

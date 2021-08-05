@@ -83,10 +83,33 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        $('.page-loader-new-layout').show();
                                    },
                                    success: function (response) {
+                                	   var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                                	   if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                                    	{
+                                    		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                                 ACC.minicart.updateMiniCartDisplay();
+                                              }
+                                    		onGiftCardCloseModal();
+                                     		setTimeout(function(){
+                                          	   $("#signUp").modal('hide');
+                                          	   $("#addToCart").addClass("show");
+                                                 $("#addToCart").show();
+                                             },500);
+                                     		mixedProductInterception(productCode, serialCode);
+                                    	}
+                                	   else{
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                       var productName = $('#productName').val();
+                                       var productCode = $('#productCode').val();
+                                       var productBrand =$('#productBrand').val();
+                                       var productType = $('#productType').val();
+                                       var productCategory = $('#productCategory').val()
+                                       var quantity = $('#quantity').val();
+                                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
                                       $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
@@ -97,6 +120,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
+                                	 }
                                    },
                                    complete : function() {
                                       $('.page-loader-new-layout').hide();

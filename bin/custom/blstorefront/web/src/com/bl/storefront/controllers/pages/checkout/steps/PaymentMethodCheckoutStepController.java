@@ -167,6 +167,7 @@ public class PaymentMethodCheckoutStepController extends AbstractCheckoutStepCon
 	@PreValidateCheckoutStep(checkoutStep = PAYMENT_METHOD)
 	public String enterStep(final Model model, final RedirectAttributes redirectAttributes) throws CMSItemNotFoundException
 	{
+		model.addAttribute("pageType",BlControllerConstants.BILLING_PAGE);
 		showMessageForRemovedGiftCard(model);
 		getCheckoutFacade().setDeliveryModeIfAvailable();
 		setupAddPaymentPage(model);
