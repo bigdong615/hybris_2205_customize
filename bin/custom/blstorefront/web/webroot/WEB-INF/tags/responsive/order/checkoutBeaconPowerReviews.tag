@@ -28,10 +28,10 @@
    (function(){
     try{
     var tracker = POWERREVIEWS.tracker.createTracker({
-        merchantGroupId: "2120371445"});
+        merchantGroupId: "${merchantGroupId}"});
         var orderFeed = {
-            merchantGroupId: '2120371445',
-            merchantId: '1415200746',
+            merchantGroupId: '${merchantGroupId}',
+            merchantId: '${merchantID}',
             locale: 'en_US',
             merchantUserId: '',
             marketingOptIn: true,
@@ -46,7 +46,7 @@
 	    		product_name: '${ycommerce:encodeUrl(entry.product.name)}',
               	unit_price: ${entry.basePrice.value},
 	    		quantity: ${entry.quantity} 
-     		   }
+     		   },
               
             </c:forEach> 
             ]

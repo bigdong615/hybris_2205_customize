@@ -45,7 +45,7 @@ public class BlUsedGearSerialStatusChangeHook implements CommercePlaceOrderMetho
 				if (SerialStatusEnum.ADDED_TO_CART.equals(blSerialProductModel.getSerialStatus()))
 				{
 					blSerialProductModel.setSerialStatus(SerialStatusEnum.SOLD);
-					getBlCartService().changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.ADDED_TO_CART);
+					getBlCartService().changeSerialStatusInStagedVersion(blSerialProductModel.getCode(), SerialStatusEnum.SOLD);
 					getModelService().save(blSerialProductModel);
 					getModelService().refresh(order);
 				}

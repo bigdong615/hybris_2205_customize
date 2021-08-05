@@ -9,6 +9,7 @@ import de.hybris.platform.ordersplitting.model.WarehouseModel;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import com.bl.core.enums.SerialStatusEnum;
 
 /**
  * It provides cart related functionality.
@@ -75,4 +76,13 @@ public interface BlCartService extends CartService {
      * @param poNotes
      */
     void savePoPaymentDetails(final String poNumber, final String poNotes);
+    
+    /**
+     * Change serial status of product of Staged version
+     *  @param productCode
+     * @param addedToCart
+     * @return
+     */
+    void changeSerialStatusInStagedVersion(final String productCode,
+        final SerialStatusEnum addedToCart);
 }
