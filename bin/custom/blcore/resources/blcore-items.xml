@@ -1977,31 +1977,31 @@
                 <attributes>
                     <attribute qualifier="daysToSkip" type="DaysCollection" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="cutOffTime" type="java.lang.String" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="numberOfDaysToSkip" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="shippingMethodId" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="shippingMethodType" type="ShippingMethodTypeEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="carrier" type="CarrierEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="warehouse" type="Warehouse" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                     <attribute qualifier="businessTypeDelivery" type="boolean">
                         <persistence type="property" />
@@ -2015,12 +2015,19 @@
                     </attribute>
                     <attribute qualifier="shippingCostCode" type="ShippingCostEnum" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
-
+                    <attribute qualifier="preReservedDays" type="java.lang.String" autocreate="true">
+                      <persistence type="property" />
+                      <modifiers read="true" write="true" search="true" />
+                    </attribute>
+                    <attribute qualifier="postReservedDays" type="java.lang.String" autocreate="true">
+                      <persistence type="property" />
+                      <modifiers read="true" write="true" search="true" />
+                    </attribute>
                     <attribute qualifier="shippingOrderSequence" type="java.lang.Number" autocreate="true">
                         <persistence type="property" />
-                        <modifiers read="true" write="true" search="true" initial="true" />
+                        <modifiers read="true" write="true" search="true" />
                     </attribute>
                 </attributes>
             </itemtype>
