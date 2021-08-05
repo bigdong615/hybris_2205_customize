@@ -319,6 +319,7 @@ margin: 0;
     right:inherit !important;
   }
   #featuredPromo span{left:24px !important;bottom:9% !important;}  
+  .expertHelpIcon {margin-top: 4px !important;}
 }
 .icon-date-forward {
     background: url(../assets/icon-arrow.svg) center no-repeat;
@@ -485,4 +486,19 @@ margin: 0;
 }    
 input[type=radio]:checked + label:before, input[type=checkbox]:checked + label:before {
     margin-right:8px;
+}
+
+.expertHelpIcon {
+    background-image: url(https://cdn.static-bl.com/images/expertHelpIconNew.png);
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 10px;
+    width: 20px;
+    height: 20px !important;
+    margin-right: 10px;
+    margin-bottom: -5px;
+    background-size: contain;
+}
+.livechat{
+  display: block !important;
 }
