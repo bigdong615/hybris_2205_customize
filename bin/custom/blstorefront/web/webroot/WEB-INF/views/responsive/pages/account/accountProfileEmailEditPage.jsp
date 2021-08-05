@@ -29,9 +29,12 @@
                                          					               </button>
                                          		                </ycommerce:testId>
                                </div>
-                                	<c:if test="${not empty successMsgEmail}">
-                                      	<div class="notification notification-tip check mt-4">${successMsgEmail}</div>
-                                  </c:if>
+                               <c:if test="${not empty errorMsg}">
+                                <div class="notification notification-error mt-4">${errorMsg}</div>
+                               </c:if>
+                               <c:if test="${not empty successMsgEmail}">
+                                 <div class="notification notification-tip check mt-4">${successMsgEmail}</div>
+                               </c:if>
                             </form:form>
                         </div>
                     </div>

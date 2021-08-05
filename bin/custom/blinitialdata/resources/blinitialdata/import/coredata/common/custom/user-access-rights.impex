@@ -45,6 +45,8 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 ;;;;SyncItemJob;+;;;
 ;;;;Type;+;;;
 ;;;;Product;+;+;+;+;+;
+;;;;BlProduct;+;+;+;+;+;
+;;;;BlSerialProduct;+;+;+;+;+;
 ;;;;Category;+;+;+;+;+;
 ;;;;VariantType;+;+;+;+;+;
 ;;;;Catalog;+;+;+;+;
@@ -86,6 +88,12 @@ UserGroup;backofficeproductmanagergroup;;;;;;;;
 ;;;;Keyword;+;;;;;
 ;;;;Unit;+;;;;;
 ;;;;User;+;;;;;
+;;;;BlOptions;+;;;;;
+;;;;ProductVideo;+;;;;;
+;;;;RepairTypeEnum;+;;;;;
+;;;;ItemTestingStatusEnum;+;;;;;
+;;;;RepairReasonsEnum;+;;;;;
+;;;;ConditionRatingValueEnum;+;;;;;
 
 $END_USERRIGHTS;;;;;
 
@@ -110,15 +118,15 @@ UserGroup ; customersupportagentgroup ;                ;                        
           ;                           ;                ;                                ; GiftCard2Order        ; +    ; +      ; +      ; -      ; -
           ;                           ;                ;                                ; Order.giftCard 
 # Access Rights for customer notes on cs cockpit;;;;;;;;
-          ;                           ;                ; Customer                       ; +                ; +    ; -      ; -
-          ;                           ;                ; Customer.customerNotes         ; +                ; +    ; +      ; +
-          ;                           ;                ; Customer2CustomerNotes         ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotesEnum              ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes                  ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.customerNoteType ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.fraud            ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.customer         ; +                ; +    ; +      ; +
-          ;                           ;                ; CustomerNotes.type             ; -                ; -    ; -      ; -
+          ;                           ;                ;                                ; Customer                       ; +                ; +    ; -      ; -
+          ;                           ;                ;                                ; Customer.customerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; Customer2CustomerNotes         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotesEnum              ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes                  ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.customerNoteType ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.fraud            ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.customer         ; +                ; +    ; +      ; +
+          ;                           ;                ;                                ; CustomerNotes.type             ; -                ; -    ; -      ; -
           ;                           ;                ;                                ; Notes.type       ; +    ; +      ; +      ; +      ; -
           ;                           ;                ;                                ; Notes.userID     ; +    ; +      ; -      ; -      ; -
 

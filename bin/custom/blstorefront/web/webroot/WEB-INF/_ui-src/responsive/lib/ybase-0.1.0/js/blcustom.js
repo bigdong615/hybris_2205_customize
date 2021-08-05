@@ -61,6 +61,8 @@ $('.shopping-cart__item-remove').on("click", function (e){
  	e.preventDefault();
  	var entryNumber = $(this).find("a").data('entry');
  	var damageWaiverType = $(this).find("a").data('id');
+ 	var productCode =$(this).find("a").data('product-code');
+  ACC.track.trackChangeDamageWaiver(productCode, damageWaiverType);
  	var damageWaiverUpdateForm = $('#updateDamageWaiverForm');
  	damageWaiverUpdateForm.find('input[name=entryNumber]:hidden').val(entryNumber);
  	damageWaiverUpdateForm.find('input[name=damageWaiverType]:hidden').val(damageWaiverType);
@@ -83,10 +85,33 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                        $('.page-loader-new-layout').show();
                                    },
                                    success: function (response) {
+                                	   var giftCardNotAllowedWarninLayer = response.giftCardNotAllowedWarninLayer;
+                                	   if(giftCardNotAllowedWarninLayer != undefined && giftCardNotAllowedWarninLayer != '')
+                                    	{
+                                    		$('#addToCartModalDialog').html(response.giftCardNotAllowedWarninLayer);
+                                    		 if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
+                                                 ACC.minicart.updateMiniCartDisplay();
+                                              }
+                                    		onGiftCardCloseModal();
+                                     		setTimeout(function(){
+                                          	   $("#signUp").modal('hide');
+                                          	   $("#addToCart").addClass("show");
+                                                 $("#addToCart").show();
+                                             },500);
+                                     		mixedProductInterception(productCode, serialCode);
+                                    	}
+                                	   else{
                                       $('#addToCartModalDialog').html(response.addToCartLayer);
                                       if (typeof ACC.minicart.updateMiniCartDisplay == 'function') {
                                          ACC.minicart.updateMiniCartDisplay();
                                       }
+                                       var productName = $('#productName').val();
+                                       var productCode = $('#productCode').val();
+                                       var productBrand =$('#productBrand').val();
+                                       var productType = $('#productType').val();
+                                       var productCategory = $('#productCategory').val()
+                                       var quantity = $('#quantity').val();
+                                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                                       //On empty cart page, add class on close & continue shopping button of add to rental modal.
                                       $(".js-emptyCartPage").find(".btn-close").addClass('emptyCart-modalClose');
                                       $(".js-emptyCartPage").find(".btn-outline").addClass('emptyCart-modalClose');
@@ -97,6 +122,7 @@ $('.shopping-cart__item-remove').on("click", function (e){
                                       if(document.getElementById("addToCart-gear-sliders") != null){
                                         setTimeout(modalBodyContent,100);
                                       };
+                                	 }
                                    },
                                    complete : function() {
                                       $('.page-loader-new-layout').hide();
@@ -810,6 +836,10 @@ function startUsedGearCartTimer() {
     
          var productCode = $(this).attr('data-product-code');
          var serialCode = $(this).attr('data-serial');
+         // This data used for GA
+         var productName = $(this).attr('data-product-name');
+         var productBrand =$(this).attr('data-product-brand');
+         var productCategory = $(this).attr('data-product-category');
          var redirectToCart = false;
          if(serialCode == '' || serialCode == undefined){
          serialCode = "serialCodeNotPresent";
@@ -871,6 +901,9 @@ function startUsedGearCartTimer() {
                     	var addToCartLayer = response.addToUsedCartLayer;
                     	if(addToCartLayer == undefined || addToCartLayer == '')
                     	{
+                       var productType ='used gear';
+                       var quantity =1;
+                       ACC.track.trackAddToCart(productCode, productName,productBrand,productType,productCategory,quantity);
                     		redirectToCart = true;
                     		startUsedGearCartTimer();
                     	}

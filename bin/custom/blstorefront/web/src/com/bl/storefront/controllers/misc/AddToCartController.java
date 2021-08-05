@@ -61,7 +61,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.bl.facades.constants.BlFacadesConstants;
+
 import org.apache.log4j.Level;
 
 /**
@@ -148,7 +148,7 @@ public class AddToCartController extends AbstractController {
             }
         }
 
-        model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC)));
+        model.addAttribute("product", productFacade.getProductForCodeAndOptions(code, Arrays.asList(ProductOption.BASIC,ProductOption.CATEGORIES)));
         final List<ProductOption> PRODUCT_OPTIONS = Arrays.asList(ProductOption.BASIC, ProductOption.PRICE,
                 ProductOption.REQUIRED_DATA, ProductOption.GALLERY, ProductOption.STOCK,ProductOption.REQUIRED_WISHLIST);
         final Integer productsLimit = Integer.valueOf(Config.getInt(PRODUCT_LIMIT, 50));
@@ -179,10 +179,18 @@ public class AddToCartController extends AbstractController {
  				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
  			}
  		}
- 		else if (isGiftCart || blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
+ 		else{
+ 			 if (isGiftCart)
+ 	 		{
+ 				BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.GIFTCARDNOTALLOWE);
+ 				return ControllerConstants.Views.Fragments.Cart.GiftCardNotAllowedWarningPopup;
+ 	 		}
+ 		
+ 		else if (blCartFacade.isRentalProductAddedToCartInUsedGearCart(code, serialCode))
  		{
  			BlLogger.logMessage(LOG, Level.DEBUG, BlControllerConstants.ADDTOCARTWARNING);
  			return ControllerConstants.Views.Fragments.Cart.AddToCartWarningPopup;
+ 		}
  		}
  		return null;
  	}

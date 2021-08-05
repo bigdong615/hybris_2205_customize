@@ -62,11 +62,8 @@
 							<div class="row">
 								<c:forEach items="${allItems}" var="cartEntry">
 									<div class="col-md-2 text-center mt-3">
-										<c:set
-											value="/blstorefront/_ui/responsive/theme-bltheme/images/BL-GC-Image-Large.jpg"
-											var="altTextHtml1" />
-										<img src="${fn:escapeXml(altTextHtml1)}" alt="${altTextHtml}"
-											title="${altText}" title="${altText}" />
+											<product:productPrimaryImage product="${cartEntry.product}"
+											format="thumbnail" />
 									</div>
 
 									<div class="col-md-6 mt-3">
@@ -100,9 +97,8 @@
 													placeholder="<spring:theme code='giftcard.PurchaseForm.email.placeholder' />"
 													name="email">
 												<textarea class="form-control mt-2 mb-4"
-													value="${entry.recipientMessage}"
 													placeholder="<spring:theme code='giftcard.PurchaseForm.message.placeholder' />"
-													name="message"></textarea>
+													name="message">${entry.recipientMessage}</textarea>
 											</div>
 										</form:form>
 									</div>
@@ -128,7 +124,7 @@
 						</c:if>
 						<form:form action="${placeOrderUrl}" id="placeOrderForm1"
 							modelAttribute="placeOrderForm">
-							<div style="display: none;">
+							
 						<b><spring:theme code="text.review.page.order.notes" /></b>
 							 <input type="text" class="form-control order-notes"
 								name="orderNotes" id="notes"
@@ -139,7 +135,7 @@
 								value="true" checked="checked" id="newsletter" />
 							<label for="newsletter"><span class="gray80"><spring:theme
 										code="text.review.page.newsletter.checkbox.label" /></span></label>
-							<hr class="mt-5"></div>
+							<hr class="mt-5">
 							<div class="reviewCart">
 								<h5 class="mb-4">
 									<spring:theme

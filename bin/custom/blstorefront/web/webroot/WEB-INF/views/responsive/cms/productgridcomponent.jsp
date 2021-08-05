@@ -10,7 +10,9 @@
          </div>
             <div id="matchingProducts" class="row">
                <c:forEach items="${searchPageData.results}" var="product" varStatus="status">
+               <c:if test="${product.productType ne 'GIFTCARD'}">
                   <product:productListerGridItem product="${product}" />
+                  </c:if>
                </c:forEach>
             </div>
    <nav:pagination searchPageData="${searchPageData}" searchUrl="${searchPageData.currentQuery.url}"/>
