@@ -8846,6 +8846,7 @@ INSERT_UPDATE BlInventoryLocation[disable.interceptor.beans='blInventoryLocation
                                                                                                     ;8174;  BIN 1400PEL 053;        BIN 1400PEL 053;                   BIN;9667;        2-11-2021 17:51
 
 
+
 UPDATE BlInventoryLocation[disable.interceptor.beans='blInventoryLocationPrepareInterceptor'] ; inventoryLocationID[unique='true'] ; locationCategory(code)                
                                                                                               ; 1                                  ; CLEAN_GEAR_CAGE                       
                                                                                               ; 2                                  ; CLEAN_GEAR_AISLE_IN_CAGE              
