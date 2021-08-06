@@ -27,12 +27,12 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 
 	private static final ArrayList<String> productPageFields = new ArrayList<>(
 			Arrays.asList("isBuy", "productCategory", "ProductName", "productSKU",
-					 "prodid", "rentalDays"));
+					 "prodid", "rentalDays","prodOutOfStock"));
 
 	private static final  ArrayList<String> cartPageFields = new ArrayList<>(
 			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy",
 					"productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays")); // NOSONAR
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays" ,"outOfStockForRentalDates","outOfStockForQuantity")); // NOSONAR
 
 
   private static final  ArrayList<String> orderConfirmationPageFields = new ArrayList<>(
@@ -43,11 +43,11 @@ public class TealiumCustomData implements HybrisCustomDataConverter
 
 	private static final ArrayList<String> checkoutShippingPage = new ArrayList<>(
 			Arrays.asList("cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays","outOfStockForRentalDates","outOfStockForQuantity"));
 
 	private static final ArrayList<String> checkoutBillingPage = new ArrayList<>(
 			Arrays.asList( "cartSize", "quantity", "couponCode" ,"damage_waiver_cost","isBuy","productCategory","ProductName","productSKU",
-					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays"));
+					"prodid","shipping_cost","subtotal","unit_price","total_value","rentalDays","outOfStockForRentalDates","outOfStockForQuantity"));
 
 	private static final ArrayList<String> allPageFields = new ArrayList<>(
 			Arrays.asList("page_type","pagetype", "AccountID", "global_url", "navigation_type", "page_name","tealium_account","utag_main_mycookie"

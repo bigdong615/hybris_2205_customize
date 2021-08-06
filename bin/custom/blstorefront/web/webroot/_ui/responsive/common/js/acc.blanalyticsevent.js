@@ -21,6 +21,10 @@ ACC.blanalyticsevent = {
 			if (searchText === "" || searchText == undefined) {
 				searchText = $('#js-site-search-input-mob').val();
 			}
+			utag.link({
+          "tealium_event"    : "search",
+          "search_bar"       : '"'+searchText+'"'
+      });
 			window.mediator.publish('trackSearch', {
 				searchText: searchText
 			});
