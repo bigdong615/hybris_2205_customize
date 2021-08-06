@@ -21,6 +21,8 @@ ACC.blanalyticsevent = {
 			if (searchText === "" || searchText == undefined) {
 				searchText = $('#js-site-search-input-mob').val();
 			}
+
+			// Track Tealium event whiling search.
 			utag.link({
           "tealium_event"    : "search",
           "search_bar"       : '"'+searchText+'"'

@@ -96,6 +96,7 @@ ACC.account = {
               if(pageType == null || pageType == undefined){
                pageType = '';
               	}
+              	// Track Tealium event for successful register.
               	var userId =$('#register-form-id').val();
               	utag.link({
                    "tealium_event"    : "user_register",
