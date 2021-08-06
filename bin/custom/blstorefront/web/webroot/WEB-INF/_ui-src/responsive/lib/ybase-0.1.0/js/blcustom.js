@@ -977,6 +977,14 @@ $('#placeOrderSummary').on("click", function(e) {
 	$('#placeOrder').click();
 });
 
+ var reviewPageError = $('.js-reviewPage-error').val();
+   if( reviewPageError!= undefined &&  reviewPageError!=null){
+    reviewPageError = reviewPageError.trim();
+     window.mediator.publish('placeOrderClick', {
+    	reviewPageError: reviewPageError
+    	});
+    }
+
 $('#placeOrder').on(
 		"click",
 		function(e) {
