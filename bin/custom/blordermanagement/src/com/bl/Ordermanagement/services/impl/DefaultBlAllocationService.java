@@ -91,9 +91,10 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
 
       if (null != order.getDeliveryAddress()) {
         consignment.setShippingAddress(order.getDeliveryAddress());
-      } else {
+      } else if (null != order.getDeliveryMode()) {
 
-        consignment.setShippingAddress(((BlPickUpZoneDeliveryModeModel)order.getDeliveryMode()).getInternalStoreAddress());
+        consignment.setShippingAddress(
+            ((BlPickUpZoneDeliveryModeModel) order.getDeliveryMode()).getInternalStoreAddress());
       }
 
       consignment
@@ -138,7 +139,7 @@ public class DefaultBlAllocationService extends DefaultAllocationService impleme
           this.getModelService().save(consignment);
           serialStocks.forEach(stock -> stock.setReservedStatus(true));
 
-          setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
+          //setAssignedFlagOfSerialProduct(result.getSerialProductMap().values(), BlCoreConstants.SOFT_ASSIGNED);
 
           this.getModelService().saveAll(serialStocks);
 
